@@ -170,7 +170,7 @@ export class UserFamiliesList {
 
 
         this.allFamilies = this.allFamilies.filter(f=>f.archive.value == false);
-        
+
         if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer.value) {
             this.context.for(DistributionCenters).lookupAsync(this.allFamilies[0].distributionCenter).then(x => this.distCenter = x);
         }
@@ -194,6 +194,11 @@ export class UserFamiliesList {
                 case DeliveryStatus.FailedBadAddress:
                 case DeliveryStatus.FailedNotHome:
                 case DeliveryStatus.FailedDoNotWant:
+
+                case DeliveryStatus.FailedNotReady:
+                case DeliveryStatus.FailedAlreadyPickedUp: 
+                case DeliveryStatus.FailedTooFar: 
+                  
                 case DeliveryStatus.FailedOther:
                     return true;
             }

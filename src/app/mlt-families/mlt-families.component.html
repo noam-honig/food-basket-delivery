@@ -1,4 +1,5 @@
 <div class="full-page mat-tipogrophy">
+    
     <div class="grow-item" *ngIf="display==deliveryList">
         <span *ngIf="deliveredSinceEver==0" class="mat-card-title" style="text-align: center;">
             {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
@@ -6,7 +7,10 @@
         <span *ngIf="deliveredSinceEver>0" class="mat-card-title" style="text-align: center;">
             {{comp.context.user.name}} תודה על {{deliveredSinceEver}} תרומות שאספת! - יאללה ממשיכים!
         </span>
-        <div style="display: flex; flex-flow: column; margin:15px; text-align: center;">
+        <span *ngIf="showFrozen()">
+            לבקשתך, לא נחבר לך תרומות לאיסוף עד {{userFrozenTill}}
+        </span>
+        <div class="button-div">
             <button mat-raised-button color="primary" *ngIf="canSelectDonors()" (click)="assignNewDelivery()">מצאו לי
                 עוד תורמים בסביבתי
             </button>
@@ -14,9 +18,6 @@
                 וואלה עמוס לי,
                 תנו לי הפסקה של שבועיים
             </button>
-            <span *ngIf="showFrozen()">
-                לבקשתך, לא נחבר לך תרומות לאיסוף עד {{userFrozenTill}}
-            </span>
             <button *ngIf="showFrozen()" mat-raised-button color="primary" (click)="unFreezeUser()">
                 התפניתי, אפשר להמשיך לחבר לי תורמים
             </button>

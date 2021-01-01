@@ -45,6 +45,7 @@ export class MltFamiliesComponent implements OnInit {
   myPhoneNumber: string = '';
   today = new Date();
   userFrozenTill = this.today;
+  showPopup = true;
   
   showFrozen() {
     if (this.thisHelper) {
@@ -76,6 +77,7 @@ export class MltFamiliesComponent implements OnInit {
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
     this.distCentersButtons = [];
     this.countFamilies();
+    this.startPage();
   }
 
   getBasketsDescription(family: ActiveFamilyDeliveries, listType: string) {
@@ -206,6 +208,7 @@ export class MltFamiliesComponent implements OnInit {
     this.selectedFamily = null
     this.familyLists.initFamilies();
     this.countFamilies();
+    this.openDeliveriesPopup();
   }
 
   async getClosestDistCenters() {
@@ -219,10 +222,20 @@ export class MltFamiliesComponent implements OnInit {
       if (this.familyLists.allFamilies.length > 0)
         volunteerLocation = this.familyLists.allFamilies[0].getDrivingLocation();
     }
-    if (volunteerLocation)
-      distCenters.sort((a, b) => GetDistanceBetween(a.address.location(), volunteerLocation) - GetDistanceBetween(b.address.location(), volunteerLocation));
+    if (volunteerLocation) {
+      distCenters.sort((a, b) => {
+        if (a.id.value == this.familyLists.distCenter.id.value) {
+          return -1;
+        } else if (b.id.value == this.familyLists.distCenter.id.value) {
+          return 1;
+        } else {
+          return GetDistanceBetween(a.address.location(), volunteerLocation) - GetDistanceBetween(b.address.location(), volunteerLocation);
+        }
+      });
 
-      return {volunteerLocation, distCenters};
+    }
+
+    return {volunteerLocation, distCenters};
   }
 
 
@@ -281,6 +294,21 @@ export class MltFamiliesComponent implements OnInit {
     this.dialog.Info("ההודעה שלך נקלטה! תודה רבה!")
     this.startPage();
   }
+
+  async openDeliveriesPopup() {
+    this.familyLists.initFamilies();
+    let delivered = this.getFamilies('delivered').length;
+    if (this.showPopup && (delivered > 0)) {
+      await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+        question: (delivered > 1 ? " ישנן " + delivered + " תרומות למסור בנקודת האיסוף " : "ישנה תרומה אחת שיש להעביר לנקודת איסוף"), 
+        yesButtonText: this.settings.lang.confirm,
+        showOnlyConfirm: true
+      });
+      this.showPopup = false;
+    }
+    else this.showPopup = true;
+  }
+
 
   async deliveredToFamily(newComment?) {
     let f = this.selectedFamily;

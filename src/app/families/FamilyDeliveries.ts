@@ -254,7 +254,8 @@ export class FamilyDeliveries extends IdEntity {
         }
     });
 
-    archive = new BoolColumn({ allowApiUpdate: [Roles.admin, Roles.lab] });
+    archive = new BoolColumn({ allowApiUpdate: c => c.isAllowed([Roles.admin, Roles.lab]) || c.isSignedIn() && getSettings(c).isSytemForMlt() });
+
     archiveDate = new changeDate({ includeInApi: Roles.admin, caption: getLang(this.context).archiveDate });
     archiveUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: getLang(this.context).archiveUser });
 
