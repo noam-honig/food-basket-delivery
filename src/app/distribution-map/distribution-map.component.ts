@@ -23,7 +23,7 @@ import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, O
 import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Sites } from '../sites/sites';
+import { getLang, Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
@@ -360,7 +360,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
         if (distCenter !== undefined)
           where.push(f.filterDistCenterAndAllowed(distCenter));
-        if (area != undefined) {
+        if (area!==undefined&&area!==null &&area!=getLang( context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
@@ -540,3 +540,4 @@ function mapSqlResult(r) {
     } as deliveryOnMap;
   }) as deliveryOnMap[];
 }
+

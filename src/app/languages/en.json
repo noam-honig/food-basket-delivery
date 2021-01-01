@@ -2097,7 +2097,7 @@
   "NewsComponent": {
     "google": "Care needs",
     "valueInCode": "מצריך טיפול",
-    "custom": "Requires Followup"
+    "custom": "Followup"
   },
   "newVolunteer": {
     "google": "New volunteer",
@@ -2555,7 +2555,7 @@
   "removeFollowUpFor": {
     "google": "Uncheck \"Requires Care\" for the family",
     "valueInCode": "לבטל את הסימון \"מצריך טיפול\" למשפחת",
-    "custom": "Remove \"Requires Followup\" for "
+    "custom": "Remove \"Followup\" for "
   },
   "removeFromFamiliesToUpdate": {
     "google": "Remove from families to update",
@@ -2624,17 +2624,17 @@
   "requireFollowUp": {
     "google": "Needs treatment / follow up",
     "valueInCode": "צריך טיפול/מעקב",
-    "custom": "Requires Followup"
+    "custom": "Followup"
   },
   "requireFollowUpUpdateDate": {
     "google": "Needs Care - When Updated",
     "valueInCode": "צריך טיפול - מתי עודכן",
-    "custom": "Requires Followup Update Date"
+    "custom": "Followup Update Date"
   },
   "requireFollowUpUpdateUser": {
     "google": "Need Care - Who Updated",
     "valueInCode": "צריך טיפול - מי עדכן",
-    "custom": "Requires Followup Update User"
+    "custom": "Followup Update User"
   },
   "resendReminder": {
     "google": "send again",
@@ -2771,7 +2771,8 @@
   },
   "selfPickup": {
     "google": "Come and take",
-    "valueInCode": "באים לקחת"
+    "valueInCode": "באים לקחת",
+    "custom": "Self Pickup"
   },
   "selfPickupByBaskets": {
     "google": "Come to pick by baskets",
@@ -2780,7 +2781,8 @@
   },
   "SelfPickupComponent": {
     "google": "Come and take",
-    "valueInCode": "באים לקחת"
+    "valueInCode": "באים לקחת",
+    "custom": "Self Pickup"
   },
   "selfPickupDeliveries": {
     "google": "Deliveries defined by firefighters to take",

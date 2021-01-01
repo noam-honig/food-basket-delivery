@@ -2376,9 +2376,9 @@
     "valueInEnglish": "The new and existing password is an identity"
   },
   "NewsComponent": {
-    "google": "Richiede follow-up",
+    "google": "Azione supplementare",
     "valueInCode": "מצריך טיפול",
-    "valueInEnglish": "Requires Followup"
+    "valueInEnglish": "Followup"
   },
   "newVolunteer": {
     "google": "Nuovo volontario",
@@ -2917,9 +2917,9 @@
     "valueInEnglish": "View in families for update"
   },
   "removeFollowUpFor": {
-    "google": "Rimuovere \"Richiede follow-up\" per",
+    "google": "Rimuovi \"Followup\" per",
     "valueInCode": "לבטל את הסימון \"מצריך טיפול\" למשפחת",
-    "valueInEnglish": "Remove \"Requires Followup\" for "
+    "valueInEnglish": "Remove \"Followup\" for "
   },
   "removeFromFamiliesToUpdate": {
     "google": "Rimuovi dalle famiglie per aggiornare",
@@ -2997,19 +2997,19 @@
     "valueInEnglish": "require EULA"
   },
   "requireFollowUp": {
-    "google": "Richiede follow-up",
+    "google": "Azione supplementare",
     "valueInCode": "צריך טיפול/מעקב",
-    "valueInEnglish": "Requires Followup"
+    "valueInEnglish": "Followup"
   },
   "requireFollowUpUpdateDate": {
-    "google": "Richiede la data di aggiornamento di follow-up",
+    "google": "Data di aggiornamento successivo",
     "valueInCode": "צריך טיפול - מתי עודכן",
-    "valueInEnglish": "Requires Followup Update Date"
+    "valueInEnglish": "Followup Update Date"
   },
   "requireFollowUpUpdateUser": {
-    "google": "Richiede un aggiornamento utente di follow-up",
+    "google": "Utente aggiornamento successivo",
     "valueInCode": "צריך טיפול - מי עדכן",
-    "valueInEnglish": "Requires Followup Update User"
+    "valueInEnglish": "Followup Update User"
   },
   "resendReminder": {
     "google": "invia di nuovo",
@@ -3167,9 +3167,9 @@
     "valueInEnglish": "Assigned independently"
   },
   "selfPickup": {
-    "google": "Vieni e prendi",
+    "google": "Ritiro automatico",
     "valueInCode": "באים לקחת",
-    "valueInEnglish": "Come and take"
+    "valueInEnglish": "Self Pickup"
   },
   "selfPickupByBaskets": {
     "google": "Self Pickup di Parcels",
@@ -3177,9 +3177,9 @@
     "valueInEnglish": "Self Pickup by Parcels"
   },
   "SelfPickupComponent": {
-    "google": "Vieni e prendi",
+    "google": "Ritiro automatico",
     "valueInCode": "באים לקחת",
-    "valueInEnglish": "Come and take"
+    "valueInEnglish": "Self Pickup"
   },
   "selfPickupDeliveries": {
     "google": "Consegne con ritiro automatico",

@@ -17,7 +17,7 @@ export class es implements Language {
   ActiveDeliveries = 'Entregas activas';
   FamiliesComponent = 'Familias';
   DeliveryFollowUpComponent = 'Seguimiento voluntario';
-  NewsComponent = 'Requiere seguimiento';
+  NewsComponent = 'Seguimiento';
   DistributionMapComponent = 'Mapa de distribución';
   OverviewComponent = 'Visión general';
   HelpersComponent = 'Voluntarios';
@@ -81,7 +81,7 @@ export class es implements Language {
   repeatFamilyNotice = 'También has estado en esta familia antes';
   inacurateAddress = 'Aviso, dirección inexacta!';
   copyAddress = 'Dirección de copia';
-  SelfPickupComponent = 'Venir y tomar';
+  SelfPickupComponent = 'Recogerse';
   oneDeliveryToDistribute = 'Una entrega para distribución';
   deliveriesToDistribute = 'Entregas asignadas';
   volunteerInfo = 'Detalles del voluntario';
@@ -296,9 +296,9 @@ export class es implements Language {
   courierAsignDate = 'Fecha de asignación voluntaria';
   deliveryCreateDate = 'Fecha de asignación';
   deliveryCreateUser = 'Usuario final';
-  requireFollowUp = 'Requiere seguimiento';
-  requireFollowUpUpdateUser = 'Requiere actualización de usuario de seguimiento';
-  requireFollowUpUpdateDate = 'Requiere fecha de actualización de seguimiento';
+  requireFollowUp = 'Seguimiento';
+  requireFollowUpUpdateUser = 'Usuario de actualización de seguimiento';
+  requireFollowUpUpdateDate = 'Fecha de actualización de seguimiento';
   deliveryDetailsFor = 'detalles de entrega para';
   remainingByBaskets = 'No asignado por parcelas';
   byBaskets = 'Por parcelas';
@@ -483,7 +483,7 @@ export class es implements Language {
   problems = 'Problemas';
   delveriesInProgress = 'Las familias estan esperando';
   dates = 'fechas';
-  selfPickup = 'Venir y tomar';
+  selfPickup = 'Recogerse';
   delveriesSuccesfull = 'Entregado';
   selfAssigned = 'Asignado independientemente';
   familiesAt = 'Familias b';
@@ -655,7 +655,7 @@ export class es implements Language {
   customSmsMessage = 'SMS personalizado';
   assignedToVolunteer = 'Asociado con un voluntario';
   languageCodeHe = 'es';
-  removeFollowUpFor = 'Eliminar "Requiere seguimiento" para';
+  removeFollowUpFor = 'Quitar "Seguimiento" de';
   allFamilySources = 'Todas las fuentes familiares';
   allNew = 'Todas las noticias';
   problemsThatRequireFollowup = 'Seguimiento de problemas';

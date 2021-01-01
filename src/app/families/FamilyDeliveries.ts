@@ -512,9 +512,9 @@ export class FamilyDeliveries extends IdEntity {
         if (city) {
             where = where.and(this.city.isEqualTo(city));
         }
-        if (area)
+        if (area !== undefined && area != getLang(this.context).allRegions)
             where = where.and(this.area.isEqualTo(area));
-        if (basket != undefined&&basket!='undefined')
+        if (basket != undefined && basket != 'undefined')
             where = where.and(this.basketType.isEqualTo(basket))
 
         return where;

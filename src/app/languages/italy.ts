@@ -17,7 +17,7 @@ export class italy implements Language {
   ActiveDeliveries = 'Consegne attive';
   FamiliesComponent = 'famiglie';
   DeliveryFollowUpComponent = 'Monitoraggio volontario';
-  NewsComponent = 'Richiede follow-up';
+  NewsComponent = 'Azione supplementare';
   DistributionMapComponent = 'Mappa di distribuzione';
   OverviewComponent = 'Panoramica';
   HelpersComponent = 'I volontari';
@@ -81,7 +81,7 @@ export class italy implements Language {
   repeatFamilyNotice = 'Anche tu sei stato in questa famiglia';
   inacurateAddress = 'Avviso, indirizzo impreciso!';
   copyAddress = 'Copia indirizzo';
-  SelfPickupComponent = 'Vieni e prendi';
+  SelfPickupComponent = 'Ritiro automatico';
   oneDeliveryToDistribute = 'Una consegna per la distribuzione';
   deliveriesToDistribute = 'Consegne assegnate';
   volunteerInfo = 'Dettagli volontari';
@@ -296,9 +296,9 @@ export class italy implements Language {
   courierAsignDate = 'Data di assegnazione volontaria';
   deliveryCreateDate = 'Data di assegnazione';
   deliveryCreateUser = 'Utente finale';
-  requireFollowUp = 'Richiede follow-up';
-  requireFollowUpUpdateUser = 'Richiede un aggiornamento utente di follow-up';
-  requireFollowUpUpdateDate = 'Richiede la data di aggiornamento di follow-up';
+  requireFollowUp = 'Azione supplementare';
+  requireFollowUpUpdateUser = 'Utente aggiornamento successivo';
+  requireFollowUpUpdateDate = 'Data di aggiornamento successivo';
   deliveryDetailsFor = 'dettagli di consegna per';
   remainingByBaskets = 'Non assegnato da pacchi';
   byBaskets = 'Dai pacchi';
@@ -483,7 +483,7 @@ export class italy implements Language {
   problems = 'I problemi';
   delveriesInProgress = 'Le famiglie stanno aspettando';
   dates = 'Date';
-  selfPickup = 'Vieni e prendi';
+  selfPickup = 'Ritiro automatico';
   delveriesSuccesfull = 'consegnato';
   selfAssigned = 'Assegnato indipendentemente';
   familiesAt = 'Famiglie b';
@@ -655,7 +655,7 @@ export class italy implements Language {
   customSmsMessage = 'SMS personalizzati';
   assignedToVolunteer = 'Associato a un volontario';
   languageCodeHe = 'it';
-  removeFollowUpFor = 'Rimuovere "Richiede follow-up" per';
+  removeFollowUpFor = 'Rimuovi "Followup" per';
   allFamilySources = 'Tutte le fonti familiari';
   allNew = 'Tutte le notizie';
   problemsThatRequireFollowup = 'Follow-up dei problemi';
