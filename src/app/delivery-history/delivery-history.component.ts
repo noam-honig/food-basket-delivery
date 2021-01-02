@@ -351,7 +351,7 @@ export class helperHistoryInfo extends Entity<string>{
   giftsConsumed = new NumberColumn('מתנות שמומשו');
   giftsPending = new NumberColumn('מתנות זמינות');
   constructor(private context: Context) {
-    super({ name: 'helperHistoryInfo', allowApiRead: true, allowApiCRUD: false });
+    super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
 
   }
 }

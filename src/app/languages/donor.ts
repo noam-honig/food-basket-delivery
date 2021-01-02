@@ -497,7 +497,7 @@ export class donor implements Language {
   leftByHouse = 'הושאר ליד הבית';
   notDeliveredBadAddress = 'לא נמסר, רחוק מידי';
   notDeliveredNotHome = 'לא נמסר, אני לא פנוי/ה';
-  notDeliveredDontWant = 'לא נמסר, בעיה אצל התורמ/ת';
+  notDeliveredDontWant = 'התרומה כבר נמסרה';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';

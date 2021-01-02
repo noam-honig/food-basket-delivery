@@ -1967,9 +1967,9 @@
     "custom": "לא נמסר, רחוק מידי"
   },
   "notDeliveredDontWant": {
-    "google": "לא נמסר, לא צריכים חבילה",
-    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
-    "custom": "לא נמסר, בעיה אצל התורמ/ת"
+    "google": "התרומה כבר נמסרה",
+    "valueInCode": "התרומה כבר נמסרה",
+    "custom": "התרומה כבר נמסרה"
   },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",
