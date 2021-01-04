@@ -933,6 +933,7 @@ export class Language {
   duplicateForNextEvent = "העתק לאירוע הבא";
   assignRepeatFamily = 'שייך משפחה שהמתנדב היה אצלה';
   done = 'טופל';
+  copyLinkForVolunteer = "העתק קישור לרישום עצמי של מתנדבים";
 }
 
 const defaultLang = new Language();

@@ -1,1 +1,6 @@
-<data-grid [settings]="events" ></data-grid>
+<div class="full-page">
+    <div>
+        <button mat-raised-button color="primary" (click)="copyLink()">{{settings.lang.copyLinkForVolunteer}}</button>
+    </div>
+    <data-grid [settings]="events" class="grow-item"></data-grid>
+</div>

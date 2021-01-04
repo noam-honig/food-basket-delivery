@@ -72,7 +72,7 @@ export class donor implements Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שנאספו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
-  assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';
+  assignCloseDeliveries = 'הצג תרומות בסביבתי';
   closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'הפריטים נקלטו';
   packageWasPickedUp = 'הפריטים נקלטו';
@@ -252,7 +252,7 @@ export class donor implements Language {
   phone4Description = 'הערות לטלפון 4';
   commentForReception = 'הערות קליטה במעבדה';
   doLabReception = 'בצע קליטה במעבדה';
-  showQRCode = 'הצג ברקוד לקליטה';
+  showQRCode = 'הצג לקליטה';
   removeQRCode = 'הסתר ברקוד';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
@@ -810,4 +810,5 @@ export class donor implements Language {
   duplicateForNextEvent = 'העתק לאירוע הבא';
   assignRepeatFamily = 'שייך תורם שהמתנדב היה אצלה';
   done = 'טופל';
+  copyLinkForVolunteer = 'העתק קישור לרישום עצמי של מתנדבים';
 }

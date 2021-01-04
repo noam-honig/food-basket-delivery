@@ -810,4 +810,5 @@ export class italy implements Language {
   duplicateForNextEvent = 'Una copia per il prossimo evento';
   assignRepeatFamily = 'Assegna una famiglia ripetuta';
   done = 'Fatto';
+  copyLinkForVolunteer = "Copia un link per l'autoregistrazione del volontario";
 }

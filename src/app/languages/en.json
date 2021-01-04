@@ -304,7 +304,7 @@
   },
   "assignCloseDeliveries": {
     "google": "Show donations around me",
-    "valueInCode": "הצג תרומות בסביבתי"
+    "valueInCode": "מצאו לי עוד תורמים בסביבתי"
   },
   "assignDeliveryMenu": {
     "google": "Associate volunteer shipments",
@@ -681,6 +681,10 @@
   "copyLink": {
     "google": "Copy link",
     "valueInCode": "העתק קישור"
+  },
+  "copyLinkForVolunteer": {
+    "google": "Copy a link to volunteer self-registration",
+    "valueInCode": "העתק קישור לרישום עצמי של מתנדבים"
   },
   "copyMessageWithLink": {
     "google": "Copy message with link",

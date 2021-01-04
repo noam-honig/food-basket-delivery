@@ -810,4 +810,5 @@ export class es implements Language {
   duplicateForNextEvent = 'Una copia para el próximo evento';
   assignRepeatFamily = 'Asignar una familia repetida';
   done = 'Hecho';
+  copyLinkForVolunteer = 'Copie un enlace para el autoregistro de voluntarios';
 }

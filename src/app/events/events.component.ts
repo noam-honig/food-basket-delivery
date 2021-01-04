@@ -6,9 +6,11 @@ import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { visitAll } from '@angular/compiler';
-import { Events } from 'pg';
+
+
 import { DialogService } from '../select-popup/dialog';
+import * as copy from 'copy-to-clipboard';
+import { Sites } from '../sites/sites';
 
 @Component({
   selector: 'app-events',
@@ -17,7 +19,7 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class EventsComponent implements OnInit {
   showArchive = false;
-  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
+  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
   events = this.context.for(Event).gridSettings({
     allowUpdate: true,
     allowInsert: true,
@@ -118,12 +120,12 @@ export class EventsComponent implements OnInit {
   private eventDisplayColumns(e: Event) {
     return [
       e.name,
-      {width:'100',column:e.registeredVolunteers},
-      {width:'100',column:e.requiredVolunteers},
-      {width:'150',column:e.eventDate},
+      { width: '100', column: e.registeredVolunteers },
+      { width: '100', column: e.requiredVolunteers },
+      { width: '150', column: e.eventDate },
       e.startTime,
       e.endTime,
-      {width:'150',column:e.eventStatus},
+      { width: '150', column: e.eventStatus },
       e.description,
       e.address,
       e.phone1,
@@ -132,6 +134,10 @@ export class EventsComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+  copyLink() {
+    copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/my-families');
+    this.dialog.Info(this.settings.lang.linkCopied);
   }
 
 }

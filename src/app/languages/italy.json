@@ -336,7 +336,7 @@
   },
   "assignCloseDeliveries": {
     "google": "Mostra donazioni intorno a me",
-    "valueInCode": "הצג תרומות בסביבתי",
+    "valueInCode": "מצאו לי עוד תורמים בסביבתי",
     "valueInEnglish": "Show donations around me"
   },
   "assignDeliveryMenu": {
@@ -743,6 +743,11 @@
     "google": "Copia link",
     "valueInCode": "העתק קישור",
     "valueInEnglish": "Copy link"
+  },
+  "copyLinkForVolunteer": {
+    "google": "Copia un link per l'autoregistrazione del volontario",
+    "valueInCode": "העתק קישור לרישום עצמי של מתנדבים",
+    "valueInEnglish": "Copy a link to volunteer self-registration"
   },
   "copyMessageWithLink": {
     "google": "Copia il messaggio con il link",

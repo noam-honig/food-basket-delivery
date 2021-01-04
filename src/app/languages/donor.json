@@ -269,7 +269,7 @@
   },
   "assignCloseDeliveries": {
     "google": "הצג תרומות בסביבתי",
-    "valueInCode": "הצג תרומות בסביבתי"
+    "valueInCode": "מצאו לי עוד תורמים בסביבתי"
   },
   "assignDeliveryMenu": {
     "google": "שיוך משלוחים למתנדב",
@@ -595,6 +595,10 @@
   "copyLink": {
     "google": "העתק קישור",
     "valueInCode": "העתק קישור"
+  },
+  "copyLinkForVolunteer": {
+    "google": "העתק קישור לרישום עצמי של מתנדבים",
+    "valueInCode": "העתק קישור לרישום עצמי של מתנדבים"
   },
   "copyMessageWithLink": {
     "google": "העתק הודעה עם קישור",
@@ -1968,7 +1972,7 @@
   },
   "notDeliveredDontWant": {
     "google": "התרומה כבר נמסרה",
-    "valueInCode": "התרומה כבר נמסרה",
+    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
     "custom": "התרומה כבר נמסרה"
   },
   "notDeliveredNotHome": {
