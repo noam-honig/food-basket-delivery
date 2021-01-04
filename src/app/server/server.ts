@@ -70,8 +70,8 @@ serverInit().then(async (dataSource) => {
 
             let tagid = 'UA-121891791-1'; // default key for Google Analytics
             if (settings.isSytemForMlt()) {
-                //tagid = 'AW-607493389';
-                result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-607493389');gtag('config', 'UA-174556479-1');");
+                //tagid = 'AW-452581833';
+                result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-452581833');gtag('config', 'UA-174556479-1');");
                 result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
 <!-- Facebook Pixel Code -->
 <script>
@@ -83,11 +83,10 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1023424438076484');
-fbq('track', 'Lead');
+fbq('init', '432475371126727');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1023424438076484&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=432475371126727&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Facebook Pixel Code -->
 

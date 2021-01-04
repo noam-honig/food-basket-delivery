@@ -13,6 +13,7 @@ import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 
 declare var gtag;
+declare var fbq;
 @Component({
   selector: 'app-register-helper',
   templateUrl: './register-helper.component.html',
@@ -60,14 +61,8 @@ export class RegisterHelperComponent implements OnInit {
       }
       this.dialog.analytics("submitVolunteerForm");
       {
-        var callback = function () {
-
-        };
-
-        gtag('event', 'conversion', {
-          'send_to': 'AW-607493389/ngwkCLDhp9wBEI261qEC',
-          'event_callback': callback
-        });
+        gtag('event', 'conversion', {'send_to': 'AW-452581833/e8KfCKWQse8BEMmz59cB'});
+        if (fbq) fbq('track', 'CompleteRegistration');
       }
 
       await RegisterHelperComponent.doHelperForm(pack(this.helper));
