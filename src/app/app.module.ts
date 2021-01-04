@@ -93,7 +93,8 @@ import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
-
+import {MatBadgeModule} from '@angular/material/badge';
+ 
 
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
@@ -200,6 +201,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     RemultModule,
     AppRoutingModule,
     ChartsModule,
+    MatBadgeModule,
     ScrollDispatchModule,
     PlatformModule
 

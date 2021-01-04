@@ -8,7 +8,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
 import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
-import { Helpers } from '../helpers/helpers';
+import { HelperId, Helpers } from '../helpers/helpers';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
@@ -36,8 +36,6 @@ export class MltFamiliesComponent implements OnInit {
   distCentersButtons = [];
   deliveredSinceEver = 0;
 
-  showQRCode: boolean = false;
-
   giftCount = 0;
   thisHelper;
   myPhoneNumber: string = '';
@@ -58,18 +56,12 @@ export class MltFamiliesComponent implements OnInit {
     return this.context.isAllowed(Roles.indie);
   }
 
-  myQRCode() {
-    return window.location.hostname + '/mlt/reception/?phone=' + this.myPhoneNumber;
-  }
-
-
   constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Context, private busy: BusyService) { }
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
     this.thisHelper = await this.context.for(Helpers).findFirst(h=>h.id.isEqualTo(this.context.user.id));
     this.myPhoneNumber = this.thisHelper.phone.value;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
@@ -131,7 +123,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async showMyGifts() {
-    showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+    showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy, this.calcGiftCount);
   }
 
   async assignNewDelivery() {
@@ -199,7 +191,11 @@ export class MltFamiliesComponent implements OnInit {
       item: y
     }));
     return result;
-  }                                                                                   
+  }                  
+  
+  async calcGiftCount(helperId: string) {
+    this.giftCount = await HelperGifts.getMyPendingGiftsCount(helperId);
+  }
 
   startPage() {
     this.display = this.deliveryList;
@@ -207,6 +203,7 @@ export class MltFamiliesComponent implements OnInit {
     this.familyLists.initFamilies();
     this.countFamilies();
     this.openDeliveriesPopup();
+    this.calcGiftCount(this.context.user.id);
   }
 
   async getClosestDistCenters() {

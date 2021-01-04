@@ -16,6 +16,7 @@ export class MyGiftsDialogComponent implements OnInit {
   giftsAvailable = 0;
   args: {
     helperId: string; 
+    notify?: (string) => void
   };
 
   constructor(
@@ -44,6 +45,8 @@ export class MyGiftsDialogComponent implements OnInit {
             })
           }
         );
+    this.args.notify(this.args.helperId);
+
   }
 
   async giftUsed(gitfID) {
@@ -53,6 +56,7 @@ export class MyGiftsDialogComponent implements OnInit {
         await gift.save();
       }
     )
+    this.args.notify(this.args.helperId);
     this.ngOnInit();
   }
 
@@ -64,6 +68,7 @@ export class MyGiftsDialogComponent implements OnInit {
         window.open(gift.giftURL.value);
       }
     )
+    this.args.notify(this.args.helperId);
     this.ngOnInit();
   }
 }

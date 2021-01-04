@@ -1,7 +1,7 @@
 <div class="full-page mat-tipogrophy">
     
     <div class="grow-item" *ngIf="display==deliveryList">
-        <span *ngIf="deliveredSinceEver==0" class="mat-card-title" style="text-align: center;">
+        <span matBadge="4" matBadgeOverlap="false" *ngIf="deliveredSinceEver==0" class="mat-card-title" style="text-align: center;">
             {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
         </span>
         <span *ngIf="deliveredSinceEver>0" class="mat-card-title" style="text-align: center;">
@@ -256,7 +256,7 @@
         <div class="button-div">
             <button mat-raised-button color="primary" (click)="startPage()">חזרה לרשימה</button>
             <button mat-raised-button color="primary" (click)="display=myProfile">הפרופיל שלי</button>
-            <button mat-raised-button color="primary" (click)="showMyGifts()"><img height="40px"
+            <button mat-raised-button color="primary" [matBadgeHidden]="giftCount==0" [matBadge]="giftCount" matBadgePosition="before" matBadgeColor="accent" (click)="showMyGifts()"><img height="40px"
                     src="/assets/gift.png" /></button>
             <button mat-raised-button color="primary" (click)="display=reception">
                 אופס! טעיתי...

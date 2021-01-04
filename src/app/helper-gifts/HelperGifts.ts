@@ -98,9 +98,10 @@ export class HelperGifts extends IdEntity {
 
 
 
-export async function showUsersGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+export async function showUsersGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService, notify?: (user:string) => void): Promise<void> {
     context.openDialog(MyGiftsDialogComponent, x => x.args = {
-        helperId: helperId
+        helperId: helperId,
+        notify: notify
     });
 }
 
