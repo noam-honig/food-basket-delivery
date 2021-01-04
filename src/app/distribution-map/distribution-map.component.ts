@@ -514,7 +514,6 @@ export class Statuses {
       case DeliveryStatus.FailedDoNotWant.id:
 
       case DeliveryStatus.FailedNotReady.id:
-      //case DeliveryStatus.FailedAlreadyPickedUp.id: 
       case DeliveryStatus.FailedTooFar.id: 
 
       case DeliveryStatus.FailedOther.id:

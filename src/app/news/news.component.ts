@@ -110,7 +110,6 @@ export class NewsComponent implements OnInit, OnDestroy {
             case DeliveryStatus.FailedDoNotWant:
 
             case DeliveryStatus.FailedNotReady:
-            //case DeliveryStatus.FailedAlreadyPickedUp: 
             case DeliveryStatus.FailedTooFar: 
 
             case DeliveryStatus.FailedOther:

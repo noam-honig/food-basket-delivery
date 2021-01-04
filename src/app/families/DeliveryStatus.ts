@@ -17,7 +17,6 @@ export class DeliveryStatus {
       case this.FailedNotHome:
       case this.FailedDoNotWant:
       case this.FailedNotReady: 
-      //case this.FailedAlreadyPickedUp: 
       case this.FailedTooFar: 
       
       case this.FailedOther:
@@ -39,8 +38,6 @@ export class DeliveryStatus {
   static FailedNotHome: DeliveryStatus = new DeliveryStatus(23, !use ? '' : use.language.notDeliveredNotHome, true);
   static FailedDoNotWant: DeliveryStatus = new DeliveryStatus(24, !use ? '' : use.language.notDeliveredDontWant, true);
   static FailedOther: DeliveryStatus = new DeliveryStatus(25, !use ? '' : use.language.notDeliveredOther, true);
-
-    //static FailedAlreadyPickedUp: DeliveryStatus = new DeliveryStatus(22, !use ? '' : "התרומה כבר נמסרה", true);
 
   constructor(public id: number, public caption: string, public isProblem = false) {
   }
@@ -80,7 +77,6 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
         if (!getSettings(context).isSytemForMlt()) {
           op = op.filter(x => 
             x.id != DeliveryStatus.FailedNotReady.id && 
-            //x.id != DeliveryStatus.FailedAlreadyPickedUp.id &&
             x.id != DeliveryStatus.FailedTooFar.id
           );
         }
@@ -115,7 +111,6 @@ export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
       case DeliveryStatus.FailedNotHome:
       case DeliveryStatus.FailedDoNotWant:
       case DeliveryStatus.FailedNotReady: 
-      //case DeliveryStatus.FailedAlreadyPickedUp: 
       case DeliveryStatus.FailedTooFar: 
       case DeliveryStatus.FailedOther:
         return 'deliveredProblem';

@@ -710,7 +710,6 @@ export class Families extends IdEntity {
           case DeliveryStatus.FailedNotHome:
           case DeliveryStatus.FailedDoNotWant:
           case DeliveryStatus.FailedNotReady:
-          //case DeliveryStatus.FailedAlreadyPickedUp: 
           case DeliveryStatus.FailedTooFar: 
           case DeliveryStatus.FailedOther:
             let duration = '';

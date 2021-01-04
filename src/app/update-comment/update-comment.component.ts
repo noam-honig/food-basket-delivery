@@ -51,7 +51,6 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
     DeliveryStatus.FailedNotHome,
     DeliveryStatus.FailedDoNotWant,
     DeliveryStatus.FailedNotReady,
-    //DeliveryStatus.FailedAlreadyPickedUp,
     DeliveryStatus.FailedTooFar,
     DeliveryStatus.FailedOther
   ];

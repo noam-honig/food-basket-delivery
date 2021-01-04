@@ -196,7 +196,6 @@ export class UserFamiliesList {
                 case DeliveryStatus.FailedDoNotWant:
 
                 case DeliveryStatus.FailedNotReady:
-                //case DeliveryStatus.FailedAlreadyPickedUp: 
                 case DeliveryStatus.FailedTooFar: 
                   
                 case DeliveryStatus.FailedOther:

@@ -288,8 +288,8 @@ export class DeliveryHistoryComponent implements OnInit {
     var hg = context.for(HelperGifts).create();
 
 
-    let r = fd.courier.isDifferentFrom('').and(fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
-      fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter)));
+    let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
+      fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter));
     if (onlyDone)
       r = r.and(fd.deliverStatus.isAResultStatus());
     if (onlyArchived)

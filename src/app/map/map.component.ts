@@ -233,7 +233,6 @@ export class MapComponent implements OnInit, OnDestroy {
                 case DeliveryStatus.FailedNotHome:
                 case DeliveryStatus.FailedDoNotWant:
                 case DeliveryStatus.FailedNotReady:
-                //case DeliveryStatus.FailedAlreadyPickedUp: 
                 case DeliveryStatus.FailedTooFar: 
                 case DeliveryStatus.FailedOther:
                     marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');

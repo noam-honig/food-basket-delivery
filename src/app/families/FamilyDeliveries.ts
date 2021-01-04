@@ -48,7 +48,6 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedDoNotWant:
 
             case DeliveryStatus.FailedNotReady: 
-            //case DeliveryStatus.FailedAlreadyPickedUp: 
             case DeliveryStatus.FailedTooFar: 
               
             case DeliveryStatus.FailedOther:
@@ -491,7 +490,6 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedNotReady:
-            //case DeliveryStatus.FailedAlreadyPickedUp: 
             case DeliveryStatus.FailedTooFar: 
             case DeliveryStatus.FailedOther:
                 let duration = '';
@@ -573,7 +571,6 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedNotReady:
-            //case DeliveryStatus.FailedAlreadyPickedUp: 
             case DeliveryStatus.FailedTooFar: 
             case DeliveryStatus.FailedOther:
                 this.needsWork.value = true;
