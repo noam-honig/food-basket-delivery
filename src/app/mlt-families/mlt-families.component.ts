@@ -19,8 +19,6 @@ import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/goog
 import { getLang } from '../sites/sites';
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
-import { QRCodeModule } from 'angular2-qrcode';
-
 
 @Component({
   selector: 'app-mlt-families',

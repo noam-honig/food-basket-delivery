@@ -397,13 +397,13 @@ export async function getCurrentLocation(useCurrentLocation: boolean,dialog:Dial
   
         }, error => {
 	  if (this.platform.ANDROID)
-            	dialog.exception(`
+            	dialog.Error(`
 		          יש לאפשר גישה למיקום -',
-		          <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`, error);
+		          <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`);
           else if (this.platform.IOS)
-            	dialog.exception(`
+            	dialog.Error(`
 		          יש לאפשר גישה למיקום -
-		          <a href="https://support.apple.com/he-il/HT203033">לינק הדרכה</a>`, error);
+		          <a href="https://support.apple.com/he-il/HT203033">לינק הדרכה</a>`);
           else
           	dialog.exception("שליפת מיקום נכשלה", error);
         });

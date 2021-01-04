@@ -91,7 +91,8 @@ export class DeliveryHistoryComponent implements OnInit {
           },
         }
       ],
-      columnSettings: h => [
+      columnSettings: h => {
+        let r = [
         {
           column: h.name,
           width: '150'
@@ -120,20 +121,25 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           column: h.dates,
           width: '75'
-        },
-        {
-          column: h.selfassigned,
-          width: '75'
-        },
-        {
-          column: h.giftsConsumed,
-          width: '75'
-        },
-        {
-          column: h.giftsPending,
-          width: '75'
-        },
-      ],
+        }];
+        if (settings.isSytemForMlt()) {
+          r.push(
+            {
+              column: h.selfassigned,
+              width: '75'
+            },
+            {
+              column: h.giftsConsumed,
+              width: '75'
+            },
+            {
+              column: h.giftsPending,
+              width: '75'
+            }
+          );
+        }
+        return r;
+      },
       get: {
         limit: 100,
         orderBy: h => [{ column: h.deliveries, descending: true }]
