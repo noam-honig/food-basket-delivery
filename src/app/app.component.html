@@ -16,7 +16,7 @@
       <p style="text-align: center">{{dialog.dc.address.getGeocodeInformation().getAddress()}}</p>
     </div>
     <h4 *ngIf="context.user">{{lang.hello}} {{context.user.name}}</h4>
-    <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()" target="_blank">מדריך למנהל</a>
+    <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()" target="_blank">מדריך למנהל</a>
     <mat-nav-list role="list">
       <mat-list-item  *ngIf="showCreateNewEvent()" >
         <a  matLine (click)="createNewEvent()" >
