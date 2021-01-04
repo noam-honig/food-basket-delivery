@@ -46,6 +46,10 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
+
+            case DeliveryStatus.FailedNotReady: 
+            case DeliveryStatus.FailedTooFar: 
+              
             case DeliveryStatus.FailedOther:
                 status = getLang(this.context).problem;
                 break;
@@ -249,7 +253,8 @@ export class FamilyDeliveries extends IdEntity {
         }
     });
 
-    archive = new BoolColumn({ allowApiUpdate: [Roles.admin, Roles.lab] });
+    archive = new BoolColumn({ allowApiUpdate: c => c.isAllowed([Roles.admin, Roles.lab]) || c.isSignedIn() && getSettings(c).isSytemForMlt() });
+
     archiveDate = new changeDate({ includeInApi: Roles.admin, caption: getLang(this.context).archiveDate });
     archiveUser = new HelperIdReadonly(this.context, { includeInApi: Roles.admin, caption: getLang(this.context).archiveUser });
 
@@ -484,6 +489,8 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
+            case DeliveryStatus.FailedNotReady:
+            case DeliveryStatus.FailedTooFar: 
             case DeliveryStatus.FailedOther:
                 let duration = '';
                 if (this.courierAssingTime.value && this.deliveryStatusDate.value)
@@ -563,6 +570,8 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
+            case DeliveryStatus.FailedNotReady:
+            case DeliveryStatus.FailedTooFar: 
             case DeliveryStatus.FailedOther:
                 this.needsWork.value = true;
                 break;

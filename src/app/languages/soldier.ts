@@ -72,7 +72,7 @@ export class soldier implements Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
-  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';
   closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'אספו את החבילה';
   packageWasPickedUp = 'אספו את החבילה';
@@ -264,6 +264,7 @@ export class soldier implements Language {
   addressOk = 'כתובת תקינה';
   previousDeliverySummary = 'סיכום משלוח קודם';
   createUser = 'משתמש מוסיף';
+  assignUser = 'משתמש משייך';
   lastUpdateDate = 'מועד עדכון אחרון';
   lastUpdateUser = 'משתמש מעדכן';
   within = 'תוך';
@@ -684,6 +685,7 @@ export class soldier implements Language {
   eventStatus = 'סטטוס';
   eventsComponent = 'ארועים';
   weeklyReportMltComponent = 'דוח שבועי מתחשבים';
+  HelperGiftsComponent = 'באר המשאלות';
   pleaseRegisterToTheFollowingEvents = 'אנא הרשמו לאירועים הקרובים';
   illBeThere = 'רשום אותי לארוע זה';
   registeredToEvent = 'הנך רשום לארוע זה';
@@ -791,6 +793,7 @@ export class soldier implements Language {
   archiveUser = 'ארכיב: משתמש מעדכן';
   showTzToVolunteer = 'הצג מספר זהות למתנדב';
   myGiftsURL = 'ההטבות שלי';
+  dateGranted = 'תאריך הענקה';
   eventIsFull = 'ארוע זה מלא, נשמח אם תרשמו לאחר';
   freezeDistributionCenter = 'הקפא רשימת חלוקה';
   deleteDistributionCenter = 'מחק רשימת חלויקה';

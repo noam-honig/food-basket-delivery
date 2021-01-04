@@ -264,6 +264,7 @@ export class es implements Language {
   addressOk = 'Dirección correcta';
   previousDeliverySummary = 'Resumen de entrega anterior';
   createUser = 'Creando usuario';
+  assignUser = 'Asociados de usuarios';
   lastUpdateDate = 'Fecha límite';
   lastUpdateUser = 'Actualizando usuario';
   within = 'dentro';
@@ -684,6 +685,7 @@ export class es implements Language {
   eventStatus = 'estado';
   eventsComponent = 'Eventos';
   weeklyReportMltComponent = 'Informe semanal considerable';
+  HelperGiftsComponent = 'El pozo de los deseos';
   pleaseRegisterToTheFollowingEvents = 'Por favor regístrese para los próximos eventos';
   illBeThere = 'Inscríbeme para este evento';
   registeredToEvent = 'Estás registrado para este evento';
@@ -791,6 +793,7 @@ export class es implements Language {
   archiveUser = 'Archivo: actualizaciones de usuario';
   showTzToVolunteer = 'Mostrar número de identificación para ser voluntario';
   myGiftsURL = 'Mis beneficios';
+  dateGranted = 'Fecha de concesión';
   eventIsFull = 'Este evento está lleno, estaremos felices si te registras después';
   freezeDistributionCenter = 'Congelar lista de distribución';
   deleteDistributionCenter = 'Eliminar una lista de deslizamiento';

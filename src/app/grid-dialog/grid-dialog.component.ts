@@ -63,6 +63,11 @@ export class GridDialogComponent implements OnInit {
       this.dialogRef.close();
     });
   }
+  isVisible(b:button){
+    if (!b.visible)
+    return true;
+    return b.visible();
+  }
 
 
 }
@@ -70,5 +75,7 @@ export class GridDialogComponent implements OnInit {
 
 export interface button {
   text: string,
-  click: ((close: () => void) => void);
+  click: ((close: () => void) => void),
+  visible?:()=>boolean
+
 }

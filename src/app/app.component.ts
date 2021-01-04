@@ -6,7 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings, BusyService } from '@remult/core';
+import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings, BusyService, Role } from '@remult/core';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
 
@@ -55,7 +55,7 @@ export class AppComponent {
 
   }
   showCreateNewEvent() {
-    return this.context.isAllowed(Roles.admin) ;
+    return this.context.isAllowed(Roles.admin);
   }
   createNewEvent() {
     new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper, this.busy);
@@ -103,7 +103,11 @@ export class AppComponent {
   }
   toolbarColor = 'primary';
   showSideBar() {
-    return this.context.isSignedIn();
+    if (!this.context.isSignedIn())
+      return false;
+    if (this.settings.isSytemForMlt() && !this.context.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
+      return false;
+    return true;
   }
   signOut() {
 

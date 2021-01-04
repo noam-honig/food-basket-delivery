@@ -1,0 +1,13 @@
+.button-div{
+    display:flex;
+    
+    >button{
+        white-space: pre-line;
+        margin: 5px;
+        line-height:inherit;
+        padding-top:5px;
+        padding-bottom:5px;
+        flex: 1 0 0px;
+        
+    }
+}

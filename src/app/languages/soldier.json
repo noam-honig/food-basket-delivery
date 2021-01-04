@@ -315,6 +315,10 @@
     "google": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
   },
+  "assignUser": {
+    "google": "משתמש משייך",
+    "valueInCode": "משתמש משייך"
+  },
   "assignVolunteer": {
     "google": "שייך למתנדב",
     "valueInCode": "שייך מתנדב"
@@ -638,6 +642,10 @@
   "customSmsMessage": {
     "google": "הודעת SMS מותאמת",
     "valueInCode": "הודעת SMS מותאמת"
+  },
+  "dateGranted": {
+    "google": "תאריך הענקה",
+    "valueInCode": "תאריך הענקה"
   },
   "dates": {
     "google": "תאריכים",
@@ -1458,6 +1466,10 @@
   "helperComment": {
     "google": "הערה",
     "valueInCode": "הערה"
+  },
+  "HelperGiftsComponent": {
+    "google": "באר המשאלות",
+    "valueInCode": "באר המשאלות"
   },
   "helperInternalComment": {
     "google": "הערה פנימית לגבי מתנדב",

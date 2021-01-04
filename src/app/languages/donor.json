@@ -315,6 +315,10 @@
     "google": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה מעבדה. אנא בחרו מעבדה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")",
     "valueInCode": "לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב \"כל הרשימות\")"
   },
+  "assignUser": {
+    "google": "משתמש משייך",
+    "valueInCode": "משתמש משייך"
+  },
   "assignVolunteer": {
     "google": "שייך מתנדב",
     "valueInCode": "שייך מתנדב"
@@ -639,6 +643,10 @@
   "customSmsMessage": {
     "google": "הודעת SMS מותאמת",
     "valueInCode": "הודעת SMS מותאמת"
+  },
+  "dateGranted": {
+    "google": "תאריך הענקה",
+    "valueInCode": "תאריך הענקה"
   },
   "dates": {
     "google": "תאריכים",
@@ -1461,6 +1469,10 @@
     "google": "הערה",
     "valueInCode": "הערה"
   },
+  "HelperGiftsComponent": {
+    "google": "באר המשאלות",
+    "valueInCode": "באר המשאלות"
+  },
   "helperInternalComment": {
     "google": "הערה פנימית לגבי מתנדב",
     "valueInCode": "הערה פנימית לגבי מתנדב"
@@ -1955,9 +1967,9 @@
     "custom": "לא נמסר, רחוק מידי"
   },
   "notDeliveredDontWant": {
-    "google": "לא נמסר, לא צריכים חבילה",
-    "valueInCode": "לא נמסר, לא מעוניינים בחבילה",
-    "custom": "לא נמסר, בעיה אצל התורמ/ת"
+    "google": "התרומה כבר נמסרה",
+    "valueInCode": "התרומה כבר נמסרה",
+    "custom": "התרומה כבר נמסרה"
   },
   "notDeliveredNotHome": {
     "google": "לא נמסר, לא היו בבית",

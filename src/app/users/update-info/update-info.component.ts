@@ -21,6 +21,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
     private context: Context,
+    public sessionManager: AuthService,
     public settings: ApplicationSettings,
     private helper: RouteHelperService) {
 
@@ -82,6 +83,10 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
     }
 
+  }
+
+  signout() {
+    this.sessionManager.signout();
   }
 
 }

@@ -72,7 +72,7 @@ export class donor implements Language {
   deliveriesDoneInTheLastTwoDays = 'משלוחים שנאספו ביומיים האחרונים';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
-  assignCloseDeliveries = 'הצג תרומות בסביבתי';
+  assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';
   closestDeliveries = 'תרומות באיזור הקרוב';
   selfPuckupSuccess = 'הפריטים נקלטו';
   packageWasPickedUp = 'הפריטים נקלטו';
@@ -252,7 +252,7 @@ export class donor implements Language {
   phone4Description = 'הערות לטלפון 4';
   commentForReception = 'הערות קליטה במעבדה';
   doLabReception = 'בצע קליטה במעבדה';
-  showQRCode = 'הצג לקליטה';
+  showQRCode = 'הצג ברקוד לקליטה';
   removeQRCode = 'הסתר ברקוד';
   statusChangeDate = 'סטטוס: תאריך שינוי';
   statusChangeUser = 'סטטוס: מי עדכן';
@@ -264,6 +264,7 @@ export class donor implements Language {
   addressOk = 'כתובת תקינה';
   previousDeliverySummary = 'סיכום משלוח קודם';
   createUser = 'משתמש מוסיף';
+  assignUser = 'משתמש משייך';
   lastUpdateDate = 'מועד עדכון אחרון';
   lastUpdateUser = 'משתמש מעדכן';
   within = 'תוך';
@@ -496,7 +497,7 @@ export class donor implements Language {
   leftByHouse = 'הושאר ליד הבית';
   notDeliveredBadAddress = 'לא נמסר, רחוק מידי';
   notDeliveredNotHome = 'לא נמסר, אני לא פנוי/ה';
-  notDeliveredDontWant = 'לא נמסר, בעיה אצל התורמ/ת';
+  notDeliveredDontWant = 'התרומה כבר נמסרה';
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';
@@ -684,6 +685,7 @@ export class donor implements Language {
   eventStatus = 'סטטוס';
   eventsComponent = 'ארועים';
   weeklyReportMltComponent = 'דוח שבועי מתחשבים';
+  HelperGiftsComponent = 'באר המשאלות';
   pleaseRegisterToTheFollowingEvents = 'אנא הרשמו לאירועים הקרובים';
   illBeThere = 'רשום אותי לארוע זה';
   registeredToEvent = 'הנך רשום לארוע זה';
@@ -791,6 +793,7 @@ export class donor implements Language {
   archiveUser = 'ארכיב: משתמש מעדכן';
   showTzToVolunteer = 'הצג מספר זהות למתנדב';
   myGiftsURL = 'ההטבות שלי';
+  dateGranted = 'תאריך הענקה';
   eventIsFull = 'ארוע זה מלא, נשמח אם תרשמו לאחר';
   freezeDistributionCenter = 'הקפא רשימת חלוקה';
   deleteDistributionCenter = 'מחק רשימת חלויקה';

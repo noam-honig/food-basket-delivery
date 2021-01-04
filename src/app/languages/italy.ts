@@ -264,6 +264,7 @@ export class italy implements Language {
   addressOk = 'Indirizzo corretto';
   previousDeliverySummary = 'Riepilogo consegna precedente';
   createUser = 'Creare un utente';
+  assignUser = 'Associati utente';
   lastUpdateDate = 'Scadenza';
   lastUpdateUser = 'Aggiornamento utente';
   within = 'entro';
@@ -684,6 +685,7 @@ export class italy implements Language {
   eventStatus = 'stato';
   eventsComponent = 'eventi';
   weeklyReportMltComponent = 'Notevole rapporto settimanale';
+  HelperGiftsComponent = 'Il pozzo dei desideri';
   pleaseRegisterToTheFollowingEvents = 'Si prega di iscriversi per i prossimi eventi';
   illBeThere = 'Registrami per questo evento';
   registeredToEvent = 'Sei registrato per questo evento';
@@ -791,6 +793,7 @@ export class italy implements Language {
   archiveUser = 'Archivio: aggiornamenti utente';
   showTzToVolunteer = 'Mostra il numero ID al volontario';
   myGiftsURL = 'I miei vantaggi';
+  dateGranted = 'Data di concessione';
   eventIsFull = 'Questo evento è pieno, saremo felici se ti iscrivi dopo';
   freezeDistributionCenter = 'Congela la lista di distribuzione';
   deleteDistributionCenter = 'Elimina un elenco di documenti';

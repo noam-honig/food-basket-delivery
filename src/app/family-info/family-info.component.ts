@@ -32,6 +32,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
+  @Input() hideSal = false;
   ngOnInit() {
   }
   actuallyShowHelp() {
