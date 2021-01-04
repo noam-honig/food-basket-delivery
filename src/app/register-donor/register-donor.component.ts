@@ -14,6 +14,8 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
 
 declare var gtag;
+declare var fbq;
+
 @Component({
   selector: 'app-register-donor',
   templateUrl: './register-donor.component.html',
@@ -80,14 +82,8 @@ export class RegisterDonorComponent implements OnInit {
       }
       this.dialog.analytics("submitDonorForm");
       {
-        var callback = function () {
-
-        };
-
-        gtag('event', 'conversion', {
-          'send_to': 'AW-607493389/xIauCNGPlNoBEI261qEC',
-          'event_callback': callback
-        });
+        gtag('event', 'conversion', {'send_to': 'AW-452581833/GgaBCLbpje8BEMmz59cB'});
+        if (fbq)   fbq('track', 'Lead');
       }
 
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
