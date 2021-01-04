@@ -2,7 +2,6 @@ import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, Decor
 import { HelperId } from '../helpers/helpers';
 import { use } from '../translate';
 import { getLang } from '../sites/sites';
-import { settings } from 'cluster';
 import { getSettings } from '../manage/ApplicationSettings';
 
 
