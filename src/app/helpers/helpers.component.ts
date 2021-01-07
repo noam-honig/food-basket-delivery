@@ -52,7 +52,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   static route: Route = {
     path: 'helpers',
     component: HelpersComponent,
-    canActivate: [distCenterAdminGuard]
+    canActivate: [AdminGuard]
   };
   clearSearch() {
     this.searchString = '';
@@ -252,7 +252,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @ServerFunction({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
@@ -260,7 +260,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       await h.save();
     });
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @ServerFunction({ allowed: Roles.admin })
   static async invalidatePassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
