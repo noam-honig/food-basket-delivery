@@ -729,6 +729,7 @@ export class italy implements Language {
   volunteerAssignments = 'Compiti volontari';
   ifYouNeedAnyHelpPleaseCall = 'Per aiuto chiama';
   customColumn = 'Un altro campo per la famiglia';
+  questionForVolunteer = 'Domanda al volontariato';
   caption = 'descrizione';
   receptionDone = 'Assorbito in laboratorio';
   optionalValues = 'Possibili valori separati da virgola';
@@ -811,4 +812,5 @@ export class italy implements Language {
   assignRepeatFamily = 'Assegna una famiglia ripetuta';
   done = 'Fatto';
   copyLinkForVolunteer = "Copia un link per l'autoregistrazione del volontario";
+  saveAndPreview = "Salva e visualizza l'anteprima";
 }

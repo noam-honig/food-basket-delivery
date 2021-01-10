@@ -2780,6 +2780,11 @@
     "valueInCode": "האם להוסיף",
     "valueInEnglish": "Do add"
   },
+  "questionForVolunteer": {
+    "google": "Pregunta para ser voluntario",
+    "valueInCode": "שאלה למתנדב",
+    "valueInEnglish": "Question to volunteer"
+  },
   "questionsAndAnswers": {
     "google": "Preguntas y respuestas",
     "valueInCode": "שאלות ותשובות",
@@ -3075,6 +3080,11 @@
     "google": "Salvar",
     "valueInCode": "שמור",
     "valueInEnglish": "Save"
+  },
+  "saveAndPreview": {
+    "google": "Guardar y obtener una vista previa",
+    "valueInCode": "שמירה ותצוגה מקדימה",
+    "valueInEnglish": "Save and preview"
   },
   "saveExcelImportReport": {
     "google": "Guardar informe de importación de Excel",

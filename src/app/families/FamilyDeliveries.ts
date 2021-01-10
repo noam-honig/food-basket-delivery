@@ -15,7 +15,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
 import { use } from "../translate";
-import { includePhoneInApi, getSettings, ApplicationSettings } from "../manage/ApplicationSettings";
+import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FamilyDeliveresStatistics } from "../family-deliveries/family-deliveries-stats";
 import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
@@ -289,7 +289,10 @@ export class FamilyDeliveries extends IdEntity {
         }
     });
 
-
+    a1 = new CustomColumn(questionForVolunteers[1]);
+    a2 = new CustomColumn(questionForVolunteers[2]);
+    a3 = new CustomColumn(questionForVolunteers[3]);
+    a4 = new CustomColumn(questionForVolunteers[4]);
 
     active() {
         return this.archive.isEqualTo(false);
@@ -655,8 +658,9 @@ export class FamilyDeliveries extends IdEntity {
                     { column: this.distributionCenter, visible: () => dialog.hasManyCenters },
                     this.needsWork,
                     this.courierComments,
+                    this.a1,this.a2,this.a3,this.a4,
                     this.internalDeliveryComment,
-                    this.special
+                    this.special,
                 ]
         };
     }

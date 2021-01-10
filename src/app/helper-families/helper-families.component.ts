@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase } from '@remult/core';
+import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase, DataAreaSettings } from '@remult/core';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -91,8 +91,8 @@ export class HelperFamiliesComponent implements OnInit {
   volunteerLocation: Location = undefined;
   async updateCurrentLocation(useCurrentLocation: boolean) {
 
-    this.volunteerLocation = await getCurrentLocation(useCurrentLocation,this.dialog);
-    
+    this.volunteerLocation = await getCurrentLocation(useCurrentLocation, this.dialog);
+
   }
 
   async refreshRoute() {
@@ -194,7 +194,7 @@ export class HelperFamiliesComponent implements OnInit {
   };
 
 
-  
+
 
   async assignNewDelivery() {
     await this.updateCurrentLocation(true);
@@ -227,7 +227,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
-  reloadList(){
+  reloadList() {
     this.familyLists.reload();
   }
 
@@ -400,6 +400,11 @@ export class HelperFamiliesComponent implements OnInit {
       family: f,
       comment: f.courierComments.value,
       helpText,
+      questionsArea: new DataAreaSettings({
+        columnSettings: () => [
+          f.a1,f.a2,f.a3,f.a4
+        ]
+      }),
       ok: async (comment) => {
         if (!f.isNew()) {
           f.deliverStatus.value = status;
@@ -422,7 +427,9 @@ export class HelperFamiliesComponent implements OnInit {
           }
         }
       },
-      cancel: () => { }
+      cancel: () => { 
+        f.undoChanges()
+      }
     });
 
   }

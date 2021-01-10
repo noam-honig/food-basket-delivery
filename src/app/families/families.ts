@@ -8,7 +8,7 @@ import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEn
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressColumn, GeocodeResult } from "../shared/googleApiHelpers";
-import { ApplicationSettings, CustomColumn } from "../manage/ApplicationSettings";
+import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
 
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
@@ -505,10 +505,10 @@ export class Families extends IdEntity {
   statusDate = new changeDate(getLang(this.context).statusChangeDate);
   statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
   fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.address.location(), searchClosestDefaultFamily: true });
-  custom1 = new CustomColumn(1);
-  custom2 = new CustomColumn(2);
-  custom3 = new CustomColumn(3);
-  custom4 = new CustomColumn(4);
+  custom1 = new CustomColumn(customColumnInfo[1]);
+  custom2 = new CustomColumn(customColumnInfo[2]);
+  custom3 = new CustomColumn(customColumnInfo[3]);
+  custom4 = new CustomColumn(customColumnInfo[4]);
 
   async reloadGeoCoding() {
 

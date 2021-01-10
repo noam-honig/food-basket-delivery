@@ -2434,6 +2434,10 @@
     "google": "Do add",
     "valueInCode": "האם להוסיף"
   },
+  "questionForVolunteer": {
+    "google": "Question to volunteer",
+    "valueInCode": "שאלה למתנדב"
+  },
   "questionsAndAnswers": {
     "google": "Questions and Answers",
     "valueInCode": "שאלות ותשובות"
@@ -2688,6 +2692,10 @@
   "save": {
     "google": "Save",
     "valueInCode": "שמור"
+  },
+  "saveAndPreview": {
+    "google": "Save and preview",
+    "valueInCode": "שמירה ותצוגה מקדימה"
   },
   "saveExcelImportReport": {
     "google": "Save Absorption Status Report from Excel",

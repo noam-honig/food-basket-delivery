@@ -2223,6 +2223,10 @@
     "google": "האם להוסיף",
     "valueInCode": "האם להוסיף"
   },
+  "questionForVolunteer": {
+    "google": "שאלה למתנדב",
+    "valueInCode": "שאלה למתנדב"
+  },
   "questionsAndAnswers": {
     "google": "שאלות ותשובות",
     "valueInCode": "שאלות ותשובות"
@@ -2458,6 +2462,10 @@
   "save": {
     "google": "שמור",
     "valueInCode": "שמור"
+  },
+  "saveAndPreview": {
+    "google": "שמירה ותצוגה מקדימה",
+    "valueInCode": "שמירה ותצוגה מקדימה"
   },
   "saveExcelImportReport": {
     "google": "שמור דוח מצב קליטה מאקסל",

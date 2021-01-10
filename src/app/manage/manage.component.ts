@@ -25,6 +25,7 @@ import { getLang } from '../sites/sites';
 import { saveToExcel } from '../shared/saveToExcel';
 import { Groups } from './groups';
 import { EmailSvc } from '../shared/utils';
+import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 
 @Component({
   selector: 'app-manage',
@@ -54,7 +55,7 @@ export class ManageComponent implements OnInit {
     this.settings.commonQuestions.value = this.serializeQa();
     try {
       await this.settings.save();
-      
+
       this.context.clearAllCache();
       this.dialog.refreshFamiliesAndDistributionCenters();
       this.settingService.init();
@@ -75,7 +76,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService,private settingService:SettingsService) { }
+  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
 
   basketType = this.context.for(BasketType).gridSettings({
     showFilter: true,
@@ -261,23 +262,58 @@ export class ManageComponent implements OnInit {
   settingsLogo = new DataAreaSettings({
     columnSettings: s => [this.settings.logoUrl]
   });
+  async saveAndPreview() {
+    await this.save();
+    let f = this.context.for(ActiveFamilyDeliveries).create();
+    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
+      family: f,
+      comment: f.courierComments.value,
+      helpText: () => this.settings.commentForSuccessDelivery,
+      questionsArea: new DataAreaSettings({
+        columnSettings: () => [
+          f.a1, f.a2, f.a3, f.a4
+        ]
+      }),
+      ok: async (comment) => {
+      },
+      cancel: () => {
+
+      }
+    });
+  }
   settingsMessages = new DataAreaSettings({
     columnSettings: s => [
+      this.settings.deliveredButtonText,
+      this.settings.commentForSuccessDelivery,
+      this.settings.commentForSuccessLeft,
+      this.settings.commentForProblem,
+      [this.settings.questionForVolunteer1Caption, this.settings.questionForVolunteer1Values],
+      [this.settings.questionForVolunteer2Caption, this.settings.questionForVolunteer2Values],
+      [this.settings.questionForVolunteer3Caption, this.settings.questionForVolunteer3Values],
+      [this.settings.questionForVolunteer4Caption, this.settings.questionForVolunteer4Values]
+
+    
+
+
+
+    ]
+  });
+  settings2Messages = new DataAreaSettings({
+    columnSettings: s => [
+  
+
       this.settings.messageForDoneDelivery,
       this.settings.message1Text,
       this.settings.message1Link,
       this.settings.message1OnlyWhenDone,
       this.settings.message2Text,
       this.settings.message2Link,
-      this.settings.message2OnlyWhenDone,
-      this.settings.deliveredButtonText,
-      this.settings.commentForSuccessDelivery,
-      this.settings.commentForSuccessLeft,
-      this.settings.commentForProblem,
+      this.settings.message2OnlyWhenDone
+
+
 
     ]
   });
-
   emailConfiguration = new DataAreaSettings({
     columnSettings: () => [this.settings.gmailUserName, this.settings.gmailPassword]
   });

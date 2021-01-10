@@ -729,6 +729,7 @@ export class soldier implements Language {
   volunteerAssignments = 'שיוך משלוחים למתנדב';
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
   customColumn = 'שדה נוסף לחייל';
+  questionForVolunteer = 'שאלה למתנדב';
   caption = 'תאור';
   receptionDone = 'נקלט במעבדה';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
@@ -811,4 +812,5 @@ export class soldier implements Language {
   assignRepeatFamily = 'שייך חייל שהמתנדב היה אצלה';
   done = 'טופל';
   copyLinkForVolunteer = 'העתק קישור לרישום עצמי של מתנדבים';
+  saveAndPreview = 'שמירה ותצוגה מקדימה';
 }

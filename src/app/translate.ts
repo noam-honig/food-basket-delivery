@@ -849,6 +849,7 @@ export class Language {
   volunteerAssignments = "שיוך משלוחים למתנדב";
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
   customColumn = "שדה נוסף למשפחה";
+  questionForVolunteer = "שאלה למתנדב";
   caption = "תאור";
   receptionDone = "נקלט במעבדה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";
@@ -934,6 +935,7 @@ export class Language {
   assignRepeatFamily = 'שייך משפחה שהמתנדב היה אצלה';
   done = 'טופל';
   copyLinkForVolunteer = "העתק קישור לרישום עצמי של מתנדבים";
+  saveAndPreview = "שמירה ותצוגה מקדימה";
 }
 
 const defaultLang = new Language();

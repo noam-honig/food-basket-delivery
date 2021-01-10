@@ -201,6 +201,14 @@ export class ApplicationSettings extends Entity<number>  {
   familyCustom4Caption = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.caption, includeInApi: Roles.admin });
   familyCustom4Values = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.optionalValues, includeInApi: Roles.admin });
   currentUserIsValidForAppLoadTest = new BoolColumn({ serverExpression: () => this.context.isSignedIn() });
+  questionForVolunteer1Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 1 " + this.lang.caption });
+  questionForVolunteer1Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 1 " + this.lang.optionalValues });
+  questionForVolunteer2Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 2 " + this.lang.caption });
+  questionForVolunteer2Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 2 " + this.lang.optionalValues });
+  questionForVolunteer3Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 3 " + this.lang.caption });
+  questionForVolunteer3Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 3 " + this.lang.optionalValues });
+  questionForVolunteer4Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 4 " + this.lang.caption });
+  questionForVolunteer4Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 4 " + this.lang.optionalValues });
 
   createBasketsForAllFamiliesInCreateEvent = new BoolColumn({ includeInApi: Roles.admin });
   includeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
@@ -344,10 +352,14 @@ export class SettingsService {
 
     BasketType.boxes1Name = this.instance.boxes1Name.value;
     BasketType.boxes2Name = this.instance.boxes2Name.value;
-    setCustomColumnInfo(1, this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
-    setCustomColumnInfo(2, this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
-    setCustomColumnInfo(3, this.instance.familyCustom3Caption, this.instance.familyCustom3Values);
-    setCustomColumnInfo(4, this.instance.familyCustom4Caption, this.instance.familyCustom4Values);
+    setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
+    setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
+    setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values);
+    setCustomColumnInfo(customColumnInfo[4], this.instance.familyCustom4Caption, this.instance.familyCustom4Values);
+    setCustomColumnInfo(questionForVolunteers[1], this.instance.questionForVolunteer1Caption, this.instance.questionForVolunteer1Values);
+    setCustomColumnInfo(questionForVolunteers[2], this.instance.questionForVolunteer2Caption, this.instance.questionForVolunteer2Values);
+    setCustomColumnInfo(questionForVolunteers[3], this.instance.questionForVolunteer3Caption, this.instance.questionForVolunteer3Values);
+    setCustomColumnInfo(questionForVolunteers[4], this.instance.questionForVolunteer4Caption, this.instance.questionForVolunteer4Values);
 
 
   }
@@ -373,23 +385,24 @@ class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFr
 }
 
 
-const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
+export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
+export const questionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
 export class CustomColumn extends StringColumn {
 
-  constructor(private num: number) {
+  constructor(private info: customColumnInfo) {
     super({
-      caption: customColumnInfo[num].caption,
+      caption: info.caption,
       allowApiUpdate: Roles.admin,
       dataControlSettings: () => ({
-        valueList: customColumnInfo[num].values,
-        visible: () => customColumnInfo[num].visible
+        valueList: info.values,
+        visible: () => info.visible
       })
     });
   }
-  visible = customColumnInfo[this.num].visible;
+  visible = this.info.visible;
 }
-export function setCustomColumnInfo(num: number, caption: StringColumn, values: StringColumn) {
-  let v = customColumnInfo[num];
+export function setCustomColumnInfo(v: customColumnInfo, caption: StringColumn, values: StringColumn) {
+  
   v.visible = !!caption.value;
   v.caption = caption.value;
   v.values = undefined;

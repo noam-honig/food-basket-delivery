@@ -729,6 +729,7 @@ export class donor implements Language {
   volunteerAssignments = 'שיוך משלוחים למתנדב';
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
   customColumn = 'שדה נוסף לתורם';
+  questionForVolunteer = 'שאלה למתנדב';
   caption = 'תאור';
   receptionDone = 'נקלט במעבדה';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
@@ -811,4 +812,5 @@ export class donor implements Language {
   assignRepeatFamily = 'שייך תורם שהמתנדב היה אצלה';
   done = 'טופל';
   copyLinkForVolunteer = 'העתק קישור לרישום עצמי של מתנדבים';
+  saveAndPreview = 'שמירה ותצוגה מקדימה';
 }

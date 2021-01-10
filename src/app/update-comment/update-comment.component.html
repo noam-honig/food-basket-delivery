@@ -15,6 +15,7 @@
   </div>
 
   <mat-dialog-content>
+    <data-area [settings]="args.questionsArea" *ngIf="args.questionsArea"></data-area>
     {{helpText()}}
     <textarea class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
     <a (click)="addLocationToComment()" style="display:block" *ngIf="!args.hideLocation">{{settings.lang.addCurrentLocationToNote}}</a>

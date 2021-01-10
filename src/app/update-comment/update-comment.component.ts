@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { Context } from '@remult/core';
+import { Context, DataAreaSettings } from '@remult/core';
 import { Column } from '@remult/core';
 
 import { DialogService } from '../select-popup/dialog';
@@ -21,6 +21,7 @@ export class GetVolunteerFeedback implements OnInit {
     hideLocation?: boolean,
     title?: string,
     comment: string,
+    questionsArea?:DataAreaSettings,
     ok: (comment: string, failStatusId: DeliveryStatus) => void,
     cancel: () => void
   };

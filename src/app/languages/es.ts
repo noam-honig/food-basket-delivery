@@ -729,6 +729,7 @@ export class es implements Language {
   volunteerAssignments = 'Asignaciones voluntarias';
   ifYouNeedAnyHelpPleaseCall = 'Para ayuda llame';
   customColumn = 'Otro campo para la familia';
+  questionForVolunteer = 'Pregunta para ser voluntario';
   caption = 'descripción';
   receptionDone = 'Absorbido en el laboratorio.';
   optionalValues = 'Posibles valores separados por comas';
@@ -811,4 +812,5 @@ export class es implements Language {
   assignRepeatFamily = 'Asignar una familia repetida';
   done = 'Hecho';
   copyLinkForVolunteer = 'Copie un enlace para el autoregistro de voluntarios';
+  saveAndPreview = 'Guardar y obtener una vista previa';
 }

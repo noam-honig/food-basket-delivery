@@ -151,6 +151,8 @@
 
             </mat-expansion-panel-header>
             <data-area [settings]="settingsMessages"></data-area>
+            <button mat-raised-button (click)="saveAndPreview()" color="primary" style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
+            <data-area [settings]="settings2Messages"></data-area>
         </mat-expansion-panel>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
