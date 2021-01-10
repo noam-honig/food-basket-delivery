@@ -58,7 +58,7 @@ export class ManageComponent implements OnInit {
 
       this.context.clearAllCache();
       this.dialog.refreshFamiliesAndDistributionCenters();
-      this.settingService.init();
+      await this.settingService.init();
     } catch (err) {
       let x = "שגיאה בשמירה: ";
       for (const c of this.settings.columns) {
