@@ -14,7 +14,7 @@ export class HelperGifts extends IdEntity {
     giftURL = new StringColumn(getLang(this.context).myGiftsURL,{allowApiUpdate:Roles.admin});
     dateCreated = new changeDate({ caption: getLang(this.context).createDate });
     userCreated = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
-    assignedToHelper = new HelperId(this.context, { caption: getLang(this.context).volunteer, allowApiUpdate: Roles.admin });
+    assignedToHelper = new HelperId(this.context, { caption: getLang(this.context).volunteer, allowApiUpdate: Roles.admin },{includeFrozen:true});
     dateGranted = new changeDate({ caption: getLang(this.context).dateGranted });
     assignedByUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).assignUser });
     wasConsumed = new BoolColumn('מתנה מומשה');
