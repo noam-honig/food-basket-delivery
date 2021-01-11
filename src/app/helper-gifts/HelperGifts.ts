@@ -24,7 +24,7 @@ export class HelperGifts extends IdEntity {
         super({
             name: "HelperGifts",
             allowApiRead: context.isSignedIn(),
-            allowApiUpdate: Roles.admin,
+            allowApiUpdate: context.isSignedIn(),
             allowApiInsert: Roles.admin,
             apiDataFilter:()=>{
                 if (context.isAllowed(Roles.admin))
