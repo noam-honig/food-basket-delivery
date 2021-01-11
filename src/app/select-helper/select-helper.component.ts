@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from '@remult/core';
-import { FilterBase } from '@remult/core';
+import { FilterBase ,AndFilter} from '@remult/core';
 
 import { BusyService } from '@remult/core';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -37,6 +37,7 @@ export class SelectHelperComponent implements OnInit {
     searchByDistance?: boolean,
     hideRecent?: boolean,
     location?: Location,
+    includeFrozen?: boolean,
     searchClosestDefaultFamily?: boolean,
     onSelect: (selectedValue: HelpersBase) => void,
     filter?: (helper: HelpersAndStats) => FilterBase
@@ -202,9 +203,12 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r = h.name.isContains(this.searchString).and(h.active());
+      let r:FilterBase = h.name.isContains(this.searchString);
+      if(!this.args.includeFrozen){
+        r= new AndFilter( h.active(),r);
+      }
       if (this.args.filter) {
-        return r.and(this.args.filter(h));
+        return new AndFilter( this.args.filter(h), r);
       }
 
       return r;
