@@ -904,11 +904,11 @@ export class Language {
   unArchiveHelper = "בטל מחיקת מתנדב";
   addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
   isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
-  volunteerPreferences="העדפות מתנדב";
-  eventInfo="פרטי ארוע";
+  volunteerPreferences = "העדפות מתנדב";
+  eventInfo = "פרטי ארוע";
   volunteerStatus = "מצב מתנדב";
   newVolunteer = "מתנדב חדש";
-  showArchive = "הצג ארכיב" ;
+  showArchive = "הצג ארכיב";
   duplicateEvents = "שכפל ארוע";
   archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
   basedNoAssignmentOrder = "לפי סדר שיוך";
@@ -927,7 +927,7 @@ export class Language {
   mustHaveAtLeastOneActiveDistributionList = "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה.";
   distributionCenterNotFound = "רשימת חלוקה לא נמצאה";
   confirmArchive = "האם להעביר לארכיון ";
-  markOnMap= "סמן על המפה";
+  markOnMap = "סמן על המפה";
   familyHistory = "היסטורית משפחה";
   includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
   latestAssigned = "שיוך אחרון";
@@ -943,16 +943,24 @@ export var use = { language: defaultLang };
 
 
 const langMap = new Map<string, Language>();
-//@ts-ignore
-langMap.set('en', new en());
-//@ts-ignore
-langMap.set('es', new es());
-//@ts-ignore
-langMap.set('italy', new italy());
-//@ts-ignore
-langMap.set('donor', new donor());
-//@ts-ignore
-langMap.set('soldier', new soldier());
+function addLang(key: string, lang: any, defaultHebrew?: boolean) {
+  for (const key in defaultLang) {
+    if (Object.prototype.hasOwnProperty.call(defaultLang, key)) {
+      const element = defaultLang[key];
+      if (lang[key] == undefined) {
+        lang[key] = defaultHebrew ? element : key;
+
+      }
+
+    }
+  }
+  langMap.set(key, lang);
+}
+addLang('en', new en());
+addLang('es', new es());
+addLang('italy', new italy());
+addLang('donor', new donor(), true);
+addLang('soldier', new soldier(), true);
 export function langByCode(lang: string) {
   let r = langMap.get(lang);
   if (!r)

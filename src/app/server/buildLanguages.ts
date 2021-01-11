@@ -1,9 +1,9 @@
 import * as fs from "fs";
 import { Language, TranslationOptions } from "../translate";
 import { config } from 'dotenv';
-import { jsonToXlsx } from "../shared/saveToExcel";
+
 import * as request from 'request';
-import { getMultipleValuesInSingleSelectionError } from "@angular/cdk/collections";
+
 
 
 async function loadTranslationXlsx(fileName: string, language: string) {
@@ -48,10 +48,11 @@ function loadLangFile(filename: string) {
 function saveLangFile(filename: string, data: any) {
     fs.writeFileSync('./src/app/languages/' + filename + '.json', JSON.stringify(data, undefined, 2));
 }
+let googleNotWorking = false;
 export async function buildLanguageFiles() {
     config();
 
-
+    
 
     for (const lang of [
         TranslationOptions.southAfrica,
@@ -66,13 +67,22 @@ export async function buildLanguageFiles() {
 
         let known = {};
         try { known = loadLangFile(fileAndClassName); }
-        catch{ }
+        catch { }
         let knownEnglish = {};
         if (lang.args.basedOnLang) {
             knownEnglish = loadLangFile(lang.args.basedOnLang);
         }
         let translate = async (term: string) => {
-            return await googleTranslate(term, lang.args.languageCode, !lang.args.basedOnLang ? 'iw' : lang.args.basedOnLang);
+            if (googleNotWorking)
+                return undefined;
+            try {
+                return await googleTranslate(term, lang.args.languageCode, !lang.args.basedOnLang ? 'iw' : lang.args.basedOnLang);
+            }
+            catch (err) {
+                console.log(err);
+                googleNotWorking = true;
+                return undefined;
+            }
         }
         if (lang.args.translateFunction)
             translate = async x => lang.args.translateFunction(x);
@@ -100,15 +110,23 @@ export async function buildLanguageFiles() {
                         val = valueInEnglish;
 
                     const element: string[] = val.split('\n');
+                    let transIsBroken = false;
                     for (let index = 0; index < element.length; index++) {
                         const term = element[index];
                         let trans = await translate(term);
+                        if (trans == undefined) {
+                            transIsBroken = true;
+                            break;
+                        }
                         console.log(term);
                         console.log(trans);
                         element[index] = trans;
                     }
                     knownVal = { google: element.join('\\n'), valueInCode: l[key], valueInEnglish };
-                    known[key] = knownVal;
+
+                    if (!transIsBroken)
+                        known[key] = knownVal;
+                    else knownVal.google = key;
                 }
                 knownVal.valueInCode = l[key];
                 knownVal.valueInEnglish = valueInEnglish;
@@ -129,19 +147,14 @@ export async function buildLanguageFiles() {
             }
         }
         keys.sort((a, b) => a.key.localeCompare(b.key));
-        let XLSX = await import('xlsx');
-        let wb = XLSX.utils.book_new();
-        wb.Workbook = { Views: [{ RTL: true }] };
-        let ws = XLSX.utils.json_to_sheet(keys);
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
-        XLSX.writeFile(wb, '/temp/' + fileAndClassName + '.xlsx');
+
         let json = {};
         for (const x of keys) {
             json[x.key] = known[x.key];
         }
         ;
         saveLangFile(fileAndClassName, json);
-        fs.writeFileSync('./src/app/languages/' + fileAndClassName + '.ts', 'import { Language } from "../translate";\nexport class ' + fileAndClassName + ' implements Language {\n' + result + '}');
+        fs.writeFileSync('./src/app/languages/' + fileAndClassName + '.ts', 'import { Language } from "../translate";\nexport class ' + fileAndClassName + ' {\n' + result + '}');
     }
 
 
