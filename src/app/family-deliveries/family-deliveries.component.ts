@@ -542,10 +542,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        deliveries.a1,
-        deliveries.a2,
-        deliveries.a3,
-        deliveries.a4,
+        
 
         deliveries.special,
         deliveries.createUser,
@@ -583,6 +580,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         { column: deliveries.messageStatus, width: '130' },
         deliveries.receptionComments
       ];
+      for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
+        if (c.visible) {
+            r.push(c);
+        }
+    }
 
       this.normalColumns = [
         deliveries.name

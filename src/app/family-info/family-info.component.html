@@ -1,8 +1,8 @@
 <div>
   
   <div *ngIf="showStatus()">
-    <h4>{{f.deliverStatus.displayValue}}</h4>
-    {{f.deliveryStatusDate.displayValue}}
+    <h4>{{f.getDeliveryDescription()}}</h4>
+    
 
   </div>
   <div *ngIf="f.courierComments.value">
@@ -11,6 +11,7 @@
 
   </div>
   <div>
+    
     <button mat-raised-button class="cancelAssignButton" color="accent" *ngIf="showFamilyPickedUp(f)"
       (click)="familiyPickedUp(f)">{{settings.lang.packageWasPickedUp}}</button>
     <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"

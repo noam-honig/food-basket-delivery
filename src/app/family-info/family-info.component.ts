@@ -59,8 +59,9 @@ export class FamilyInfoComponent implements OnInit {
   }
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
-  
-  @Input() userFamilies :UserFamiliesList;
+
+  @Input() userFamilies: UserFamiliesList;
+  @Input() selfPickupScreen = false;
   useWaze() {
     return this.settings.lang.languageCode == 'iw';
   }
@@ -69,7 +70,7 @@ export class FamilyInfoComponent implements OnInit {
     return this.partOfAssign && f.courier.value != '' && f.deliverStatus.value == DeliveryStatus.ReadyForDelivery;
   }
   showFamilyPickedUp(f: ActiveFamilyDeliveries) {
-    return f.deliverStatus.value == DeliveryStatus.SelfPickup;
+    return f.deliverStatus.value == DeliveryStatus.SelfPickup || f.deliverStatus.value == DeliveryStatus.ReadyForDelivery && !f.courier.value && this.selfPickupScreen;
   }
 
   async getPickupComments(f: ActiveFamilyDeliveries) {
@@ -202,11 +203,13 @@ export class FamilyInfoComponent implements OnInit {
       dialog: this.dialog,
       refreshDeliveryStats: () => {
         x = f.courier.value;
-        this.userFamilies.reload();
+        if (this.userFamilies)
+          this.userFamilies.reload();
       }
     });
-    if (x!=f.courier.value)
-    this.userFamilies.reload();
+    if (x != f.courier.value)
+      if (this.userFamilies)
+        this.userFamilies.reload();
 
   }
   copyAddress(f: ActiveFamilyDeliveries) {
@@ -214,6 +217,10 @@ export class FamilyInfoComponent implements OnInit {
     this.dialog.Info(use.language.address + " " + f.address.value + " " + use.language.wasCopiedSuccefully);
   }
   showStatus() {
-    return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery && this.f.deliverStatus.value != DeliveryStatus.SelfPickup;
+    if (this.f.deliverStatus.value == DeliveryStatus.SelfPickup)
+      return false;
+    if (this.selfPickupScreen)
+      return true;
+    return this.f.deliverStatus.value != DeliveryStatus.ReadyForDelivery;
   }
 }
