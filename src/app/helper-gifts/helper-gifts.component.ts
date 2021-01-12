@@ -18,33 +18,6 @@ export class HelperGiftsComponent implements OnInit {
       orderBy: hg => [{ column: hg.dateGranted, descending: false }],
       limit: 100
     },
-    columnSettings: helperGifts => [
-      helperGifts.giftURL,
-      helperGifts.dateCreated,
-      helperGifts.userCreated,
-      {
-        column: helperGifts.assignedToHelper,
-        width: "250",
-        clickIcon: "edit",
-        click: async f => {
-          await this.context.openDialog(
-            SelectHelperComponent,
-            x =>
-              (x.args = {
-                includeFrozen: true,
-                onSelect: async s => {
-                  f.assignedToHelper.value = s ? s.id.value : "";
-                  await f.save();
-                }
-              })
-          );
-        }
-      },
-      helperGifts.dateGranted,
-      helperGifts.assignedByUser,
-      helperGifts.wasConsumed,
-      helperGifts.wasClicked
-    ],
     gridButtons: [
       {
         name: "יבוא מאקסל",
