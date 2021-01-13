@@ -1,5 +1,5 @@
 import { Language } from "../translate";
-export class en implements Language {
+export class en {
   assignDeliveryMenu = 'Assign Volunteer';
   defaultOrgName = "My organization's name";
   defaultSmsText = 'Hello !VOLUNTEER!\nTo deliver parcels for !ORG! Click: !URL!\nThanks !SENDER!';
@@ -169,7 +169,7 @@ export class en implements Language {
   freeText2ForVolunteer = 'Free text 2 for volunteer';
   urlFreeText2 = 'Free volunteer text URL 2 for volunteer';
   showText2OnlyWhenDone = 'Display free text 2 only when the volunteer has finished all parcels';
-  enableSelfPickupModule = 'There are families who come to take from the division center';
+  enableSelfPickupModule = 'Enable Self Pickup module';
   enableLabReception = 'Delivery ends after absorption in the laboratory';
   showVolunteerCompany = 'Save on behalf of which company the volunteer came from';
   activateEscort = 'Enable driver escort management';
@@ -515,15 +515,15 @@ export class en implements Language {
   updateFamilyStatus = 'Update family status';
   updateDefaultBasket = 'Update default parcel type';
   updateExistingDeliveries = 'Change also for ongoing deliveries';
-  updateDefaultSelfPickup = 'Update are coming by default';
+  updateDefaultSelfPickup = 'Update Defauly Self Pickup';
   updateArea = 'Update area for families';
   updateDefaultQuantity = 'Update default quantity';
   updateFamilySource = 'Update Referrer';
-  selfPickupStrategy_familyDefault = 'Come take according to the default family setting';
+  selfPickupStrategy_familyDefault = 'Self Pickup by family default';
   selfPickupStrategy_yes = 'Self Pickup';
   selfpickupStrategy_no = 'Home delivery';
   selfpickupStrategy_byCurrentDelivery = 'Self Pickup according to the current delivery';
-  selfPickupStrategy = 'Set up come take';
+  selfPickupStrategy = 'Self Pickup Strategy';
   notAthorized = 'No legacy!';
   actionNotFound = 'Action not found on server';
   active = 'Active';
@@ -672,7 +672,7 @@ export class en implements Language {
   endsOnDistributionCenter = 'End at the distribution center';
   parcelSummary = 'Show Parcel Summary';
   useCurrentLocationForStart = 'Calculate route based on current location';
-  eventName = 'Event name';
+  eventName = 'Event Title';
   eventDescription = 'description';
   eventDate = 'date';
   eventTime = 'hour';
@@ -787,7 +787,7 @@ export class en implements Language {
   newVolunteer = 'New volunteer';
   showArchive = 'View archive';
   duplicateEvents = 'Duplicate an event';
-  archiveCurrentEvent = 'Tonight there is an event for the archive?';
+  archiveCurrentEvent = 'Archive existing event?';
   basedNoAssignmentOrder = 'In order of association';
   volunteerComment = 'Volunteer note';
   archiveDate = 'Archive: Date of update';

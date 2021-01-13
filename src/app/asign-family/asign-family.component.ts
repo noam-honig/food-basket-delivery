@@ -69,7 +69,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.helperFamilies.switchToMap();
 
             setTimeout(() => {
-                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea,this.basketType.id);
+                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter.value, this.filterArea, this.basketType.id);
             }, 50);
         }, 50);
 
@@ -94,7 +94,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await this.familyLists.helper.displayEditDialog(this.dialog, this.busy);
         if (this.phone != this.familyLists.helper.phone.value)
             this.phone = this.familyLists.helper.phone.value;
-        
+
     }
     async searchPhone() {
         this.clearHelperInfo(false);
@@ -154,7 +154,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.area = undefined;
         if (clearPhone)
             this.phone = '';
-        this.familyLists.setRouteStats( undefined);
+        this.familyLists.setRouteStats(undefined);
         this.preferRepeatFamilies = true;
         this.showRepeatFamilies = false;
         this.clearList();
@@ -238,7 +238,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
                 filterArea: this.filterArea,
-                filterBasket:this.basketType.id,
+                filterBasket: this.basketType.id,
                 helperId: this.helper ? this.helper.id.value : '',
                 distCenter: this.dialog.distCenter.value
             }));
@@ -264,7 +264,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             this.areas = r.areas;
-            if (this.filterArea != getLang( this.context).allRegions && !this.areas.find(x => x.name == this.filterArea)) {
+            if (this.filterArea != getLang(this.context).allRegions && !this.areas.find(x => x.name == this.filterArea)) {
 
                 this.areas.push({ name: this.filterArea, unassignedFamilies: 0 });
             }
@@ -495,7 +495,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => FilterBase) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
-                let where = f.readyFilter(info.filterCity, info.filterGroup, info.filterArea,info.filterBasket).and(f.filterDistCenterAndAllowed(info.distCenter));
+                let where = f.readyFilter(info.filterCity, info.filterGroup, info.filterArea, info.filterBasket).and(f.filterDistCenterAndAllowed(info.distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
                 }
@@ -511,7 +511,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let f = context.for(ActiveFamilyDeliveries).create();
         let fd = context.for(FamilyDeliveries).create();
         if (info.helperId) {
-            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea,info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
+            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', f.active().and(f.filterDistCenterAndAllowed(info.distCenter)).and(f.readyFilter(info.filterCity, info.filterGroup, info.filterArea, info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
                 filterRepeatFamilies(sql, f, fd, info.helperId), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
@@ -540,7 +540,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sql.columnWithAlias(sql.func('count ', '*'), 'c')
             ],
             from: f,
-            where: () => [f.filterDistCenterAndAllowed(info.distCenter), f.readyFilter(info.filterCity, info.filterGroup,undefined,info.filterBasket)]
+            where: () => [f.filterDistCenterAndAllowed(info.distCenter), f.readyFilter(info.filterCity, info.filterGroup, undefined, info.filterBasket)]
         }), ' group by ', f.area, ' order by ', f.area)));
         result.areas = groupBy.rows.map(x => {
             let r: CityInfo = {
@@ -901,16 +901,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
     }
-    addFamily(filter: (f: ActiveFamilyDeliveries) => FilterBase, analyticsName: string, selectStreet?: boolean) {
+    addFamily(filter: (f: ActiveFamilyDeliveries) => FilterBase, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
         this.context.openDialog(SelectFamilyComponent, x => x.args = {
             where: f => {
                 let where = filter(f);
                 if (this.filterCity)
                     where = new AndFilter(f.city.isEqualTo(this.filterCity), where);
-                if (this.filterArea!=use.language.allRegions)
+                if (this.filterArea != use.language.allRegions)
                     where = new AndFilter(f.area.isEqualTo(this.filterArea), where);
                 return where;
             },
+            allowShowAll,
             selectStreet,
             distCenter: this.dialog.distCenter.value,
             onSelect: async selectedDeliveries => {
@@ -975,10 +976,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => f.id.isIn(this.repeatFamilies), 'repeat-families')
     }
     addSpecific() {
-        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea,this.basketType.id), 'specific');
+        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.id), 'specific', false, true);
     }
     addStreet() {
-        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea,this.basketType.id), 'street', true);
+        this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.id), 'street', true);
     }
 }
 
@@ -1026,7 +1027,7 @@ export interface GetBasketStatusActionInfo {
     filterGroup: string;
     filterCity: string;
     filterArea: string;
-    filterBasket:string;
+    filterBasket: string;
     helperId: string;
     distCenter: string;
 }

@@ -252,7 +252,7 @@
   "archiveCurrentEvent": {
     "google": "¿Esta noche hay un evento para el archivo?",
     "valueInCode": "העבר ארוע קיים לארכיב?",
-    "valueInEnglish": "Tonight there is an event for the archive?"
+    "valueInEnglish": "Archive existing event?"
   },
   "archiveDate": {
     "google": "Archivo: fecha de actualización",
@@ -1276,9 +1276,9 @@
     "valueInEnglish": "Delivery ends after absorption in the laboratory"
   },
   "enableSelfPickupModule": {
-    "google": "Hay familias que vienen a sacar del centro de división.",
+    "google": "Habilitar el módulo Self Pickup",
     "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה",
-    "valueInEnglish": "There are families who come to take from the division center"
+    "valueInEnglish": "Enable Self Pickup module"
   },
   "endOnFar": {
     "google": "Terminar en la dirección más lejana",
@@ -1351,9 +1351,9 @@
     "valueInEnglish": "This event is full, we'll be happy if you sign up after"
   },
   "eventName": {
-    "google": "Nombre del evento",
-    "valueInCode": "שם ארוע",
-    "valueInEnglish": "Event name"
+    "google": "Título del evento",
+    "valueInCode": "כותרת ארוע",
+    "valueInEnglish": "Event Title"
   },
   "eventPreparation": {
     "google": "Sequía",
@@ -1857,12 +1857,12 @@
   },
   "helpName": {
     "google": "nombre alternativo",
-    "valueInCode": "שם חלופי",
+    "valueInCode": "שם לעזרה",
     "valueInEnglish": "alternative name"
   },
   "helpPhone": {
     "google": "Teléfono alternativo",
-    "valueInCode": "טלפון חלופי",
+    "valueInCode": "טלפון לעזרה",
     "valueInEnglish": "Alternate Phone"
   },
   "hideFamilyPhoneFromVolunteer": {
@@ -3202,9 +3202,9 @@
     "valueInEnglish": "Self Pickup Deliveries"
   },
   "selfPickupStrategy": {
-    "google": "Configurar ven a tomar",
+    "google": "Estrategia de recogida automática",
     "valueInCode": "הגדרת באים לקחת",
-    "valueInEnglish": "Set up come take"
+    "valueInEnglish": "Self Pickup Strategy"
   },
   "selfpickupStrategy_byCurrentDelivery": {
     "google": "Recogida automática según la entrega actual",
@@ -3212,9 +3212,9 @@
     "valueInEnglish": "Self Pickup according to the current delivery"
   },
   "selfPickupStrategy_familyDefault": {
-    "google": "Venga a tomar de acuerdo con la configuración familiar predeterminada",
+    "google": "Auto recogida por defecto familiar",
     "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה",
-    "valueInEnglish": "Come take according to the default family setting"
+    "valueInEnglish": "Self Pickup by family default"
   },
   "selfpickupStrategy_no": {
     "google": "Entrega a domicilio",
@@ -3782,9 +3782,9 @@
     "valueInEnglish": "Update default quantity"
   },
   "updateDefaultSelfPickup": {
-    "google": "Las actualizaciones vienen por defecto",
+    "google": "Actualizar la recogida automática por defecto",
     "valueInCode": "עדכן באים לקחת ברירת מחדל",
-    "valueInEnglish": "Update are coming by default"
+    "valueInEnglish": "Update Defauly Self Pickup"
   },
   "updateDefaultVolunteer": {
     "google": "Actualizar un voluntario familiar predeterminado",

@@ -1,5 +1,5 @@
 import { Language } from "../translate";
-export class es implements Language {
+export class es {
   assignDeliveryMenu = 'Asignar voluntario';
   defaultOrgName = 'El nombre de mi organización';
   defaultSmsText = '¡Hola !VOLUNTEER! \nTo entrega paquetes para !ORG! Haga clic en: !URL! \nTgracias !SENDER!';
@@ -169,7 +169,7 @@ export class es implements Language {
   freeText2ForVolunteer = 'Texto libre 2 para voluntario';
   urlFreeText2 = 'Texto voluntario gratuito URL 2 para voluntario';
   showText2OnlyWhenDone = 'Mostrar texto libre 2 solo cuando el voluntario haya terminado todos los paquetes';
-  enableSelfPickupModule = 'Hay familias que vienen a sacar del centro de división.';
+  enableSelfPickupModule = 'Habilitar el módulo Self Pickup';
   enableLabReception = 'La entrega finaliza después de la absorción en el laboratorio.';
   showVolunteerCompany = 'Ahorre en nombre de qué compañía vino el voluntario';
   activateEscort = 'Habilitar la gestión de acompañantes';
@@ -515,15 +515,15 @@ export class es implements Language {
   updateFamilyStatus = 'Actualizar estado familiar';
   updateDefaultBasket = 'Actualizar tipo de parcela predeterminado';
   updateExistingDeliveries = 'Cambio también para entregas en curso';
-  updateDefaultSelfPickup = 'Las actualizaciones vienen por defecto';
+  updateDefaultSelfPickup = 'Actualizar la recogida automática por defecto';
   updateArea = 'Área de actualización para familias';
   updateDefaultQuantity = 'Actualizar cantidad predeterminada';
   updateFamilySource = 'Actualizar referencia';
-  selfPickupStrategy_familyDefault = 'Venga a tomar de acuerdo con la configuración familiar predeterminada';
+  selfPickupStrategy_familyDefault = 'Auto recogida por defecto familiar';
   selfPickupStrategy_yes = 'Recogerse';
   selfpickupStrategy_no = 'Entrega a domicilio';
   selfpickupStrategy_byCurrentDelivery = 'Recogida automática según la entrega actual';
-  selfPickupStrategy = 'Configurar ven a tomar';
+  selfPickupStrategy = 'Estrategia de recogida automática';
   notAthorized = 'No hay legado!';
   actionNotFound = 'Acción no encontrada en el servidor';
   active = 'Activo';
@@ -672,7 +672,7 @@ export class es implements Language {
   endsOnDistributionCenter = 'Terminar en el centro de distribución.';
   parcelSummary = 'Mostrar resumen de parcela';
   useCurrentLocationForStart = 'Calcular ruta basada en la ubicación actual';
-  eventName = 'Nombre del evento';
+  eventName = 'Título del evento';
   eventDescription = 'descripción';
   eventDate = 'fecha';
   eventTime = 'hora';

@@ -1083,7 +1083,7 @@
   },
   "eventName": {
     "google": "שם ארוע",
-    "valueInCode": "שם ארוע"
+    "valueInCode": "כותרת ארוע"
   },
   "eventPreparation": {
     "google": "טיוטא",
@@ -1487,11 +1487,11 @@
   },
   "helpName": {
     "google": "שם חלופי",
-    "valueInCode": "שם חלופי"
+    "valueInCode": "שם לעזרה"
   },
   "helpPhone": {
     "google": "טלפון חלופי",
-    "valueInCode": "טלפון חלופי"
+    "valueInCode": "טלפון לעזרה"
   },
   "hideFamilyPhoneFromVolunteer": {
     "google": "אל תציג את הטלפון של התורם למתנדב",

@@ -37,12 +37,14 @@
                 [attr.myId]="e.id.value">
                 <mat-expansion-panel-header [class.registered]="!volunteerInEvent(e).isNew()">
                     <div style="display:flex;flex-direction: column;">
-                        <mat-panel-title> {{e.name.value}} <mat-icon *ngIf="!volunteerInEvent(e).isNew()"
-                                style="color:green">done</mat-icon>
+                        <mat-panel-title *ngIf="e.name.value"> {{e.name.value}} <mat-icon
+                                *ngIf="!volunteerInEvent(e).isNew()" style="color:green">done</mat-icon>
                         </mat-panel-title>
-                        <mat-panel-description>
-                            {{e.eventDate.displayValue}}, {{e.startTime.value}} - {{e.endTime.value}}
-                        </mat-panel-description>
+                        <mat-panel-title>
+                            {{e.eventDate.displayValue}}<span *ngIf="e.startTime.value">, {{e.startTime.value}}</span><span
+                                *ngIf="e.endTime.value"> -
+                                {{e.endTime.value}}</span>
+                        </mat-panel-title>
 
                     </div>
                 </mat-expansion-panel-header>
@@ -50,39 +52,44 @@
                     {{e.description.value}}
                 </div>
                 <div>
-                    <div class="phone-container" *ngIf="e.address.ok()">
-                        <span (click)="e.address.openWaze()">
+                    <div class="phone-container" *ngIf="getAddress(e).ok()">
+                        <span (click)="getAddress(e).openWaze()">
                             <img src="assets/waze.png">
 
                         </span>
                         <div>
-                            <a (click)="e.address.openWaze()">
-                                <span style="display:block"> {{e.address.value}} </span>
+                            <a (click)="getAddress(e).openWaze()">
+                                <span style="display:block"> {{getAddress(e).value}} </span>
                             </a>
                         </div>
                     </div>
 
 
-                    <div class="phone-container" *ngIf="e.phone1.value">
-                        <a href="tel:{{e.phone1.value}}">
+                    <div class="phone-container" *ngIf="getPhone(e).value">
+                        <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
+                            (click)="sendWhatsapp(getPhone(e).value)">
+                            <img src="assets/whatsapp.png">
+                        </span>
+                        <a href="tel:{{getPhone(e).value}}">
                             <button mat-mini-fab style="vertical-align: middle" color="primary">
                                 <mat-icon>call</mat-icon>
                             </button>
                         </a>
                         <div>
-                            <a href="tel:{{e.phone1.value}}">{{e.phone1.displayValue}}</a>,
-                            {{e.phone1Description.value}}
+                            <a href="tel:{{getPhone(e).value}}">{{getPhone(e).displayValue}}</a>,
+                            {{e.phone1.value? e.phone1Description.value:settings.helpText.value}}
                         </div>
                     </div>
 
                 </div>
-                <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}/{{e.requiredVolunteers.value}}</div>
+                <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}<span
+                        *ngIf="e.requiredVolunteers.value"> /{{e.requiredVolunteers.value}} </span></div>
                 <button mat-raised-button color="primary"
-                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value<e.requiredVolunteers.value"
+                    *ngIf="volunteerInEvent(e).isNew() && (e.registeredVolunteers.value<e.requiredVolunteers.value||e.requiredVolunteers.value==0)"
                     (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
                 </button>
                 <span mat-raised-button color="primary"
-                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value">{{settings.lang.eventIsFull}}
+                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value&&e.requiredVolunteers.value>0">{{settings.lang.eventIsFull}}
                 </span>
                 <span *ngIf="!volunteerInEvent(e).isNew()">
                     {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>

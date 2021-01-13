@@ -225,7 +225,7 @@
     "custom": "Archive current delivery"
   },
   "archiveCurrentEvent": {
-    "google": "Tonight there is an event for the archive?",
+    "google": "Archive existing event?",
     "valueInCode": "העבר ארוע קיים לארכיב?"
   },
   "archiveDate": {
@@ -1162,8 +1162,9 @@
     "valueInCode": "משלוח מסתיים אחרי קליטה במעבדה"
   },
   "enableSelfPickupModule": {
-    "google": "There are families who come to take from the division center",
-    "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה"
+    "google": "Enable self pickup module",
+    "valueInCode": "ישנן משפחות שבאות לקחת ממרכז החלוקה",
+    "custom": "Enable Self Pickup module"
   },
   "endOnFar": {
     "google": "Start at the division center and end at the farthest address",
@@ -1226,7 +1227,8 @@
   },
   "eventName": {
     "google": "Event name",
-    "valueInCode": "שם ארוע"
+    "valueInCode": "כותרת ארוע",
+    "custom": "Event Title"
   },
   "eventPreparation": {
     "google": "Draft",
@@ -1659,11 +1661,11 @@
   },
   "helpName": {
     "google": "alternative name",
-    "valueInCode": "שם חלופי"
+    "valueInCode": "שם לעזרה"
   },
   "helpPhone": {
     "google": "Alternate Phone",
-    "valueInCode": "טלפון חלופי"
+    "valueInCode": "טלפון לעזרה"
   },
   "hideFamilyPhoneFromVolunteer": {
     "google": "Do not show the family phone to a volunteer",
@@ -2803,7 +2805,8 @@
   },
   "selfPickupStrategy": {
     "google": "Set up come take",
-    "valueInCode": "הגדרת באים לקחת"
+    "valueInCode": "הגדרת באים לקחת",
+    "custom": "Self Pickup Strategy"
   },
   "selfpickupStrategy_byCurrentDelivery": {
     "google": "Come take according to the current shipping definition",
@@ -2812,7 +2815,8 @@
   },
   "selfPickupStrategy_familyDefault": {
     "google": "Come take according to the default family setting",
-    "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה"
+    "valueInCode": "באים לקחת בהתאם להגדרת הברירת מחדל למשפחה",
+    "custom": "Self Pickup by family default"
   },
   "selfpickupStrategy_no": {
     "google": "Home delivery",
@@ -3299,7 +3303,8 @@
   },
   "updateDefaultSelfPickup": {
     "google": "Update are coming by default",
-    "valueInCode": "עדכן באים לקחת ברירת מחדל"
+    "valueInCode": "עדכן באים לקחת ברירת מחדל",
+    "custom": "Update Defauly Self Pickup"
   },
   "updateDefaultVolunteer": {
     "google": "Update a default family volunteer",

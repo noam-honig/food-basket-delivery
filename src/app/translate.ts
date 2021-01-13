@@ -274,8 +274,8 @@ export class Language {
   leftByDoorMessageColumnName = 'הודעה למתנדב כאשר הושאר ליד הבית';
   problemCommentColumnName = 'הודעה למתנדב כאשר יש בעיה';
   messageForVolunteerWhenDoneCaption = 'הודעה למתנדב כאשר סיים את כל המשפחות';
-  helpName = 'שם חלופי';
-  helpPhone = 'טלפון חלופי';
+  helpName = 'שם לעזרה';
+  helpPhone = 'טלפון לעזרה';
   successButtonSettingName = "מלל כפתור נמסר בהצלחה";
   freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
   urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
@@ -792,7 +792,7 @@ export class Language {
   endsOnDistributionCenter = "סיים במרכז החלוקה";
   parcelSummary = 'הצג סיכום סוגי סלים';
   useCurrentLocationForStart = "חשב מסלול ממיקום נוכחי";
-  eventName = "שם ארוע";
+  eventName = "כותרת ארוע";
   eventDescription = "תאור";
   eventDate = "תאריך";
   eventTime = "שעה";

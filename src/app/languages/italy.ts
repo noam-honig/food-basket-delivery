@@ -1,5 +1,5 @@
 import { Language } from "../translate";
-export class italy implements Language {
+export class italy {
   assignDeliveryMenu = 'Assegna volontario';
   defaultOrgName = 'Il nome della mia organizzazione';
   defaultSmsText = 'Ciao !VOLUNTEER! \nTo consegna pacchi per !ORG! Fare clic: !URL! \nThanks !SENDER!';
@@ -169,7 +169,7 @@ export class italy implements Language {
   freeText2ForVolunteer = 'Testo libero 2 per volontari';
   urlFreeText2 = 'Testo volontario gratuito URL 2 per volontari';
   showText2OnlyWhenDone = 'Visualizza testo libero 2 solo quando il volontario ha completato tutti i pacchi';
-  enableSelfPickupModule = 'Ci sono famiglie che vengono a prendere dal centro di divisione';
+  enableSelfPickupModule = 'Abilita il modulo di ritiro automatico';
   enableLabReception = "La consegna termina dopo l'assorbimento in laboratorio";
   showVolunteerCompany = 'Risparmia per conto di quale compagnia proviene il volontario';
   activateEscort = 'Abilita la gestione della scorta conducente';
@@ -515,15 +515,15 @@ export class italy implements Language {
   updateFamilyStatus = 'Aggiorna lo stato della famiglia';
   updateDefaultBasket = 'Aggiorna il tipo di pacco predefinito';
   updateExistingDeliveries = 'Modifica anche per consegne in corso';
-  updateDefaultSelfPickup = "L'aggiornamento arriverà per impostazione predefinita";
+  updateDefaultSelfPickup = 'Aggiorna il ritiro automatico predefinito';
   updateArea = 'Area di aggiornamento per famiglie';
   updateDefaultQuantity = 'Aggiorna la quantità predefinita';
   updateFamilySource = 'Aggiorna referrer';
-  selfPickupStrategy_familyDefault = "Vieni prendere in base all'impostazione familiare predefinita";
+  selfPickupStrategy_familyDefault = 'Ritiro autonomo per impostazione predefinita della famiglia';
   selfPickupStrategy_yes = 'Pickup automatico';
   selfpickupStrategy_no = 'Consegna a domicilio';
   selfpickupStrategy_byCurrentDelivery = 'Ritiro automatico in base alla consegna corrente';
-  selfPickupStrategy = 'Impostare come take take';
+  selfPickupStrategy = 'Strategia di ritiro automatico';
   notAthorized = 'Nessuna eredità!';
   actionNotFound = 'Azione non trovata sul server';
   active = 'Attivo';
@@ -672,7 +672,7 @@ export class italy implements Language {
   endsOnDistributionCenter = 'Termina al centro di distribuzione';
   parcelSummary = 'Mostra riepilogo pacchi';
   useCurrentLocationForStart = 'Calcola il percorso in base alla posizione corrente';
-  eventName = "Nome dell'evento";
+  eventName = 'Titolo evento';
   eventDescription = 'descrizione';
   eventDate = 'Data';
   eventTime = 'ora';

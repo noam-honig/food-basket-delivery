@@ -54,5 +54,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
+  
   <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
+  <mat-checkbox [(ngModel)]="showAll" *ngIf="args.allowShowAll" (change)="doFilter()" style="margin-right:10px" >{{settings.lang.showAll}}</mat-checkbox>
 </mat-dialog-actions>

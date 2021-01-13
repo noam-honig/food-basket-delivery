@@ -13,6 +13,7 @@ import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material';
+import { PhoneColumn } from '../model-shared/types';
 
 
 
@@ -87,6 +88,20 @@ export class MyFamiliesComponent implements OnInit {
     }
     return r;
   }
+  getAddress(e: Event) {
+    if (e.address.ok())
+      return e.address;
+    return this.settings.address;
+  }
+  getPhone(e: Event) {
+    if (e.phone1.value)
+      return e.phone1;
+    return this.settings.helpPhone;
+  }
+  sendWhatsapp(phone: string) {
+    PhoneColumn.sendWhatsappToPhone(phone, '', this.context);
+  }
+
   async registerToEvent(e: Event) {
     let ev = this.volunteerInEvent(e);
     if (ev.isNew()) {

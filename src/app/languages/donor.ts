@@ -1,5 +1,5 @@
 import { Language } from "../translate";
-export class donor implements Language {
+export class donor {
   assignDeliveryMenu = 'שיוך משלוחים למתנדב';
   defaultOrgName = 'שם הארגון שלי';
   defaultSmsText = 'שלום !מתנדב!\nלחלוקת חבילות !ארגון! לחץ על: !אתר! \nתודה !שולח!';

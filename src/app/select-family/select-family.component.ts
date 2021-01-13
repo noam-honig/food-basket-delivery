@@ -21,13 +21,15 @@ export class SelectFamilyComponent implements OnInit {
     where: (f: ActiveFamilyDeliveries) => FilterBase,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
-    distCenter: string
+    distCenter: string,
+    allowShowAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context, public settings: ApplicationSettings) { }
   searchString: string = '';
   families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
   pageSize = 7;
+  showAll = false;
   selectFirst() {
 
   }
@@ -42,12 +44,13 @@ export class SelectFamilyComponent implements OnInit {
       x.selectState = {
         get selected() { return !!self.selected.find(y => y.id.value == f.id.value) },
         set selected(value: boolean) {
-
+          if (DeliveryStatus.IsAResultStatus(f.deliverStatus.value))
+            return;
           if (value)
             self.selected.push(f)
           else
             self.selected.splice(self.selected.findIndex(y => y.id.value == f.id.value), 1);
-          console.log(f.id.value, value, self.selected);
+
         }
       }
     }
@@ -70,7 +73,7 @@ export class SelectFamilyComponent implements OnInit {
             r = f.address.isContains(this.searchString);
           result = new AndFilter(result, r);
         }
-        if (this.args.where) {
+        if (this.args.where && !this.showAll) {
           let x = this.args.where(f);
           if (x)
             return new AndFilter(result, x);
@@ -107,7 +110,7 @@ export class SelectFamilyComponent implements OnInit {
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
       if (f.courier.value) {
-        return this.settings.lang.assignedToVolunteer;
+        return this.settings.lang.assignedToVolunteer + " " + f.courier.getValue();
       } else {
         return '';
       }
