@@ -85,8 +85,8 @@ export abstract class HelpersBase extends IdEntity {
     });
 
     frozenTill = new DateColumn({
-        allowApiUpdate: Roles.admin,
-        includeInApi: Roles.admin,
+        allowApiUpdate: this.context.isSignedIn(),
+        includeInApi: this.context.isSignedIn(),
         caption: getLang(this.context).frozenTill
     });
 
