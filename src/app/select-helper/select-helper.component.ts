@@ -219,7 +219,13 @@ export class SelectHelperComponent implements OnInit {
       if (Helpers.recentHelpers.length == 0 || this.args.hideRecent)
         this.getHelpers();
       else {
-        this.filteredHelpers = mapHelpers(Helpers.recentHelpers, x => undefined);
+        let recentHelpers = Helpers.recentHelpers;
+        if(!this.args.includeFrozen){
+          recentHelpers = recentHelpers.filter(h => 
+            !h.archive.value && !h.isFrozen.value  
+          );
+        }
+        this.filteredHelpers = mapHelpers(recentHelpers, x => undefined);
         this.showingRecentHelpers = true;
       }
 
