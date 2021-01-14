@@ -813,4 +813,5 @@ export class donor {
   done = 'טופל';
   copyLinkForVolunteer = 'העתק קישור לרישום עצמי של מתנדבים';
   saveAndPreview = 'שמירה ותצוגה מקדימה';
+  areYouSureYouWantToDelete = 'האם אתה בטוח שאתה רוצה למחוק את';
 }

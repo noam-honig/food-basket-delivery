@@ -813,4 +813,5 @@ export class es {
   done = 'Hecho';
   copyLinkForVolunteer = 'Copie un enlace para el autoregistro de voluntarios';
   saveAndPreview = 'Guardar y obtener una vista previa';
+  areYouSureYouWantToDelete = 'areYouSureYouWantToDelete';
 }
