@@ -590,7 +590,8 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, private args: {
         filter?: (helper: HelpersAndStats) => FilterBase,
         location?: () => Location,
-        familyId?: () => string
+        familyId?: () => string,
+        includeFrozen?: boolean,
         searchClosestDefaultFamily?: boolean
     } = {}) {
         super({
@@ -608,6 +609,7 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
             x => x.args = {
                 filter: this.args.filter, location: this.args.location ? this.args.location() : undefined,
                 familyId: this.args.familyId ? this.args.familyId() : undefined,
+                includeFrozen: this.args.includeFrozen,
                 searchClosestDefaultFamily: this.args.searchClosestDefaultFamily
                 , onSelect: s => {
                     this.value = (s ? s.id.value : '');

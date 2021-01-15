@@ -1,41 +1,42 @@
-import { Component, OnInit } from '@angular/core';
-import { Context } from '@remult/core';
-import { GeneralImportFromExcelComponent } from '../import-gifts/import-from-excel.component';
-import { HelperGifts } from './HelperGifts';
-
+import { Component, OnInit } from "@angular/core";
+import { Context } from "@remult/core";
+import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
+import { HelperGifts } from "./HelperGifts";
+import { SelectHelperComponent } from "../select-helper/select-helper.component";
 @Component({
-  selector: 'app-helper-gifts',
-  templateUrl: './helper-gifts.component.html',
-  styleUrls: ['./helper-gifts.component.scss']
+  selector: "app-helper-gifts",
+  templateUrl: "./helper-gifts.component.html",
+  styleUrls: ["./helper-gifts.component.scss"]
 })
 export class HelperGiftsComponent implements OnInit {
-
-  constructor(private context: Context) { }
+  constructor(private context: Context) {}
   gifts = this.context.for(HelperGifts).gridSettings({
-    allowUpdate: true, 
+    allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 7,
     get: {
       orderBy: hg => [{ column: hg.dateGranted, descending: false }],
       limit: 100
     },
-    gridButtons:[{
-      name:'יבוא מאקסל',
-      click:()=>{
-        this.context.openDialog(GeneralImportFromExcelComponent,x=>x.args={
-          title:'יבוא מתנות מאקסל',
-          excelFileLoaded:async data=>{
-            await HelperGifts.importUrls(data.map(d=>d[0]));
-            this.gifts.getRecords();
-          }
+    gridButtons: [
+      {
+        name: "יבוא מאקסל",
+        click: () => {
+          this.context.openDialog(
+            GeneralImportFromExcelComponent,
+            x =>
+              (x.args = {
+                title: "יבוא מתנות מאקסל",
+                excelFileLoaded: async data => {
+                  await HelperGifts.importUrls(data.map(d => d[0]));
+                  this.gifts.getRecords();
+                }
+              })
+          );
         }
-          
-        );
       }
-    }]
+    ]
   });
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
