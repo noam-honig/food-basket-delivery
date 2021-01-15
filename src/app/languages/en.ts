@@ -813,4 +813,5 @@ export class en {
   done = 'Done';
   copyLinkForVolunteer = 'Copy a link to volunteer self-registration';
   saveAndPreview = 'Save and preview';
+  areYouSureYouWantToDelete = 'areYouSureYouWantToDelete';
 }

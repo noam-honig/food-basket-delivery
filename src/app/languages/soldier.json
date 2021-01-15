@@ -239,6 +239,10 @@
     "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
   },
+  "areYouSureYouWantToDelete": {
+    "google": "האם אתה בטוח שאתה רוצה למחוק את",
+    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק את"
+  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"

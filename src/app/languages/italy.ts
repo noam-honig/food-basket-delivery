@@ -813,4 +813,5 @@ export class italy {
   done = 'Fatto';
   copyLinkForVolunteer = "Copia un link per l'autoregistrazione del volontario";
   saveAndPreview = "Salva e visualizza l'anteprima";
+  areYouSureYouWantToDelete = 'areYouSureYouWantToDelete';
 }
