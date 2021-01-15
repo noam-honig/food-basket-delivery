@@ -363,12 +363,12 @@ export class ManageComponent implements OnInit {
         this.settings.showDistCenterAsEndAddressForVolunteer,
         this.settings.defaultPrefixForExcelImport,
         this.settings.redTitleBar,
-        this.settings.forWho,
         this.settings.manageEscorts,
         [this.settings.familyCustom1Caption, this.settings.familyCustom1Values],
         [this.settings.familyCustom2Caption, this.settings.familyCustom2Values],
         [this.settings.familyCustom3Caption, this.settings.familyCustom3Values],
-        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values]
+        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values],
+        this.settings.forWho,
       ];
 
       if (this.settings.isSytemForMlt())

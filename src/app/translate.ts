@@ -21,7 +21,15 @@ export class TranslationOptions {
     googleMapCountry: 'IL',
     bounds: israel
   });
-  static donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
+  static us: TranslationOptions = new TranslationOptions(3, 'United States', {
+    googleMapCountry: 'US',
+    bounds: new myBounds(-171.791110603, 18.91619, -66.96466, 71.3577635769),
+    leftToRight: true,
+    languageCode: 'en',
+    languageFile: 'en',
+    internationalPrefixForSmsAndAws: '+1'
+  });
+  static donors: TranslationOptions = new TranslationOptions(1, 'מתחשבים', {
     googleMapCountry: 'IL',
     bounds: israel,
     languageFile: 'donor',
@@ -58,6 +66,7 @@ export class TranslationOptions {
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+27'
   });
+  
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     bounds: new myBounds(6.7499552751, 36.619987291, 18.4802470232, 47.1153931748),
     googleMapCountry: 'IT',
