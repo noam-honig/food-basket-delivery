@@ -813,5 +813,10 @@ export class en {
   done = 'Done';
   copyLinkForVolunteer = 'Copy a link to volunteer self-registration';
   saveAndPreview = 'Save and preview';
-  areYouSureYouWantToDelete = 'areYouSureYouWantToDelete';
+  areYouSureYouWantToDelete = 'Are you sure you want to delete the';
+  codeWord = 'Code word';
+  toConfirmPleaseTypeTheCodeWord = 'To confirm the deletion, please type the code word';
+  deleted = 'Deleted';
+  wrongCodeWordProcessAborted = 'Wrong code word - process stopped';
+  configuration = 'The system is for';
 }

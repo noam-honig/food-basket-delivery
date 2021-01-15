@@ -103,7 +103,7 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
       })
     });
     if (!this.defs.caption)
-      this.defs.caption = 'המערכת היא עבור';
+      this.defs.caption =use.language.configuration ;
   }
 
 }
@@ -936,7 +936,12 @@ export class Language {
   done = 'טופל';
   copyLinkForVolunteer = "העתק קישור לרישום עצמי של מתנדבים";
   saveAndPreview = "שמירה ותצוגה מקדימה";
-  areYouSureYouWantToDelete = "האם אתה בטוח שאתה רוצה למחוק את";
+  areYouSureYouWantToDelete = "האם אתה בטוח שאתה רוצה למחוק ";
+  codeWord = 'מילת קוד';
+  toConfirmPleaseTypeTheCodeWord = "לאישור המחיקה אנא הקלד את מילת הקוד ";
+  deleted = "נמחק";
+  wrongCodeWordProcessAborted = "מילת קוד שגויה - התהליך מופסק";
+  configuration = 'המערכת היא עבור';
 }
 
 const defaultLang = new Language();
