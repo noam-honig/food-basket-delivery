@@ -720,9 +720,9 @@
     "valueInEnglish": "Completed"
   },
   "configuration": {
-    "google": "El sistema es para",
+    "google": "Configuración",
     "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "The system is for"
+    "valueInEnglish": "Configuration"
   },
   "confirm": {
     "google": "Confirmar",
@@ -917,7 +917,7 @@
   },
   "deleted": {
     "google": "Eliminado",
-    "valueInCode": "נמחוק",
+    "valueInCode": "נמחק",
     "valueInEnglish": "Deleted"
   },
   "deleteDeliveries": {
@@ -1729,6 +1729,11 @@
     "google": "Suelo",
     "valueInCode": "קומה",
     "valueInEnglish": "Floor"
+  },
+  "foodParcel": {
+    "google": "Paquete de comida",
+    "valueInCode": "סל מזון",
+    "valueInEnglish": "Food Parcel"
   },
   "for": {
     "google": "A",

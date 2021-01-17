@@ -818,5 +818,6 @@ export class italy {
   toConfirmPleaseTypeTheCodeWord = "Per confermare l'eliminazione, digita la parola in codice";
   deleted = 'Eliminato';
   wrongCodeWordProcessAborted = 'Parola in codice errata - processo interrotto';
-  configuration = 'Il sistema è per';
+  configuration = 'Configurazione';
+  foodParcel = 'Pacco alimentare';
 }

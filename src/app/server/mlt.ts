@@ -68,7 +68,7 @@ export async function createVolunteer(v: volunteer) {
     let context = await getMltContext();
     console.log("createVolunteer", JSON.stringify(v));
     try {
-        v.Telephone = PhoneColumn.fixPhoneInput(v.Telephone);
+        v.Telephone = PhoneColumn.fixPhoneInput(v.Telephone,context);
         let h = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(v.Telephone));
         if (h) {
             //h.eventComment.value += ', נרשום שוב באתר ב' + new Date().toLocaleDateString();
