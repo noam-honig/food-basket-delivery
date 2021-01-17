@@ -21,13 +21,14 @@ export class TranslationOptions {
     googleMapCountry: 'IL',
     bounds: israel
   });
-  static us: TranslationOptions = new TranslationOptions(3, 'United States', {
+  static us: TranslationOptions = new TranslationOptions(6, 'United States', {
     googleMapCountry: 'US',
     bounds: new myBounds(-171.791110603, 18.91619, -66.96466, 71.3577635769),
     leftToRight: true,
     languageCode: 'en',
     languageFile: 'en',
-    internationalPrefixForSmsAndAws: '+1'
+    internationalPrefixForSmsAndAws: '+1',
+    suppressPhoneZeroAddition:true
   });
   static donors: TranslationOptions = new TranslationOptions(1, 'מתחשבים', {
     googleMapCountry: 'IL',
@@ -97,7 +98,8 @@ export class TranslationOptions {
 
     basedOnLang?: string,
     translateFunction?: (s: string) => string,
-    internationalPrefixForSmsAndAws?: string
+    internationalPrefixForSmsAndAws?: string,
+    suppressPhoneZeroAddition?:boolean
   }) {
 
   }
@@ -951,6 +953,8 @@ export class Language {
   deleted = "נמחק";
   wrongCodeWordProcessAborted = "מילת קוד שגויה - התהליך מופסק";
   configuration = 'המערכת היא עבור';
+  foodParcel = 'סל מזון';
+  
 }
 
 const defaultLang = new Language();

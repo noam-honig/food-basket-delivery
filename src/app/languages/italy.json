@@ -302,7 +302,7 @@
   "areYouSureYouWantToDelete": {
     "google": "Sei sicuro di voler eliminare il file",
     "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
-    "valueInEnglish": "Are you sure you want to delete the"
+    "valueInEnglish": "Are you sure you want to delete "
   },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Sei sicuro di voler contrassegnare correttamente consegnato a",
@@ -720,9 +720,9 @@
     "valueInEnglish": "Completed"
   },
   "configuration": {
-    "google": "Il sistema è per",
+    "google": "Configurazione",
     "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "The system is for"
+    "valueInEnglish": "Configuration"
   },
   "confirm": {
     "google": "Confermare",
@@ -917,7 +917,7 @@
   },
   "deleted": {
     "google": "Eliminato",
-    "valueInCode": "נמחוק",
+    "valueInCode": "נמחק",
     "valueInEnglish": "Deleted"
   },
   "deleteDeliveries": {
@@ -1729,6 +1729,11 @@
     "google": "Pavimento",
     "valueInCode": "קומה",
     "valueInEnglish": "Floor"
+  },
+  "foodParcel": {
+    "google": "Pacco alimentare",
+    "valueInCode": "סל מזון",
+    "valueInEnglish": "Food Parcel"
   },
   "for": {
     "google": "Per",

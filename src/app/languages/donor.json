@@ -734,7 +734,7 @@
   },
   "deleted": {
     "google": "נמחוק",
-    "valueInCode": "נמחוק"
+    "valueInCode": "נמחק"
   },
   "deleteDeliveries": {
     "google": "מחק משלוחים",
@@ -1384,6 +1384,10 @@
   "floor": {
     "google": "קומה",
     "valueInCode": "קומה"
+  },
+  "foodParcel": {
+    "google": "סל מזון",
+    "valueInCode": "סל מזון"
   },
   "for": {
     "google": "ל",

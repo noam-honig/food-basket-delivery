@@ -819,4 +819,5 @@ export class soldier {
   deleted = 'נמחוק';
   wrongCodeWordProcessAborted = 'מילת קוד שגויה - התהליך מופסק';
   configuration = 'המערכת היא עבור';
+  foodParcel = 'סל מזון';
 }

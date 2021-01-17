@@ -1,6 +1,6 @@
 import * as radweb from '@remult/core';
 import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context, StringColumn } from '@remult/core';
-import { use } from '../translate';
+import { TranslationOptions, use } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
 import { isDesktop } from '../shared/utils';
@@ -44,30 +44,35 @@ export class PhoneColumn extends radweb.StringColumn {
   get displayValue() {
     return PhoneColumn.formatPhone(this.value);
   }
-  static fixPhoneInput(s: string) {
+  static fixPhoneInput(s: string, context: Context) {
     if (!s)
       return s;
     let orig = s;
     s = s.replace(/\D/g, '');
     if (orig.startsWith('+'))
       return '+' + s;
+    let forWho = getSettings(context).forWho.value;
+    if (forWho && forWho.args.suppressPhoneZeroAddition)
+      return s;
     if (s.length == 9 && s[0] != '0' && s[0] != '3')
       s = '0' + s;
     return s;
   }
 
   static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context) {
-    phone = PhoneColumn.fixPhoneInput(phone);
+    phone = PhoneColumn.fixPhoneInput(phone, context);
     if (phone.startsWith('0')) {
       phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
     }
+    if (getSettings(context).forWho.value.args.suppressPhoneZeroAddition&&!phone.startsWith('+'))
+      phone = getSettings(context).getInternationalPhonePrefix() + phone;
 
     if (phone.startsWith('+'))
       phone = phone.substr(1);
 
     window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
   }
-  
+
   static formatPhone(s: string) {
     if (!s)
       return s;
@@ -317,9 +322,9 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnCountWithAs(rootEntity: Entity, query: FromAndWhere, colName:string) {
+  columnCountWithAs(rootEntity: Entity, query: FromAndWhere, colName: string) {
     return this.columnDbName(rootEntity, {
-      select: () => [this.build("count(*) ",colName)],
+      select: () => [this.build("count(*) ", colName)],
       from: query.from,
       innerJoin: query.innerJoin,
       outerJoin: query.outerJoin,
@@ -327,9 +332,9 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnMaxWithAs(rootEntity: Entity,column:Column, query: FromAndWhere, colName:string) {
+  columnMaxWithAs(rootEntity: Entity, column: Column, query: FromAndWhere, colName: string) {
     return this.columnDbName(rootEntity, {
-      select: () => [this.build("max(",column,") ",colName)],
+      select: () => [this.build("max(", column, ") ", colName)],
       from: query.from,
       innerJoin: query.innerJoin,
       outerJoin: query.outerJoin,
@@ -678,7 +683,7 @@ export function logChanges(e: Entity, context: Context, args?: {
     try {
       p = Sites.getOrganizationFromContext(context);
     }
-    catch{
+    catch {
     }
     p += "/" + e.defs.name + "/" + e.columns.idColumn.value;
     if (e.isNew()) {
@@ -702,6 +707,6 @@ export function required(col: StringColumn, message?: string) {
 export function getValueFromResult(r: any, col: Column) {
   let result = r[col.defs.dbName.toLowerCase()];
   if (result === undefined)
-    console.error("couldn't find "+col.defs.key,r);
+    console.error("couldn't find " + col.defs.key, r);
   return result;
 }

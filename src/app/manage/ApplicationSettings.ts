@@ -232,7 +232,7 @@ export class ApplicationSettings extends Entity<number>  {
                 l.value = 'http://' + l.value.trim();
             }
           }
-          this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
+          this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value,context);
           if (this.forWho.value)
             setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
           setSettingsForSite(Sites.getValidSchemaFromContext(context), this);

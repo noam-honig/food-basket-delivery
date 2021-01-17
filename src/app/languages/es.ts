@@ -818,5 +818,6 @@ export class es {
   toConfirmPleaseTypeTheCodeWord = 'Para confirmar la eliminación, escriba la palabra de código';
   deleted = 'Eliminado';
   wrongCodeWordProcessAborted = 'Palabra de código incorrecta: proceso detenido';
-  configuration = 'El sistema es para';
+  configuration = 'Configuración';
+  foodParcel = 'Paquete de comida';
 }

@@ -98,7 +98,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async searchPhone() {
         this.clearHelperInfo(false);
-        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
+        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone, this.context);
 
         if (this.isValidPhone()) {
             this.phone = cleanPhone;
@@ -116,7 +116,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
     }
     isValidPhone() {
-        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone);
+        let cleanPhone = PhoneColumn.fixPhoneInput(this.phone, this.context);
 
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }

@@ -386,7 +386,7 @@ export class HelperFamiliesComponent implements OnInit {
       return;
     if (!fd.phone1.value.startsWith("05"))
       return;
-    let phone = PhoneColumn.fixPhoneInput(fd.phone1.value);
+    let phone = PhoneColumn.fixPhoneInput(fd.phone1.value, context);
     if (phone.length != 10) {
       console.log(phone + " doesn't match sms structure");
       return;
@@ -402,7 +402,7 @@ export class HelperFamiliesComponent implements OnInit {
       helpText,
       questionsArea: new DataAreaSettings({
         columnSettings: () => [
-          f.a1,f.a2,f.a3,f.a4
+          f.a1, f.a2, f.a3, f.a4
         ]
       }),
       ok: async (comment) => {
@@ -427,7 +427,7 @@ export class HelperFamiliesComponent implements OnInit {
           }
         }
       },
-      cancel: () => { 
+      cancel: () => {
         f.undoChanges()
       }
     });

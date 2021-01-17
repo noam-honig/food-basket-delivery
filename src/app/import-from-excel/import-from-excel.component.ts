@@ -402,7 +402,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
             catch (err) {
                 this.fileInput.nativeElement.value = '';
-                
+
                 throw err;
             }
             this.fileInput.nativeElement.value = '';
@@ -594,15 +594,18 @@ export class ImportFromExcelComponent implements OnInit {
             name: use.language.address,
             searchNames: [use.language.streetName],
             updateFamily: async (v, f) => {
-                let r = parseAddress(v);
-                if (r.address)
-                    updateCol(f.address, r.address);
-                if (r.dira)
-                    updateCol(f.appartment, r.dira);
-                if (r.floor)
-                    updateCol(f.floor, r.floor);
-                if (r.knisa)
-                    updateCol(f.entrance, r.knisa);
+                if (this.settings.lang.languageCode == 'iw') {
+                    let r = parseAddress(v);
+                    if (r.address)
+                        updateCol(f.address, r.address);
+                    if (r.dira)
+                        updateCol(f.appartment, r.dira);
+                    if (r.floor)
+                        updateCol(f.floor, r.floor);
+                    if (r.knisa)
+                        updateCol(f.entrance, r.knisa);
+                }
+                else f.address.value = v;
             },
             columns: [this.f.address, this.f.appartment, this.f.floor, this.f.entrance]
         });
@@ -742,7 +745,7 @@ export class ImportFromExcelComponent implements OnInit {
 
             updateFamily: async (v, f, h) => {
                 h.gotVolunteerPhone = true;
-                v = PhoneColumn.fixPhoneInput(v);
+                v = PhoneColumn.fixPhoneInput(v, this.context);
                 await h.lookupAndInsert(Helpers, h => h.phone, v, h => h.id, h.fd.courier, x => {
                     x.name.value = 'מתנדב ' + v;
                 });
@@ -1052,7 +1055,7 @@ export class ImportFromExcelComponent implements OnInit {
 
     private buildUpdatedColumns() {
         let updatedColumns = new Map<Column, boolean>();
-        this.additionalColumns = this.additionalColumns.filter(x=>x.column);
+        this.additionalColumns = this.additionalColumns.filter(x => x.column);
         //updatedColumns.set(this.f.status, true);
         for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
             if (cu)
