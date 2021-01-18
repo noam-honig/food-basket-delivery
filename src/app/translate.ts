@@ -806,6 +806,7 @@ export class Language {
   eventsComponent = "ארועים";
   weeklyReportMltComponent = "דוח שבועי מתחשבים";
   HelperGiftsComponent = "באר המשאלות";
+  SigningURLComponent = "ניהול אתרי רישום";
   pleaseRegisterToTheFollowingEvents = "אנא הרשמו לאירועים הקרובים";
   illBeThere = "רשום אותי לארוע זה";
   registeredToEvent = "הנך רשום לארוע זה";

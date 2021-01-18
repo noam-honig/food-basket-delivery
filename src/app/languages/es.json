@@ -299,11 +299,6 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInEnglish": "Are you sure you want to cancel assignment to"
   },
-  "areYouSureYouWantToDelete": {
-    "google": "¿Está seguro de que desea eliminar el",
-    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
-    "valueInEnglish": "Are you sure you want to delete "
-  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "¿Está seguro de que desea marcar como entregado con éxito a",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
@@ -659,11 +654,6 @@
     "valueInCode": "תרומות באיזור הקרוב",
     "valueInEnglish": "Donations in the near area"
   },
-  "codeWord": {
-    "google": "Palabra de código",
-    "valueInCode": "מילת קוד",
-    "valueInEnglish": "Code word"
-  },
   "columnSelectionInFile": {
     "google": "Columnas en la selección de archivos",
     "valueInCode": "בחירת עמודות בקובץ",
@@ -718,11 +708,6 @@
     "google": "Terminado",
     "valueInCode": "הושלמו",
     "valueInEnglish": "Completed"
-  },
-  "configuration": {
-    "google": "El sistema es para",
-    "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "The system is for"
   },
   "confirm": {
     "google": "Confirmar",
@@ -914,11 +899,6 @@
     "google": "Definir entregas para todas las familias importadas del archivo Excel",
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
     "valueInEnglish": "Define deliveries for all families imported from Excel file"
-  },
-  "deleted": {
-    "google": "Eliminado",
-    "valueInCode": "נמחוק",
-    "valueInEnglish": "Deleted"
   },
   "deleteDeliveries": {
     "google": "Eliminar entregas",
@@ -3661,11 +3641,6 @@
     "valueInCode": "ל",
     "valueInEnglish": "To"
   },
-  "toConfirmPleaseTypeTheCodeWord": {
-    "google": "Para confirmar la eliminación, escriba la palabra de código",
-    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד ",
-    "valueInEnglish": "To confirm the deletion, please type the code word"
-  },
   "toDate": {
     "google": "Hasta",
     "valueInCode": "עד תאריך",
@@ -4080,11 +4055,6 @@
     "google": "dentro",
     "valueInCode": "תוך",
     "valueInEnglish": "within"
-  },
-  "wrongCodeWordProcessAborted": {
-    "google": "Palabra de código incorrecta: proceso detenido",
-    "valueInCode": "מילת קוד שגויה - התהליך מופסק",
-    "valueInEnglish": "Wrong code word - process stopped"
   },
   "yes": {
     "google": "si",

@@ -299,11 +299,6 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInEnglish": "Are you sure you want to cancel assignment to"
   },
-  "areYouSureYouWantToDelete": {
-    "google": "Sei sicuro di voler eliminare il file",
-    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
-    "valueInEnglish": "Are you sure you want to delete the"
-  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Sei sicuro di voler contrassegnare correttamente consegnato a",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
@@ -659,11 +654,6 @@
     "valueInCode": "תרומות באיזור הקרוב",
     "valueInEnglish": "Donations in the near area"
   },
-  "codeWord": {
-    "google": "Parola in codice",
-    "valueInCode": "מילת קוד",
-    "valueInEnglish": "Code word"
-  },
   "columnSelectionInFile": {
     "google": "Colonne nella selezione dei file",
     "valueInCode": "בחירת עמודות בקובץ",
@@ -718,11 +708,6 @@
     "google": "Completato",
     "valueInCode": "הושלמו",
     "valueInEnglish": "Completed"
-  },
-  "configuration": {
-    "google": "Il sistema è per",
-    "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "The system is for"
   },
   "confirm": {
     "google": "Confermare",
@@ -914,11 +899,6 @@
     "google": "Definire le consegne per tutte le famiglie importate dal file Excel",
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
     "valueInEnglish": "Define deliveries for all families imported from Excel file"
-  },
-  "deleted": {
-    "google": "Eliminato",
-    "valueInCode": "נמחוק",
-    "valueInEnglish": "Deleted"
   },
   "deleteDeliveries": {
     "google": "Elimina consegne",
@@ -3661,11 +3641,6 @@
     "valueInCode": "ל",
     "valueInEnglish": "To"
   },
-  "toConfirmPleaseTypeTheCodeWord": {
-    "google": "Per confermare l'eliminazione, digita la parola in codice",
-    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד ",
-    "valueInEnglish": "To confirm the deletion, please type the code word"
-  },
   "toDate": {
     "google": "Fino a",
     "valueInCode": "עד תאריך",
@@ -4080,11 +4055,6 @@
     "google": "entro",
     "valueInCode": "תוך",
     "valueInEnglish": "within"
-  },
-  "wrongCodeWordProcessAborted": {
-    "google": "Parola in codice errata - processo interrotto",
-    "valueInCode": "מילת קוד שגויה - התהליך מופסק",
-    "valueInEnglish": "Wrong code word - process stopped"
   },
   "yes": {
     "google": "sì",

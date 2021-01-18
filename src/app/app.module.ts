@@ -90,6 +90,8 @@ import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/voluntee
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
 import { PlatformModule } from '@angular/cdk/platform';
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
+import { SigningURLComponent } from './signing-url/signing-url.component';
+
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
@@ -185,6 +187,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     VolunteerCrossAssignComponent,
     WeeklyReportMltComponent,
     HelperGiftsComponent,
+    SigningURLComponent,
     GeneralImportFromExcelComponent,
     MyGiftsDialogComponent,
     MltFamiliesComponent
@@ -302,6 +305,8 @@ export function initApp(session: JwtSessionManager, settings: SettingsService) {
       routeMap.set(WeeklyReportMltComponent, l.weeklyReportMltComponent);
 
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
+      routeMap.set(SigningURLComponent, l.SigningURLComponent);
+      
 
 
 
