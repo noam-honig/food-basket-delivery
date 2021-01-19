@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Context, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
-import { RegisterURL } from './signing-url';
+import { RegisterURL } from './regsiter-url';
 
 @Component({
-  selector: 'app-signing-url',
-  templateUrl: './signing-url.component.html',
-  styleUrls: ['./signing-url.component.scss']
+  selector: 'app-register-url',
+  templateUrl: './register-url.component.html',
+  styleUrls: ['./register-url.component.scss']
 })
 
 export class SigningURLComponent implements OnInit {
@@ -27,16 +27,12 @@ export class SigningURLComponent implements OnInit {
         if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
           question: 'האם להוסיף נתונים מטבלאות תורמים ומתנדבים?'
         }, q => q.yes)) {
-          this.updateFromTables();
+          await RegisterURL.loadUrlsFromTables();
+          await this.urls.getRecords();
         }
       }
     }]
   });
-
-
-  updateFromTables() {
-    RegisterURL.loadUrlsFromTables()
-  }
 
   ngOnInit() { }
 

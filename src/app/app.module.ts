@@ -90,7 +90,7 @@ import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/voluntee
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
 import { PlatformModule } from '@angular/cdk/platform';
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
-import { SigningURLComponent } from './signing-url/signing-url.component';
+import { SigningURLComponent } from './resgister-url/regsiter-url.component';
 
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';

@@ -12,6 +12,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries, MessageStatus } from '../fami
 import { FamilyStatus } from '../families/FamilyStatus';
 import { Helpers } from '../helpers/helpers';
 import { SqlBuilder } from '../model-shared/types';
+import { RegisterURL, urlDbOperator } from '../resgister-url/regsiter-url';
 
 @Component({
   selector: 'app-weekly-report-mlt',
@@ -60,12 +61,16 @@ export class WeeklyReportMltComponent implements OnInit {
     }
 
     let volData = await WeeklyReportMltComponent.getVolunteersData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalVolunteers = volData.total;
-    this.addedVolunteers = volData.added;
+    this.totalVolunteers = 0;
+    volData.forEach(x => {this.totalVolunteers += +x['total']});
+    this.addedVolunteers = 0;
+    volData.forEach(x => {this.addedVolunteers += +x['added']});
 
     let donorsData = await WeeklyReportMltComponent.getDonorsData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalDonors = donorsData.total;
-    this.addedDonors = donorsData.added;
+    this.totalDonors = 0;
+    donorsData.forEach(x => {this.totalDonors += +x['total']});
+    this.addedDonors = 0;
+    donorsData.forEach(x => {this.addedDonors += +x['added']});
 
     this.avgFamiliesPerVolunteer = await WeeklyReportMltComponent.getVolunteerAverage(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
     
@@ -114,22 +119,26 @@ export class WeeklyReportMltComponent implements OnInit {
     var toDateDate = DateColumn.stringToDate(toDate);
       
     let h = context.for(Helpers).create();
+    let u = context.for(RegisterURL).create();
+
     let sql = new SqlBuilder();
-    sql.addEntity(h,"Helpers")
-    let counters = (await db.execute(sql.build(sql.query({
+    //sql.addEntity(h,"Helpers")
+      
+    let q = sql.build(sql.query({
         select: () => [
+          u.prettyName,
           sql.build('count (*) total'),
           sql.build('sum (', sql.case([{ when: [h.createDate.isLessOrEqualTo(toDateDate).and(h.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
         ],
         from: h,
+        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(h.referredBy), ' like ',u.URL)] }],
         where: () => [h.archive.isEqualTo(false)]
-    })))).rows[0];
+      }), ' group by ', u.prettyName
+    );
 
-    let total = counters['total'];
-    let added = counters['added'];
-
-    return {total, added};
-    
+    console.log(q);
+    let counters = (await db.execute(q)).rows;
+    return counters;
   }
 
 
@@ -138,23 +147,26 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
       
+    let u = context.for(RegisterURL).create();
     let f = context.for(Families).create();
     let sql = new SqlBuilder();
-    sql.addEntity(f,"Families")
-    let counters = (await db.execute(sql.build(sql.query({
+    //sql.addEntity(f,"Families")
+    
+    let q = sql.build(sql.query({
         select: () => [
+          u.prettyName,
           sql.build('count (*) total'),
           sql.build('sum (', sql.case([{ when: [f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
         ],
         from: f,
+        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(f.custom1), ' like ',u.URL)] }],
         where: () => [f.status.isEqualTo(FamilyStatus.Active)]
-    })))).rows[0];
-
-    let total = counters['total'];
-    let added = counters['added'];
-
-    return {total, added};
-    
+      }), ' group by ', u.prettyName
+    );
+  
+    console.log(q);
+    let counters = (await db.execute(q)).rows;
+    return counters;
   }
 
 
