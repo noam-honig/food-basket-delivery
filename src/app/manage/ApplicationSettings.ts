@@ -1,4 +1,4 @@
-import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction } from '@remult/core';
+import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction, Allowed } from '@remult/core';
 import { GeocodeInformation, GetGeoInformation, AddressColumn } from "../shared/googleApiHelpers";
 import { Entity, Context, EntityClass } from '@remult/core';
 import { PhoneColumn, logChanges } from "../model-shared/types";
@@ -232,7 +232,7 @@ export class ApplicationSettings extends Entity<number>  {
                 l.value = 'http://' + l.value.trim();
             }
           }
-          this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value);
+          this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value,context);
           if (this.forWho.value)
             setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
           setSettingsForSite(Sites.getValidSchemaFromContext(context), this);
@@ -352,14 +352,14 @@ export class SettingsService {
 
     BasketType.boxes1Name = this.instance.boxes1Name.value;
     BasketType.boxes2Name = this.instance.boxes2Name.value;
-    setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
-    setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
-    setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values);
-    setCustomColumnInfo(customColumnInfo[4], this.instance.familyCustom4Caption, this.instance.familyCustom4Values);
-    setCustomColumnInfo(questionForVolunteers[1], this.instance.questionForVolunteer1Caption, this.instance.questionForVolunteer1Values);
-    setCustomColumnInfo(questionForVolunteers[2], this.instance.questionForVolunteer2Caption, this.instance.questionForVolunteer2Values);
-    setCustomColumnInfo(questionForVolunteers[3], this.instance.questionForVolunteer3Caption, this.instance.questionForVolunteer3Values);
-    setCustomColumnInfo(questionForVolunteers[4], this.instance.questionForVolunteer4Caption, this.instance.questionForVolunteer4Values);
+    setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values, Roles.admin);
+    setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values, Roles.admin);
+    setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values, Roles.admin);
+    setCustomColumnInfo(customColumnInfo[4], this.instance.familyCustom4Caption, this.instance.familyCustom4Values, Roles.admin);
+    setCustomColumnInfo(questionForVolunteers[1], this.instance.questionForVolunteer1Caption, this.instance.questionForVolunteer1Values, true);
+    setCustomColumnInfo(questionForVolunteers[2], this.instance.questionForVolunteer2Caption, this.instance.questionForVolunteer2Values, true);
+    setCustomColumnInfo(questionForVolunteers[3], this.instance.questionForVolunteer3Caption, this.instance.questionForVolunteer3Values, true);
+    setCustomColumnInfo(questionForVolunteers[4], this.instance.questionForVolunteer4Caption, this.instance.questionForVolunteer4Values, true);
 
 
   }
@@ -392,7 +392,7 @@ export class CustomColumn extends StringColumn {
   constructor(private info: customColumnInfo) {
     super({
       caption: info.caption,
-      allowApiUpdate: Roles.admin,
+      allowApiUpdate: info.role,
       dataControlSettings: () => ({
         valueList: info.values,
         visible: () => info.visible
@@ -401,11 +401,12 @@ export class CustomColumn extends StringColumn {
   }
   visible = this.info.visible;
 }
-export function setCustomColumnInfo(v: customColumnInfo, caption: StringColumn, values: StringColumn) {
-  
+export function setCustomColumnInfo(v: customColumnInfo, caption: StringColumn, values: StringColumn, role: Allowed) {
+
   v.visible = !!caption.value;
   v.caption = caption.value;
   v.values = undefined;
+  v.role = role;
   if (values.value) {
     v.values = values.value.split(',').map(x => x.trim());
   }
@@ -428,7 +429,8 @@ export function getSettings(context: Context) {
 interface customColumnInfo {
   caption?: string,
   visible?: boolean,
-  values?: string[]
+  values?: string[],
+  role?: Allowed
 }
 export function includePhoneInApi(context: Context) {
   var s = getSettings(context);

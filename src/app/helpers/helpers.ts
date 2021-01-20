@@ -85,8 +85,8 @@ export abstract class HelpersBase extends IdEntity {
     });
 
     frozenTill = new DateColumn({
-        allowApiUpdate: Roles.admin,
-        includeInApi: Roles.admin,
+        allowApiUpdate: this.context.isSignedIn(),
+        includeInApi: this.context.isSignedIn(),
         caption: getLang(this.context).frozenTill
     });
 
@@ -371,7 +371,7 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
-                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value);
+                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value,this.context);
                     if (!this._disableDuplicateCheck)
                         await checkForDuplicateValue(this, this.phone, context.for(Helpers), getLang(this.context).alreadyExist);
                     if (this.isNew())

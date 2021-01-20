@@ -172,8 +172,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
           if (h.archive.value)
             await h.reactivate();
           else {
-            await h.deactivate();
-            this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
+            if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
+              question: getLang(this.context).areYouSureYouWantToDelete + ' ' + h.name.value + '?'
+            }, q => q.yes)) {
+              await h.deactivate();
+              this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
+            }
           }
         }
       },

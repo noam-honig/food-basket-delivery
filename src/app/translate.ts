@@ -21,7 +21,16 @@ export class TranslationOptions {
     googleMapCountry: 'IL',
     bounds: israel
   });
-  static donors: TranslationOptions = new TranslationOptions(1, 'תורמים', {
+  static us: TranslationOptions = new TranslationOptions(6, 'United States', {
+    googleMapCountry: 'US',
+    bounds: new myBounds(-171.791110603, 18.91619, -66.96466, 71.3577635769),
+    leftToRight: true,
+    languageCode: 'en',
+    languageFile: 'en',
+    internationalPrefixForSmsAndAws: '+1',
+    suppressPhoneZeroAddition:true
+  });
+  static donors: TranslationOptions = new TranslationOptions(1, 'מתחשבים', {
     googleMapCountry: 'IL',
     bounds: israel,
     languageFile: 'donor',
@@ -58,6 +67,7 @@ export class TranslationOptions {
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+27'
   });
+  
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     bounds: new myBounds(6.7499552751, 36.619987291, 18.4802470232, 47.1153931748),
     googleMapCountry: 'IT',
@@ -88,7 +98,8 @@ export class TranslationOptions {
 
     basedOnLang?: string,
     translateFunction?: (s: string) => string,
-    internationalPrefixForSmsAndAws?: string
+    internationalPrefixForSmsAndAws?: string,
+    suppressPhoneZeroAddition?:boolean
   }) {
 
   }
@@ -103,7 +114,7 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
       })
     });
     if (!this.defs.caption)
-      this.defs.caption = 'המערכת היא עבור';
+      this.defs.caption =use.language.configuration ;
   }
 
 }
@@ -936,6 +947,14 @@ export class Language {
   done = 'טופל';
   copyLinkForVolunteer = "העתק קישור לרישום עצמי של מתנדבים";
   saveAndPreview = "שמירה ותצוגה מקדימה";
+  areYouSureYouWantToDelete = "האם אתה בטוח שאתה רוצה למחוק ";
+  codeWord = 'מילת קוד';
+  toConfirmPleaseTypeTheCodeWord = "לאישור המחיקה אנא הקלד את מילת הקוד ";
+  deleted = "נמחק";
+  wrongCodeWordProcessAborted = "מילת קוד שגויה - התהליך מופסק";
+  configuration = 'המערכת היא עבור';
+  foodParcel = 'סל מזון';
+  
 }
 
 const defaultLang = new Language();

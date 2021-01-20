@@ -813,4 +813,11 @@ export class es {
   done = 'Hecho';
   copyLinkForVolunteer = 'Copie un enlace para el autoregistro de voluntarios';
   saveAndPreview = 'Guardar y obtener una vista previa';
+  areYouSureYouWantToDelete = '¿Está seguro de que desea eliminar el';
+  codeWord = 'Palabra de código';
+  toConfirmPleaseTypeTheCodeWord = 'Para confirmar la eliminación, escriba la palabra de código';
+  deleted = 'Eliminado';
+  wrongCodeWordProcessAborted = 'Palabra de código incorrecta: proceso detenido';
+  configuration = 'Configuración';
+  foodParcel = 'Paquete de comida';
 }

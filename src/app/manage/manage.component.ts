@@ -292,7 +292,7 @@ export class ManageComponent implements OnInit {
       [this.settings.questionForVolunteer3Caption, this.settings.questionForVolunteer3Values],
       [this.settings.questionForVolunteer4Caption, this.settings.questionForVolunteer4Values]
 
-    
+
 
 
 
@@ -300,7 +300,7 @@ export class ManageComponent implements OnInit {
   });
   settings2Messages = new DataAreaSettings({
     columnSettings: s => [
-  
+
 
       this.settings.messageForDoneDelivery,
       this.settings.message1Text,
@@ -363,12 +363,12 @@ export class ManageComponent implements OnInit {
         this.settings.showDistCenterAsEndAddressForVolunteer,
         this.settings.defaultPrefixForExcelImport,
         this.settings.redTitleBar,
-        this.settings.forWho,
         this.settings.manageEscorts,
         [this.settings.familyCustom1Caption, this.settings.familyCustom1Values],
         [this.settings.familyCustom2Caption, this.settings.familyCustom2Values],
         [this.settings.familyCustom3Caption, this.settings.familyCustom3Values],
-        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values]
+        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values],
+        this.settings.forWho,
       ];
 
       if (this.settings.isSytemForMlt())
@@ -505,29 +505,33 @@ export class ManageComponent implements OnInit {
       'data:image;base64,' + this.images.currentRow.base64Icon.value);
   }
   async deleteFamilies() {
-    let codeWord = new StringColumn('מילת קוד');
-    let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן"];
+    let codeWord = new StringColumn(this.settings.lang.codeWord);
+    let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן", "חגי", "נגה"];
+    if (!(this.settings.lang.languageCode == 'iw')) {
+      codeWords = ["Noam", "Yoni", "Itamar", "Maayan", "Nitzan", "Hagai", "Noga", "Ofri"]
+
+    }
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
     let count = await this.context.for(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
-    if (!await this.dialog.YesNoPromise("האם אתה בטוח שאתה רוצה למחוק " + count + " משפחות?"))
+    if (!await this.dialog.YesNoPromise(this.settings.lang.areYouSureYouWantToDelete + " " + count + this.settings.lang.families + "?"))
       return;
     await this.context.openDialog(InputAreaComponent, x => {
       x.args = {
-        title: 'אנא הקלד "' + correctCodeWord + '" בשדה מילת קוד לאישור המחיקה',
+        title: this.settings.lang.toConfirmPleaseTypeTheCodeWord + '"' + correctCodeWord + '"',
         settings: { columnSettings: () => [codeWord] }, ok: () => doIt = true, cancel: () => doIt = false
       }
     })
     if (!doIt)
       return;
     if (codeWord.value != correctCodeWord) {
-      this.dialog.Error("מילת קוד שגויה - התהליך מופסק");
+      this.dialog.Error(this.settings.lang.wrongCodeWordProcessAborted);
       return;
     }
     let r = await ManageComponent.deleteFamiliesOnServer();
-    this.dialog.Info('נמחקו ' + r + ' משפחות');
+    this.dialog.Info(this.settings.lang.deleted + ' ' + r + ' ' + this.settings.lang.families);
   }
-  resetToDefault() {
+  async resetToDefault() {
     this.settings.id.value = 1;
 
     this.settings.smsText.value = this.settings.lang.defaultSmsText;
@@ -539,6 +543,18 @@ export class ManageComponent implements OnInit {
     this.settings.deliveredButtonText.value = this.settings.lang.deliveredButtonText;
     this.settings.boxes1Name.value = this.settings.lang.boxes1Name;
     this.settings.boxes2Name.value = this.settings.lang.boxes2Name;
+    var b = await this.context.for(BasketType).findFirst();
+    if (b) {
+      b.name.value = this.settings.lang.foodParcel;
+      await b.save();
+      this.basketType.getRecords();
+    }
+    let d = await this.context.for(DistributionCenters).findFirst();
+    if (d) {
+      d.name.value = this.settings.lang.defaultDistributionListName;
+      await d.save();
+      this.distributionCenters.getRecords();
+    }
   }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
