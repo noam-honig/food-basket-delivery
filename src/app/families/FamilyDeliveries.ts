@@ -47,9 +47,9 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
 
-            case DeliveryStatus.FailedNotReady: 
-            case DeliveryStatus.FailedTooFar: 
-              
+            case DeliveryStatus.FailedNotReady:
+            case DeliveryStatus.FailedTooFar:
+
             case DeliveryStatus.FailedOther:
                 status = getLang(this.context).problem;
                 break;
@@ -449,7 +449,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     staticGetShortDescription(deliverStatus: DeliveryStatusColumn, deliveryStatusDate: changeDate, courier: HelperId, courierComments: StringColumn) {
         let r = deliverStatus.displayValue + " ";
-        if (DeliveryStatus.IsAResultStatus(deliverStatus.value)) {
+        if (DeliveryStatus.IsAResultStatus(deliverStatus.value) && deliveryStatusDate.value) {
             if (deliveryStatusDate.value.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
                 r += getLang(this.context).on + " " + deliveryStatusDate.value.toLocaleDateString("he-il");
             else
@@ -493,7 +493,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedNotReady:
-            case DeliveryStatus.FailedTooFar: 
+            case DeliveryStatus.FailedTooFar:
             case DeliveryStatus.FailedOther:
                 let duration = '';
                 if (this.courierAssingTime.value && this.deliveryStatusDate.value)
@@ -574,7 +574,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedNotHome:
             case DeliveryStatus.FailedDoNotWant:
             case DeliveryStatus.FailedNotReady:
-            case DeliveryStatus.FailedTooFar: 
+            case DeliveryStatus.FailedTooFar:
             case DeliveryStatus.FailedOther:
                 this.needsWork.value = true;
                 break;
@@ -658,7 +658,7 @@ export class FamilyDeliveries extends IdEntity {
                     { column: this.distributionCenter, visible: () => dialog.hasManyCenters },
                     this.needsWork,
                     this.courierComments,
-                    this.a1,this.a2,this.a3,this.a4,
+                    this.a1, this.a2, this.a3, this.a4,
                     this.internalDeliveryComment,
                     this.special,
                 ]
