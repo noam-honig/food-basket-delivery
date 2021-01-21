@@ -52,6 +52,7 @@ export class RegisterURL extends IdEntity {
                     console.log("adding entry for: ", url);
                     g = context.for(RegisterURL).create();
                     g.URL.value = url;
+                    g.prettyName.value = url;
                     await g.save();
                 }
             }
