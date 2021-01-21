@@ -239,10 +239,6 @@
     "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
   },
-  "areYouSureYouWantToDelete": {
-    "google": "האם אתה בטוח שאתה רוצה למחוק את",
-    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק "
-  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
@@ -527,10 +523,6 @@
     "google": "תרומות באיזור הקרוב",
     "valueInCode": "תרומות באיזור הקרוב"
   },
-  "codeWord": {
-    "google": "מילת קוד",
-    "valueInCode": "מילת קוד"
-  },
   "columnSelectionInFile": {
     "google": "בחירת עמודות בקובץ",
     "valueInCode": "בחירת עמודות בקובץ"
@@ -574,10 +566,6 @@
   "completed": {
     "google": "הושלמו",
     "valueInCode": "הושלמו"
-  },
-  "configuration": {
-    "google": "המערכת היא עבור",
-    "valueInCode": "המערכת היא עבור"
   },
   "confirm": {
     "google": "אשר",
@@ -2931,10 +2919,6 @@
     "google": "ל",
     "valueInCode": "ל"
   },
-  "toConfirmPleaseTypeTheCodeWord": {
-    "google": "לאישור המחיקה אנא הקלד את מילת הקוד ",
-    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד "
-  },
   "toDate": {
     "google": "עד תאריך",
     "valueInCode": "עד תאריך"
@@ -3266,10 +3250,6 @@
   "within": {
     "google": "תוך",
     "valueInCode": "תוך"
-  },
-  "wrongCodeWordProcessAborted": {
-    "google": "מילת קוד שגויה - התהליך מופסק",
-    "valueInCode": "מילת קוד שגויה - התהליך מופסק"
   },
   "yes": {
     "google": "כן",

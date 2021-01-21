@@ -299,11 +299,6 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInEnglish": "Are you sure you want to cancel assignment to"
   },
-  "areYouSureYouWantToDelete": {
-    "google": "¿Está seguro de que desea eliminar el",
-    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
-    "valueInEnglish": "Are you sure you want to delete "
-  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "¿Está seguro de que desea marcar como entregado con éxito a",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
@@ -658,11 +653,6 @@
     "google": "Donaciones en el área cercana",
     "valueInCode": "תרומות באיזור הקרוב",
     "valueInEnglish": "Donations in the near area"
-  },
-  "codeWord": {
-    "google": "Palabra de código",
-    "valueInCode": "מילת קוד",
-    "valueInEnglish": "Code word"
   },
   "columnSelectionInFile": {
     "google": "Columnas en la selección de archivos",
@@ -3666,11 +3656,6 @@
     "valueInCode": "ל",
     "valueInEnglish": "To"
   },
-  "toConfirmPleaseTypeTheCodeWord": {
-    "google": "Para confirmar la eliminación, escriba la palabra de código",
-    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד ",
-    "valueInEnglish": "To confirm the deletion, please type the code word"
-  },
   "toDate": {
     "google": "Hasta",
     "valueInCode": "עד תאריך",
@@ -4085,11 +4070,6 @@
     "google": "dentro",
     "valueInCode": "תוך",
     "valueInEnglish": "within"
-  },
-  "wrongCodeWordProcessAborted": {
-    "google": "Palabra de código incorrecta: proceso detenido",
-    "valueInCode": "מילת קוד שגויה - התהליך מופסק",
-    "valueInEnglish": "Wrong code word - process stopped"
   },
   "yes": {
     "google": "si",

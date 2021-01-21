@@ -48,9 +48,8 @@ import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-u
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
-import { HelperGifts } from './helper-gifts/HelperGifts';
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
-
+import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 
 
 @Injectable()
@@ -123,6 +122,8 @@ export const routes: Routes = [
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard] },
   { path: 'helper-gifts', component: HelperGiftsComponent, canActivate: [MltAdminGuard] },
+  { path: 'register-url', component: RegisterURLComponent, canActivate: [MltAdminGuard] },
+  
   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
   { path: 'events', component: EventsComponent, canActivate: [AdminGuard] },

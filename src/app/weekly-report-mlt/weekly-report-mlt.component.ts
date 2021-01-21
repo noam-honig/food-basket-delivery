@@ -12,6 +12,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries, MessageStatus } from '../fami
 import { FamilyStatus } from '../families/FamilyStatus';
 import { Helpers } from '../helpers/helpers';
 import { SqlBuilder } from '../model-shared/types';
+import { RegisterURL, urlDbOperator } from '../resgister-url/regsiter-url';
 
 @Component({
   selector: 'app-weekly-report-mlt',
@@ -26,85 +27,105 @@ export class WeeklyReportMltComponent implements OnInit {
   constructor(public context: Context) { }
 
   
-  totalDonations = 0;
-  addedDonations = 0;
-  addedCollected = 0;
-  addedReceived = 0;
-//  totalPerBasket: {basketType: string, total: number, added: number, collected: number, received: number} [] = [];
   totalPerBasket = [];
+  allBaskets = new Set();
+  donorsData = [];
+  volData = [];
 
-  totalVolunteers = 0;
-  totalDonors = 0;
-  addedVolunteers = 0;
-  addedDonors = 0;
+  registerUrls = new Set();
+  selectedUrl = '';
 
   avgFamiliesPerVolunteer = '0';
 
   ngOnInit() {
+  }
+  ngAfterViewInit() {
     this.refresh();
   }
 
   async refresh() {
-    let totals = await WeeklyReportMltComponent.getEquipmentStatusTotals(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalPerBasket = totals;
-    this.totalDonations = 0;
-    this.addedDonations = 0;
-    this.addedCollected = 0;
-    this.addedReceived = 0;
-  for (const b of totals) {
-      this.totalDonations += b.total;
-      this.addedDonations += b.added;
-      this.addedCollected += b.collected;
-      this.addedReceived += b.received;
-    
-    }
+    RegisterURL.loadUrlsFromTables();
+    this.totalPerBasket = await WeeklyReportMltComponent.getEquipmentStatusTotals(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
+    this.allBaskets.clear();
+    this.totalPerBasket.forEach(item=>{
+      if (!this.allBaskets.has(item.baskettype) && (item.baskettype) && (item.baskettype!='')) {
+        this.allBaskets.add(item.baskettype)
+      }
+    });
 
-    let volData = await WeeklyReportMltComponent.getVolunteersData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalVolunteers = volData.total;
-    this.addedVolunteers = volData.added;
+    this.volData = await WeeklyReportMltComponent.getVolunteersData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
+    this.donorsData = await WeeklyReportMltComponent.getDonorsData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
 
-    let donorsData = await WeeklyReportMltComponent.getDonorsData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalDonors = donorsData.total;
-    this.addedDonors = donorsData.added;
+    let mergedArray = [...this.volData, ...this.donorsData, ...this.totalPerBasket]
+
+    mergedArray.forEach(item => {
+      if (!this.registerUrls.has(item.prettyname)) {
+        this.registerUrls.add(item.prettyname)
+      }
+    });
 
     this.avgFamiliesPerVolunteer = await WeeklyReportMltComponent.getVolunteerAverage(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
     
   }
 
+  getDonationsSummary(key: string, basket?: string, url?: string) {
+    let object = this.totalPerBasket.find(item=>{
+      return ((item.URLGroup == (!url)) || (item.prettyname==url)) &&
+             ((item.URLGroup == (!basket)) || (item.baskettype==basket));
+    });
+    if (!object) return "NONE";
+    return +object[key];
+  }
+
+  getDonorsData(key:string, url?: string) {
+    let object = this.donorsData.find(item=>{
+      return ((item.URLGroup == (!url)) || (item.prettyname==url));
+    });
+    if (!object) return "NONE";
+    return +object[key];
+  }
+
+  getVolData(key:string, url?: string) {
+    let object = this.volData.find(item=>{
+      return ((item.URLGroup == (!url)) || (item.prettyname==url));
+    });
+    if (!object) return "NONE";
+    return +object[key];
+  }
+
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
-    let totalPerBasket: {basketType: string, total: number, added: number, collected: number, received: number} [] = [];
+    let totalPerBasket: {URL: string, basketType: string, total: number, added: number, collected: number, received: number} [] = [];
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
 
       
-    let f = context.for(FamilyDeliveries).create();
-    let sql = new SqlBuilder();
-    sql.addEntity(f,"FamilyDeliveries")
-    let baskets = await db.execute(sql.build(sql.query({
-        select: () => [f.basketType,
-          sql.build('sum (', sql.case([{ when: [f.deliverStatus.isNotProblem()], then: f.quantity }], 0), ') total'),
-          sql.build('sum (', sql.case([{ when: [f.deliverStatus.isNotProblem().and(f.createDate.isLessOrEqualTo(toDateDate)).and(f.createDate.isGreaterThan(fromDateDate))], then: f.quantity }], 0), ') added'),
-          sql.build('sum (', sql.case([{ when: [f.deliverStatus.isSuccess().and(f.createDate.isLessOrEqualTo(toDateDate)).and(f.createDate.isGreaterThan(fromDateDate))], then: f.quantity }], 0), ') collected'),
-          sql.build('sum (', sql.case([{ when: [f.notActive().and(f.deliverStatus.isSuccess().and(f.createDate.isLessOrEqualTo(toDateDate)).and(f.createDate.isGreaterThan(fromDateDate)))], then: f.quantity }], 0), ') received'),
-        ],
-        from: f,
-        where: () => ['true']
-    }), ' group by ', f.basketType));
-    for (const r of baskets.rows) {
-        let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-        let b = await context.for(BasketType).lookupAsync(b=>b.id.isEqualTo(basketId));
-        totalPerBasket.push({
-            basketType: b.name.value,
-            total: +r['total'],
-            added: +r['added'],
-            collected: +r['collected'],
-            received: +r['received']
-        });
-    }
+    let fd = context.for(FamilyDeliveries).create();
+    let u = context.for(RegisterURL).create();
 
-    return totalPerBasket;
-    
+    let sql = new SqlBuilder();
+    sql.addEntity(fd,"fd")
+
+    let q = sql.build(sql.query({
+        select: () => [
+          sql.build('grouping(',fd.basketType,') basketGroup'),
+          fd.basketType,
+          sql.build('grouping(',u.prettyName,') URLGroup'),
+          u.prettyName,
+          sql.build('sum (', sql.case([{ when: [fd.deliverStatus.isNotProblem()], then: fd.quantity }], 0), ') total'),
+          sql.build('sum (', sql.case([{ when: [fd.deliverStatus.isNotProblem().and(fd.createDate.isLessOrEqualTo(toDateDate)).and(fd.createDate.isGreaterThan(fromDateDate))], then: fd.quantity }], 0), ') added'),
+          sql.build('sum (', sql.case([{ when: [fd.deliverStatus.isSuccess().and(fd.createDate.isLessOrEqualTo(toDateDate)).and(fd.createDate.isGreaterThan(fromDateDate))], then: fd.quantity }], 0), ') collected'),
+          sql.build('sum (', sql.case([{ when: [fd.notActive().and(fd.deliverStatus.isSuccess().and(fd.createDate.isLessOrEqualTo(toDateDate)).and(fd.createDate.isGreaterThan(fromDateDate)))], then: fd.quantity }], 0), ') received'),
+        ],
+        from: fd,
+        innerJoin: () => [
+          { to: u, on: () => [sql.build(urlDbOperator('(select f.custom1 from Families f where fd.family=f.id limit 1)'),' like ',u.URL)] }
+        ],
+        where: () => ['true']
+    }), ' group by cube(', fd.basketType, ', ',  u.prettyName, ')');
+
+    let baskets = await db.execute(q);
+    return baskets.rows;
   }
 
 
@@ -114,22 +135,24 @@ export class WeeklyReportMltComponent implements OnInit {
     var toDateDate = DateColumn.stringToDate(toDate);
       
     let h = context.for(Helpers).create();
+    let u = context.for(RegisterURL).create();
+
     let sql = new SqlBuilder();
-    sql.addEntity(h,"Helpers")
-    let counters = (await db.execute(sql.build(sql.query({
+      
+    let q = sql.build(sql.query({
         select: () => [
+          sql.build('grouping(',u.prettyName,') URLGroup'),
+          u.prettyName,
           sql.build('count (*) total'),
           sql.build('sum (', sql.case([{ when: [h.createDate.isLessOrEqualTo(toDateDate).and(h.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
         ],
         from: h,
+        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(h.referredBy.defs.dbName), ' like ',u.URL)] }],
         where: () => [h.archive.isEqualTo(false)]
-    })))).rows[0];
+      }), ' group by cube(', u.prettyName, ')'
+    );
 
-    let total = counters['total'];
-    let added = counters['added'];
-
-    return {total, added};
-    
+    return (await db.execute(q)).rows;
   }
 
 
@@ -138,23 +161,24 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateColumn.stringToDate(fromDate);
     var toDateDate = DateColumn.stringToDate(toDate);
       
+    let u = context.for(RegisterURL).create();
     let f = context.for(Families).create();
     let sql = new SqlBuilder();
-    sql.addEntity(f,"Families")
-    let counters = (await db.execute(sql.build(sql.query({
+    
+    let q = sql.build(sql.query({
         select: () => [
+          sql.build('grouping(',u.prettyName,') URLGroup'),
+          u.prettyName,
           sql.build('count (*) total'),
           sql.build('sum (', sql.case([{ when: [f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
         ],
         from: f,
+        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(f.custom1.defs.dbName), ' like ',u.URL)] }],
         where: () => [f.status.isEqualTo(FamilyStatus.Active)]
-    })))).rows[0];
-
-    let total = counters['total'];
-    let added = counters['added'];
-
-    return {total, added};
-    
+      }), ' group by cube(', u.prettyName, ')'
+    );
+  
+    return (await db.execute(q)).rows;
   }
 
 
