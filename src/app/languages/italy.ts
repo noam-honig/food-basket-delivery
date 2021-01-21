@@ -813,4 +813,11 @@ export class italy {
   done = 'Fatto';
   copyLinkForVolunteer = "Copia un link per l'autoregistrazione del volontario";
   saveAndPreview = "Salva e visualizza l'anteprima";
+  areYouSureYouWantToDelete = 'Sei sicuro di voler eliminare il file';
+  codeWord = 'Parola in codice';
+  toConfirmPleaseTypeTheCodeWord = "Per confermare l'eliminazione, digita la parola in codice";
+  deleted = 'Eliminato';
+  wrongCodeWordProcessAborted = 'Parola in codice errata - processo interrotto';
+  configuration = 'Configurazione';
+  foodParcel = 'Pacco alimentare';
 }

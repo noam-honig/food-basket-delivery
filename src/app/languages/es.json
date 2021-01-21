@@ -709,6 +709,11 @@
     "valueInCode": "הושלמו",
     "valueInEnglish": "Completed"
   },
+  "configuration": {
+    "google": "Configuración",
+    "valueInCode": "המערכת היא עבור",
+    "valueInEnglish": "Configuration"
+  },
   "confirm": {
     "google": "Confirmar",
     "valueInCode": "אשר",
@@ -899,6 +904,11 @@
     "google": "Definir entregas para todas las familias importadas del archivo Excel",
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
     "valueInEnglish": "Define deliveries for all families imported from Excel file"
+  },
+  "deleted": {
+    "google": "Eliminado",
+    "valueInCode": "נמחק",
+    "valueInEnglish": "Deleted"
   },
   "deleteDeliveries": {
     "google": "Eliminar entregas",
@@ -1709,6 +1719,11 @@
     "google": "Suelo",
     "valueInCode": "קומה",
     "valueInEnglish": "Floor"
+  },
+  "foodParcel": {
+    "google": "Paquete de comida",
+    "valueInCode": "סל מזון",
+    "valueInEnglish": "Food Parcel"
   },
   "for": {
     "google": "A",

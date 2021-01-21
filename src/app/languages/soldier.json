@@ -719,6 +719,10 @@
     "google": "הגדר משלוחים לכל החיילים מהאקסל",
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל"
   },
+  "deleted": {
+    "google": "נמחוק",
+    "valueInCode": "נמחק"
+  },
   "deleteDeliveries": {
     "google": "מחק משלוחים",
     "valueInCode": "מחק משלוחים"
@@ -1366,6 +1370,10 @@
   "floor": {
     "google": "קומה",
     "valueInCode": "קומה"
+  },
+  "foodParcel": {
+    "google": "סל מזון",
+    "valueInCode": "סל מזון"
   },
   "for": {
     "google": "ל",

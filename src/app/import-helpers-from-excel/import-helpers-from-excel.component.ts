@@ -284,7 +284,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       s.what();
     }
 
-    f.phone.value = PhoneColumn.fixPhoneInput(f.phone.value);
+    f.phone.value = PhoneColumn.fixPhoneInput(f.phone.value,this.context);
 
 
     let info: excelRowInfo = {

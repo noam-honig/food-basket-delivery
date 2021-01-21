@@ -826,6 +826,10 @@
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
     "custom": "Define deliveries for all families imported from Excel file"
   },
+  "deleted": {
+    "google": "Deleted",
+    "valueInCode": "נמחק"
+  },
   "deleteDeliveries": {
     "google": "Delete shipments",
     "valueInCode": "מחק משלוחים",
@@ -1535,6 +1539,11 @@
     "google": "floor",
     "valueInCode": "קומה",
     "custom": "Floor"
+  },
+  "foodParcel": {
+    "google": "Food basket",
+    "valueInCode": "סל מזון",
+    "custom": "Food Parcel"
   },
   "for": {
     "google": "To",

@@ -121,7 +121,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
 
   phoneState = new loginState(async () => {
-    this.phone.value = (await import('src/app/model-shared/types')).PhoneColumn.fixPhoneInput(this.phone.value);
+    this.phone.value = (await import('src/app/model-shared/types')).PhoneColumn.fixPhoneInput(this.phone.value,this.context);
     if (!this.phone.value || this.phone.value.length < 10) {
       this.dialog.Error(this.settings.lang.invalidPhoneNumber);
       return;

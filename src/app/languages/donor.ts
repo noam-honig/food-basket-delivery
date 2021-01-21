@@ -813,4 +813,11 @@ export class donor {
   done = 'טופל';
   copyLinkForVolunteer = 'העתק קישור לרישום עצמי של מתנדבים';
   saveAndPreview = 'שמירה ותצוגה מקדימה';
+  areYouSureYouWantToDelete = 'האם אתה בטוח שאתה רוצה למחוק את';
+  codeWord = 'מילת קוד';
+  toConfirmPleaseTypeTheCodeWord = 'לאישור המחיקה אנא הקלד את מילת הקוד ';
+  deleted = 'נמחוק';
+  wrongCodeWordProcessAborted = 'מילת קוד שגויה - התהליך מופסק';
+  configuration = 'המערכת היא עבור';
+  foodParcel = 'סל מזון';
 }

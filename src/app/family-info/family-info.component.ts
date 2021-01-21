@@ -144,7 +144,7 @@ export class FamilyInfoComponent implements OnInit {
       if (fd.courier.value != context.user.id && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
         throw "אינך רשאי לחייג למשפחה זו";
 
-      cleanPhone = PhoneColumn.fixPhoneInput(fd.phone1.value);
+      cleanPhone = PhoneColumn.fixPhoneInput(fd.phone1.value, context);
       if (!cleanPhone) return { error: "למשפחה זו לא מעודכן טלפון" };
       if (cleanPhone.startsWith('0'))
         cleanPhone = cleanPhone.substring(1);

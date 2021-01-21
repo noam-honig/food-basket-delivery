@@ -299,6 +299,11 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInEnglish": "Are you sure you want to cancel assignment to"
   },
+  "areYouSureYouWantToDelete": {
+    "google": "Sei sicuro di voler eliminare il file",
+    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
+    "valueInEnglish": "Are you sure you want to delete "
+  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Sei sicuro di voler contrassegnare correttamente consegnato a",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
@@ -709,6 +714,11 @@
     "valueInCode": "הושלמו",
     "valueInEnglish": "Completed"
   },
+  "configuration": {
+    "google": "Configurazione",
+    "valueInCode": "המערכת היא עבור",
+    "valueInEnglish": "Configuration"
+  },
   "confirm": {
     "google": "Confermare",
     "valueInCode": "אשר",
@@ -899,6 +909,11 @@
     "google": "Definire le consegne per tutte le famiglie importate dal file Excel",
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל",
     "valueInEnglish": "Define deliveries for all families imported from Excel file"
+  },
+  "deleted": {
+    "google": "Eliminato",
+    "valueInCode": "נמחק",
+    "valueInEnglish": "Deleted"
   },
   "deleteDeliveries": {
     "google": "Elimina consegne",
@@ -1709,6 +1724,11 @@
     "google": "Pavimento",
     "valueInCode": "קומה",
     "valueInEnglish": "Floor"
+  },
+  "foodParcel": {
+    "google": "Pacco alimentare",
+    "valueInCode": "סל מזון",
+    "valueInEnglish": "Food Parcel"
   },
   "for": {
     "google": "Per",

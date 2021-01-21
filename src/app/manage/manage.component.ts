@@ -363,12 +363,12 @@ export class ManageComponent implements OnInit {
         this.settings.showDistCenterAsEndAddressForVolunteer,
         this.settings.defaultPrefixForExcelImport,
         this.settings.redTitleBar,
-        this.settings.forWho,
         this.settings.manageEscorts,
         [this.settings.familyCustom1Caption, this.settings.familyCustom1Values],
         [this.settings.familyCustom2Caption, this.settings.familyCustom2Values],
         [this.settings.familyCustom3Caption, this.settings.familyCustom3Values],
-        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values]
+        [this.settings.familyCustom4Caption, this.settings.familyCustom4Values],
+        this.settings.forWho,
       ];
 
       if (this.settings.isSytemForMlt())
@@ -531,7 +531,7 @@ export class ManageComponent implements OnInit {
     let r = await ManageComponent.deleteFamiliesOnServer();
     this.dialog.Info(this.settings.lang.deleted + ' ' + r + ' ' + this.settings.lang.families);
   }
-  resetToDefault() {
+  async resetToDefault() {
     this.settings.id.value = 1;
 
     this.settings.smsText.value = this.settings.lang.defaultSmsText;
@@ -543,6 +543,18 @@ export class ManageComponent implements OnInit {
     this.settings.deliveredButtonText.value = this.settings.lang.deliveredButtonText;
     this.settings.boxes1Name.value = this.settings.lang.boxes1Name;
     this.settings.boxes2Name.value = this.settings.lang.boxes2Name;
+    var b = await this.context.for(BasketType).findFirst();
+    if (b) {
+      b.name.value = this.settings.lang.foodParcel;
+      await b.save();
+      this.basketType.getRecords();
+    }
+    let d = await this.context.for(DistributionCenters).findFirst();
+    if (d) {
+      d.name.value = this.settings.lang.defaultDistributionListName;
+      await d.save();
+      this.distributionCenters.getRecords();
+    }
   }
   @ServerFunction({ allowed: Roles.admin })
   static async deleteFamiliesOnServer(context?: Context) {
