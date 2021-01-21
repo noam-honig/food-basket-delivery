@@ -10,7 +10,7 @@ import { RegisterURL } from './regsiter-url';
   styleUrls: ['./register-url.component.scss']
 })
 
-export class SigningURLComponent implements OnInit {
+export class RegisterURLComponent implements OnInit {
 
   constructor(private context: Context) { }
   urls = this.context.for(RegisterURL).gridSettings({
