@@ -152,9 +152,7 @@ export class WeeklyReportMltComponent implements OnInit {
       }), ' group by cube(', u.prettyName, ')'
     );
 
-    console.log(q);
-    let counters = (await db.execute(q)).rows;
-    return counters;
+    return (await db.execute(q)).rows;
   }
 
 
@@ -180,9 +178,7 @@ export class WeeklyReportMltComponent implements OnInit {
       }), ' group by cube(', u.prettyName, ')'
     );
   
-    console.log(q);
-    let counters = (await db.execute(q)).rows;
-    return counters;
+    return (await db.execute(q)).rows;
   }
 
 
