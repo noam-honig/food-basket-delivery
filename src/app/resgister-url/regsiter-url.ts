@@ -33,7 +33,7 @@ export class RegisterURL extends IdEntity {
 
         async function loadUrls(sql: SqlBuilder, table: IdEntity, field: StringColumn){
             let q = sql.query({
-                select: () => [sql.build('distinct ', urlDbOperator(field), ' as url')],
+                select: () => [sql.build('distinct ', urlDbOperator(field.defs.dbName), ' as url')],
                 from: table,
                 outerJoin: () => [{ to: u, on: () => [sql.build(field, ' like textcat(textcat(\'%\',',u.URL,'),\'%\')' )] }],
                 where: () => [sql.build(u.URL, ' is null')]
@@ -60,7 +60,7 @@ export class RegisterURL extends IdEntity {
     }
 };
 
-export function urlDbOperator(field: StringColumn) : string {
-    return 'split_part(' + field.defs.dbName + ', \'/\', 3)'
+export function urlDbOperator(fieldDBName: string) : string {
+    return 'split_part(' + fieldDBName + ', \'/\', 3)'
 }
 

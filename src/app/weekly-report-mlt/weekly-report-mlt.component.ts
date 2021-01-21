@@ -119,7 +119,7 @@ export class WeeklyReportMltComponent implements OnInit {
         ],
         from: fd,
         innerJoin: () => [
-          { to: u, on: () => [sql.build('split_part((select f.custom1 from Families f where fd.family=f.id limit 1), \'/\', 3) like ',u.URL)] }
+          { to: u, on: () => [sql.build(urlDbOperator('(select f.custom1 from Families f where fd.family=f.id limit 1)'),' like ',u.URL)] }
         ],
         where: () => ['true']
     }), ' group by cube(', fd.basketType, ', ',  u.prettyName, ')');
@@ -147,7 +147,7 @@ export class WeeklyReportMltComponent implements OnInit {
           sql.build('sum (', sql.case([{ when: [h.createDate.isLessOrEqualTo(toDateDate).and(h.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
         ],
         from: h,
-        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(h.referredBy), ' like ',u.URL)] }],
+        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(h.referredBy.defs.dbName), ' like ',u.URL)] }],
         where: () => [h.archive.isEqualTo(false)]
       }), ' group by cube(', u.prettyName, ')'
     );
@@ -175,7 +175,7 @@ export class WeeklyReportMltComponent implements OnInit {
           sql.build('sum (', sql.case([{ when: [f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
         ],
         from: f,
-        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(f.custom1), ' like ',u.URL)] }],
+        innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(f.custom1.defs.dbName), ' like ',u.URL)] }],
         where: () => [f.status.isEqualTo(FamilyStatus.Active)]
       }), ' group by cube(', u.prettyName, ')'
     );
