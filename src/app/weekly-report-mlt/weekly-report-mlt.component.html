@@ -1,6 +1,6 @@
 <app-date-range (dateChanged)="refresh()" [rangeWeekly]="true"></app-date-range>
-<mat-form-field appearance="fill">
-  <mat-label>אתר רישום לבחירה</mat-label>
+<mat-form-field appearance="standard" style="width:250px">
+  <mat-label style="width:150px">אתר רישום לבחירה</mat-label>
   <mat-select [(ngModel)]="selectedUrl" >
     <mat-option *ngFor="let u of registerUrls" [value]="u">{{u}}</mat-option>
   </mat-select>
@@ -38,17 +38,17 @@
   </tr>
   <tr>
         <th>מתנדבים</th>
-        <td>{{totalVolunteers}}</td>
-        <td>{{addedVolunteers}} (ממוצע משפחות למתנדב: {{avgFamiliesPerVolunteer}})</td>
-        <td *ngIf="selectedUrl != ''">{{volDataSelected('total')}}</td>
-        <td *ngIf="selectedUrl != ''">{{volDataSelected('added')}}</td>
+        <td>{{getVolData('total')}}</td>
+        <td>{{getVolData('added')}} (ממוצע משפחות למתנדב: {{avgFamiliesPerVolunteer}})</td>
+        <td *ngIf="selectedUrl != ''">{{getVolData('total', selectedUrl)}}</td>
+        <td *ngIf="selectedUrl != ''">{{getVolData('added', selectedUrl)}}</td>
     </tr>
     <tr>
         <th>תורמים</th>
-        <td>{{totalDonors}}</td>
-        <td>{{addedDonors}}</td>
-        <td *ngIf="selectedUrl != ''">{{donorsDataSelected('total')}}</td>
-        <td *ngIf="selectedUrl != ''">{{donorsDataSelected('added')}}</td>
+        <td>{{getDonorsData('total')}}</td>
+        <td>{{getDonorsData('added')}}</td>
+        <td *ngIf="selectedUrl != ''">{{getDonorsData('total', selectedUrl)}}</td>
+        <td *ngIf="selectedUrl != ''">{{getDonorsData('added', selectedUrl)}}</td>
     </tr>
     <tr>
         <th>תרומות </th>

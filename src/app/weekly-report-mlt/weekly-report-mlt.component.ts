@@ -29,11 +29,6 @@ export class WeeklyReportMltComponent implements OnInit {
   
   totalPerBasket = [];
   allBaskets = new Set();
-
-  totalVolunteers = 0;
-  totalDonors = 0;
-  addedVolunteers = 0;
-  addedDonors = 0;
   donorsData = [];
   volData = [];
 
@@ -49,6 +44,7 @@ export class WeeklyReportMltComponent implements OnInit {
   }
 
   async refresh() {
+    RegisterURL.loadUrlsFromTables();
     this.totalPerBasket = await WeeklyReportMltComponent.getEquipmentStatusTotals(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
     this.allBaskets.clear();
     this.totalPerBasket.forEach(item=>{
@@ -58,18 +54,9 @@ export class WeeklyReportMltComponent implements OnInit {
     });
 
     this.volData = await WeeklyReportMltComponent.getVolunteersData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalVolunteers = 0;
-    this.volData.forEach(x => {this.totalVolunteers += +x['total']});
-    this.addedVolunteers = 0;
-    this.volData.forEach(x => {this.addedVolunteers += +x['added']});
-
     this.donorsData = await WeeklyReportMltComponent.getDonorsData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.totalDonors = 0;
-    this.donorsData.forEach(x => {this.totalDonors += +x['total']});
-    this.addedDonors = 0;
-    this.donorsData.forEach(x => {this.addedDonors += +x['added']});
 
-    let mergedArray = [...this.volData, ...this.donorsData]
+    let mergedArray = [...this.volData, ...this.donorsData, ...this.totalPerBasket]
 
     mergedArray.forEach(item => {
       if (!this.registerUrls.has(item.prettyname)) {
@@ -90,21 +77,20 @@ export class WeeklyReportMltComponent implements OnInit {
     return +object[key];
   }
 
-  donorsDataSelected(key:string) {
-    let object = this.donorsData.find(x=>(x.prettyname==this.selectedUrl));
+  getDonorsData(key:string, url?: string) {
+    let object = this.donorsData.find(item=>{
+      return ((item.URLGroup == (!url)) || (item.prettyname==url));
+    });
     if (!object) return "NONE";
     return +object[key];
   }
 
-  volDataSelected(key:string) {
-    let object = this.volData.find(x=>(x.prettyname==this.selectedUrl));
+  getVolData(key:string, url?: string) {
+    let object = this.volData.find(item=>{
+      return ((item.URLGroup == (!url)) || (item.prettyname==url));
+    });
     if (!object) return "NONE";
     return +object[key];
-  }
-
-  donationDataSelected(basket: string, key:string) {
-    let basketData = this.totalPerBasket.find(x=>((x.prettyname==this.selectedUrl)&&(x.baskettype==basket)));
-    return +basketData[key];
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
@@ -155,6 +141,7 @@ export class WeeklyReportMltComponent implements OnInit {
       
     let q = sql.build(sql.query({
         select: () => [
+          sql.build('grouping(',u.prettyName,') URLGroup'),
           u.prettyName,
           sql.build('count (*) total'),
           sql.build('sum (', sql.case([{ when: [h.createDate.isLessOrEqualTo(toDateDate).and(h.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
@@ -162,7 +149,7 @@ export class WeeklyReportMltComponent implements OnInit {
         from: h,
         innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(h.referredBy), ' like ',u.URL)] }],
         where: () => [h.archive.isEqualTo(false)]
-      }), ' group by ', u.prettyName
+      }), ' group by cube(', u.prettyName, ')'
     );
 
     console.log(q);
@@ -182,6 +169,7 @@ export class WeeklyReportMltComponent implements OnInit {
     
     let q = sql.build(sql.query({
         select: () => [
+          sql.build('grouping(',u.prettyName,') URLGroup'),
           u.prettyName,
           sql.build('count (*) total'),
           sql.build('sum (', sql.case([{ when: [f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
@@ -189,7 +177,7 @@ export class WeeklyReportMltComponent implements OnInit {
         from: f,
         innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(f.custom1), ' like ',u.URL)] }],
         where: () => [f.status.isEqualTo(FamilyStatus.Active)]
-      }), ' group by ', u.prettyName
+      }), ' group by cube(', u.prettyName, ')'
     );
   
     console.log(q);
