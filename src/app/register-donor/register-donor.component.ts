@@ -16,6 +16,31 @@ import { ActivatedRoute } from '@angular/router';
 declare var gtag;
 declare var fbq;
 
+/*
+edit the Wix forms: 
+
+// API Reference: https://www.wix.com/velo/reference/api-overview/introduction
+// “Hello, World!” Example: https://learn-code.wix.com/en/article/1-hello-world
+import wixWindow from 'wix-window';
+
+
+// ...
+
+$w.onReady(function () {
+	// Write your JavaScript here
+	let referrer = wixWindow.referrer;  // "http://somesite.com"
+	//$w('#button4').label = referrer;
+
+	$w('#button4').onClick ( () => {
+		wixWindow.openModal("https://mlt-test.herokuapp.com/mlt/register-donor?refer=" + referrer, {
+							"width": 650, "height": 800} );
+	} );
+	// To select an element by ID use: $w("#elementID")
+
+	// Click "Preview" to run your code
+});
+*/
+
 @Component({
   selector: 'app-register-donor',
   templateUrl: './register-donor.component.html',
@@ -30,6 +55,8 @@ export class RegisterDonorComponent implements OnInit {
     else return false;
   }
 
+  refer : string = null;
+  isDone = false;
   donor = new donorForm(this.context);
   area = new DataAreaSettings({
     columnSettings: () => 
@@ -41,10 +68,17 @@ export class RegisterDonorComponent implements OnInit {
     ]
   });
   ngOnInit() {
-    this.donor.docref.value = document.referrer;
+    let urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('refer')) {
+      this.refer = urlParams.get('refer');
+      this.donor.docref.value = this.refer;
+    } else {
+      this.donor.docref.value = document.referrer;
+    }
   }
+
   allowSubmit() {
-    return this.hasQuantity() && this.hasMandatoryFields();
+    return this.hasQuantity() && this.hasMandatoryFields() && !this.isDone;
   }
 
   hasMandatoryFields() {
@@ -80,24 +114,31 @@ export class RegisterDonorComponent implements OnInit {
         this.dialog.Error(error);
         return;
       }
-      this.dialog.analytics("submitDonorForm");
-      {
-        gtag('event', 'conversion', {'send_to': 'AW-452581833/GgaBCLbpje8BEMmz59cB'});
-        if (fbq)   fbq('track', 'Lead');
-      }
 
       await RegisterDonorComponent.doDonorForm(pack(this.donor));
 
-      this.dialog.analytics("submitDonorForm");
-      await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-        question: this.settings.lang.thankYouForDonation,
-        showOnlyConfirm: true
-      });
-      window.location.href = "https://www.mitchashvim.org.il/";
+      this.isDone = true;
+      try {
+        this.dialog.analytics("submitDonorForm");
+        gtag('event', 'conversion', {'send_to': 'AW-452581833/GgaBCLbpje8BEMmz59cB'});
+        if (fbq)   fbq('track', 'Lead');
+      }
+      catch (err) {
+        console.log("problem with tags: ", err)
+      }
     }
     catch (err) {
       this.dialog.exception("donor form", err);
     }
+
+    await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+      question: this.settings.lang.thankYouForDonation,
+      showOnlyConfirm: true
+    });
+
+    if (this.refer) return;
+    if (this.donor.docref.value != '') window.location.href = this.donor.docref.value 
+    else window.location.href = "https://www.mitchashvim.org.il/";
   }
 
   @ServerFunction({ allowed: true })
