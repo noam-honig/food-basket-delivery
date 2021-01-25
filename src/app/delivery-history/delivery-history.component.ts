@@ -8,6 +8,7 @@ import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/h
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, NumberColumn } from '@remult/core';
 import { sortColumns } from '../shared/utils';
+import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 
 import { Route } from '@angular/router';
 
@@ -65,15 +66,47 @@ export class DeliveryHistoryComponent implements OnInit {
 
     this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
       showFilter: true,
+      allowSelection: true,
 
       numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 10 : 7),
       gridButtons: [{
-        name: this.settings.lang.exportToExcel,
-        visible: () => this.context.isAllowed(Roles.admin),
-        click: async () => {
-          await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          name: this.settings.lang.exportToExcel,
+          visible: () => this.context.isAllowed(Roles.admin),
+          click: async () => {
+            await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          }
+        },
+        {
+          name: 'הענק מתנה',
+          visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
+          click: async () => {
+            let rows = this.helperInfo.selectedRows;
+            
+            if(rows.length == 0) {
+              this.dialog.Error('לא נבחרו מתנדבים');
+              return;
+            }
+
+            if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
+              question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
+            }, q => q.yes)) {
+              if(await context.for(HelperGifts).count(g=>g.assignedToHelper.isEqualTo('')) >= rows.length) {
+                try {
+                  for await (const h of rows) {
+                    await HelperGifts.assignGift(h.courier.value);
+                  }
+                  this.refresh();
+                }
+                catch (err) {
+                  this.dialog.Error(err.error.message);
+                }
+              } else {
+                this.dialog.Error('אין מספיק מתנות לחלוקה');
+              }
+            }
+          },
         }
-      }],
+      ],
       rowButtons: [
         {
           name: this.settings.lang.deliveries,
@@ -86,8 +119,13 @@ export class DeliveryHistoryComponent implements OnInit {
           name: 'הענק מתנה',
           visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
           click: async x => {
-            await HelperGifts.assignGift(x.courier.value);
-            this.refresh();
+            try {
+              await HelperGifts.assignGift(x.courier.value);
+              this.refresh();
+            }
+            catch (err) {
+              this.dialog.Error(err.error.message);
+            }
           },
         }
       ],
