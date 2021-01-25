@@ -91,7 +91,7 @@ export class DeliveryHistoryComponent implements OnInit {
               question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
             }, q => q.yes)) {
               if(await context.for(HelperGifts).count(g=>g.assignedToHelper.isEqualTo('')) >= rows.length) {
-                for await (const h of rows) {
+                for (const h of rows) {
                   await HelperGifts.assignGift(h.courier.value);
                 }
                 this.refresh();
