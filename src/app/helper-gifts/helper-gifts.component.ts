@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { Context } from "@remult/core";
 import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
 import { HelperGifts } from "./HelperGifts";
-import { SelectHelperComponent } from "../select-helper/select-helper.component";
 @Component({
   selector: "app-helper-gifts",
   templateUrl: "./helper-gifts.component.html",
