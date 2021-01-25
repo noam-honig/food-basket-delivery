@@ -91,15 +91,10 @@ export class DeliveryHistoryComponent implements OnInit {
               question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
             }, q => q.yes)) {
               if(await context.for(HelperGifts).count(g=>g.assignedToHelper.isEqualTo('')) >= rows.length) {
-                try {
-                  for await (const h of rows) {
-                    await HelperGifts.assignGift(h.courier.value);
-                  }
-                  this.refresh();
+                for await (const h of rows) {
+                  await HelperGifts.assignGift(h.courier.value);
                 }
-                catch (err) {
-                  this.dialog.Error(err.error.message);
-                }
+                this.refresh();
               } else {
                 this.dialog.Error('אין מספיק מתנות לחלוקה');
               }
@@ -119,13 +114,8 @@ export class DeliveryHistoryComponent implements OnInit {
           name: 'הענק מתנה',
           visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
           click: async x => {
-            try {
-              await HelperGifts.assignGift(x.courier.value);
-              this.refresh();
-            }
-            catch (err) {
-              this.dialog.Error(err.error.message);
-            }
+            await HelperGifts.assignGift(x.courier.value);
+            this.refresh();
           },
         }
       ],
