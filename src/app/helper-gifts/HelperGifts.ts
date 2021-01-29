@@ -60,12 +60,18 @@ export class HelperGifts extends IdEntity {
     }
     @ServerFunction({allowed:Roles.admin})
     static async  assignGift(helperId:string,context?:Context){
-        let g = await context.for(HelperGifts).findFirst(g=>g.assignedToHelper.isEqualTo(''));
-        g.assignedToHelper.value = helperId;
-        g.wasConsumed.value = false;
-        g.wasClicked.value = false;
-        await g.save();
-
+        if(await context.for(HelperGifts).count(g=>g.assignedToHelper.isEqualTo('')) > 0) {
+            let g = await context.for(HelperGifts).findFirst(g=>g.assignedToHelper.isEqualTo(''));
+            if(g) {
+                g.assignedToHelper.value = helperId;
+                g.wasConsumed.value = false;
+                g.wasClicked.value = false;
+                await g.save();
+                return;
+            }
+        }
+        
+        throw new Error('אין מתנות לחלוקה');
     }
     @ServerFunction({allowed:Roles.admin})
     static async importUrls(urls:string[],context?:Context){
