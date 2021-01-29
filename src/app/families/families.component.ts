@@ -12,9 +12,9 @@ import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { DomSanitizer, Title } from '@angular/platform-browser';
 
-import { FilterBase } from '@remult/core';
 
-import { BusyService } from '@remult/core';
+
+import { BusyService } from '@remult/angular';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
@@ -222,8 +222,8 @@ export class FamiliesComponent implements OnInit {
             limit: this.limit,
             where: f => {
                 let index = 0;
-                let result: FilterBase = undefined;
-                let addFilter = (filter: FilterBase) => {
+                let result: Filter = undefined;
+                let addFilter = (filter: Filter) => {
                     if (result)
                         result = new AndFilter(result, filter);
                     else result = filter;
@@ -636,7 +636,7 @@ export class FamiliesComponent implements OnInit {
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
-        equalToFilter: (f: Families, item: type) => FilterBase,
+        equalToFilter: (f: Families, item: type) => Filter,
         differentFromFilter: (f: Families, item: type) => AndFilter
     ) {
         stats.stats.splice(0);
@@ -725,7 +725,7 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: Families) => FilterBase,
+    rule: (f: Families) => Filter,
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }

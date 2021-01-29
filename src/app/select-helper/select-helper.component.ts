@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions, ServerFunction, DialogConfig, SqlDatabase } from '@remult/core';
-import { FilterBase ,AndFilter} from '@remult/core';
+import { Context, FindOptions, ServerFunction, SqlDatabase } from '@remult/core';
+import { Filter ,AndFilter} from '@remult/core';
 
-import { BusyService } from '@remult/core';
+import { BusyService, DialogConfig } from '@remult/angular';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
@@ -40,7 +40,7 @@ export class SelectHelperComponent implements OnInit {
     includeFrozen?: boolean,
     searchClosestDefaultFamily?: boolean,
     onSelect: (selectedValue: HelpersBase) => void,
-    filter?: (helper: HelpersAndStats) => FilterBase
+    filter?: (helper: HelpersAndStats) => Filter
 
   };
   filteredHelpers: helperInList[] = [];
@@ -203,7 +203,7 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r:FilterBase = h.name.isContains(this.searchString);
+      let r:Filter = h.name.isContains(this.searchString);
       if(!this.args.includeFrozen){
         r= new AndFilter( h.active(),r);
       }

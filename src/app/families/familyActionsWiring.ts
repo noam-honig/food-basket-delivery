@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, FilterBase, EntityWhere, packWhere, EntityOrderBy } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, Filter, EntityWhere, packWhere, EntityOrderBy } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -160,7 +160,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     help?: () => string,
     allowed: Allowed,
     confirmQuestion?: () => string,
-    additionalWhere?: (f: T) => FilterBase
+    additionalWhere?: (f: T) => Filter
 }
 
 
@@ -195,7 +195,7 @@ export function buildGridButtonFromActions<T extends IdEntity>(actions: {
 
 export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, args: {
 
-    where: (f: T) => FilterBase,
+    where: (f: T) => Filter,
     forEachRow: (f: T) => Promise<void>,
     orderBy?: EntityOrderBy<T>,
     count?: number

@@ -1,5 +1,5 @@
 import { ServerFunction, StringColumn, NumberColumn, Entity, AndFilter } from '@remult/core';
-import { FilterBase } from '@remult/core';
+import { Filter } from '@remult/core';
 import { Families } from "./families";
 import { Context } from '@remult/core';
 import { BasketInfo } from "../asign-family/asign-family.component";
@@ -81,7 +81,7 @@ export class Stats {
 
 
 export class FaimilyStatistics {
-    constructor(public name: string, public rule: (f: Families) => FilterBase, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: Families) => Filter, public color?: string, value?: number) {
         this.value = value;
     }
 

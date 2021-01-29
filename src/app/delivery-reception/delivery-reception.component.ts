@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, BusyService, FilterBase, AndFilter, EntityWhere, Column, ServerFunction, SqlDatabase } from '@remult/core';
+import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, Filter, AndFilter, EntityWhere, Column, ServerFunction, SqlDatabase } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -32,7 +33,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     get: {
       limit: 100,
       where: f =>
-        f.id.isIn(this.deliveriesForPhone)
+        f.id.isIn(...this.deliveriesForPhone)
       , orderBy: f => f.name
     },
     columnSettings: deliveries => {

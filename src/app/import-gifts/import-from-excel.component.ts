@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BusyService, Context, SelectValueDialogComponent } from '@remult/core';
+import { Context } from '@remult/core';
+import { BusyService, SelectValueDialogComponent } from '@remult/angular';
 import * as xlsx from 'xlsx';
 
 @Component({

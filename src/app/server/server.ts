@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer } from '@remult/server';
+import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer, initExpress } from '@remult/server';
 import * as fs from 'fs';
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -141,10 +141,10 @@ s.parentNode.insertBefore(b, s);})();
 
 
 
-    
+
     if (!process.env.DISABLE_SERVER_EVENTS) {
         let serverEvents = new ServerEvents(app);
-        
+
 
         let lastMessage = new Date();
         Families.SendMessageToBrowsers = (x, c, distCenter) => {
@@ -156,10 +156,13 @@ s.parentNode.insertBefore(b, s);})();
     }
 
 
-    let eb = new ExpressBridge(
+    let eb = initExpress(
         //@ts-ignore
         app,
-        dataSource, process.env.DISABLE_HTTPS == "true", !Sites.multipleSites);
+        dataSource, {
+        disableHttpsForDevOnly: process.env.DISABLE_HTTPS == "true",
+        disableAutoApi: Sites.multipleSites
+    });
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
@@ -192,7 +195,7 @@ s.parentNode.insertBefore(b, s);})();
         OverviewComponent.createSchemaApi = async schema => {
             let stack: [] = app._router.stack;
             stack.splice(stack.length - 1, 1);
-            
+
             createSchemaApi(schema);
             app.use('/*', async (req, res) => {
                 await sendIndex(res, req);
@@ -272,7 +275,7 @@ function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds:
         try {
             res.send(fs.readFileSync('dist/favicon.ico'));
         }
-        catch{
+        catch {
             res.send(fs.readFileSync('assets/favicon.ico'));
         }
     })

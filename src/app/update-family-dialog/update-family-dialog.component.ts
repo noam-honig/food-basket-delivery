@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult } from '../families/families';
 
-import { Context, DialogConfig, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting, BusyService } from '@remult/core';
+import { BusyService, DialogConfig } from '@remult/angular';
+import { Context,  DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';

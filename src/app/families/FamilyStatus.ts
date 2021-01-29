@@ -1,4 +1,4 @@
-import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
+import { ColumnOptions, ValueListColumn, NumberColumn, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
 import { use, Language } from '../translate';
 import { getLang } from '../sites/sites';

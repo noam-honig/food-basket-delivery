@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
-import { BusyService, AndFilter } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { AndFilter } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FilterBase } from '@remult/core';
+import { Filter } from '@remult/core';
 import { Context } from '@remult/core';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -18,7 +19,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 export class SelectFamilyComponent implements OnInit {
 
   public args: {
-    where: (f: ActiveFamilyDeliveries) => FilterBase,
+    where: (f: ActiveFamilyDeliveries) => Filter,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
     distCenter: string,

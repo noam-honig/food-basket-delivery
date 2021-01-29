@@ -6,7 +6,9 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context, RouteHelperService, NotSignedInGuard, StringColumn, BoolColumn, DataAreaSettings } from '@remult/core';
+import { Context, StringColumn, BoolColumn, DataAreaSettings } from '@remult/core';
+import { RouteHelperService, NotSignedInGuard } from '@remult/angular';
+
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
 import { CustomReuseStrategy } from 'src/app/custom-reuse-controller-router-strategy';

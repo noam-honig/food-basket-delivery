@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, BoolColumn, DateColumn, BusyService } from '@remult/core';
+import { Context, BoolColumn, DateColumn } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';

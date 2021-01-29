@@ -1,4 +1,5 @@
-import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BusyService, BoolColumn } from "@remult/core";
+import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BoolColumn } from "@remult/core";
+import { BusyService } from '@remult/angular';
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";

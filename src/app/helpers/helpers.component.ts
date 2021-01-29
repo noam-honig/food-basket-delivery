@@ -9,7 +9,7 @@ import { Route } from '@angular/router';
 import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter, Column } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { DateColumn, DataAreaSettings } from '@remult/core';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BusyService, ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase, DataAreaSettings } from '@remult/core';
+import { ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase, DataAreaSettings } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -379,7 +380,7 @@ export class HelperFamiliesComponent implements OnInit {
       return;
     if (!settings.sendSuccessMessageToFamily.value)
       return;
-    let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
+    let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn(DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere)));
     if (!fd)
       console.log("did not send sms to " + deliveryId + " failed to find delivery");
     if (!fd.phone1.value)

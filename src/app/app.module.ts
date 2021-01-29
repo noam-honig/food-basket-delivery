@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule, routes } from './app-routing.module';
 import { AppComponent, routeMap } from './app.component';
-import { RemultModule, Context, JwtSessionManager } from '@remult/core';
+import { RemultModule, JwtSessionManager } from '@remult/angular';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';

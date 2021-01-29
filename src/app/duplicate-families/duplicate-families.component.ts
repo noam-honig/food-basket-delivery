@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService, Column, BoolColumn, DataAreaSettings } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, Column, BoolColumn, DataAreaSettings } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -135,7 +136,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         ],
         get: {
           limit: 25,
-          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(d.ids.split(','))),
+          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(...d.ids.split(','))),
           orderBy: f => f.name
         }
 

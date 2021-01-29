@@ -1,5 +1,5 @@
 import * as radweb from '@remult/core';
-import { Entity, Column, FilterBase, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context, StringColumn } from '@remult/core';
+import { Entity, Column, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context, StringColumn } from '@remult/core';
 import { TranslationOptions, use } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
@@ -252,7 +252,7 @@ export class SqlBuilder {
     if (e instanceof Column)
       v = e.defs.dbName;
 
-    let f = e as FilterBase;
+    let f = e as Filter;
     if (f && f.__applyToConsumer) {
 
       let bridge = new FilterConsumerBridgeToSqlRequest(new myDummySQLCommand());
@@ -483,10 +483,7 @@ export class SqlBuilder {
       where.push(...query.where());
     }
     {
-      let before: FilterBase = {
-        __applyToConsumer: (x) => {
-        }
-      };
+      let before = new Filter(x=>{});
       let x = query.from.__decorateWhere(before);
       if (x != before)
         where.push(x);

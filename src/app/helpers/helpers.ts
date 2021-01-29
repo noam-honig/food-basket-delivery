@@ -1,5 +1,6 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService, DateColumn, DataControlInfo } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, Filter, Entity, Column, EntityProvider, checkForDuplicateValue, DateColumn, DataControlInfo } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
 
 
@@ -464,7 +465,7 @@ export class Helpers extends HelpersBase {
 
         let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
             where: f => f.fixedCourier.isEqualTo(this.id)
-                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
+                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(...ids))
         });
         if (otherFamilies.length > 0) {
             if (await dialog.YesNoPromise(getLang(this.context).thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + getLang(this.context).familiesDotCancelTheseAssignments)) {
@@ -588,7 +589,7 @@ export class Helpers extends HelpersBase {
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, private args: {
-        filter?: (helper: HelpersAndStats) => FilterBase,
+        filter?: (helper: HelpersAndStats) => Filter,
         location?: () => Location,
         familyId?: () => string,
         includeFrozen?: boolean,
@@ -653,7 +654,7 @@ export class CompanyColumn extends StringColumn {
     }
 }
 export class HelperIdReadonly extends HelperId {
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => Filter) {
         super(context, settingsOrCaption, { filter });
         this.defs.allowApiUpdate = false;
     }

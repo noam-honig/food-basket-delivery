@@ -1,10 +1,10 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { StringColumn, RouteHelperService } from '@remult/core';
+import { StringColumn } from '@remult/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { SignedInGuard } from '@remult/core';
+import { SignedInGuard, RouteHelperService } from '@remult/angular';
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';

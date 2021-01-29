@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, FilterBase, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest, ValueListColumn, NumberColumn } from '@remult/core';
+import { UrlBuilder, Filter, ServerFunction, StringColumn, DataAreaSettings, BoolColumn, SqlDatabase, AndFilter, FilterConsumerBridgeToSqlRequest, ValueListColumn, NumberColumn } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -22,7 +22,7 @@ import { BasketType } from '../families/BasketType';
 
 
 import { SqlBuilder, wasChanged, PhoneColumn } from '../model-shared/types';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
@@ -493,7 +493,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             repeatFamilies: []
         };
 
-        let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => FilterBase) => {
+        let countFamilies = (additionalWhere?: (f: ActiveFamilyDeliveries) => Filter) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
                 let where = f.readyFilter(info.filterCity, info.filterGroup, info.filterArea, info.filterBasket).and(f.filterDistCenterAndAllowed(info.distCenter));
                 if (additionalWhere) {
@@ -901,7 +901,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             f.courier.isEqualTo('').and(f.special.isEqualTo(YesNo.Yes))), 'special');
     }
-    addFamily(filter: (f: ActiveFamilyDeliveries) => FilterBase, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
+    addFamily(filter: (f: ActiveFamilyDeliveries) => Filter, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
         this.context.openDialog(SelectFamilyComponent, x => x.args = {
             where: f => {
                 let where = filter(f);
@@ -973,7 +973,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         Helpers.addToRecent(this.helper);
     }
     addRepeat() {
-        this.addFamily(f => f.id.isIn(this.repeatFamilies), 'repeat-families')
+        this.addFamily(f => f.id.isIn(...this.repeatFamilies), 'repeat-families')
     }
     addSpecific() {
         this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.id), 'specific', false, true);

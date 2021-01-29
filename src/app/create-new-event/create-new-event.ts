@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn, RouteHelperService, BusyService } from '@remult/core';
+import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn } from '@remult/core';
+import { RouteHelperService, BusyService } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
 

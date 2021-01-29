@@ -14,7 +14,7 @@ import { Route } from '@angular/router';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { FamilySourceId } from '../families/FamilySources';
 import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';

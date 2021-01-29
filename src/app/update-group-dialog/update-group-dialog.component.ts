@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Context, DialogConfig } from '@remult/core';
+import { Context } from '@remult/core';
 import { Groups } from '../manage/groups';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';

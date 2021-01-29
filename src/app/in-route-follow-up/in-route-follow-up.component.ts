@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, Column, DataControlInfo, StringColumn, BusyService, EntityWhere } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { Context, Column, DataControlInfo, StringColumn, EntityWhere } from '@remult/core';
 import { InRouteHelpers, HelperCommunicationHistory } from './in-route-helpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { use } from '../translate';

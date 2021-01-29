@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
-
+import { Context, DataControlSettings, Filter, AndFilter,  packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -351,7 +351,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.updateChart();
     }));
   }
-  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => FilterBase) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => Filter) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
@@ -372,7 +372,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   private prepComplexStats<type extends { name: string, count: number }>(
     cities: type[],
     stats: statsOnTab,
-    equalToFilter: (f: ActiveFamilyDeliveries, item: string) => FilterBase,
+    equalToFilter: (f: ActiveFamilyDeliveries, item: string) => Filter,
     differentFromFilter: (f: ActiveFamilyDeliveries, item: string) => AndFilter
   ) {
     stats.stats.splice(0);
@@ -455,8 +455,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       limit: this.limit,
       where: f => {
         let index = 0;
-        let result: FilterBase = undefined;
-        let addFilter = (filter: FilterBase) => {
+        let result: Filter = undefined;
+        let addFilter = (filter: Filter) => {
           if (result)
             result = new AndFilter(result, filter);
           else result = filter;
@@ -739,7 +739,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) }))
+    return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(...result) }))
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
@@ -782,7 +782,7 @@ interface statsOnTab {
   stats: FamilyDeliveresStatistics[],
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
-  rule: (f: ActiveFamilyDeliveries) => FilterBase,
+  rule: (f: ActiveFamilyDeliveries) => Filter,
   fourthColumn: () => DataControlSettings,
   refreshStats?: (stats: statsOnTab) => Promise<void>
 }

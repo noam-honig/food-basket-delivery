@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { ServerFunction, Context, SqlDatabase, BusyService, StringColumn, Column } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { ServerFunction, Context, SqlDatabase, StringColumn, Column } from '@remult/core';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -58,7 +59,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => fd.readyFilter().and(fd.id.isIn(...f.deliveries.map(x => x.id)))
       })) {
         fd.courier.value = h.id;
         await fd.save();
@@ -72,7 +73,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   async cancelAssignHelper(f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(f.assignedHelper.id).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => fd.courier.isEqualTo(f.assignedHelper.id).and(fd.id.isIn(...f.deliveries.map(x => x.id)))
       })) {
         fd.courier.value = '';
         await fd.save();

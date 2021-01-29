@@ -3,7 +3,7 @@ import { MatSnackBar } from "@angular/material";
 import { Context, DataAreaSettings, ServerFunction } from '@remult/core';
 
 
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";

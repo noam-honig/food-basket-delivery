@@ -7,7 +7,7 @@ import { HasAsyncGetTheValue, PhoneColumn } from '../model-shared/types';
 
 
 import { DialogService } from '../select-popup/dialog';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 
 
 import { Roles } from '../auth/roles';
@@ -441,7 +441,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       let columnsInCompareMemberName = this.columnsInCompare.map(x => x.defs.key);
 
       await new Promise((resolve) => setTimeout(() => {
-        resolve();
+        resolve({});
       }, 500));
       try {
         for (let index = 2; index <= this.totalRows; index++) {

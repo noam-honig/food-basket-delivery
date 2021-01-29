@@ -1,4 +1,5 @@
-import { BoolColumn, BusyService, Context, DateColumn, EntityClass, IdEntity, NumberColumn, ServerFunction, StringColumn } from "@remult/core";
+import { BoolColumn, Context, DateColumn, EntityClass, IdEntity, NumberColumn, ServerFunction, StringColumn } from "@remult/core";
+import { BusyService } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { changeDate, wasChanged } from "../model-shared/types";
 import { getLang } from "../sites/sites";

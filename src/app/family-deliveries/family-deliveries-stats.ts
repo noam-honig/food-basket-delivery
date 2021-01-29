@@ -1,5 +1,5 @@
 
-import { FilterBase, AndFilter, Context, ServerFunction, EntityClass, Entity, StringColumn, NumberColumn, SqlDatabase } from "@remult/core";
+import { Filter, AndFilter, Context, ServerFunction, EntityClass, Entity, StringColumn, NumberColumn, SqlDatabase } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -139,7 +139,7 @@ export class FamilyDeliveryStats {
 }
 
 export class FamilyDeliveresStatistics {
-    constructor(public name: string, public rule: (f: ActiveFamilyDeliveries) => FilterBase, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: ActiveFamilyDeliveries) => Filter, public color?: string, value?: number) {
         this.value = value;
     }
 
