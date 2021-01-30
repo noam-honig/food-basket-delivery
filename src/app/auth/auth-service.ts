@@ -90,10 +90,9 @@ export class AuthService {
             this.signout();
         }
             ;
-        if (settings.currentUserIsValidForAppLoadTest.value)
-            tokenHelper.loadSessionFromCookie(Sites.getOrganizationFromContext(this.context));
-        else {
-
+        
+        if (!settings.currentUserIsValidForAppLoadTest.value) {
+            tokenHelper.signout();
         }
 
         tokenHelper.tokenInfoChanged = () => {
@@ -126,7 +125,7 @@ export class AuthService {
         if (loginResponse.authToken) {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
-            if (this.failedSmsSignInPhone){
+            if (this.failedSmsSignInPhone) {
                 this.failedSmsSignInPhone = null;
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             }
@@ -285,7 +284,7 @@ export class AuthService {
                         this.setToken(r, this.remember);
 
                 }
-                catch{
+                catch {
                     this.signout();
                 }
             setTimeout(async () => {
