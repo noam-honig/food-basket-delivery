@@ -203,7 +203,7 @@ export class Helpers extends HelpersBase {
         });
         r.push(this.createDate);
 
-        if (this.context.isAllowed(Roles.admin)&&settings.isSytemForMlt()) {
+        if (this.context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
                 column: this.frozenTill, width: '120'
             });
@@ -289,11 +289,11 @@ export class Helpers extends HelpersBase {
                     r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                     return r;
                 },
-                get: {
-                    where: fd => fd.courier.isEqualTo(this.id),
-                    orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-                    limit: 25
-                }
+
+                where: fd => fd.courier.isEqualTo(this.id),
+                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+                rowsInPage: 25
+
             })
         });
     }
@@ -372,7 +372,7 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
-                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value,this.context);
+                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value, this.context);
                     if (!this._disableDuplicateCheck)
                         await checkForDuplicateValue(this, this.phone, context.for(Helpers), getLang(this.context).alreadyExist);
                     if (this.isNew())
@@ -597,12 +597,12 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
     } = {}) {
         super({
             dataControlSettings: () =>
-                ({
-                    getValue: () => this.getValue(),
-                    hideDataOnInput: true,
-                    width: '200',
-                    click: async () => this.showSelectDialog()
-                })
+            ({
+                getValue: () => this.getValue(),
+                hideDataOnInput: true,
+                width: '200',
+                click: async () => this.showSelectDialog()
+            })
         }, settingsOrCaption);
     }
     async showSelectDialog(onSelect?: () => void) {
@@ -646,10 +646,10 @@ export class CompanyColumn extends StringColumn {
         super({
             caption: getLang(context).company,
             dataControlSettings: () =>
-                ({
-                    width: '300',
-                    click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
-                })
+            ({
+                width: '300',
+                click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+            })
         });
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, Filter, AndFilter,  packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
+import { Context, DataControlSettings, Filter, AndFilter, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
 import { BusyService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -56,7 +56,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
   async refreshFamilyGrid() {
     this.deliveries.page = 1;
-    await this.deliveries.getRecords();
+    await this.deliveries.reloadData();
   }
   async newFamily() {
     let f = this.context.for(Families).create();
@@ -451,36 +451,36 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     numOfColumnsInGrid: 5,
 
     knowTotalRows: true,
-    get: {
-      limit: this.limit,
-      where: f => {
-        let index = 0;
-        let result: Filter = undefined;
-        let addFilter = (filter: Filter) => {
-          if (result)
-            result = new AndFilter(result, filter);
-          else result = filter;
-        }
 
-        if (this.currentStatFilter) {
-          addFilter(this.currentStatFilter.rule(f));
-        } else {
-          if (this.myTab)
-            index = this.myTab.selectedIndex;
-          if (index < 0 || index == undefined)
-            index = 0;
-
-          addFilter(this.statTabs[index].rule(f));
-        }
-        if (this.searchString) {
-          addFilter(f.name.isContains(this.searchString));
-        }
-
-        addFilter(f.filterDistCenterAndAllowed(this.dialog.distCenter.value));
-        return result;
+    rowsInPage: this.limit,
+    where: f => {
+      let index = 0;
+      let result: Filter = undefined;
+      let addFilter = (filter: Filter) => {
+        if (result)
+          result = new AndFilter(result, filter);
+        else result = filter;
       }
-      , orderBy: f => f.name
-    },
+
+      if (this.currentStatFilter) {
+        addFilter(this.currentStatFilter.rule(f));
+      } else {
+        if (this.myTab)
+          index = this.myTab.selectedIndex;
+        if (index < 0 || index == undefined)
+          index = 0;
+
+        addFilter(this.statTabs[index].rule(f));
+      }
+      if (this.searchString) {
+        addFilter(f.name.isContains(this.searchString));
+      }
+
+      addFilter(f.filterDistCenterAndAllowed(this.dialog.distCenter.value));
+      return result;
+    }
+    , orderBy: f => f.name
+    ,
     columnSettings: deliveries => {
       let r = [
 
@@ -542,7 +542,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        
+
 
         deliveries.special,
         deliveries.createUser,
@@ -582,9 +582,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
         if (c.visible) {
-            r.push(c);
+          r.push(c);
         }
-    }
+      }
 
       this.normalColumns = [
         deliveries.name
@@ -654,7 +654,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
-            reloadDeliveries: () => this.deliveries.getRecords(),
+            reloadDeliveries: () => this.deliveries.reloadData(),
             dialog: this.dialog
           });
         }

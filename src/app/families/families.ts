@@ -109,12 +109,12 @@ export class Families extends IdEntity {
           name: use.language.deliveryDetails,
           click: async fd => fd.showDeliveryOnlyDetail({
             dialog: args.dialog,
-            refreshDeliveryStats: () => result.getRecords()
+            refreshDeliveryStats: () => result.reloadData()
           })
         },
         ...(await import("../family-deliveries/family-deliveries.component")).getDeliveryGridButtons({
           context: this.context,
-          refresh: () => result.getRecords(),
+          refresh: () => result.reloadData(),
           deliveries: () => result,
           dialog: args.dialog,
           settings: args.settings,
@@ -137,11 +137,11 @@ export class Families extends IdEntity {
         r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
         return r;
       },
-      get: {
-        where: fd => fd.family.isEqualTo(this.id),
-        orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-        limit: 25
-      }
+
+      where: fd => fd.family.isEqualTo(this.id),
+      orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+      rowsInPage: 25
+
     });
     return result;
   }
@@ -712,7 +712,7 @@ export class Families extends IdEntity {
           case DeliveryStatus.FailedNotHome:
           case DeliveryStatus.FailedDoNotWant:
           case DeliveryStatus.FailedNotReady:
-          case DeliveryStatus.FailedTooFar: 
+          case DeliveryStatus.FailedTooFar:
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)

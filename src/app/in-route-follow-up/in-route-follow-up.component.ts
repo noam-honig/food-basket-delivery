@@ -21,12 +21,12 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService,private dialog:DialogService) { }
+  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
   helpers = this.context.for(InRouteHelpers).gridSettings({
-    get: {
-      limit: 25,
-      where: x => this.currentOption.where(x)
-    },
+
+    rowsInPage: 25,
+    where: x => this.currentOption.where(x)
+    ,
     knowTotalRows: true,
     showFilter: true,
     numOfColumnsInGrid: 99,
@@ -87,11 +87,11 @@ export class InRouteFollowUpComponent implements OnInit {
               r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
               return r;
             },
-            get: {
-              where: fd => fd.courier.isEqualTo(h.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-              orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-              limit: 25
-            }
+
+            where: fd => fd.courier.isEqualTo(h.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+            rowsInPage: 25
+
           })
         });
       }
@@ -112,7 +112,7 @@ export class InRouteFollowUpComponent implements OnInit {
       name: use.language.volunteerInfo,
       click: async s => {
         let h = await this.context.for(Helpers).findId(s.id);
-        h.displayEditDialog(this.dialog,this.busy);
+        h.displayEditDialog(this.dialog, this.busy);
       }
     }]
   });

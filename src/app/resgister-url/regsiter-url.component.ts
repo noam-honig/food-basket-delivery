@@ -14,21 +14,21 @@ export class RegisterURLComponent implements OnInit {
 
   constructor(private context: Context) { }
   urls = this.context.for(RegisterURL).gridSettings({
-    allowUpdate: true, 
+    allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 2,
-    get: {
-      orderBy: su => [{ column: su.prettyName, descending: false }],
-      limit: 100
-    },
-    gridButtons:[{
-      name:'עדכן ממתנדבים ותורמים',
-      click:async ()=>{
+
+    orderBy: su => [{ column: su.prettyName, descending: false }],
+    rowsInPage: 100
+    ,
+    gridButtons: [{
+      name: 'עדכן ממתנדבים ותורמים',
+      click: async () => {
         if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
           question: 'האם להוסיף נתונים מטבלאות תורמים ומתנדבים?'
         }, q => q.yes)) {
           await RegisterURL.loadUrlsFromTables();
-          await this.urls.getRecords();
+          await this.urls.reloadData();
         }
       }
     }]

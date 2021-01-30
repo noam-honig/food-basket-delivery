@@ -94,7 +94,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         gridButtons: [
           ...buildGridButtonFromActions([UpdateStatus, updateGroup], this.context,
             {
-              afterAction: async () => await x.args.settings.getRecords(),
+              afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
               callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
               buildActionInfo: async actionWhere => {
@@ -134,11 +134,11 @@ export class DuplicateFamiliesComponent implements OnInit {
             click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy })
           }
         ],
-        get: {
-          limit: 25,
-          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(...d.ids.split(','))),
-          orderBy: f => f.name
-        }
+
+        rowsInPage: 25,
+        where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(...d.ids.split(','))),
+        orderBy: f => f.name
+
 
       })
 
@@ -162,7 +162,7 @@ export class DuplicateFamiliesComponent implements OnInit {
     }
     await this.context.openDialog(MergeFamiliesComponent, y => y.families = items, y => {
       if (y.merged)
-        x.args.settings.getRecords();
+        x.args.settings.reloadData();
     });
   }
 

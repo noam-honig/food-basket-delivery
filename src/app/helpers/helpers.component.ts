@@ -36,7 +36,7 @@ import { Families } from '../families/families';
 export class HelpersComponent implements OnInit, OnDestroy {
   constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
-      this.helpers.getRecords();
+      this.helpers.reloadData();
     }, this.destroyHelper);
   }
   quickAdd() {
@@ -56,7 +56,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   };
   clearSearch() {
     this.searchString = '';
-    this.helpers.getRecords();
+    this.helpers.reloadData();
   }
   showDeleted = false;
   searchString: string = '';
@@ -87,7 +87,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.showDeletedHelpers,
         click: () => {
           this.showDeleted = !this.showDeleted;
-          this.helpers.getRecords();
+          this.helpers.reloadData();
         }
       },
       {
@@ -95,7 +95,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         click: async () => {
           if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
             await HelpersComponent.clearCommentsOnServer();
-            this.helpers.getRecords();
+            this.helpers.reloadData();
           }
         },
         visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
@@ -106,7 +106,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         click: async () => {
           if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
             await HelpersComponent.clearEscortsOnServer();
-            this.helpers.getRecords();
+            this.helpers.reloadData();
           }
         },
         visible: () => this.context.isAllowed(Roles.admin)
@@ -162,7 +162,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.freezeHelper,
-        visible: () => this.context.isAllowed(Roles.admin)&&this.settings.isSytemForMlt(),
+        visible: () => this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt(),
         click: async h => this.editFreezeDate(h)
       },
       {
@@ -190,16 +190,16 @@ export class HelpersComponent implements OnInit, OnDestroy {
       }
     ],
 
-    get: {
-      orderBy: h => [h.name],
-      limit: 25,
-      where: h => {
-        let r = h.name.isContains(this.searchString);
-        if (this.showDeleted)
-          return r;
-        else return r.and(h.archive.isEqualTo(false));
-      }
-    },
+
+    orderBy: h => [h.name],
+    rowsInPage: 25,
+    where: h => {
+      let r = h.name.isContains(this.searchString);
+      if (this.showDeleted)
+        return r;
+      else return r.and(h.archive.isEqualTo(false));
+    }
+    ,
     columnSettings: helpers => {
       this.numOfColsInGrid = 4;
       if (this.context.isAllowed(Roles.admin))
@@ -249,7 +249,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
       return;
     this.busy.donotWait(async () =>
-      await this.helpers.getRecords());
+      await this.helpers.reloadData());
   }
 
 

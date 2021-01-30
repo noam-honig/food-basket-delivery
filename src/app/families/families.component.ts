@@ -178,7 +178,7 @@ export class FamiliesComponent implements OnInit {
     }
     async refreshFamilyGrid() {
         this.families.page = 1;
-        await this.families.getRecords();
+        await this.families.reloadData();
     }
 
     clearSearch() {
@@ -218,35 +218,35 @@ export class FamiliesComponent implements OnInit {
 
 
 
-        get: {
-            limit: this.limit,
-            where: f => {
-                let index = 0;
-                let result: Filter = undefined;
-                let addFilter = (filter: Filter) => {
-                    if (result)
-                        result = new AndFilter(result, filter);
-                    else result = filter;
-                }
 
-                if (this.currentStatFilter) {
-                    addFilter(this.currentStatFilter.rule(f));
-                } else {
-                    if (this.myTab)
-                        index = this.myTab.selectedIndex;
-                    if (index < 0 || index == undefined)
-                        index = 0;
-
-                    addFilter(this.statTabs[index].rule(f));
-                }
-                if (this.searchString) {
-                    addFilter(f.name.isContains(this.searchString));
-                }
-
-                return result;
+        rowsInPage: this.limit,
+        where: f => {
+            let index = 0;
+            let result: Filter = undefined;
+            let addFilter = (filter: Filter) => {
+                if (result)
+                    result = new AndFilter(result, filter);
+                else result = filter;
             }
-            , orderBy: f => f.name
-        },
+
+            if (this.currentStatFilter) {
+                addFilter(this.currentStatFilter.rule(f));
+            } else {
+                if (this.myTab)
+                    index = this.myTab.selectedIndex;
+                if (index < 0 || index == undefined)
+                    index = 0;
+
+                addFilter(this.statTabs[index].rule(f));
+            }
+            if (this.searchString) {
+                addFilter(f.name.isContains(this.searchString));
+            }
+
+            return result;
+        }
+        , orderBy: f => f.name
+        ,
 
         knowTotalRows: true,
 
@@ -262,7 +262,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     column: families.address,
                     width: '250',
-                    clickIcon:'edit',
+                    clickIcon: 'edit',
                     click: (f) => {
                         f.showFamilyDialog({ focusOnAddress: true });
                     },

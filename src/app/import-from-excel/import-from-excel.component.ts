@@ -924,7 +924,7 @@ export class ImportFromExcelComponent implements OnInit {
                         this.dialog.Info(index + " " + use.language.linesProcessed + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                         await new Promise(r => {
                             setTimeout(() => {
-                                {r({})};
+                                { r({}) };
                             }, 100);
                         });
                     }
@@ -1274,11 +1274,11 @@ export class ImportFromExcelComponent implements OnInit {
                 r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                 return r;
             },
-            get: {
-                where: fd => fd.family.isEqualTo(f.id),
-                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-                limit: 25
-            }
+
+            where: fd => fd.family.isEqualTo(f.id),
+            orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+            rowsInPage: 25
+
         });
 
 

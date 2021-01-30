@@ -93,10 +93,10 @@ export class ManageComponent implements OnInit {
       }
     ],
     saving: () => this.refreshEnvironmentAfterSave(),
-    get: {
-      limit: 25,
-      orderBy: f => [f.name]
-    },
+
+    rowsInPage: 25,
+    orderBy: f => [f.name]
+    ,
     newRow: b => b.boxes.value = 1,
     allowUpdate: true,
     allowInsert: true,
@@ -110,7 +110,7 @@ export class ManageComponent implements OnInit {
         name: this.settings.lang.showDeletedDistributionCenters,
         click: () => {
           this.showArchivedDistributionCenters = !this.showArchivedDistributionCenters;
-          this.distributionCenters.getRecords();
+          this.distributionCenters.reloadData();
         }
       }
       ,
@@ -182,15 +182,15 @@ export class ManageComponent implements OnInit {
         width: '100px'
       }
     ],
-    get: {
-      limit: 25,
-      where: d => {
-        if (!this.showArchivedDistributionCenters)
-          return d.archive.isEqualTo(false);
-      },
-      orderBy: f => [f.name],
 
-    }, saving: f => {
+    rowsInPage: 25,
+    where: d => {
+      if (!this.showArchivedDistributionCenters)
+        return d.archive.isEqualTo(false);
+    },
+    orderBy: f => [f.name],
+
+    saving: f => {
       this.refreshEnvironmentAfterSave();
 
     },
@@ -215,10 +215,10 @@ export class ManageComponent implements OnInit {
     ], allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
-    get: {
-      limit: 25,
-      orderBy: f => [f.name]
-    },
+
+    rowsInPage: 25,
+    orderBy: f => [f.name]
+    ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   groups = this.context.for(Groups).gridSettings({
@@ -230,10 +230,10 @@ export class ManageComponent implements OnInit {
     ], allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
-    get: {
-      limit: 25,
-      orderBy: f => [f.name]
-    },
+
+    rowsInPage: 25,
+    orderBy: f => [f.name]
+    ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   settingsArea = new DataAreaSettings({
@@ -418,7 +418,7 @@ export class ManageComponent implements OnInit {
       this.helpPhones = [];
     }
 
-    this.images.getRecords();
+    this.images.reloadData();
   }
   helpPhones: PhoneItem[] = [{
     option: PhoneOption.assignerOrOrg
@@ -548,13 +548,13 @@ export class ManageComponent implements OnInit {
     if (b) {
       b.name.value = this.settings.lang.foodParcel;
       await b.save();
-      this.basketType.getRecords();
+      this.basketType.reloadData();
     }
     let d = await this.context.for(DistributionCenters).findFirst();
     if (d) {
       d.name.value = this.settings.lang.defaultDistributionListName;
       await d.save();
-      this.distributionCenters.getRecords();
+      this.distributionCenters.reloadData();
     }
   }
   @ServerFunction({ allowed: Roles.admin })

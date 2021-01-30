@@ -34,7 +34,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
   helpers = this.context.for(Helpers).gridSettings({
     numOfColumnsInGrid: 0,
     allowUpdate: true,
-    get: { where: h => h.id.isEqualTo(this.context.user.id) },
+    where: h => h.id.isEqualTo(this.context.user.id),
     columnSettings: h => [
       h.name,
       h.phone,
@@ -57,7 +57,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-    this.helpers.getRecords().then(() => {
+    this.helpers.reloadData().then(() => {
       if (!this.helpers.currentRow.password.value)
         this.confirmPassword.value = '';
     });
@@ -74,7 +74,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
         await this.helpers.items[0].save();
         this.dialog.Info(this.settings.lang.updateSaved);
         this.confirmPassword.value = this.helpers.currentRow.password.value ? Helpers.emptyPassword : '';
-        this.helper.navigateToComponent( (await import('../../my-families/my-families.component')).MyFamiliesComponent);
+        this.helper.navigateToComponent((await import('../../my-families/my-families.component')).MyFamiliesComponent);
 
 
       }

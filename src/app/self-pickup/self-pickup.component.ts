@@ -28,7 +28,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   constructor(private busy: BusyService
     , private context: Context, private dialog: DialogService, public   settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
-      this.families.getRecords();
+      this.families.reloadData();
     }, this.destroyHelper);
   }
   destroyHelper = new DestroyHelper();

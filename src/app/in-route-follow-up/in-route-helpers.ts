@@ -20,7 +20,7 @@ export class InRouteHelpers extends IdEntity {
                 text: 'הוסף',
                 click: async () => {
 
-                    await this.addCommunication(() => gridDialog.args.settings.getRecords());
+                    await this.addCommunication(() => gridDialog.args.settings.reloadData());
                 }
             }],
             settings: this.context.for(HelperCommunicationHistory).gridSettings({
@@ -47,11 +47,11 @@ export class InRouteHelpers extends IdEntity {
                 ],
 
                 columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
-                get: {
-                    where: hist => hist.volunteer.isEqualTo(this.id),
-                    orderBy: fd => [{ column: fd.createDate, descending: true }],
-                    limit: 25
-                }
+
+                where: hist => hist.volunteer.isEqualTo(this.id),
+                orderBy: fd => [{ column: fd.createDate, descending: true }],
+                rowsInPage: 25
+
             })
         });
         this.reload();

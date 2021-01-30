@@ -30,12 +30,12 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     rowCssClass: f => f.deliverStatus.getCss(),
 
     knowTotalRows: true,
-    get: {
-      limit: 100,
-      where: f =>
-        f.id.isIn(...this.deliveriesForPhone)
-      , orderBy: f => f.name
-    },
+
+    rowsInPage: 100,
+    where: f =>
+      f.id.isIn(...this.deliveriesForPhone)
+    , orderBy: f => f.name
+    ,
     columnSettings: deliveries => {
       let r = [
         { column: deliveries.name, width: '100' },
@@ -110,8 +110,8 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     ]
   });
 
-  phone = new StringColumn({caption:"טלפון של תורם או מתנדב",dataControlSettings:()=>({inputType:'tel'}) });
-  
+  phone = new StringColumn({ caption: "טלפון של תורם או מתנדב", dataControlSettings: () => ({ inputType: 'tel' }) });
+
   constructor(
     private context: Context,
     public dialog: DialogService,
@@ -163,7 +163,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   async search() {
     try {
-      this.deliveriesForPhone = (await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value)).map(x=>x.id);
+      this.deliveriesForPhone = (await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value)).map(x => x.id);
       this.showData = (this.deliveriesForPhone.length > 0);
     } catch (err) {
 
@@ -173,6 +173,6 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   async refreshFamilyGrid() {
     this.deliveries.page = 1;
-    await this.deliveries.getRecords();
+    await this.deliveries.reloadData();
   }
 }

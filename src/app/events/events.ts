@@ -29,16 +29,16 @@ export class Event extends IdEntity {
                         eh.helper.value = h.id.value;
                         eh.eventId.value = this.id.value;
                         await eh.save();
-                        x.args.settings.getRecords()
+                        x.args.settings.reloadData()
                     }
                 })
 
             }],
             settings: this.context.for(volunteersInEvent).gridSettings({
-                get: {
-                    limit: 50,
-                    where: ve => ve.eventId.isEqualTo(this.id)
-                },
+
+                rowsInPage: 50,
+                where: ve => ve.eventId.isEqualTo(this.id)
+                ,
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
                 columnSettings: ev => [

@@ -24,11 +24,11 @@ export class EventsComponent implements OnInit {
   events = this.context.for(Event).gridSettings({
     allowUpdate: true,
     allowInsert: true,
-    get: {
-      limit: 25,
-      where: e => this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive),
-      orderBy: e => [e.eventStatus, e.eventDate, e.startTime]
-    },
+
+    rowsInPage: 25,
+    where: e => this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive),
+    orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
+
     showFilter: true,
     allowSelection: true,
     gridButtons: [
@@ -72,7 +72,7 @@ export class EventsComponent implements OnInit {
                     await current.save();
                   }
                 }
-                this.events.getRecords();
+                this.events.reloadData();
               });
             }
           });
@@ -84,7 +84,7 @@ export class EventsComponent implements OnInit {
         name: this.settings.lang.showArchive,
         click: () => {
           this.showArchive = !this.showArchive;
-          this.events.getRecords();
+          this.events.reloadData();
         }
       },
     ],
