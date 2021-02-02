@@ -6,7 +6,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
-import { controllerAllowed } from "@Remult/core";
+import { controllerAllowed } from "@remult/core";
 import { Families } from "./families";
 
 
@@ -60,8 +60,9 @@ export abstract class ActionOnRows<T extends IdEntity>  {
                     return false;
                 if (this.args.visible) {
                     r = this.args.visible(component);
+                    console.log(this.args.title,r);
                 }
-                return r;
+                return true;
             },
             icon: this.args.icon,
             click: async () => {

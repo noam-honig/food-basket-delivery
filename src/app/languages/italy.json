@@ -3898,7 +3898,7 @@
   },
   "updateStatusHelp": {
     "google": "Lo stato è stato rimosso dagli elenchi - progettato per segnalare che la famiglia non dovrebbe ricevere cibo - ma a differenza dello stato di eliminazione - vogliamo mantenerlo nel database in modo che se il benessere lo riporti a noi, sapremo che sono stati rimossi dagli elenchi. È adatto a famiglie che sono state risolte o che semplicemente non vogliono ricevere - oppure l'indirizzo non esiste ecc.",
-    "valueInCode": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...",
+    "valueInCode": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפטרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו...",
     "valueInEnglish": "Status has been removed from the lists - designed to signal that the family should not receive food - but unlike the deletion status - we want to keep it in the database so that if welfare brings it to us again, we will know that they have been removed from the lists. It is suitable for families who have been resolved or who simply do not want to receive - or the address does not exist etc ..."
   },
   "updateVolunteer": {

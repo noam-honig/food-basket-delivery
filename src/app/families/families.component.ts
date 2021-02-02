@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase, controllerAllowed } from '@remult/core';
 
 import { Families, AreaColumn } from './families';
 
@@ -37,7 +37,7 @@ import { TranslationOptions, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
-import {  NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
+import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
 
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
@@ -71,8 +71,8 @@ export class FamiliesComponent implements OnInit {
             count: x.count
         }));
     }
-
-
+   
+    test = new NewDelivery(this.context);
     limit = 25;
 
 
@@ -369,12 +369,12 @@ export class FamiliesComponent implements OnInit {
             ]
             return r;
         },
-        gridButtons: [
+        gridButtons: test([
             ...[
                 new NewDelivery(this.context),
-                new updateGroup (this.context),
-                new UpdateArea (this.context),
-                new UpdateStatus (this.context),
+                new updateGroup(this.context),
+                new UpdateArea(this.context),
+                new UpdateStatus(this.context),
                 new UpdateSelfPickup(this.context),
                 new UpdateDefaultVolunteer(this.context),
                 new UpdateBasketType(this.context),
@@ -401,7 +401,7 @@ export class FamiliesComponent implements OnInit {
 
                 },
                 visible: () => this.isAdmin && this.families.selectedRows.length > 1
-            }],
+            }]),
         allowSelection: true,
         rowButtons: [
             {
@@ -761,3 +761,7 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
     });
 }
 
+function test (arr: any){
+    console.log(arr);
+    return arr;
+}
