@@ -3027,6 +3027,10 @@
     "google": "עדכן הערה",
     "valueInCode": "עדכן הערה"
   },
+  "updated": {
+    "google": "עודכנו",
+    "valueInCode": "עודכנו"
+  },
   "updatedBy": {
     "google": "עודכן על ידי",
     "valueInCode": "עודכן על ידי"

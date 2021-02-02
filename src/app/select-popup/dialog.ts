@@ -233,6 +233,7 @@ export function extractError(err: any) {
 
     return JSON.stringify(err);
 }
+
 export class DestroyHelper {
     private destroyList: (() => void)[] = [];
     add(arg0: () => void) {

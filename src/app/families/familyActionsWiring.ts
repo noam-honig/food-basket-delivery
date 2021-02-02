@@ -6,14 +6,13 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
+import { controllerAllowed, ControllerBase, controllerColumns, ServerMethod, ServerMethod2 } from "../dev/server-method";
+import { Families } from "./families";
 
 
 
 
-export interface serverUpdateInfo<T extends IdEntity> {
-    where: EntityWhere<T>;
-    count: number;
-}
+
 export interface packetServerUpdateInfo {
     packedWhere: any;
     count: number;
@@ -25,7 +24,7 @@ export interface DoWorkOnServerHelper<T extends IdEntity> {
 }
 
 
-export class ActionOnRows<T extends IdEntity> {
+export abstract class ActionOnRows<T extends IdEntity>  {
     constructor(protected context: Context,
         private entity: {
             new(...args: any[]): T;
@@ -33,6 +32,7 @@ export class ActionOnRows<T extends IdEntity> {
         public args: ActionOnRowsArgs<T>
 
     ) {
+
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
 
@@ -40,7 +40,7 @@ export class ActionOnRows<T extends IdEntity> {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => args.columns();
+            args.dialogColumns = async x => controllerColumns(this);
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -50,34 +50,12 @@ export class ActionOnRows<T extends IdEntity> {
 
     }
 
-    async doWorkOnServer(doWork: (h: DoWorkOnServerHelper<T>) => Promise<number>, args: any[]) {
-
-        let i = 0;
-        for (const c of this.args.columns()) {
-            c.rawValue = args[i++];
-        }
-        if (this.args.validate)
-            await this.args.validate();
-        let r = await doWork({
-            actionWhere: x => {
-                if (this.args.additionalWhere)
-                    return this.args.additionalWhere(x);
-            },
-            forEach: this.args.forEach
-        });
-        if (this.args.onEnd)
-            await this.args.onEnd();
-        return r;
-
-
-    }
-
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
             name: this.args.title,
             visible: () => {
-                let r = this.context.isAllowed(this.args.allowed);
+                let r = controllerAllowed(this, this.context);
                 if (!r)
                     return false;
                 if (this.args.visible) {
@@ -105,10 +83,14 @@ export class ActionOnRows<T extends IdEntity> {
 
                         },
                         ok: async () => {
-                            let info = await component.buildActionInfo(this.args.additionalWhere);
-                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + info.count + ' ' + component.groupName + '?')) {
-                                let r = await this.internalForTestingCallTheServer(component, info);
-                                component.dialog.Info(r);
+                            let groupName = this.context.for(this.entity).create().defs.caption;
+                            let count = await this.context.for(this.entity).count(this.composeWhere(component.userWhere))
+                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
+                                let r = await this.internalForTestingCallTheServer({
+                                    count,
+                                    where: component.userWhere
+                                });
+
 
 
                                 component.afterAction();
@@ -123,27 +105,60 @@ export class ActionOnRows<T extends IdEntity> {
         } as GridButton;
     }
 
-    async internalForTestingCallTheServer(component: actionDialogNeeds<T>, info: serverUpdateInfo<T>) {
-        let args = [];
-        for (const c of this.args.columns()) {
-            args.push(c.rawValue);
-        }
+    async internalForTestingCallTheServer(info: {
+        where: EntityWhere<T>,
+        count: number
+    }) {
 
-        let r = await component.callServer({
+        let r = await this.execute({
             count: info.count,
             packedWhere: packWhere(this.context.for(this.entity).create(), info.where)
-        }, this.args.title, args);
+        });
+
         return r;
     }
+
+    composeWhere(where: EntityWhere<T>) {
+        if (this.args.additionalWhere) {
+            return x => new AndFilter(where(x), this.args.additionalWhere(x));
+        }
+        return where;
+
+    }
+
+    @ServerMethod2()
+    async execute(info: packetServerUpdateInfo) {
+        let where = this.composeWhere(x => unpackWhere(x, info.packedWhere));
+
+        let count = await this.context.for(this.entity).count(where);
+        if (count != info.count) {
+            throw "ארעה שגיאה אנא נסה שוב";
+        }
+        let r = await pagedRowsIterator<T>(this.context.for(this.entity), {
+            where,
+            orderBy: this.args.orderBy,
+            forEachRow: async (f) => {
+                await this.args.forEach(f);
+                if (f.wasChanged())
+                    await f.save();
+            }
+
+
+        });
+        let message = this.args.title + ": " + r + " " + this.context.for(this.entity).create().defs.caption + " " + getLang(this.context).updated;
+
+        await Families.SendMessageToBrowsers(message, this.context, '');
+        return r;
+    }
+
 }
 
 export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     settings: ApplicationSettings,
     afterAction: () => {},
-    buildActionInfo: (actionWhere: EntityWhere<T>) => Promise<serverUpdateInfo<T>>,
-    callServer: (info: packetServerUpdateInfo, action: string, columns: any[]) => Promise<string>,
-    groupName: string
+    userWhere: EntityWhere<T>
+
 }
 
 
@@ -152,53 +167,22 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     visible?: (component: actionDialogNeeds<T>) => boolean,
     forEach: (f: T) => Promise<void>,
     onEnd?: () => Promise<void>,
-    columns: () => Column[],
     validateInComponent?: (component: actionDialogNeeds<T>) => Promise<void>,
     validate?: () => Promise<void>,
     title: string,
     icon?: string,
     help?: () => string,
-    allowed: Allowed,
     confirmQuestion?: () => string,
-    additionalWhere?: (f: T) => Filter
+    additionalWhere?: (f: T) => Filter,
+    orderBy?: EntityOrderBy<T>
 }
-
-
-export async function filterActionOnServer<T extends IdEntity>(actions: {
-    new(context: Context): ActionOnRows<T>;
-}[], context: Context, doWork: (h: DoWorkOnServerHelper<T>) => Promise<number>, action: string, args: any[]) {
-    for (const a of actions) {
-        let x = new a(context);
-        if (x.args.title == action) {
-            if (context.isAllowed(x.args.allowed)) {
-                return await x.doWorkOnServer(doWork, args);
-            }
-            else {
-                return getLang(context).notAthorized;
-            }
-        }
-    }
-    throw getLang(context).actionNotFound;
-}
-
-export function buildGridButtonFromActions<T extends IdEntity>(actions: {
-    new(context: Context): ActionOnRows<T>
-}[], context: Context, component: actionDialogNeeds<T>) {
-    let r = [];
-    for (const a of actions) {
-        r.push(new a(context).gridButton(component));
-    }
-    return r;
-}
-
 
 
 export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, args: {
 
     where: (f: T) => Filter,
     forEachRow: (f: T) => Promise<void>,
-    orderBy?: EntityOrderBy<T>,
-    count?: number
+    orderBy?: EntityOrderBy<T>
 }) {
     let updated = 0;
     let pt = new PromiseThrottle(10);
@@ -208,29 +192,4 @@ export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEnt
     }
     await pt.done();
     return updated;
-}
-export async function iterateRowsActionOnServer<T extends IdEntity>(
-    args: {
-        context: SpecificEntityHelper<string, T>,
-        h: DoWorkOnServerHelper<T>,
-        info: packetServerUpdateInfo,
-        additionalWhere?: EntityWhere<T>
-
-    }) {
-    let where = x => new AndFilter(args.h.actionWhere(x), unpackWhere(x, args.info.packedWhere));
-    if (args.additionalWhere) {
-        let w = where;
-        where = x => new AndFilter(w(x), args.additionalWhere(x));
-    }
-    let count = await args.context.count(where);
-    if (count != args.info.count) {
-        throw "ארעה שגיאה אנא נסה שוב";
-    }
-    return await pagedRowsIterator<T>(args.context, {
-        where,
-        orderBy: args.h.orderBy,
-        forEachRow: async (f) => await args.h.forEach(f),
-        count,
-
-    });
 }

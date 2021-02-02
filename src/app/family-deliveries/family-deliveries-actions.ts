@@ -4,27 +4,50 @@ import { DistributionCenterId, DistributionCenters, allCentersToken } from "../m
 import { HelperId } from "../helpers/helpers";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
-import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, filterActionOnServer, serverUpdateInfo, pagedRowsIterator } from "../families/familyActionsWiring";
+import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, packetServerUpdateInfo } from "../families/familyActionsWiring";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus, DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
-import { SelfPickupStrategyColumn, updateGroup, UpdateArea, UpdateStatus, bridge } from "../families/familyActions";
+import { SelfPickupStrategyColumn, updateGroup, UpdateArea, UpdateStatus, updateGroupForDeliveries, UpdateAreaForDeliveries, UpdateStatusForDeliveries } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
+import { controllerColumns, ServerController, ServerMethod } from "../dev/server-method";
 
 
+export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+
+    constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
+        super(context, FamilyDeliveries, buildArgsForFamilyDeliveries(args));
+    }
+}
+function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
+    if (args.orderBy)
+        throw "didn't expect order by";
+    args.orderBy = x => [{ column: x.createDate, descending: true }]//to handle the case where paging is used, and items are added with different ids
+    let originalForEach = args.forEach;
+    args.forEach = async fd => {
+        fd._disableMessageToUsers = true;
+        await originalForEach(fd);
+    };
+    let originalWhere = args.additionalWhere;
+    if (originalWhere) {
+        args.additionalWhere = x => new AndFilter(originalWhere(x), x.isAllowedForUser());
+    }
+    else args.additionalWhere = x => x.isAllowedForUser();
+    return args;
+}
 
 
-
-
-export class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'deleteDeliveries'
+})
+export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     updateFamilyStatus = new BoolColumn(getLang(this.context).updateFamilyStatus);
     status = new FamilyStatusColumn(this.context);
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
-            columns: () => [this.updateFamilyStatus, this.status],
+        super(context, {
             dialogColumns: async c => [
                 this.updateFamilyStatus,
                 { column: this.status, visible: () => this.updateFamilyStatus.value }
@@ -43,7 +66,11 @@ export class DeleteDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'UpdateFamilyDefaults'
+})
+export class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
     byCurrentCourier = new BoolColumn(use.language.defaultVolunteer);
     basketType = new BoolColumn(use.language.defaultBasketType);
     quantity = new BoolColumn(use.language.defaultQuantity);
@@ -53,9 +80,7 @@ class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
 
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
             help: () => use.language.updateFamilyDefaultsHelp,
-            columns: () => [this.basketType, this.quantity, this.byCurrentCourier, this.comment],
             dialogColumns: async (c) => [
                 this.basketType, this.quantity, this.byCurrentCourier, this.comment, {
                     column: this.selfPickup, visible: () => c.settings.usingSelfPickupModule.value
@@ -91,6 +116,10 @@ class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
         });
     }
 }
+@ServerController({
+    allowed: Roles.distCenterAdmin,
+    key: 'updateCourier'
+})
 export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
     clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
     courier = new HelperId(this.context, getLang(this.context).volunteer);
@@ -98,9 +127,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
     usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
             help: () => getLang(this.context).updateVolunteerHelp,
-            columns: () => [this.clearVoulenteer, this.courier, this.updateAlsoAsFixed],
             dialogColumns: async () => [
                 this.clearVoulenteer,
                 { column: this.courier, visible: () => !this.clearVoulenteer.value },
@@ -132,15 +159,18 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
         this.courier.value = '';
     }
 }
-export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.distCenterAdmin,
+    key: 'updateDeliveriesStatus'
+})
+export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
     status = new DeliveryStatusColumn(this.context);
     comment = new StringColumn(getLang(this.context).internalComment);
     deleteExistingComment = new BoolColumn(getLang(this.context).deleteExistingComment);
+
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
-            columns: () => [this.status, this.comment, this.deleteExistingComment],
+        super(context, {
             title: getLang(context).updateDeliveriesStatus,
             help: () => getSettings(context).isSytemForMlt() ? '' : getLang(this.context).updateDeliveriesStatusHelp,
             validate: async () => {
@@ -149,8 +179,7 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
 
             },
             validateInComponent: async c => {
-                let info = await c.buildActionInfo(undefined);
-                let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count(x => x.deliverStatus.isAResultStatus().and(info.where(x)))
+                let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count(x => x.deliverStatus.isAResultStatus().and(this.composeWhere(c.userWhere)(x)))
                 if (deliveriesWithResultStatus > 0 && (this.status.value == DeliveryStatus.ReadyForDelivery || this.status.value == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
                         getLang(this.context).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.context).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
@@ -160,7 +189,7 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
                 }
             },
             forEach: async f => {
-                if (getSettings(context).isSytemForMlt() ||  !(this.status.value == DeliveryStatus.Frozen && f.deliverStatus.value != DeliveryStatus.ReadyForDelivery)) {
+                if (getSettings(context).isSytemForMlt() || !(this.status.value == DeliveryStatus.Frozen && f.deliverStatus.value != DeliveryStatus.ReadyForDelivery)) {
                     f.deliverStatus.value = this.status.value;
                     if (this.deleteExistingComment) {
                         f.internalDeliveryComment.value = '';
@@ -181,9 +210,9 @@ export class UpdateDeliveriesStatus extends ActionOnRows<ActiveFamilyDeliveries>
 
 export class ArchiveHelper {
     showDelivered = false;
-    markOnTheWayAsDelivered = new BoolColumn({ dataControlSettings: () => ({ visible: () => this.showDelivered }) });
+    markOnTheWayAsDelivered = new BoolColumn({ key: 'markOnTheWayAsDelivered', dataControlSettings: () => ({ visible: () => this.showDelivered }) });
     showSelfPickup = false;
-    markSelfPickupAsDelivered = new BoolColumn({ dataControlSettings: () => ({ visible: () => this.showSelfPickup }) });
+    markSelfPickupAsDelivered = new BoolColumn({ key: 'markSelfPickupAsDelivered', dataControlSettings: () => ({ visible: () => this.showSelfPickup }) });
     constructor(private context: Context) { }
     getColumns() {
         return [this.markOnTheWayAsDelivered, this.markSelfPickupAsDelivered];
@@ -220,14 +249,16 @@ export class ArchiveHelper {
 
 }
 
-class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'archiveDeliveries'
+})
+export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     archiveHelper = new ArchiveHelper(this.context);
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
-            columns: () => this.archiveHelper.getColumns(),
+        super(context, {
             dialogColumns: async c => {
-                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(await (await c.buildActionInfo(undefined)).where, c.settings.usingSelfPickupModule.value);
+                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule.value);
             },
 
             title: getLang(context).archiveDeliveries,
@@ -239,39 +270,46 @@ class ArchiveDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
             },
 
         });
+        controllerColumns(this).push(...controllerColumns(this.archiveHelper));
     }
 }
 
-class UpdateBasketType extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.distCenterAdmin,
+    key: 'updateBasketType'
+})
+export class UpdateBasketType extends ActionOnFamilyDeliveries {
     basketType = new BasketId(this.context);
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
-            columns: () => [this.basketType],
+        super(context, {
             title: getLang(context).updateBasketType,
             forEach: async f => { f.basketType.value = this.basketType.value },
 
         });
     }
 }
-class UpdateQuantity extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.distCenterAdmin,
+    key: 'updateQuantity'
+})
+export class UpdateQuantity extends ActionOnFamilyDeliveries {
     quantity = new QuantityColumn(this.context);
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.distCenterAdmin,
-            columns: () => [this.quantity],
+        super(context, {
             title: getLang(context).updateBasketQuantity,
             forEach: async f => { f.quantity.value = this.quantity.value },
         });
     }
 }
 
-export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'updateDistributionCenter'
+})
+export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     distributionCenter = new DistributionCenterId(this.context);
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
-            columns: () => [this.distributionCenter],
+        super(context, {
             title: getLang(context).updateDistributionList,
             forEach: async f => { f.distributionCenter.value = this.distributionCenter.value },
 
@@ -279,7 +317,11 @@ export class UpdateDistributionCenter extends ActionOnRows<ActiveFamilyDeliverie
     }
 }
 
-export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
+@ServerController({
+    allowed: Roles.admin,
+    key: 'newDeliveryForDeliveries'
+})
+export class NewDelivery extends ActionOnFamilyDeliveries {
     useExistingBasket = new BoolColumn({ caption: getLang(this.context).useBusketTypeFromCurrentDelivery, defaultValue: true });
     basketType = new BasketId(this.context);
     quantity = new QuantityColumn(this.context);
@@ -292,23 +334,8 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
 
     distributionCenter = new DistributionCenterId(this.context);
     useCurrentDistributionCenter = new BoolColumn(getLang(this.context).distributionListAsCurrentDelivery);
-
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
-            allowed: Roles.admin,
-            columns: () => [
-                this.useExistingBasket,
-                this.basketType,
-                this.quantity,
-                this.helperStrategy,
-                this.helper,
-                this.distributionCenter,
-                this.autoArchive,
-                this.newDeliveryForAll,
-                this.selfPickup,
-                this.useCurrentDistributionCenter,
-                ...this.archiveHelper.getColumns()
-            ],
+        super(context, {
             dialogColumns: async (component) => {
                 this.basketType.value = '';
                 this.quantity.value = 1;
@@ -321,7 +348,7 @@ export class NewDelivery extends ActionOnRows<ActiveFamilyDeliveries> {
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter.value },
                     this.helperStrategy,
                     { column: this.helper, visible: () => this.helperStrategy.value == HelperStrategy.selectHelper },
-                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(await (await component.buildActionInfo(undefined)).where, component.settings.usingSelfPickupModule.value),
+                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule.value),
                     this.autoArchive,
                     this.newDeliveryForAll,
                     this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value)
@@ -402,18 +429,3 @@ class HelperStrategyColumn extends ValueListColumn<HelperStrategy>{
         })
     }
 }
-
-
-
-export const delvieryActions = () => [
-    NewDelivery,
-    ArchiveDeliveries,
-    DeleteDeliveries,
-    UpdateDeliveriesStatus,
-    UpdateBasketType,
-    UpdateQuantity,
-    UpdateDistributionCenter,
-    UpdateCourier,
-    UpdateFamilyDefaults,
-    bridge(updateGroup), bridge(UpdateArea), bridge(UpdateStatus)
-];

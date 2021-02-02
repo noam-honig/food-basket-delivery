@@ -2,15 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
 import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
-import { Sites } from '../sites/sites';
 import { Helpers } from '../helpers/helpers';
-import { allCentersToken } from '../manage/distribution-centers';
-import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
+import { ControllerBase, ServerMethod } from '../dev/server-method';
 
 declare var gtag;
 declare var fbq;
@@ -71,7 +69,7 @@ export class RegisterHelperComponent implements OnInit {
         return;
       }
 
-      await RegisterHelperComponent.doHelperForm(pack(this.helper));
+  //    await RegisterHelperComponent.doHelperForm(pack(this.helper));
 
       this.isDone = true;
       try {
@@ -94,15 +92,11 @@ export class RegisterHelperComponent implements OnInit {
     else window.location.href = "https://www.mitchashvim.org.il/";
   }
 
-  @ServerFunction({ allowed: true })
-  static async doHelperForm(args: any[], context?: Context) {
-    await executeOnServer(helperForm, args, context);
-  }
 }
 
-class helperForm {
+class helperForm extends ControllerBase {
   constructor(private context: Context) {
-
+    super({ key: 'register-donor', allowed: true })
   }
   name = new StringColumn({
     caption: "שם מלא", validate: () => {
@@ -129,10 +123,9 @@ class helperForm {
   company = new StringColumn({ caption: "ארגון" });
   docref = new StringColumn();
 
-  columns = [this.name, this.socialSecurityNumber, this.phone, this.email, this.address1, this.address2, this.company, this.docref];
-
-  async doWork(context: Context) {
-    let h = context.for(Helpers).create();
+  @ServerMethod()
+  async createHelper() {
+    let h = this.context.for(Helpers).create();
     h.name.value = this.name.value;
     if (!this.address1.value)
       this.address1.value = '';
@@ -150,10 +143,10 @@ class helperForm {
     let settings = await ApplicationSettings.getAsync(this.context);
     if (settings.registerHelperReplyEmailText.value && settings.registerHelperReplyEmailText.value != '') {
       let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value,
-        settings.organisationName.value, '', h.name.value, context.user.name, '');
+        settings.organisationName.value, '', h.name.value, this.context.user.name, '');
 
       try {
-        await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value, context);
+        await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, h.email.value, this.context);
       } catch (err) {
         console.error('send mail', err);
       }

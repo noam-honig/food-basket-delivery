@@ -37,8 +37,8 @@ import { TranslationOptions, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
-import { familyActions } from './familyActions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer, packetServerUpdateInfo } from './familyActionsWiring';
+import {  NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
+
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { MatAccordion } from '@angular/material/expansion';
@@ -370,23 +370,23 @@ export class FamiliesComponent implements OnInit {
             return r;
         },
         gridButtons: [
-            ...buildGridButtonFromActions(familyActions(), this.context,
+            ...[
+                new NewDelivery(this.context),
+                new updateGroup (this.context),
+                new UpdateArea (this.context),
+                new UpdateStatus (this.context),
+                new UpdateSelfPickup(this.context),
+                new UpdateDefaultVolunteer(this.context),
+                new UpdateBasketType(this.context),
+                new UpdateQuantity(this.context),
+                new UpdateFamilySource(this.context)
+            ].map(x => x.gridButton(
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
-                    buildActionInfo: async actionWhere => {
-                        let where: EntityWhere<Families> = f => {
-                            let r = new AndFilter(actionWhere(f), this.families.getFilterWithSelectedRows().where(f));
-                            return r;
-                        };
-                        return {
-                            count: await this.context.for(Families).count(where),
-                            where
-                        };
-                    }, settings: this.settings,
-                    groupName: this.settings.lang.families
-                })
+                    userWhere: f => this.families.getFilterWithSelectedRows().where(f),
+                    settings: this.settings
+                }))
             , {
                 name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
@@ -434,25 +434,6 @@ export class FamiliesComponent implements OnInit {
 
         ]
     });
-
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async FamilyActionOnServer(info: packetServerUpdateInfo, action: string, args: any[], context?: Context) {
-        let r = await filterActionOnServer(familyActions(), context, async h =>
-            await iterateRowsActionOnServer({
-                context: context.for(Families),
-                h: {
-                    actionWhere: h.actionWhere,
-                    forEach: async f => {
-                        await h.forEach(f);
-                        if (f.wasChanged())
-                            await f.save();
-                    }
-                },
-                info
-            })
-            , action, args);
-        return r + ' ' + getLang(context).familiesUpdated;
-    }
 
 
 

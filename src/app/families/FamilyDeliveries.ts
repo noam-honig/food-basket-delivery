@@ -306,6 +306,7 @@ export class FamilyDeliveries extends IdEntity {
         super({
             name: apiEndPoing,
             dbName: 'FamilyDeliveries',
+            caption: getLang(context).deliveries,
             allowApiRead: context.isSignedIn(),
             allowApiInsert: false,
             allowApiUpdate: context.isSignedIn(),

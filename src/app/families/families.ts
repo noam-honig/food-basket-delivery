@@ -329,6 +329,7 @@ export class Families extends IdEntity {
     super(
       {
         name: "Families",
+        caption: getLang(context).deliveries,
         allowApiRead: Roles.admin,
         allowApiUpdate: Roles.admin,
         allowApiDelete: false,

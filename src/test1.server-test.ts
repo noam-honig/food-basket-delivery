@@ -4,15 +4,16 @@ import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
 import { Roles } from "./app/auth/roles";
 import { HelpersAndStats } from "./app/delivery-follow-up/HelpersAndStats";
+import { controllerColumns } from "./app/dev/server-method";
 import { DeliveryStatus } from "./app/families/DeliveryStatus";
 import { Families } from "./app/families/families";
 import { FamiliesComponent } from "./app/families/families.component";
-import { bridge, bridgeFamilyDeliveriesToFamilies, UpdateArea, UpdateStatus } from "./app/families/familyActions";
+import { bridgeFamilyDeliveriesToFamilies, UpdateArea, UpdateAreaForDeliveries, UpdateStatus, UpdateStatusForDeliveries } from "./app/families/familyActions";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./app/families/FamilyDeliveries";
 import { FamilyStatus } from "./app/families/FamilyStatus";
-import { UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
+import { ArchiveDeliveries, DeleteDeliveries, UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
 import { FamilyDeliveriesComponent } from "./app/family-deliveries/family-deliveries.component";
-import { Helpers } from "./app/helpers/helpers";
+import { Helpers, HelperUserInfo } from "./app/helpers/helpers";
 import { ApplicationSettings } from "./app/manage/ApplicationSettings";
 import { serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
@@ -50,7 +51,7 @@ async function init() {
     describe("the test", () => {
         let helperId: string;
         beforeEach(async done => {
-            for (const d of await context.for(ActiveFamilyDeliveries).find()) {
+            for (const d of await context.for(FamilyDeliveries).find()) {
                 await d.delete();
             }
 
@@ -212,7 +213,7 @@ async function init() {
     describe("test update family status", () => {
 
         beforeEach(async (done) => {
-            for (const d of await context.for(ActiveFamilyDeliveries).find()) {
+            for (const d of await context.for(FamilyDeliveries).find()) {
                 await d.delete();
             }
             for (const f of await context.for(Families).find()) {
@@ -234,22 +235,13 @@ async function init() {
             await fd2.save();
 
             expect(+await context.for(ActiveFamilyDeliveries).count(x => x.family.isEqualTo(f.id))).toBe(2);
-            let u = new UpdateStatus(context);
-            let b = new bridgeFamilyDeliveriesToFamilies(context, u);
+
+            let b = new UpdateStatusForDeliveries(context);
+            let u = b.orig as UpdateStatus;
             u.status.value = FamilyStatus.Frozen;
             u.archiveFinshedDeliveries.value = true;
 
             await b.internalForTestingCallTheServer({
-                afterAction: async () => { },
-                groupName: '',
-                buildActionInfo: async actionWhere => {
-                    return { where: actionWhere, count: 1 }
-                },
-                settings: await ApplicationSettings.getAsync(context),
-                dialog: undefined,
-                callServer: (info, actions, columns) => FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context)
-
-            }, {
                 count: 1,
                 where: x => x.id.isEqualTo(fd.id)
             });
@@ -272,19 +264,6 @@ async function init() {
             u.status.value = DeliveryStatus.Frozen;
 
             await u.internalForTestingCallTheServer({
-                afterAction: async () => { },
-                groupName: '',
-                buildActionInfo: async actionWhere => {
-                    return { where: actionWhere, count: 1 }
-                },
-                settings: await ApplicationSettings.getAsync(context),
-                dialog: undefined,
-                callServer: async (info, actions, columns) => {
-                    let r = await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context);
-                    return r;
-                }
-
-            }, {
                 count: 1,
                 where: x => x.id.isEqualTo(fd.id)
             });
@@ -302,16 +281,6 @@ async function init() {
             u.area.value = "north";
 
             await u.internalForTestingCallTheServer({
-                afterAction: async () => { },
-                groupName: '',
-                buildActionInfo: async actionWhere => {
-                    return { where: actionWhere, count: 1 }
-                },
-                settings: await ApplicationSettings.getAsync(context),
-                dialog: undefined,
-                callServer: (info, actions, columns) => FamiliesComponent.FamilyActionOnServer(info, actions, columns, context)
-
-            }, {
                 count: 1,
                 where: x => x.id.isEqualTo(f.id)
             });
@@ -325,22 +294,13 @@ async function init() {
             await f.save();
             let fd = f.createDelivery('');
             await fd.save();
-            let u = new UpdateArea(context);
-            let b = new bridgeFamilyDeliveriesToFamilies(context, u);
+
+            let b = new UpdateAreaForDeliveries(context);
+            let u = b.orig as UpdateArea;
             u.area.value = 'north';
 
 
             await b.internalForTestingCallTheServer({
-                afterAction: async () => { },
-                groupName: '',
-                buildActionInfo: async actionWhere => {
-                    return { where: actionWhere, count: 1 }
-                },
-                settings: await ApplicationSettings.getAsync(context),
-                dialog: undefined,
-                callServer: (info, actions, columns) => FamilyDeliveriesComponent.DeliveriesActionOnServer(info, actions, columns, context)
-
-            }, {
                 count: 1,
                 where: x => x.id.isEqualTo(fd.id)
             });
@@ -348,6 +308,60 @@ async function init() {
             let fd_after = await context.for(FamilyDeliveries).findId(fd.id);
             expect(fd_after.area.value).toBe("north", "fd");
 
+        });
+        itAsync("test Action Where", async () => {
+
+            let f = await context.for(Families).create();
+            f.name.value = "test";
+            await f.save();
+            let fd = f.createDelivery('');
+            fd.deliverStatus.value = DeliveryStatus.Success;
+            await fd.save();
+            var u = new DeleteDeliveries(context);
+            await u.internalForTestingCallTheServer({
+                count: 0,
+                where: x => undefined
+            });
+            expect(+(await context.for(FamilyDeliveries).count())).toBe(1);
+            fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+            await fd.save();
+            await u.internalForTestingCallTheServer({
+                count: 1,
+                where: x => undefined
+            });
+            expect(+(await context.for(FamilyDeliveries).count())).toBe(0);
+
+        });
+        fitAsync("test delete only works for user dist center", async () => {
+            let f = await context.for(Families).create();
+            f.name.value = "test";
+            await f.save();
+            await f.createDelivery('a').save();
+            await f.createDelivery('a').save();
+            await f.createDelivery('b').save();
+            let c2 = new ServerContext();
+            c2._setUser({
+                id: 'distCenterAdmin',
+                name: 'distCenterAdmin',
+                distributionCenter: 'b',
+                escortedHelperName: undefined,
+                theHelperIAmEscortingId: undefined,
+                roles: [Roles.distCenterAdmin]
+            } as HelperUserInfo);
+            c2.setDataProvider(sql);
+            expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(3);
+            var u = new DeleteDeliveries(c2);
+            await u.internalForTestingCallTheServer({
+                count: 1,
+                where: x => undefined
+            });
+            expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(2);
+        });
+        itAsync("archive helper is serialized ok", async () => {
+
+            let x = new ArchiveDeliveries(context);
+            expect(controllerColumns(x).includes(x.archiveHelper.markOnTheWayAsDelivered)).toBe(true);
+            
         });
     });
 }

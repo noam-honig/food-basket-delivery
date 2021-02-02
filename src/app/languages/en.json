@@ -3296,6 +3296,10 @@
     "valueInCode": "עדכן הערה",
     "custom": "Update Comment"
   },
+  "updated": {
+    "google": "Updated",
+    "valueInCode": "עודכנו"
+  },
   "updatedBy": {
     "google": "Updated by",
     "valueInCode": "עודכן על ידי"

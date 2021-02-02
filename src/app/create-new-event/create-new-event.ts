@@ -6,9 +6,6 @@ import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
 
 import { allCentersToken, DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
-import { executeOnServer, pack } from '../server/mlt';
-import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
-import { RequiredValidator } from '@angular/forms';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -20,6 +17,7 @@ import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
 import { PromiseThrottle } from '../shared/utils';
 import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
+import { controllerAllowed, ControllerBase, controllerColumns, ServerController, ServerMethod, ServerMethod2 } from '../dev/server-method';
 
 function visible(when: () => boolean, caption?: string) {
     return {
@@ -28,8 +26,11 @@ function visible(when: () => boolean, caption?: string) {
     };
 }
 
-
-export class CreateNewEvent {
+@ServerController({
+    key: 'createNewEvent',
+    allowed: Roles.admin
+})
+export class CreateNewEvent  {
     archiveHelper = new ArchiveHelper(this.context);
     createNewDelivery = new BoolColumn(getLang(this.context).createNewDeliveryForAllFamilies);
     distributionCenter = new DistributionCenterId(this.context, { dataControlSettings: () => ({ visible: () => false }) });
@@ -40,18 +41,14 @@ export class CreateNewEvent {
     basketType = new BasketId(this.context, visible(() => !this.useFamilyBasket.value));
 
     constructor(private context: Context) {
-
+      
+        controllerColumns(this).push(...controllerColumns(this.archiveHelper));
+    }
+    isAllowed(){
+        return controllerAllowed(this,this.context);
     }
 
-    columns = [...this.archiveHelper.getColumns(),
-    this.createNewDelivery,
-    this.distributionCenter,
-    this.moreOptions,
-    this.includeGroups,
-    this.excludeGroups,
-    this.useFamilyBasket,
-    this.basketType];
-
+    @ServerMethod2()
     async createNewEvent() {
         let settings = await ApplicationSettings.getAsync(this.context);
         for (const x of [
@@ -132,7 +129,7 @@ export class CreateNewEvent {
         if (this.includeGroups.value) {
             this.moreOptions.value = true;
         }
-        this.distributionCenter.value = dialog.distCenter.value;
+       this.distributionCenter.value = dialog.distCenter.value;
 
         if (this.distributionCenter.value == allCentersToken) {
             let centers = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
@@ -166,10 +163,10 @@ export class CreateNewEvent {
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {
-                columnSettings: () => this.columns
+                columnSettings: () => controllerColumns(this)
             },
             ok: async () => {
-                let deliveriesCreated = await CreateNewEvent.createNewEvent(pack(this));
+                let deliveriesCreated = await this.createNewEvent();
                 dialog.distCenter.value = dialog.distCenter.value;
                 if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
                     routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
@@ -185,7 +182,7 @@ export class CreateNewEvent {
                     if (!await dialog.YesNoPromise(getLang(this.context).confirmArchive + " " + count + " " + getLang(this.context).deliveries))
                         throw getLang(this.context).actionCanceled;
                 }
-                if (this.createNewDelivery.value && !await dialog.YesNoPromise(getLang(this.context).create + " " + await CreateNewEvent.countNewDeliveries(pack(this)) + " " + getLang(this.context).newDeliveriesQM))
+                if (this.createNewDelivery.value && !await dialog.YesNoPromise(getLang(this.context).create + " " + await this.countNewDeliveries() + " " + getLang(this.context).newDeliveriesQM))
                     throw getLang(this.context).actionCanceled;
             }
 
@@ -194,27 +191,12 @@ export class CreateNewEvent {
         });
 
     }
-    @ServerFunction({ allowed: Roles.admin })
-    static async createNewEvent(args: any[], context?: Context) {
-        let x = new CreateNewEvent(context);
-        x.unpack(args);
-        return x.createNewEvent();
-    }
-    @ServerFunction({ allowed: Roles.admin })
-    static async countNewDeliveries(args: any[], context?: Context) {
-        let x = new CreateNewEvent(context);
-        x.unpack(args);
-        return x.iterateFamilies(async () => { });
+ 
 
-    }
-    unpack(args: any[]) {
-        let i = 0;
-        for (const c of this.columns) {
-            c.rawValue = args[i++];
-        }
+    
+    @ServerMethod()
+    async countNewDeliveries() {
+        return this.iterateFamilies(async () => { });
     }
 }
-
-
-
 

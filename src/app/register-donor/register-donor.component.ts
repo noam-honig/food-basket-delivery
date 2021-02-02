@@ -5,13 +5,12 @@ import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
 import { allCentersToken } from '../manage/distribution-centers';
-import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
-import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
+import { ControllerBase, ServerMethod } from '../dev/server-method';
 
 declare var gtag;
 declare var fbq;
@@ -115,7 +114,7 @@ export class RegisterDonorComponent implements OnInit {
         return;
       }
 
-      await RegisterDonorComponent.doDonorForm(pack(this.donor));
+      await this.donor.createDonor();
 
       this.isDone = true;
       try {
@@ -141,10 +140,6 @@ export class RegisterDonorComponent implements OnInit {
     else window.location.href = "https://www.mitchashvim.org.il/";
   }
 
-  @ServerFunction({ allowed: true })
-  static async doDonorForm(args: any[], context?: Context) {
-    await executeOnServer(donorForm, args, context);
-  }
 }
 
 export class EquipmentAge {
@@ -163,9 +158,12 @@ export class EquipmentAgeColumn extends ValueListColumn<EquipmentAge>{
     }, caption));
   }
 }
-class donorForm {
+class donorForm  extends ControllerBase{
   constructor(private context: Context) {
-
+    super({
+      allowed:true,
+      key:'register-donor'
+    });
   }
   name = new StringColumn({
     caption: "שם מלא", validate: () => {
@@ -208,15 +206,10 @@ class donorForm {
   })
 
   docref = new StringColumn();
-  columns = [
-    this.name, this.selfDeliver, 
-    this.computer, this.computerAge,
-    this.laptop, this.laptopAge,
-    this.screen, this.donationType, this.address, this.phone, this.email, this.docref
-  ];
 
-  async doWork(context: Context) {
-    let f = context.for(Families).create();
+  @ServerMethod()
+  async createDonor() {
+    let f = this.context.for(Families).create();
     f.name.value = this.name.value;
     if (!this.address.value)
       this.address.value = '';
@@ -228,6 +221,7 @@ class donorForm {
 
     await f.save();
     var quantity = 0;
+    let self=this;
     async function addDelivery(type: string, q: number, isSelfDeliver: boolean) {
       if (q > 0) {
         quantity += q;
@@ -238,7 +232,7 @@ class donorForm {
           distCenter: allCentersToken,
           quantity: q,
           selfPickup: isSelfDeliver,
-        }, context);
+        }, self.context);
       }
     }
     if (this.computerAge.value.isNew)
@@ -261,7 +255,7 @@ class donorForm {
         distCenter: allCentersToken,
         quantity: 1,
         selfPickup: false
-      }, context);
+      }, this.context);
     }
 
     let settings = await ApplicationSettings.getAsync(this.context);

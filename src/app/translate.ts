@@ -956,6 +956,7 @@ export class Language {
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
   
+  updated = "עודכנו";
 }
 
 const defaultLang = new Language();

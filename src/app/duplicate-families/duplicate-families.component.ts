@@ -6,8 +6,7 @@ import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { familyActions, UpdateStatus, updateGroup } from '../families/familyActions';
+import {  UpdateStatus, updateGroup } from '../families/familyActions';
 import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
@@ -92,23 +91,13 @@ export class DuplicateFamiliesComponent implements OnInit {
         numOfColumnsInGrid: 6,
 
         gridButtons: [
-          ...buildGridButtonFromActions([UpdateStatus, updateGroup], this.context,
+          ...[new UpdateStatus(this.context),new  updateGroup(this.context)].map(a=>a.gridButton(
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
-              buildActionInfo: async actionWhere => {
-                let where: EntityWhere<Families> = f => {
-                  let r = new AndFilter(actionWhere(f), x.args.settings.getFilterWithSelectedRows().where(f));
-                  return r;
-                };
-                return {
-                  count: await this.context.for(Families).count(where),
-                  where
-                };
-              }, settings: this.settings,
-              groupName: this.settings.lang.families
-            })
+              userWhere: f => x.args.settings.getFilterWithSelectedRows().where(f),
+              settings: this.settings
+            }))
           , {
             name: this.settings.lang.mergeFamilies,
             click: async () => {
