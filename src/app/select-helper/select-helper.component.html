@@ -8,7 +8,7 @@
   <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args&&args.location">
     {{settings.lang.byLocation}}
   </button>
-  <mat-checkbox [(ngModel)]="args.includeFrozen" (change)="getHelpers()" style="margin-right:10px" >{{settings.lang.showAll}}</mat-checkbox>
+  <mat-checkbox [(ngModel)]="args.includeFrozen" (change)="getHelpers()" style="margin-right:10px" >{{settings.lang.showFreezed}}</mat-checkbox>
   <form (submit)="selectFirst()">
 
 

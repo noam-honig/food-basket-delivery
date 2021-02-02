@@ -711,8 +711,7 @@
   },
   "configuration": {
     "google": "Configuración",
-    "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "Configuration"
+    "valueInCode": "המערכת היא עבור"
   },
   "confirm": {
     "google": "Confirmar",
