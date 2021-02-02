@@ -12,7 +12,7 @@ import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
-import { ServerController } from "../dev/server-method";
+import { ServerController } from "@remult/core";
 
 
 

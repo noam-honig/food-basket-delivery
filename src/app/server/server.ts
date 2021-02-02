@@ -162,7 +162,7 @@ s.parentNode.insertBefore(b, s);})();
         dataSource, {
         disableHttpsForDevOnly: process.env.DISABLE_HTTPS == "true",
         disableAutoApi: Sites.multipleSites
-    });
+    }); 
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
     Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);

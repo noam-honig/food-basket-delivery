@@ -12,7 +12,7 @@ import { BasketId, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus, FamilyStatusColumn } from "../families/FamilyStatus";
 import { SelfPickupStrategyColumn, updateGroup, UpdateArea, UpdateStatus, updateGroupForDeliveries, UpdateAreaForDeliveries, UpdateStatusForDeliveries } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
-import { controllerColumns, ServerController, ServerMethod } from "../dev/server-method";
+import { getColumnsFromObject, ServerController, ServerMethod } from "@remult/core";
 
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
@@ -270,7 +270,7 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
             },
 
         });
-        controllerColumns(this).push(...controllerColumns(this.archiveHelper));
+        getColumnsFromObject(this).push(...getColumnsFromObject(this.archiveHelper));
     }
 }
 

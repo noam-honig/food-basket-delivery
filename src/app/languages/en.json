@@ -268,6 +268,10 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "custom": "Are you sure you want to cancel assignment to"
   },
+  "areYouSureYouWantToDelete": {
+    "google": "Are you sure you want to delete",
+    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק "
+  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Are you sure you want to mark successfully delivered to",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
@@ -600,6 +604,10 @@
     "google": "Donations in the near area",
     "valueInCode": "תרומות באיזור הקרוב"
   },
+  "codeWord": {
+    "google": "Code word",
+    "valueInCode": "מילת קוד"
+  },
   "columnSelectionInFile": {
     "google": "Choose columns in a file",
     "valueInCode": "בחירת עמודות בקובץ",
@@ -651,6 +659,10 @@
   "completed": {
     "google": "Completed",
     "valueInCode": "הושלמו"
+  },
+  "configuration": {
+    "google": "The system is for",
+    "valueInCode": "המערכת היא עבור"
   },
   "confirm": {
     "google": "which",
@@ -2514,6 +2526,10 @@
     "google": "This message will be sent to the volunteer after registering for the system",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
   },
+  "RegisterURLComponent": {
+    "google": "Management of registration sites",
+    "valueInCode": "ניהול אתרי רישום"
+  },
   "remainingByBaskets": {
     "google": "Remained by baskets",
     "valueInCode": "טרם שוייכו לפי סלים",
@@ -3189,6 +3205,10 @@
     "google": "To",
     "valueInCode": "ל"
   },
+  "toConfirmPleaseTypeTheCodeWord": {
+    "google": "To confirm the deletion, please type the code word",
+    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד "
+  },
   "toDate": {
     "google": "Until",
     "valueInCode": "עד תאריך"
@@ -3549,6 +3569,10 @@
   "within": {
     "google": "within",
     "valueInCode": "תוך"
+  },
+  "wrongCodeWordProcessAborted": {
+    "google": "Wrong code word - process stopped",
+    "valueInCode": "מילת קוד שגויה - התהליך מופסק"
   },
   "yes": {
     "google": "Yes",

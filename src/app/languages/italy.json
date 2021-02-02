@@ -302,7 +302,7 @@
   "areYouSureYouWantToDelete": {
     "google": "Sei sicuro di voler eliminare il file",
     "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
-    "valueInEnglish": "Are you sure you want to delete "
+    "valueInEnglish": "Are you sure you want to delete"
   },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Sei sicuro di voler contrassegnare correttamente consegnato a",
@@ -659,6 +659,11 @@
     "valueInCode": "תרומות באיזור הקרוב",
     "valueInEnglish": "Donations in the near area"
   },
+  "codeWord": {
+    "google": "Parola in codice",
+    "valueInCode": "מילת קוד",
+    "valueInEnglish": "Code word"
+  },
   "columnSelectionInFile": {
     "google": "Colonne nella selezione dei file",
     "valueInCode": "בחירת עמודות בקובץ",
@@ -717,7 +722,7 @@
   "configuration": {
     "google": "Configurazione",
     "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "Configuration"
+    "valueInEnglish": "The system is for"
   },
   "confirm": {
     "google": "Confermare",
@@ -2880,6 +2885,11 @@
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
     "valueInEnglish": "This message will be sent to the volunteer after registering for the system"
   },
+  "RegisterURLComponent": {
+    "google": "Gestione dei siti di registrazione",
+    "valueInCode": "ניהול אתרי רישום",
+    "valueInEnglish": "Management of registration sites"
+  },
   "remainingByBaskets": {
     "google": "Non assegnato da pacchi",
     "valueInCode": "טרם שוייכו לפי סלים",
@@ -3661,6 +3671,11 @@
     "valueInCode": "ל",
     "valueInEnglish": "To"
   },
+  "toConfirmPleaseTypeTheCodeWord": {
+    "google": "Per confermare l'eliminazione, digita la parola in codice",
+    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד ",
+    "valueInEnglish": "To confirm the deletion, please type the code word"
+  },
   "toDate": {
     "google": "Fino a",
     "valueInCode": "עד תאריך",
@@ -4080,6 +4095,11 @@
     "google": "entro",
     "valueInCode": "תוך",
     "valueInEnglish": "within"
+  },
+  "wrongCodeWordProcessAborted": {
+    "google": "Parola in codice errata - processo interrotto",
+    "valueInCode": "מילת קוד שגויה - התהליך מופסק",
+    "valueInEnglish": "Wrong code word - process stopped"
   },
   "yes": {
     "google": "sì",

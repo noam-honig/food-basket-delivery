@@ -1,10 +1,9 @@
-import { actionInfo, myServerAction, ServerContext, ServerFunction, SqlDatabase } from "@remult/core";
+import { actionInfo, getColumnsFromObject, myServerAction, ServerContext, ServerFunction, SqlDatabase } from "@remult/core";
 import { settings } from "cluster";
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
 import { Roles } from "./app/auth/roles";
 import { HelpersAndStats } from "./app/delivery-follow-up/HelpersAndStats";
-import { controllerColumns } from "./app/dev/server-method";
 import { DeliveryStatus } from "./app/families/DeliveryStatus";
 import { Families } from "./app/families/families";
 import { FamiliesComponent } from "./app/families/families.component";
@@ -332,7 +331,7 @@ async function init() {
             expect(+(await context.for(FamilyDeliveries).count())).toBe(0);
 
         });
-        fitAsync("test delete only works for user dist center", async () => {
+        itAsync("test delete only works for user dist center", async () => {
             let f = await context.for(Families).create();
             f.name.value = "test";
             await f.save();
@@ -360,7 +359,7 @@ async function init() {
         itAsync("archive helper is serialized ok", async () => {
 
             let x = new ArchiveDeliveries(context);
-            expect(controllerColumns(x).includes(x.archiveHelper.markOnTheWayAsDelivered)).toBe(true);
+            expect(getColumnsFromObject(x).includes(x.archiveHelper.markOnTheWayAsDelivered)).toBe(true);
             
         });
     });

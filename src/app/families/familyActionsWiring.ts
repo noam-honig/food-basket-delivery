@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, Filter, EntityWhere, packWhere, EntityOrderBy } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, Filter, EntityWhere, packWhere, EntityOrderBy, getColumnsFromObject, ServerMethod } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -6,7 +6,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
-import { controllerAllowed, ControllerBase, controllerColumns, ServerMethod, ServerMethod2 } from "../dev/server-method";
+import { controllerAllowed } from "@Remult/core";
 import { Families } from "./families";
 
 
@@ -40,7 +40,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => controllerColumns(this);
+            args.dialogColumns = async x => getColumnsFromObject(this);
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -126,7 +126,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
     }
 
-    @ServerMethod2()
+    @ServerMethod()
     async execute(info: packetServerUpdateInfo) {
         let where = this.composeWhere(x => unpackWhere(x, info.packedWhere));
 

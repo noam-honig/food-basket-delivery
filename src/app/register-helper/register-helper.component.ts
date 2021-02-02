@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn } from '@remult/core';
+import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, getColumnsFromObject, ServerController,ServerMethod } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
-import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { ControllerBase, ServerMethod } from '../dev/server-method';
+
 
 declare var gtag;
 declare var fbq;
@@ -20,11 +19,11 @@ declare var fbq;
 export class RegisterHelperComponent implements OnInit {
   constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings) { }
 
-  refer : string = null;
+  refer: string = null;
   isDone = false;
 
   helper = new helperForm(this.context);
-  area = new DataAreaSettings({ columnSettings: () => this.helper.columns.filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2 && c != this.helper.docref) });
+  area = new DataAreaSettings({ columnSettings: () => getColumnsFromObject(this.helper).filter(c => c != this.helper.name && c != this.helper.address1 && c != this.helper.address2 && c != this.helper.docref) });
   ngOnInit() {
 
     let urlParams = new URLSearchParams(window.location.search);
@@ -54,27 +53,14 @@ export class RegisterHelperComponent implements OnInit {
       return;
     }
     try {
-      let error = '';
-      for (const c of this.helper.columns) {
-        //@ts-ignore
-        c.__clearErrors();
-        //@ts-ignore
-        c.__performValidation();
-        if (!error && c.validationError) {
-          error = c.defs.caption + ": " + c.validationError;
-        }
-      }
-      if (error) {
-        this.dialog.Error(error);
-        return;
-      }
+      
 
-  //    await RegisterHelperComponent.doHelperForm(pack(this.helper));
+      await this.helper.createHelper();
 
       this.isDone = true;
       try {
-       this.dialog.analytics("submitVolunteerForm");
-        gtag('event', 'conversion', {'send_to': 'AW-452581833/e8KfCKWQse8BEMmz59cB'});
+        this.dialog.analytics("submitVolunteerForm");
+        gtag('event', 'conversion', { 'send_to': 'AW-452581833/e8KfCKWQse8BEMmz59cB' });
         if (fbq) fbq('track', 'CompleteRegistration');
       }
       catch (err) {
@@ -88,15 +74,16 @@ export class RegisterHelperComponent implements OnInit {
     await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
 
     if (this.refer) return;
-    if (this.helper.docref.value != '') window.location.href = this.helper.docref.value 
+    if (this.helper.docref.value != '') window.location.href = this.helper.docref.value
     else window.location.href = "https://www.mitchashvim.org.il/";
   }
 
 }
 
-class helperForm extends ControllerBase {
+@ServerController({ key: 'register-helper', allowed: true })
+class helperForm  {
   constructor(private context: Context) {
-    super({ key: 'register-donor', allowed: true })
+    
   }
   name = new StringColumn({
     caption: "שם מלא", validate: () => {
@@ -125,6 +112,12 @@ class helperForm extends ControllerBase {
 
   @ServerMethod()
   async createHelper() {
+    this.context._setUser({
+      id: 'WIX',
+      name: 'WIX',
+      roles: []
+    });
+
     let h = this.context.for(Helpers).create();
     h.name.value = this.name.value;
     if (!this.address1.value)

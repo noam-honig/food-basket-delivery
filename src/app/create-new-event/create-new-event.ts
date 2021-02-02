@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn } from '@remult/core';
+import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn, ServerController, controllerAllowed, ServerMethod, getColumnsFromObject } from '@remult/core';
 import { RouteHelperService, BusyService } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
@@ -17,7 +17,7 @@ import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
 import { PromiseThrottle } from '../shared/utils';
 import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { controllerAllowed, ControllerBase, controllerColumns, ServerController, ServerMethod, ServerMethod2 } from '../dev/server-method';
+
 
 function visible(when: () => boolean, caption?: string) {
     return {
@@ -42,13 +42,13 @@ export class CreateNewEvent  {
 
     constructor(private context: Context) {
       
-        controllerColumns(this).push(...controllerColumns(this.archiveHelper));
+        getColumnsFromObject(this).push(...getColumnsFromObject(this.archiveHelper));
     }
     isAllowed(){
         return controllerAllowed(this,this.context);
     }
 
-    @ServerMethod2()
+    @ServerMethod()
     async createNewEvent() {
         let settings = await ApplicationSettings.getAsync(this.context);
         for (const x of [
@@ -163,7 +163,7 @@ export class CreateNewEvent  {
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {
-                columnSettings: () => controllerColumns(this)
+                columnSettings: () => getColumnsFromObject(this)
             },
             ok: async () => {
                 let deliveriesCreated = await this.createNewEvent();
