@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationSettings, qaItem, phoneOption } from '../manage/ApplicationSettings';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Context } from '@remult/core';
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';

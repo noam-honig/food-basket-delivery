@@ -25,7 +25,7 @@ export class SendSmsAction {
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
-                await SendSmsAction.documentHelperMessage(reminder, h, context,"SMS");
+                await SendSmsAction.documentHelperMessage(reminder, h, context, "SMS");
             });
         }
         catch (err) {
@@ -42,7 +42,7 @@ export class SendSmsAction {
         else
             h.smsDate.value = new Date();
         await h.save();
-        let hist = context.for((await import ('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+        let hist = context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
         hist.volunteer.value = h.id.value;
         if (reminder) {
             hist.comment.value = 'Reminder ' + type;
@@ -123,6 +123,7 @@ export class SendSmsUtils {
     pw = process.env.SMS_PW;
     accid = process.env.SMS_ACCID;
 
+    static twilioSendSms: (to: string, body: string) => Promise<any>;
 
     async sendSms(phone: string, from: string, text: string, org: string, schema: string, settings: ApplicationSettings) {
 
@@ -139,7 +140,7 @@ export class SendSmsUtils {
             '<accid>' + this.accid + '</accid>' +
             '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
             '<t>' + date + '</t>' +
-            '<txtUserCellular>'+(settings.isSytemForMlt()?'Mitchashvim':'Hagai')+'</txtUserCellular>' +
+            '<txtUserCellular>' + (settings.isSytemForMlt() ? 'Mitchashvim' : 'Hagai') + '</txtUserCellular>' +
             '<destination>' + phone + '</destination>' +
             '<txtSMSmessage>' + text + '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
@@ -151,17 +152,25 @@ export class SendSmsUtils {
 
 
         try {
-            if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
-                let prefix = settings.forWho.value.args.internationalPrefixForSmsAndAws;
-                if (phone.startsWith('0'))
-                    phone = phone.substring(1, 1000);
-                if (!phone.startsWith('+'))
-                    phone = prefix + phone;
-                let f = "+972507330590";
+            let prefix = settings.forWho.value.args.internationalPrefixForSmsAndAws;
+            if (!prefix)
+                prefix = "+972";
+            let internationalPhone = phone;
+            if (internationalPhone.startsWith('0'))
+                internationalPhone = internationalPhone.substring(1, 1000);
+            if (!internationalPhone.startsWith('+'))
+                internationalPhone = prefix + internationalPhone;
+            if (SendSmsUtils.twilioSendSms) {
+                let r = await SendSmsUtils.twilioSendSms(internationalPhone, text);
+
+                console.log(r);
+            }
+            else if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
+
                 let AWS = await import('aws-sdk');
                 let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
                     Message: text,
-                    PhoneNumber: phone,
+                    PhoneNumber: internationalPhone,
                     MessageAttributes: {
                         'AWS.SNS.SMS.SenderID': {
                             'DataType': 'String',

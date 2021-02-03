@@ -10,7 +10,7 @@ import { Context, RouteHelperService, NotSignedInGuard, StringColumn, BoolColumn
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
 import { CustomReuseStrategy } from 'src/app/custom-reuse-controller-router-strategy';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 
 

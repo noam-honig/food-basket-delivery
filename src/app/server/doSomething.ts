@@ -32,9 +32,26 @@ let match = 0;
 export async function DoIt() {
     try {
         var x = await serverInit();
+        const accountSID = process.env.twilio_accountSID;
+        const authToken = process.env.twilio_authToken;
+
+        let twilio = await import('twilio');
+        let client = twilio(accountSID, authToken);
+        try {
+            let r = await client.messages.create({
+                to: '+972507330590',
+                from: '+972525073567',
+                body: 'testing 123'
+            });
+            console.dir(r);
+        }
+        catch (err) {
+            console.error(err);
+        }
         //await sendMessagE();
         //   await loadTranslationXlsx('c:/temp/newen.xlsx','en');
-        await buildDocs();
+        //        await buildDocs();
+        console.log('doing it');
 
 
 
@@ -157,11 +174,10 @@ async function buildDocs() {
             let extra = '';
             if (c.defs.allowApiUpdate === false)
                 extra += " readonly";
-            
-            s += "| " + c.defs.key + " | " + c.defs.caption + " | " + c.constructor.name.replace(/Column/g,'') + " | " + extra + " |\n";
+
+            s += "| " + c.defs.key + " | " + c.defs.caption + " | " + c.constructor.name.replace(/Column/g, '') + " | " + extra + " |\n";
         }
     }
     fs.writeFileSync("./docs/model.md", s);
 }
 
- 

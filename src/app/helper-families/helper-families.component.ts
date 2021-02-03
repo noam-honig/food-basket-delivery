@@ -21,7 +21,7 @@ import { isGpsAddress, Location, toLongLat, GetDistanceBetween, getCurrentLocati
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
-import { MatTabGroup } from '@angular/material';
+import { MatTabGroup } from '@angular/material/tabs';
 import { routeStrategyColumn } from '../asign-family/route-strategy';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PhoneColumn, SqlBuilder, getValueFromResult } from '../model-shared/types';

@@ -19,6 +19,7 @@ import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
 import './send-email';
+import { SendSmsUtils } from '../asign-family/send-sms-action';
 
 declare const lang = '';
 
@@ -58,9 +59,9 @@ export async function serverInit() {
             generateHash: p => passwordHash.generate(p),
             verify: (p, h) => passwordHash.verify(p, h)
         }
+        const accountSID = process.env.twilio_accountSID;
+        const authToken = process.env.twilio_authToken;
         FamilyInfoComponent.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
-            const accountSID = process.env.twilio_accountSID;
-            const authToken = process.env.twilio_authToken;
             const proxyService = process.env.twilio_proxyService;
             if (!accountSID)
                 throw "לא הוגדר שירות טלפונים";
@@ -79,6 +80,20 @@ export async function serverInit() {
             let p1 = await p.create({ friendlyName: 'volunteer', identifier: vPhone });
             let p2 = await p.create({ friendlyName: 'family', identifier: cleanPhone });
             return { phone: p1.proxyIdentifier, session: session.sid }
+        }
+        if (process.env.twilio_use_for_sms) {
+            const twilio_sms_from_number = process.env.twilio_sms_from_number;
+            SendSmsUtils.twilioSendSms = async (to, text) => {
+
+                let twilio = await import('twilio');
+                let client = twilio(accountSID, authToken);
+                return await client.messages.create({
+                    to: to,
+                    from: twilio_sms_from_number,
+                    body: text
+                });
+
+            }
         }
         Sites.initOnServer();
         if (Sites.multipleSites) {
@@ -179,7 +194,7 @@ export async function serverInit() {
 
                     });
                 }
-                catch{
+                catch {
                     sortedSchemas.push({
                         name: s,
                         lastSignIn: new Date(1900, 1, 1)
@@ -187,7 +202,7 @@ export async function serverInit() {
                 }
             }
             sortedSchemas.sort((a, b) => b.lastSignIn.valueOf() - a.lastSignIn.valueOf());
-            
+
 
 
             let i = 0;
