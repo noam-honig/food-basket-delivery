@@ -26,7 +26,7 @@ export class EmailColumn extends radweb.StringColumn {
       })
     }, settingsOrCaption);
     if (!this.defs.caption)
-      use.language.email;
+      this.defs.caption =  use.language.email;
   }
 }
 export class PhoneColumn extends radweb.StringColumn {

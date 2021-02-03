@@ -1019,7 +1019,8 @@
   },
   "email": {
     "google": "eMail",
-    "valueInCode": "eMail"
+    "valueInCode": "דואל",
+    "custom": "דואל"
   },
   "emailDonorContentCaption": {
     "google": "תוכן אימייל תורם",

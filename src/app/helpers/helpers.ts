@@ -1,7 +1,7 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, Filter, Entity, Column, EntityProvider, checkForDuplicateValue, DateColumn, DataControlInfo } from '@remult/core';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, Filter, Entity, Column, EntityProvider, checkForDuplicateValue, DateColumn, DataControlInfo, ServerMethod } from '@remult/core';
 import { BusyService } from '@remult/angular';
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges, isPhoneValidForIsrael } from '../model-shared/types';
 
 
 
@@ -15,13 +15,15 @@ import { getLang } from '../sites/sites';
 import { GeocodeInformation, GetGeoInformation, Location, AddressColumn } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
-import { getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { SendSmsAction } from '../asign-family/send-sms-action';
+import { EmailSvc } from '../shared/utils';
 
 
 
@@ -479,7 +481,47 @@ export class Helpers extends HelpersBase {
 
         dialog.Info(i + " " + getLang(this.context).familiesUpdated);
     }
+    @ServerMethod({ allowed: true })
+    async mltRegister() {
+        if (!this.isNew())
+            throw "מתנדב קיים";
+        let error = false;
+        for (const col of [this.name, this.preferredDistributionAreaAddress, this.phone, this.socialSecurityNumber]) {
+            col.validationError = '';
+            if (!col.value) {
+                col.validationError = 'שדה חובה';
+                error = true;
+            }
+        }
+        if (error)
+            throw "יש למלא שדות חובה" +
+            "(שם, כתובת, טלפון ות.ז.)";
+        if (!isPhoneValidForIsrael(this.phone.value)) {
+            this.phone.validationError = "טלפון לא תקין";
+            throw this.phone.validationError;
+        }
+        let settings = await ApplicationSettings.getAsync(this.context);
+        if (!settings.isSytemForMlt())
+            throw "Not Allowed";
+        this.context._setUser({
+            id: 'WIX',
+            name: 'WIX',
+            roles: []
+        });
+        await this.save();
 
+
+        if (settings.registerHelperReplyEmailText.value && settings.registerHelperReplyEmailText.value != '') {
+            let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value,
+                settings.organisationName.value, '', this.name.value, this.context.user.name, '');
+
+            try {
+                await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, this.email.value, this.context);
+            } catch (err) {
+                console.error('send mail', err);
+            }
+        }
+    }
 
     addressApiResult2 = new StringColumn();
     preferredFinishAddress = new AddressColumn(this.context, this.addressApiResult2,

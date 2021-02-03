@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 import { Column } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -73,6 +74,9 @@ export class AddressInputComponent implements AfterViewInit {
     });
 
   }
+  getError(){
+    return this.column.validationError;
+  }
 
   ngAfterViewInit() {
     if (this.autoInit) {
@@ -84,6 +88,14 @@ export class AddressInputComponent implements AfterViewInit {
       this.destroyMe.remove();
 
   }
+  ngErrorStateMatches = new class extends ErrorStateMatcher {
+    constructor(public parent: AddressInputComponent) {
+      super();
+    }
+    isErrorState() {
+      return !!this.parent.column.validationError;
+    }
+  }(this);
 
 }
 

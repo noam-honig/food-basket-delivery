@@ -778,7 +778,7 @@ export class Language {
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
   volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
-  email = 'eMail';
+  email = 'דואל';
   preferredDistributionArea = 'כתובת לאזור חלוקה';
   preferredFinishAddress = 'כתובת לסיום המסלול';
   doesNotExist = "לא קיים";

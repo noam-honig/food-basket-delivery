@@ -1272,7 +1272,7 @@
   },
   "email": {
     "google": "correo electrónico",
-    "valueInCode": "eMail",
+    "valueInCode": "דואל",
     "valueInEnglish": "eMail"
   },
   "emailDonorContentCaption": {

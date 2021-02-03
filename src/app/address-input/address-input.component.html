@@ -1,4 +1,5 @@
 <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
     <mat-label>{{column.defs.caption}}</mat-label>
-    <input matInput [(ngModel)]="column.value" #addressInput>
+    <input #theId matInput [(ngModel)]="column.value" #addressInput [errorStateMatcher]="ngErrorStateMatches">
+    <mat-error *ngIf="getError()" [id]="theId">{{getError()}}</mat-error>
 </mat-form-field>
