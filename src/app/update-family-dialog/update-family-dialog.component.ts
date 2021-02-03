@@ -19,7 +19,7 @@ import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Sites } from '../sites/sites';
 import { async } from '@angular/core/testing';
-import { MatExpansionPanel } from '@angular/material';
+import { MatExpansionPanel } from '@angular/material/expansion'; 
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
 import { isGpsAddress, Location } from '../shared/googleApiHelpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';

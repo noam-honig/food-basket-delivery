@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { BusyService } from '@remult/angular';
 import { Context, Column, GridSettings, ServerFunction } from '@remult/core';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';

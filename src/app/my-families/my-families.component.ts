@@ -13,7 +13,7 @@ import { LoginComponent } from '../users/login/login.component';
 import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
-import { MatExpansionPanel } from '@angular/material';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { PhoneColumn } from '../model-shared/types';
 
 

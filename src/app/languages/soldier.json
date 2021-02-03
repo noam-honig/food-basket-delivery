@@ -2723,6 +2723,10 @@
     "google": "הצג חיילים",
     "valueInCode": "הצג משפחות"
   },
+  "showFreezed": {
+    "google": "הצג מוקפאים",
+    "valueInCode": "הצג מוקפאים"
+  },
   "showHelperComment": {
     "google": "הצג הערה בשיוך למתנדב",
     "valueInCode": "הצג הערה בשיוך למתנדב"

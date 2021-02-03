@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { siteItem, dateRange } from '../overview/overview.component';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-site-overview',

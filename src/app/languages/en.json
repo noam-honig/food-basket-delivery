@@ -2980,6 +2980,10 @@
     "google": "View families",
     "valueInCode": "הצג משפחות"
   },
+  "showFreezed": {
+    "google": "Show frozen",
+    "valueInCode": "הצג מוקפאים"
+  },
   "showHelperComment": {
     "google": "Save note to volunteer",
     "valueInCode": "הצג הערה בשיוך למתנדב"

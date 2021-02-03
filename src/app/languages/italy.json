@@ -3406,6 +3406,11 @@
     "valueInCode": "הצג משפחות",
     "valueInEnglish": "View families"
   },
+  "showFreezed": {
+    "google": "Mostra congelato",
+    "valueInCode": "הצג מוקפאים",
+    "valueInEnglish": "Show frozen"
+  },
   "showHelperComment": {
     "google": "Salva nota come volontario",
     "valueInCode": "הצג הערה בשיוך למתנדב",

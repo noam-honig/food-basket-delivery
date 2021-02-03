@@ -957,6 +957,7 @@ export class Language {
   foodParcel = 'סל מזון';
   
   updated = "עודכנו";
+  showFreezed = 'הצג מוקפאים';
 }
 
 const defaultLang = new Language();

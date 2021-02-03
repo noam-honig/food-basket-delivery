@@ -822,4 +822,5 @@ export class es {
   configuration = 'Configuración';
   foodParcel = 'Paquete de comida';
   updated = 'Actualizado';
+  showFreezed = 'Mostrar congelado';
 }
