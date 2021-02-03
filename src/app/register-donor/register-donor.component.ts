@@ -195,6 +195,9 @@ class donorForm {
 
   @ServerMethod()
   async createDonor() {
+    let settings = await ApplicationSettings.getAsync(this.context);
+    if (!settings.isSytemForMlt())
+      throw "Not Allowed";
     this.context._setUser({
       id: 'WIX',
       name: 'WIX',
@@ -249,7 +252,7 @@ class donorForm {
       }, this.context);
     }
 
-    let settings = await ApplicationSettings.getAsync(this.context);
+
 
     if (settings.registerFamilyReplyEmailText.value && settings.registerFamilyReplyEmailText.value != '') {
       let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value,
