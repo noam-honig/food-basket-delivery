@@ -686,6 +686,7 @@ export class italy {
   eventsComponent = 'eventi';
   weeklyReportMltComponent = 'Notevole rapporto settimanale';
   HelperGiftsComponent = 'Il pozzo dei desideri';
+  RegisterURLComponent = 'RegisterURLComponent';
   pleaseRegisterToTheFollowingEvents = 'Si prega di iscriversi per i prossimi eventi';
   illBeThere = 'Registrami per questo evento';
   registeredToEvent = 'Sei registrato per questo evento';
@@ -814,10 +815,11 @@ export class italy {
   copyLinkForVolunteer = "Copia un link per l'autoregistrazione del volontario";
   saveAndPreview = "Salva e visualizza l'anteprima";
   areYouSureYouWantToDelete = 'Sei sicuro di voler eliminare il file';
-  codeWord = 'Parola in codice';
-  toConfirmPleaseTypeTheCodeWord = "Per confermare l'eliminazione, digita la parola in codice";
+  codeWord = 'codeWord';
+  toConfirmPleaseTypeTheCodeWord = 'toConfirmPleaseTypeTheCodeWord';
   deleted = 'Eliminato';
-  wrongCodeWordProcessAborted = 'Parola in codice errata - processo interrotto';
+  wrongCodeWordProcessAborted = 'wrongCodeWordProcessAborted';
   configuration = 'Configurazione';
   foodParcel = 'Pacco alimentare';
+  showFreezed = 'showFreezed';
 }

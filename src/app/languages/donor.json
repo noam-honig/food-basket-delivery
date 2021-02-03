@@ -239,6 +239,10 @@
     "google": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל"
   },
+  "areYouSureYouWantToDelete": {
+    "google": "האם אתה בטוח שאתה רוצה למחוק ",
+    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק "
+  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "האם אתה בטוח שאתה רוצה לסמן תרומה נאספה ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
@@ -524,6 +528,10 @@
     "google": "תרומות באיזור הקרוב",
     "valueInCode": "תרומות באיזור הקרוב"
   },
+  "codeWord": {
+    "google": "מילת קוד",
+    "valueInCode": "מילת קוד"
+  },
   "columnSelectionInFile": {
     "google": "בחירת עמודות בקובץ",
     "valueInCode": "בחירת עמודות בקובץ"
@@ -567,6 +575,10 @@
   "completed": {
     "google": "הושלמו",
     "valueInCode": "הושלמו"
+  },
+  "configuration": {
+    "google": "המערכת היא עבור",
+    "valueInCode": "המערכת היא עבור"
   },
   "confirm": {
     "google": "אשר",
@@ -2303,6 +2315,10 @@
     "google": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
   },
+  "RegisterURLComponent": {
+    "google": "ניהול אתרי רישום",
+    "valueInCode": "ניהול אתרי רישום"
+  },
   "remainingByBaskets": {
     "google": "טרם שוייכו לפי סלים",
     "valueInCode": "טרם שוייכו לפי סלים"
@@ -2715,6 +2731,10 @@
     "google": "הצג תורמים",
     "valueInCode": "הצג משפחות"
   },
+  "showFreezed": {
+    "google": "הצג מוקפאים",
+    "valueInCode": "הצג מוקפאים"
+  },
   "showHelperComment": {
     "google": "הצג הערה בשיוך למתנדב",
     "valueInCode": "הצג הערה בשיוך למתנדב"
@@ -2926,6 +2946,10 @@
   "to": {
     "google": "ל",
     "valueInCode": "ל"
+  },
+  "toConfirmPleaseTypeTheCodeWord": {
+    "google": "לאישור המחיקה אנא הקלד את מילת הקוד ",
+    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד "
   },
   "toDate": {
     "google": "עד תאריך",
@@ -3258,6 +3282,10 @@
   "within": {
     "google": "תוך",
     "valueInCode": "תוך"
+  },
+  "wrongCodeWordProcessAborted": {
+    "google": "מילת קוד שגויה - התהליך מופסק",
+    "valueInCode": "מילת קוד שגויה - התהליך מופסק"
   },
   "yes": {
     "google": "כן",

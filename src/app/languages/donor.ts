@@ -686,6 +686,7 @@ export class donor {
   eventsComponent = 'ארועים';
   weeklyReportMltComponent = 'דוח שבועי מתחשבים';
   HelperGiftsComponent = 'באר המשאלות';
+  RegisterURLComponent = 'ניהול אתרי רישום';
   pleaseRegisterToTheFollowingEvents = 'אנא הרשמו לאירועים הקרובים';
   illBeThere = 'רשום אותי לארוע זה';
   registeredToEvent = 'הנך רשום לארוע זה';
@@ -813,11 +814,12 @@ export class donor {
   done = 'טופל';
   copyLinkForVolunteer = 'העתק קישור לרישום עצמי של מתנדבים';
   saveAndPreview = 'שמירה ותצוגה מקדימה';
-  areYouSureYouWantToDelete = 'האם אתה בטוח שאתה רוצה למחוק את';
+  areYouSureYouWantToDelete = 'האם אתה בטוח שאתה רוצה למחוק ';
   codeWord = 'מילת קוד';
   toConfirmPleaseTypeTheCodeWord = 'לאישור המחיקה אנא הקלד את מילת הקוד ';
   deleted = 'נמחוק';
   wrongCodeWordProcessAborted = 'מילת קוד שגויה - התהליך מופסק';
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
+  showFreezed = 'הצג מוקפאים';
 }

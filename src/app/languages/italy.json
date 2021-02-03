@@ -301,8 +301,7 @@
   },
   "areYouSureYouWantToDelete": {
     "google": "Sei sicuro di voler eliminare il file",
-    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק ",
-    "valueInEnglish": "Are you sure you want to delete "
+    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק "
   },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Sei sicuro di voler contrassegnare correttamente consegnato a",
@@ -716,8 +715,7 @@
   },
   "configuration": {
     "google": "Configurazione",
-    "valueInCode": "המערכת היא עבור",
-    "valueInEnglish": "Configuration"
+    "valueInCode": "המערכת היא עבור"
   },
   "confirm": {
     "google": "Confermare",
