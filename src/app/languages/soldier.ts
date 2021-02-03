@@ -821,5 +821,5 @@ export class soldier {
   wrongCodeWordProcessAborted = 'מילת קוד שגויה - התהליך מופסק';
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
-  showFreezed = 'הצג מוקפאים';
+  updated = 'עודכנו';
 }

@@ -686,7 +686,7 @@ export class en {
   eventsComponent = 'Events';
   weeklyReportMltComponent = 'Considerable weekly report';
   HelperGiftsComponent = 'The Well of Wishes';
-  RegisterURLComponent = 'RegisterURLComponent';
+  RegisterURLComponent = 'Management of registration sites';
   pleaseRegisterToTheFollowingEvents = 'Please sign up for upcoming events';
   illBeThere = 'Sign me up for this event';
   registeredToEvent = 'You are registered for this event';
@@ -814,12 +814,12 @@ export class en {
   done = 'Done';
   copyLinkForVolunteer = 'Copy a link to volunteer self-registration';
   saveAndPreview = 'Save and preview';
-  areYouSureYouWantToDelete = 'areYouSureYouWantToDelete';
-  codeWord = 'codeWord';
-  toConfirmPleaseTypeTheCodeWord = 'toConfirmPleaseTypeTheCodeWord';
+  areYouSureYouWantToDelete = 'Are you sure you want to delete';
+  codeWord = 'Code word';
+  toConfirmPleaseTypeTheCodeWord = 'To confirm the deletion, please type the code word';
   deleted = 'Deleted';
-  wrongCodeWordProcessAborted = 'wrongCodeWordProcessAborted';
-  configuration = 'configuration';
+  wrongCodeWordProcessAborted = 'Wrong code word - process stopped';
+  configuration = 'The system is for';
   foodParcel = 'Food Parcel';
-  showFreezed = 'show Freezed';
+  updated = 'Updated';
 }

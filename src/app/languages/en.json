@@ -268,6 +268,10 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לבטל שיוך ל",
     "custom": "Are you sure you want to cancel assignment to"
   },
+  "areYouSureYouWantToDelete": {
+    "google": "Are you sure you want to delete",
+    "valueInCode": "האם אתה בטוח שאתה רוצה למחוק "
+  },
   "areYouSureYouWantToMarkDeliveredSuccesfullyToAllHelperFamilies": {
     "google": "Are you sure you want to mark successfully delivered to",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
@@ -600,6 +604,10 @@
     "google": "Donations in the near area",
     "valueInCode": "תרומות באיזור הקרוב"
   },
+  "codeWord": {
+    "google": "Code word",
+    "valueInCode": "מילת קוד"
+  },
   "columnSelectionInFile": {
     "google": "Choose columns in a file",
     "valueInCode": "בחירת עמודות בקובץ",
@@ -651,6 +659,10 @@
   "completed": {
     "google": "Completed",
     "valueInCode": "הושלמו"
+  },
+  "configuration": {
+    "google": "The system is for",
+    "valueInCode": "המערכת היא עבור"
   },
   "confirm": {
     "google": "which",
@@ -2514,6 +2526,10 @@
     "google": "This message will be sent to the volunteer after registering for the system",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
   },
+  "RegisterURLComponent": {
+    "google": "Management of registration sites",
+    "valueInCode": "ניהול אתרי רישום"
+  },
   "remainingByBaskets": {
     "google": "Remained by baskets",
     "valueInCode": "טרם שוייכו לפי סלים",
@@ -3189,6 +3205,10 @@
     "google": "To",
     "valueInCode": "ל"
   },
+  "toConfirmPleaseTypeTheCodeWord": {
+    "google": "To confirm the deletion, please type the code word",
+    "valueInCode": "לאישור המחיקה אנא הקלד את מילת הקוד "
+  },
   "toDate": {
     "google": "Until",
     "valueInCode": "עד תאריך"
@@ -3296,6 +3316,10 @@
     "valueInCode": "עדכן הערה",
     "custom": "Update Comment"
   },
+  "updated": {
+    "google": "Updated",
+    "valueInCode": "עודכנו"
+  },
   "updatedBy": {
     "google": "Updated by",
     "valueInCode": "עודכן על ידי"
@@ -3378,7 +3402,7 @@
   },
   "updateStatusHelp": {
     "google": "Status has been removed from the lists - designed to signal that the family should not receive food - but unlike the deletion status - we want to keep it in the database so that if welfare brings it to us again, we will know that they have been removed from the lists. It is suitable for families who have been resolved or who simply do not want to receive - or the address does not exist etc ...",
-    "valueInCode": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפתרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו..."
+    "valueInCode": "סטטוס הוצא מהרשימות - נועד כדי לסמן שהמשפחה לא אמורה לקבל מזון - אבל בניגוד לסטטוס למחיקה - אנחנו רוצים לשמור אותה בבסיס הנתונים כדי שאם הרווחה יביאו לנו אותה שוב, נדע להגיד שהם הוצאו מהרשימות. זה מתאים למשפחות שחס וחלילה נפטרו או שפשוט לא רוצים לקבל - או שהכתובת לא קיימת וכו..."
   },
   "updateVolunteer": {
     "google": "Update volunteer shipper",
@@ -3545,6 +3569,10 @@
   "within": {
     "google": "within",
     "valueInCode": "תוך"
+  },
+  "wrongCodeWordProcessAborted": {
+    "google": "Wrong code word - process stopped",
+    "valueInCode": "מילת קוד שגויה - התהליך מופסק"
   },
   "yes": {
     "google": "Yes",

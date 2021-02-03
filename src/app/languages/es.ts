@@ -686,7 +686,7 @@ export class es {
   eventsComponent = 'Eventos';
   weeklyReportMltComponent = 'Informe semanal considerable';
   HelperGiftsComponent = 'El pozo de los deseos';
-  RegisterURLComponent = 'RegisterURLComponent';
+  RegisterURLComponent = 'Gestión de sitios de registro';
   pleaseRegisterToTheFollowingEvents = 'Por favor regístrese para los próximos eventos';
   illBeThere = 'Inscríbeme para este evento';
   registeredToEvent = 'Estás registrado para este evento';
@@ -814,12 +814,12 @@ export class es {
   done = 'Hecho';
   copyLinkForVolunteer = 'Copie un enlace para el autoregistro de voluntarios';
   saveAndPreview = 'Guardar y obtener una vista previa';
-  areYouSureYouWantToDelete = 'areYouSureYouWantToDelete';
-  codeWord = 'codeWord';
-  toConfirmPleaseTypeTheCodeWord = 'toConfirmPleaseTypeTheCodeWord';
+  areYouSureYouWantToDelete = 'estas seguro que quieres borrarlo';
+  codeWord = 'Palabra de código';
+  toConfirmPleaseTypeTheCodeWord = 'Para confirmar la eliminación, escriba la palabra de código';
   deleted = 'Eliminado';
-  wrongCodeWordProcessAborted = 'wrongCodeWordProcessAborted';
+  wrongCodeWordProcessAborted = 'Palabra de código incorrecta: proceso detenido';
   configuration = 'Configuración';
   foodParcel = 'Paquete de comida';
-  showFreezed = 'showFreezed';
+  updated = 'Actualizado';
 }
