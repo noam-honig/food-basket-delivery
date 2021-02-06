@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, Filter, EntityWhere, packWhere, EntityOrderBy, getColumnsFromObject, ServerMethod } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, Filter, EntityWhere, packWhere, EntityOrderBy, getColumnsFromObject, ServerMethod, ServerProgress } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -60,7 +60,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
                     return false;
                 if (this.args.visible) {
                     r = this.args.visible(component);
-                    console.log(this.args.title,r);
+                    console.log(this.args.title, r);
                 }
                 return true;
             },
@@ -83,7 +83,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
                         },
-                        ok: async () => {
+                        ok: async () => { 
                             let groupName = this.context.for(this.entity).create().defs.caption;
                             let count = await this.context.for(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
@@ -127,21 +127,23 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
     }
 
-    @ServerMethod()
-    async execute(info: packetServerUpdateInfo) {
+    @ServerMethod({ allowed: undefined, queue: true })
+    async execute(info: packetServerUpdateInfo, progress?: ServerProgress) {
         let where = this.composeWhere(x => unpackWhere(x, info.packedWhere));
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {
             throw "ארעה שגיאה אנא נסה שוב";
         }
+        let i = 0;
         let r = await pagedRowsIterator<T>(this.context.for(this.entity), {
             where,
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
-                await this.args.forEach(f);
+                await this.args.forEach(f); 
                 if (f.wasChanged())
                     await f.save();
+                progress.progress(++i / count);
             }
 
 
@@ -188,6 +190,7 @@ export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEnt
     let updated = 0;
     let pt = new PromiseThrottle(10);
     for await (const f of context.iterate({ where: args.where, orderBy: args.orderBy })) {
+
         await pt.push(args.forEachRow(f));
         updated++;
     }

@@ -24,7 +24,7 @@ export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamily
 function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
     if (args.orderBy)
         throw "didn't expect order by";
-    args.orderBy = x => [{ column: x.createDate, descending: true }]//to handle the case where paging is used, and items are added with different ids
+    args.orderBy = x => [{ column: x.createDate, descending: true }, { column: x.id }]//to handle the case where paging is used, and items are added with different ids
     let originalForEach = args.forEach;
     args.forEach = async fd => {
         fd._disableMessageToUsers = true;
@@ -142,7 +142,7 @@ export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
                 }
                 else {
                     fd.courier.value = this.courier.value;
-                   if (this.updateAlsoAsFixed.value) {
+                    if (this.updateAlsoAsFixed.value) {
                         let f = await this.context.for(Families).findId(fd.family);
                         if (f) {
                             f.fixedCourier.value = this.courier.value;

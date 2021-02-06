@@ -8,7 +8,7 @@ import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } 
 
 
 import { BusyService } from '@remult/angular';
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, DataAreaSettings, ServerFunction, DataControlInfo } from '@remult/core';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, DataAreaSettings, ServerFunction, DataControlInfo, ServerProgress } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -557,14 +557,19 @@ export class ManageComponent implements OnInit {
       this.distributionCenters.reloadData();
     }
   }
-  @ServerFunction({ allowed: Roles.admin })
-  static async deleteFamiliesOnServer(context?: Context) {
-    let count = await pagedRowsIterator(context.for(Families),
-      {
-        where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
-        forEachRow: async f => await f.delete(),
+  @ServerFunction({ allowed: Roles.admin, queue: true })
+  static async deleteFamiliesOnServer(context?: Context, progress?: ServerProgress) {
+    let it = context.for(Families).iterate({
+      where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
+      orderBy: f => [{ column: f.createDate, descending: true }]
 
-      });
+    });
+    let count = await it.count();
+    let i = 0;
+    for await (const f of it) {
+      await f.delete();
+      progress.progress(++i / count);
+    }
     return count;
   }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn, ServerController, controllerAllowed, ServerMethod, getColumnsFromObject } from '@remult/core';
+import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, BoolColumn, ServerController, controllerAllowed, ServerMethod, getColumnsFromObject, ServerProgress } from '@remult/core';
 import { RouteHelperService, BusyService } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
@@ -30,7 +30,7 @@ function visible(when: () => boolean, caption?: string) {
     key: 'createNewEvent',
     allowed: Roles.admin
 })
-export class CreateNewEvent  {
+export class CreateNewEvent {
     archiveHelper = new ArchiveHelper(this.context);
     createNewDelivery = new BoolColumn(getLang(this.context).createNewDeliveryForAllFamilies);
     distributionCenter = new DistributionCenterId(this.context, { dataControlSettings: () => ({ visible: () => false }) });
@@ -41,15 +41,15 @@ export class CreateNewEvent  {
     basketType = new BasketId(this.context, visible(() => !this.useFamilyBasket.value));
 
     constructor(private context: Context) {
-      
+
         getColumnsFromObject(this).push(...getColumnsFromObject(this.archiveHelper));
     }
-    isAllowed(){
-        return controllerAllowed(this,this.context);
+    isAllowed() {
+        return controllerAllowed(this, this.context);
     }
 
-    @ServerMethod()
-    async createNewEvent() {
+    @ServerMethod({ queue: true, allowed: Roles.admin })
+    async createNewEvent(progress?: ServerProgress) {
         let settings = await ApplicationSettings.getAsync(this.context);
         for (const x of [
             [this.createNewDelivery, settings.createBasketsForAllFamiliesInCreateEvent],
@@ -76,17 +76,20 @@ export class CreateNewEvent  {
                         fd.basketType.value = this.basketType.value;
                 }
                 await fd.save();
-            });
+            }, progress);
             Families.SendMessageToBrowsers(r + " " + getLang(this.context).deliveriesCreated, this.context, '');
         }
         return r;
 
     }
 
-    async iterateFamilies(what: (f: Families) => Promise<any>) {
+    async iterateFamilies(what: (f: Families) => Promise<any>, progress: ServerProgress) {
         let pt = new PromiseThrottle(10);
         let i = 0;
-        for await (let f of this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active) })) {
+        let families = this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active) });
+        let total = await families.count();
+        for await (let f of families) {
+            progress.progress(i / total);
             let match = true;
             if (this.moreOptions.value) {
                 if (this.includeGroups.value) {
@@ -129,7 +132,7 @@ export class CreateNewEvent  {
         if (this.includeGroups.value) {
             this.moreOptions.value = true;
         }
-       this.distributionCenter.value = dialog.distCenter.value;
+        this.distributionCenter.value = dialog.distCenter.value;
 
         if (this.distributionCenter.value == allCentersToken) {
             let centers = await this.context.for(DistributionCenters).find({ where: x => x.isActive() });
@@ -191,12 +194,12 @@ export class CreateNewEvent  {
         });
 
     }
- 
 
-    
-    @ServerMethod()
-    async countNewDeliveries() {
-        return this.iterateFamilies(async () => { });
+
+
+    @ServerMethod({ queue: true, allowed: Roles.admin })
+    async countNewDeliveries(progress?: ServerProgress) {
+        return this.iterateFamilies(async () => { }, progress);
     }
 }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, ServerFunction, DateColumn, Entity, SqlDatabase, StringColumn, ServerContext } from '@remult/core';
+import { Context, ServerFunction, DateColumn, Entity, SqlDatabase, StringColumn, ServerContext, ServerProgress } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { Sites,  validSchemaName } from '../sites/sites';
+import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { SqlBuilder } from '../model-shared/types';
@@ -38,8 +38,8 @@ export class OverviewComponent implements OnInit {
     this.sortBy = s.caption;
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption]);
   }
-  @ServerFunction({ allowed: Roles.overview })
-  static async getOverview(context?: Context) {
+  @ServerFunction({ allowed: Roles.overview, queue: true })
+  static async getOverview(context?: Context, progress?: ServerProgress) {
     let today = new Date();
     let onTheWay = "בדרך";
     let inEvent = "באירוע";
@@ -121,8 +121,9 @@ export class OverviewComponent implements OnInit {
     let fd = context.for(FamilyDeliveries).create();
 
 
-
+    let soFar = 0;
     for (const org of Sites.schemas) {
+      progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
       var as = context.for(ApplicationSettings, dp).create();
@@ -201,8 +202,8 @@ export class OverviewComponent implements OnInit {
           let r = await OverviewComponent.createSchema(id.value, name.value);
           if (!r.ok)
             throw r.errorText;
-            window.open(location.href = '/' + id.value,'_blank');
-            this.ngOnInit();
+          window.open(location.href = '/' + id.value, '_blank');
+          this.ngOnInit();
         }
         catch (err) {
           this.dialog.Error(err);

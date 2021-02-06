@@ -17,8 +17,9 @@ import { Sites, setLangForSite } from '../sites/sites';
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
+import { preparePostgressQueueStorage } from "@remult/server-postgres";
 
-
+ 
 
 serverInit().then(async (dataSource) => {
 
@@ -161,7 +162,8 @@ s.parentNode.insertBefore(b, s);})();
         app,
         dataSource, {
         disableHttpsForDevOnly: process.env.DISABLE_HTTPS == "true",
-        disableAutoApi: Sites.multipleSites
+        disableAutoApi: Sites.multipleSites,
+        queueStorage: await preparePostgressQueueStorage(dataSource(new ServerContext()))
     }); 
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
