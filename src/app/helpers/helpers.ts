@@ -202,7 +202,7 @@ export class Helpers extends HelpersBase {
         });
         r.push(this.createDate);
 
-        if (this.context.isAllowed(Roles.admin)&&settings.isSytemForMlt()) {
+        if (this.context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
                 column: this.frozenTill, width: '120'
             });
@@ -246,6 +246,7 @@ export class Helpers extends HelpersBase {
         let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
+            stateName: 'deliveries-for-volunteer',
             settings: ctx.gridSettings({
                 numOfColumnsInGrid: 7,
                 knowTotalRows: true,
@@ -371,7 +372,7 @@ export class Helpers extends HelpersBase {
 
                         this.admin.value = true;
                     }
-                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value,this.context);
+                    this.phone.value = PhoneColumn.fixPhoneInput(this.phone.value, this.context);
                     if (!this._disableDuplicateCheck)
                         await checkForDuplicateValue(this, this.phone, context.for(Helpers), getLang(this.context).alreadyExist);
                     if (this.isNew())
@@ -596,12 +597,12 @@ export class HelperId extends IdColumn implements HasAsyncGetTheValue {
     } = {}) {
         super({
             dataControlSettings: () =>
-                ({
-                    getValue: () => this.getValue(),
-                    hideDataOnInput: true,
-                    width: '200',
-                    click: async () => this.showSelectDialog()
-                })
+            ({
+                getValue: () => this.getValue(),
+                hideDataOnInput: true,
+                width: '200',
+                click: async () => this.showSelectDialog()
+            })
         }, settingsOrCaption);
     }
     async showSelectDialog(onSelect?: () => void) {
@@ -645,10 +646,10 @@ export class CompanyColumn extends StringColumn {
         super({
             caption: getLang(context).company,
             dataControlSettings: () =>
-                ({
-                    width: '300',
-                    click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
-                })
+            ({
+                width: '300',
+                click: async () => context.openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => this.value = x)
+            })
         });
     }
 }

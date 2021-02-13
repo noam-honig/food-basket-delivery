@@ -1,4 +1,4 @@
-import { DataControlInfo, DataControlSettings, Column, Context } from "@remult/core";
+import { DataControlInfo, DataControlSettings, Column, Context, GridSettings } from "@remult/core";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {
@@ -6,7 +6,7 @@ export async function foreachSync<T>(array: T[], action: (item: T) => Promise<vo
   }
 }
 
-export function sortColumns(list: any, columns: DataControlInfo<any>[]) {
+export function sortColumns(list: GridSettings<any>, columns: DataControlInfo<any>[]) {
   if (list.origList && list.origList.length > 0)
     list.resetColumns();
   list.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);

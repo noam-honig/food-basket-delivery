@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IDataAreaSettings, DataAreaSettings, GridSettings, DialogConfig } from '@remult/core';
+import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
@@ -17,6 +18,7 @@ export class GridDialogComponent implements OnInit {
   args: {
     title: string,
     settings: GridSettings<any>,
+    stateName?: string,
     ok?: () => void,
     cancel?: () => void,
     validate?: () => Promise<void>,
@@ -25,7 +27,7 @@ export class GridDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<any>,
-    public settings:ApplicationSettings
+    public settings: ApplicationSettings
 
   ) {
 
@@ -34,7 +36,8 @@ export class GridDialogComponent implements OnInit {
 
 
   ngOnInit() {
-
+    if (this.args.stateName)
+      new columnOrderAndWidthSaver(this.args.settings).load(this.args.stateName)
   }
   cancel() {
     if (!this.ok && this.args.cancel)
@@ -47,7 +50,7 @@ export class GridDialogComponent implements OnInit {
       try {
         await this.args.validate();
       }
-      catch{
+      catch {
         return;
       }
     }
@@ -55,7 +58,7 @@ export class GridDialogComponent implements OnInit {
       await this.args.ok();
     this.ok = true;
     this.dialogRef.close();
-    
+
   }
   buttonClick(b: button, e: MouseEvent) {
     e.preventDefault();
@@ -63,9 +66,9 @@ export class GridDialogComponent implements OnInit {
       this.dialogRef.close();
     });
   }
-  isVisible(b:button){
+  isVisible(b: button) {
     if (!b.visible)
-    return true;
+      return true;
     return b.visible();
   }
 
@@ -76,6 +79,6 @@ export class GridDialogComponent implements OnInit {
 export interface button {
   text: string,
   click: ((close: () => void) => void),
-  visible?:()=>boolean
+  visible?: () => boolean
 
 }

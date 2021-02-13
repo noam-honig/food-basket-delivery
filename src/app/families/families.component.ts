@@ -44,6 +44,7 @@ import { MergeFamiliesComponent } from '../merge-families/merge-families.compone
 import { MatAccordion } from '@angular/material/expansion';
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
+import { columnOrderAndWidthSaver } from './columnOrderAndWidthSaver';
 
 
 
@@ -262,7 +263,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     column: families.address,
                     width: '250',
-                    clickIcon:'edit',
+                    clickIcon: 'edit',
                     click: (f) => {
                         f.showFamilyDialog({ focusOnAddress: true });
                     },
@@ -558,6 +559,7 @@ export class FamiliesComponent implements OnInit {
         this.searchString = '';
         await this.refreshFamilyGrid();
         this.updateChart();
+        this.columnSaver.suspend = true;
         if (this.cols) {
             sortColumns(this.families, this.cols);
             this.cols = undefined;
@@ -570,6 +572,7 @@ export class FamiliesComponent implements OnInit {
             sortColumns(this.families, this.addressProblemColumns);
 
         }
+        this.columnSaver.suspend = false;
 
     }
     clearStat() {
@@ -679,14 +682,14 @@ export class FamiliesComponent implements OnInit {
         stats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-
+    columnSaver = new columnOrderAndWidthSaver(this.families);
     @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
 
     ngOnInit() {
 
         this.refreshStats();
         sortColumns(this.families, this.normalColumns);
-        //  debugger;
+        this.columnSaver.load('families');
     }
 
     statTotal(t: statsOnTab) {
