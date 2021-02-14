@@ -160,26 +160,26 @@ export class SendSmsUtils {
                 internationalPhone = internationalPhone.substring(1, 1000);
             if (!internationalPhone.startsWith('+'))
                 internationalPhone = prefix + internationalPhone;
-            if (SendSmsUtils.twilioSendSms) {
-                let r = await SendSmsUtils.twilioSendSms(internationalPhone, text);
+            if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
+                if (SendSmsUtils.twilioSendSms) {
+                    let r = await SendSmsUtils.twilioSendSms(internationalPhone, text);
 
-                console.log(r);
-            }
-            else if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
-
-                let AWS = await import('aws-sdk');
-                let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
-                    Message: text,
-                    PhoneNumber: internationalPhone,
-                    MessageAttributes: {
-                        'AWS.SNS.SMS.SenderID': {
-                            'DataType': 'String',
-                            'StringValue': 'HAGAI'
+                    console.log(r);
+                }
+                else {
+                    let AWS = await import('aws-sdk');
+                    let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
+                        Message: text,
+                        PhoneNumber: internationalPhone,
+                        MessageAttributes: {
+                            'AWS.SNS.SMS.SenderID': {
+                                'DataType': 'String',
+                                'StringValue': 'HAGAI'
+                            }
                         }
-                    }
-                }).promise();
-                console.log(phone, r);
-
+                    }).promise();
+                    console.log(phone, r);
+                } 
             } else {
                 let h = new fetch.Headers();
                 h.append('Content-Type', 'text/xml; charset=utf-8');

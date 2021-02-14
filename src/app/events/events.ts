@@ -20,6 +20,7 @@ export class Event extends IdEntity {
     showVolunteers(dialog: DialogService, busy: BusyService): void {
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: this.name.value,
+            stateName:'helpers-per-event',
 
             buttons: [{
                 text: getLang(this.context).addVolunteer,

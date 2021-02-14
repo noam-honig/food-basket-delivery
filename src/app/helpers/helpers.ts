@@ -249,6 +249,7 @@ export class Helpers extends HelpersBase {
         let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
+            stateName: 'deliveries-for-volunteer',
             settings: ctx.gridSettings({
                 numOfColumnsInGrid: 7,
                 knowTotalRows: true,

@@ -60,6 +60,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   async showFamilies(d: duplicateFamilies) {
     await this.context.openDialog(GridDialogComponent, x => x.args = {
       title: this.settings.lang.familiesAt + d.address,
+      stateName:'duplicate-families',
       buttons: [{
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }

@@ -86,6 +86,7 @@ export class Families extends IdEntity {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
+      stateName:'deliveries-for-family',
       settings: gridDialogSettings,
       buttons: [{
         text: use.language.newDelivery,

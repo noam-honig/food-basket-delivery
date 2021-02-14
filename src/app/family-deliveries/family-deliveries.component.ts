@@ -29,6 +29,7 @@ import { getLang } from '../sites/sites';
 import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Groups } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
+import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -742,6 +743,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.refreshStats();
     this.deliveries.columns.numOfColumnsInGrid = this.normalColumns.length;
     sortColumns(this.deliveries, this.normalColumns);
+    new columnOrderAndWidthSaver(this.deliveries).load('active-deliveries-component');
   }
 }
 
