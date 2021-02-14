@@ -86,10 +86,9 @@ export class CreateNewEvent {
     async iterateFamilies(what: (f: Families) => Promise<any>, progress: ServerProgress) {
         let pt = new PromiseThrottle(10);
         let i = 0;
-        let families = this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active) });
-        let total = await families.count();
-        for await (let f of families) {
-            progress.progress(i / total);
+        
+        
+        for await (let f of this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active),progress })) {
             let match = true;
             if (this.moreOptions.value) {
                 if (this.includeGroups.value) {

@@ -559,18 +559,18 @@ export class ManageComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.admin, queue: true })
   static async deleteFamiliesOnServer(context?: Context, progress?: ServerProgress) {
-    let it = context.for(Families).iterate({
-      where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
-      orderBy: f => [{ column: f.createDate, descending: true }]
-
-    });
-    let count = await it.count();
+    
+    
     let i = 0;
-    for await (const f of it) {
+    for await (const f of context.for(Families).iterate({
+      where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
+      orderBy: f => [{ column: f.createDate, descending: true }],
+      progress
+    })) {
       await f.delete();
-      progress.progress(++i / count);
+      i++;
     }
-    return count;
+    return i;
   }
 
 
