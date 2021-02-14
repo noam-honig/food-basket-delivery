@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
 import { isDesktop } from '../shared/utils';
 import { getSettings } from '../manage/ApplicationSettings';
+import { isDate } from 'util';
 
 
 
@@ -26,7 +27,7 @@ export class EmailColumn extends radweb.StringColumn {
       })
     }, settingsOrCaption);
     if (!this.defs.caption)
-      this.defs.caption =  use.language.email;
+      this.defs.caption = use.language.email;
   }
 }
 export class PhoneColumn extends radweb.StringColumn {
@@ -64,7 +65,7 @@ export class PhoneColumn extends radweb.StringColumn {
     if (phone.startsWith('0')) {
       phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
     }
-    if (getSettings(context).forWho.value.args.suppressPhoneZeroAddition&&!phone.startsWith('+'))
+    if (getSettings(context).forWho.value.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
       phone = getSettings(context).getInternationalPhonePrefix() + phone;
 
     if (phone.startsWith('+'))
@@ -483,7 +484,7 @@ export class SqlBuilder {
       where.push(...query.where());
     }
     {
-      let before = new Filter(x=>{});
+      let before = new Filter(x => { });
       let x = query.from.__decorateWhere(before);
       if (x != before)
         where.push(x);
@@ -540,6 +541,8 @@ class myDummySQLCommand implements SqlCommand {
     throw new Error("Method not implemented.");
   }
   addParameterAndReturnSqlToken(val: any): string {
+    if (isDate(val))
+      val = val.toISOString();
     if (typeof (val) == "string") {
       return new SqlBuilder().str(val);
     }

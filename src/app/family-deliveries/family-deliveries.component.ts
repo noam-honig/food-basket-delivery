@@ -16,7 +16,7 @@ import { BasketType } from '../families/BasketType';
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { ArchiveDeliveries, DeleteDeliveries,  NewDelivery, UpdateBasketType, UpdateCourier, UpdateDeliveriesStatus, UpdateDistributionCenter, UpdateFamilyDefaults, UpdateQuantity } from './family-deliveries-actions';
+import { ArchiveDeliveries, DeleteDeliveries, NewDelivery, UpdateBasketType, UpdateCourier, UpdateDeliveriesStatus, UpdateDistributionCenter, UpdateFamilyDefaults, UpdateQuantity } from './family-deliveries-actions';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
@@ -741,7 +741,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.refreshStats();
     this.deliveries.columns.numOfColumnsInGrid = this.normalColumns.length;
-    sortColumns(this.deliveries, this.normalColumns)
+    sortColumns(this.deliveries, this.normalColumns);
   }
 }
 
