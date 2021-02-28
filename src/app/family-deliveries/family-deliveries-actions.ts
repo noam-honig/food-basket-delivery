@@ -5,7 +5,7 @@ import { HelperId } from "../helpers/helpers";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { ActionOnRows, actionDialogNeeds, ActionOnRowsArgs, packetServerUpdateInfo } from "../families/familyActionsWiring";
-import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
+import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus, DeliveryStatusColumn } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
 import { BasketId, QuantityColumn } from "../families/BasketType";
@@ -79,7 +79,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
 
 
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
+        super(context, ActiveFamilyDeliveries, {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
                 this.basketType, this.quantity, this.byCurrentCourier, this.comment, {
@@ -126,7 +126,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     updateAlsoAsFixed = new BoolColumn(getLang(this.context).setAsDefaultVolunteer);
     usedCouriers: string[] = [];
     constructor(context: Context) {
-        super(context, FamilyDeliveries, {
+        super(context, ActiveFamilyDeliveries, {
             help: () => getLang(this.context).updateVolunteerHelp,
             dialogColumns: async () => [
                 this.clearVoulenteer,
