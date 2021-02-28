@@ -18,7 +18,7 @@ import { getColumnsFromObject, ServerController, ServerMethod } from "@remult/co
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
     constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
-        super(context, FamilyDeliveries, buildArgsForFamilyDeliveries(args));
+        super(context, ActiveFamilyDeliveries, buildArgsForFamilyDeliveries(args));
     }
 }
 function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
@@ -70,7 +70,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     allowed: Roles.admin,
     key: 'UpdateFamilyDefaults'
 })
-export class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
+export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     byCurrentCourier = new BoolColumn(use.language.defaultVolunteer);
     basketType = new BoolColumn(use.language.defaultBasketType);
     quantity = new BoolColumn(use.language.defaultQuantity);
@@ -120,7 +120,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<FamilyDeliveries> {
     allowed: Roles.distCenterAdmin,
     key: 'updateCourier'
 })
-export class UpdateCourier extends ActionOnRows<FamilyDeliveries> {
+export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
     courier = new HelperId(this.context, getLang(this.context).volunteer);
     updateAlsoAsFixed = new BoolColumn(getLang(this.context).setAsDefaultVolunteer);
