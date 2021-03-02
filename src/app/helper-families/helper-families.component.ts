@@ -28,7 +28,6 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { PhoneColumn, SqlBuilder, getValueFromResult } from '../model-shared/types';
 import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
-import { lang } from 'moment';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
