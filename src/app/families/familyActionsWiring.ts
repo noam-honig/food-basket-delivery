@@ -60,9 +60,8 @@ export abstract class ActionOnRows<T extends IdEntity>  {
                     return false;
                 if (this.args.visible) {
                     r = this.args.visible(component);
-                    console.log(this.args.title, r);
                 }
-                return true;
+                return r;
             },
             icon: this.args.icon,
             click: async () => {
@@ -83,7 +82,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
                         },
-                        ok: async () => { 
+                        ok: async () => {
                             let groupName = this.context.for(this.entity).create().defs.caption;
                             let count = await this.context.for(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
@@ -140,7 +139,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             where,
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
-                await this.args.forEach(f); 
+                await this.args.forEach(f);
                 if (f.wasChanged())
                     await f.save();
                 progress.progress(++i / count);
