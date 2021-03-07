@@ -13,6 +13,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-in-route-follow-up',
@@ -21,12 +22,23 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private context: Context, private settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
-  helpers = this.context.for(InRouteHelpers).gridSettings({
+  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService,private dialog:DialogService) { }
 
+  searchString: string = '';
+  clearSearch() {
+    this.searchString = '';
+    this.helpers.reloadData();
+  }
+
+  helpers = this.context.for(InRouteHelpers).gridSettings({
+    get: {
+      limit: 25,
+      where: h => {
+        let r = h.name.isContains(this.searchString);
+        return r.and(this.currentOption.where(h));
+      }
+    },
     rowsInPage: 25,
-    where: x => this.currentOption.where(x)
-    ,
     knowTotalRows: true,
     showFilter: true,
     numOfColumnsInGrid: 99,
@@ -35,7 +47,9 @@ export class InRouteFollowUpComponent implements OnInit {
       click: () => saveToExcel(this.settings, this.context.for(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
     }],
     rowCssClass: x => {
-      if ((x.minAssignDate.value < daysAgo(5)) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(5)))
+      if ((!x.seenFirstAssign.value) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(3)))
+        return 'communicationProblem';
+      else if ((x.minAssignDate.value < daysAgo(5)) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(5)))
         return 'addressProblem';
       else
         return '';
@@ -114,7 +128,12 @@ export class InRouteFollowUpComponent implements OnInit {
         let h = await this.context.for(Helpers).findId(s.id);
         h.displayEditDialog(this.dialog, this.busy);
       }
-    }]
+    },
+    {
+      name: use.language.freezeHelper,
+      visible: () => this.context.isAllowed(Roles.admin)&&this.settings.isSytemForMlt(),
+      click: async h => this.editFreezeDate(h)
+    },]
   });
 
   ngOnInit() {
@@ -130,12 +149,50 @@ export class InRouteFollowUpComponent implements OnInit {
       where: s => s.seenFirstAssign.isEqualTo(false).and(s.minAssignDate.isLessOrEqualTo(daysAgo(2)))
     },
     {
-      text: 'שיוך ראשון לפני יותר מ 7 ימים',
-      where: s => s.minAssignDate.isLessOrEqualTo(daysAgo(7))
+      text: 'שיוך ראשון לפני יותר מ 5 ימים',
+      where: s => s.minAssignDate.isLessOrEqualTo(daysAgo(5))
     }
   ]
   currentOption = this.radioOption[0];
 
+  async doSearch() {
+    if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
+      return;
+    this.busy.donotWait(async () =>
+      await this.helpers.reloadData());
+  }
+
+  private freezeDateEntry(h: InRouteHelpers) {
+    let r: DataControlInfo<Helpers>[] = [
+      {
+        column: h.frozenTill,
+        width: '150'
+      },
+      {
+        column: h.internalComment,
+        width: '150'
+      },
+    ];
+    return r;
+  }
+
+  async editFreezeDate(h: InRouteHelpers) {
+    this.context.openDialog(InputAreaComponent, x => x.args = {
+      title: use.language.freezeHelper,
+      ok: async () => {
+        let helper = await this.context.for(Helpers).findId(h.id);
+        helper.frozenTill.value = h.frozenTill.value;
+        helper.internalComment.value = h.internalComment.value;
+        await helper.save();
+        this.helpers.reloadData();
+      },
+      cancel: () => {
+      },
+      settings: {
+        columnSettings: () => this.freezeDateEntry(h)
+      }
+    });
+  }
 }
 
 interface filterOptions {

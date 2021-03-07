@@ -1,4 +1,4 @@
-import { IdEntity, StringColumn, Context, EntityClass, NumberColumn, Column, BoolColumn } from "@remult/core";
+import { IdEntity, StringColumn, Context, EntityClass, NumberColumn, Column, BoolColumn, DateColumn } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, changeDate } from "../model-shared/types";
@@ -84,12 +84,18 @@ export class InRouteHelpers extends IdEntity {
     minAssignDate = new myDateTime(this.context, "שיוך ראשון");
     lastCommunicationDate = new myDateTime(this.context, " תקשורת אחרונה");
     lastComment = new StringColumn("תקשורת אחרונה");
+    lastCommunicationUser = new StringColumn("תקשורת אחרונה על ידי");
     lastSignInDate = new myDateTime(this.context, 'כניסה אחרונה למערכת');
     deliveriesInProgress = new NumberColumn({ caption: getLang(this.context).delveriesInProgress, dataControlSettings: () => ({ width: '100' }) });
     maxAssignDate = new myDateTime(this.context, " שיוך אחרון");
     lastCompletedDelivery = new myDateTime(this.context, 'תאריך איסוף מוצלח אחרון');
     completedDeliveries = new NumberColumn({ caption: "איסופים מוצלחים", dataControlSettings: () => ({ width: '100' }) });
     seenFirstAssign = new BoolColumn('ראה את השיוך הראשון');
+    internalComment = new StringColumn('הערה פנימית');
+    company = new StringColumn('ארגון');
+    frozenTill = new DateColumn({
+        caption: 'מוקפא עד לתאריך'
+    });
     constructor(private context: Context) {
         super({
             name: 'in-route-helpers',
@@ -101,6 +107,7 @@ export class InRouteHelpers extends IdEntity {
                 let history = context.for(FamilyDeliveries).create();
                 let com = context.for(HelperCommunicationHistory).create();
                 let h = context.for(Helpers).create();
+                let h2 = context.for(Helpers).create();
                 let helperFamilies = (where: () => any[]) => {
                     return {
                         from: f,
@@ -115,13 +122,22 @@ export class InRouteHelpers extends IdEntity {
                         orderBy: [{ column: com.createDate, descending: true }]
                     }, toCol)
                 }
+                let comHelperInnerSelect = (toCol: Column) => {
+                    return sql.innerSelect({
+                        select: () => [h2.name],
+                        from: com,
+                        innerJoin: () => [{ to: h2, on: () => [sql.eq(com.createUser, h2.id)] }],
+                        where: () => [sql.eq(com.volunteer, h.id), sql.build(com.comment, ' not like \'%Link%\'')],
+                        orderBy: [{ column: com.createDate, descending: true }]
+                    }, toCol)
+                }
                 return sql.build('(select *,',
                     sql.case([{ when: [sql.build(this.lastSignInDate, ' is null or ', this.lastSignInDate, '<', this.minAssignDate)], then: false }], true)
                     , ' ', this.seenFirstAssign
                     ,
 
                     ' from (', sql.query({
-                        select: () => [h.id, h.name, h.lastSignInDate, h.smsDate,
+                        select: () => [h.id, h.name, h.lastSignInDate, h.smsDate, h.internalComment, h.company, h.frozenTill,
                         sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.deliveriesInProgress)
                             , sql.minInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.minAssignDate)
                             , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), this.maxAssignDate)
@@ -129,6 +145,7 @@ export class InRouteHelpers extends IdEntity {
                             , comInnerSelect(com.createDate, this.lastCommunicationDate)
                             , comInnerSelect(com.comment, this.lastComment)
                             , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), history.deliverStatus.isSuccess()] }, this.completedDeliveries)
+                            , comHelperInnerSelect(this.lastCommunicationUser)
                         ],
 
                         from: h,
