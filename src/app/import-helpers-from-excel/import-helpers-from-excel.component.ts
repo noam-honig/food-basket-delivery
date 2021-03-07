@@ -380,6 +380,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     addColumn(this.helper.email);
     addColumn(this.helper.eventComment);
     addColumn(this.helper.company);
+    addColumn(this.helper.socialSecurityNumber);
     this.columns.push({
       key: 'firstName',
       name: 'שם פרטי',
