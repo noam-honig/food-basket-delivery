@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, BusyService, Column, BoolColumn, DataAreaSettings } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, Column, BoolColumn, DataAreaSettings } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import { buildGridButtonFromActions } from '../families/familyActionsWiring';
-import { familyActions, UpdateStatus, updateGroup } from '../families/familyActions';
+import {  UpdateStatus, updateGroup } from '../families/familyActions';
 import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
@@ -92,23 +92,13 @@ export class DuplicateFamiliesComponent implements OnInit {
         numOfColumnsInGrid: 6,
 
         gridButtons: [
-          ...buildGridButtonFromActions([UpdateStatus, updateGroup], this.context,
+          ...[new UpdateStatus(this.context),new  updateGroup(this.context)].map(a=>a.gridButton(
             {
-              afterAction: async () => await x.args.settings.getRecords(),
+              afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
-              buildActionInfo: async actionWhere => {
-                let where: EntityWhere<Families> = f => {
-                  let r = new AndFilter(actionWhere(f), x.args.settings.getFilterWithSelectedRows().where(f));
-                  return r;
-                };
-                return {
-                  count: await this.context.for(Families).count(where),
-                  where
-                };
-              }, settings: this.settings,
-              groupName: this.settings.lang.families
-            })
+              userWhere: f => x.args.settings.getFilterWithSelectedRows().where(f),
+              settings: this.settings
+            }))
           , {
             name: this.settings.lang.mergeFamilies,
             click: async () => {
@@ -134,11 +124,11 @@ export class DuplicateFamiliesComponent implements OnInit {
             click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy })
           }
         ],
-        get: {
-          limit: 25,
-          where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(d.ids.split(','))),
-          orderBy: f => f.name
-        }
+
+        rowsInPage: 25,
+        where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(...d.ids.split(','))),
+        orderBy: f => f.name
+
 
       })
 
@@ -162,7 +152,7 @@ export class DuplicateFamiliesComponent implements OnInit {
     }
     await this.context.openDialog(MergeFamiliesComponent, y => y.families = items, y => {
       if (y.merged)
-        x.args.settings.getRecords();
+        x.args.settings.reloadData();
     });
   }
 

@@ -822,4 +822,5 @@ export class italy {
   configuration = 'Configurazione';
   foodParcel = 'Pacco alimentare';
   updated = 'Aggiornato';
+  showFreezed = 'Mostra congelato';
 }

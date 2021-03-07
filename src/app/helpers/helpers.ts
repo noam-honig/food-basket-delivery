@@ -1,6 +1,7 @@
 
-import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, FilterBase, Entity, Column, EntityProvider, checkForDuplicateValue, BusyService, DateColumn, DataControlInfo } from '@remult/core';
-import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges } from '../model-shared/types';
+import { NumberColumn, IdColumn, Context, EntityClass, ColumnOptions, IdEntity, StringColumn, BoolColumn, EntityOptions, UserInfo, Filter, Entity, Column, EntityProvider, checkForDuplicateValue, DateColumn, DataControlInfo, ServerMethod } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { changeDate, HasAsyncGetTheValue, PhoneColumn, DateTimeColumn, EmailColumn, SqlBuilder, wasChanged, logChanges, isPhoneValidForIsrael } from '../model-shared/types';
 
 
 
@@ -14,13 +15,15 @@ import { getLang } from '../sites/sites';
 import { GeocodeInformation, GetGeoInformation, Location, AddressColumn } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { Sites } from '../sites/sites';
-import { getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { SendSmsAction } from '../asign-family/send-sms-action';
+import { EmailSvc } from '../shared/utils';
 
 
 
@@ -289,11 +292,11 @@ export class Helpers extends HelpersBase {
                     r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                     return r;
                 },
-                get: {
-                    where: fd => fd.courier.isEqualTo(this.id),
-                    orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-                    limit: 25
-                }
+
+                where: fd => fd.courier.isEqualTo(this.id),
+                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+                rowsInPage: 25
+
             })
         });
     }
@@ -465,7 +468,7 @@ export class Helpers extends HelpersBase {
 
         let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
             where: f => f.fixedCourier.isEqualTo(this.id)
-                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
+                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(...ids))
         });
         if (otherFamilies.length > 0) {
             if (await dialog.YesNoPromise(getLang(this.context).thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + getLang(this.context).familiesDotCancelTheseAssignments)) {
@@ -479,7 +482,47 @@ export class Helpers extends HelpersBase {
 
         dialog.Info(i + " " + getLang(this.context).familiesUpdated);
     }
+    @ServerMethod({ allowed: true })
+    async mltRegister() {
+        if (!this.isNew())
+            throw "מתנדב קיים";
+        let error = false;
+        for (const col of [this.name, this.preferredDistributionAreaAddress, this.phone, this.socialSecurityNumber]) {
+            col.validationError = '';
+            if (!col.value) {
+                col.validationError = 'שדה חובה';
+                error = true;
+            }
+        }
+        if (error)
+            throw "יש למלא שדות חובה" +
+            "(שם, כתובת, טלפון ות.ז.)";
+        if (!isPhoneValidForIsrael(this.phone.value)) {
+            this.phone.validationError = "טלפון לא תקין";
+            throw this.phone.validationError;
+        }
+        let settings = await ApplicationSettings.getAsync(this.context);
+        if (!settings.isSytemForMlt())
+            throw "Not Allowed";
+        this.context._setUser({
+            id: 'WIX',
+            name: 'WIX',
+            roles: []
+        });
+        await this.save();
 
+
+        if (settings.registerHelperReplyEmailText.value && settings.registerHelperReplyEmailText.value != '') {
+            let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText.value,
+                settings.organisationName.value, '', this.name.value, this.context.user.name, '');
+
+            try {
+                await EmailSvc.sendMail(settings.lang.thankYouForHelp, message, this.email.value, this.context);
+            } catch (err) {
+                console.error('send mail', err);
+            }
+        }
+    }
 
     addressApiResult2 = new StringColumn();
     preferredFinishAddress = new AddressColumn(this.context, this.addressApiResult2,
@@ -589,7 +632,7 @@ export class Helpers extends HelpersBase {
 export class HelperId extends IdColumn implements HasAsyncGetTheValue {
 
     constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, private args: {
-        filter?: (helper: HelpersAndStats) => FilterBase,
+        filter?: (helper: HelpersAndStats) => Filter,
         location?: () => Location,
         familyId?: () => string,
         includeFrozen?: boolean,
@@ -654,7 +697,7 @@ export class CompanyColumn extends StringColumn {
     }
 }
 export class HelperIdReadonly extends HelperId {
-    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => FilterBase) {
+    constructor(protected context: Context, settingsOrCaption?: ColumnOptions<string>, filter?: (helper: HelpersAndStats) => Filter) {
         super(context, settingsOrCaption, { filter });
         this.defs.allowApiUpdate = false;
     }

@@ -3,7 +3,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Context, DataAreaSettings, ServerFunction } from '@remult/core';
 
 
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
@@ -26,7 +26,7 @@ declare var gtag;
 export class DialogService {
     async exception(title: string, err: any): Promise<void> {
 
-        this.log("Exception:" + title + ": " + extractError(err) + "cookies:" + document.cookie);
+        this.log(err, title);
         await this.Error(title + ": " + extractError(err));
         throw err;
     }
@@ -190,19 +190,18 @@ export class DialogService {
     confirmDelete(of: string) {
         return this.YesNoPromise(use.language.confirmDeleteOf + " " + of + "?");
     }
-    async log(s: string) {
-        await DialogService.doLog(s);
+    async log(error: any, title?: string) {
+        let message = "Exception: " + extractError(error);
+        if (error.message && error.message != message)
+            message += " - " + error.message;
+        if (title) {
+            title + " - " + message;
+        }
+        await DialogService.doLog(message);
     }
     @ServerFunction({ allowed: true })
     static async doLog(s: string, context?: Context) {
         console.log(s);
-        if (context.user) {
-            console.log("server context: " + JSON.stringify(context.user));
-        }
-        else
-            console.log("server context has no user");
-        console.log("authorization cookie:", context.getCookie("authorization"));
-
     }
 }
 export function extractError(err: any) {
@@ -224,7 +223,7 @@ export function extractError(err: any) {
     if (err.message) {
         let r = err.message;
         if (err.error && err.error.message)
-            r = err.error.message + " - " + r;
+            r = err.error.message;
         return r;
     }
     if (err.error)
@@ -233,6 +232,7 @@ export function extractError(err: any) {
 
     return JSON.stringify(err);
 }
+
 export class DestroyHelper {
     private destroyList: (() => void)[] = [];
     add(arg0: () => void) {
@@ -277,7 +277,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         if (this.context.isSignedIn())
             this.zone.run(async () => {
                 let err = extractError(error);
-                this.dialog.log("Exception:" + err).catch(x => { });
+                this.dialog.log(error).catch(x => { });
                 this.dialog.Error(err);
             });
 

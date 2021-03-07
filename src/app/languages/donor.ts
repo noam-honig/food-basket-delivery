@@ -647,7 +647,7 @@ export class donor {
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
   volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
-  email = 'eMail';
+  email = 'דואל';
   preferredDistributionArea = 'כתובת אזור חלוקה מועדף 1';
   preferredFinishAddress = 'כתובת לאזור חלוקה 2';
   doesNotExist = 'לא קיים';
@@ -822,4 +822,5 @@ export class donor {
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
   updated = 'עודכנו';
+  showFreezed = 'הצג מוקפאים';
 }

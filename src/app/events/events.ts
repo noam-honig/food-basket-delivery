@@ -1,4 +1,5 @@
-import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BusyService, BoolColumn } from "@remult/core";
+import { IdEntity, StringColumn, Context, DateColumn, NumberColumn, IdColumn, ValueListColumn, EntityClass, BoolColumn } from "@remult/core";
+import { BusyService } from '@remult/angular';
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
@@ -29,16 +30,16 @@ export class Event extends IdEntity {
                         eh.helper.value = h.id.value;
                         eh.eventId.value = this.id.value;
                         await eh.save();
-                        x.args.settings.getRecords()
+                        x.args.settings.reloadData()
                     }
                 })
 
             }],
             settings: this.context.for(volunteersInEvent).gridSettings({
-                get: {
-                    limit: 50,
-                    where: ve => ve.eventId.isEqualTo(this.id)
-                },
+
+                rowsInPage: 50,
+                where: ve => ve.eventId.isEqualTo(this.id)
+                ,
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
                 columnSettings: ev => [

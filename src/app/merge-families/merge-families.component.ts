@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
-import { Context, Column, GridSettings, ServerFunction, BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { Context, Column, GridSettings, ServerFunction } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';

@@ -4,7 +4,9 @@ import { YesNoColumn } from "./YesNo";
 import { FamilySourceId } from "./FamilySources";
 import { BasketId, QuantityColumn } from "./BasketType";
 import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, FilterBase, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting, InMemoryDataProvider, ServerContext, SelectValueDialogComponent, BusyService } from '@remult/core';
+import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, Filter, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
+import { BusyService, SelectValueDialogComponent } from '@remult/angular';
+
 import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressColumn, GeocodeResult } from "../shared/googleApiHelpers";
@@ -108,12 +110,12 @@ export class Families extends IdEntity {
           name: use.language.deliveryDetails,
           click: async fd => fd.showDeliveryOnlyDetail({
             dialog: args.dialog,
-            refreshDeliveryStats: () => result.getRecords()
+            refreshDeliveryStats: () => result.reloadData()
           })
         },
         ...(await import("../family-deliveries/family-deliveries.component")).getDeliveryGridButtons({
           context: this.context,
-          refresh: () => result.getRecords(),
+          refresh: () => result.reloadData(),
           deliveries: () => result,
           dialog: args.dialog,
           settings: args.settings,
@@ -136,11 +138,11 @@ export class Families extends IdEntity {
         r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
         return r;
       },
-      get: {
-        where: fd => fd.family.isEqualTo(this.id),
-        orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-        limit: 25
-      }
+
+      where: fd => fd.family.isEqualTo(this.id),
+      orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+      rowsInPage: 25
+
     });
     return result;
   }
@@ -328,6 +330,7 @@ export class Families extends IdEntity {
     super(
       {
         name: "Families",
+        caption: getLang(context).deliveries,
         allowApiRead: Roles.admin,
         allowApiUpdate: Roles.admin,
         allowApiDelete: false,
@@ -711,7 +714,7 @@ export class Families extends IdEntity {
           case DeliveryStatus.FailedNotHome:
           case DeliveryStatus.FailedDoNotWant:
           case DeliveryStatus.FailedNotReady:
-          case DeliveryStatus.FailedTooFar: 
+          case DeliveryStatus.FailedTooFar:
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime.value && n.deliveryStatusDate.value)

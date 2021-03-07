@@ -822,4 +822,5 @@ export class en {
   configuration = 'The system is for';
   foodParcel = 'Food Parcel';
   updated = 'Updated';
+  showFreezed = 'Show frozen';
 }

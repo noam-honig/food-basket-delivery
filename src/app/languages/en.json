@@ -1159,7 +1159,7 @@
   },
   "email": {
     "google": "eMail",
-    "valueInCode": "eMail"
+    "valueInCode": "דואל"
   },
   "emailDonorContentCaption": {
     "google": "תוכן אימייל מתנדב",
@@ -2979,6 +2979,10 @@
   "showFamilies": {
     "google": "View families",
     "valueInCode": "הצג משפחות"
+  },
+  "showFreezed": {
+    "google": "Show frozen",
+    "valueInCode": "הצג מוקפאים"
   },
   "showHelperComment": {
     "google": "Save note to volunteer",

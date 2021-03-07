@@ -1,6 +1,6 @@
 import { changeDate, PhoneColumn, SqlBuilder, DateTimeColumn, wasChanged } from "../model-shared/types";
 
-import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, FilterBase, AndFilter, Column, DataAreaSettings, IDataAreaSettings, ValueListColumn, ColumnOptions } from '@remult/core';
+import { EntityClass, Context, IdColumn, IdEntity, StringColumn, NumberColumn, BoolColumn, Filter, AndFilter, Column, DataAreaSettings, IDataAreaSettings, ValueListColumn, ColumnOptions } from '@remult/core';
 import { BasketId, QuantityColumn } from "./BasketType";
 import { FamilyId, Families, GroupsColumn, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatusColumn, DeliveryStatus } from "./DeliveryStatus";
@@ -306,6 +306,7 @@ export class FamilyDeliveries extends IdEntity {
         super({
             name: apiEndPoing,
             dbName: 'FamilyDeliveries',
+            caption: getLang(context).deliveries,
             allowApiRead: context.isSignedIn(),
             allowApiInsert: false,
             allowApiUpdate: context.isSignedIn(),
@@ -426,8 +427,8 @@ export class FamilyDeliveries extends IdEntity {
         if (!this.context.isSignedIn())
             return this.id.isEqualTo('no rows');
         let user = <HelperUserInfo>this.context.user;
-        let result: FilterBase;
-        let add = (f: FilterBase) => result = new AndFilter(f, result);
+        let result: Filter;
+        let add = (f: Filter) => result = new AndFilter(f, result);
         if (this.onlyActive)
             add(this.active());
         if (!this.context.isAllowed([Roles.admin, Roles.lab])) {
@@ -465,7 +466,7 @@ export class FamilyDeliveries extends IdEntity {
     readyAndSelfPickup() {
         return this.deliverStatus.readyAndSelfPickup(this.courier);
     }
-    filterDistCenterAndAllowed(distCenter: string): FilterBase {
+    filterDistCenterAndAllowed(distCenter: string): Filter {
         return this.distributionCenter.filter(distCenter);
     }
     getDeliveryDescription() {

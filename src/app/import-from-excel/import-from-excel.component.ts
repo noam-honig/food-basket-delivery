@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, RouteHelperService, DataControlInfo } from '@remult/core';
+import { Column, Entity, ServerFunction, IdColumn, SqlDatabase, StringColumn, DataAreaSettings, BoolColumn, DataArealColumnSetting, EntityWhere, AndFilter, DataControlInfo } from '@remult/core';
+import { RouteHelperService } from '@remult/angular';
+
 import { Context } from '@remult/core';
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { HasAsyncGetTheValue, PhoneColumn, wasChanged } from '../model-shared/types';
@@ -10,7 +12,7 @@ import { BasketType, BasketId } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService, extractError } from '../select-popup/dialog';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 
 
 import { Roles } from '../auth/roles';
@@ -312,7 +314,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     if (sheets.length > 1) {
                         await new Promise(x => setTimeout(() => {
-                            x();
+                            x({});
                         }, 500));
                         await this.context.openDialog(SelectListComponent, x => {
                             x.args = {
@@ -910,7 +912,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
             await new Promise((resolve) => setTimeout(() => {
-                resolve();
+                resolve({});
             }, 500));
             let index;
             var start = new Date().valueOf();
@@ -922,7 +924,7 @@ export class ImportFromExcelComponent implements OnInit {
                         this.dialog.Info(index + " " + use.language.linesProcessed + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                         await new Promise(r => {
                             setTimeout(() => {
-                                r();
+                                { r({}) };
                             }, 100);
                         });
                     }
@@ -1272,11 +1274,11 @@ export class ImportFromExcelComponent implements OnInit {
                 r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
                 return r;
             },
-            get: {
-                where: fd => fd.family.isEqualTo(f.id),
-                orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-                limit: 25
-            }
+
+            where: fd => fd.family.isEqualTo(f.id),
+            orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+            rowsInPage: 25
+
         });
 
 

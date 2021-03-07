@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Context, EntityClass, IdEntity, StringColumn, BoolColumn, NumberColumn, ServerFunction } from '@remult/core';
+import { CreateNewEvent } from '../create-new-event/create-new-event';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -17,26 +18,22 @@ export class TestMapComponent implements OnInit {
 
   constructor(private context: Context) { }
 
-  results: string[] = [];
-  run = false;
-  async ngOnInit() {
-    this.doIt();
-  }
-  doIt() {
-    return;
 
-    
+  async ngOnInit() {
+    setTimeout(() => {
+
+      this.doIt();
+    }, 1000);
   }
-  @ServerFunction({ allowed: true })
-  static async testtest(context?: Context) {
-    var r = (await ApplicationSettings.getAsync(context)).organisationName.value;
-    return r;
+  async doIt() {
+
+
+
   }
-  async assignFamilies(h: HelpersAndStats) {
-    alert('disabled for now');
-    this.ngOnInit();
-  }
+
 
 }
+
+
 
 

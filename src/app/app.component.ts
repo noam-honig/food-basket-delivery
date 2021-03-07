@@ -6,7 +6,8 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context, RouteHelperService, JwtSessionManager, DataAreaSettings, BusyService, Role } from '@remult/core';
+import { Context } from '@remult/core';
+import { RouteHelperService, BusyService } from '@remult/angular';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
 
@@ -39,7 +40,7 @@ export class AppComponent {
     public router: Router,
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
-    private helper: RouteHelperService,
+    public helper: RouteHelperService,
     public context: Context,
     public settings: ApplicationSettings,
     private busy: BusyService
@@ -54,12 +55,9 @@ export class AppComponent {
 
 
   }
-  showCreateNewEvent() {
-    return this.context.isAllowed(Roles.admin);
-  }
-  createNewEvent() {
-    new CreateNewEvent(this.context).show(this.dialog, this.settings, this.helper, this.busy);
-  }
+
+  createNewEventAction = new CreateNewEvent(this.context);
+
 
 
 

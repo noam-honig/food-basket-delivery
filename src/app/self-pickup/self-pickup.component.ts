@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { Context } from '@remult/core';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -28,7 +28,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   constructor(private busy: BusyService
     , private context: Context, private dialog: DialogService, public   settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
-      this.families.getRecords();
+      this.families.reloadData();
     }, this.destroyHelper);
   }
   destroyHelper = new DestroyHelper();

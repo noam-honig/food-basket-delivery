@@ -4,8 +4,8 @@ import { DialogService, extractError } from "../select-popup/dialog";
 
 import { Helpers, HelperUserInfo } from "../helpers/helpers";
 
-import { ServerFunction, UserInfo, JwtSessionManager, RouteHelperService, DataApiRequest } from '@remult/core';
-import { Context } from '@remult/core';
+import { JwtSessionManager, RouteHelperService } from '@remult/angular';
+import { ServerFunction, Context } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 
@@ -41,7 +41,7 @@ export class AuthService {
     failedSmsSignInPhone: string = undefined;
     private setToken(token: string, remember: boolean) {
         let org = Sites.getOrganizationFromContext(this.context);
-        this.tokenHelper.setToken(token, remember, '/' + org);
+        this.tokenHelper.setToken(token, remember);
     }
     @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
@@ -90,10 +90,9 @@ export class AuthService {
             this.signout();
         }
             ;
-        if (settings.currentUserIsValidForAppLoadTest.value)
-            tokenHelper.loadSessionFromCookie();
-        else {
-
+        
+        if (!settings.currentUserIsValidForAppLoadTest.value) {
+            tokenHelper.signout();
         }
 
         tokenHelper.tokenInfoChanged = () => {
@@ -126,7 +125,7 @@ export class AuthService {
         if (loginResponse.authToken) {
             this.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
-            if (this.failedSmsSignInPhone){
+            if (this.failedSmsSignInPhone) {
                 this.failedSmsSignInPhone = null;
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             }
@@ -140,7 +139,7 @@ export class AuthService {
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
         }
         else {
-            this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
+            this.tokenHelper.signout();
         }
         return loginResponse;
 
@@ -259,7 +258,7 @@ export class AuthService {
 
 
     async signout() {
-        this.tokenHelper.signout('/' + Sites.getOrganizationFromContext(this.context));
+        this.tokenHelper.signout();
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
@@ -285,7 +284,7 @@ export class AuthService {
                         this.setToken(r, this.remember);
 
                 }
-                catch{
+                catch {
                     this.signout();
                 }
             setTimeout(async () => {

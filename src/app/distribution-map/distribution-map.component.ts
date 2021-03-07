@@ -16,7 +16,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 import { colors } from '../families/stats-action';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 
@@ -27,9 +27,9 @@ import { getLang, Sites } from '../sites/sites';
 import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
-import { delvieryActions, UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, actionDialogNeeds } from '../families/familyActionsWiring';
-import { UpdateArea, updateGroup, bridge } from '../families/familyActions';
+import {  UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
+import { actionDialogNeeds } from '../families/familyActionsWiring';
+import { UpdateArea, UpdateAreaForDeliveries, updateGroup, updateGroupForDeliveries } from '../families/familyActions';
 import { AreaColumn, Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -75,32 +75,21 @@ export class DistributionMap implements OnInit, OnDestroy {
 
   }
   buttons: GridButton[] = [
-    ...buildGridButtonFromActions([
-      bridge(UpdateArea)
-      , UpdateDistributionCenter,
-      UpdateCourier,
-      bridge(updateGroup),
-      NewDelivery,
-      UpdateDeliveriesStatus,
-      DeleteDeliveries], this.context, this.buttonDeliveryHelper()),
-  ];
-
-
-  private buttonDeliveryHelper(): actionDialogNeeds<ActiveFamilyDeliveries> {
-    return {
+    ...[
+      new UpdateAreaForDeliveries(this.context),
+      new UpdateDistributionCenter(this.context),
+      new UpdateCourier(this.context),
+      new updateGroupForDeliveries(this.context),
+      new NewDelivery(this.context),
+      new UpdateDeliveriesStatus(this.context),
+      new DeleteDeliveries(this.context)
+    ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
-      callServer: async (info, action, args) => await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, action, args),
-      buildActionInfo: async (actionWhere) => {
-        return {
-          count: this.selectedDeliveries.length,
-          where: x => x.id.isIn(this.selectedDeliveries.map(x => x.id))
-        };
-      },
-      settings: this.settings,
-      groupName: this.settings.lang.deliveries
-    };
-  }
+      userWhere: x => x.id.isIn(...this.selectedDeliveries.map(x => x.id)),
+      settings: this.settings
+    })),
+  ];
 
   hasVisibleButtons() {
     return this.buttons.find(x => !x.visible || x.visible());

@@ -61,12 +61,12 @@ export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
 
 export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValue {
 
-  filter(distCenter: string): import("@remult/core").FilterBase {
+  filter(distCenter: string): import("@remult/core").Filter {
     if (distCenter != allCentersToken)
       return new AndFilter(this.isAllowedForUser(), this.isEqualTo(distCenter));
     return this.isAllowedForUser();
   }
-  isAllowedForUser(): import("@remult/core").FilterBase {
+  isAllowedForUser(): import("@remult/core").Filter {
     return filterCenterAllowedForUser(this, this.context);
 
   }

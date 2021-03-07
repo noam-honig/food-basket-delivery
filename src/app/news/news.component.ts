@@ -7,8 +7,8 @@ import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { Route, ActivatedRoute } from '@angular/router';
 
 
-import { FilterBase } from '@remult/core';
-import { BusyService } from '@remult/core';
+import { Filter } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
@@ -122,7 +122,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 }
 export interface NewsFilter {
     name: string;
-    where?: (rowType: ActiveFamilyDeliveries) => FilterBase;
+    where?: (rowType: ActiveFamilyDeliveries) => Filter;
 }
 interface familySource {
     name: string;

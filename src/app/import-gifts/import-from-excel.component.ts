@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BusyService, Context, SelectValueDialogComponent } from '@remult/core';
-import * as xlsx from 'xlsx';
+import { Context } from '@remult/core';
+import { BusyService, SelectValueDialogComponent } from '@remult/angular';
 
 @Component({
   selector: 'app-import-from-excel',
@@ -46,7 +46,8 @@ export class GeneralImportFromExcelComponent implements OnInit {
             binary += String.fromCharCode(bytes[i]);
           }
           // call 'xlsx' to read the file
-          var oFile = (await import('xlsx')).read(binary, { type: 'binary', cellDates: true, cellStyles: true });
+          let xlsx = (await import('xlsx'));
+          var oFile = xlsx.read(binary, { type: 'binary', cellDates: true, cellStyles: true });
           sheets = oFile.SheetNames;
           getJsonArray = (sheet: string) =>  xlsx.utils.sheet_to_json(oFile.Sheets[sheet],{header:1})
 

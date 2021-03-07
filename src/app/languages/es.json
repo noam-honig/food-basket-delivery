@@ -1272,7 +1272,7 @@
   },
   "email": {
     "google": "correo electrónico",
-    "valueInCode": "eMail",
+    "valueInCode": "דואל",
     "valueInEnglish": "eMail"
   },
   "emailDonorContentCaption": {
@@ -3405,6 +3405,11 @@
     "google": "Ver familias",
     "valueInCode": "הצג משפחות",
     "valueInEnglish": "View families"
+  },
+  "showFreezed": {
+    "google": "Mostrar congelado",
+    "valueInCode": "הצג מוקפאים",
+    "valueInEnglish": "Show frozen"
   },
   "showHelperComment": {
     "google": "Guardar nota para ser voluntario",

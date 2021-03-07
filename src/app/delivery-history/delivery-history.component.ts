@@ -14,7 +14,7 @@ import { Route } from '@angular/router';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { BusyService } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { FamilySourceId } from '../families/FamilySources';
 import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
@@ -47,7 +47,7 @@ export class DeliveryHistoryComponent implements OnInit {
   });
 
   async refresh() {
-    this.deliveries.getRecords();
+    this.deliveries.reloadData();
     await this.refreshHelpers();
   }
   static route: Route = {
@@ -70,44 +70,44 @@ export class DeliveryHistoryComponent implements OnInit {
 
       numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 10 : 7),
       gridButtons: [{
-          name: this.settings.lang.exportToExcel,
-          visible: () => this.context.isAllowed(Roles.admin),
-          click: async () => {
-            await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+        name: this.settings.lang.exportToExcel,
+        visible: () => this.context.isAllowed(Roles.admin),
+        click: async () => {
+          await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+        }
+      },
+      {
+        name: 'הענק מתנה',
+        visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
+        click: async () => {
+          let rows = this.helperInfo.selectedRows;
+
+          if (rows.length == 0) {
+            this.dialog.Error('לא נבחרו מתנדבים');
+            return;
+          }
+
+          if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
+            question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
+          }, q => q.yes)) {
+            if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo('')) >= rows.length) {
+              for (const h of rows) {
+                await HelperGifts.assignGift(h.courier.value);
+              }
+              this.refresh();
+            } else {
+              this.dialog.Error('אין מספיק מתנות לחלוקה');
+            }
           }
         },
-        {
-          name: 'הענק מתנה',
-          visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
-          click: async () => {
-            let rows = this.helperInfo.selectedRows;
-            
-            if(rows.length == 0) {
-              this.dialog.Error('לא נבחרו מתנדבים');
-              return;
-            }
-
-            if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
-              question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
-            }, q => q.yes)) {
-              if(await context.for(HelperGifts).count(g=>g.assignedToHelper.isEqualTo('')) >= rows.length) {
-                for (const h of rows) {
-                  await HelperGifts.assignGift(h.courier.value);
-                }
-                this.refresh();
-              } else {
-                this.dialog.Error('אין מספיק מתנות לחלוקה');
-              }
-            }
-          },
-        }
+      }
       ],
       rowButtons: [
         {
           name: this.settings.lang.deliveries,
           click: async x => {
             let h = await this.context.for(Helpers).findId(x.courier);
-            h.showDeliveryHistory(this.dialog,this.busy);
+            h.showDeliveryHistory(this.dialog, this.busy);
           },
         },
         {
@@ -121,35 +121,35 @@ export class DeliveryHistoryComponent implements OnInit {
       ],
       columnSettings: h => {
         let r = [
-        {
-          column: h.name,
-          width: '150'
-        },
-        {
-          column: h.phone,
-          width: '140'
-        },
-        {
-          column: h.company,
-          width: '150'
-        },
-        {
-          column: h.deliveries,
-          width: '75'
-        },
-        {
-          column: h.succesful,
-          width: '75'
-        },
-        {
-          column: h.families,
+          {
+            column: h.name,
+            width: '150'
+          },
+          {
+            column: h.phone,
+            width: '140'
+          },
+          {
+            column: h.company,
+            width: '150'
+          },
+          {
+            column: h.deliveries,
+            width: '75'
+          },
+          {
+            column: h.succesful,
+            width: '75'
+          },
+          {
+            column: h.families,
 
-          width: '75'
-        },
-        {
-          column: h.dates,
-          width: '75'
-        }];
+            width: '75'
+          },
+          {
+            column: h.dates,
+            width: '75'
+          }];
         if (settings.isSytemForMlt()) {
           r.push(
             {
@@ -168,10 +168,10 @@ export class DeliveryHistoryComponent implements OnInit {
         }
         return r;
       },
-      get: {
-        limit: 100,
-        orderBy: h => [{ column: h.deliveries, descending: true }]
-      },
+
+      rowsInPage: 100,
+      orderBy: h => [{ column: h.deliveries, descending: true }],
+
       knowTotalRows: true
     });
 
@@ -192,7 +192,7 @@ export class DeliveryHistoryComponent implements OnInit {
       return x;
     });
     rows.splice(0, rows.length, ...x);
-    this.helperInfo.getRecords();
+    this.helperInfo.reloadData();
   }
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
@@ -256,19 +256,19 @@ export class DeliveryHistoryComponent implements OnInit {
 
     numOfColumnsInGrid: (this.mltColumns.length ? this.mltColumns.length : 6),
     knowTotalRows: true,
-    get: {
-      limit: 50,
-      where: d => {
-        var toDate = this.dateRange.toDate.value;
-        toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.distributionCenter.filter(this.dialog.distCenter.value))
-        if (this.onlyDone.value)
-          r = r.and(d.deliverStatus.isAResultStatus());
-        if (this.onlyArchived.value)
-          r = r.and(d.archive.isEqualTo(true));
-        return r;
-      }
-    },
+
+    rowsInPage: 50,
+    where: d => {
+      var toDate = this.dateRange.toDate.value;
+      toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
+      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.distributionCenter.filter(this.dialog.distCenter.value))
+      if (this.onlyDone.value)
+        r = r.and(d.deliverStatus.isAResultStatus());
+      if (this.onlyArchived.value)
+        r = r.and(d.archive.isEqualTo(true));
+      return r;
+    }
+    ,
     rowButtons: [
       {
         name: '',
@@ -301,7 +301,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     if (this.mltColumns.length > 0)
       sortColumns(this.deliveries, this.mltColumns);
-      this.dateRange.ngOnInit();
+    this.dateRange.ngOnInit();
     this.refreshHelpers();
 
   }
@@ -324,7 +324,7 @@ export class DeliveryHistoryComponent implements OnInit {
       r = r.and(fd.archive.isEqualTo(true));
 
 
-    let queryText =   
+    let queryText =
       sql.build("select ", [
         fd.courier.defs.dbName,
         sql.columnInnerSelect(fd, {
@@ -364,8 +364,8 @@ export class DeliveryHistoryComponent implements OnInit {
           ' where ', sql.and(r))
 
         + sql.build(' group by ', fd.courier.defs.dbName), ") x");
-        
-        return (await db.execute(queryText)).rows;
+
+    return (await db.execute(queryText)).rows;
 
   }
 

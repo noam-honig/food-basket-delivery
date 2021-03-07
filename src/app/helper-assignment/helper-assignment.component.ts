@@ -4,7 +4,8 @@ import { Helpers } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DialogConfig, Context } from '@remult/core';
+import { Context } from '@remult/core';
+import { DialogConfig } from '@remult/angular';
 
 @Component({
   selector: 'app-helper-assignment',

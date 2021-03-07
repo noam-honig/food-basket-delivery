@@ -822,4 +822,5 @@ export class soldier {
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
   updated = 'עודכנו';
+  showFreezed = 'הצג מוקפאים';
 }

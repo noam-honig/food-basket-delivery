@@ -7,7 +7,8 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } from './ApplicationSettings';
 
 
-import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, RouteHelperService, DataAreaSettings, ServerFunction, BusyService, DataControlInfo } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { Context, IdEntity, IdColumn, StringColumn, EntityClass, Entity, NumberColumn, DataAreaSettings, ServerFunction, DataControlInfo, ServerProgress } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -92,10 +93,10 @@ export class ManageComponent implements OnInit {
       }
     ],
     saving: () => this.refreshEnvironmentAfterSave(),
-    get: {
-      limit: 25,
-      orderBy: f => [f.name]
-    },
+
+    rowsInPage: 25,
+    orderBy: f => [f.name]
+    ,
     newRow: b => b.boxes.value = 1,
     allowUpdate: true,
     allowInsert: true,
@@ -109,7 +110,7 @@ export class ManageComponent implements OnInit {
         name: this.settings.lang.showDeletedDistributionCenters,
         click: () => {
           this.showArchivedDistributionCenters = !this.showArchivedDistributionCenters;
-          this.distributionCenters.getRecords();
+          this.distributionCenters.reloadData();
         }
       }
       ,
@@ -181,15 +182,15 @@ export class ManageComponent implements OnInit {
         width: '100px'
       }
     ],
-    get: {
-      limit: 25,
-      where: d => {
-        if (!this.showArchivedDistributionCenters)
-          return d.archive.isEqualTo(false);
-      },
-      orderBy: f => [f.name],
 
-    }, saving: f => {
+    rowsInPage: 25,
+    where: d => {
+      if (!this.showArchivedDistributionCenters)
+        return d.archive.isEqualTo(false);
+    },
+    orderBy: f => [f.name],
+
+    saving: f => {
       this.refreshEnvironmentAfterSave();
 
     },
@@ -214,10 +215,10 @@ export class ManageComponent implements OnInit {
     ], allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
-    get: {
-      limit: 25,
-      orderBy: f => [f.name]
-    },
+
+    rowsInPage: 25,
+    orderBy: f => [f.name]
+    ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   groups = this.context.for(Groups).gridSettings({
@@ -229,10 +230,10 @@ export class ManageComponent implements OnInit {
     ], allowUpdate: true,
     allowInsert: true,
     allowDelete: true,
-    get: {
-      limit: 25,
-      orderBy: f => [f.name]
-    },
+
+    rowsInPage: 25,
+    orderBy: f => [f.name]
+    ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name.value)
   });
   settingsArea = new DataAreaSettings({
@@ -417,7 +418,7 @@ export class ManageComponent implements OnInit {
       this.helpPhones = [];
     }
 
-    this.images.getRecords();
+    this.images.reloadData();
   }
   helpPhones: PhoneItem[] = [{
     option: PhoneOption.assignerOrOrg
@@ -547,24 +548,29 @@ export class ManageComponent implements OnInit {
     if (b) {
       b.name.value = this.settings.lang.foodParcel;
       await b.save();
-      this.basketType.getRecords();
+      this.basketType.reloadData();
     }
     let d = await this.context.for(DistributionCenters).findFirst();
     if (d) {
       d.name.value = this.settings.lang.defaultDistributionListName;
       await d.save();
-      this.distributionCenters.getRecords();
+      this.distributionCenters.reloadData();
     }
   }
-  @ServerFunction({ allowed: Roles.admin })
-  static async deleteFamiliesOnServer(context?: Context) {
-    let count = await pagedRowsIterator(context.for(Families),
-      {
-        where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
-        forEachRow: async f => await f.delete(),
-
-      });
-    return count;
+  @ServerFunction({ allowed: Roles.admin, queue: true })
+  static async deleteFamiliesOnServer(context?: Context, progress?: ServerProgress) {
+    
+    
+    let i = 0;
+    for await (const f of context.for(Families).iterate({
+      where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
+      orderBy: f => [{ column: f.createDate, descending: true }],
+      progress
+    })) {
+      await f.delete();
+      i++;
+    }
+    return i;
   }
 
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase } from '@remult/core';
+import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase, controllerAllowed } from '@remult/core';
 
 import { Families, AreaColumn } from './families';
 
@@ -12,9 +12,9 @@ import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { DomSanitizer, Title } from '@angular/platform-browser';
 
-import { FilterBase } from '@remult/core';
 
-import { BusyService } from '@remult/core';
+
+import { BusyService } from '@remult/angular';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
@@ -37,8 +37,8 @@ import { TranslationOptions, use } from '../translate';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
-import { familyActions } from './familyActions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, iterateRowsActionOnServer, packetServerUpdateInfo } from './familyActionsWiring';
+import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
+
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { MatAccordion } from '@angular/material/expansion';
@@ -72,8 +72,8 @@ export class FamiliesComponent implements OnInit {
             count: x.count
         }));
     }
-
-
+   
+    test = new NewDelivery(this.context);
     limit = 25;
 
 
@@ -179,7 +179,7 @@ export class FamiliesComponent implements OnInit {
     }
     async refreshFamilyGrid() {
         this.families.page = 1;
-        await this.families.getRecords();
+        await this.families.reloadData();
     }
 
     clearSearch() {
@@ -219,35 +219,35 @@ export class FamiliesComponent implements OnInit {
 
 
 
-        get: {
-            limit: this.limit,
-            where: f => {
-                let index = 0;
-                let result: FilterBase = undefined;
-                let addFilter = (filter: FilterBase) => {
-                    if (result)
-                        result = new AndFilter(result, filter);
-                    else result = filter;
-                }
 
-                if (this.currentStatFilter) {
-                    addFilter(this.currentStatFilter.rule(f));
-                } else {
-                    if (this.myTab)
-                        index = this.myTab.selectedIndex;
-                    if (index < 0 || index == undefined)
-                        index = 0;
-
-                    addFilter(this.statTabs[index].rule(f));
-                }
-                if (this.searchString) {
-                    addFilter(f.name.isContains(this.searchString));
-                }
-
-                return result;
+        rowsInPage: this.limit,
+        where: f => {
+            let index = 0;
+            let result: Filter = undefined;
+            let addFilter = (filter: Filter) => {
+                if (result)
+                    result = new AndFilter(result, filter);
+                else result = filter;
             }
-            , orderBy: f => f.name
-        },
+
+            if (this.currentStatFilter) {
+                addFilter(this.currentStatFilter.rule(f));
+            } else {
+                if (this.myTab)
+                    index = this.myTab.selectedIndex;
+                if (index < 0 || index == undefined)
+                    index = 0;
+
+                addFilter(this.statTabs[index].rule(f));
+            }
+            if (this.searchString) {
+                addFilter(f.name.isContains(this.searchString));
+            }
+
+            return result;
+        }
+        , orderBy: f => f.name
+        ,
 
         knowTotalRows: true,
 
@@ -370,24 +370,24 @@ export class FamiliesComponent implements OnInit {
             ]
             return r;
         },
-        gridButtons: [
-            ...buildGridButtonFromActions(familyActions(), this.context,
+        gridButtons: test([
+            ...[
+                new NewDelivery(this.context),
+                new updateGroup(this.context),
+                new UpdateArea(this.context),
+                new UpdateStatus(this.context),
+                new UpdateSelfPickup(this.context),
+                new UpdateDefaultVolunteer(this.context),
+                new UpdateBasketType(this.context),
+                new UpdateQuantity(this.context),
+                new UpdateFamilySource(this.context)
+            ].map(x => x.gridButton(
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    callServer: async (info, action, args) => await FamiliesComponent.FamilyActionOnServer(info, action, args),
-                    buildActionInfo: async actionWhere => {
-                        let where: EntityWhere<Families> = f => {
-                            let r = new AndFilter(actionWhere(f), this.families.getFilterWithSelectedRows().where(f));
-                            return r;
-                        };
-                        return {
-                            count: await this.context.for(Families).count(where),
-                            where
-                        };
-                    }, settings: this.settings,
-                    groupName: this.settings.lang.families
-                })
+                    userWhere: f => this.families.getFilterWithSelectedRows().where(f),
+                    settings: this.settings
+                }))
             , {
                 name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
@@ -402,7 +402,7 @@ export class FamiliesComponent implements OnInit {
 
                 },
                 visible: () => this.isAdmin && this.families.selectedRows.length > 1
-            }],
+            }]),
         allowSelection: true,
         rowButtons: [
             {
@@ -435,25 +435,6 @@ export class FamiliesComponent implements OnInit {
 
         ]
     });
-
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async FamilyActionOnServer(info: packetServerUpdateInfo, action: string, args: any[], context?: Context) {
-        let r = await filterActionOnServer(familyActions(), context, async h =>
-            await iterateRowsActionOnServer({
-                context: context.for(Families),
-                h: {
-                    actionWhere: h.actionWhere,
-                    forEach: async f => {
-                        await h.forEach(f);
-                        if (f.wasChanged())
-                            await f.save();
-                    }
-                },
-                info
-            })
-            , action, args);
-        return r + ' ' + getLang(context).familiesUpdated;
-    }
 
 
 
@@ -639,7 +620,7 @@ export class FamiliesComponent implements OnInit {
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
-        equalToFilter: (f: Families, item: type) => FilterBase,
+        equalToFilter: (f: Families, item: type) => Filter,
         differentFromFilter: (f: Families, item: type) => AndFilter
     ) {
         stats.stats.splice(0);
@@ -728,7 +709,7 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: Families) => FilterBase,
+    rule: (f: Families) => Filter,
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
@@ -783,3 +764,7 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
     });
 }
 
+function test (arr: any){
+    console.log(arr);
+    return arr;
+}

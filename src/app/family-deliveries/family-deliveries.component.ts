@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, FilterBase, AndFilter, BusyService, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
-
+import { Context, DataControlSettings, Filter, AndFilter, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
+import { BusyService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -16,8 +16,8 @@ import { BasketType } from '../families/BasketType';
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { delvieryActions } from './family-deliveries-actions';
-import { buildGridButtonFromActions, serverUpdateInfo, filterActionOnServer, pagedRowsIterator, iterateRowsActionOnServer, packetServerUpdateInfo } from '../families/familyActionsWiring';
+import { ArchiveDeliveries, DeleteDeliveries, NewDelivery, UpdateBasketType, UpdateCourier, UpdateDeliveriesStatus, UpdateDistributionCenter, UpdateFamilyDefaults, UpdateQuantity } from './family-deliveries-actions';
+
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -28,6 +28,7 @@ import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
 import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Groups } from '../manage/groups';
+import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 @Component({
@@ -57,7 +58,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
   async refreshFamilyGrid() {
     this.deliveries.page = 1;
-    await this.deliveries.getRecords();
+    await this.deliveries.reloadData();
   }
   async newFamily() {
     let f = this.context.for(Families).create();
@@ -352,7 +353,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.updateChart();
     }));
   }
-  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => FilterBase) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => Filter) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
@@ -373,7 +374,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   private prepComplexStats<type extends { name: string, count: number }>(
     cities: type[],
     stats: statsOnTab,
-    equalToFilter: (f: ActiveFamilyDeliveries, item: string) => FilterBase,
+    equalToFilter: (f: ActiveFamilyDeliveries, item: string) => Filter,
     differentFromFilter: (f: ActiveFamilyDeliveries, item: string) => AndFilter
   ) {
     stats.stats.splice(0);
@@ -452,36 +453,36 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     numOfColumnsInGrid: 5,
 
     knowTotalRows: true,
-    get: {
-      limit: this.limit,
-      where: f => {
-        let index = 0;
-        let result: FilterBase = undefined;
-        let addFilter = (filter: FilterBase) => {
-          if (result)
-            result = new AndFilter(result, filter);
-          else result = filter;
-        }
 
-        if (this.currentStatFilter) {
-          addFilter(this.currentStatFilter.rule(f));
-        } else {
-          if (this.myTab)
-            index = this.myTab.selectedIndex;
-          if (index < 0 || index == undefined)
-            index = 0;
-
-          addFilter(this.statTabs[index].rule(f));
-        }
-        if (this.searchString) {
-          addFilter(f.name.isContains(this.searchString));
-        }
-
-        addFilter(f.filterDistCenterAndAllowed(this.dialog.distCenter.value));
-        return result;
+    rowsInPage: this.limit,
+    where: f => {
+      let index = 0;
+      let result: Filter = undefined;
+      let addFilter = (filter: Filter) => {
+        if (result)
+          result = new AndFilter(result, filter);
+        else result = filter;
       }
-      , orderBy: f => f.name
-    },
+
+      if (this.currentStatFilter) {
+        addFilter(this.currentStatFilter.rule(f));
+      } else {
+        if (this.myTab)
+          index = this.myTab.selectedIndex;
+        if (index < 0 || index == undefined)
+          index = 0;
+
+        addFilter(this.statTabs[index].rule(f));
+      }
+      if (this.searchString) {
+        addFilter(f.name.isContains(this.searchString));
+      }
+
+      addFilter(f.filterDistCenterAndAllowed(this.dialog.distCenter.value));
+      return result;
+    }
+    , orderBy: f => f.name
+    ,
     columnSettings: deliveries => {
       let r = [
 
@@ -543,7 +544,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
         deliveries.deliveryComments,
-        
+
 
         deliveries.special,
         deliveries.createUser,
@@ -583,9 +584,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
         if (c.visible) {
-            r.push(c);
+          r.push(c);
         }
-    }
+      }
 
       this.normalColumns = [
         deliveries.name
@@ -617,17 +618,25 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     },
     allowSelection: true,
     gridButtons: [
-      ...buildGridButtonFromActions(delvieryActions(), this.context,
-        {
-          afterAction: async () => await this.refresh(),
-          dialog: this.dialog,
-          callServer: async (info, action, args) => await FamilyDeliveriesComponent.DeliveriesActionOnServer(info, action, args),
-          buildActionInfo: async actionWhere => {
-            return await this.buildWhereForAction(actionWhere);
-          },
-          settings: this.settings,
-          groupName: getLang(this.context).deliveries
-        }),
+      ...[
+        new NewDelivery(this.context),
+        new ArchiveDeliveries(this.context),
+        new DeleteDeliveries(this.context),
+        new UpdateDeliveriesStatus(this.context),
+        new UpdateBasketType(this.context),
+        new UpdateQuantity(this.context),
+        new UpdateDistributionCenter(this.context),
+        new UpdateCourier(this.context),
+        new UpdateFamilyDefaults(this.context),
+        new updateGroupForDeliveries(this.context),
+        new UpdateAreaForDeliveries(this.context),
+        new UpdateStatusForDeliveries(this.context)
+      ].map(a => a.gridButton({
+        afterAction: async () => await this.refresh(),
+        dialog: this.dialog,
+        userWhere: f => this.deliveries.getFilterWithSelectedRows().where(f),
+        settings: this.settings
+      })),
 
       {
         name: getLang(this.context).exportToExcel,
@@ -655,7 +664,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           fd.showDetailsDialog({
             refreshDeliveryStats: () => this.refreshStats(),
-            reloadDeliveries: () => this.deliveries.getRecords(),
+            reloadDeliveries: () => this.deliveries.reloadData(),
             dialog: this.dialog
           });
         }
@@ -673,21 +682,6 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     ]
   });
 
-
-  private async buildWhereForAction(actionWhere) {
-    let where: EntityWhere<ActiveFamilyDeliveries> = f => {
-      let r = this.deliveries.getFilterWithSelectedRows().where(f);
-      if (actionWhere) {
-        r = new AndFilter(actionWhere(f), r);
-      }
-      return r;
-
-    };
-    return {
-      count: await this.context.for(ActiveFamilyDeliveries).count(where),
-      where: where
-    };
-  }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async getGroups(distCenter: string, readyOnly = false, context?: Context) {
     let pendingStats = [];
@@ -740,37 +734,15 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) }))
+    return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(...result) }))
   }
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async DeliveriesActionOnServer(info: packetServerUpdateInfo, action: string, args: any[], context?: Context) {
-    let r = await filterActionOnServer(delvieryActions(), context, async (h) => {
-      return await iterateRowsActionOnServer({
-        context: context.for(ActiveFamilyDeliveries),
-        h: {
-          actionWhere: x => h.actionWhere(x),
-          orderBy: x => [{ column: x.createDate, descending: true }],
-          forEach: async fd => {
-            fd._disableMessageToUsers = true;
-            await h.forEach(fd);
-            if (fd.wasChanged())
-              await fd.save();
-          }
-        },
-        info,
-        additionalWhere:
-          fd => fd.isAllowedForUser(),
-      });
-    }, action, args);
-    Families.SendMessageToBrowsers(getLang(context).deliveriesUpdated, context, '');
-    return r + getLang(context).deliveriesUpdated;
-  }
+
 
   ngOnInit() {
     this.refreshStats();
     this.deliveries.columns.numOfColumnsInGrid = this.normalColumns.length;
-    sortColumns(this.deliveries, this.normalColumns)
+    sortColumns(this.deliveries, this.normalColumns);
     new columnOrderAndWidthSaver(this.deliveries).load('active-deliveries-component');
   }
 }
@@ -784,7 +756,7 @@ interface statsOnTab {
   stats: FamilyDeliveresStatistics[],
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
-  rule: (f: ActiveFamilyDeliveries) => FilterBase,
+  rule: (f: ActiveFamilyDeliveries) => Filter,
   fourthColumn: () => DataControlSettings,
   refreshStats?: (stats: statsOnTab) => Promise<void>
 }

@@ -27,7 +27,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@remult/core/input-styles.scss",
+              "./node_modules/@remult/angular/input-styles.scss",
               "src/styles.scss"
             ],
             "scripts": []

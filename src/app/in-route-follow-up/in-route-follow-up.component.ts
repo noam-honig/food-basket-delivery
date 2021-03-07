@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, Column, DataControlInfo, StringColumn, BusyService, EntityWhere } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { Context, Column, DataControlInfo, StringColumn, EntityWhere } from '@remult/core';
 import { InRouteHelpers, HelperCommunicationHistory } from './in-route-helpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { use } from '../translate';
@@ -26,7 +27,7 @@ export class InRouteFollowUpComponent implements OnInit {
   searchString: string = '';
   clearSearch() {
     this.searchString = '';
-    this.helpers.getRecords();
+    this.helpers.reloadData();
   }
 
   helpers = this.context.for(InRouteHelpers).gridSettings({
@@ -37,6 +38,7 @@ export class InRouteFollowUpComponent implements OnInit {
         return r.and(this.currentOption.where(h));
       }
     },
+    rowsInPage: 25,
     knowTotalRows: true,
     showFilter: true,
     numOfColumnsInGrid: 99,
@@ -99,11 +101,11 @@ export class InRouteFollowUpComponent implements OnInit {
               r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
               return r;
             },
-            get: {
-              where: fd => fd.courier.isEqualTo(h.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-              orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
-              limit: 25
-            }
+
+            where: fd => fd.courier.isEqualTo(h.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+            rowsInPage: 25
+
           })
         });
       }
@@ -124,7 +126,7 @@ export class InRouteFollowUpComponent implements OnInit {
       name: use.language.volunteerInfo,
       click: async s => {
         let h = await this.context.for(Helpers).findId(s.id);
-        h.displayEditDialog(this.dialog,this.busy);
+        h.displayEditDialog(this.dialog, this.busy);
       }
     },
     {
@@ -157,7 +159,7 @@ export class InRouteFollowUpComponent implements OnInit {
     if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
       return;
     this.busy.donotWait(async () =>
-      await this.helpers.getRecords());
+      await this.helpers.reloadData());
   }
 
   private freezeDateEntry(h: InRouteHelpers) {
@@ -182,7 +184,7 @@ export class InRouteFollowUpComponent implements OnInit {
         helper.frozenTill.value = h.frozenTill.value;
         helper.internalComment.value = h.internalComment.value;
         await helper.save();
-        this.helpers.getRecords();
+        this.helpers.reloadData();
       },
       cancel: () => {
       },

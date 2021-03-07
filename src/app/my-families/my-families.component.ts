@@ -2,7 +2,8 @@ import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { Context, RouteHelperService } from '@remult/core';
+import { RouteHelperService } from '@remult/angular';
+import { Context } from '@remult/core';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

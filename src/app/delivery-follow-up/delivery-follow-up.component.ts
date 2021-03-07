@@ -4,8 +4,8 @@ import { AndFilter, ServerFunction, SqlDatabase } from '@remult/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 
-import { BusyService } from '@remult/core';
-import { FilterBase } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { Filter } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 
 

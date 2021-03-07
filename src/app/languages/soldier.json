@@ -1017,7 +1017,7 @@
   },
   "email": {
     "google": "eMail",
-    "valueInCode": "eMail"
+    "valueInCode": "דואל"
   },
   "emailDonorContentCaption": {
     "google": "תוכן אימייל מתנדב",
@@ -2722,6 +2722,10 @@
   "showFamilies": {
     "google": "הצג חיילים",
     "valueInCode": "הצג משפחות"
+  },
+  "showFreezed": {
+    "google": "הצג מוקפאים",
+    "valueInCode": "הצג מוקפאים"
   },
   "showHelperComment": {
     "google": "הצג הערה בשיוך למתנדב",

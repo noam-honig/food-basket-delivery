@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AndFilter, BusyService, Column, Context, FilterBase, ServerFunction } from '@remult/core';
+import { BusyService } from '@remult/angular';
+import { AndFilter, Column, Context, ServerFunction } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';

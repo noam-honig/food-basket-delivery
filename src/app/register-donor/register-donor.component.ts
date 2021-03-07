@@ -1,17 +1,16 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
-import { StringColumn, NumberColumn, BoolColumn, DataAreaSettings, ServerFunction, Context, Column, ValueListColumn, ColumnOptions } from '@remult/core';
+import { StringColumn, NumberColumn, BoolColumn, DataAreaSettings, ServerFunction, Context, Column, ValueListColumn, ColumnOptions, ServerController } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
 import { allCentersToken } from '../manage/distribution-centers';
-import { executeOnServer, pack } from '../server/mlt';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
-import { RequiredValidator } from '@angular/forms';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
+import { ServerMethod } from '@remult/core';
 
 declare var gtag;
 declare var fbq;
@@ -27,17 +26,17 @@ import wixWindow from 'wix-window';
 // ...
 
 $w.onReady(function () {
-	// Write your JavaScript here
-	let referrer = wixWindow.referrer;  // "http://somesite.com"
-	//$w('#button4').label = referrer;
+  // Write your JavaScript here
+  let referrer = wixWindow.referrer;  // "http://somesite.com"
+  //$w('#button4').label = referrer;
 
-	$w('#button4').onClick ( () => {
-		wixWindow.openModal("https://mlt-test.herokuapp.com/mlt/register-donor?refer=" + referrer, {
-							"width": 650, "height": 800} );
-	} );
-	// To select an element by ID use: $w("#elementID")
+  $w('#button4').onClick ( () => {
+    wixWindow.openModal("https://mlt-test.herokuapp.com/mlt/register-donor?refer=" + referrer, {
+              "width": 650, "height": 800} );
+  } );
+  // To select an element by ID use: $w("#elementID")
 
-	// Click "Preview" to run your code
+  // Click "Preview" to run your code
 });
 */
 
@@ -47,25 +46,25 @@ $w.onReady(function () {
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { } 
+  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
 
-  showCCMessage() : boolean {
+  showCCMessage(): boolean {
     if (this.activeRoute.routeConfig.data && this.activeRoute.routeConfig.data.isCC)
       return true
     else return false;
   }
 
-  refer : string = null;
+  refer: string = null;
   isDone = false;
   donor = new donorForm(this.context);
   area = new DataAreaSettings({
-    columnSettings: () => 
-    [
+    columnSettings: () =>
+      [
         [this.donor.computer, this.donor.computerAge],
         [this.donor.laptop, this.donor.laptopAge],
-        this.donor.screen, 
+        this.donor.screen,
         this.donor.donationType, this.donor.phone, this.donor.email
-    ]
+      ]
   });
   ngOnInit() {
     let urlParams = new URLSearchParams(window.location.search);
@@ -100,28 +99,13 @@ export class RegisterDonorComponent implements OnInit {
       return;
     }
     try {
-      let error = '';
-      for (const c of this.donor.columns) {
-        //@ts-ignore
-        c.__clearErrors();
-        //@ts-ignore
-        c.__performValidation();
-        if (!error && c.validationError) {
-          error = c.defs.caption + ": " + c.validationError;
-        }
-      }
-      if (error) {
-        this.dialog.Error(error);
-        return;
-      }
-
-      await RegisterDonorComponent.doDonorForm(pack(this.donor));
+      await this.donor.createDonor();
 
       this.isDone = true;
       try {
         this.dialog.analytics("submitDonorForm");
-        gtag('event', 'conversion', {'send_to': 'AW-452581833/GgaBCLbpje8BEMmz59cB'});
-        if (fbq)   fbq('track', 'Lead');
+        gtag('event', 'conversion', { 'send_to': 'AW-452581833/GgaBCLbpje8BEMmz59cB' });
+        if (fbq) fbq('track', 'Lead');
       }
       catch (err) {
         console.log("problem with tags: ", err)
@@ -137,14 +121,10 @@ export class RegisterDonorComponent implements OnInit {
     });
 
     if (this.refer) return;
-    if (this.donor.docref.value != '') window.location.href = this.donor.docref.value 
+    if (this.donor.docref.value != '') window.location.href = this.donor.docref.value
     else window.location.href = "https://www.mitchashvim.org.il/";
   }
 
-  @ServerFunction({ allowed: true })
-  static async doDonorForm(args: any[], context?: Context) {
-    await executeOnServer(donorForm, args, context);
-  }
 }
 
 export class EquipmentAge {
@@ -163,6 +143,10 @@ export class EquipmentAgeColumn extends ValueListColumn<EquipmentAge>{
     }, caption));
   }
 }
+@ServerController({
+  allowed: true,
+  key: 'register-donor'
+})
 class donorForm {
   constructor(private context: Context) {
 
@@ -208,15 +192,18 @@ class donorForm {
   })
 
   docref = new StringColumn();
-  columns = [
-    this.name, this.selfDeliver, 
-    this.computer, this.computerAge,
-    this.laptop, this.laptopAge,
-    this.screen, this.donationType, this.address, this.phone, this.email, this.docref
-  ];
 
-  async doWork(context: Context) {
-    let f = context.for(Families).create();
+  @ServerMethod()
+  async createDonor() {
+    let settings = await ApplicationSettings.getAsync(this.context);
+    if (!settings.isSytemForMlt())
+      throw "Not Allowed";
+    this.context._setUser({
+      id: 'WIX',
+      name: 'WIX',
+      roles: []
+    });
+    let f = this.context.for(Families).create();
     f.name.value = this.name.value;
     if (!this.address.value)
       this.address.value = '';
@@ -228,6 +215,7 @@ class donorForm {
 
     await f.save();
     var quantity = 0;
+    let self = this;
     async function addDelivery(type: string, q: number, isSelfDeliver: boolean) {
       if (q > 0) {
         quantity += q;
@@ -238,15 +226,15 @@ class donorForm {
           distCenter: allCentersToken,
           quantity: q,
           selfPickup: isSelfDeliver,
-        }, context);
+        }, self.context);
       }
     }
-    if (this.computerAge.value.isNew)
+    if (this.computerAge.value === undefined || this.computerAge.value.isNew)
       await addDelivery('מחשב', this.computer.value, this.selfDeliver.value)
-    else 
+    else
       await addDelivery('מחשב_ישן', this.computer.value, this.selfDeliver.value);
 
-    if (this.laptopAge.value.isNew)
+    if (this.laptopAge.value === undefined || this.laptopAge.value.isNew)
       await addDelivery('לפטופ', this.laptop.value, this.selfDeliver.value)
     else
       await addDelivery('לפטופ_ישן', this.laptop.value, this.selfDeliver.value);
@@ -261,10 +249,10 @@ class donorForm {
         distCenter: allCentersToken,
         quantity: 1,
         selfPickup: false
-      }, context);
+      }, this.context);
     }
 
-    let settings = await ApplicationSettings.getAsync(this.context);
+
 
     if (settings.registerFamilyReplyEmailText.value && settings.registerFamilyReplyEmailText.value != '') {
       let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText.value,

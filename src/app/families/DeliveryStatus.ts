@@ -1,4 +1,4 @@
-import { ColumnOptions, ValueListColumn, NumberColumn, FilterBase, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
+import { ColumnOptions, ValueListColumn, NumberColumn, Filter, Column, DecorateDataColumnSettings, ValueListItem, Context } from '@remult/core';
 import { HelperId } from '../helpers/helpers';
 import { use } from '../translate';
 import { getLang } from '../sites/sites';
@@ -43,7 +43,7 @@ export class DeliveryStatus {
 
 }
 export class DeliveryStatusColumn extends ValueListColumn<DeliveryStatus> {
-  isNotAResultStatus(): FilterBase {
+  isNotAResultStatus(): Filter {
     return this.isLessOrEqualTo(DeliveryStatus.Frozen);
   }
   isActiveDelivery() {

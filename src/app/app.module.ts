@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule, routes } from './app-routing.module';
 import { AppComponent, routeMap } from './app.component';
-import { RemultModule, Context, JwtSessionManager } from '@remult/core';
+import { RemultModule, JwtSessionManager } from '@remult/angular';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
@@ -95,6 +95,7 @@ import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
+import { Context } from '@remult/core';
 
 
 
@@ -230,7 +231,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [JwtSessionManager, SettingsService],
+      deps: [JwtSessionManager, SettingsService,Context],
       useFactory: initApp,
       multi: true,
 
@@ -268,11 +269,11 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: JwtSessionManager, settings: SettingsService) {
+export function initApp(session: JwtSessionManager, settings: SettingsService,context:Context) {
   return async () => {
 
     try {
-
+      session.loadSessionFromCookie(Sites.getOrganizationFromContext(context));
 
       await settings.init();
 
