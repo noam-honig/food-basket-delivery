@@ -804,7 +804,7 @@ export class Language {
   list = "רשימה";
   map = "מפה";
   noDeliveries = "אין משלוחים לחלוקה";
-  showDistCenterAsEndAddressForVolunteer = "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב";
+  showDistCenterAsEndAddressForVolunteer = "הצג את כתובת רשימת החלוקה כנקודת האיסוף";
   endOnFar = "סיים בכתובת הרחוקה ביותר";
   startAtDistributionCenterAndEndOnRemoteFamily = "סיים בכתובת המבודדת ביותר";
   circularRoute = "התחל וסיים במרכז החלוקה";
@@ -966,6 +966,7 @@ export class Language {
   
   updated = "עודכנו";
   showFreezed = 'הצג מוקפאים';
+  pickupLocation = "נקודת איסוף";
 }
 
 const defaultLang = new Language();

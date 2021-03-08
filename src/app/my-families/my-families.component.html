@@ -23,7 +23,21 @@
             </span>
         </ng-container>
     </div>
+    
+    <mat-card *ngIf="settings.showDistCenterAsEndAddressForVolunteer.value&&familyLists.distCenter">
+        <mat-card-title>{{settings.lang.pickupLocation}}: {{familyLists.distCenter.name.value}}</mat-card-title>
+        <div class="phone-container" *ngIf="  familyLists.distCenter.address.ok()">
+            <span (click)="familyLists.distCenter.address.openWaze()">
+                <img src="assets/waze.png">
 
+            </span>
+            <div>
+                <a (click)="familyLists.distCenter.address.openWaze()">
+                    <span style="display:block"> {{familyLists.distCenter.address.value}} </span>
+                </a>
+            </div>
+        </div>
+    </mat-card>
 
 
     <app-helper-families [familyLists]="familyLists">
@@ -41,8 +55,8 @@
                                 *ngIf="!volunteerInEvent(e).isNew()" style="color:green">done</mat-icon>
                         </mat-panel-title>
                         <mat-panel-title>
-                            {{e.eventDate.displayValue}}<span *ngIf="e.startTime.value">, {{e.startTime.value}}</span><span
-                                *ngIf="e.endTime.value"> -
+                            {{e.eventDate.displayValue}}<span *ngIf="e.startTime.value">,
+                                {{e.startTime.value}}</span><span *ngIf="e.endTime.value"> -
                                 {{e.endTime.value}}</span>
                         </mat-panel-title>
 
