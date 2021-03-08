@@ -12,7 +12,7 @@ export class myBounds {
 
   }
 }
-
+//https://gist.github.com/graydon/11198540
 const israel = new myBounds(34.2654333839, 29.5013261988, 35.8363969256, 33.2774264593);
 export class TranslationOptions {
 
@@ -29,6 +29,14 @@ export class TranslationOptions {
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+1',
     suppressPhoneZeroAddition:true
+  });
+  static us: TranslationOptions = new TranslationOptions(7, 'Australia', {
+    googleMapCountry: 'AU',
+    bounds: new myBounds (113.338953078, -43.6345972634, 153.569469029, -10.6681857235),
+    leftToRight: true,
+    languageCode: 'en',
+    languageFile: 'en',
+    internationalPrefixForSmsAndAws: '+61'
   });
   static donors: TranslationOptions = new TranslationOptions(1, 'מתחשבים', {
     googleMapCountry: 'IL',
