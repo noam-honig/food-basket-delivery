@@ -30,7 +30,7 @@ export class TranslationOptions {
     internationalPrefixForSmsAndAws: '+1',
     suppressPhoneZeroAddition:true
   });
-  static us: TranslationOptions = new TranslationOptions(7, 'Australia', {
+  static australia: TranslationOptions = new TranslationOptions(7, 'Australia', {
     googleMapCountry: 'AU',
     bounds: new myBounds (113.338953078, -43.6345972634, 153.569469029, -10.6681857235),
     leftToRight: true,
