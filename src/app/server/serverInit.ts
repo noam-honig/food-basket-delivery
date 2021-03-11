@@ -82,8 +82,16 @@ export async function serverInit() {
             return { phone: p1.proxyIdentifier, session: session.sid }
         }
         if (process.env.twilio_use_for_sms) {
-            const twilio_sms_from_number = process.env.twilio_sms_from_number;
-            SendSmsUtils.twilioSendSms = async (to, text) => {
+
+            SendSmsUtils.twilioSendSms = async (to, text, forWho) => {
+                const envKey = 'twilio_sms_from_number';
+                var twilio_sms_from_number = process.env[envKey];
+                if (forWho.args.internationalPrefixForSmsAndAws) {
+                    let specific = process.env[envKey + '_' + forWho.args.internationalPrefixForSmsAndAws.substring(1)];
+                    if (specific) {
+                        twilio_sms_from_number = specific;
+                    }
+                }
 
                 let twilio = await import('twilio');
                 let client = twilio(accountSID, authToken);

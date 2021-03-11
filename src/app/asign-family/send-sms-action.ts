@@ -6,6 +6,7 @@ import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
+import { TranslationOptions } from '../translate';
 
 
 
@@ -123,7 +124,7 @@ export class SendSmsUtils {
     pw = process.env.SMS_PW;
     accid = process.env.SMS_ACCID;
 
-    static twilioSendSms: (to: string, body: string) => Promise<any>;
+    static twilioSendSms: (to: string, body: string, forWho: TranslationOptions) => Promise<any>;
 
     async sendSms(phone: string, from: string, text: string, org: string, schema: string, settings: ApplicationSettings) {
 
@@ -162,7 +163,7 @@ export class SendSmsUtils {
                 internationalPhone = prefix + internationalPhone;
             if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
                 if (SendSmsUtils.twilioSendSms) {
-                    let r = await SendSmsUtils.twilioSendSms(internationalPhone, text);
+                    let r = await SendSmsUtils.twilioSendSms(internationalPhone, text, settings.forWho.value);
 
                     console.log(r);
                 }
@@ -179,7 +180,7 @@ export class SendSmsUtils {
                         }
                     }).promise();
                     console.log(phone, r);
-                } 
+                }
             } else {
                 let h = new fetch.Headers();
                 h.append('Content-Type', 'text/xml; charset=utf-8');

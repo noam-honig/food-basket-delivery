@@ -38,6 +38,14 @@ export class TranslationOptions {
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+61'
   });
+  static uk: TranslationOptions = new TranslationOptions(44, 'United Kingdom', {
+    googleMapCountry: 'GB',
+    bounds: new myBounds (-7.57216793459, 49.959999905, 1.68153079591, 58.6350001085),
+    leftToRight: true,
+    languageCode: 'en',
+    languageFile: 'en',
+    internationalPrefixForSmsAndAws: '+44'
+  });
   static donors: TranslationOptions = new TranslationOptions(1, 'מתחשבים', {
     googleMapCountry: 'IL',
     bounds: israel,
