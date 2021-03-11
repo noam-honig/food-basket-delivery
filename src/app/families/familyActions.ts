@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, ValueListColumn, DataControlInfo } from "@remult/core";
+import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, ValueListColumn, DataControlInfo, getColumnsFromObject } from "@remult/core";
 import { Families, GroupsColumn } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketId, QuantityColumn } from "./BasketType";
@@ -371,6 +371,7 @@ export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy
 
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
     processedFamilies = new Map<string, boolean>();
+    __columns = getColumnsFromObject(this.orig);
 
     constructor(context: Context, public orig: ActionOnRows<Families>) {
         super(context, FamilyDeliveries, {
