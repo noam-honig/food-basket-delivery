@@ -1,5 +1,6 @@
 import { TestBed, async, inject } from '@angular/core/testing';
-import { ServerContext, InMemoryDataProvider, JwtSessionManager, myServerAction, actionInfo } from '@remult/core';
+import { ServerContext, InMemoryDataProvider,  myServerAction, actionInfo } from '@remult/core';
+import { JwtSessionManager } from '@remult/angular';
 import { Helpers } from '../helpers/helpers';
 import { Roles } from './roles';
 import { AuthService } from './auth-service';
@@ -15,7 +16,7 @@ describe('users and security', () => {
         verify: (a, b) => a == b
     };
     Helpers.helper = new JWTCookieAuthorizationHelper({
-        addAllowedHeader: (x) => { },
+
         addRequestProcessor: (a) => { }
     }, "asdfasdfsa");
     actionInfo.runningOnServer = true;
@@ -167,7 +168,7 @@ describe('users and security', () => {
 
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(false);
-        
+
     }));
     it("sign in from sms, for a user with a password or with privliges, should move to login screen", async(async () => {
         let { c, context } = await getHelperContext({

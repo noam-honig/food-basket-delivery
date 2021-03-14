@@ -35,7 +35,7 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { PromiseThrottle } from '../shared/utils';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
 import { UpdateArea } from '../families/familyActions';
-import { calcAffectiveDistance } from '../volunteer-cross-assign/volunteer-cross-assign.component';
+
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DistributionCenters } from '../manage/distribution-centers';
@@ -186,6 +186,7 @@ export class HelperFamiliesComponent implements OnInit {
         });
       }
     }
+    let calcAffectiveDistance = (await (import('../volunteer-cross-assign/volunteer-cross-assign.component'))).calcAffectiveDistance;
     result.sort((a, b) => {
       return calcAffectiveDistance(a.item.distance, a.item.totalItems) - calcAffectiveDistance(b.item.distance, b.item.totalItems);
     });

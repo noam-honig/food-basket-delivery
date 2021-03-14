@@ -11,6 +11,7 @@ import { fixPhone, processPhone, phoneResult, parseAndUpdatePhone } from './impo
 import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
 import { validSchemaName } from './sites/sites';
 import { MergeFamiliesComponent } from './merge-families/merge-families.component';
+import { FamilyStatus } from './families/FamilyStatus';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
@@ -25,6 +26,14 @@ describe('AppComponent', () => {
   var q = (query: QueryBuilder, expectresult: String) => {
     expect(sql.query(query)).toBe(expectresult);
   };
+  it('test q', () => {
+    expect(
+      sql.query({
+        select: () => [f.id], from: f, where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete),
+          sql.build(f.id, ' in (', sql.query({ select: () => [afd.family], from: afd }), ')')]
+      })).toBe("select e1.id from Families e1 where status <> 98 and e1.id in (select fd.family from FamilyDeliveries fd where archive = false)");
+
+  });
   it('basics work', () => {
     expect(sql.build(bt.id)).toBe('p.id');
   });
@@ -198,7 +207,7 @@ describe('AppComponent', () => {
   });
   it("fix phone input", () => {
 
-    expect(PhoneColumn.fixPhoneInput("+972507330590")).toBe("+972507330590");
+    expect(PhoneColumn.fixPhoneInput("+972507330590", context)).toBe("+972507330590");
   });
   it("test schema name", () => {
     expect(validSchemaName("abc")).toBe("abc");
@@ -287,7 +296,7 @@ describe('AppComponent', () => {
   it("properMerge4", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined,undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.family.phone1.value = '0507330590';
     c.families = [f, f2];
@@ -306,7 +315,7 @@ describe('AppComponent', () => {
   it("properMerge", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined,undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.tz.value = '1';
@@ -318,7 +327,7 @@ describe('AppComponent', () => {
   it("properMerge1", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined,undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
 
@@ -329,7 +338,7 @@ describe('AppComponent', () => {
   it("properMerge2", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined,undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.tz.value = '1';
@@ -341,7 +350,7 @@ describe('AppComponent', () => {
   it("properMerge3", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
-    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined,undefined);
+    let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
     f.phone1.value = '1';
@@ -354,9 +363,9 @@ describe('AppComponent', () => {
     expect(c.family.phone2.value).toBe('2');
     expect(c.family.phone2Description.value).toBe('d2');
   });
-  it("valid phoneb",()=>{
-    let test = (phone:string,expected:boolean)=>expect(isPhoneValidForIsrael(phone)).toBe(expected,phone);
-    test('039197373',true);
+  it("valid phoneb", () => {
+    let test = (phone: string, expected: boolean) => expect(isPhoneValidForIsrael(phone)).toBe(expected, phone);
+    test('039197373', true);
   });
 
 

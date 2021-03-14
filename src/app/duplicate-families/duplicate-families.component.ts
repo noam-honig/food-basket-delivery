@@ -6,11 +6,12 @@ import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import {  UpdateStatus, updateGroup } from '../families/familyActions';
+import { UpdateStatus, updateGroup } from '../families/familyActions';
 import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { Roles } from '../auth/roles';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-duplicate-families',
@@ -22,8 +23,9 @@ export class DuplicateFamiliesComponent implements OnInit {
   address = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
   name = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
   phone = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
+  onlyActive = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.activeDeliveries, defaultValue: true })
   tz = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
-  area = new DataAreaSettings({ columnSettings: () => [[this.address, this.name, this.phone, this.tz]] });
+  area = new DataAreaSettings({ columnSettings: () => [[this.address, this.name, this.phone, this.tz, this.onlyActive]] });
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
   }
@@ -40,7 +42,8 @@ export class DuplicateFamiliesComponent implements OnInit {
         address: this.address.value,
         name: this.name.value,
         phone: this.phone.value,
-        tz: this.tz.value
+        tz: this.tz.value,
+        onlyActive: this.onlyActive.value
       });
       this.post();
     }
@@ -60,7 +63,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   async showFamilies(d: duplicateFamilies) {
     await this.context.openDialog(GridDialogComponent, x => x.args = {
       title: this.settings.lang.familiesAt + d.address,
-      stateName:'duplicate-families',
+      stateName: 'duplicate-families',
       buttons: [{
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
@@ -92,7 +95,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         numOfColumnsInGrid: 6,
 
         gridButtons: [
-          ...[new UpdateStatus(this.context),new  updateGroup(this.context)].map(a=>a.gridButton(
+          ...[new UpdateStatus(this.context), new updateGroup(this.context)].map(a => a.gridButton(
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
@@ -157,11 +160,12 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
 
   @ServerFunction({ allowed: true })
-  static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean }, context?: Context, db?: SqlDatabase) {
+  static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, context?: Context, db?: SqlDatabase) {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";
     let sql = new SqlBuilder();
     let f = context.for(Families).create();
+    let fd = context.for(ActiveFamilyDeliveries).create();
     let q = '';
     for (const tz of [f.tz, f.tz2]) {
       for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {
@@ -180,10 +184,15 @@ export class DuplicateFamiliesComponent implements OnInit {
             sql.columnWithAlias(sql.extractNumber(phone), 'phone')
           ],
           from: f,
-          where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete)],
+          where: () => {
+            let r: any[] = [f.status.isDifferentFrom(FamilyStatus.ToDelete)];
+            if (compare.onlyActive) {
+              r.push(sql.build(f.id, ' in (', sql.query({ select: () => [fd.family], from: fd }), ')'));
+            }
+            return r;
+          },
         });
       }
-
     }
 
     let where = [];

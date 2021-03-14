@@ -975,6 +975,7 @@ export class Language {
   updated = "עודכנו";
   showFreezed = 'הצג מוקפאים';
   pickupLocation = "נקודת איסוף";
+  activeDeliveries="משלוחים פעילים";
 }
 
 const defaultLang = new Language();
