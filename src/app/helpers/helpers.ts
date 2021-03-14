@@ -328,7 +328,7 @@ export class Helpers extends HelpersBase {
                         if (updatingMyOwnHelperInfo) {
                             if (!this.admin.originalValue && !this.distCenterAdmin.originalValue)
                                 canUpdate = true;
-                            if (this.admin.originalValue && context.isAllowed(Roles.admin))
+                            if (this.admin.originalValue && context.isAllowed([Roles.admin, Roles.overview]))
                                 canUpdate = true;
                             if (this.distCenterAdmin.originalValue && context.isAllowed(Roles.distCenterAdmin))
                                 canUpdate = true;
