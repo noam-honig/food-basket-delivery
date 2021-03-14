@@ -360,6 +360,7 @@ export class ManageComponent implements OnInit {
         this.settings.showCompanies,
         this.settings.showHelperComment,
         this.settings.volunteerCanUpdateComment,
+        this.settings.volunteerCanUpdateDeliveryComment,
         this.settings.routeStrategy,
         this.settings.showDistCenterAsEndAddressForVolunteer,
         this.settings.defaultPrefixForExcelImport,

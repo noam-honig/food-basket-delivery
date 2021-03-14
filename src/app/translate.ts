@@ -793,6 +793,7 @@ export class Language {
   removeGroupAssignmentVerb = 'להסיר שיוך לקבצה';
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
   volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
+  volunteerCanUpdateDeliveryComment = "מתנדב יכול לעדכן הערה למשלוח";
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'דואל';
   preferredDistributionArea = 'כתובת לאזור חלוקה';

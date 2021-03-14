@@ -166,6 +166,7 @@ export class ApplicationSettings extends Entity<number>  {
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = new BoolColumn(this.lang.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery);
   checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
   volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
+  volunteerCanUpdateDeliveryComment = new BoolColumn(this.lang.volunteerCanUpdateDeliveryComment);
   hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
   static serverHasPhoneProxy = false;
   usePhoneProxy = new BoolColumn({ allowApiUpdate: false });

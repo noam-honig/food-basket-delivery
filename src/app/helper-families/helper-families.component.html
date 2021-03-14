@@ -79,7 +79,7 @@
                 <br />
                 <button mat-raised-button class="myButton badButton"
                   (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
-                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()"
+                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()||settings.volunteerCanUpdateDeliveryComment.value"
                   (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
 
 
