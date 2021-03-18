@@ -58,7 +58,7 @@ export async function GetGeoInformation(address: string, context: Context) {
                 cacheEntry.createDate.value = new Date();
                 try {
                     await cacheEntry.save();
-                } catch{
+                } catch {
 
                 }
                 let g = new GeocodeInformation(r as GeocodeResult);
@@ -195,11 +195,18 @@ export function getAddress(result: { formatted_address?: string, address_compone
     return r;
 }
 export function getCity(address_component: AddressComponent[]) {
-    let r = 'UNKNOWN';
+    let r = undefined;
     address_component.forEach(x => {
         if (x.types[0] == "locality")
             r = x.long_name;
     });
+    if (!r)
+        address_component.forEach(x => {
+            if (x.types[0] == "postal_town")
+                r = x.long_name;
+        });
+    if (!r)
+        return "UNKNOWN";
     return r;
 }
 // Polygon getBounds extension - google-maps-extensions
@@ -354,7 +361,7 @@ export function GetDistanceBetween(a: Location, b: Location) {
 }
 
 export class AddressColumn extends StringColumn {
-    
+
     constructor(private context: Context, private apiResultColumn: StringColumn, settingsOrCaption?: ColumnOptions<string>, settingsOrCaption1?: ColumnOptions<string>) {
         super(settingsOrCaption, settingsOrCaption1);
 
@@ -369,7 +376,7 @@ export class AddressColumn extends StringColumn {
     private _lastGeo: GeocodeInformation;
     openWaze() {
         window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.value) + '&navigate=yes');
-      }
+    }
 
     getGeocodeInformation() {
         if (this._lastString == this.apiResultColumn.value)
@@ -384,33 +391,33 @@ export class AddressColumn extends StringColumn {
         return this.getGeocodeInformation().location();
     }
 }
-export async function getCurrentLocation(useCurrentLocation: boolean,dialog:DialogService) {
-    let result:Location= undefined;
+export async function getCurrentLocation(useCurrentLocation: boolean, dialog: DialogService) {
+    let result: Location = undefined;
     if (useCurrentLocation) {
-      await new Promise((res, rej) => {
-        navigator.geolocation.getCurrentPosition(x => {
-          result = {
-            lat: x.coords.latitude,
-            lng: x.coords.longitude
-          };
-          res();
-  
-        }, error => {
-	  if (this.platform.ANDROID)
-            	dialog.Error(`
+        await new Promise((res, rej) => {
+            navigator.geolocation.getCurrentPosition(x => {
+                result = {
+                    lat: x.coords.latitude,
+                    lng: x.coords.longitude
+                };
+                res();
+
+            }, error => {
+                if (this.platform.ANDROID)
+                    dialog.Error(`
 		          יש לאפשר גישה למיקום -',
 		          <a href="https://support.google.com/android/answer/3467281?hl=iw">לינק הדרכה</a>`);
-          else if (this.platform.IOS)
-            	dialog.Error(`
+                else if (this.platform.IOS)
+                    dialog.Error(`
 		          יש לאפשר גישה למיקום -
 		          <a href="https://support.apple.com/he-il/HT203033">לינק הדרכה</a>`);
-          else
-          	dialog.exception("שליפת מיקום נכשלה", error);
+                else
+                    dialog.exception("שליפת מיקום נכשלה", error);
+            });
         });
-      });
-  
+
     }
     return result;
-  }
-  
+}
+
 
