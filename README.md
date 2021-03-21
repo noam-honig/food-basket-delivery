@@ -51,5 +51,5 @@ For development purposes you can use the index_dev.html and change it to match w
 ### Contributing code
 To contribute to this repository please fork in and use pull requests.
 
-For an excellent guide on how to do it, see (Contribute to someone's repository
-)[http://kbroman.org/github_tutorial/pages/fork.html]
+For an excellent guide on how to do it, see [Contribute to someone's repository]
+(http://kbroman.org/github_tutorial/pages/fork.html)
