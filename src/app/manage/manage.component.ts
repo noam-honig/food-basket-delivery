@@ -353,6 +353,7 @@ export class ManageComponent implements OnInit {
         this.settings.usingSelfPickupModule,
         this.settings.showLeftThereButton,
         this.settings.volunteerCanUpdateDeliveryComment,
+        this.settings.showDeliverySummaryToVolunteerOnFirstSignIn,
         this.settings.hideFamilyPhoneFromVolunteer,
         this.settings.showOnlyLastNamePartToVolunteer,
         this.settings.showTzToVolunteer,

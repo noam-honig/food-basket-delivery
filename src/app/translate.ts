@@ -977,6 +977,7 @@ export class Language {
   showFreezed = 'הצג מוקפאים';
   pickupLocation = "נקודת איסוף";
   activeDeliveries="משלוחים פעילים";
+  showDeliverySummaryToVolunteerOnFirstSignIn = "הצג סיכום משלוח למתנדב בכניסה ראשונה";
 }
 
 const defaultLang = new Language();

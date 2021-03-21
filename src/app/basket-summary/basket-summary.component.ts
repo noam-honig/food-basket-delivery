@@ -11,12 +11,13 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class BasketSummaryComponent implements OnInit {
 
-  constructor(private context: Context,public settings:ApplicationSettings) { }
+  constructor(private context: Context, public settings: ApplicationSettings) { }
   families: UserFamiliesList;
   boxes1Name = BasketType.boxes1Name;
   boxes2Name = BasketType.boxes2Name;
   boxes1 = 0;
   boxes2 = 0;
+  comments: { comment: string, family: string }[] = [];
   async ngOnInit() {
     let hash = new Map<string, basketStats>();
     for (const delivery of this.families.toDeliver) {
@@ -25,6 +26,9 @@ export class BasketSummaryComponent implements OnInit {
       let b2 = b.boxes2.value * delivery.quantity.value;
       this.boxes1 += b1;
       this.boxes2 += b2;
+      if (delivery.deliveryComments.value) {
+        this.comments.push({ comment: delivery.deliveryComments.value, family: delivery.name.value });
+      }
       let s = hash.get(delivery.basketType.value);
       if (!s) {
         s = {

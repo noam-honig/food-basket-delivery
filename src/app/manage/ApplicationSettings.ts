@@ -180,6 +180,7 @@ export class ApplicationSettings extends Entity<number>  {
   requireComplexPassword = new BoolColumn(this.lang.requireComplexPassword);
   timeToDisconnect = new NumberColumn(this.lang.timeToDisconnect);
   daysToForcePasswordChange = new NumberColumn(this.lang.daysToForcePasswordChange);
+  showDeliverySummaryToVolunteerOnFirstSignIn = new BoolColumn(this.lang.showDeliverySummaryToVolunteerOnFirstSignIn);
 
   showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
   routeStrategy = new routeStrategyColumn();

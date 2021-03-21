@@ -36,9 +36,6 @@ export class MyFamiliesComponent implements OnInit {
   }
   async ngOnInit() {
 
-    let h = await (await this.context.for(Helpers).findFirst(i => i.id.isEqualTo(this.context.user.id)));
-
-
     let done = ''
     try {
       done += '1';
@@ -52,6 +49,23 @@ export class MyFamiliesComponent implements OnInit {
       else done += "3";
 
       await this.familyLists.initForHelper(helper);
+      if (this.settings.showDeliverySummaryToVolunteerOnFirstSignIn.value) {
+        let comments = this.familyLists.toDeliver.filter(d => d.deliveryComments.value);
+        if (comments) {
+          let date = new Date().toDateString();
+          let displayed: { id: string, comment: string, displayedOn: string }[] = [];
+          let storageValue = localStorage.getItem("last-summary-display");
+          if (storageValue)
+            displayed = JSON.parse(storageValue);
+          if (comments.filter(x => !displayed.find(d => d.id == x.id.value && d.comment == x.deliveryComments.value && d.displayedOn == date)).length>0) {
+            await this.familyLists.showBasketSummary();
+            displayed = comments.map(x => ({ id: x.id.value, comment: x.deliveryComments.value, displayedOn: date }));
+            localStorage.setItem("last-summary-display", JSON.stringify(displayed));
+
+          }
+
+        }
+      }
       done += '4';
     }
     catch (err) {
