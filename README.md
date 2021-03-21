@@ -47,3 +47,9 @@ You can create new environments for organizations by clicking the add environmen
 ### index.html
 The index file is changed on the fly as you run the application in production, according to the environment language and direction.
 For development purposes you can use the index_dev.html and change it to match what the language and direction you want to test at that time
+
+### Contributing code
+To contribute to this repository please fork in and use pull requests.
+
+For an excellent guide on how to do it, see (Contribute to someone's repository
+)[http://kbroman.org/github_tutorial/pages/fork.html]
