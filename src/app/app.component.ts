@@ -103,6 +103,10 @@ export class AppComponent {
   showSideBar() {
     if (!this.context.isSignedIn())
       return false;
+    if (this.activeRoute&&this.activeRoute.firstChild&&this.activeRoute.firstChild.snapshot&&this.activeRoute.firstChild.snapshot.routeConfig&&this.activeRoute.firstChild.snapshot.routeConfig.path=="playback") {
+      return false;
+
+    }
     if (this.settings.isSytemForMlt() && !this.context.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
       return false;
     return true;

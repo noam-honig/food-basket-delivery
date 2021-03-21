@@ -8,6 +8,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-playback',
@@ -16,7 +17,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class PlaybackComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings) { }
+  constructor(public settings: ApplicationSettings,public dialog:DialogService) { }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   public colors: Array<any> = [
@@ -253,7 +254,7 @@ export class PlaybackComponent implements OnInit {
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {
-        let where = [f.deliverStatus.isActiveDelivery().and(f.deliverStatus.isDifferentFrom(DeliveryStatus.Frozen).and(f.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(f.deliveryStatusDate.isLessThan(toDateDate))))];
+        let where = [f.deliverStatus.isActiveDelivery().and(f.deliverStatus.isAResultStatus().and(f.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(f.deliveryStatusDate.isLessThan(toDateDate))))];
         return where;
       },
       orderBy: [f.addressLatitude, f.addressLongitude]
