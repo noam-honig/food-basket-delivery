@@ -132,7 +132,7 @@ export class HelperFamiliesComponent implements OnInit {
     let result: selectListItem<DeliveryInList>[] = [];
     let fd = context.for(ActiveFamilyDeliveries).create();
     let sql = new SqlBuilder();
-
+    let settings = await ApplicationSettings.getAsync(context);
 
     for (const r of (await db.execute(sql.query({
       select: () => [
@@ -145,7 +145,7 @@ export class HelperFamiliesComponent implements OnInit {
         fd.floor,
         fd.city],
       from: fd,
-      where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(''))]
+      where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and(fd.quantity.isLessThan(settings.maxDeliverisQuantityToShowForIndependent))]
     }))).rows) {
       let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
       let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name.value;

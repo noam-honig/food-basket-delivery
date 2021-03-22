@@ -216,7 +216,7 @@ export class ApplicationSettings extends Entity<number>  {
   includeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
   excludeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
 
-
+  maxDeliverisQuantityToShowForIndependent = 6;
 
   constructor(private context: Context) {
     super({
