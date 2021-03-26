@@ -374,7 +374,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
     __columns = getColumnsFromObject(this.orig);
 
     constructor(context: Context, public orig: ActionOnRows<Families>) {
-        super(context, FamilyDeliveries, {
+        super(context, ActiveFamilyDeliveries, {
             forEach: async fd => {
                 if (this.processedFamilies.get(fd.family.value))
                     return;
