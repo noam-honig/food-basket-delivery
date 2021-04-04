@@ -646,6 +646,7 @@ export class es {
   removeGroupAssignmentVerb = 'Eliminar grupo';
   replaceGroupAssignmentVerb = 'Reemplazar afiliación con el grupo';
   volunteerCanUpdateComment = 'Un voluntario puede tomar nota por sí mismo.';
+  volunteerCanUpdateDeliveryComment = 'volunteerCanUpdateDeliveryComment';
   volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
   email = 'correo electrónico';
   preferredDistributionArea = 'Dirección de área de distribución preferida';
@@ -823,4 +824,9 @@ export class es {
   foodParcel = 'Paquete de comida';
   updated = 'Actualizado';
   showFreezed = 'Mostrar congelado';
+  pickupLocation = 'pickupLocation';
+  activeDeliveries = 'activeDeliveries';
+  showDeliverySummaryToVolunteerOnFirstSignIn = 'showDeliverySummaryToVolunteerOnFirstSignIn';
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee';
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself';
 }

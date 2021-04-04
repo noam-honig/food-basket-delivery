@@ -40,6 +40,7 @@ import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
+import { FamilySources } from '../families/FamilySources';
 
 
 @Component({
@@ -145,7 +146,7 @@ export class HelperFamiliesComponent implements OnInit {
         fd.floor,
         fd.city],
       from: fd,
-      where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and(fd.quantity.isLessThan(settings.maxDeliverisQuantityToShowForIndependent))]
+      where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and(fd.quantity.isLessOrEqualTo(settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee)).and(fd.familySource.isDifferentFrom('0b9e0645-206a-457c-8785-97163073366d'))]
     }))).rows) {
       let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
       let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name.value;

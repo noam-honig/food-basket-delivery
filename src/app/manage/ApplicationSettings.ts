@@ -187,6 +187,8 @@ export class ApplicationSettings extends Entity<number>  {
 
   BusyHelperAllowedFreq_nom = new NumberColumn(this.lang.maxDeliveriesBeforeBusy);
   BusyHelperAllowedFreq_denom = new NumberColumn(this.lang.daysCountForBusy);
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = new NumberColumn(this.lang.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee);
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = new NumberColumn(this.lang.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself);
 
   defaultStatusType = new DeliveryStatusColumn(this.context, {
     caption: this.lang.defaultStatusType
@@ -216,7 +218,7 @@ export class ApplicationSettings extends Entity<number>  {
   includeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
   excludeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
 
-  maxDeliverisQuantityToShowForIndependent = 6;
+
 
   constructor(private context: Context) {
     super({

@@ -2974,7 +2974,7 @@
   },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "View distribution list addresses as a volunteer endpoint",
-    "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
+    "valueInCode": "הצג את כתובת רשימת החלוקה כנקודת האיסוף"
   },
   "showFamilies": {
     "google": "View families",

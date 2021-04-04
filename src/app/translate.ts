@@ -978,6 +978,8 @@ export class Language {
   pickupLocation = "נקודת איסוף";
   activeDeliveries="משלוחים פעילים";
   showDeliverySummaryToVolunteerOnFirstSignIn = "הצג סיכום משלוח למתנדב בכניסה ראשונה";
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות";
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ";
 }
 
 const defaultLang = new Language();

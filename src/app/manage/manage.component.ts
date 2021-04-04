@@ -375,7 +375,7 @@ export class ManageComponent implements OnInit {
       ];
 
       if (this.settings.isSytemForMlt())
-        r.push(this.settings.BusyHelperAllowedFreq_nom, this.settings.BusyHelperAllowedFreq_denom);
+        r.push(this.settings.BusyHelperAllowedFreq_nom, this.settings.BusyHelperAllowedFreq_denom, this.settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee, this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself);
       return r;
     }
   });
