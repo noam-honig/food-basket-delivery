@@ -18,7 +18,6 @@ import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
 import { preparePostgressQueueStorage } from "@remult/server-postgres";
-
  
 
 serverInit().then(async (dataSource) => {

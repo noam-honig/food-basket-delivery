@@ -50,6 +50,7 @@ import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/voluntee
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
 import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
+import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
 
 
 @Injectable()
@@ -112,6 +113,7 @@ export const routes: Routes = [
   
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
+  { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },

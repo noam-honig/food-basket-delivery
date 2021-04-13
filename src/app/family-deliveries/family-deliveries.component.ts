@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Context, DataControlSettings, Filter, AndFilter, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
-import { BusyService } from '@remult/angular';
+import { BusyService, RouteHelperService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -30,6 +30,7 @@ import { PhoneColumn, SqlBuilder } from '../model-shared/types';
 import { Groups } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
+import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -433,7 +434,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     private context: Context,
     public dialog: DialogService,
     private busy: BusyService,
-    public settings: ApplicationSettings
+    public settings: ApplicationSettings,
+    public route: RouteHelperService
   ) {
 
     if (!settings.usingSelfPickupModule.value)
@@ -637,7 +639,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         userWhere: f => this.deliveries.getFilterWithSelectedRows().where(f),
         settings: this.settings
       })),
-
+      {
+        name: getLang(this.context).printVolunteers,
+        visible: () => this.context.isAllowed(Roles.admin),
+        click: async () => {
+          this.route.navigateToComponent(PrintVolunteersComponent)
+        }
+      },
       {
         name: getLang(this.context).exportToExcel,
         click: async () => {

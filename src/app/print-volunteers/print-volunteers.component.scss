@@ -1,0 +1,13 @@
+.printTable {
+    -webkit-print-color-adjust: exact;
+    width: 100%;
+    th,
+    td {
+      border: 1px solid #ddd !important;
+      padding: 8px !important;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.05) !important;
+    }
+  }
+  
