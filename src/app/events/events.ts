@@ -106,7 +106,7 @@ export class Event extends IdEntity {
                         name: getLang(this.context).remove,
                         click: async eh => {
                             await eh.delete();
-                            x.args.settings.items.splice(x.args.settings.items.indexOf(eh))
+                            x.args.settings.items.splice(x.args.settings.items.indexOf(eh),1)
                         }
                     }
                 ]
