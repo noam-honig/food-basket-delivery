@@ -14,7 +14,7 @@ import { BasketType } from '../families/BasketType';
 
 
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
-import { Families } from '../families/families';
+import { canSendWhatsapp, Families, sendWhatsappToFamily } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ArchiveDeliveries, DeleteDeliveries, NewDelivery, UpdateBasketType, UpdateCourier, UpdateDeliveriesStatus, UpdateDistributionCenter, UpdateFamilyDefaults, UpdateQuantity } from './family-deliveries-actions';
 
@@ -833,6 +833,12 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         newDelivery(d)
       },
       visible: d => args.context.isAllowed(Roles.admin) && DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
+    },
+    {
+      name: getLang(args.context).sendWhatsAppToFamily,
+      click: f => sendWhatsappToFamily(f, args.context),
+      visible: f => canSendWhatsapp(f),
+      icon: 'textsms'
     },
     {
       textInMenu: () => getLang(args.context).assignVolunteer,

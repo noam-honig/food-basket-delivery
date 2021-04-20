@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase, controllerAllowed } from '@remult/core';
 
-import { Families, AreaColumn } from './families';
+import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
 import { YesNo } from "./YesNo";
 
@@ -72,7 +72,7 @@ export class FamiliesComponent implements OnInit {
             count: x.count
         }));
     }
-   
+
     test = new NewDelivery(this.context);
     limit = 25;
 
@@ -426,6 +426,13 @@ export class FamiliesComponent implements OnInit {
             }
             ,
             {
+                name: this.settings.lang.sendWhatsAppToFamily,
+                click: f => sendWhatsappToFamily(f, this.context),
+                visible: f => canSendWhatsapp(f),
+                icon:'textsms'
+            }
+            ,
+            {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
                     f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy });
@@ -764,7 +771,7 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
     });
 }
 
-function test (arr: any){
+function test(arr: any) {
     console.log(arr);
     return arr;
 }

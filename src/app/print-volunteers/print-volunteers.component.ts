@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
-import { Context } from '@remult/core';
+import { Context, ServerFunction } from '@remult/core';
+import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { PromiseThrottle } from '../shared/utils';
 
 @Component({
   selector: 'app-print-volunteers',
@@ -11,31 +13,41 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 export class PrintVolunteersComponent implements OnInit {
 
   constructor(private context: Context, private busy: BusyService) { }
-  volunteers: {
-    id: string,
-    name: string,
-    quantity: number
-  }[] = [];
+  volunteers: volunteer[] = [];
   total: number = 0;
   ngOnInit() {
-    this.busy.doWhileShowingBusy(async () => {
-      for await (const d of this.context.for(ActiveFamilyDeliveries).iterate()) {
-        let v = this.volunteers.find(v => v.id == d.courier.value);
-        if (!v) {
-          v = {
-            id: d.courier.value,
-            name: await d.courier.getTheName(),
-            quantity: 0
-          }
-          this.volunteers.push(v);
-        }
-        v.quantity += d.quantity.value;
-        this.total++;
-      }
-      this.volunteers.sort((a, b) => a.name.localeCompare(b.name));
+    PrintVolunteersComponent.volunteersForPrint().then(x => {
+      this.volunteers = x.volunteers;
+      this.total = x.total;
     });
 
+  }
+  @ServerFunction({ allowed: Roles.admin })
+  static async volunteersForPrint(context?: Context) {
+    let total = 0;
+    let volunteers: volunteer[] = [];
+    for await (const d of context.for(ActiveFamilyDeliveries).iterate()) {
+      let v = volunteers.find(v => v.id == d.courier.value);
+      if (!v) {
+        v = {
+          id: d.courier.value,
+          name: await d.courier.getTheName(),
+          quantity: 0
+        }
+        volunteers.push(v);
+      }
+      v.quantity += d.quantity.value;
+      total++;
+    }
+    volunteers.sort((a, b) => a.name.localeCompare(b.name));
+
+    return { total, volunteers };
   }
 
 }
 
+interface volunteer {
+  id: string,
+  name: string,
+  quantity: number
+}
