@@ -127,7 +127,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   @ServerFunction({ allowed: Roles.indie })
-  static async getDeliveriesByLocation(pivotLocation: Location, context?: Context, db?: SqlDatabase) {
+  static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, context?: Context, db?: SqlDatabase) {
     if (!getSettings(context).isSytemForMlt())
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
@@ -146,7 +146,13 @@ export class HelperFamiliesComponent implements OnInit {
         fd.floor,
         fd.city],
       from: fd,
-      where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and(fd.quantity.isLessOrEqualTo(settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee)).and(fd.familySource.isDifferentFrom('0b9e0645-206a-457c-8785-97163073366d'))]
+      where: () => {
+        if (selfAssign) {
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and(fd.familySource.isDifferentFrom('0b9e0645-206a-457c-8785-97163073366d'))];
+        } else {
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(''))];
+        }
+      }
     }))).rows) {
       let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
       let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name.value;
@@ -191,6 +197,13 @@ export class HelperFamiliesComponent implements OnInit {
     result.sort((a, b) => {
       return calcAffectiveDistance(a.item.distance, a.item.totalItems) - calcAffectiveDistance(b.item.distance, b.item.totalItems);
     });
+    let removeFam = -1;
+    do {
+      removeFam = result.findIndex(f => f.item.totalItems > settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee.value);
+      if (removeFam >= 0) {
+        result.splice(removeFam, 1);
+      }
+    } while (removeFam >=0)
     result.splice(15);
     return result;
   };
@@ -200,7 +213,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   async assignNewDelivery() {
     await this.updateCurrentLocation(true);
-    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation));
+    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation, false));
 
     await this.context.openDialog(SelectListComponent, x => {
       x.args = {

@@ -138,7 +138,7 @@ export class MltFamiliesComponent implements OnInit {
   async assignNewDelivery() {
     var volunteerLocation = await getCurrentLocation(true, this.dialog);
 
-    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(volunteerLocation));
+    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(volunteerLocation, true));
 
     await this.context.openDialog(SelectListComponent, x => {
       x.args = {
