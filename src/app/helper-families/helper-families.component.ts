@@ -197,13 +197,16 @@ export class HelperFamiliesComponent implements OnInit {
     result.sort((a, b) => {
       return calcAffectiveDistance(a.item.distance, a.item.totalItems) - calcAffectiveDistance(b.item.distance, b.item.totalItems);
     });
-    let removeFam = -1;
-    do {
-      removeFam = result.findIndex(f => f.item.totalItems > settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee.value);
-      if (removeFam >= 0) {
-        result.splice(removeFam, 1);
-      }
-    } while (removeFam >=0)
+    if (selfAssign) {
+      let removeFam = -1;
+
+      do {
+        removeFam = result.findIndex(f => f.item.totalItems > settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee.value);
+        if (removeFam >= 0) {
+          result.splice(removeFam, 1);
+        }
+      } while (removeFam >=0)
+    }
     result.splice(15);
     return result;
   };
