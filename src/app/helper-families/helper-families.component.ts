@@ -134,6 +134,7 @@ export class HelperFamiliesComponent implements OnInit {
     let fd = context.for(ActiveFamilyDeliveries).create();
     let sql = new SqlBuilder();
     let settings = await ApplicationSettings.getAsync(context);
+    let privateDonation = selfAssign ? (await context.for(FamilySources).lookupAsync(x => x.name.isEqualTo('תרומה פרטית'))).id.value : '';
 
     for (const r of (await db.execute(sql.query({
       select: () => [
@@ -144,11 +145,12 @@ export class HelperFamiliesComponent implements OnInit {
         fd.id,
         fd.family,
         fd.floor,
-        fd.city],
+        fd.city,
+        fd.familySource],
       from: fd,
       where: () => {
         if (selfAssign) {
-          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and(fd.familySource.isDifferentFrom('0b9e0645-206a-457c-8785-97163073366d'))];
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and((fd.familySource.isIn('', privateDonation)))];
         } else {
           return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(''))];
         }
