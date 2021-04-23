@@ -145,8 +145,7 @@ export class HelperFamiliesComponent implements OnInit {
         fd.id,
         fd.family,
         fd.floor,
-        fd.city,
-        fd.familySource],
+        fd.city],
       from: fd,
       where: () => {
         if (selfAssign) {
