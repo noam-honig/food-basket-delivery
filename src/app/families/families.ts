@@ -447,7 +447,7 @@ export class Families extends IdEntity {
   nextBirthday = new DateColumn({
 
     caption: getLang(this.context).nextBirthDay,
-    sqlExpression: () => "cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday",
+    sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
     dataControlSettings: () => ({
       readOnly: true,
