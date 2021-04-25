@@ -191,7 +191,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
             forEach: async f => {
                 if (getSettings(context).isSytemForMlt() || !(this.status.value == DeliveryStatus.Frozen && f.deliverStatus.value != DeliveryStatus.ReadyForDelivery)) {
                     f.deliverStatus.value = this.status.value;
-                    if (this.deleteExistingComment) {
+                    if (this.deleteExistingComment.value) {
                         f.internalDeliveryComment.value = '';
                     }
                     if (this.comment.value) {

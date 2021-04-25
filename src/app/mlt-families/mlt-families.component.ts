@@ -329,14 +329,18 @@ export class MltFamiliesComponent implements OnInit {
     }
   }
   
-  async familyNotProblem(f: ActiveFamilyDeliveries) {
+  async familyNotProblem(family: ActiveFamilyDeliveries) {
     if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
-      question: "להחזיר את התורם " + f.name.displayValue +  " לרשימת הממתינים לך? ",
+      question: "להחזיר את התורם " + family.name.displayValue +  " לרשימת הממתינים לך? ",
       yesButtonText: this.settings.lang.confirm
     }, y => y.yes)) {
-      f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-      f.checkNeedsWork();
-      await f.save();
+      for (const f of this.getDeliveriesList('problem')) {
+        if (f.family.value==family.family.value) {
+          f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+          f.checkNeedsWork();
+          await f.save();
+        }
+      }
     }
     this.startPage()
   }

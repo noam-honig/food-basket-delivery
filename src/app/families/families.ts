@@ -86,7 +86,7 @@ export class Families extends IdEntity {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
     this.context.openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
-      stateName:'deliveries-for-family',
+      stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
       buttons: [{
         text: use.language.newDelivery,
@@ -1098,4 +1098,32 @@ export function displayDupInfo(info: duplicateFamilyInfo, context: Context) {
 export interface autocompleteResult {
   address: string,
   result: GeocodeResult
+}
+
+export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phone?: string) {
+  if (!phone) {
+    for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
+      if (p.value && p.value.startsWith('05')) {
+        phone = p.value;
+        break;
+      }
+    }
+  }
+  PhoneColumn.sendWhatsappToPhone(phone,
+    use.language.hello + ' ' + f.name.value + ',', context);
+}
+export function canSendWhatsapp(f: familyLikeEntity) {
+  for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
+    if (p.value && p.value.startsWith('05')) {
+      return true;
+    }
+  }
+}
+
+export interface familyLikeEntity {
+  name: StringColumn;
+  phone1: StringColumn;
+  phone2: StringColumn;
+  phone3: StringColumn;
+  phone4: StringColumn;
 }

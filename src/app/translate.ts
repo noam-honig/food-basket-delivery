@@ -28,11 +28,11 @@ export class TranslationOptions {
     languageCode: 'en',
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+1',
-    suppressPhoneZeroAddition:true
+    suppressPhoneZeroAddition: true
   });
   static australia: TranslationOptions = new TranslationOptions(7, 'Australia', {
     googleMapCountry: 'AU',
-    bounds: new myBounds (113.338953078, -43.6345972634, 153.569469029, -10.6681857235),
+    bounds: new myBounds(113.338953078, -43.6345972634, 153.569469029, -10.6681857235),
     leftToRight: true,
     languageCode: 'en',
     languageFile: 'en',
@@ -40,7 +40,7 @@ export class TranslationOptions {
   });
   static uk: TranslationOptions = new TranslationOptions(44, 'United Kingdom', {
     googleMapCountry: 'GB',
-    bounds: new myBounds (-7.57216793459, 49.959999905, 1.68153079591, 58.6350001085),
+    bounds: new myBounds(-7.57216793459, 49.959999905, 1.68153079591, 58.6350001085),
     leftToRight: true,
     languageCode: 'en',
     languageFile: 'en',
@@ -83,7 +83,7 @@ export class TranslationOptions {
     languageFile: 'en',
     internationalPrefixForSmsAndAws: '+27'
   });
-  
+
   static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
     bounds: new myBounds(6.7499552751, 36.619987291, 18.4802470232, 47.1153931748),
     googleMapCountry: 'IT',
@@ -115,7 +115,7 @@ export class TranslationOptions {
     basedOnLang?: string,
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string,
-    suppressPhoneZeroAddition?:boolean
+    suppressPhoneZeroAddition?: boolean
   }) {
 
   }
@@ -130,7 +130,7 @@ export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions
       })
     });
     if (!this.defs.caption)
-      this.defs.caption =use.language.configuration ;
+      this.defs.caption = use.language.configuration;
   }
 
 }
@@ -972,14 +972,15 @@ export class Language {
   wrongCodeWordProcessAborted = "מילת קוד שגויה - התהליך מופסק";
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
-  
+
   updated = "עודכנו";
   showFreezed = 'הצג מוקפאים';
   pickupLocation = "נקודת איסוף";
-  activeDeliveries="משלוחים פעילים";
+  activeDeliveries = "משלוחים פעילים";
   showDeliverySummaryToVolunteerOnFirstSignIn = "הצג סיכום משלוח למתנדב בכניסה ראשונה";
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות";
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ";
+  printVolunteers = "הדפס מתנדבים";
 }
 
 const defaultLang = new Language();

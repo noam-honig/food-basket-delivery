@@ -12,7 +12,12 @@
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.infoAboutUpdates}}</button>
             <button mat-menu-item (click)="sendSmsToCourier()"
                 *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">{{settings.lang.sendMessageToVolunteer}}</button>
+            <button mat-menu-item *ngIf="canSendWhatsApp()" (click)="sendWhatsApp()">
+                <mat-icon>textsms</mat-icon>
+                <div style="    display: inline-flex;line-height: 17px;"> {{settings.lang.sendWhatsAppToFamily}}
 
+                </div>
+            </button>
             <a mat-menu-item href="tel:{{args.familyDelivery.courier.getPhone()}}" style="padding-right:15px;"
                 *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
                 <button mat-menu-item *ngIf="args.familyDelivery&&args.familyDelivery.courier.value">
@@ -132,8 +137,7 @@
                         <data-area [settings]="extraFamilyInfo"></data-area>
                         <mat-form-field appearance="outline" style="width:100%">
                             <mat-label>{{families.currentRow.internalComment.defs.caption}}</mat-label>
-                            <textarea matInput  [(ngModel)]="families.currentRow.internalComment.value"
-                                ></textarea>
+                            <textarea matInput [(ngModel)]="families.currentRow.internalComment.value"></textarea>
                         </mat-form-field>
                         <data-area [settings]="extraFamilyInfo2"></data-area>
                     </ng-template>

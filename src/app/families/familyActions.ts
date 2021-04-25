@@ -189,7 +189,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
             title: getLang(context).updateFamilyStatus,
             forEach: async f => {
                 f.status.value = this.status.value;
-                if (this.deleteExistingComment) {
+                if (this.deleteExistingComment.value) {
                     f.internalComment.value = '';
                 }
                 if (this.comment.value) {

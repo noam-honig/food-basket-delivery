@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
-import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult } from '../families/families';
+import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
 import { BusyService, DialogConfig } from '@remult/angular';
-import { Context,  DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
+import { Context, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -19,7 +19,7 @@ import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Sites } from '../sites/sites';
 import { async } from '@angular/core/testing';
-import { MatExpansionPanel } from '@angular/material/expansion'; 
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
 import { isGpsAddress, Location } from '../shared/googleApiHelpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
@@ -115,8 +115,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new StringColumn(),
       ok: async (comment) => {
-          await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
-          this.dialog.Info("הודעה נשלחה");
+        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
+        this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },
       hideLocation: true,
@@ -186,7 +186,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     }
     this.confirmed = true;
     this.reloadDeliveries = wasChanged(this.families.currentRow.status);
-    if(!this.refreshDeliveryStatistics)
+    if (!this.refreshDeliveryStatistics)
       this.refreshDeliveryStatistics = this.reloadDeliveries;
     await this.families.currentRow.save();
     if (this.delivery)
@@ -286,7 +286,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       columnSettings: families => [
         families.groups,
         [families.status, families.familyMembers]
-      
+
       ]
     });
     this.extraFamilyInfo2 = this.families.addArea({
@@ -377,6 +377,11 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
   }
 
+  sendWhatsApp() {
+    sendWhatsappToFamily(this.args.family, this.context);
+  }
+  canSendWhatsApp() {
+    return canSendWhatsapp(this.args.family);
 
-
+  }
 }

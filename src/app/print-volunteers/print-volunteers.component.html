@@ -1,0 +1,12 @@
+<table class="printTable">
+    <tr><th>מתנדבים</th><th>כמות</th></tr>
+    <tr *ngFor="let v of volunteers">
+        <td>{{v.name}}</td>
+        <td>{{v.quantity}}</td>
+
+    </tr>
+    <tr>
+        <th>סה"כ</th>
+        <th>{{total}}</th>
+    </tr>
+</table>
