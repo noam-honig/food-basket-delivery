@@ -56,7 +56,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   canSelectDonors() {
-    return this.context.isAllowed(Roles.indie);
+    return this.context.isAllowed(Roles.indie) && this.getFamilies('toDeliver').length < this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself.value;
   }
 
   myQRCode() {
@@ -138,27 +138,37 @@ export class MltFamiliesComponent implements OnInit {
   async assignNewDelivery() {
     var volunteerLocation = await getCurrentLocation(true, this.dialog);
 
-    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(volunteerLocation));
+    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(volunteerLocation, true));
 
     await this.context.openDialog(SelectListComponent, x => {
       x.args = {
         title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
         multiSelect: true,
         onSelect: async (selectedItems) => {
-          if (selectedItems.length > 0)
-            this.busy.doWhileShowingBusy(async () => {
-              let ids: string[] = [];
-              for (const selectedItem of selectedItems) {
-                let d: DeliveryInList = selectedItem.item;
-                ids.push(...d.ids);
-              }
-              await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
-              await this.familyLists.refreshRoute({
-                strategyId: this.settings.routeStrategy.value.id,
-                volunteerLocation: volunteerLocation
-              });
-              await this.familyLists.reload();
-            });
+          if (selectedItems.length > 0) {
+            if((this.getFamilies('toDeliver').length + selectedItems.length) > this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself.value) {
+              this.context.openDialog(YesNoQuestionComponent, x =>
+                  x.args = {
+                    question: 'חרגת משיוך מקסימלי של משלוחים',
+                    showOnlyConfirm: true
+                  }
+                );
+            } else {
+                this.busy.doWhileShowingBusy(async () => {
+                  let ids: string[] = [];
+                  for (const selectedItem of selectedItems) {
+                    let d: DeliveryInList = selectedItem.item;
+                    ids.push(...d.ids);
+                  }
+                  await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+                  await this.familyLists.refreshRoute({
+                    strategyId: this.settings.routeStrategy.value.id,
+                    volunteerLocation: volunteerLocation
+                  });
+                  await this.familyLists.reload();
+                });
+            }
+          }
         },
         options: afdList
       }

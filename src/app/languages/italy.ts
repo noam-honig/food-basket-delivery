@@ -646,6 +646,7 @@ export class italy {
   removeGroupAssignmentVerb = 'Rimuovi gruppo';
   replaceGroupAssignmentVerb = "Sostituisci l'affiliazione con il gruppo";
   volunteerCanUpdateComment = 'Un volontario può prendere nota per se stesso';
+  volunteerCanUpdateDeliveryComment = 'volunteerCanUpdateDeliveryComment';
   volunteerCanUpdatePreferredDistributionAddress = "Un volontario può aggiornare un'area di divisione preferita";
   email = 'e-mail';
   preferredDistributionArea = 'Indirizzo area di distribuzione preferita';
@@ -823,4 +824,9 @@ export class italy {
   foodParcel = 'Pacco alimentare';
   updated = 'Aggiornato';
   showFreezed = 'Mostra congelato';
+  pickupLocation = 'pickupLocation';
+  activeDeliveries = 'activeDeliveries';
+  showDeliverySummaryToVolunteerOnFirstSignIn = 'showDeliverySummaryToVolunteerOnFirstSignIn';
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee';
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself';
 }

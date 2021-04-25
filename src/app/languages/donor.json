@@ -19,6 +19,10 @@
     "google": "פעיל",
     "valueInCode": "פעיל"
   },
+  "activeDeliveries": {
+    "google": "משלוחים פעילים",
+    "valueInCode": "משלוחים פעילים"
+  },
   "ActiveDeliveries": {
     "google": "משלוחים פעילים",
     "valueInCode": "משלוחים פעילים"
@@ -1778,6 +1782,14 @@
     "google": "מספר משלוחים להגדרת מתנדב עסוק",
     "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק"
   },
+  "MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself": {
+    "google": "כמות מוצרים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ",
+    "valueInCode": "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו "
+  },
+  "MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee": {
+    "google": "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות",
+    "valueInCode": "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות"
+  },
   "merge": {
     "google": "שמור מיזוג",
     "valueInCode": "שמור מיזוג"
@@ -2157,6 +2169,10 @@
   "phones": {
     "google": "טלפונים",
     "valueInCode": "טלפונים"
+  },
+  "pickupLocation": {
+    "google": "נקודת איסוף",
+    "valueInCode": "נקודת איסוף"
   },
   "PlaybackComponent": {
     "google": "סרטון חלוקה",
@@ -2724,9 +2740,13 @@
     "google": "הצג מתנדבים מחוקים",
     "valueInCode": "הצג מתנדבים מחוקים"
   },
+  "showDeliverySummaryToVolunteerOnFirstSignIn": {
+    "google": "הצג סיכום משלוח למתנדב בכניסה ראשונה",
+    "valueInCode": "הצג סיכום משלוח למתנדב בכניסה ראשונה"
+  },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "הצג כתובות מעבדה כנקודת סיום למתנדב",
-    "valueInCode": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב"
+    "valueInCode": "הצג את כתובת רשימת החלוקה כנקודת האיסוף"
   },
   "showFamilies": {
     "google": "הצג תורמים",
@@ -3199,6 +3219,10 @@
   "volunteerCanUpdateComment": {
     "google": "מתנדב יכול לעדכן לעצמו הערה",
     "valueInCode": "מתנדב יכול לעדכן לעצמו הערה"
+  },
+  "volunteerCanUpdateDeliveryComment": {
+    "google": "מתנדב יכול לעדכן הערה למשלוח",
+    "valueInCode": "מתנדב יכול לעדכן הערה למשלוח"
   },
   "volunteerCanUpdatePreferredDistributionAddress": {
     "google": "מתנדב יכול לעדכן אזור חלוקה מועדף",

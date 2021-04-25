@@ -646,6 +646,7 @@ export class soldier {
   removeGroupAssignmentVerb = 'להסיר שיוך לקבצה';
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
   volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
+  volunteerCanUpdateDeliveryComment = 'מתנדב יכול לעדכן הערה למשלוח';
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'eMail';
   preferredDistributionArea = 'כתובת אזור חלוקה מועדף';
@@ -823,4 +824,9 @@ export class soldier {
   foodParcel = 'סל מזון';
   updated = 'עודכנו';
   showFreezed = 'הצג מוקפאים';
+  pickupLocation = 'נקודת איסוף';
+  activeDeliveries = 'משלוחים פעילים';
+  showDeliverySummaryToVolunteerOnFirstSignIn = 'הצג סיכום משלוח למתנדב בכניסה ראשונה';
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות';
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'כמות מוצרים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ';
 }

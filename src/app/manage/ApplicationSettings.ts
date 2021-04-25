@@ -187,6 +187,8 @@ export class ApplicationSettings extends Entity<number>  {
 
   BusyHelperAllowedFreq_nom = new NumberColumn(this.lang.maxDeliveriesBeforeBusy);
   BusyHelperAllowedFreq_denom = new NumberColumn(this.lang.daysCountForBusy);
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = new NumberColumn(this.lang.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee);
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = new NumberColumn(this.lang.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself);
 
   defaultStatusType = new DeliveryStatusColumn(this.context, {
     caption: this.lang.defaultStatusType

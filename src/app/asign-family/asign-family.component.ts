@@ -605,7 +605,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async assignClosestDeliveries() {
 
-        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddress.location()));
+        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddress.location(), false));
 
         await this.context.openDialog(SelectListComponent, x => {
             x.args = {
