@@ -21,7 +21,7 @@ import { preparePostgressQueueStorage } from "@remult/server-postgres";
  
 
 serverInit().then(async (dataSource) => {
-
+//
 
     let app = express();
     function getContext(req: express.Request, sendDs?: (ds: SqlDatabase) => void) {
@@ -31,7 +31,7 @@ serverInit().then(async (dataSource) => {
         context.setReq(r);
         let ds = dataSource(context);
         context.setDataProvider(ds);
-        if (sendDs)
+        if (sendDs) 
             sendDs(ds);
         return context;
     }

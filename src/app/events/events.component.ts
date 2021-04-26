@@ -54,7 +54,7 @@ export class EventsComponent implements OnInit {
                   e.requiredVolunteers.value = current.requiredVolunteers.value;
                   e.startTime.value = current.startTime.value;
                   e.endTime.value = current.endTime.value;
-                  e.eventDate.value = date.value;
+                  e.eventDate.rawValue = date.rawValue;
                   e.address.value = current.address.value;
                   e.phone1.value = current.phone1.value;
                   e.phone1Description.value = current.phone1Description.value;
