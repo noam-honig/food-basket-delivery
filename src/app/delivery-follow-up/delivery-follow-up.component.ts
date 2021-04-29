@@ -188,7 +188,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       ],
       where: () => [ sql.eq(fd.archive,false),fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
 
-    }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by couriername')));///, sql.func('max', fd.courierAssingTime),' desc')));
+    }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime),' desc')));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];
