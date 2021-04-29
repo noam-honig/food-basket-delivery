@@ -557,6 +557,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.floor,
         deliveries.appartment,
         deliveries.entrance,
+        { column: deliveries.buildingCode, width: '50' },
         { column: deliveries.addressComment },
         { column: deliveries.city, width: '100' },
         deliveries.area,

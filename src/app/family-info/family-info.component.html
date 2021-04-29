@@ -1,8 +1,8 @@
 <div>
-  
+
   <div *ngIf="showStatus()">
     <h4>{{f.getDeliveryDescription()}}</h4>
-    
+
 
   </div>
   <div *ngIf="f.courierComments.value">
@@ -11,7 +11,7 @@
 
   </div>
   <div>
-    
+
     <button mat-raised-button class="cancelAssignButton" color="accent" *ngIf="showFamilyPickedUp(f)"
       (click)="familiyPickedUp(f)">{{settings.lang.packageWasPickedUp}}</button>
     <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"
@@ -70,6 +70,11 @@
 
 
       </a>
+      <ng-container *ngIf="f.buildingCode.value">
+        <div >
+          {{settings.lang.buildingCode}}:  <strong class="emphesize-comment"> {{f.buildingCode.value}}</strong>
+        </div>
+      </ng-container>
       <ng-container *ngIf="f.addressComment.value">
         <div class="emphesize-comment">
           <strong style="color:red;">{{settings.lang.notice}} </strong> {{f.addressComment.value}}
@@ -78,11 +83,22 @@
     </div>
 
     <div class="address-links">
-      <a (click)="f.openGoogleMaps()" *ngIf="useWaze()">google map</a>
+      <mat-menu #addressMenu="matMenu">
+        <button mat-menu-item (click)="f.openGoogleMaps()" *ngIf="useWaze()">google map</button>
 
-      <a (click)="f.showOnGovMap()" *ngIf="useWaze()">govmap</a>
+        <button mat-menu-item (click)="f.showOnGovMap()" *ngIf="useWaze()">govmap</button>
+  
+        <button mat-menu-item (click)="copyAddress(f)">{{settings.lang.copyAddress}}</button>
 
-      <a (click)="copyAddress(f)">{{settings.lang.copyAddress}}</a>
+
+      </mat-menu>
+
+      <button mat-icon-button [matMenuTriggerFor]="addressMenu">
+
+        <mat-icon style="color:lightblue">explore</mat-icon>
+      </button>
+
+   
     </div>
 
   </div>

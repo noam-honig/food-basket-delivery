@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, BoolColumn, DateColumn } from '@remult/core';
+import { Context, BoolColumn, DateColumn, AndFilter } from '@remult/core';
 import { BusyService } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -9,9 +9,11 @@ import { Helpers } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 
-import { DialogService } from '../select-popup/dialog';
+import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import * as copy from 'copy-to-clipboard';
 import { Sites } from '../sites/sites';
+import { Roles } from '../auth/roles';
+import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 @Component({
   selector: 'app-events',
@@ -20,14 +22,23 @@ import { Sites } from '../sites/sites';
 })
 export class EventsComponent implements OnInit {
   showArchive = false;
-  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
+  }
+  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
+    dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
+  }
   events = this.context.for(Event).gridSettings({
-    allowUpdate: true,
-    allowInsert: true,
+    allowUpdate: this.context.isAllowed(Roles.admin),
+    allowInsert: this.context.isAllowed(Roles.admin),
+
 
     rowsInPage: 25,
-    where: e => this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive),
+    where: e => new AndFilter(e.distributionCenter.filter(this.dialog.distCenter.value),this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)),
     orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
+    newRow: async e =>
+      e.distributionCenter.value = await this.dialog.getDistCenter(e.address.location()),
 
     showFilter: true,
     allowSelection: true,
@@ -58,6 +69,7 @@ export class EventsComponent implements OnInit {
                   e.address.value = current.address.value;
                   e.phone1.value = current.phone1.value;
                   e.phone1Description.value = current.phone1Description.value;
+                  e.distributionCenter.value = current.distributionCenter.value;
                   await e.save();
                   for (const c of await this.context.for(volunteersInEvent).find({ where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id.value)) })) {
                     let v = this.context.for(volunteersInEvent).create();
@@ -128,6 +140,7 @@ export class EventsComponent implements OnInit {
       e.endTime,
       { width: '150', column: e.eventStatus },
       e.description,
+      e.distributionCenter,
       e.address,
       e.phone1,
       e.phone1Description
@@ -135,6 +148,7 @@ export class EventsComponent implements OnInit {
   }
 
   ngOnInit() {
+    new columnOrderAndWidthSaver(this.events).load('events-component');
   }
   copyLink() {
     copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/my-families');

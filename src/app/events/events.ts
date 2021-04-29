@@ -14,13 +14,14 @@ import { DialogService } from "../select-popup/dialog";
 import { saveToExcel } from '../shared/saveToExcel';
 import { getSettings } from "../manage/ApplicationSettings";
 import { AddressColumn } from "../shared/googleApiHelpers";
+import { allCentersToken, DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
 
 @EntityClass
 export class Event extends IdEntity {
     showVolunteers(dialog: DialogService, busy: BusyService): void {
         this.context.openDialog(GridDialogComponent, x => x.args = {
             title: this.name.value,
-            stateName:'helpers-per-event',
+            stateName: 'helpers-per-event',
 
             buttons: [{
                 text: getLang(this.context).addVolunteer,
@@ -106,7 +107,7 @@ export class Event extends IdEntity {
                         name: getLang(this.context).remove,
                         click: async eh => {
                             await eh.delete();
-                            x.args.settings.items.splice(x.args.settings.items.indexOf(eh),1)
+                            x.args.settings.items.splice(x.args.settings.items.indexOf(eh), 1)
                         }
                     }
                 ]
@@ -122,6 +123,9 @@ export class Event extends IdEntity {
     requiredVolunteers = new NumberColumn(getLang(this.context).requiredVolunteers);
     addressApiResult = new StringColumn();
     address = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).address);
+    distributionCenter = new DistributionCenterId(this.context, {
+        allowApiUpdate: Roles.admin
+    });
 
     phone1 = new PhoneColumn(getLang(this.context).phone1);
     phone1Description = new StringColumn(getLang(this.context).phone1Description);
@@ -146,6 +150,8 @@ export class Event extends IdEntity {
             saving: async () => {
                 if (context.onServer) {
                     await this.address.updateApiResultIfChanged();
+                    if (this.distributionCenter.value == allCentersToken)
+                        this.distributionCenter.value = (await this.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false))).id.value;
                 }
             },
 
@@ -239,7 +245,7 @@ export class volunteersInEvent extends IdEntity {
             name: 'volunteersInEvent',
             allowApiCRUD: c => c.isSignedIn(),
             apiDataFilter: () => {
-                if (context.isAllowed(Roles.admin))
+                if (context.isAllowed([Roles.admin,Roles.distCenterAdmin]))
                     return undefined;
                 return this.helper.isEqualTo(context.user.id);
             }

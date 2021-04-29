@@ -334,9 +334,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
           families.entrance
         ],
         families.addressComment,
+        [families.buildingCode,families.area],
         families.addressByGoogle,
-        [families.addressOk, families.city],
-        [families.area, families.postalCode]
+        [families.addressOk, families.city,families.postalCode]
+        
       ]
     });
 

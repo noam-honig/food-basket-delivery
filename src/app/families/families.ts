@@ -286,9 +286,10 @@ export class Families extends IdEntity {
       this.floor,
       this.appartment,
       this.entrance,
+      this.buildingCode,
       this.city,
       this.area,
-      this.addressComment,
+      this.addressComment,//
       this.addressLongitude,
       this.addressLatitude,
       this.drivingLongitude,
@@ -488,6 +489,7 @@ export class Families extends IdEntity {
   floor = new StringColumn(getLang(this.context).floor);
   appartment = new StringColumn(getLang(this.context).appartment);
   entrance = new StringColumn(getLang(this.context).entrance);
+  buildingCode = new StringColumn(getLang(this.context).buildingCode);
   city = new StringColumn({ caption: getLang(this.context).cityAutomaticallyUpdatedByGoogle });
   area = new AreaColumn(this.context);
   addressComment = new StringColumn(getLang(this.context).addressComment);

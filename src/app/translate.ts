@@ -981,6 +981,7 @@ export class Language {
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות";
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ";
   printVolunteers = "הדפס מתנדבים";
+  buildingCode = "קוד לבנין";
 }
 
 const defaultLang = new Language();

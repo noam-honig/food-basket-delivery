@@ -165,6 +165,10 @@ export class FamilyDeliveries extends IdEntity {
         caption: getLang(this.context).entrance,
         allowApiUpdate: false
     });
+    buildingCode = new StringColumn({
+        caption: getLang(this.context).buildingCode,
+        allowApiUpdate: false
+    });
     city = new StringColumn({
         caption: getLang(this.context).cityAutomaticallyUpdatedByGoogle
         , allowApiUpdate: false

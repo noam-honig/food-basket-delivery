@@ -128,7 +128,7 @@ export const routes: Routes = [
   
   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
-  { path: 'events', component: EventsComponent, canActivate: [AdminGuard] },
+  { path: 'events', component: EventsComponent, canActivate: [distCenterAdminGuard] },
   
   LoginFromSmsComponent.route,
 

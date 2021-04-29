@@ -37,11 +37,12 @@ export class columnOrderAndWidthSaver {
             let x: storedColumn[] = [];
             for (let index = 0; index < this.grid.columns.numOfColumnsInGrid; index++) {
                 const element = this.grid.columns.items[index];
-                if (element.column) {
-                    x.push({ key: element.column.defs.key, width: element.width });
-                }
-                else
-                    x.push({ caption: element.caption, width: element.width });
+                if (element)
+                    if (element.column) {
+                        x.push({ key: element.column.defs.key, width: element.width });
+                    }
+                    else
+                        x.push({ caption: element.caption, width: element.width });
             }
             let s = this.getStorage();
             s[key] = x;

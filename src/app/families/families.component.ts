@@ -297,6 +297,7 @@ export class FamiliesComponent implements OnInit {
                 { column: families.floor, width: '50' },
                 { column: families.appartment, width: '50' },
                 { column: families.entrance, width: '50' },
+                { column: families.buildingCode, width: '50' },
                 { column: families.addressComment },
                 families.city,
                 families.area,
