@@ -18,7 +18,7 @@ export class FamilyInListComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() i: number;
   @Input() newAssign: boolean;
-  @Input() latestAssign:boolean;
+  @Input() latestAssign: boolean;
   @Input() distanceFromPreviousLocation: number;
   @Output() delivered = new EventEmitter<void>();
   ngOnInit() {
@@ -39,7 +39,16 @@ export class FamilyInListComponent implements OnInit {
 
     let r = this.f.getAddressDescription();
     if (this.distanceFromPreviousLocation === 0) {
-      r = "* " + r;
+      let x = "";
+      if (this.f.floor.value)
+        x += this.settings.lang.floor + " " + this.f.floor.value;
+      if (this.f.appartment.value) {
+        x += " " + this.settings.lang.appartment + " " + this.f.appartment.value;
+      }
+      if (x != "") {
+        r = '* כנ"ל ' + x;
+      } else
+        r = "* " + r;
     }
     if (this.distanceFromPreviousLocation > 0) {
       r += ", " + this.distanceFromPreviousLocation.toFixed(1) + " " + this.settings.lang.km;
