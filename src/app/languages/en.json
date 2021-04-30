@@ -20,6 +20,10 @@
     "valueInCode": "פעיל",
     "custom": "Active"
   },
+  "activeDeliveries": {
+    "google": "Active deliveries",
+    "valueInCode": "משלוחים פעילים"
+  },
   "ActiveDeliveries": {
     "google": "Active deliveries",
     "valueInCode": "משלוחים פעילים"
@@ -306,6 +310,10 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "custom": "Assignment to a family group"
   },
+  "assignBuildings": {
+    "google": "Selection of buildings",
+    "valueInCode": "בחירת בניינים"
+  },
   "assignCloseDeliveries": {
     "google": "Show donations around me",
     "valueInCode": "מצאו לי עוד תורמים בסביבתי"
@@ -460,6 +468,10 @@
     "google": "Name quantity 2 in basket types",
     "valueInCode": "שם כמות 2 בסוגי סלים",
     "custom": "Parcel type name for other unit"
+  },
+  "buildingCode": {
+    "google": "Building code",
+    "valueInCode": "קוד לבנין"
   },
   "by": {
     "google": "By",
@@ -1967,6 +1979,14 @@
     "google": "Number of deliveries to define a busy volunteer",
     "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק"
   },
+  "MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself": {
+    "google": "Maximum amount of deliveries that an independent volunteer can assign to himself",
+    "valueInCode": "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו "
+  },
+  "MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee": {
+    "google": "Maximum quantity of products in delivery that an independent volunteer can see",
+    "valueInCode": "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות"
+  },
   "merge": {
     "google": "Keep conditioning",
     "valueInCode": "שמור מיזוג"
@@ -2360,6 +2380,10 @@
     "valueInCode": "טלפונים",
     "custom": "Phones"
   },
+  "pickupLocation": {
+    "google": "Collecting point",
+    "valueInCode": "נקודת איסוף"
+  },
   "PlaybackComponent": {
     "google": "A distribution video",
     "valueInCode": "סרטון חלוקה"
@@ -2420,6 +2444,10 @@
   "previousDeliverySummary": {
     "google": "Previous delivery summary",
     "valueInCode": "סיכום משלוח קודם"
+  },
+  "printVolunteers": {
+    "google": "Print volunteers",
+    "valueInCode": "הדפס מתנדבים"
   },
   "prioritizeRepeatFamilies": {
     "google": "Priority for returning families",
@@ -2780,7 +2808,7 @@
   },
   "selectedDeliveries": {
     "google": "Shipments marked",
-    "valueInCode": "משלוחים סומנו",
+    "valueInCode": "סומנו",
     "custom": "deliveries marked"
   },
   "selectExcelFile": {
@@ -2890,6 +2918,10 @@
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר",
     "custom": "Send SMS to Family on delivery"
   },
+  "sendWhats": {
+    "google": "Send WhatsApp",
+    "valueInCode": "שלח ווטסאפ"
+  },
   "sendWhatsAppToFamily": {
     "google": "Send WhatsApp to family",
     "valueInCode": "שלח ווטסאפ למשפחה"
@@ -2971,6 +3003,10 @@
   "showDeletedHelpers": {
     "google": "View deleted volunteers",
     "valueInCode": "הצג מתנדבים מחוקים"
+  },
+  "showDeliverySummaryToVolunteerOnFirstSignIn": {
+    "google": "View a delivery summary for a volunteer at first entry",
+    "valueInCode": "הצג סיכום משלוח למתנדב בכניסה ראשונה"
   },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "View distribution list addresses as a volunteer endpoint",
@@ -3484,6 +3520,10 @@
   "volunteerCanUpdateComment": {
     "google": "A volunteer can make a note for himself",
     "valueInCode": "מתנדב יכול לעדכן לעצמו הערה"
+  },
+  "volunteerCanUpdateDeliveryComment": {
+    "google": "A volunteer can update a note for delivery",
+    "valueInCode": "מתנדב יכול לעדכן הערה למשלוח"
   },
   "volunteerCanUpdatePreferredDistributionAddress": {
     "google": "A volunteer can update a preferred division area",

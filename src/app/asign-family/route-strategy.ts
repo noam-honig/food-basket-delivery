@@ -161,7 +161,15 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
     }
     for (const f of addresses) {
         if (f.families.length > 0)
-            f.families.sort((a, b) => { return (+a.appartment.value) - (+b.appartment.value) });
+            f.families.sort((a, b) => {
+                if (a.floor.value == b.floor.value) {
+                    return (+a.appartment.value - +b.appartment.value);
+                }
+                let r = +b.floor.value - +a.floor.value;
+                if (r != 0)
+                    return r;
+                return b.floor.value.localeCompare(a.floor.value);
+            });
     }
     let distCenterLocation = await (await families[0].distributionCenter.getRouteStartGeo()).location();
     let routeStart = strategy.args.getRouteStart(distCenterLocation, addresses, volunteerLocation);

@@ -829,4 +829,8 @@ export class soldier {
   showDeliverySummaryToVolunteerOnFirstSignIn = 'הצג סיכום משלוח למתנדב בכניסה ראשונה';
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות';
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'כמות מוצרים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ';
+  printVolunteers = 'הדפס מתנדבים';
+  buildingCode = 'קוד לבנין';
+  sendWhats = 'שלח ווטסאפ';
+  assignBuildings = 'בחירת בניינים';
 }

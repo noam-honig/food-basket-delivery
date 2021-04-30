@@ -22,7 +22,7 @@ import { BasketType } from '../families/BasketType';
 
 
 import { SqlBuilder, wasChanged, PhoneColumn } from '../model-shared/types';
-import { BusyService } from '@remult/angular';
+import { BusyService, SelectValueDialogComponent } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
@@ -34,7 +34,7 @@ import { SelectFamilyComponent } from '../select-family/select-family.component'
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { DistributionCenters, DistributionCenterId, allCentersToken } from '../manage/distribution-centers';
-import { CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
+import { CitiesStats, CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
 
@@ -45,6 +45,7 @@ import { SelectListComponent } from '../select-list/select-list.component';
 import { use } from '../translate';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { getLang } from '../sites/sites';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 
 
@@ -517,21 +518,41 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
 
 
-        for await (let c of context.for(CitiesStatsPerDistCenter).iterate({
-            orderBy: ff => [{ column: ff.city }],
-            where: ff => ff.distributionCenter.filter(info.distCenter)
-        })) {
-            var ci = {
-                name: c.city.value,
-                unassignedFamilies: c.families.value
-            };
-            if (!info.filterGroup) {
-                result.cities.push(ci);
-            }
-            else {
-                ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city.value));
-                if (ci.unassignedFamilies > 0)
+
+        if (info.distCenter == allCentersToken) {
+            for await (let c of context.for(CitiesStats).iterate({
+                orderBy: ff => [{ column: ff.city }],
+            })) {
+                var ci = {
+                    name: c.city.value,
+                    unassignedFamilies: c.deliveries.value
+                };
+                if (!info.filterGroup) {
                     result.cities.push(ci);
+                }
+                else {
+                    ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city.value));
+                    if (ci.unassignedFamilies > 0)
+                        result.cities.push(ci);
+                }
+            }
+        } else {
+            for await (let c of context.for(CitiesStatsPerDistCenter).iterate({
+                orderBy: ff => [{ column: ff.city }],
+                where: ff => ff.distributionCenter.filter(info.distCenter)
+            })) {
+                var ci = {
+                    name: c.city.value,
+                    unassignedFamilies: c.families.value
+                };
+                if (!info.filterGroup) {
+                    result.cities.push(ci);
+                }
+                else {
+                    ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city.value));
+                    if (ci.unassignedFamilies > 0)
+                        result.cities.push(ci);
+                }
             }
         }
         let groupBy = (await db.execute(sql.build(sql.query({
@@ -941,6 +962,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
         })
     }
+
     private async performSpecificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
         await this.verifyHelperExistance();
         f.courier.value = this.helper.id.value;
@@ -951,6 +973,44 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             this.refreshBaskets();
         }, 300);
+    }
+    private async assignMultipleFamilies(ids: string[], quantity = 0) {
+        await this.verifyHelperExistance();
+        await AsignFamilyComponent.assignMultipleFamilies({
+            helper: this.helper.id.value,
+            ids,
+            quantity
+        });
+        this.refreshList();
+    }
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async assignMultipleFamilies(args: {
+        helper: string,
+        ids: string[],
+        quantity: number,
+    }, context?: Context) {
+        let familyDeliveries = await context.for(ActiveFamilyDeliveries).find({
+            where: fd =>
+                fd.id.isIn(...args.ids).and(fd.isAllowedForUser()).and(fd.readyFilter())
+        });
+        if (args.quantity > 0) {
+            familyDeliveries.sort((a, b) => {
+                if (a.floor.value == b.floor.value) {
+                    return (+a.appartment.value - +b.appartment.value);
+                }
+                return +b.floor.value - +a.floor.value;
+            });
+        }
+        let added = 0;
+        for (const fd of familyDeliveries) {
+            if (args.quantity) {
+                added += fd.quantity.value;
+                if (added > args.quantity)
+                    break;
+            }
+            fd.courier.value = args.helper;
+            await fd.save();
+        }
     }
     showSave() {
         return this.helper && this.helper.wasChanged();
@@ -981,6 +1041,79 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     addStreet() {
         this.addFamily(f => f.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.id), 'street', true);
     }
+    async addBuilding() {
+        let rows = await AsignFamilyComponent.selectBuildings({
+            filterCity: this.filterCity,
+            filterArea: this.filterArea,
+            filterGroup: this.filterGroup,
+            basketTypeId: this.basketType.id,
+            distCenter: this.dialog.distCenter.value
+        });
+        if (rows.length == 0) {
+            this.dialog.Error(this.settings.lang.noDeliveriesLeft);
+        }
+        else {
+            this.context.openDialog(SelectValueDialogComponent, x => x.args(
+                {
+                    values: rows.map(r => ({
+                        caption: r.address + " - (" + r.quantity + ")",
+                        item: r
+                    }))
+                    , onSelect: async r => {
+                        let q = new NumberColumn(this.settings.lang.quantity);
+                        q.value = r.item.quantity;
+                        await this.context.openDialog(InputAreaComponent, x => x.args = {
+                            settings: {
+                                columnSettings: () => [q]
+                            },
+                            title: this.settings.lang.quantity + " " + this.settings.lang.for + " " + r.item.address,
+                            cancel: () => { },
+                            ok: async () => {
+                                await this.assignMultipleFamilies(r.item.ids, q.value);
+                            }
+                        });
+
+
+                    }
+                    , title: this.settings.lang.assignBuildings
+
+                }))
+        }
+    }
+    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    static async selectBuildings(args: {
+        filterCity: string,
+        filterGroup: string,
+        filterArea: string,
+        basketTypeId: string,
+        distCenter: string
+    },
+        context?: Context,
+        db?: SqlDatabase
+    ) {
+        var sql = new SqlBuilder();
+        var fd = context.for(ActiveFamilyDeliveries).create();
+        let result = await db.execute(sql.query({
+            from: fd,
+            select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
+            where: () => [fd.filterDistCenterAndAllowed(args.distCenter),
+            fd.readyFilter(args.filterCity, args.filterGroup, args.filterArea, args.basketTypeId)],
+            groupBy: () => [fd.addressLatitude, fd.addressLongitude],
+            having: () => [sql.build("sum(quantity)", '> 4')]
+        }));
+        let r: {
+            address: string,
+            quantity: number,
+            ids: string[]
+        }[] = []
+        r = result.rows.map(r => ({
+            address: r.address,
+            quantity: r.quantity,
+            ids: r.ids.split(',')
+        }));
+        return r;
+    }
+
 }
 
 export interface AddBoxInfo {

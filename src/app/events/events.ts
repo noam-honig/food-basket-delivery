@@ -104,6 +104,11 @@ export class Event extends IdEntity {
                         }
                     },
                     {
+                        name: getLang(this.context).sendWhats,
+                        click: h => h.helperPhone.sendWhatsapp(this.context),
+                        icon: 'textsms'
+                    },
+                    {
                         name: getLang(this.context).remove,
                         click: async eh => {
                             await eh.delete();
@@ -245,7 +250,7 @@ export class volunteersInEvent extends IdEntity {
             name: 'volunteersInEvent',
             allowApiCRUD: c => c.isSignedIn(),
             apiDataFilter: () => {
-                if (context.isAllowed([Roles.admin,Roles.distCenterAdmin]))
+                if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                     return undefined;
                 return this.helper.isEqualTo(context.user.id);
             }

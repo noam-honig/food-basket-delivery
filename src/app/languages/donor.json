@@ -275,6 +275,10 @@
     "google": "שיוך לקבוצת תורמים",
     "valueInCode": "שיוך לקבוצת משפחות"
   },
+  "assignBuildings": {
+    "google": "בחירת בניינים",
+    "valueInCode": "בחירת בניינים"
+  },
   "assignCloseDeliveries": {
     "google": "הצג תרומות בסביבתי",
     "valueInCode": "מצאו לי עוד תורמים בסביבתי"
@@ -407,6 +411,10 @@
   "boxes2NameCaption": {
     "google": "שם כמות 2 בסוגי סלים",
     "valueInCode": "שם כמות 2 בסוגי סלים"
+  },
+  "buildingCode": {
+    "google": "קוד לבנין",
+    "valueInCode": "קוד לבנין"
   },
   "by": {
     "google": "על ידי",
@@ -2235,6 +2243,10 @@
     "google": "סיכום משלוח קודם",
     "valueInCode": "סיכום משלוח קודם"
   },
+  "printVolunteers": {
+    "google": "הדפס מתנדבים",
+    "valueInCode": "הדפס מתנדבים"
+  },
   "prioritizeRepeatFamilies": {
     "google": "עדיפות לתורמים חוזרים",
     "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן"
@@ -2566,7 +2578,7 @@
   },
   "selectedDeliveries": {
     "google": "משלוחים סומנו",
-    "valueInCode": "משלוחים סומנו"
+    "valueInCode": "סומנו"
   },
   "selectExcelFile": {
     "google": "בחר קובץ אקסל",
@@ -2663,6 +2675,10 @@
   "sendSuccessMessageToFamily": {
     "google": "שלח הודעה לתורם כאשר הסל נמסר",
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר"
+  },
+  "sendWhats": {
+    "google": "שלח ווטסאפ",
+    "valueInCode": "שלח ווטסאפ"
   },
   "sendWhatsAppToFamily": {
     "google": "שלח ווטסאפ לתורם",

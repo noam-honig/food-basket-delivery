@@ -133,6 +133,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
       },
       {
+        name: this.settings.lang.sendWhats,
+        click: h => h.phone.sendWhatsapp(this.context),
+
+        icon: 'textsms'
+      },
+      {
         name: use.language.resetPassword,
         click: async h => {
           this.dialog.YesNoQuestion(use.language.resetPasswordAreYouSureFor + " " + h.name.value, async () => {

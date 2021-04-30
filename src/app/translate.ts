@@ -499,7 +499,7 @@ export class Language {
   volunteers = 'מתנדבים';
   selectDeliveriesOnMap = 'בחר משפחות על המפה';
   drawingHelpText = 'אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום';
-  selectedDeliveries = 'משלוחים סומנו';
+  selectedDeliveries = 'סומנו';
   showVolunteers = 'הצג מתנדבים';
   addressesWithMoreThanOneFamily = 'כתובות עם יותר ממשפחה אחת';
   showFamilies = 'הצג משפחות';
@@ -982,6 +982,8 @@ export class Language {
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ";
   printVolunteers = "הדפס מתנדבים";
   buildingCode = "קוד לבנין";
+  sendWhats = "שלח ווטסאפ";
+  assignBuildings = "בחירת בניינים";
 }
 
 const defaultLang = new Language();

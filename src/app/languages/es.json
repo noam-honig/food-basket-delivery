@@ -24,6 +24,11 @@
     "valueInCode": "פעיל",
     "valueInEnglish": "Active"
   },
+  "activeDeliveries": {
+    "google": "Entregas activas",
+    "valueInCode": "משלוחים פעילים",
+    "valueInEnglish": "Active deliveries"
+  },
   "ActiveDeliveries": {
     "google": "Entregas activas",
     "valueInCode": "משלוחים פעילים",
@@ -339,6 +344,11 @@
     "valueInCode": "שיוך לקבוצת משפחות",
     "valueInEnglish": "Assignment to a family group"
   },
+  "assignBuildings": {
+    "google": "Selección de edificios",
+    "valueInCode": "בחירת בניינים",
+    "valueInEnglish": "Selection of buildings"
+  },
   "assignCloseDeliveries": {
     "google": "Mostrar donaciones a mi alrededor",
     "valueInCode": "מצאו לי עוד תורמים בסביבתי",
@@ -503,6 +513,11 @@
     "google": "Nombre de tipo de paquete para otra unidad",
     "valueInCode": "שם כמות 2 בסוגי סלים",
     "valueInEnglish": "Parcel type name for other unit"
+  },
+  "buildingCode": {
+    "google": "Código de construcción",
+    "valueInCode": "קוד לבנין",
+    "valueInEnglish": "Building code"
   },
   "by": {
     "google": "por",
@@ -2220,6 +2235,16 @@
     "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק",
     "valueInEnglish": "Number of deliveries to define a busy volunteer"
   },
+  "MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself": {
+    "google": "Cantidad máxima de entregas que un voluntario independiente puede asignarse a sí mismo",
+    "valueInCode": "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ",
+    "valueInEnglish": "Maximum amount of deliveries that an independent volunteer can assign to himself"
+  },
+  "MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee": {
+    "google": "Cantidad máxima de productos en entrega que un voluntario independiente puede ver",
+    "valueInCode": "כמות מוצרים מקסימלית במשלוח שמתנדב עצמאי יכול לראות",
+    "valueInEnglish": "Maximum quantity of products in delivery that an independent volunteer can see"
+  },
   "merge": {
     "google": "Mantener el acondicionamiento",
     "valueInCode": "שמור מיזוג",
@@ -2690,6 +2715,11 @@
     "valueInCode": "טלפונים",
     "valueInEnglish": "Phones"
   },
+  "pickupLocation": {
+    "google": "Punto de recogida",
+    "valueInCode": "נקודת איסוף",
+    "valueInEnglish": "Collecting point"
+  },
   "PlaybackComponent": {
     "google": "Un video de distribución",
     "valueInCode": "סרטון חלוקה",
@@ -2764,6 +2794,11 @@
     "google": "Resumen de entrega anterior",
     "valueInCode": "סיכום משלוח קודם",
     "valueInEnglish": "Previous delivery summary"
+  },
+  "printVolunteers": {
+    "google": "Imprimir voluntarios",
+    "valueInCode": "הדפס מתנדבים",
+    "valueInEnglish": "Print volunteers"
   },
   "prioritizeRepeatFamilies": {
     "google": "Prefiero familias pasadas",
@@ -3178,7 +3213,7 @@
   },
   "selectedDeliveries": {
     "google": "mercado de entregas",
-    "valueInCode": "משלוחים סומנו",
+    "valueInCode": "סומנו",
     "valueInEnglish": "deliveries marked"
   },
   "selectExcelFile": {
@@ -3301,6 +3336,11 @@
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר",
     "valueInEnglish": "Send SMS to Family on delivery"
   },
+  "sendWhats": {
+    "google": "Enviar whatsapp",
+    "valueInCode": "שלח ווטסאפ",
+    "valueInEnglish": "Send WhatsApp"
+  },
   "sendWhatsAppToFamily": {
     "google": "Envía WhatsApp a la familia",
     "valueInCode": "שלח ווטסאפ למשפחה",
@@ -3395,6 +3435,11 @@
     "google": "Ver voluntarios eliminados",
     "valueInCode": "הצג מתנדבים מחוקים",
     "valueInEnglish": "View deleted volunteers"
+  },
+  "showDeliverySummaryToVolunteerOnFirstSignIn": {
+    "google": "Ver un resumen de entrega de un voluntario en la primera entrada",
+    "valueInCode": "הצג סיכום משלוח למתנדב בכניסה ראשונה",
+    "valueInEnglish": "View a delivery summary for a volunteer at first entry"
   },
   "showDistCenterAsEndAddressForVolunteer": {
     "google": "Ver las direcciones de la lista de distribución como punto final voluntario",
@@ -3990,6 +4035,11 @@
     "google": "Un voluntario puede tomar nota por sí mismo.",
     "valueInCode": "מתנדב יכול לעדכן לעצמו הערה",
     "valueInEnglish": "A volunteer can make a note for himself"
+  },
+  "volunteerCanUpdateDeliveryComment": {
+    "google": "Un voluntario puede actualizar una nota para la entrega.",
+    "valueInCode": "מתנדב יכול לעדכן הערה למשלוח",
+    "valueInEnglish": "A volunteer can update a note for delivery"
   },
   "volunteerCanUpdatePreferredDistributionAddress": {
     "google": "Un voluntario puede actualizar un área de división preferida",

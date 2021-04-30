@@ -646,7 +646,7 @@ export class en {
   removeGroupAssignmentVerb = 'Remove Group';
   replaceGroupAssignmentVerb = 'Replace affiliation with the group';
   volunteerCanUpdateComment = 'A volunteer can make a note for himself';
-  volunteerCanUpdateDeliveryComment = 'volunteerCanUpdateDeliveryComment';
+  volunteerCanUpdateDeliveryComment = 'A volunteer can update a note for delivery';
   volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
   email = 'eMail';
   preferredDistributionArea = 'Preferred distribution area address';
@@ -824,9 +824,13 @@ export class en {
   foodParcel = 'Food Parcel';
   updated = 'Updated';
   showFreezed = 'Show frozen';
-  pickupLocation = 'pickupLocation';
-  activeDeliveries = 'activeDeliveries';
-  showDeliverySummaryToVolunteerOnFirstSignIn = 'showDeliverySummaryToVolunteerOnFirstSignIn';
-  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee';
-  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself';
+  pickupLocation = 'Collecting point';
+  activeDeliveries = 'Active deliveries';
+  showDeliverySummaryToVolunteerOnFirstSignIn = 'View a delivery summary for a volunteer at first entry';
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'Maximum quantity of products in delivery that an independent volunteer can see';
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'Maximum amount of deliveries that an independent volunteer can assign to himself';
+  printVolunteers = 'Print volunteers';
+  buildingCode = 'Building code';
+  sendWhats = 'Send WhatsApp';
+  assignBuildings = 'Selection of buildings';
 }

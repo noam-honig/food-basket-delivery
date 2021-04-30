@@ -646,7 +646,7 @@ export class es {
   removeGroupAssignmentVerb = 'Eliminar grupo';
   replaceGroupAssignmentVerb = 'Reemplazar afiliación con el grupo';
   volunteerCanUpdateComment = 'Un voluntario puede tomar nota por sí mismo.';
-  volunteerCanUpdateDeliveryComment = 'volunteerCanUpdateDeliveryComment';
+  volunteerCanUpdateDeliveryComment = 'Un voluntario puede actualizar una nota para la entrega.';
   volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
   email = 'correo electrónico';
   preferredDistributionArea = 'Dirección de área de distribución preferida';
@@ -824,9 +824,13 @@ export class es {
   foodParcel = 'Paquete de comida';
   updated = 'Actualizado';
   showFreezed = 'Mostrar congelado';
-  pickupLocation = 'pickupLocation';
-  activeDeliveries = 'activeDeliveries';
-  showDeliverySummaryToVolunteerOnFirstSignIn = 'showDeliverySummaryToVolunteerOnFirstSignIn';
-  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee';
-  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself';
+  pickupLocation = 'Punto de recogida';
+  activeDeliveries = 'Entregas activas';
+  showDeliverySummaryToVolunteerOnFirstSignIn = 'Ver un resumen de entrega de un voluntario en la primera entrada';
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'Cantidad máxima de productos en entrega que un voluntario independiente puede ver';
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = 'Cantidad máxima de entregas que un voluntario independiente puede asignarse a sí mismo';
+  printVolunteers = 'Imprimir voluntarios';
+  buildingCode = 'Código de construcción';
+  sendWhats = 'Enviar whatsapp';
+  assignBuildings = 'Selección de edificios';
 }

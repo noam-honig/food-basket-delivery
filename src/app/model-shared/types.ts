@@ -59,6 +59,9 @@ export class PhoneColumn extends radweb.StringColumn {
       s = '0' + s;
     return s;
   }
+  sendWhatsapp(context: Context, message = "") {
+    PhoneColumn.sendWhatsappToPhone(this.value, message, context);
+  }
 
   static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context) {
     phone = PhoneColumn.fixPhoneInput(phone, context);
