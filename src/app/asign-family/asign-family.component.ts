@@ -996,7 +996,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         if (args.quantity > 0) {
             familyDeliveries.sort((a, b) => {
                 if (a.floor.value == b.floor.value) {
-                    return (+a.appartment.value - +b.appartment.value);
+                    return (+b.appartment.value - +a.appartment.value);
                 }
                 return +b.floor.value - +a.floor.value;
             });

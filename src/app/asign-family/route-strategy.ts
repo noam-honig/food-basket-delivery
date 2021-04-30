@@ -163,7 +163,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         if (f.families.length > 0)
             f.families.sort((a, b) => {
                 if (a.floor.value == b.floor.value) {
-                    return (+a.appartment.value - +b.appartment.value);
+                    return (+b.appartment.value - +a.appartment.value);
                 }
                 let r = +b.floor.value - +a.floor.value;
                 if (r != 0)
