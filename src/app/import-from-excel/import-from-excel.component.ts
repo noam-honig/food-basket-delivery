@@ -780,6 +780,7 @@ export class ImportFromExcelComponent implements OnInit {
             this.f.floor,
             this.f.appartment,
             this.f.entrance,
+            this.f.buildingCode,
             this.f.socialWorker,
             this.f.email
 
