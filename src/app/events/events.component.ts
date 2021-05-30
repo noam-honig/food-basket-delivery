@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, BoolColumn, DateColumn, AndFilter } from '@remult/core';
-import { BusyService } from '@remult/angular';
+import { Context, AndFilter, DateOnlyValueConverter, ColumnDefinitionsOf } from '@remult/core';
+import { BusyService, GridSettings, InputControl, openDialog } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
@@ -14,6 +14,7 @@ import * as copy from 'copy-to-clipboard';
 import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
+import { filterDistCenter } from '../manage/distribution-centers';
 
 @Component({
   selector: 'app-events',
@@ -29,16 +30,16 @@ export class EventsComponent implements OnInit {
   constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events = this.context.for(Event).gridSettings({
+  events = new GridSettings(this.context.for(Event), {
     allowUpdate: this.context.isAllowed(Roles.admin),
     allowInsert: this.context.isAllowed(Roles.admin),
 
 
     rowsInPage: 25,
-    where: e => new AndFilter(e.distributionCenter.filter(this.dialog.distCenter.value),this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)),
+    where: e => new AndFilter(filterDistCenter(e.distributionCenter, this.dialog.distCenter, this.context), this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)),
     orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
     newRow: async e =>
-      e.distributionCenter.value = await this.dialog.getDistCenter(e.address.location()),
+      e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),
 
     showFilter: true,
     allowSelection: true,
@@ -47,11 +48,11 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          let archiveCurrentEvent = new BoolColumn(this.settings.lang.archiveCurrentEvent);
+          let archiveCurrentEvent = new InputControl<boolean>({ caption: this.settings.lang.archiveCurrentEvent });
           archiveCurrentEvent.value = true;
-          let date = new DateColumn(this.settings.lang.eventDate);
+          let date = new InputControl<Date>({ caption: this.settings.lang.eventDate, valueConverter: () => DateOnlyValueConverter });
           date.value = new Date();
-          await this.context.openDialog(InputAreaComponent, x => x.args = {
+          await openDialog(InputAreaComponent, x => x.args = {
             title: this.settings.lang.duplicateEvents,
             settings: {
               columnSettings: () => [archiveCurrentEvent, date]
@@ -60,22 +61,22 @@ export class EventsComponent implements OnInit {
               await this.busy.doWhileShowingBusy(async () => {
                 for (const current of this.events.selectedRows) {
                   let e = this.context.for(Event).create();
-                  e.name.value = current.name.value;
-                  e.description.value = current.description.value;
-                  e.requiredVolunteers.value = current.requiredVolunteers.value;
-                  e.startTime.value = current.startTime.value;
-                  e.endTime.value = current.endTime.value;
-                  e.eventDate.rawValue = date.rawValue;
-                  e.address.value = current.address.value;
-                  e.phone1.value = current.phone1.value;
-                  e.phone1Description.value = current.phone1Description.value;
-                  e.distributionCenter.value = current.distributionCenter.value;
+                  e.name = current.name;
+                  e.description = current.description;
+                  e.requiredVolunteers = current.requiredVolunteers;
+                  e.startTime = current.startTime;
+                  e.endTime = current.endTime;
+                  e.eventDate = date.value;
+                  e.address = current.address;
+                  e.phone1 = current.phone1;
+                  e.phone1Description = current.phone1Description;
+                  e.distributionCenter = current.distributionCenter;
                   await e.save();
                   for (const c of await this.context.for(volunteersInEvent).find({ where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id.value)) })) {
                     let v = this.context.for(volunteersInEvent).create();
-                    v.eventId.value = e.id.value;
-                    v.helper.value = c.helper.value;
-                    v.duplicateToNextEvent.value = true;
+                    v.eventId = e.id;
+                    v.helper = c.helper;
+                    v.duplicateToNextEvent = true;
                     await v.save();
 
                   }
@@ -106,13 +107,13 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.eventInfo,
         click: async e => {
-          this.context.openDialog(InputAreaComponent, x => x.args = {
+          openDialog(InputAreaComponent, x => x.args = {
             title: this.settings.lang.eventInfo,
             settings: {
-              columnSettings: () => this.eventDisplayColumns(e)
+              columnSettings: () => this.eventDisplayColumns(e._.repository.defs.columns)
             },
             ok: () => e.save(),
-            cancel: () => e.undoChanges(),
+            cancel: () => e._.undoChanges(),
             buttons: [
               {
                 text: this.settings.lang.volunteers,
@@ -130,7 +131,7 @@ export class EventsComponent implements OnInit {
       }
     ]
   });
-  private eventDisplayColumns(e: Event) {
+  private eventDisplayColumns(e: ColumnDefinitionsOf<Event>) {
     return [
       e.name,
       { width: '100', column: e.registeredVolunteers },

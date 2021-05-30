@@ -1,17 +1,14 @@
-import { IdEntity, EntityClass, Context, StringColumn } from "@remult/core";
-import { getLang } from "../sites/sites";
+import { IdEntity, Context, Entity, Column } from "@remult/core";
 import { Roles } from "../auth/roles";
+import { use } from "../translate";
 
-@EntityClass
+@Entity({
+  key: "groups",
+  allowApiRead: Roles.admin,
+  allowApiCrud: Roles.admin,
+})
 export class Groups extends IdEntity {
 
-  name = new StringColumn(getLang(this.context).group);
-
-  constructor(private context: Context) {
-    super({
-      name: "groups",
-      allowApiRead: Roles.admin,
-      allowApiCRUD: Roles.admin,
-    });
-  }
+  @Column({ caption: use.language.group })
+  name: string;
 }

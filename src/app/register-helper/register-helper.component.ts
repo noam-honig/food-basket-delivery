@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { PhoneColumn, required, isPhoneValidForIsrael } from '../model-shared/types';
-import { StringColumn, NumberColumn, DataAreaSettings, ServerFunction, Context, Column, IdColumn, getColumnsFromObject, ServerController, ServerMethod } from '@remult/core';
+
+import { ServerFunction, Context, Column, ServerController, ServerMethod, getControllerDefs } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DataAreaSettings, openDialog } from '../../../../radweb/projects/angular';
 
 
 declare var gtag;
@@ -21,34 +22,28 @@ export class RegisterHelperComponent implements OnInit {
   isDone = false;
 
   helper = this.context.for(Helpers).create();
-
+  
   area = new DataAreaSettings({
     columnSettings: () => [
-      { column: this.helper.socialSecurityNumber, caption: "תעודת זהות (עבור ביטוח מתנדבים)" },
-      { column: this.helper.phone, allowClick: () => false },
-      { column: this.helper.email, allowClick: () => false },
-      { column: this.helper.company, allowClick: () => false }
+      { column: this.helper.$.socialSecurityNumber, caption: "תעודת זהות (עבור ביטוח מתנדבים)" },
+      { column: this.helper.$.phone, allowClick: () => false },
+      { column: this.helper.$.email, allowClick: () => false },
+      { column: this.helper.$.company, allowClick: () => false }
     ]
   });
   ngOnInit() {
-    this.helper.preferredDistributionAreaAddress.defs.caption = "כתובת שנדע לחבר לך תורמים קרובים";
-    this.helper.preferredFinishAddress.defs.caption = "איזור נוסף ממנו נח לך לאסוף תרומות?";
-
-
   }
   allowSubmit() {
     return !this.isDone;
   }
 
-
-
   async submit() {
     let urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('refer')) {
       this.refer = urlParams.get('refer');
-      this.helper.referredBy.value = this.refer;
+      this.helper.referredBy = this.refer;
     } else {
-      this.helper.referredBy.value = document.referrer;
+      this.helper.referredBy = document.referrer;
     }
 
     await this.helper.mltRegister();
@@ -63,10 +58,10 @@ export class RegisterHelperComponent implements OnInit {
       console.log("problem with tags: ", err)
     }
 
-    await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
+    await openDialog(YesNoQuestionComponent, x => x.args = { question: "תודה על עזרתך", showOnlyConfirm: true });
 
     if (this.refer) return;
-    if (this.helper.referredBy.value != '') window.location.href = this.helper.referredBy.value;
+    if (this.helper.referredBy != '') window.location.href = this.helper.referredBy;
     else window.location.href = "https://www.mitchashvim.org.il/";
   }
 

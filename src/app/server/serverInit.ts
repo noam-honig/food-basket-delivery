@@ -1,20 +1,20 @@
 
 import { Pool, QueryResult } from 'pg';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
+import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/core/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, Context, Entity, SqlDatabase } from '@remult/core';
+import { ServerContext, Context, Entity, SqlDatabase, ClassType } from '@remult/core';
 import '../app.module';
 
 
 
 import { Helpers } from '../helpers/helpers';
-import * as passwordHash from 'password-hash';
+
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
-import { wasChanged, SqlBuilder } from '../model-shared/types';
+import {  SqlBuilder, SqlFor } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
@@ -55,10 +55,7 @@ export async function serverInit() {
 
 
         });
-        Helpers.passwordHelper = {
-            generateHash: p => passwordHash.generate(p),
-            verify: (p, h) => passwordHash.verify(p, h)
-        }
+       
         const accountSID = process.env.twilio_accountSID;
         const authToken = process.env.twilio_authToken;
         FamilyInfoComponent.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
@@ -114,22 +111,22 @@ export async function serverInit() {
             context.setDataProvider(dp)
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
-            for (const entity of <{ new(...args: any[]): Entity; }[]>[
+            for (const entity of <ClassType<any>[]>[
                 ApplicationSettings,
                 ApplicationImages,
                 Helpers, SitesEntity]) {
-                await builder.createIfNotExist(context.for(entity).create());
-                await builder.verifyAllColumns(context.for(entity).create());
+                await builder.createIfNotExist(context.for(entity).defs);
+                await builder.verifyAllColumns(context.for(entity).defs);
             }
             await SitesEntity.completeInit(context);
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
             if (settings.isNew()) {
-                settings.organisationName.value = "מערכת חלוקה";
-                settings.id.value = 1;
+                settings.organisationName = "מערכת חלוקה";
+                settings.id = 1;
                 await settings.save();
             } else {
-                settings.logoUrl.value = '/assets/apple-touch-icon.png';
-                if (wasChanged(settings.logoUrl))
+                settings.logoUrl = '/assets/apple-touch-icon.png';
+                if (settings.$.logoUrl.wasChanged())
                     await settings.save();
             }
 
@@ -166,31 +163,13 @@ export async function serverInit() {
             return await InitSpecificSchema(pool, site);
         }
         //init application settings
-        if (false) {
-            let i = 0;
-            for (const s of Sites.schemas) {
-                if (s.toLowerCase() == Sites.guestSchema)
-                    throw 'admin is an ivalid schema name';
-                try {
-                    console.log('verify app settings for ' + s + " - " + ++i + "/" + Sites.schemas.length)
-                    let schemaPool = new PostgresSchemaWrapper(pool, s);
-                    let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
-                    let context = new ServerContext(db);
-                    var builder = new PostgresSchemaBuilder(db, s);
-                    await builder.createIfNotExist(context.for(ApplicationSettings).create());
-                    await builder.verifyAllColumns(context.for(ApplicationSettings).create());
-                }
-                catch (err) {
-                    throw err;
-                }
-            }
-        } {
+        {
             let sortedSchemas: { name: string, lastSignIn: Date }[] = [];
             for (const s of Sites.schemas) {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let context = new ServerContext();
-                    let h = context.for(Helpers).create();
+                    let h =SqlFor( context.for(Helpers));
                     var sql = new SqlBuilder();
                     let r = (await db.execute(sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];
@@ -226,7 +205,7 @@ export async function serverInit() {
                 }
                 if (!process.env.DISABLE_LOAD_DELAY)
                     await new Promise(x => setTimeout(() => {
-                        x();
+                        x({});
                     }, 1000));
             }
         }

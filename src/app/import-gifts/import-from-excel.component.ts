@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Context } from '@remult/core';
-import { BusyService, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 @Component({
   selector: 'app-import-from-excel',
@@ -55,7 +55,7 @@ export class GeneralImportFromExcelComponent implements OnInit {
         });
         let sheet = sheets[0];
         if (sheets.length > 1) {
-          await this.context.openDialog(SelectValueDialogComponent, x => x.args({
+          await openDialog(SelectValueDialogComponent, x => x.args({
             title: 'בחר גליון',
             values: sheets.map(x => ({ caption: x })),
             onSelect: x => sheet = x.caption

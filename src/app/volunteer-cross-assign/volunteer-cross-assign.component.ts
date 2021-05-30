@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { BusyService } from '@remult/angular';
-import { ServerFunction, Context, SqlDatabase, StringColumn } from '@remult/core';
-import { Helpers, HelpersBase } from '../helpers/helpers';
+import { BusyService, openDialog } from '@remult/angular';
+import { ServerFunction, Context, SqlDatabase } from '@remult/core';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -43,7 +43,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
 
   async showAssignment(rh: helperInfo) {
     let h = await this.context.for(Helpers).findId(rh.id);
-    this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+    openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async helperDetails(rh: helperInfo) {
     let h = await this.context.for(Helpers).findId(rh.id);
@@ -54,9 +54,9 @@ export class VolunteerCrossAssignComponent implements OnInit {
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.readyFilter().and(fd.id.isIn(...f.deliveries.map(x => x.id)))
+        where: fd => FamilyDeliveries.readyFilter(fd, this.context).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier.value = h.id;
+        fd.courier = new HelperId(h.id, this.context);
         await fd.save();
       }
     });
@@ -69,9 +69,9 @@ export class VolunteerCrossAssignComponent implements OnInit {
   async cancelAssignHelper(f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(f.assignedHelper.id).and(fd.id.isIn(...f.deliveries.map(x => x.id)))
+        where: fd => fd.courier.isEqualTo(new HelperId(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier.value = '';
+        fd.courier = HelperId.empty(this.context);
         await fd.save();
       }
     });

@@ -1,130 +1,164 @@
-import { IdEntity, EntityClass, StringColumn, Context, IdColumn, ColumnOptions, AndFilter, BoolColumn } from "@remult/core";
-import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location, AddressColumn } from "../shared/googleApiHelpers";
-import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
+import { IdEntity, Context, StoreAsStringValueConverter, AndFilter, Column, Entity, filterOf, filterOptions, Filter, ColumnSettings, Storable } from "@remult/core";
+import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
+import { Phone } from "../model-shared/Phone";
+import { LookupValue } from "../model-shared/LookupValue";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
 import { getLang } from '../sites/sites';
+import { DataControl, getValueList } from "../../../../radweb/projects/angular";
+import { use } from "../translate";
+import { Families } from "../families/families";
 
 
 
-@EntityClass
+@Entity<DistributionCenters>({
+  key: "DistributionCenters",
+  allowApiRead: context => context.isSignedIn(),
+  allowApiInsert: Roles.admin,
+  allowApiUpdate: Roles.admin,
+  defaultOrderBy: self => self.name,
+
+
+  saving: async (self) => {
+    if (self.context.onServer) {
+      await self.addressHelper.updateApiResultIfChanged();
+    }
+  }
+})
 export class DistributionCenters extends IdEntity {
 
+  constructor(private context: Context) {
+    super();
+  }
 
-  name = new StringColumn({ caption: getLang(this.context).distributionCenterName });
-  semel = new StringColumn({ caption: getLang(this.context).distributionCenterUniqueId });
-  addressApiResult = new StringColumn();
-  address = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).deliveryCenterAddress);
-  comments = new StringColumn(getLang(this.context).distributionCenterComment);
-  phone1 = new PhoneColumn(getLang(this.context).phone1);
-  phone1Description = new StringColumn(getLang(this.context).phone1Description);
-  phone2 = new PhoneColumn(getLang(this.context).phone2);
-  phone2Description = new StringColumn(getLang(this.context).phone2Description);
-  isFrozen = new BoolColumn(getLang(this.context).frozen);
-  archive = new BoolColumn();
-  isActive() {
-    return this.isFrozen.isEqualTo(false).and(this.archive.isEqualTo(false));
+  @Column({ caption: use.language.distributionCenterName })
+  name: string;
+  @Column({ caption: use.language.distributionCenterUniqueId })
+  semel: string;
+  @Column()
+  addressApiResult: string;
+  @Column({
+    caption: use.language.deliveryCenterAddress
+  })
+  address: string;
+  addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
+  @Column({ caption: use.language.distributionCenterComment })
+  comments: string;
+  @Column({ caption: use.language.phone1 })
+  phone1: Phone;
+  @Column({ caption: use.language.phone1Description })
+  phone1Description: string;
+  @Column({ caption: use.language.phone2 })
+  phone2: Phone;
+  @Column({ caption: use.language.phone2Description })
+  phone2Description: string;
+  @Column({ caption: use.language.frozen })
+  isFrozen: boolean;
+  @Column()
+  archive: boolean;
+
+  static isActive(e: filterOf<DistributionCenters>) {
+    return e.isFrozen.isEqualTo(false).and(e.archive.isEqualTo(false));
   }
 
 
   openWaze() {
-    //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.address.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
+    this.addressHelper.openWaze();
   }
 
 
-  constructor(private context: Context) {
-    super({
-      name: "DistributionCenters",
-      allowApiRead: context.isSignedIn(),
-      allowApiInsert: Roles.admin,
-      allowApiUpdate: Roles.admin,
 
-
-      saving: async () => {
-        if (context.onServer) {
-          await this.address.updateApiResultIfChanged();
-        }
-      }
-    });
-  }
 
 }
 export const allCentersToken = '<allCenters>';
-export function filterCenterAllowedForUser(center: IdColumn, context: Context) {
+export function filterCenterAllowedForUser(center: filterOptions<DistributionCenterId>, context: Context) {
   if (context.isAllowed(Roles.admin)) {
     return undefined;
   } else if (context.isSignedIn())
-    return center.isEqualTo((<HelperUserInfo>context.user).distributionCenter);
+    return center.isEqualTo(new DistributionCenterId((<HelperUserInfo>context.user).distributionCenter, context));
+}
+export function filterDistCenter(distCenterColumn: filterOptions<DistributionCenterId>, distCenter: DistributionCenterId, context: Context): Filter {
+  let allowed = filterCenterAllowedForUser(distCenterColumn, context);
+  if (!distCenter.isAllCentersToken())
+    return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
+  return allowed;
 }
 
-export class DistributionCenterId extends IdColumn implements HasAsyncGetTheValue {
 
-  filter(distCenter: string): import("@remult/core").Filter {
-    if (distCenter != allCentersToken)
-      return new AndFilter(this.isAllowedForUser(), this.isEqualTo(distCenter));
-    return this.isAllowedForUser();
+
+@Storable<DistributionCenterId>({
+  valueConverter: c => new StoreAsStringValueConverter<DistributionCenterId>(x => x.id, x => new DistributionCenterId(x, c)),
+  displayValue: (e, v) => v.item.name,
+  defaultValue: (e, context) => new DistributionCenterId(context.user ? (<HelperUserInfo>context.user).distributionCenter : '', context)
+})
+@DataControl<any, DistributionCenterId>({
+  getValue: (e, val) => val.displayValue,
+  hideDataOnInput: true,
+  valueList: context => DistributionCenterId.getValueList(context),
+  width: '150',
+})
+export class DistributionCenterId extends LookupValue<DistributionCenters>{
+  static allCentersToken(context: Context): DistributionCenterId {
+    return new DistributionCenterId(allCentersToken, context)
   }
-  isAllowedForUser(): import("@remult/core").Filter {
-    return filterCenterAllowedForUser(this, this.context);
 
+  static forCurrentUser(context: Context): DistributionCenterId {
+    return new DistributionCenterId((<HelperUserInfo>context.user).distributionCenter, context);
+  }
+  matchesCurrentUser() {
+    return this.id == (<HelperUserInfo>this.context.user).distributionCenter;
+  }
+  evilGetId(): string {
+    return this.id;
+  }
+  async SendMessageToBrowser(message: string, context: Context) {
+    await Families.SendMessageToBrowsers(message, context, this.id);
+  }
+  isAllCentersToken() {
+    return this.id != allCentersToken;
+  }
+  constructor(id: string, private context: Context) {
+    super(id, context.for(DistributionCenters));
   }
   checkAllowedForUser() {
     if (this.context.isAllowed(Roles.admin)) {
       return true;
     } else if (this.context.isAllowed(Roles.distCenterAdmin))
-      return (<HelperUserInfo>this.context.user).distributionCenter == this.value;
+      return (<HelperUserInfo>this.context.user).distributionCenter == this.id;
     return false;
   }
   async getRouteStartGeo() {
-    let d = await this.context.for(DistributionCenters).lookupAsync(this);
-    if (d.addressApiResult.value && d.address.value && d.address.ok())
-      return d.address.getGeocodeInformation();
-    return (await ApplicationSettings.getAsync(this.context)).address.getGeocodeInformation();
+    let d = await this.waitLoad();
+    if (d.addressApiResult && d.address && d.addressHelper.ok())
+      return d.addressHelper.getGeocodeInformation();
+    return (await ApplicationSettings.getAsync(this.context)).addressHelper.getGeocodeInformation();
   }
+  static async getValueList(context: Context, showAllOptions = false) {
 
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>, showAllOption?: boolean) {
-    super(settingsOrCaption, {
-      dataControlSettings: () =>
-        ({
-          valueList: this.context.for(DistributionCenters).getValueList({
-            where: c => c.archive.isEqualTo(false),
-            orderBy: (f: DistributionCenters) => {
-              return [{ column: f.name }];
-            }
-          }).then(x => {
-            if (showAllOption)
-              x.splice(0, 0, { caption: 'כל הרשימות', id: allCentersToken })
-            return x;
-          })
-          , width: '150'
-        }),
-      defaultValue: context.user ? (<HelperUserInfo>context.user).distributionCenter : ''
-    });
-    if (!this.defs.caption)
-      this.defs.caption = getLang(this.context).distributionList;
-  }
-  get displayValue() {
-    return this.context.for(DistributionCenters).lookup(this).name.value;
-  }
-  async getTheValue() {
-    let r = await this.context.for(DistributionCenters).lookupAsync(this);
-    if (r && r.name && r.name.value)
-      return r.name.value;
-    return '';
+    let r = await getValueList<DistributionCenters>(context.for(DistributionCenters), {
+      where: c => c.archive.isEqualTo(false)
+    })
+    if (showAllOptions) {
+      r.splice(0, 0, { caption: 'כל הרשימות', id: allCentersToken })
+    }
+    return r;
+
   }
 }
 
+
+
+
 export async function findClosestDistCenter(loc: Location, context: Context, centers?: DistributionCenters[]) {
-  let result: string;
+  let result: DistributionCenterId;
   let dist: number;
   if (!centers)
-    centers = await context.for(DistributionCenters).find({ where: c => c.isActive() });
+    centers = await context.for(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
   for (const c of centers) {
-    let myDist = GetDistanceBetween(c.address.location(), loc);
+    let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
     if (result === undefined || myDist < dist) {
-      result = c.id.value;
+      result = new DistributionCenterId(c.id, context);
       dist = myDist;
     }
   }

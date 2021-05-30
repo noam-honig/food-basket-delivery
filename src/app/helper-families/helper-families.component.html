@@ -13,7 +13,7 @@
           *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
         <ng-container *ngFor="let h of otherDependentVolunteers">
           <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
-            {{h.name.value}}</button>
+            {{h.name}}</button>
         </ng-container>
         <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
           class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
@@ -57,8 +57,8 @@
             <mat-expansion-panel-header>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
-                [latestAssign]="partOfAssign&&f.courierAssingTime.value?.valueOf()==familyLists.maxAssignTime"
-                [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id.value)">
+                [latestAssign]="partOfAssign&&f.courierAssingTime?.valueOf()==familyLists.maxAssignTime"
+                [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id)">
               </app-family-in-list>
 
 
@@ -71,15 +71,15 @@
 
 
                 <button mat-raised-button class="myButton" color="accent"
-                  (click)="deliveredToFamily(f)">{{settings.deliveredButtonText.value}}</button>
-                <br *ngIf="settings.showLeftThereButton.value" />
-                <button *ngIf="settings.showLeftThereButton.value" mat-raised-button class="myButton"
+                  (click)="deliveredToFamily(f)">{{settings.deliveredButtonText}}</button>
+                <br *ngIf="settings.showLeftThereButton" />
+                <button *ngIf="settings.showLeftThereButton" mat-raised-button class="myButton"
                   (click)="leftThere(f)">{{settings.lang.leftDeliveryNextToHouse}}
                 </button>
                 <br />
                 <button mat-raised-button class="myButton badButton"
                   (click)="couldntDeliverToFamily(f)">{{settings.lang.ranIntoAProblem}}</button>
-                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()||settings.volunteerCanUpdateDeliveryComment.value"
+                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()||settings.volunteerCanUpdateDeliveryComment"
                   (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
 
 
@@ -138,8 +138,8 @@
       (click)="sendSms(true)">
 
       <span
-        *ngIf="familyLists&&familyLists.helper&&familyLists.helper.reminderSmsDate.value; else elseContent">{{settings.lang.reminderSent}}
-        {{familyLists.helper.reminderSmsDate.relativeDateName(context)}} {{settings.lang.resendReminder}}
+        *ngIf="familyLists&&familyLists.helper&&familyLists.helper.reminderSmsDate; else elseContent">{{settings.lang.reminderSent}}
+        {{reminderSmsRelativeDate()}} {{settings.lang.resendReminder}}
 
       </span>
 
@@ -169,7 +169,7 @@
     <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper"
       (click)="callHelper()">
       <mat-icon>phone</mat-icon>
-      {{settings.lang.dialTo}}{{familyLists.helper.name.value}}
+      {{settings.lang.dialTo}}{{familyLists.helper.name}}
       {{familyLists.helper.phone.displayValue}}
 
     </button>
@@ -177,7 +177,7 @@
   <div class="sendSmsButtonLine no-print">
     <button mat-raised-button class="contact-helper-button"
       *ngIf="partOfReview&&familyLists.helper && familyLists.escort" (click)="callEscort()">
-      {{settings.lang.callEscort}} {{familyLists.escort.name.value}}
+      {{settings.lang.callEscort}} {{familyLists.escort.name}}
       {{familyLists.escort.phone.displayValue}}
 
     </button>
@@ -188,7 +188,7 @@
   <div class="print-only">
     <div *ngIf="familyLists.helper&&!familyLists.helper.isNew()">
       <h4>{{settings.lang.hello}}
-        {{familyLists.helper.name.value +(familyLists.helper.eventComment.value?' ('+familyLists.helper.eventComment.value+')':'')}},
+        {{familyLists.helper.name +(familyLists.helper.eventComment?' ('+familyLists.helper.eventComment+')':'')}},
         {{settings.lang.phone}} {{familyLists.getHelperPhone() }}, {{settings.lang.thereAre}}
         {{familyLists.getLeftFamiliesDescription()}} </h4>
       {{getHelpText()}}
@@ -202,48 +202,48 @@
       </tr>
       <tr *ngFor="let f of familyLists.toDeliver;let i=index">
         <td>
-          {{i+1}}. {{f.name.value}}
-          <ng-container *ngIf="f.deliveryComments.value">
+          {{i+1}}. {{f.name}}
+          <ng-container *ngIf="f.deliveryComments">
             <br />
-            <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments.value}}
+            <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments}}
           </ng-container>
         </td>
 
         <td>
-          {{f.address.value}}
-          <ng-container *ngIf="f.area.value">
+          {{f.address}}
+          <ng-container *ngIf="f.area">
             <br />
-            {{f.area.defs.caption}}: {{f.area.value}}
+            {{f.$.area.defs.caption}}: {{f.area}}
           </ng-container>
-          <ng-container *ngIf="f.floor.value||f.appartment.value">
+          <ng-container *ngIf="f.floor||f.appartment">
             <br />
           </ng-container>
-          <ng-container *ngIf="f.floor.value">
-            {{f.floor.defs.caption}} {{f.floor.value}}
+          <ng-container *ngIf="f.floor">
+            {{f.$.floor.defs.caption}} {{f.floor}}
           </ng-container>
-          <ng-container *ngIf="f.appartment.value">
-            {{f.appartment.defs.caption}} {{f.appartment.value}}
+          <ng-container *ngIf="f.appartment">
+            {{f.$.appartment.defs.caption}} {{f.appartment}}
           </ng-container>
-          <ng-container *ngIf="f.entrance.value">
-            {{f.entrance.defs.caption}} {{f.entrance.value}}
+          <ng-container *ngIf="f.entrance">
+            {{f.$.entrance.defs.caption}} {{f.entrance}}
           </ng-container>
-          <ng-container *ngIf="f.addressComment.value">
-            <br /> {{f.addressComment.value}}
+          <ng-container *ngIf="f.addressComment">
+            <br /> {{f.addressComment}}
           </ng-container>
         </td>
         <td>
-          {{f.phone1.displayValue}}<ng-container *ngIf="f.phone1Description.value">, {{f.phone1Description.value}}
+          {{f.phone1.displayValue}}<ng-container *ngIf="f.phone1Description">, {{f.phone1Description}}
           </ng-container>
-          <div style="margin-top:5px" *ngIf="f.phone2.value">
+          <div style="margin-top:5px" *ngIf="f.phone2">
 
             <div style="display:inline-block">
-              {{f.phone2.displayValue}}, {{f.phone2Description.value?f.phone2Description.value:f.name.value}}
+              {{f.phone2.displayValue}}, {{f.phone2Description?f.phone2Description:f.name}}
 
             </div>
           </div>
         </td>
         <td>
-          <span *ngIf="f.quantity.value>1">{{f.quantity.value}} x </span> {{f.basketType.displayValue}}
+          <span *ngIf="f.quantity>1">{{f.quantity}} x </span> {{f.$.basketType.displayValue}}
         </td>
       </tr>
       <tr>

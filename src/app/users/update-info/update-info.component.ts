@@ -1,10 +1,10 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { StringColumn } from '@remult/core';
+
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { SignedInGuard, RouteHelperService } from '@remult/angular';
+import { SignedInGuard, RouteHelperService, InputControl, GridSettings } from '@remult/angular';
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
@@ -30,8 +30,8 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, canActivate: [SignedInGuard] };
 
-  confirmPassword = new StringColumn({ caption: this.settings.lang.confirmPassword, dataControlSettings: () => ({ inputType: 'password' }), defaultValue: Helpers.emptyPassword });
-  helpers = this.context.for(Helpers).gridSettings({
+  confirmPassword = new InputControl<string>({ caption: this.settings.lang.confirmPassword, inputType: 'password', defaultValue: () => Helpers.emptyPassword });
+  helpers = new GridSettings(this.context.for(Helpers), {
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     where: h => h.id.isEqualTo(this.context.user.id),
@@ -41,7 +41,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
       h.email,
       { column: h.preferredDistributionAreaAddress },
       { column: h.preferredFinishAddress },
-      { column: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment.value },
+      { column: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment },
       h.password,
       { column: this.confirmPassword },
 
@@ -58,22 +58,22 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.helpers.reloadData().then(() => {
-      if (!this.helpers.currentRow.password.value)
+      if (!this.helpers.currentRow.password)
         this.confirmPassword.value = '';
     });
   }
   async register() {
     try {
-      let passwordChanged = this.helpers.currentRow.password.value != this.helpers.currentRow.password.originalValue;
-      let thePassword = this.helpers.currentRow.password.value;
-      if (this.helpers.currentRow.password.value != this.confirmPassword.value) {
+      let passwordChanged = this.helpers.currentRow.$.password.wasChanged();
+      let thePassword = this.helpers.currentRow.password;
+      if (this.helpers.currentRow.password != this.confirmPassword.value) {
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
       }
       else {
 
         await this.helpers.items[0].save();
         this.dialog.Info(this.settings.lang.updateSaved);
-        this.confirmPassword.value = this.helpers.currentRow.password.value ? Helpers.emptyPassword : '';
+        this.confirmPassword.value = this.helpers.currentRow.password ? Helpers.emptyPassword : '';
         this.helper.navigateToComponent((await import('../../my-families/my-families.component')).MyFamiliesComponent);
 
 

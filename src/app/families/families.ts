@@ -1,22 +1,23 @@
-import { DeliveryStatus, DeliveryStatusColumn } from "./DeliveryStatus";
-import { YesNoColumn } from "./YesNo";
+import { DeliveryStatus } from "./DeliveryStatus";
+import { YesNo } from "./YesNo";
 
 import { FamilySourceId } from "./FamilySources";
-import { BasketId, QuantityColumn } from "./BasketType";
-import { SqlBuilder, PhoneColumn, EmailColumn, delayWhileTyping, wasChanged, changeDate } from "../model-shared/types";
-import { DataControlSettings, Column, Context, EntityClass, ServerFunction, IdEntity, IdColumn, StringColumn, NumberColumn, BoolColumn, SqlDatabase, DateColumn, Filter, ColumnOptions, SpecificEntityHelper, Entity, DataArealColumnSetting } from '@remult/core';
-import { BusyService, SelectValueDialogComponent } from '@remult/angular';
+import { BasketTypeId, QuantityColumn } from "./BasketType";
+import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
+import { Phone } from "../model-shared/Phone";
+import { Column, Context, ServerFunction, StoreAsStringValueConverter, IdEntity, SqlDatabase, Filter, Entity, Validators, DateOnlyValueConverter, Storable, DecimalValueConverter, ColumnDefinitions, ColumnDefinitionsOf, EntityDefinitions } from '@remult/core';
+import { BusyService, DataArealColumnSetting, DataControl, DataControlSettings, GridSettings, InputControl, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
-import { HelperIdReadonly, HelperId, Helpers } from "../helpers/helpers";
+import { HelperId, Helpers } from "../helpers/helpers";
 
-import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, AddressColumn, GeocodeResult } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
 
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
 import { use } from "../translate";
-import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
+import { FamilyStatus } from "./FamilyStatus";
 
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { DialogService } from "../select-popup/dialog";
@@ -24,8 +25,9 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 
 
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
-import { allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
+import { allCentersToken, DistributionCenterId, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
+import { SelectHelperComponent } from "../select-helper/select-helper.component";
 
 
 
@@ -46,18 +48,108 @@ declare type factoryFor<T> = {
 
 
 
-@EntityClass
+@Entity<Families>(
+  {
+    key: "Families",
+    caption: use.language.deliveries,
+    allowApiRead: Roles.admin,
+    allowApiUpdate: Roles.admin,
+    allowApiDelete: false,
+    allowApiInsert: Roles.admin,
+    apiDataFilter: (self, context) => {
+      if (!context.isAllowed(Roles.admin)) {
+        if (context.isAllowed(Roles.admin))
+          return undefined;
+        return self.id.isEqualTo('no rows');
+      }
+    },
+    saving: async (self) => {
+      if (self.disableOnSavingRow)
+        return;
+      if (self.context.onServer) {
+        if (!self.quantity || self.quantity < 1)
+          self.quantity = 1;
+        if (self.$.area.wasChanged() && self.area)
+          self.area = self.area.trim();
+
+
+
+        if (self.$.address.wasChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
+          await self.reloadGeoCoding();
+        }
+        if (self.isNew()) {
+          self.createDate = new Date();
+          self.createUser = new HelperId(self.context.user.id, self.context);
+        }
+        if (self.$.status.wasChanged()) {
+          self.statusDate = new Date();
+          self.statusUser = new HelperId(self.context.user.id, self.context);
+        }
+
+        if (!self._suppressLastUpdateDuringSchemaInit) {
+          self.lastUpdateDate = new Date();
+          self.lastUpdateUser = new HelperId(self.context.user.id, self.context);
+        }
+
+
+
+        if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.wasChanged())) {
+          for await (const fd of await self.context.for(FamilyDeliveries).find({
+            where: fd =>
+              fd.family.isEqualTo(self.id).and(
+                fd.archive.isEqualTo(false).and(
+                  DeliveryStatus.isNotAResultStatus(fd.deliverStatus)
+                ))
+          })) {
+            self.updateDelivery(fd);
+            if (self.$.basketType.wasChanged() && fd.basketType == self.$.basketType.originalValue)
+              fd.basketType = self.basketType;
+            if (self.$.quantity.wasChanged() && fd.quantity == self.$.quantity.originalValue)
+              fd.quantity = self.quantity;
+            if (self.$.deliveryComments.wasChanged() && fd.deliveryComments == self.$.deliveryComments.originalValue)
+              fd.deliveryComments = self.deliveryComments;
+            if (self.$.fixedCourier.wasChanged() && fd.courier == self.$.fixedCourier.originalValue)
+              fd.courier = self.fixedCourier;
+            if (self.$.defaultSelfPickup.wasChanged())
+              if (self.defaultSelfPickup)
+                if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
+                  fd.deliverStatus = DeliveryStatus.SelfPickup;
+                else if (fd.deliverStatus == DeliveryStatus.SelfPickup)
+                  fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
+            await fd.save();
+          }
+        }
+
+      }
+      else if (!self.context.onServer) {
+        let statusChangedOutOfActive = self.$.status.wasChanged() && self.status != FamilyStatus.Active;
+        if (statusChangedOutOfActive) {
+          let activeDeliveries = self.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
+          if (await activeDeliveries.count() > 0) {
+            if (await openDialog(YesNoQuestionComponent, async x => x.args = {
+              question: getLang(self.context).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.context).deliveries_ShouldWeDeleteThem
+            }, y => y.yes)) {
+              for await (const d of activeDeliveries) {
+                await d.delete();
+
+              }
+            }
+          }
+        }
+      }
+    }
+  })
 export class Families extends IdEntity {
   @ServerFunction({ allowed: Roles.admin })
   static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
-    let f = context.for(Families).create();
+    let f = SqlFor(context.for(Families));
     let r = await db.execute(sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
       where: () => [f.status.isEqualTo(FamilyStatus.Active)],
       groupBy: () => [f.fixedCourier],
-      orderBy: [{ column: f.fixedCourier, descending: false }]
+      orderBy: [{ column: f.fixedCourier, isDescending: false }]
 
     }));
     let result = r.rows.map(x => ({
@@ -68,12 +160,12 @@ export class Families extends IdEntity {
     for (const r of result) {
       let h = await context.for(Helpers).findId(r.id);
       if (h)
-        r.name = h.name.value;
+        r.name = h.name;
     }
     return result;
   }
   async showFamilyDialog(tools?: { onSave?: () => Promise<void>, focusOnAddress?: boolean }) {
-    this.context.openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
+    openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
       family: this,
       focusOnAddress: tools && tools.focusOnAddress,
       onSave: async () => {
@@ -84,8 +176,8 @@ export class Families extends IdEntity {
   }
   async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
-    this.context.openDialog(GridDialogComponent, x => x.args = {
-      title: getLang(this.context).deliveriesFor + ' ' + this.name.value,
+    openDialog(GridDialogComponent, x => x.args = {
+      title: getLang(this.context).deliveriesFor + ' ' + this.name,
       stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
       buttons: [{
@@ -96,7 +188,7 @@ export class Families extends IdEntity {
     });
   }
   public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
-    let result = this.context.for(FamilyDeliveries).gridSettings({
+    let result = new GridSettings(this.context.for(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
       rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -124,7 +216,7 @@ export class Families extends IdEntity {
         })
       ],
       columnSettings: fd => {
-        let r: Column[] = [
+        let r: ColumnDefinitions[] = [
           fd.deliverStatus,
           fd.deliveryStatusDate,
           fd.basketType,
@@ -135,12 +227,12 @@ export class Families extends IdEntity {
           fd.internalDeliveryComment,
           fd.distributionCenter
         ];
-        r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+        r.push(...[...fd].filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.caption.localeCompare(b.caption)));
         return r;
       },
 
       where: fd => fd.family.isEqualTo(this.id),
-      orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+      orderBy: fd => fd.deliveryStatusDate.descending(),
       rowsInPage: 25
 
     });
@@ -155,7 +247,7 @@ export class Families extends IdEntity {
     if (!args)
       args = {};
     if (!args.doNotCheckIfHasExistingDeliveries) {
-      let hasExisting = await this.context.for(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(d.deliverStatus.isNotAResultStatus()));
+      let hasExisting = await this.context.for(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(DeliveryStatus.isNotAResultStatus(d.deliverStatus)));
       if (hasExisting > 0) {
         if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
           this.showDeliveryHistoryDialog({ dialog, settings, busy });
@@ -164,40 +256,46 @@ export class Families extends IdEntity {
       }
     }
 
-    let newDelivery = this.createDelivery(await dialog.getDistCenter(this.address.location()));
-    let arciveCurrentDelivery = new BoolColumn({ caption: getLang(this.context).archiveCurrentDelivery, defaultValue: true });
+    let newDelivery = this.createDelivery(await (await dialog.getDistCenter(this.addressHelper.location())).evilGetId());
+    let arciveCurrentDelivery = new InputControl<boolean>({
+      caption: getLang(this.context).archiveCurrentDelivery,
+      defaultValue: () => true
+    });
     if (args.copyFrom != undefined) {
       newDelivery.copyFrom(args.copyFrom);
 
     }
-    let selfPickup = new BoolColumn({ caption: getLang(this.context).familySelfPickup, defaultValue: this.defaultSelfPickup.value });
+    let selfPickup = new InputControl<boolean>({
+      caption: getLang(this.context).familySelfPickup,
+      defaultValue: () => this.defaultSelfPickup
+    });
     if (args.copyFrom) {
-      selfPickup.value = args.copyFrom.deliverStatus.value == DeliveryStatus.SuccessPickedUp;
-      if (args.copyFrom.deliverStatus.value.isProblem)
-        newDelivery.courier.value = '';
+      selfPickup.value = args.copyFrom.deliverStatus == DeliveryStatus.SuccessPickedUp;
+      if (args.copyFrom.deliverStatus.isProblem)
+        newDelivery.courier = new HelperId('', this.context);
     }
 
 
-    await this.context.openDialog(InputAreaComponent, x => {
+    await openDialog(InputAreaComponent, x => {
       x.args = {
         settings: {
           columnSettings: () => {
             let r: DataArealColumnSetting<any>[] = [
-              [newDelivery.basketType,
-              newDelivery.quantity],
-              newDelivery.deliveryComments];
+              [newDelivery.$.basketType,
+              newDelivery.$.quantity],
+              newDelivery.$.deliveryComments];
             if (dialog.hasManyCenters)
-              r.push(newDelivery.distributionCenter);
+              r.push(newDelivery.$.distributionCenter);
             r.push(newDelivery.courier);
-            if (args.copyFrom != null && DeliveryStatus.IsAResultStatus(args.copyFrom.deliverStatus.value)) {
+            if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus()) {
               r.push(arciveCurrentDelivery);
             }
-            r.push({ column: selfPickup, visible: () => settings.usingSelfPickupModule.value })
+            r.push({ column: selfPickup, visible: () => settings.usingSelfPickupModule })
 
             return r;
           }
         },
-        title: getLang(this.context).newDeliveryFor + this.name.value,
+        title: getLang(this.context).newDeliveryFor + this.name,
         validate: async () => {
           let count = await newDelivery.duplicateCount();
           if (count > 0) {
@@ -210,17 +308,17 @@ export class Families extends IdEntity {
           }
         },
         ok: async () => {
-          let newId = await Families.addDelivery(newDelivery.family.value, {
-            basketType: newDelivery.basketType.value,
-            quantity: newDelivery.quantity.value,
-            comment: newDelivery.deliveryComments.value,
-            courier: newDelivery.courier.value,
-            distCenter: newDelivery.distributionCenter.value,
+          let newId = await Families.addDelivery(newDelivery.family, {
+            basketType: newDelivery.basketType.evilGetId(),
+            quantity: newDelivery.quantity,
+            comment: newDelivery.deliveryComments,
+            courier: newDelivery.courier.evilGetId(),
+            distCenter: newDelivery.distributionCenter.evilGetId(),
             selfPickup: selfPickup.value
 
           });
-          if (args.copyFrom != null && DeliveryStatus.IsAResultStatus(args.copyFrom.deliverStatus.value) && arciveCurrentDelivery.value) {
-            args.copyFrom.archive.value = true;
+          if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus() && arciveCurrentDelivery.value) {
+            args.copyFrom.archive = true;
             await args.copyFrom.save();
           }
           if (args.aDeliveryWasAdded)
@@ -246,313 +344,280 @@ export class Families extends IdEntity {
     let f = await context.for(Families).findId(familyId);
     if (f) {
       if (settings.distCenter == allCentersToken)
-        settings.distCenter = await findClosestDistCenter(f.address.location(), context);
+        settings.distCenter = await (await findClosestDistCenter(f.addressHelper.location(), context)).evilGetId();
       let fd = f.createDelivery(settings.distCenter);
-      fd.basketType.value = settings.basketType;
-      fd.quantity.value = settings.quantity;
-      fd.deliveryComments.value = settings.comment;
-      fd.distributionCenter.value = settings.distCenter;
-      fd.courier.value = settings.courier;
-      if (settings.deliverStatus) fd.deliverStatus.value = settings.deliverStatus;
-      if (settings.archive) fd.archive.value = settings.archive;
+      fd.basketType = new BasketTypeId(settings.basketType, context);
+      fd.quantity = settings.quantity;
+      fd.deliveryComments = settings.comment;
+      fd.distributionCenter = new DistributionCenterId(settings.distCenter, context);
+      fd.courier = new HelperId(settings.courier, context);
+      if (settings.deliverStatus) fd.deliverStatus = settings.deliverStatus;
+      if (settings.archive) fd.archive = settings.archive;
       if (settings.selfPickup)
-        fd.deliverStatus.value = DeliveryStatus.SelfPickup;
+        fd.deliverStatus = DeliveryStatus.SelfPickup;
 
       await fd.save();
-      return fd.id.value;
+      return fd.id;
     }
     throw getLang(context).familyWasNotFound;
 
   }
   createDelivery(distCenter: string) {
     let fd = this.context.for(FamilyDeliveries).create();
-    fd.family.value = this.id.value;
-    fd.distributionCenter.value = distCenter;
-    fd.special.value = this.special.value;
-    fd.basketType.value = this.basketType.value;
-    fd.quantity.value = this.quantity.value;
-    fd.deliveryComments.value = this.deliveryComments.value;
-    fd.courier.value = this.fixedCourier.value;
-    fd.deliverStatus.value = this.defaultSelfPickup.value ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
+    fd.family = this.id;
+    fd.distributionCenter = new DistributionCenterId(distCenter, this.context);
+    fd.special = this.special;
+    fd.basketType = this.basketType;
+    fd.quantity = this.quantity;
+    fd.deliveryComments = this.deliveryComments;
+    fd.courier = this.fixedCourier;
+    fd.deliverStatus = this.defaultSelfPickup ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
     this.updateDelivery(fd);
     return fd;
   }
   sharedColumns() {
     return [
-      this.name,
-      this.familySource,
-      this.groups,
-      this.address,
-      this.floor,
-      this.appartment,
-      this.entrance,
-      this.buildingCode,
-      this.city,
-      this.area,
-      this.addressComment,//
-      this.addressLongitude,
-      this.addressLatitude,
-      this.drivingLongitude,
-      this.drivingLatitude,
-      this.addressByGoogle,
-      this.addressOk,
-      this.phone1,
-      this.phone1Description,
-      this.phone2,
-      this.phone2Description,
-      this.phone3,
-      this.phone3Description,
-      this.phone4,
-      this.phone4Description,
-      this.fixedCourier,
-      this.familyMembers
+      this.$.name,
+      this.$.familySource,
+      this.$.groups,
+      this.$.address,
+      this.$.floor,
+      this.$.appartment,
+      this.$.entrance,
+      this.$.buildingCode,
+      this.$.city,
+      this.$.area,
+      this.$.addressComment,//
+      this.$.addressLongitude,
+      this.$.addressLatitude,
+      this.$.drivingLongitude,
+      this.$.drivingLatitude,
+      this.$.addressByGoogle,
+      this.$.addressOk,
+      this.$.phone1,
+      this.$.phone1Description,
+      this.$.phone2,
+      this.$.phone2Description,
+      this.$.phone3,
+      this.$.phone3Description,
+      this.$.phone4,
+      this.$.phone4Description,
+      this.$.fixedCourier,
+      this.$.familyMembers
     ];
   }
   isGpsAddress() {
-    return isGpsAddress(this.address.value);
+    return isGpsAddress(this.address);
   }
   getAddressDescription() {
     if (this.isGpsAddress()) {
-      return getLang(this.context).gpsLocationNear + ' ' + this.addressByGoogle.value;
+      return getLang(this.context).gpsLocationNear + ' ' + this.addressByGoogle;
 
     }
-    return this.address.value;
+    return this.address;
   }
   updateDelivery(fd: import("./FamilyDeliveries").FamilyDeliveries) {
-    fd.family.value = this.id.value;
+    fd.family = this.id;
     for (const col of this.sharedColumns()) {
-      fd.columns.find(col).value = col.value;
+      fd.$[col.defs.key].value = col.value;
     }
   }
 
   __disableGeocoding = false;
 
   constructor(private context: Context) {
-    super(
-      {
-        name: "Families",
-        caption: getLang(context).deliveries,
-        allowApiRead: Roles.admin,
-        allowApiUpdate: Roles.admin,
-        allowApiDelete: false,
-        allowApiInsert: Roles.admin,
-        apiDataFilter: () => {
-          if (!context.isAllowed(Roles.admin)) {
-            if (context.isAllowed(Roles.admin))
-              return undefined;
-            return this.id.isEqualTo('no rows');
-          }
-        },
-        saving: async () => {
-          if (this.disableOnSavingRow)
-            return;
-          if (this.context.onServer) {
-            if (!this.quantity.value || this.quantity.value < 1)
-              this.quantity.value = 1;
-            if (wasChanged(this.area) && this.area.value)
-              this.area.value = this.area.value.trim();
-
-
-
-            if (this.address.value != this.address.originalValue || !this.address.ok() || this.autoCompleteResult.value) {
-              await this.reloadGeoCoding();
-            }
-            if (this.isNew()) {
-              this.createDate.value = new Date();
-              this.createUser.value = context.user.id;
-            }
-            if (this.status.value != this.status.originalValue) {
-              this.statusDate.value = new Date();
-              this.statusUser.value = context.user.id;
-            }
-
-            if (!this._suppressLastUpdateDuringSchemaInit) {
-              this.lastUpdateDate.value = new Date();
-              this.lastUpdateUser.value = context.user.id;
-            }
-
-
-
-            if (this.sharedColumns().find(x => x.value != x.originalValue) || [this.basketType, this.quantity, this.deliveryComments, this.defaultSelfPickup].find(x => wasChanged(x))) {
-              for await (const fd of await context.for(FamilyDeliveries).find({
-                where: fd =>
-                  fd.family.isEqualTo(this.id).and(
-                    fd.archive.isEqualTo(false).and(
-                      fd.deliverStatus.isGreaterOrEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                        fd.deliverStatus.isLessOrEqualTo(DeliveryStatus.Frozen)
-                      )))
-              })) {
-                this.updateDelivery(fd);
-                if (wasChanged(this.basketType) && fd.basketType.value == this.basketType.originalValue)
-                  fd.basketType.value = this.basketType.value;
-                if (wasChanged(this.quantity) && fd.quantity.value == this.quantity.originalValue)
-                  fd.quantity.value = this.quantity.value;
-                if (wasChanged(this.deliveryComments) && fd.deliveryComments.value == this.deliveryComments.originalValue)
-                  fd.deliveryComments.value = this.deliveryComments.value;
-                if (wasChanged(this.fixedCourier) && fd.courier.value == this.fixedCourier.originalValue)
-                  fd.courier.value = this.fixedCourier.value;
-                if (wasChanged(this.defaultSelfPickup))
-                  if (this.defaultSelfPickup.value)
-                    if (fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
-                      fd.deliverStatus.value = DeliveryStatus.SelfPickup;
-                    else if (fd.deliverStatus.value == DeliveryStatus.SelfPickup)
-                      fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
-                await fd.save();
-              }
-            }
-
-          }
-          else if (!this.context.onServer) {
-            let statusChangedOutOfActive = wasChanged(this.status) && this.status.value != FamilyStatus.Active;
-            if (statusChangedOutOfActive) {
-              let activeDeliveries = this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(this.id).and(fd.deliverStatus.isNotAResultStatus()) });
-              if (await activeDeliveries.count() > 0) {
-                if (await this.context.openDialog(YesNoQuestionComponent, async x => x.args = {
-                  question: getLang(this.context).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(this.context).deliveries_ShouldWeDeleteThem
-                }, y => y.yes)) {
-                  for await (const d of activeDeliveries) {
-                    await d.delete();
-
-                  }
-                }
-              }
-            }
-          }
-        }
-
-      });
-    this.id.defs.caption = getLang(this.context).familyIdInHagaiApp;
+    super();
   }
   disableChangeLogging = false;
   disableOnSavingRow = false;
   _suppressLastUpdateDuringSchemaInit = false;
 
+  @Column({
+    caption: use.language.familyName,
+    //valueChange: () => this.delayCheckDuplicateFamilies(),
+    validate: Validators.required.withMessage(use.language.nameIsTooShort)
+  })
+  name: string;
 
-  name = new StringColumn({
-    caption: getLang(this.context).familyName,
-    valueChange: () => this.delayCheckDuplicateFamilies(),
-    validate: () => {
-      if (!this.name.value)
-        this.name.validationError = getLang(this.context).nameIsTooShort;
-    }
-  });
 
-  tz = new StringColumn({
-    caption: getLang(this.context).socialSecurityNumber, valueChange: () => this.delayCheckDuplicateFamilies()
-  });
-  tz2 = new StringColumn({
-    caption: getLang(this.context).spouceSocialSecurityNumber, valueChange: () => this.delayCheckDuplicateFamilies()
-  });
-  familyMembers = new NumberColumn({ caption: getLang(this.context).familyMembers });
-  birthDate = new DateColumn({ caption: getLang(this.context).birthDate });
-  nextBirthday = new DateColumn({
-
-    caption: getLang(this.context).nextBirthDay,
+  @Column({
+    caption: use.language.socialSecurityNumber,
+    //    valueChange: () => this.delayCheckDuplicateFamilies()
+  })
+  tz: string;
+  @Column({
+    caption: use.language.spouceSocialSecurityNumber,
+    //valueChange: () => this.delayCheckDuplicateFamilies()
+  })
+  tz2: string;
+  @Column({ caption: use.language.familyMembers })
+  familyMembers: number;
+  @Column({ caption: use.language.birthDate, valueConverter: () => DateOnlyValueConverter })
+  birthDate: Date;
+  @Column<Families>({
+    caption: use.language.nextBirthDay,
     sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
-    dataControlSettings: () => ({
-      readOnly: true,
-      inputType: 'date',
-      getValue: () => {
-        if (!this.nextBirthday.value)
-          return;
-        return this.nextBirthday.displayValue + " - " + getLang(this.context).age + " " + (this.nextBirthday.value.getFullYear() - this.birthDate.value.getFullYear())
-      }
-    })
-
-  })
-  basketType = new BasketId(this.context, getLang(this.context).defaultBasketType);
-  quantity = new QuantityColumn(this.context, { caption: getLang(this.context).defaultQuantity, allowApiUpdate: Roles.admin });
-
-  familySource = new FamilySourceId(this.context, { includeInApi: true, caption: getLang(this.context).familySource });
-  socialWorker = new StringColumn(getLang(this.context).familyHelpContact);
-  socialWorkerPhone1 = new PhoneColumn(getLang(this.context).familyHelpPhone1);
-  socialWorkerPhone2 = new PhoneColumn(getLang(this.context).familyHelpPhone2);
-  groups = new GroupsColumn(this.context);
-  special = new YesNoColumn({ caption: getLang(this.context).specialAsignment });
-  defaultSelfPickup = new BoolColumn(getLang(this.context).defaultSelfPickup);
-  iDinExcel = new StringColumn({ caption: getLang(this.context).familyUniqueId });
-  internalComment = new StringColumn({ caption: getLang(this.context).internalComment });
-
-
-  addressApiResult = new StringColumn();
-  address = new AddressColumn(this.context, this.addressApiResult, getLang(this.context).address, {
-    valueChange: () => {
-      if (!this.address.value)
-        return;
-      let y = parseUrlInAddress(this.address.value);
-      if (y != this.address.value)
-        this.address.value = y;
+    valueConverter: () => DateOnlyValueConverter,
+    displayValue: self => {
+      if (!self.nextBirthday)
+        return '';
+      return self.$.nextBirthday.displayValue + " - " + use.language.age + " " + (self.nextBirthday.getFullYear() - self.birthDate.getFullYear())
     }
-  });
+  })
 
-  floor = new StringColumn(getLang(this.context).floor);
-  appartment = new StringColumn(getLang(this.context).appartment);
-  entrance = new StringColumn(getLang(this.context).entrance);
-  buildingCode = new StringColumn(getLang(this.context).buildingCode);
-  city = new StringColumn({ caption: getLang(this.context).cityAutomaticallyUpdatedByGoogle });
-  area = new AreaColumn(this.context);
-  addressComment = new StringColumn(getLang(this.context).addressComment);
-  postalCode = new NumberColumn(getLang(this.context).postalCode);
-  deliveryComments = new StringColumn(getLang(this.context).defaultDeliveryComment);
+  nextBirthday: Date
+  @Column({ caption: use.language.defaultBasketType })
+  basketType: BasketTypeId;
+  @Column({ caption: use.language.defaultQuantity, allowApiUpdate: Roles.admin })
+  quantity: number;
+  @Column({ includeInApi: true, caption: use.language.familySource })
+  familySource: FamilySourceId;
+  @Column({ caption: use.language.familyHelpContact })
+  socialWorker: string;
+  @Column({ caption: use.language.familyHelpPhone1 })
+  socialWorkerPhone1: Phone;
+  @Column({ caption: use.language.familyHelpPhone2 })
+  socialWorkerPhone2: Phone;
+  @Column()
+  groups: GroupsValue;
+  @Column({ caption: use.language.specialAsignment })
+  special: YesNo;
+  @Column({ caption: use.language.defaultSelfPickup })
+  defaultSelfPickup: boolean;
+  @Column({ caption: use.language.familyUniqueId })
+  iDinExcel: string;
+  @Column({ caption: use.language.internalComment })
+  internalComment: string;
+  @Column()
+  addressApiResult: string;
 
-  phone1 = new PhoneColumn({ caption: getLang(this.context).phone1, dbName: 'phone', valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone1Description = new StringColumn(getLang(this.context).phone1Description);
-  phone2 = new PhoneColumn({ caption: getLang(this.context).phone2, valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone2Description = new StringColumn(getLang(this.context).phone2Description);
-  phone3 = new PhoneColumn({ caption: getLang(this.context).phone3, valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone3Description = new StringColumn(getLang(this.context).phone3Description);
-  phone4 = new PhoneColumn({ caption: getLang(this.context).phone4, valueChange: () => this.delayCheckDuplicateFamilies() });
-  phone4Description = new StringColumn(getLang(this.context).phone4Description);
+  @Column({
+    caption: use.language.address,
+    // valueChange: () => {
+    //   if (!this.address.value)
+    //     return;
+    //   let y = parseUrlInAddress(this.address.value);
+    //   if (y != this.address.value)
+    //     this.address.value = y;
+    // }
+  })
+  address: string;
+  addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
 
-  email = new EmailColumn();
 
-  status = new FamilyStatusColumn(this.context);
-  statusDate = new changeDate(getLang(this.context).statusChangeDate);
-  statusUser = new HelperIdReadonly(this.context, getLang(this.context).statusChangeUser);
-  fixedCourier = new HelperId(this.context, getLang(this.context).defaultVolunteer, { location: () => this.address.location(), searchClosestDefaultFamily: true });
-  custom1 = new CustomColumn(customColumnInfo[1]);
-  custom2 = new CustomColumn(customColumnInfo[2]);
-  custom3 = new CustomColumn(customColumnInfo[3]);
-  custom4 = new CustomColumn(customColumnInfo[4]);
+  @Column({ caption: use.language.floor })
+  floor: string;
+  @Column({ caption: use.language.appartment })
+  appartment: string;
+  @Column({ caption: use.language.entrance })
+  entrance: string;
+  @Column({ caption: use.language.buildingCode })
+  buildingCode: string;
+  @Column({ caption: use.language.cityAutomaticallyUpdatedByGoogle })
+  city: string;
+  @AreaColumn()
+  area: string;
+  @Column({ caption: use.language.addressComment })
+  addressComment: string;
+  @Column({ caption: use.language.postalCode })
+  postalCode: number;
+  @Column({ caption: use.language.defaultDeliveryComment })
+  deliveryComments: string;
+  @Column({
+    caption: use.language.phone1, dbName: 'phone',
+    //valueChange: () => this.delayCheckDuplicateFamilies()
+  })
+  phone1: Phone;
+  @Column({ caption: use.language.phone1Description })
+  phone1Description: string;
+  @Column({
+    caption: use.language.phone2,
+    //valueChange: () => this.delayCheckDuplicateFamilies()
+  })
+  phone2: Phone;
+  @Column({ caption: use.language.phone2Description })
+  phone2Description: string;
+  @Column({
+    caption: use.language.phone3,
+    //valueChange: () => this.delayCheckDuplicateFamilies()
+  })
+  phone3: Phone;
+  @Column({ caption: use.language.phone3Description })
+  phone3Description: string;
+  @Column({
+    caption: use.language.phone4,
+    //valueChange: () => this.delayCheckDuplicateFamilies()
+  })
+  phone4: Phone;
+  @Column({ caption: use.language.phone4Description })
+  phone4Description: string;
+  @Column()
+  email: Email;
+  @Column()
+  status: FamilyStatus;
+  @ChangeDateColumn({ caption: use.language.statusChangeDate })
+  statusDate: Date;
+  @Column({ caption: use.language.statusChangeUser, allowApiUpdate: false })
+  statusUser: HelperId;
+  @Column({ caption: use.language.defaultVolunteer })
+  @DataControl<Families, HelperId>({
+    click: (e, col) => {
+      openDialog(SelectHelperComponent, x => x.args = {
+        searchClosestDefaultFamily: true,
+        location: e.addressHelper.location(),
+        onSelect: selected => col.value = new HelperId(selected.id, e.context)
+      });
+    }
+  })
+  fixedCourier: HelperId;
+  @CustomColumn(() => customColumnInfo[1])
+  custom1: string;
+  @CustomColumn(() => customColumnInfo[2])
+  custom2: string;
+  @CustomColumn(() => customColumnInfo[3])
+  custom3: string;
+  @CustomColumn(() => customColumnInfo[4])
+  custom4: string;
+
 
   async reloadGeoCoding() {
 
     let geo: GeocodeInformation;
 
-    if (this.autoCompleteResult.value) {
-      let result: autocompleteResult = JSON.parse(this.autoCompleteResult.value);
-      if (result.address == this.address.value)
+    if (this.autoCompleteResult) {
+      let result: autocompleteResult = JSON.parse(this.autoCompleteResult);
+      if (result.address == this.address)
         geo = new GeocodeInformation(result.result);
     }
     if (geo == undefined && !this.__disableGeocoding)
-      geo = await GetGeoInformation(this.address.value, this.context);
+      geo = await GetGeoInformation(this.address, this.context);
     if (geo == undefined) {
       geo = new GeocodeInformation();
     }
-    this.addressApiResult.value = geo.saveToString();
-    this.city.value = '';
+    this.addressApiResult = geo.saveToString();
+    this.city = '';
     if (geo.ok()) {
-      this.city.value = geo.getCity();
+      this.city = geo.getCity();
       await this.setPostalCodeServerOnly();
     }
-    this.addressOk.value = !geo.partialMatch();
-    this.addressByGoogle.value = geo.getAddress();
-    this.addressLongitude.value = geo.location().lng;
-    this.addressLatitude.value = geo.location().lat;
-    this.drivingLatitude.value = this.addressLatitude.value;
-    this.drivingLongitude.value = this.addressLongitude.value;
-    if (isGpsAddress(this.address.value)) {
-      var j = this.address.value.split(',');
-      this.addressLatitude.value = +j[0];
-      this.addressLongitude.value = +j[1];
+    this.addressOk = !geo.partialMatch();
+    this.addressByGoogle = geo.getAddress();
+    this.addressLongitude = geo.location().lng;
+    this.addressLatitude = geo.location().lat;
+    this.drivingLatitude = this.addressLatitude;
+    this.drivingLongitude = this.addressLongitude;
+    if (isGpsAddress(this.address)) {
+      var j = this.address.split(',');
+      this.addressLatitude = +j[0];
+      this.addressLongitude = +j[1];
     }
   }
 
   async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
       return;
-    var geo = this.address.getGeocodeInformation();
+    var geo = this.addressHelper.getGeocodeInformation();
     var house = '';
     var streen = '';
     var location = '';
@@ -579,7 +644,7 @@ export class Families extends IdEntity {
         body: 'location=' + encodeURI(location) + '&street=' + encodeURI(streen) + '&house=' + encodeURI(house) + '&entrance=&pob='
       })).json();
       if (r.errors == 0 && r.zip) {
-        this.postalCode.value = +r.zip;
+        this.postalCode = +r.zip;
       }
     }
     catch (err) {
@@ -588,82 +653,78 @@ export class Families extends IdEntity {
   }
 
 
-  previousDeliveryStatus = new DeliveryStatusColumn(this.context, {
-    caption: getLang(this.context).previousDeliveryStatus,
-    sqlExpression: () => {
-      return this.dbNameFromLastDelivery(fde => fde.deliverStatus, "prevStatus");
+  @Column({
+    caption: use.language.previousDeliveryStatus,
+    sqlExpression: (self, context) => {
+      return dbNameFromLastDelivery(self, context, fde => fde.deliverStatus, "prevStatus");
     }
-  });
-  previousDeliveryDate = new changeDate({
-    caption: getLang(this.context).previousDeliveryDate,
+  })
+  previousDeliveryStatus: DeliveryStatus;
+  @ChangeDateColumn({
+    caption: use.language.previousDeliveryDate,
 
-    sqlExpression: () => {
-      return this.dbNameFromLastDelivery(fde => fde.deliveryStatusDate, "prevDate");
+    sqlExpression: (self, context) => {
+      return dbNameFromLastDelivery(self, context, fde => fde.deliveryStatusDate, "prevDate");
     }
-  });
-  previousDeliveryComment = new StringColumn({
-    caption: getLang(this.context).previousDeliveryNotes,
-    sqlExpression: () => {
-      return this.dbNameFromLastDelivery(fde => fde.courierComments, "prevComment");
+  })
+  previousDeliveryDate: Date;
+  @Column<Families>({
+    caption: use.language.previousDeliveryNotes,
+    sqlExpression: (self, context) => {
+      return dbNameFromLastDelivery(self, context, fde => fde.courierComments, "prevComment");
     }
-  });
-
-  numOfActiveReadyDeliveries = new NumberColumn({
-    caption: getLang(this.context).numOfActiveReadyDeliveries,
-    sqlExpression: () => {
-      let fd = this.context.for(FamilyDeliveries).create();
+  })
+  previousDeliveryComment: string;
+  @Column({
+    caption: use.language.numOfActiveReadyDeliveries,
+    sqlExpression: (selfDefs, context) => {
+      let self = SqlFor(selfDefs);
+      let fd = SqlFor(context.for(FamilyDeliveries));
       let sql = new SqlBuilder();
-      return sql.columnCount(this, {
+      return sql.columnCount(self, {
         from: fd,
-        where: () => [sql.eq(fd.family, this.id),
-        fd.archive.isEqualTo(false).and(fd.deliverStatus.isNotAResultStatus())]
+        where: () => [sql.eq(fd.family, self.id),
+        fd.archive.isEqualTo(false).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus))]
       });
 
     }
-  });
-
-
-
+  })
+  numOfActiveReadyDeliveries: number;
+  @Column({ valueConverter: () => DecimalValueConverter })
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
-  addressLongitude = new NumberColumn({ decimalDigits: 8 });
-  addressLatitude = new NumberColumn({ decimalDigits: 8 });
+  addressLongitude: number;
+  @Column({ valueConverter: () => DecimalValueConverter })
+  addressLatitude: number;
+  @Column({ valueConverter: () => DecimalValueConverter })
   //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
-  drivingLongitude = new NumberColumn({ decimalDigits: 8 });
-  drivingLatitude = new NumberColumn({ decimalDigits: 8 });
-  addressByGoogle = new StringColumn({ caption: getLang(this.context).addressByGoogle, allowApiUpdate: false });
-  autoCompleteResult = new StringColumn({ serverExpression: () => '' });
-  addressOk = new BoolColumn({ caption: getLang(this.context).addressOk });
-
-  private dbNameFromLastDelivery(col: (fd: import("./FamilyDeliveries").FamilyDeliveries) => Column, alias: string) {
-
-    let fd = this.context.for(FamilyDeliveries).create();
-    let sql = new SqlBuilder();
-    return sql.columnInnerSelect(this, {
-      select: () => [sql.columnWithAlias(col(fd), alias)],
-      from: fd,
-
-      where: () => [sql.eq(fd.family, this.id),
-      ],
-      orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
-    });
-  }
+  drivingLongitude: number;
+  @Column({ valueConverter: () => DecimalValueConverter })
+  drivingLatitude: number;
+  @Column({ caption: use.language.addressByGoogle, allowApiUpdate: false })
+  addressByGoogle: string;
+  @Column({ serverExpression: () => '' })
+  autoCompleteResult: string;
+  @Column({ caption: use.language.addressOk })
+  addressOk: boolean;
 
 
 
-  getPreviousDeliveryColumn() {
+
+
+  static getPreviousDeliveryColumn(self: ColumnDefinitionsOf<Families>) {
     return {
-      caption: getLang(this.context).previousDeliverySummary,
+      caption: use.language.previousDeliverySummary,
       readonly: true,
-      column: this.previousDeliveryStatus,
+      column: self.previousDeliveryStatus,
       dropDown: {
-        items: this.previousDeliveryStatus.getOptions()
+        items: DeliveryStatus.converter.getOptions()
       },
       getValue: f => {
-        if (!f.previousDeliveryStatus.value)
+        if (!f.previousDeliveryStatus)
           return '';
-        let r = f.previousDeliveryStatus.displayValue;
-        if (f.previousDeliveryComment.value) {
-          r += ': ' + f.previousDeliveryComment.value
+        let r = f.previousDeliveryStatus.caption;
+        if (f.previousDeliveryComment) {
+          r += ': ' + f.previousDeliveryComment
         }
         return r;
       },
@@ -677,26 +738,32 @@ export class Families extends IdEntity {
 
 
 
-  createDate = new changeDate({ caption: getLang(this.context).createDate });
-  createUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
-  lastUpdateDate = new changeDate({ caption: getLang(this.context).lastUpdateDate });
-  lastUpdateUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).lastUpdateUser });
+  @ChangeDateColumn({ caption: use.language.createDate })
+  createDate: Date;
+  @Column({ allowApiUpdate: false, caption: use.language.createUser })
+  createUser: HelperId;
+  @ChangeDateColumn({ caption: use.language.lastUpdateDate })
+  lastUpdateDate: Date;
+  @Column({ allowApiUpdate: false, caption: use.language.lastUpdateUser })
+  lastUpdateUser: HelperId;
+
 
 
 
 
   openWaze() {
+
     //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.address.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + '&navigate=yes');
+    window.open('waze://?ll=' + this.addressHelper.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address) + '&navigate=yes');
   }
   openGoogleMaps() {
-    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.address.value, '_blank');
+    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.address, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.address.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.context).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.context).languageCode, '_blank');
   }
   showOnGovMap() {
-    window.open('https://www.govmap.gov.il/?q=' + this.address.value + '&z=10', '_blank');
+    window.open('https://www.govmap.gov.il/?q=' + this.address + '&z=10', '_blank');
   }
 
 
@@ -707,7 +774,7 @@ export class Families extends IdEntity {
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Context) {
     switch (updateType) {
       case 1:
-        switch (n.deliverStatus.value) {
+        switch (n.deliverStatus) {
           case DeliveryStatus.ReadyForDelivery:
             break;
           case DeliveryStatus.Success:
@@ -719,18 +786,18 @@ export class Families extends IdEntity {
           case DeliveryStatus.FailedTooFar:
           case DeliveryStatus.FailedOther:
             let duration = '';
-            if (n.courierAssingTime.value && n.deliveryStatusDate.value)
-              duration = ' ' + getLang(context).within + ' ' + Math.round((n.deliveryStatusDate.value.valueOf() - n.courierAssingTime.value.valueOf()) / 60000) + " " + getLang(context).minutes;
-            return n.deliverStatus.displayValue + (n.courierComments.value ? ", \"" + n.courierComments.value + "\" - " : '') + ' ' + getLang(context).forFamily + ' ' + n.name.value + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
+            if (n.courierAssingTime && n.deliveryStatusDate)
+              duration = ' ' + getLang(context).within + ' ' + Math.round((n.deliveryStatusDate.valueOf() - n.courierAssingTime.valueOf()) / 60000) + " " + getLang(context).minutes;
+            return n.deliverStatus.caption + (n.courierComments ? ", \"" + n.courierComments + "\" - " : '') + ' ' + getLang(context).forFamily + ' ' + n.name + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
         }
-        return getLang(context).theFamily + ' ' + n.name.value + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.displayValue;
+        return getLang(context).theFamily + ' ' + n.name + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.caption;
       case 2:
-        if (n.courier.value)
-          return getLang(context).theFamily + ' ' + n.name.value + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
+        if (n.courier.isNotEmpty())
+          return getLang(context).theFamily + ' ' + n.name + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
         else
-          return getLang(context).assignmentCanceledFor + " " + n.name.value;
+          return getLang(context).assignmentCanceledFor + " " + n.name;
     }
-    return n.deliverStatus.displayValue;
+    return n.deliverStatus.caption;
   }
   tzDelay: delayWhileTyping;
   private delayCheckDuplicateFamilies() {
@@ -746,44 +813,61 @@ export class Families extends IdEntity {
     });
 
   }
+  @ServerFunction({ allowed: Roles.admin })
+  static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
+    var sql = new SqlBuilder();
+    let f = SqlFor(context.for(Families));
+    let r = await db.execute(sql.query({
+      from: f,
+      select: () => [f.area, 'count (*) as count'],
+      where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+      groupBy: () => [f.area],
+      orderBy: [{ column: f.area, isDescending: false }]
+
+    }));
+    return r.rows.map(x => ({
+      area: x.area,
+      count: x.count
+    }));
+  }
   _disableAutoDuplicateCheck = false;
   duplicateFamilies: duplicateFamilyInfo[] = [];
 
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name.value, this.tz.value, this.tz2.value, this.phone1.value, this.phone2.value, this.phone3.value, this.phone4.value, this.id.value, false, this.address.value);
-    this.tz.validationError = undefined;
-    this.tz2.validationError = undefined;
-    this.phone1.validationError = undefined;
-    this.phone2.validationError = undefined;
-    this.phone3.validationError = undefined;
-    this.phone4.validationError = undefined;
-    this.name.validationError = undefined;
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name, this.tz, this.tz2, this.phone1.thePhone, this.phone2.thePhone, this.phone3.thePhone, this.phone4.thePhone, this.id, false, this.address);
+    this.$.tz.error = undefined;
+    this.$.tz2.error = undefined;
+    this.$.phone1.error = undefined;
+    this.$.phone2.error = undefined;
+    this.$.phone3.error = undefined;
+    this.$.phone4.error = undefined;
+    this.$.name.error = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
       let errorText = getLang(this.context).valueAlreadyExistsFor + ' "' + d.name + '" ' + getLang(this.context).atAddress + ' ' + d.address;
       if (d.tz)
-        this.tz.validationError = errorText;
+        this.$.tz.error = errorText;
       if (d.tz2)
-        this.tz2.validationError = errorText;
+        this.$.tz2.error = errorText;
       if (d.phone1)
-        this.phone1.validationError = errorText;
+        this.$.phone1.error = errorText;
       if (d.phone2)
-        this.phone2.validationError = errorText;
+        this.$.phone2.error = errorText;
       if (d.phone3)
-        this.phone3.validationError = errorText;
+        this.$.phone3.error = errorText;
       if (d.phone4)
-        this.phone4.validationError = errorText;
-      if (d.nameDup && this.name.value != this.name.originalValue) {
+        this.$.phone4.error = errorText;
+      if (d.nameDup && this.$.name.wasChanged()) {
         if (!foundExactName)
-          this.name.validationError = errorText;
-        if (this.name.value && d.name && this.name.value.trim() == d.name.trim())
+          this.$.name.error = errorText;
+        if (this.name && d.name && this.name.trim() == d.name.trim())
           foundExactName = true;
       }
     }
-    PhoneColumn.validatePhone(this.phone1, this.context);
-    PhoneColumn.validatePhone(this.phone2, this.context);
-    PhoneColumn.validatePhone(this.phone3, this.context);
-    PhoneColumn.validatePhone(this.phone4, this.context);
+    Phone.validatePhone(this.$.phone1, this.context);
+    Phone.validatePhone(this.$.phone2, this.context);
+    Phone.validatePhone(this.$.phone3, this.context);
+    Phone.validatePhone(this.$.phone4, this.context);
 
 
   }
@@ -792,9 +876,9 @@ export class Families extends IdEntity {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
-    var f = context.for(Families).create();
+    var f = SqlFor(context.for(Families));
 
-    let compareAsNumber = (col: Column<string>, value: string) => {
+    let compareAsNumber = (col: ColumnDefinitions<any>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
     };
     let tzCol = sql.or(compareAsNumber(f.tz, tz), compareAsNumber(f.tz2, tz));
@@ -867,13 +951,6 @@ export class Families extends IdEntity {
 }
 
 
-export class FamilyId extends IdColumn {
-  constructor(context: Context, settingsOrCaption?: ColumnOptions<string>) {
-    super(settingsOrCaption);
-    if (!this.defs.caption)
-      this.defs.caption = getLang(context).familyIdInHagaiApp
-  }
-}
 
 export interface duplicateFamilyInfo {
   id: string;
@@ -892,12 +969,12 @@ export interface duplicateFamilyInfo {
 }
 
 export interface FamilyUpdateInfo {
-  name: StringColumn,
+  name: string,
   courier: HelperId,
-  deliverStatus: DeliveryStatusColumn,
-  courierAssingTime: changeDate,
-  deliveryStatusDate: changeDate,
-  courierComments: StringColumn
+  deliverStatus: DeliveryStatus,
+  courierAssingTime: Date,
+  deliveryStatusDate: Date,
+  courierComments: string
 }
 
 export function parseAddress(s: string) {
@@ -947,43 +1024,55 @@ export interface parseAddressResult {
   floor?: string;
   knisa?: string;
 }
-export class AreaColumn extends StringColumn {
-  constructor(context: Context, settingsOrCaption?: ColumnOptions<string>) {
-    super({
-      dataControlSettings: () => ({
-        click: async () => {
-          let areas = await AreaColumn.getAreas();
-          await context.openDialog(SelectValueDialogComponent, x => x.args({
-            values: areas.map(x => ({ caption: x.area })),
-            onSelect: area => {
-              this.value = area.caption;
-            }
-          }))
-        }
-      })
-    }, settingsOrCaption);
-    if (!this.defs.caption)
-      this.defs.caption = getLang(context).region;
-  }
-  @ServerFunction({ allowed: Roles.admin })
-  static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
-    var sql = new SqlBuilder();
-    let f = context.for(Families).create();
-    let r = await db.execute(sql.query({
-      from: f,
-      select: () => [f.area, 'count (*) as count'],
-      where: () => [f.status.isEqualTo(FamilyStatus.Active)],
-      groupBy: () => [f.area],
-      orderBy: [{ column: f.area, descending: false }]
 
-    }));
-    return r.rows.map(x => ({
-      area: x.area,
-      count: x.count
-    }));
+export function AreaColumn() {
+  return (target, key) => {
+    DataControl<any, string>({
+      click: async (row, col) => {
+        let areas = await Families.getAreas();
+        await openDialog(SelectValueDialogComponent, x => x.args({
+          values: areas.map(x => ({ caption: x.area })),
+          onSelect: area => {
+            col.value = area.caption;
+          }
+        }))
+      }
+    })(target, key);
+    return Column({
+      caption: use.language.region
+    })(target, key);
   }
 }
-export class GroupsColumn extends StringColumn {
+
+
+
+@Storable<GroupsValue>({
+  valueConverter: () => new StoreAsStringValueConverter(x => x.value, x => new GroupsValue(x)),
+  caption: use.language.familyGroup,
+})
+@DataControl<any, GroupsValue>({
+  forceEqualFilter: false,
+  width: '300',
+  click: async (row, col) => {
+    openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
+      s.init({
+        groups: col.value.value,
+        ok: x => col.value = new GroupsValue(x)
+      })
+    });
+  }
+
+})
+export class GroupsValue {
+  replace(val: string) {
+    this.value = val;
+  }
+  constructor(private value: string) {
+
+  }
+  evilGet() {
+    return this.value;
+  }
   listGroups() {
     if (!this.value)
       return [];
@@ -1003,25 +1092,6 @@ export class GroupsColumn extends StringColumn {
     else
       this.value = '';
     this.value += group;
-  }
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
-    super({
-      caption: getLang(context).familyGroup,
-
-      dataControlSettings: () => ({
-        width: '300',
-
-        forceEqualFilter: false,
-        click: async () => {
-          this.context.openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
-            s.init({
-              groups: this.value,
-              ok: x => this.value = x
-            })
-          });
-        }
-      })
-    }, settingsOrCaption);
   }
   selected(group: string) {
     if (!this.value)
@@ -1105,27 +1175,41 @@ export interface autocompleteResult {
 export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phone?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-      if (p.value && p.value.startsWith('05')) {
-        phone = p.value;
+      if (p.thePhone && p.thePhone.startsWith('05')) {
+        phone = p.thePhone;
         break;
       }
     }
   }
-  PhoneColumn.sendWhatsappToPhone(phone,
-    use.language.hello + ' ' + f.name.value + ',', context);
+  Phone.sendWhatsappToPhone(phone,
+    use.language.hello + ' ' + f.name + ',', context);
 }
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-    if (p.value && p.value.startsWith('05')) {
+    if (p.thePhone && p.thePhone.startsWith('05')) {
       return true;
     }
   }
 }
 
 export interface familyLikeEntity {
-  name: StringColumn;
-  phone1: StringColumn;
-  phone2: StringColumn;
-  phone3: StringColumn;
-  phone4: StringColumn;
+  name: string;
+  phone1: Phone;
+  phone2: Phone;
+  phone3: Phone;
+  phone4: Phone;
+}
+
+function dbNameFromLastDelivery(selfDefs: EntityDefinitions<Families>, context: Context, col: (fd: ColumnDefinitionsOf<import("./FamilyDeliveries").FamilyDeliveries>) => ColumnDefinitions, alias: string) {
+  let self = SqlFor(selfDefs);
+  let fd = SqlFor(context.for(FamilyDeliveries));
+  let sql = new SqlBuilder();
+  return sql.columnInnerSelect(self, {
+    select: () => [sql.columnWithAlias(col(fd), alias)],
+    from: fd,
+
+    where: () => [sql.eq(fd.family, self.id),
+    ],
+    orderBy: [{ column: fd.deliveryStatusDate, isDescending: true }]
+  });
 }

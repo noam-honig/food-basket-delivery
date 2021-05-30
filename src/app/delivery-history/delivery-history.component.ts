@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { EntityClass, Context, StringColumn, IdColumn, SpecificEntityHelper, SqlDatabase, Column, DataControlInfo, BoolColumn } from '@remult/core';
-import { FamilyId } from '../families/families';
-import { SqlBuilder, PhoneColumn } from '../model-shared/types';
-import { BasketId } from '../families/BasketType';
-import { DeliveryStatusColumn } from '../families/DeliveryStatus';
-import { HelperId, HelperIdReadonly, Helpers, CompanyColumn } from '../helpers/helpers';
+import { Context, SqlDatabase, Column, EntityBase, getControllerDefs, DateOnlyValueConverter } from '@remult/core';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { Phone } from "../model-shared/Phone";
+import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { CompoundIdColumn, DateColumn, DataAreaSettings, InMemoryDataProvider, Entity, GridSettings, NumberColumn } from '@remult/core';
+import { InMemoryDataProvider, Entity } from '@remult/core';
 import { sortColumns } from '../shared/utils';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 
@@ -14,16 +12,19 @@ import { Route } from '@angular/router';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { BusyService } from '@remult/angular';
-import { FamilySourceId } from '../families/FamilySources';
+import { BusyService, DataAreaSettings, DataControlInfo, GridSettings, InputControl, openDialog } from '@remult/angular';
+
 import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DistributionCenterId } from '../manage/distribution-centers';
+
 import { getLang } from '../sites/sites';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
+import { use } from '../translate';
+import { DeliveryStatus } from '../families/DeliveryStatus';
+import { DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
 
 
 
@@ -40,10 +41,14 @@ export class DeliveryHistoryComponent implements OnInit {
 
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
-  onlyDone = new BoolColumn({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: true })
-  onlyArchived = new BoolColumn({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: false })//this.settings.isSytemForMlt() })
+  onlyDone = new InputControl<boolean>({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: () => true })
+  onlyArchived = new InputControl<boolean>({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: () => false })//this.settings.isSytemForMlt() })
   rangeArea = new DataAreaSettings({
-    columnSettings: () => [this.onlyDone, this.onlyArchived],
+    columnSettings: () => {
+      let defs = getControllerDefs(this);
+      return [defs.columns.onlyDone, defs.columns.onlyArchived]
+
+    },
   });
 
   async refresh() {
@@ -63,8 +68,9 @@ export class DeliveryHistoryComponent implements OnInit {
   constructor(private context: Context, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
     this.helperStorage = new InMemoryDataProvider();
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
-
-    this.helperInfo = context.for(helperHistoryInfo, this.helperStorage).gridSettings({
+    let stam = new Context();
+    stam.setDataProvider(this.helperStorage);
+    this.helperInfo = new GridSettings(stam.for(helperHistoryInfo), {
       showFilter: true,
       allowSelection: true,
 
@@ -73,7 +79,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.settings, this.context.for(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.courier);
+          await saveToExcel(this.settings, stam.for(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.$.courier);
         }
       },
       {
@@ -87,12 +93,12 @@ export class DeliveryHistoryComponent implements OnInit {
             return;
           }
 
-          if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
+          if (await openDialog(YesNoQuestionComponent, q => q.args = {
             question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
           }, q => q.yes)) {
-            if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo('')) >= rows.length) {
+            if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(new HelperId('', this.context))) >= rows.length) {
               for (const h of rows) {
-                await HelperGifts.assignGift(h.courier.value);
+                await HelperGifts.assignGift(h.courier);
               }
               this.refresh();
             } else {
@@ -114,7 +120,7 @@ export class DeliveryHistoryComponent implements OnInit {
           name: 'הענק מתנה',
           visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
           click: async x => {
-            await HelperGifts.assignGift(x.courier.value);
+            await HelperGifts.assignGift(x.courier);
             this.refresh();
           },
         }
@@ -170,7 +176,7 @@ export class DeliveryHistoryComponent implements OnInit {
       },
 
       rowsInPage: 100,
-      orderBy: h => [{ column: h.deliveries, descending: true }],
+      orderBy: h => h.deliveries.descending(),
 
       knowTotalRows: true
     });
@@ -179,8 +185,8 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.value, this.onlyDone.value, this.onlyArchived.value);
-    let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).create().defs.dbName];
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.evilGetId(), this.onlyDone.value, this.onlyArchived.value);
+    let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -196,14 +202,14 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
-  deliveries = this.context.for(FamilyDeliveries).gridSettings({
+  deliveries = new GridSettings(this.context.for(FamilyDeliveries), {
     showFilter: true,
     rowCssClass: d => d.deliverStatus.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-        await saveToExcel(this.settings, this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+        await saveToExcel(this.settings, this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -220,7 +226,7 @@ export class DeliveryHistoryComponent implements OnInit {
           caption: this.settings.lang.deliverySummary,
           column: d.deliverStatus,
           readOnly: true,
-          valueList: d.deliverStatus.getOptions()
+          valueList: DeliveryStatus.converter.getOptions()
           ,
           getValue: f => f.getShortDeliveryDescription(),
           width: '300'
@@ -234,7 +240,7 @@ export class DeliveryHistoryComponent implements OnInit {
         d.courierAssingTime,
         d.deliveryStatusUser
       ];
-      for (const c of d.columns) {
+      for (const c of d) {
         if (!r.includes(c) && c != d.id && c != d.family)
           r.push(c);
       }
@@ -261,9 +267,9 @@ export class DeliveryHistoryComponent implements OnInit {
     where: d => {
       var toDate = this.dateRange.toDate.value;
       toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(d.distributionCenter.filter(this.dialog.distCenter.value))
+      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(filterDistCenter(d.distributionCenter, this.dialog.distCenter, this.context))
       if (this.onlyDone.value)
-        r = r.and(d.deliverStatus.isAResultStatus());
+        r = r.and(DeliveryStatus.isAResultStatus(d.deliverStatus));
       if (this.onlyArchived.value)
         r = r.and(d.archive.isEqualTo(true));
       return r;
@@ -285,9 +291,9 @@ export class DeliveryHistoryComponent implements OnInit {
         name: '',
         icon: 'replay',
         showInLine: true,
-        visible: x => (x.archive.value) && this.context.isAllowed(Roles.admin),
+        visible: x => (x.archive) && this.context.isAllowed(Roles.admin),
         click: async fd => {
-          fd.archive.value = false;
+          fd.archive = false;
           await fd.save();
           this.refresh();
         }
@@ -307,86 +313,99 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenter: string, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
-    var fromDateDate = DateColumn.stringToDate(fromDate);
-    var toDateDate = DateColumn.stringToDate(toDate);
+    var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
+    var toDateDate = DateOnlyValueConverter.fromJson(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
-    var fd = context.for(FamilyDeliveries).create();
-    var h = context.for(Helpers).create();
-    var hg = context.for(HelperGifts).create();
+    var fd = SqlFor(context.for(FamilyDeliveries));
+
+    var h = SqlFor(context.for(Helpers));
+    var hg = SqlFor(context.for(HelperGifts));
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
-      fd.deliveryStatusDate.isLessThan(toDateDate)).and(fd.distributionCenter.filter(distCenter));
+      fd.deliveryStatusDate.isLessThan(toDateDate)).and(filterDistCenter(fd.distributionCenter, new DistributionCenterId(distCenter, context), context));
     if (onlyDone)
-      r = r.and(fd.deliverStatus.isAResultStatus());
+      r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
     if (onlyArchived)
       r = r.and(fd.archive.isEqualTo(true));
 
 
     let queryText =
       sql.build("select ", [
-        fd.courier.defs.dbName,
+        fd.courier.dbName,
         sql.columnInnerSelect(fd, {
           select: () => [h.name],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
+          where: () => [sql.build(h.id, "=", fd.courier.dbName)]
         }),
         sql.columnInnerSelect(fd, {
           select: () => [h.company],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
+          where: () => [sql.build(h.id, "=", fd.courier.dbName)]
         }),
         sql.columnInnerSelect(fd, {
           select: () => [h.phone],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.defs.dbName)]
+          where: () => [sql.build(h.id, "=", fd.courier.dbName)]
         }),
         sql.columnInnerSelect(hg, {
           select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, true), ' then 1 else 0 end) consumed')],
           from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.defs.dbName)]
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier)]
         }),
         sql.columnInnerSelect(hg, {
           select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, false), ' then 1 else 0 end) pending')],
           from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.defs.dbName)]
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier)]
         })
         , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
         sql.build("select ", [
-          fd.courier.defs.dbName,
+          fd.courier,
           "count(*) deliveries",
-          sql.build("count (distinct date (", fd.courierAssingTime.defs.dbName, ")) dates"),
-          sql.build("count (distinct ", fd.family.defs.dbName, ") families"),
-          sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(fd.deliverStatus.isSuccess()), ' then 1 else 0 end) selfassigned'),
-          sql.build('sum (', sql.case([{ when: [fd.deliverStatus.isSuccess()], then: 1 }], 0), ') succesful')],
-          ' from ', fd.defs.dbName,
+          sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),
+          sql.build("count (distinct ", fd.family, ") families"),
+          sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(DeliveryStatus.isSuccess(fd.deliverStatus)), ' then 1 else 0 end) selfassigned'),
+          sql.build('sum (', sql.case([{ when: [DeliveryStatus.isSuccess(fd.deliverStatus)], then: 1 }], 0), ') succesful')],
+          ' from ', fd,
           ' where ', sql.and(r))
 
-        + sql.build(' group by ', fd.courier.defs.dbName), ") x");
+        + sql.build(' group by ', fd.courier), ") x");
 
     return (await db.execute(queryText)).rows;
 
   }
 
 }
-@EntityClass
-export class helperHistoryInfo extends Entity<string>{
+@Entity({
+  key: 'helperHistoryInfo',
+  includeInApi: false
+})
+export class helperHistoryInfo extends EntityBase {
 
-  courier = new StringColumn();
-  name = new StringColumn(getLang(this.context).volunteerName);
-  phone = new PhoneColumn(getLang(this.context).phone);
-  company = new CompanyColumn(this.context);
-  deliveries = new NumberColumn(getLang(this.context).deliveries);
-  succesful = new NumberColumn(getLang(this.context).delveriesSuccesfull);
-  selfassigned = new NumberColumn(getLang(this.context).selfAssigned);
-  families = new NumberColumn(getLang(this.context).families);
-  dates = new NumberColumn(getLang(this.context).dates);
-  giftsConsumed = new NumberColumn('מתנות שמומשו');
-  giftsPending = new NumberColumn('מתנות זמינות');
-  constructor(private context: Context) {
-    super({ name: 'helperHistoryInfo', allowApiRead: false, allowApiCRUD: false });
+  @Column()
+  courier: string;
+  @Column({ caption: use.language.volunteerName })
+  name: string;
+  @Column({ caption: use.language.phone })
+  phone: Phone;
+  @CompanyColumn()
+  company: string;
+  @Column({ caption: use.language.deliveries })
+  deliveries: number;
+  @Column({ caption: use.language.delveriesSuccesfull })
+  succesful: number;
+  @Column({ caption: use.language.selfAssigned })
+  selfassigned: number;
+  @Column({ caption: use.language.families })
+  families: number;
+  @Column({ caption: use.language.dates })
+  dates: number;
+  @Column({ caption: 'מתנות שמומשו' })
+  giftsConsumed: number;
+  @Column({ caption: 'מתנות זמינות' })
+  giftsPending: number;
 
-  }
+
 }
 

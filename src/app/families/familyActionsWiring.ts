@@ -1,4 +1,4 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, IdEntity, SpecificEntityHelper, Filter, EntityWhere, packWhere, EntityOrderBy, getColumnsFromObject, ServerMethod, ServerProgress } from "@remult/core";
+import { Context, Column, Allowed, ServerFunction, AndFilter, unpackWhere, IdEntity, Filter, EntityWhere, EntityOrderBy, ServerMethod, ServerProgress, filterOf, EntityWhereItem, EntityBase, getControllerDefs, Repository, IterateOptions } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -8,6 +8,8 @@ import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
 import { controllerAllowed } from "@remult/core";
 import { Families } from "./families";
+import { DataArealColumnSetting, GridButton, openDialog } from "../../../../radweb/projects/angular";
+
 
 
 
@@ -40,7 +42,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => getColumnsFromObject(this);
+            args.dialogColumns = async x => [...getControllerDefs(this).columns];
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -67,7 +69,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             click: async () => {
 
                 let cols = await this.args.dialogColumns(component);
-                await this.context.openDialog(InputAreaComponent, x => {
+                await openDialog(InputAreaComponent, x => {
                     x.args = {
                         settings: {
                             columnSettings: () => cols
@@ -83,7 +85,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                         },
                         ok: async () => {
-                            let groupName = this.context.for(this.entity).create().defs.caption;
+                            let groupName = this.context.for(this.entity).defs.caption;
                             let count = await this.context.for(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                                 let r = await this.internalForTestingCallTheServer({
@@ -112,7 +114,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: packWhere(this.context.for(this.entity).create(), info.where)
+            packedWhere: this.context.for(this.entity).packWhere(info.where)
         });
 
         return r;
@@ -120,7 +122,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
     composeWhere(where: EntityWhere<T>) {
         if (this.args.additionalWhere) {
-            return x => new AndFilter(where(x), this.args.additionalWhere(x));
+            return x => new AndFilter(this.context.for(this.entity).translateWhereToFilter(where), this.args.additionalWhere(x));
         }
         return where;
 
@@ -128,7 +130,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
     @ServerMethod({ allowed: undefined, queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ServerProgress) {
-        let where = this.composeWhere(x => unpackWhere(x, info.packedWhere));
+        let where = this.composeWhere(x => this.context.for(this.entity).unpackWhere(info.packedWhere));
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {
@@ -147,7 +149,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + this.context.for(this.entity).create().defs.caption + " " + getLang(this.context).updated;
+        let message = this.args.title + ": " + r + " " + this.context.for(this.entity).defs.caption + " " + getLang(this.context).updated;
 
         await Families.SendMessageToBrowsers(message, this.context, '');
         return r;
@@ -159,7 +161,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     settings: ApplicationSettings,
     afterAction: () => {},
-    userWhere: EntityWhere<T>
+    userWhere: EntityWhereItem<T>
 
 }
 
@@ -175,17 +177,17 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     icon?: string,
     help?: () => string,
     confirmQuestion?: () => string,
-    additionalWhere?: (f: T) => Filter,
+    additionalWhere?: (f: filterOf<T>) => Filter,
     orderBy?: EntityOrderBy<T>
 }
 
 
-export async function pagedRowsIterator<T extends IdEntity>(context: SpecificEntityHelper<string, T>, args: {
+export async function pagedRowsIterator<T extends EntityBase>(context: Repository<T>, args: {
 
-    where: (f: T) => Filter,
+
     forEachRow: (f: T) => Promise<void>,
-    orderBy?: EntityOrderBy<T>
-}) {
+
+} & IterateOptions<T>) {
     let updated = 0;
     let pt = new PromiseThrottle(10);
     for await (const f of context.iterate({ where: args.where, orderBy: args.orderBy })) {

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
-import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FindOptions, ServerFunction, SqlDatabase } from '@remult/core';
-import { Filter ,AndFilter} from '@remult/core';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
+import { Context, filterOf, FindOptions, ServerFunction, SqlDatabase } from '@remult/core';
+import { Filter, AndFilter } from '@remult/core';
 
 import { BusyService, DialogConfig } from '@remult/angular';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -14,8 +14,9 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { SqlBuilder, relativeDateName } from '../model-shared/types';
+import { SqlBuilder, relativeDateName, SqlFor } from '../model-shared/types';
 import { getLang } from '../sites/sites';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
   selector: 'app-select-helper',
@@ -40,14 +41,14 @@ export class SelectHelperComponent implements OnInit {
     includeFrozen?: boolean,
     searchClosestDefaultFamily?: boolean,
     onSelect: (selectedValue: HelpersBase) => void,
-    filter?: (helper: HelpersAndStats) => Filter
+    filter?: (helper: filterOf<HelpersAndStats>) => Filter
 
   };
   filteredHelpers: helperInList[] = [];
   constructor(
     private dialogRef: MatDialogRef<any>,
 
-    private context: Context,
+    public context: Context,
     private busy: BusyService,
     public settings: ApplicationSettings
 
@@ -72,20 +73,20 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of context.for(Helpers).iterate({ where: h => h.active() })) {
-      helpers.set(h.id.value, {
-        helperId: h.id.value,
-        name: h.name.value,
+    for await (const h of context.for(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
+      helpers.set(h.id, {
+        helperId: h.id,
+        name: h.name,
         phone: h.phone.displayValue,
         distance: 99999999
       });
-      if (h.preferredDistributionAreaAddress.ok()) {
-        let theH = helpers.get(h.id.value);
-        check(theH, h.preferredDistributionAreaAddress.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress.value);
+      if (h.preferredDistributionAreaAddressHelper.ok()) {
+        let theH = helpers.get(h.id);
+        check(theH, h.preferredDistributionAreaAddressHelper.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress);
       }
-      if (h.preferredFinishAddress.ok()) {
-        let theH = helpers.get(h.id.value);
-        check(theH, h.preferredFinishAddress.location(), getLang(context).preferredDistributionArea + ": " + h.preferredFinishAddress.value);
+      if (h.preferredFinishAddressHelper.ok()) {
+        let theH = helpers.get(h.id);
+        check(theH, h.preferredFinishAddressHelper.location(), getLang(context).preferredDistributionArea + ": " + h.preferredFinishAddress);
       }
     }
 
@@ -93,13 +94,14 @@ export class SelectHelperComponent implements OnInit {
     if (!selectDefaultVolunteer) {
 
       /* ----    calculate active deliveries and distances    ----*/
-      let afd = context.for(ActiveFamilyDeliveries).create();
-
+      let afd =SqlFor(context.for(ActiveFamilyDeliveries));
+      
+      
 
 
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom('').and(afd.deliverStatus.isNotAResultStatus())],
+        where: () => [afd.courier.isDifferentFrom(HelperId.empty(context)).and(DeliveryStatus.isAResultStatus(afd.deliverStatus))],
         select: () => [
           sql.columnWithAlias("distinct " + sql.getItemSql(afd.family), 'fam'),
           sql.columnWithAlias(afd.courier, "courier"),
@@ -120,15 +122,17 @@ export class SelectHelperComponent implements OnInit {
 
       /*  ---------- calculate completed deliveries and "busy" status -------------*/
       let sql1 = new SqlBuilder();
-      let fd = context.for(FamilyDeliveries).create();
+      
+      let fd =SqlFor(context.for(FamilyDeliveries)) ;
+      
       let limitDate = new Date();
-      limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom.value);
+      limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
 
       for (const d of (await db.execute(sql1.query({
         from: fd,
         where: () => [
-          fd.courier.isDifferentFrom('')
-            .and(fd.deliverStatus.isAResultStatus())
+          fd.courier.isDifferentFrom(HelperId.empty(context))
+            .and(DeliveryStatus.isAResultStatus(fd.deliverStatus))
             .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
         ],
         select: () => [
@@ -142,14 +146,15 @@ export class SelectHelperComponent implements OnInit {
         if (h) {
           h.lastCompletedDeliveryString = relativeDateName(context, { d: d.delivery_date });
           h.totalRecentDeliveries = d.count;
-          h.isBusyVolunteer = (h.totalRecentDeliveries > getSettings(context).BusyHelperAllowedFreq_nom.value) ? "busyVolunteer" : "";
+          h.isBusyVolunteer = (h.totalRecentDeliveries > getSettings(context).BusyHelperAllowedFreq_nom) ? "busyVolunteer" : "";
         }
       }
     } else {
-      let afd = context.for(Families).create();
+      
+      let afd = SqlFor(context.for(Families));
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.fixedCourier.isDifferentFrom('').and(afd.status.isEqualTo(FamilyStatus.Active))],
+        where: () => [afd.fixedCourier.isDifferentFrom( HelperId.empty(context)).and(afd.status.isEqualTo(FamilyStatus.Active))],
         select: () => [
           sql.columnWithAlias(afd.fixedCourier, "courier"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
@@ -168,9 +173,11 @@ export class SelectHelperComponent implements OnInit {
       }
     }
     if (familyId) {
-      for (const fd of await context.for(FamilyDeliveries).find({ where: fd => fd.family.isEqualTo(familyId).and(fd.deliverStatus.isProblem()) })) {
-        if (fd.courier.value) {
-          let h = helpers.get(fd.courier.value);
+      for (const fd of await context.for(FamilyDeliveries).find({
+        where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
+      })) {
+        if (fd.courier) {
+          let h = helpers.get(fd.courier.evilGetId());
           if (h) {
             h.hadProblem = true;
           }
@@ -203,12 +210,12 @@ export class SelectHelperComponent implements OnInit {
 
 
     this.findOptions.where = h => {
-      let r:Filter = h.name.isContains(this.searchString);
-      if(!this.args.includeFrozen){
-        r= new AndFilter( h.active(),r);
+      let r: Filter = h.name.contains(this.searchString);
+      if (!this.args.includeFrozen) {
+        r = new AndFilter(HelpersBase.active(h), r);
       }
       if (this.args.filter) {
-        return new AndFilter( this.args.filter(h), r);
+        return new AndFilter(this.args.filter(h), r);
       }
 
       return r;
@@ -220,9 +227,9 @@ export class SelectHelperComponent implements OnInit {
         this.getHelpers();
       else {
         let recentHelpers = Helpers.recentHelpers;
-        if(!this.args.includeFrozen){
-          recentHelpers = recentHelpers.filter(h => 
-            !h.archive.value && !h.isFrozen.value  
+        if (!this.args.includeFrozen) {
+          recentHelpers = recentHelpers.filter(h =>
+            !h.archive && !h.isFrozen
           );
         }
         this.filteredHelpers = mapHelpers(recentHelpers, x => undefined);
@@ -239,7 +246,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress.value);
+      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
       this.showingRecentHelpers = false;
     });
 
@@ -252,7 +259,7 @@ export class SelectHelperComponent implements OnInit {
 
   }
   showCompany() {
-    return ApplicationSettings.get(this.context).showCompanies.value;
+    return ApplicationSettings.get(this.context).showCompanies;
   }
   selectFirst() {
     if (this.filteredHelpers.length > 0)
@@ -290,8 +297,8 @@ interface helperInList {
 function mapHelpers<hType extends HelpersBase>(helpers: hType[], getFamilies: (h: hType) => number): helperInList[] {
   return helpers.map(h => ({
     helper: h,
-    helperId: h.id.value,
-    name: h.name.value,
+    helperId: h.id,
+    name: h.name,
     phone: h.phone.displayValue,
     assignedDeliveries: getFamilies(h)
 

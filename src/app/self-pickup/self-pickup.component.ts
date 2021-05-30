@@ -1,14 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { BusyService } from '@remult/angular';
+import { BusyService, GridSettings } from '@remult/angular';
 import { Context } from '@remult/core';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrLabGuard } from '../auth/roles';
+import { distCenterOrLabGuard } from '../auth/roles';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { filterDistCenter } from '../manage/distribution-centers';
 
 @Component({
   selector: 'app-self-pickup',
@@ -26,7 +27,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   };
 
   constructor(private busy: BusyService
-    , private context: Context, private dialog: DialogService, public   settings: ApplicationSettings) {
+    , private context: Context, private dialog: DialogService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.families.reloadData();
     }, this.destroyHelper);
@@ -37,7 +38,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = '';
   showAllFamilies = false;
-  families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
+  families = new GridSettings(this.context.for(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {
@@ -47,7 +48,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
 
     await this.families.get({
       where: f => {
-        let r = f.name.isContains(this.searchString).and(f.distributionCenter.filter(this.dialog.distCenter.value));
+        let r = f.name.contains(this.searchString).and(filterDistCenter(f.distributionCenter, this.dialog.distCenter, this.context));
         if (!this.showAllFamilies) {
           return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
         }
@@ -65,14 +66,14 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
 
   showStatus(f: ActiveFamilyDeliveries) {
-    if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
-      if (f.courier.value) {
+    if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
+      if (f.courier.isNotEmpty()) {
         return 'משוייך למתנדב';
       } else {
         return '';
       }
     }
-    return f.deliverStatus.displayValue;
+    return f.deliverStatus.caption;
   }
   async ngOnInit() {
     this.busy.donotWait(async () =>

@@ -1,12 +1,13 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, EntityClass, StringColumn, Entity, DateTimeColumn, Context, ColumnOptions } from '@remult/core';
+import { UrlBuilder,  Entity,  Context,  EntityColumn, EntityBase, Column } from '@remult/core';
 
 
 
 
 import * as geometry from 'spherical-geometry-js';
-import { wasChanged } from '../model-shared/types';
+
 import { DialogService } from '../select-popup/dialog';
+import { DateTimeColumn } from '../model-shared/types';
 
 
 
@@ -23,13 +24,13 @@ export async function GetGeoInformation(address: string, context: Context) {
         return new GeocodeInformation();
     }
     address = address.trim();
-    let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => x.id.isEqualTo(address));
+    let cacheEntry = await context.for(GeocodeCache).lookupIdAsync(address);
     if (!cacheEntry.isNew()) {
         //console.log('cache:' + address);
-        return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult.value) as GeocodeResult);
+        return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);
     }
     let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync(context);
-    let b = settings.forWho.value.args.bounds;
+    let b = settings.forWho.args.bounds;
     let x = pendingRequests.get(address);
     if (!x) {
         let u = new UrlBuilder('https://maps.googleapis.com/maps/api/geocode/json');
@@ -53,9 +54,9 @@ export async function GetGeoInformation(address: string, context: Context) {
             let r = fetch.default(u.url).then(async x => await x.json().then(async (r: GeocodeResult) => {
 
 
-                cacheEntry.id.value = address;
-                cacheEntry.googleApiResult.value = JSON.stringify(r);
-                cacheEntry.createDate.value = new Date();
+                cacheEntry.id = address;
+                cacheEntry.googleApiResult = JSON.stringify(r);
+                cacheEntry.createDate = new Date();
                 try {
                     await cacheEntry.save();
                 } catch {
@@ -89,17 +90,22 @@ export async function GetGeoInformation(address: string, context: Context) {
 }
 
 
-@EntityClass
-export class GeocodeCache extends Entity<string> {
-    id = new StringColumn();
-    googleApiResult = new StringColumn();
-    createDate = new DateTimeColumn();
+@Entity({
+    key: "GeocodeCache",
+    allowApiRead: false,
+    allowApiCrud: false,
+    includeInApi:false
+})
+export class GeocodeCache extends EntityBase {
+    @Column()
+    id:string;
+    @Column()
+    googleApiResult:string;
+    @DateTimeColumn()
+    createDate:Date;
+    
     constructor() {
-        super({
-            name: "GeocodeCache",
-            allowApiRead: false,
-            allowApiCRUD: false
-        });
+        super();
     }
 }
 
@@ -360,29 +366,29 @@ export function GetDistanceBetween(a: Location, b: Location) {
     return geometry.computeDistanceBetween(a, b) / 1000;
 }
 
-export class AddressColumn extends StringColumn {
+export class AddressHelper {
 
-    constructor(private context: Context, private apiResultColumn: StringColumn, settingsOrCaption?: ColumnOptions<string>, settingsOrCaption1?: ColumnOptions<string>) {
-        super(settingsOrCaption, settingsOrCaption1);
+    constructor(private context: Context, private addressColumn: () => EntityColumn<string, any>, private apiResultColumn: () => EntityColumn<string, any>) {
+
 
     }
     async updateApiResultIfChanged() {
-        if (wasChanged(this) || !this.ok()) {
-            let geo = await GetGeoInformation(this.value, this.context);
-            this.apiResultColumn.value = geo.saveToString();
+        if (this.addressColumn().wasChanged() || !this.ok()) {
+            let geo = await GetGeoInformation(this.addressColumn().value, this.context);
+            this.apiResultColumn().value = geo.saveToString();
         }
     }
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
     openWaze() {
-        window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.value) + '&navigate=yes');
+        window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
     }
 
     getGeocodeInformation() {
-        if (this._lastString == this.apiResultColumn.value)
+        if (this._lastString == this.apiResultColumn().value)
             return this._lastGeo ? this._lastGeo : new GeocodeInformation();
-        this._lastString = this.apiResultColumn.value;
-        return this._lastGeo = GeocodeInformation.fromString(this.apiResultColumn.value);
+        this._lastString = this.apiResultColumn().value;
+        return this._lastGeo = GeocodeInformation.fromString(this.apiResultColumn().value);
     }
     ok() {
         return this.getGeocodeInformation().ok();
@@ -400,7 +406,7 @@ export async function getCurrentLocation(useCurrentLocation: boolean, dialog: Di
                     lat: x.coords.latitude,
                     lng: x.coords.longitude
                 };
-                res();
+                res({});
 
             }, error => {
                 if (this.platform.ANDROID)

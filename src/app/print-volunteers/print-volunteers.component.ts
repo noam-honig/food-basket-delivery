@@ -27,16 +27,16 @@ export class PrintVolunteersComponent implements OnInit {
     let total = 0;
     let volunteers: volunteer[] = [];
     for await (const d of context.for(ActiveFamilyDeliveries).iterate()) {
-      let v = volunteers.find(v => v.id == d.courier.value);
+      let v = volunteers.find(v => v.id == d.courier.evilGetId());
       if (!v) {
         v = {
-          id: d.courier.value,
+          id: d.courier.evilGetId(),
           name: await d.courier.getTheName(),
           quantity: 0
         }
         volunteers.push(v);
       }
-      v.quantity += d.quantity.value;
+      v.quantity += d.quantity;
       total++;
     }
     volunteers.sort((a, b) => a.name.localeCompare(b.name));

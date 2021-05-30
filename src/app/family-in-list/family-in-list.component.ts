@@ -25,9 +25,9 @@ export class FamilyInListComponent implements OnInit {
 
   }
   getName() {
-    if (this.settings.showOnlyLastNamePartToVolunteer.value)
-      return this.f.name.value.replace(/^.* /g, '');
-    return this.f.name.value;
+    if (this.settings.showOnlyLastNamePartToVolunteer)
+      return this.f.name.replace(/^.* /g, '');
+    return this.f.name;
 
   }
 
@@ -40,10 +40,10 @@ export class FamilyInListComponent implements OnInit {
     let r = this.f.getAddressDescription();
     if (this.distanceFromPreviousLocation === 0) {
       let x = "";
-      if (this.f.floor.value)
-        x += this.settings.lang.floor + " " + this.f.floor.value;
-      if (this.f.appartment.value) {
-        x += " " + this.settings.lang.appartment + " " + this.f.appartment.value;
+      if (this.f.floor)
+        x += this.settings.lang.floor + " " + this.f.floor;
+      if (this.f.appartment) {
+        x += " " + this.settings.lang.appartment + " " + this.f.appartment;
       }
       if (x != "") {
         r = '* כנ"ל ' + x;
@@ -57,7 +57,7 @@ export class FamilyInListComponent implements OnInit {
 
   }
   horizontalPan(e: any) {
-    if (this.settings.forWho.value == TranslationOptions.Families)
+    if (this.settings.forWho == TranslationOptions.Families)
       if (Math.abs(e.overallVelocityX) < 1) {
 
         this.offsetXValue = Math.max(-100, Math.min(0, e.deltaX));

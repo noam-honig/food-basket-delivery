@@ -1,4 +1,4 @@
-import { ServerFunction, StringColumn, NumberColumn, Entity, AndFilter } from '@remult/core';
+import { ServerFunction, filterOf } from '@remult/core';
 import { Filter } from '@remult/core';
 import { Families } from "./families";
 import { Context } from '@remult/core';
@@ -7,7 +7,7 @@ import { BasketInfo } from "../asign-family/asign-family.component";
 import { Roles } from "../auth/roles";
 import { Groups } from "../manage/groups";
 
-import {  FamilyStatus } from './FamilyStatus';
+import { FamilyStatus } from './FamilyStatus';
 import { getLang } from '../sites/sites';
 
 
@@ -25,7 +25,7 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    constructor(private context:Context){
+    constructor(private context: Context) {
 
     }
     outOfList = new FaimilyStatistics(getLang(this.context).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
@@ -58,15 +58,15 @@ export class Stats {
 
         await context.for(Groups).find({
             limit: 1000,
-            orderBy: f => [{ column: f.name }]
+            orderBy: f =>  f.name 
         }).then(groups => {
             for (const g of groups) {
                 let x: groupStats = {
-                    name: g.name.value,
+                    name: g.name,
                     total: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.for(Families).count(f => f.groups.isContains(x.name).and(
+                pendingStats.push(context.for(Families).count(f => f.groups.contains(x.name).and(
                     f.status.isEqualTo(FamilyStatus.Active))).then(r => x.total = r));
             }
         });
@@ -81,7 +81,7 @@ export class Stats {
 
 
 export class FaimilyStatistics {
-    constructor(public name: string, public rule: (f: Families) => Filter, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: filterOf<Families>) => Filter, public color?: string, value?: number) {
         this.value = value;
     }
 

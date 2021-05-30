@@ -23,7 +23,7 @@ export class CommonQuestionsComponent implements OnInit {
   }
   async init(family:ActiveFamilyDeliveries){
     this.args ={family: family};
-    this.phoneOptions = await ApplicationSettings.getPhoneOptions(family.id.value);
+    this.phoneOptions = await ApplicationSettings.getPhoneOptions(family.id);
   }
 
   async ngOnInit() {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Context, ServerFunction, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -21,7 +21,7 @@ export class SelectCompanyComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<any>,
-    public settings : ApplicationSettings
+    public settings: ApplicationSettings
   ) {
 
   }
@@ -54,12 +54,12 @@ export class SelectCompanyComponent implements OnInit {
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async getCompanies(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
-    let h = context.for(Helpers).create();
+    let h = SqlFor(context.for(Helpers));
     let r = await db.execute(sql.query({
       from: h,
       select: () => [sql.build("distinct ", h.company)],
       where: () => [h.company.isGreaterThan('')],
-      orderBy: [{ column: h.company, descending: false }]
+      orderBy: [{ column: h.company }]
 
     }));
     return r.rows.map(x => x.company);

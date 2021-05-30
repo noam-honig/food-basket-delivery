@@ -1,18 +1,16 @@
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
-import { Helpers, HelpersBase } from '../helpers/helpers';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
-import { Location, GeocodeInformation } from '../shared/googleApiHelpers';
 import { Context } from '@remult/core';
 
-import { ElementRef } from '@angular/core';
-import { PhoneColumn } from '../model-shared/types';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats } from "../asign-family/route-strategy";
+import { openDialog } from "../../../../radweb/projects/angular";
 
 
 export class UserFamiliesList {
@@ -25,7 +23,7 @@ export class UserFamiliesList {
     }
     startAssignByMap(city: string, group: string, distCenter: string, area: string, basketType: string) {
 
-        this.map.loadPotentialAsigment(city, group, distCenter, area,basketType);
+        this.map.loadPotentialAsigment(city, group, distCenter, area, basketType);
         setTimeout(() => {
             this.map.gmapElement.nativeElement.scrollIntoView();
         }, 100);
@@ -74,13 +72,13 @@ export class UserFamiliesList {
     private async initHelper(h: Helpers) {
         this.helper = h;
         this.escort = undefined;
-        if (this.helper && h.escort.value) {
-            this.escort = await this.context.for(Helpers).lookupAsync(x => x.id.isEqualTo(h.escort));
+        if (this.helper && h.escort) {
+            this.escort = await h.escort.waitLoad()
         }
 
     }
     showBasketSummary() {
-        this.context.openDialog(BasketSummaryComponent, x => x.families = this);
+        openDialog(BasketSummaryComponent, x => x.families = this);
     }
     getLeftFamiliesDescription() {
 
@@ -88,8 +86,8 @@ export class UserFamiliesList {
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
-            boxes += this.context.for(BasketType).lookup(iterator.basketType).boxes.value * iterator.quantity.value;
-            boxes2 += this.context.for(BasketType).lookup(iterator.basketType).boxes2.value * iterator.quantity.value;
+            boxes += iterator.basketType.item.boxes * iterator.quantity;
+            boxes2 += iterator.basketType.item.boxes2 * iterator.quantity;
         }
         if (this.toDeliver.length == 0)
             return this.settings.lang.noDeliveries;
@@ -130,7 +128,7 @@ export class UserFamiliesList {
         if (!this.helper.isNew()) {
             this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({
                 where: f => {
-                    let r = f.courier.isEqualTo(this.helper.id).and(f.deliverStatus.isActiveDelivery());
+                    let r = f.courier.isEqualTo(new HelperId(this.helper.id, this.context));
                     if (this.settings.isSytemForMlt())
                         return r;
                     return r.and(f.visibleToCourier.isEqualTo(true))
@@ -142,7 +140,7 @@ export class UserFamiliesList {
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
                     this.highlightNewFamilies = true;
-                    this.familiesAlreadyAssigned.set(f.id.value, true);
+                    this.familiesAlreadyAssigned.set(f.id, true);
                 }
 
             }
@@ -157,7 +155,7 @@ export class UserFamiliesList {
     distCenter: DistributionCenters;
 
     async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs) {
-        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id.value, args).then(r => {
+        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id, args).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {
                 this.setRouteStats(r.stats);
@@ -169,35 +167,35 @@ export class UserFamiliesList {
     initFamilies() {
 
 
-        this.allFamilies = this.allFamilies.filter(f=>f.archive.value == false);
+        this.allFamilies = this.allFamilies.filter(f => f.archive == false);
 
-        if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer.value) {
-            this.context.for(DistributionCenters).lookupAsync(this.allFamilies[0].distributionCenter).then(x => this.distCenter = x);
+        if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer) {
+            this.allFamilies[0].distributionCenter.waitLoad().then(x => this.distCenter = x);
         }
         else {
             this.distCenter = undefined;
         }
-        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.ReadyForDelivery);
-        if (this.toDeliver.find(f => f.routeOrder.value == 0) && this.toDeliver.length > 0) {
+        this.toDeliver = this.allFamilies.filter(f => f.deliverStatus == DeliveryStatus.ReadyForDelivery);
+        if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {
             this.refreshRoute({});
         }
         if (this.toDeliver.length == 0)
             this.prevRouteStats = undefined;
         this.maxAssignTime = undefined;
         for (const f of this.toDeliver) {
-            if (f.courierAssingTime.value && (this.maxAssignTime == undefined || this.maxAssignTime < f.courierAssingTime.value.valueOf()))
-                this.maxAssignTime = f.courierAssingTime.value.valueOf();
+            if (f.courierAssingTime && (this.maxAssignTime == undefined || this.maxAssignTime < f.courierAssingTime.valueOf()))
+                this.maxAssignTime = f.courierAssingTime.valueOf();
         }
-        this.delivered = this.allFamilies.filter(f => f.deliverStatus.value == DeliveryStatus.Success || f.deliverStatus.value == DeliveryStatus.SuccessLeftThere);
+        this.delivered = this.allFamilies.filter(f => f.deliverStatus == DeliveryStatus.Success || f.deliverStatus == DeliveryStatus.SuccessLeftThere);
         this.problem = this.allFamilies.filter(f => {
-            switch (f.deliverStatus.value) {
+            switch (f.deliverStatus) {
                 case DeliveryStatus.FailedBadAddress:
                 case DeliveryStatus.FailedNotHome:
                 case DeliveryStatus.FailedDoNotWant:
 
                 case DeliveryStatus.FailedNotReady:
-                case DeliveryStatus.FailedTooFar: 
-                  
+                case DeliveryStatus.FailedTooFar:
+
                 case DeliveryStatus.FailedOther:
                     return true;
             }

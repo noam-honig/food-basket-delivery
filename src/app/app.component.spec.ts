@@ -2,8 +2,9 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 
-import { ServerContext, EntityClass, IdEntity, StringColumn, NumberColumn, Context } from '@remult/core';
-import { SqlBuilder, QueryBuilder, PhoneColumn, isPhoneValidForIsrael } from './model-shared/types';
+import { ServerContext, IdEntity, Context } from '@remult/core';
+import { SqlBuilder, QueryBuilder, SqlFor } from './model-shared/types';
+import { Phone, isPhoneValidForIsrael } from "./model-shared/Phone";
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
@@ -15,11 +16,12 @@ import { FamilyStatus } from './families/FamilyStatus';
 
 describe('AppComponent', () => {
   var context = new ServerContext();
-  var bt = context.for(BasketType).create();
-  var f = context.for(Families).create();
+  var bt = SqlFor(context.for(BasketType));
+
+  var f = SqlFor(context.for(Families));
   var sql = new SqlBuilder();
-  let afd = context.for(ActiveFamilyDeliveries).create();
-  let fd = context.for(FamilyDeliveries).create();
+  let afd = SqlFor(context.for(ActiveFamilyDeliveries));
+  let fd = SqlFor(context.for(FamilyDeliveries));
   sql.addEntity(bt, 'p');
   sql.addEntity(afd, 'fd');
   sql.addEntity(fd, 'h');
@@ -30,7 +32,7 @@ describe('AppComponent', () => {
     expect(
       sql.query({
         select: () => [f.id], from: f, where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete),
-          sql.build(f.id, ' in (', sql.query({ select: () => [afd.family], from: afd }), ')')]
+        sql.build(f.id, ' in (', sql.query({ select: () => [afd.family], from: afd }), ')')]
       })).toBe("select e1.id from Families e1 where status <> 98 and e1.id in (select fd.family from FamilyDeliveries fd where archive = false)");
 
   });
@@ -58,7 +60,7 @@ describe('AppComponent', () => {
 
       where: () => [sql.eq(afd.family, '123'),
       ],
-      orderBy: [{ column: afd.deliveryStatusDate, descending: true }]
+      orderBy: [{ column: afd.deliveryStatusDate, isDescending: true }]
     })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 and archive = false order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
   it('fixed filter 3', () => {
@@ -68,7 +70,7 @@ describe('AppComponent', () => {
 
       where: () => [sql.eq(fd.family, '123'),
       ],
-      orderBy: [{ column: fd.deliveryStatusDate, descending: true }]
+      orderBy: [{ column: fd.deliveryStatusDate, isDescending: true }]
     })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
   it('Where', () => {
@@ -106,7 +108,7 @@ describe('AppComponent', () => {
     q({
       select: () => [bt.id],
       from: bt,
-      orderBy: [bt.id, { column: bt.name, descending: true }]
+      orderBy: [bt.id, { column: bt.name, isDescending: true }]
     }, 'select p.id from BasketType p order by p.id, p.name desc');
   });
   it("column dbname can reference root entity", () => {
@@ -124,7 +126,7 @@ describe('AppComponent', () => {
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
   it('delete 2', () => {
-    let p = context.for(BasketType).create();
+    let p = SqlFor(context.for(BasketType));
     expect(sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', () => {
@@ -134,7 +136,7 @@ describe('AppComponent', () => {
     })).toBe("update BasketType p set id = '123', name = 'noam' where p.boxes = 5 and p.boxes = 6");
   });
   it('update 2 ', () => {
-    let pd = context.for(Families).create();
+    let pd = SqlFor(context.for(Families));
     expect(sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
@@ -203,11 +205,11 @@ describe('AppComponent', () => {
   });
   it("format phone", () => {
 
-    expect(PhoneColumn.formatPhone("214,391,757")).toBe("021-439-1757");
+    expect(Phone.formatPhone("214,391,757")).toBe("021-439-1757");
   });
   it("fix phone input", () => {
 
-    expect(PhoneColumn.fixPhoneInput("+972507330590", context)).toBe("+972507330590");
+    expect(Phone.fixPhoneInput("+972507330590", context)).toBe("+972507330590");
   });
   it("test schema name", () => {
     expect(validSchemaName("abc")).toBe("abc");
@@ -262,51 +264,51 @@ describe('AppComponent', () => {
   it("updatePhone", () => {
     let f = context.for(Families).create();
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
-    expect(f.phone1.value).toBe('04-8767772');
-    expect(f.phone1Description.value).toBe(undefined);
-    expect(f.phone2.value).toBe('050-7467774');
-    expect(f.phone2Description.value).toBe('(לריסה)');
-    expect(f.phone3.value).toBe(undefined);
-    expect(f.phone3Description.value).toBe(undefined);
+    expect(f.phone1.thePhone).toBe('04-8767772');
+    expect(f.phone1Description).toBe(undefined);
+    expect(f.phone2.thePhone).toBe('050-7467774');
+    expect(f.phone2Description).toBe('(לריסה)');
+    expect(f.phone3.thePhone).toBe(undefined);
+    expect(f.phone3Description).toBe(undefined);
   });
   it("updatePhone2", () => {
     let f = context.for(Families).create();
-    f.phone1.value = '0507330590';
+    f.phone1.thePhone = '0507330590';
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
-    expect(f.phone1.value).toBe('0507330590');
-    expect(f.phone2.value).toBe('04-8767772');
-    expect(f.phone2Description.value).toBe(undefined);
-    expect(f.phone3.value).toBe('050-7467774');
-    expect(f.phone3Description.value).toBe('(לריסה)');
-    expect(f.phone4.value).toBe(undefined);
-    expect(f.phone4Description.value).toBe(undefined);
+    expect(f.phone1.thePhone).toBe('0507330590');
+    expect(f.phone2.thePhone).toBe('04-8767772');
+    expect(f.phone2Description).toBe(undefined);
+    expect(f.phone3.thePhone).toBe('050-7467774');
+    expect(f.phone3Description).toBe('(לריסה)');
+    expect(f.phone4.thePhone).toBe(undefined);
+    expect(f.phone4Description).toBe(undefined);
   });
   it("updatePhone3", () => {
     let f = context.for(Families).create();
-    f.phone2.value = '0507330590';
+    f.phone2.thePhone = '0507330590';
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
-    expect(f.phone1.value).toBe('04-8767772');
-    expect(f.phone1Description.value).toBe(undefined);
-    expect(f.phone2.value).toBe('0507330590');
-    expect(f.phone3.value).toBe('050-7467774');
-    expect(f.phone3Description.value).toBe('(לריסה)');
-    expect(f.phone4.value).toBe(undefined);
-    expect(f.phone4Description.value).toBe(undefined);
+    expect(f.phone1.thePhone).toBe('04-8767772');
+    expect(f.phone1Description).toBe(undefined);
+    expect(f.phone2.thePhone).toBe('0507330590');
+    expect(f.phone3.thePhone).toBe('050-7467774');
+    expect(f.phone3Description).toBe('(לריסה)');
+    expect(f.phone4.thePhone).toBe(undefined);
+    expect(f.phone4Description).toBe(undefined);
   });
   it("properMerge4", () => {
     let f = context.for(Families).create();
     let f2 = context.for(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
-    c.family.phone1.value = '0507330590';
+    c.family.phone1.thePhone = '0507330590';
     c.families = [f, f2];
-    f.phone1.value = '0507330590';
-    f2.phone1.value = '0523307014';
-    f2.phone2.value = '3';
+    f.phone1.thePhone = '0507330590';
+    f2.phone1.thePhone = '0523307014';
+    f2.phone2.thePhone = '3';
     c.rebuildCompare(true);
-    expect(c.family.phone1.value).toBe('0507330590');
-    expect(c.family.phone2.value).toBe('0523307014');
-    expect(c.family.phone3.value).toBe('3');
+    expect(c.family.phone1.thePhone).toBe('0507330590');
+    expect(c.family.phone2.thePhone).toBe('0523307014');
+    expect(c.family.phone3.thePhone).toBe('3');
   });
   it("worksWithUndefined", () => {
     expect(processPhone(undefined).length).toBe(0);
@@ -318,11 +320,11 @@ describe('AppComponent', () => {
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
-    f.tz.value = '1';
-    f2.tz.value = '2';
+    f.tz = '1';
+    f2.tz = '2';
     c.rebuildCompare(true);
-    expect(c.family.tz.value).toBe('1');
-    expect(c.family.tz2.value).toBe('2');
+    expect(c.family.tz).toBe('1');
+    expect(c.family.tz2).toBe('2');
   });
   it("properMerge1", () => {
     let f = context.for(Families).create();
@@ -331,9 +333,9 @@ describe('AppComponent', () => {
     c.family = context.for(Families).create();
     c.families = [f, f2];
 
-    f2.tz.value = '2';
+    f2.tz = '2';
     c.rebuildCompare(true);
-    expect(c.family.tz.value).toBe('2');
+    expect(c.family.tz).toBe('2');
   });
   it("properMerge2", () => {
     let f = context.for(Families).create();
@@ -341,10 +343,10 @@ describe('AppComponent', () => {
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
-    f.tz.value = '1';
-    f2.tz.value = '01';
+    f.tz = '1';
+    f2.tz = '01';
     c.rebuildCompare(true);
-    expect(c.family.tz.value).toBe('1');
+    expect(c.family.tz).toBe('1');
 
   });
   it("properMerge3", () => {
@@ -353,15 +355,15 @@ describe('AppComponent', () => {
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
-    f.phone1.value = '1';
-    f.phone1Description.value = 'd1';
-    f2.phone1.value = '2';
-    f2.phone1Description.value = 'd2';
+    f.phone1.thePhone = '1';
+    f.phone1Description = 'd1';
+    f2.phone1.thePhone = '2';
+    f2.phone1Description = 'd2';
     c.rebuildCompare(true);
-    expect(c.family.phone1.value).toBe('1');
-    expect(c.family.phone1Description.value).toBe('d1');
-    expect(c.family.phone2.value).toBe('2');
-    expect(c.family.phone2Description.value).toBe('d2');
+    expect(c.family.phone1.thePhone).toBe('1');
+    expect(c.family.phone1Description).toBe('d1');
+    expect(c.family.phone2.thePhone).toBe('2');
+    expect(c.family.phone2Description).toBe('d2');
   });
   it("valid phoneb", () => {
     let test = (phone: string, expected: boolean) => expect(isPhoneValidForIsrael(phone)).toBe(expected, phone);

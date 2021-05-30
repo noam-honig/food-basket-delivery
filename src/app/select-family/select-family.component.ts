@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
-import { BusyService } from '@remult/angular';
-import { AndFilter } from '@remult/core';
+import { BusyService, GridSettings } from '@remult/angular';
+import { AndFilter, EntityDefinitions, filterOf } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Filter } from '@remult/core';
 import { Context } from '@remult/core';
@@ -9,6 +9,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
 
 
 @Component({
@@ -19,16 +20,16 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 export class SelectFamilyComponent implements OnInit {
 
   public args: {
-    where: (f: ActiveFamilyDeliveries) => Filter,
+    where: (f: filterOf<ActiveFamilyDeliveries>) => Filter,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
-    distCenter: string,
+    distCenter: DistributionCenterId,
     allowShowAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context, public settings: ApplicationSettings) { }
   searchString: string = '';
-  families = this.context.for(ActiveFamilyDeliveries).gridSettings({ knowTotalRows: true });
+  families = new GridSettings(this.context.for(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
   showAll = false;
   selectFirst() {
@@ -43,14 +44,14 @@ export class SelectFamilyComponent implements OnInit {
     let self = this;
     if (x.selectState === undefined) {
       x.selectState = {
-        get selected() { return !!self.selected.find(y => y.id.value == f.id.value) },
+        get selected() { return !!self.selected.find(y => y.id == f.id) },
         set selected(value: boolean) {
-          if (DeliveryStatus.IsAResultStatus(f.deliverStatus.value))
+          if (f.deliverStatus.IsAResultStatus())
             return;
           if (value)
             self.selected.push(f)
           else
-            self.selected.splice(self.selected.findIndex(y => y.id.value == f.id.value), 1);
+            self.selected.splice(self.selected.findIndex(y => y.id == f.id), 1);
 
         }
       }
@@ -67,11 +68,11 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: f => {
-        let result = f.filterDistCenterAndAllowed(this.args.distCenter);
+        let result = filterDistCenter(f.distributionCenter,this.args.distCenter,this.context);
         {
-          let r = f.name.isContains(this.searchString);
+          let r = f.name.contains(this.searchString);
           if (this.args.selectStreet)
-            r = f.address.isContains(this.searchString);
+            r = f.address.contains(this.searchString);
           result = new AndFilter(result, r);
         }
         if (this.args.where && !this.showAll) {
@@ -109,14 +110,14 @@ export class SelectFamilyComponent implements OnInit {
 
   }
   showStatus(f: ActiveFamilyDeliveries) {
-    if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery) {
-      if (f.courier.value) {
+    if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
+      if (f.courier) {
         return this.settings.lang.assignedToVolunteer + " " + f.courier.getValue();
       } else {
         return '';
       }
     }
-    return f.deliverStatus.displayValue;
+    return f.deliverStatus.caption;
   }
   async ngOnInit() {
     this.busy.donotWait(async () =>

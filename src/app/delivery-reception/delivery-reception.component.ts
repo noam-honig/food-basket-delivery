@@ -1,16 +1,17 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { DataAreaSettings, DataControlInfo, StringColumn, BoolColumn, Context, Filter, AndFilter, EntityWhere, Column, ServerFunction, SqlDatabase } from '@remult/core';
-import { BusyService } from '@remult/angular';
+import { Context, Filter, AndFilter, EntityWhere, Column, ServerFunction, SqlDatabase } from '@remult/core';
+import { BusyService, DataControlInfo, GridSettings, InputControl, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { PhoneColumn } from '../model-shared/types';
+
 import { getLang } from '../sites/sites';
 import { ActivatedRoute } from '@angular/router';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
+import { DistributionCenterId } from '../manage/distribution-centers';
 
 @Component({
   selector: 'app-delivery-reception',
@@ -24,7 +25,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   urlParams = new URLSearchParams(window.location.search);
   deliveriesForPhone: string[] = [];
 
-  deliveries = this.context.for(FamilyDeliveries).gridSettings({
+  deliveries = new GridSettings(this.context.for(FamilyDeliveries), {
     allowUpdate: false,
     numOfColumnsInGrid: 3,
     rowCssClass: f => f.deliverStatus.getCss(),
@@ -33,7 +34,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
     rowsInPage: 100,
     where: f =>
-      f.id.isIn(...this.deliveriesForPhone)
+      f.id.isIn(this.deliveriesForPhone)
     , orderBy: f => f.name
     ,
     columnSettings: deliveries => {
@@ -84,10 +85,10 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         click: async d => {
           if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
             {
-              d.archive.value = true;
-              let user = <HelperUserInfo>this.context.user;
-              d.distributionCenter.value = user.distributionCenter;
-              d.deliverStatus.value = DeliveryStatus.Success;
+              d.archive = true;
+              
+              d.distributionCenter = DistributionCenterId.forCurrentUser(this.context) 
+              d.deliverStatus = DeliveryStatus.Success;
               await d.save();
               await this.refreshFamilyGrid();
             }
@@ -100,9 +101,8 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         icon: 'report_problem',
         showInLine: true,
         click: async d => {
-          d.deliverStatus.value = DeliveryStatus.FailedOther;
-          let user = <HelperUserInfo>this.context.user;
-          d.distributionCenter.value = user.distributionCenter;
+          d.deliverStatus = DeliveryStatus.FailedOther;
+          d.distributionCenter = DistributionCenterId.forCurrentUser(this.context) ;
           this.editComment(d);
         }
         , textInMenu: () => getLang(this.context).notDelivered
@@ -110,7 +110,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     ]
   });
 
-  phone = new StringColumn({ caption: "טלפון של תורם או מתנדב", dataControlSettings: () => ({ inputType: 'tel' }) });
+  phone = new InputControl<string>({ caption: "טלפון של תורם או מתנדב", inputType: 'tel' });
 
   constructor(
     private context: Context,
@@ -122,7 +122,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   private receptionCommentEntry(deliveries: FamilyDeliveries) {
     let r: DataControlInfo<FamilyDeliveries>[] = [
       {
-        column: deliveries.receptionComments,
+        column: deliveries.$.receptionComments,
         width: '150'
       },
     ];
@@ -130,10 +130,10 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   }
 
   private editComment(d: FamilyDeliveries) {
-    this.context.openDialog(InputAreaComponent, x => x.args = {
+    openDialog(InputAreaComponent, x => x.args = {
       title: getLang(this.context).commentForReception,
       validate: async () => {
-        if (d.receptionComments.value == '')
+        if (d.receptionComments == '')
           throw getLang(this.context).updateComment;
       },
       ok: () => {

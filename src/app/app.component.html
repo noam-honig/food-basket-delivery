@@ -1,4 +1,4 @@
-<div *ngIf="settings.requireConfidentialityApprove.value" class="print-only">
+<div *ngIf="settings.requireConfidentialityApprove" class="print-only">
   {{settings.lang.infoIsConfidential}}
 </div>
 <mat-sidenav-container class="app-sidenav-container">
@@ -9,11 +9,11 @@
     <div style="width:100%;text-align: center">
       <img src="{{getLogo()}}" />
     </div>
-    <p style="text-align: center" *ngIf="!dialog.dc">{{settings.organisationName.value}}</p>
+    <p style="text-align: center" *ngIf="!dialog.dc">{{settings.organisationName}}</p>
     <div *ngIf="dialog.dc">
-      <p style="text-align: center">{{dialog.dc.name.value}}
+      <p style="text-align: center">{{dialog.dc.name}}
       </p>
-      <p style="text-align: center">{{dialog.dc.address.getGeocodeInformation().getAddress()}}</p>
+      <p style="text-align: center">{{dialog.dc.addressHelper.getGeocodeInformation().getAddress()}}</p>
     </div>
     <h4 *ngIf="context.user">{{lang.hello}} {{context.user.name}}</h4>
     <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()" target="_blank">מדריך למנהל</a>

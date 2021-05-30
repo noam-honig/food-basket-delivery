@@ -1,11 +1,12 @@
 
-import { ValueListColumn, Context } from '@remult/core';
+import {  Context, Storable } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
 import { Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
+import { ValueListValueConverter } from '../../../radweb/projects/core/src/column';
 
 export class myBounds {
   constructor(public west: number, public south: number, public east: number, public north: number) {
@@ -14,6 +15,7 @@ export class myBounds {
 }
 //https://gist.github.com/graydon/11198540
 const israel = new myBounds(34.2654333839, 29.5013261988, 35.8363969256, 33.2774264593);
+@Storable({ valueConverter:()=> new ValueListValueConverter(TranslationOptions) })
 export class TranslationOptions {
 
 
@@ -121,19 +123,7 @@ export class TranslationOptions {
   }
 
 }
-export class TranslationOptionsColumn extends ValueListColumn<TranslationOptions> {
 
-  constructor() {
-    super(TranslationOptions, {
-      dataControlSettings: () => ({
-        width: '150'
-      })
-    });
-    if (!this.defs.caption)
-      this.defs.caption = use.language.configuration;
-  }
-
-}
 export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
 
 

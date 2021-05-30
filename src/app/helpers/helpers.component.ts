@@ -1,16 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 
-import { Helpers } from './helpers';
+import { HelperId, Helpers } from './helpers';
 
 
 import { Route } from '@angular/router';
 
-import { ServerFunction, DataControlSettings, DataControlInfo, ServerContext, AndFilter, Column } from '@remult/core';
+import { ServerFunction, ServerContext, AndFilter, Column } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { BusyService } from '@remult/angular';
-import { DateColumn, DataAreaSettings } from '@remult/core';
+import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
+
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -61,23 +61,23 @@ export class HelpersComponent implements OnInit, OnDestroy {
   showDeleted = false;
   searchString: string = '';
   numOfColsInGrid = 4;
-  helpers = this.context.for(Helpers).gridSettings({
+  helpers = new GridSettings(this.context.for(Helpers), {
     showFilter: true,
     allowDelete: false,
     allowInsert: true,
     allowUpdate: true,
     knowTotalRows: true,
 
-    rowCssClass: h => (h.archive.value ? 'deliveredProblem' : h.isFrozen.value ? 'forzen' : ''),
+    rowCssClass: h => (h.archive ? 'deliveredProblem' : h.isFrozen ? 'forzen' : ''),
 
     gridButtons: [
       {
         name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.id || c == d.password || c == d.totalKm || c == d.totalTime || c == d.smsDate || c == d.reminderSmsDate || c == d.realStoredPassword || c == d.shortUrlKey || c == d.admin, undefined,
+          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
             async (h, addColumn) => {
-              addColumn(use.language.city, h.preferredDistributionAreaAddress.getGeocodeInformation().getCity(), 's');
-              addColumn(use.language.city + "2", h.preferredFinishAddress.getGeocodeInformation().getCity(), 's');
+              addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation().getCity(), 's');
+              addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation().getCity(), 's');
 
             });
         }
@@ -93,18 +93,18 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.clearAllVolunteerComments,
         click: async () => {
-          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
+          if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
             await HelpersComponent.clearCommentsOnServer();
             this.helpers.reloadData();
           }
         },
-        visible: () => this.settings.showHelperComment.value && this.context.isAllowed(Roles.admin)
+        visible: () => this.settings.showHelperComment && this.context.isAllowed(Roles.admin)
 
       },
       {
         name: use.language.clearEscortInfo,
         click: async () => {
-          if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
+          if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
             await HelpersComponent.clearEscortsOnServer();
             this.helpers.reloadData();
           }
@@ -128,7 +128,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         icon: 'list_alt',
         visible: h => !h.isNew(),
         click: async h =>
-          this.context.openDialog(
+          openDialog(
             HelperAssignmentComponent, s => s.argsHelper = h)
 
       },
@@ -141,30 +141,30 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.resetPassword,
         click: async h => {
-          this.dialog.YesNoQuestion(use.language.resetPasswordAreYouSureFor + " " + h.name.value, async () => {
-            await HelpersComponent.resetPassword(h.id.value);
+          this.dialog.YesNoQuestion(use.language.resetPasswordAreYouSureFor + " " + h.name, async () => {
+            await HelpersComponent.resetPassword(h.id);
             this.dialog.Info(use.language.passwordWasReset);
           });
         },
-        visible: h => (this.context.isAllowed(Roles.admin) || !h.admin.value)
+        visible: h => (this.context.isAllowed(Roles.admin) || !h.admin)
       },
       {
         name: use.language.invalidatePassword,
         click: async h => {
-          this.dialog.YesNoQuestion(use.language.invalidatePassword + " " + h.name.value, async () => {
-            await HelpersComponent.invalidatePassword(h.id.value);
+          this.dialog.YesNoQuestion(use.language.invalidatePassword + " " + h.name, async () => {
+            await HelpersComponent.invalidatePassword(h.id);
             this.dialog.Info(use.language.passwordInvalidated);
           });
         },
-        visible: h => ((this.context.isAllowed(Roles.admin) || !h.admin.value) && this.settings.daysToForcePasswordChange.value > 0)
+        visible: h => ((this.context.isAllowed(Roles.admin) || !h.admin) && this.settings.daysToForcePasswordChange > 0)
       },
       {
         name: use.language.sendInviteBySms,
         click: async h => {
-          let r = await HelpersComponent.sendInvite(h.id.value);
+          let r = await HelpersComponent.sendInvite(h.id);
           this.dialog.Info(r);
         },
-        visible: h => h.admin.value || h.distCenterAdmin.value
+        visible: h => h.admin || h.distCenterAdmin
       },
       {
         name: use.language.freezeHelper,
@@ -172,14 +172,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
         click: async h => this.editFreezeDate(h)
       },
       {
-        textInMenu: h => h.archive.value ? use.language.unDeleteHelper : use.language.archiveHelper,
+        textInMenu: h => h.archive ? use.language.unDeleteHelper : use.language.archiveHelper,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async h => {
-          if (h.archive.value)
+          if (h.archive)
             await h.reactivate();
           else {
-            if (await this.context.openDialog(YesNoQuestionComponent, q => q.args = {
-              question: getLang(this.context).areYouSureYouWantToDelete + ' ' + h.name.value + '?'
+            if (await openDialog(YesNoQuestionComponent, q => q.args = {
+              question: getLang(this.context).areYouSureYouWantToDelete + ' ' + h.name + '?'
             }, q => q.yes)) {
               await h.deactivate();
               this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
@@ -200,7 +200,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     orderBy: h => [h.name],
     rowsInPage: 25,
     where: h => {
-      let r = h.name.isContains(this.searchString);
+      let r = h.name.contains(this.searchString);
       if (this.showDeleted)
         return r;
       else return r.and(h.archive.isEqualTo(false));
@@ -213,9 +213,9 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.settings.isSytemForMlt())
         this.numOfColsInGrid += 6;
 
-      return helpers.selectColumns();
+      return Helpers.selectColumns(helpers, this.context);
     },
-    confirmDelete: (h) => this.dialog.confirmDelete(h.name.value),
+    confirmDelete: (h) => this.dialog.confirmDelete(h.name),
 
 
   });
@@ -223,11 +223,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
   private freezeDateEntry(h: Helpers) {
     let r: DataControlInfo<Helpers>[] = [
       {
-        column: h.frozenTill,
+        column: h.$.frozenTill,
         width: '150'
       },
       {
-        column: h.internalComment,
+        column: h.$.internalComment,
         width: '150'
       },
     ];
@@ -235,7 +235,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   }
 
   private editFreezeDate(h: Helpers) {
-    this.context.openDialog(InputAreaComponent, x => x.args = {
+    openDialog(InputAreaComponent, x => x.args = {
       title: getLang(this.context).freezeHelper,
       ok: () => {
         h.save();
@@ -266,7 +266,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
-      h.realStoredPassword.value = '';
+      h.realStoredPassword = '';
       await h.save();
     });
   }
@@ -274,7 +274,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   static async invalidatePassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
-      h.passwordChangeDate.value = new Date(1901, 1, 1);
+      h.passwordChangeDate = new Date(1901, 1, 1);
       await h.save();
     });
   }
@@ -284,13 +284,13 @@ export class HelpersComponent implements OnInit, OnDestroy {
     let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
       return getLang(context).unfitForInvite;
-    if (!(h.admin.value || h.distCenterAdmin.value))
+    if (!(h.admin || h.distCenterAdmin))
       return getLang(context).unfitForInvite;
     let url = context.getOrigin() + '/' + Sites.getOrganizationFromContext(context);
     let s = await ApplicationSettings.getAsync(context);
-    let hasPassword = h.password.value && h.password.value.length > 0;
-    let message = getLang(context).hello + ` ${h.name.value}
-`+ getLang(context).welcomeTo + ` ${s.organisationName.value}.
+    let hasPassword = h.password && h.password.length > 0;
+    let message = getLang(context).hello + ` ${h.name}
+`+ getLang(context).welcomeTo + ` ${s.organisationName}.
 `+ getLang(context).pleaseEnterUsing + `
 ${url}
 `;
@@ -298,7 +298,7 @@ ${url}
       message += getLang(context).enterFirstTime
     }
     let from = await context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
-    await new SendSmsUtils().sendSms(h.phone.value, from.phone.value, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
+    await new SendSmsUtils().sendSms(h.phone.thePhone, from.phone.thePhone, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
     return getLang(context).inviteSentSuccesfully
 
 
@@ -316,26 +316,13 @@ ${url}
 
 
   }
-  fromDate = new DateColumn({
-    caption: use.language.fromDate,
-    valueChange: () => {
 
-      if (this.toDate.value < this.fromDate.value) {
-        //this.toDate.value = this.getEndOfMonth();
-      }
 
-    }
-  });
-  toDate = new DateColumn(use.language.toDate);
-  rangeArea = new DataAreaSettings({
-    columnSettings: () => [this.fromDate, this.toDate],
-    numberOfColumnAreas: 2
-  });
 
   @ServerFunction({ allowed: Roles.admin })
   static async clearCommentsOnServer(context?: Context) {
     for await (const h of context.for(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
-      h.eventComment.value = '';
+      h.eventComment = '';
       await h.save();
     }
   }
@@ -343,9 +330,9 @@ ${url}
   @ServerFunction({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
     for await (const h of context.for(Helpers).iterate()) {
-      h.escort.value = '';
-      h.needEscort.value = false;
-      h.theHelperIAmEscorting.value = '';
+      h.escort = HelperId.empty(context);
+      h.needEscort = false;
+      h.theHelperIAmEscorting = HelperId.empty(context);;
       await h.save();
     }
   }

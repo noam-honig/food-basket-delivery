@@ -1,11 +1,11 @@
-import { Context, DataArealColumnSetting, Column, Allowed, ServerFunction, BoolColumn, GridButton, StringColumn, AndFilter, unpackWhere, ValueListColumn, DataControlInfo, getColumnsFromObject } from "@remult/core";
-import { Families, GroupsColumn } from "./families";
+import { Context, AndFilter, Storable, Column, getControllerDefs } from "@remult/core";
+import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
-import { BasketId, QuantityColumn } from "./BasketType";
+import { BasketTypeId, QuantityColumn } from "./BasketType";
 import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { HelperId } from "../helpers/helpers";
-import { Groups } from "../manage/groups";
-import { FamilyStatusColumn, FamilyStatus } from "./FamilyStatus";
+
+import { FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
 import { ActionOnRows, packetServerUpdateInfo } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -13,7 +13,35 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { ServerController } from "@remult/core";
+import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
+import { DataControl, getValueList } from "../../../../radweb/projects/angular";
+import { Groups } from "../manage/groups";
 
+@Storable({
+    valueConverter: () => new ValueListValueConverter(SelfPickupStrategy),
+    caption: use.language.selfPickupStrategy
+})
+export class SelfPickupStrategy {
+    static familyDefault = new SelfPickupStrategy(0, use.language.selfPickupStrategy_familyDefault, x => {
+        x.newDelivery.deliverStatus = x.family.defaultSelfPickup ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
+    });
+    static byCurrentDelivery = new SelfPickupStrategy(1, use.language.selfpickupStrategy_byCurrentDelivery, x => {
+        x.newDelivery.deliverStatus =
+            x.existingDelivery.deliverStatus == DeliveryStatus.SuccessPickedUp || x.existingDelivery.deliverStatus == DeliveryStatus.SelfPickup
+                ? DeliveryStatus.SelfPickup
+                : DeliveryStatus.ReadyForDelivery;
+    });
+    static yes = new SelfPickupStrategy(2, use.language.selfPickupStrategy_yes, x => {
+        x.newDelivery.deliverStatus = DeliveryStatus.SelfPickup
+    });
+    static no = new SelfPickupStrategy(3, use.language.selfpickupStrategy_no, x => {
+        x.newDelivery.deliverStatus = DeliveryStatus.ReadyForDelivery
+    });
+
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, family: Families }) => void) {
+
+    }
+}
 
 
 @ServerController({
@@ -21,46 +49,59 @@ import { ServerController } from "@remult/core";
     key: 'NewDelivery'
 })
 export class NewDelivery extends ActionOnRows<Families> {
-    useFamilyBasket = new BoolColumn({ caption: getLang(this.context).useFamilyDefaultBasketType, defaultValue: true });
-    basketType = new BasketId(this.context);
-    useFamilyQuantity = new BoolColumn({ caption: getLang(this.context).useFamilyQuantity, defaultValue: true });
-    useFamilyMembersAsQuantity = new BoolColumn({ caption: getLang(this.context).useFamilyMembersAsQuantity });
-    quantity = new QuantityColumn(this.context);
-
-    distributionCenter = new DistributionCenterId(this.context);
-    useDefaultVolunteer = new BoolColumn({ caption: getLang(this.context).defaultVolunteer, defaultValue: true });
-    courier = new HelperId(this.context);
-    selfPickup = new SelfPickupStrategyColumn(false);
-
-    excludeGroups = new GroupsColumn(this.context, {
-        caption: getLang(this.context).excludeGroups
+    @Column({ caption: use.language.useFamilyDefaultBasketType })
+    useFamilyBasket: boolean = true;
+    @Column()
+    basketType: BasketTypeId;
+    @Column({ caption: use.language.useFamilyQuantity })
+    useFamilyQuantity: boolean = true;
+    @Column({ caption: use.language.useFamilyMembersAsQuantity })
+    useFamilyMembersAsQuantity: boolean;
+    @QuantityColumn()
+    quantity: number;
+    @Column()
+    distributionCenter: DistributionCenterId;
+    @Column({ caption: use.language.defaultVolunteer })
+    useDefaultVolunteer: boolean = true;
+    @Column()
+    courier: HelperId;
+    @Column()
+    @DataControl({ valueList: new ValueListValueConverter(SelfPickupStrategy).getOptions().filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
+    selfPickup: SelfPickupStrategy;
+    @Column({
+        caption: use.language.excludeGroups
     })
+    get $() { return getControllerDefs(this).columns };
+    excludeGroups: GroupsValue;
     constructor(context: Context) {
         super(context, Families, {
             validate: async () => {
-                let x = await context.for(DistributionCenters).findId(this.distributionCenter);
-                if (!x && false) {
-                    this.distributionCenter.validationError = getLang(this.context).mustSelectDistributionList;
-                    throw this.distributionCenter.validationError;
+                let x = await this.distributionCenter.waitLoad();
+                if (this.distributionCenter.exists()) {
+                    this.$.distributionCenter.error = getLang(this.context).mustSelectDistributionList;
+                    throw this.$.distributionCenter.error;
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType.value = '';
-                this.quantity.value = 1;
-                this.distributionCenter.value = component.dialog.distCenter.value;
-                if (this.distributionCenter.value == allCentersToken)
-                    this.distributionCenter.value = '';
+                this.basketType = new BasketTypeId('', context);
+                this.quantity = 1;
+                this.distributionCenter = component.dialog.distCenter;
+                if (this.distributionCenter.isAllCentersToken())
+                    this.distributionCenter = new DistributionCenterId('', context);
                 return [
-                    this.useFamilyBasket,
-                    { column: this.basketType, visible: () => !this.useFamilyBasket.value },
-                    this.useFamilyQuantity,
-                    { column: this.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity.value },
-                    { column: this.quantity, visible: () => !this.useFamilyQuantity.value && !this.useFamilyMembersAsQuantity.value },
-                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters },
-                    this.useDefaultVolunteer,
-                    { column: this.courier, visible: () => !this.useDefaultVolunteer.value },
-                    this.selfPickup.getDispaySettings(component.settings.usingSelfPickupModule.value),
-                    this.excludeGroups
+                    this.$.useFamilyBasket,
+                    { column: this.$.basketType, visible: () => !this.useFamilyBasket },
+                    this.$.useFamilyQuantity,
+                    { column: this.$.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity },
+                    { column: this.$.quantity, visible: () => !this.useFamilyQuantity && !this.useFamilyMembersAsQuantity },
+                    { column: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters },
+                    this.$.useDefaultVolunteer,
+                    { column: this.$.courier, visible: () => !this.useDefaultVolunteer },
+                    {
+                        column: this.$.selfPickup,
+                        visible: () => component.settings.usingSelfPickupModule
+                    },
+                    this.$.excludeGroups
                 ]
             },
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
@@ -69,28 +110,28 @@ export class NewDelivery extends ActionOnRows<Families> {
             title: getLang(context).newDelivery,
             icon: 'add_shopping_cart',
             forEach: async f => {
-                if (this.excludeGroups.value) {
-                    for (let g of this.excludeGroups.listGroups()) {
-                        if (f.groups.selected(g.trim())) {
-                            return;
-                        }
 
+                for (let g of this.excludeGroups.listGroups()) {
+                    if (f.groups.selected(g.trim())) {
+                        return;
                     }
+
                 }
-                let fd = f.createDelivery(this.distributionCenter.value);
+
+                let fd = f.createDelivery(this.distributionCenter.evilGetId());
                 fd._disableMessageToUsers = true;
-                if (!this.useFamilyBasket.value) {
-                    fd.basketType.value = this.basketType.value;
+                if (!this.useFamilyBasket) {
+                    fd.basketType = this.basketType;
                 }
-                if (!this.useFamilyQuantity.value) {
-                    if (this.useFamilyMembersAsQuantity.value)
-                        fd.quantity.value = f.familyMembers.value;
+                if (!this.useFamilyQuantity) {
+                    if (this.useFamilyMembersAsQuantity)
+                        fd.quantity = f.familyMembers;
                     else
-                        fd.quantity.value = this.quantity.value;
+                        fd.quantity = this.quantity;
                 }
-                this.selfPickup.value.applyTo({ existingDelivery: undefined, newDelivery: fd, family: f });
-                if (!this.useDefaultVolunteer.value) {
-                    fd.courier.value = this.courier.value;
+                this.selfPickup.applyTo({ existingDelivery: undefined, newDelivery: fd, family: f });
+                if (!this.useDefaultVolunteer) {
+                    fd.courier = this.courier;
                 }
                 let count = (await fd.duplicateCount());
                 if (count == 0)
@@ -108,26 +149,34 @@ export class NewDelivery extends ActionOnRows<Families> {
 })
 export class updateGroup extends ActionOnRows<Families> {
 
-    group = new StringColumn({
-        caption: getLang(this.context).familyGroup,
-        dataControlSettings: () => ({
-            valueList: this.context.for(Groups).getValueList({ idColumn: x => x.name, captionColumn: x => x.name })
-        })
-    });
-    action = new UpdateGroupStrategyColumn();
+    @Column({
+        caption: use.language.familyGroup
+
+    })
+    @DataControl({
+        valueList: context => getValueList<Groups>(context.for(Groups), { idColumn: x => x.columns.name, captionColumn: x => x.columns.name })
+    })
+    group: string;
+    @Column()
+    action: UpdateGroupStrategy;
+    get $() { return getControllerDefs(this).columns }
     constructor(context: Context) {
         super(context, Families, {
-            confirmQuestion: () => this.action.value.caption + ' "' + this.group.value + '"',
+            confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
             title: getLang(context).assignAFamilyGroup,
             forEach: async f => {
-                this.action.value.whatToDo(f.groups, this.group.value);
+                this.action.whatToDo(f.groups, this.group);
             }
 
         });
-        this.group.value = '';
+        this.group = '';
     }
 }
 
+@Storable({
+    caption: use.language.action,
+    valueConverter: () => new ValueListValueConverter(UpdateGroupStrategy)
+})
 export class UpdateGroupStrategy {
     static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
         if (!col.selected(val))
@@ -138,22 +187,11 @@ export class UpdateGroupStrategy {
             col.removeGroup(val);
     });
     static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val) => {
-        col.value = val;
+        col.replace(val);
     });
 
-    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsColumn, val: string) => void) {
+    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsValue, val: string) => void) {
 
-    }
-}
-
-export class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrategy>
-{
-    constructor() {
-        super(UpdateGroupStrategy, {
-            caption: use.language.action,
-            defaultValue: UpdateGroupStrategy.add,
-            dataControlSettings: () => ({ valueList: this.getOptions() })
-        });
     }
 }
 
@@ -164,49 +202,55 @@ export class UpdateGroupStrategyColumn extends ValueListColumn<UpdateGroupStrate
     key: 'UpdateFamilyStatus'
 })
 export class UpdateStatus extends ActionOnRows<Families> {
-    status = new FamilyStatusColumn(this.context);
-    archiveFinshedDeliveries = new BoolColumn({ caption: getLang(this.context).archiveFinishedDeliveries, defaultValue: true });
-    deletePendingDeliveries = new BoolColumn({ caption: getLang(this.context).deletePendingDeliveries, defaultValue: true });
-    comment = new StringColumn(getLang(this.context).internalComment);
-    deleteExistingComment = new BoolColumn(getLang(this.context).deleteExistingComment);
+    @Column()
+    status: FamilyStatus = FamilyStatus.Active;
+    @Column({ caption: use.language.archiveFinishedDeliveries })
+    archiveFinshedDeliveries: boolean = true;
+    @Column({ caption: use.language.deletePendingDeliveries })
+    deletePendingDeliveries: boolean = true;
+    @Column({ caption: use.language.internalComment })
+    comment: string;
+    @Column({ caption: use.language.deleteExistingComment })
+    deleteExistingComment: boolean;
 
+    get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {
         super(context, Families, {
             help: () => getLang(this.context).updateStatusHelp,
             dialogColumns: async () => {
-                if (!this.status.value)
-                    this.status.value = FamilyStatus.Active;
+                if (!this.status)
+                    this.status = FamilyStatus.Active;
 
                 return [
-                    this.status,
-                    this.comment,
-                    this.deleteExistingComment,
-                    { column: this.archiveFinshedDeliveries, visible: () => this.status.value != FamilyStatus.Active },
-                    { column: this.deletePendingDeliveries, visible: () => this.status.value != FamilyStatus.Active },
+                    this.$.status,
+                    this.$.comment,
+                    this.$.deleteExistingComment,
+                    { column: this.$.archiveFinshedDeliveries, visible: () => this.status != FamilyStatus.Active },
+                    { column: this.$.deletePendingDeliveries, visible: () => this.status != FamilyStatus.Active },
 
                 ]
             },
             title: getLang(context).updateFamilyStatus,
             forEach: async f => {
-                f.status.value = this.status.value;
-                if (this.deleteExistingComment.value) {
-                    f.internalComment.value = '';
+                f.status = this.status;
+                if (this.deleteExistingComment) {
+                    f.internalComment = '';
                 }
-                if (this.comment.value) {
-                    if (f.internalComment.value)
-                        f.internalComment.value += ", ";
-                    f.internalComment.value += this.comment.value;
+                if (this.comment) {
+                    if (f.internalComment)
+                        f.internalComment += ", ";
+                    f.internalComment += this.comment;
                 }
-                if (f.status.value != FamilyStatus.Active && (this.archiveFinshedDeliveries.value || this.deletePendingDeliveries.value)) {
+                if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
                     for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
-                        if (DeliveryStatus.IsAResultStatus(fd.deliverStatus.value)) {
+                        if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
-                                fd.archive.value = true;
+                                fd.archive = true;
                                 await fd.save();
                             }
                         }
                         else {
-                            if (this.deletePendingDeliveries.value)
+                            if (this.deletePendingDeliveries)
                                 await fd.delete();
                         }
 
@@ -221,11 +265,13 @@ export class UpdateStatus extends ActionOnRows<Families> {
     key: 'UpdateFamilyBasketType'
 })
 export class UpdateBasketType extends ActionOnRows<Families> {
-    basket = new BasketId(this.context);
+    @Column()
+    basket: BasketTypeId;
+
     constructor(context: Context) {
         super(context, Families, {
             title: getLang(context).updateDefaultBasket,
-            forEach: async f => { f.basketType.value = this.basket.value },
+            forEach: async f => { f.basketType = this.basket },
         });
     }
 }
@@ -235,26 +281,29 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     key: 'UpdateSelfPickup'
 })
 export class UpdateSelfPickup extends ActionOnRows<Families> {
-    selfPickup = new BoolColumn(getLang(this.context).selfPickup);
-    updateExistingDeliveries = new BoolColumn(getLang(this.context).updateExistingDeliveries);
+    @Column({ caption: use.language.selfPickup })
+    selfPickup: boolean;
+    @Column({ caption: use.language.updateExistingDeliveries })
+    updateExistingDeliveries: boolean;
+
 
     constructor(context: Context) {
         super(context, Families, {
-            visible: c => c.settings.usingSelfPickupModule.value,
+            visible: c => c.settings.usingSelfPickupModule,
             title: getLang(context).updateDefaultSelfPickup,
             forEach: async f => {
                 {
-                    f.defaultSelfPickup.value = this.selfPickup.value;
-                    if (this.updateExistingDeliveries.value) {
-                        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(fd.deliverStatus.isNotAResultStatus()) })) {
-                            if (this.selfPickup.value) {
-                                if (fd.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
-                                    fd.deliverStatus.value = DeliveryStatus.SelfPickup;
+                    f.defaultSelfPickup = this.selfPickup;
+                    if (this.updateExistingDeliveries) {
+                        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
+                            if (this.selfPickup) {
+                                if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
+                                    fd.deliverStatus = DeliveryStatus.SelfPickup;
 
                             }
                             else
-                                if (fd.deliverStatus.value == DeliveryStatus.SelfPickup)
-                                    fd.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+                                if (fd.deliverStatus == DeliveryStatus.SelfPickup)
+                                    fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
                             if (fd.wasChanged())
                                 await fd.save();
                         }
@@ -262,7 +311,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                 }
             },
         });
-        this.updateExistingDeliveries.value = true;
+        this.updateExistingDeliveries = true;
     }
 }
 @ServerController({
@@ -270,11 +319,13 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     key: 'UpdateArea'
 })
 export class UpdateArea extends ActionOnRows<Families> {
-    area = new StringColumn(getLang(this.context).region);
+    @Column({ caption: use.language.region })
+    area: string;
+
     constructor(context: Context) {
         super(context, Families, {
             title: getLang(context).updateArea,
-            forEach: async f => { f.area.value = this.area.value.trim() },
+            forEach: async f => { f.area = this.area.trim() },
         });
     }
 }
@@ -283,11 +334,13 @@ export class UpdateArea extends ActionOnRows<Families> {
     key: 'UpdateDefaultQuantity'
 })
 export class UpdateQuantity extends ActionOnRows<Families> {
-    quantity = new QuantityColumn(this.context);
+    @QuantityColumn()
+    quantity: number;
+
     constructor(context: Context) {
         super(context, Families, {
             title: getLang(context).updateDefaultQuantity,
-            forEach: async f => { f.quantity.value = this.quantity.value },
+            forEach: async f => { f.quantity = this.quantity },
         });
     }
 }
@@ -296,11 +349,13 @@ export class UpdateQuantity extends ActionOnRows<Families> {
     key: 'UpdateFamilySource'
 })
 export class UpdateFamilySource extends ActionOnRows<Families> {
-    familySource = new FamilySourceId(this.context);
+    @Column()
+    familySource: FamilySourceId;
+
     constructor(context: Context) {
         super(context, Families, {
             title: getLang(context).updateFamilySource,
-            forEach: async f => { f.familySource.value = this.familySource.value }
+            forEach: async f => { f.familySource = this.familySource }
         });
     }
 }
@@ -309,77 +364,47 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
     key: 'UpdateDefaultVolunteer'
 })
 export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
-    clearVoulenteer = new BoolColumn(getLang(this.context).clearVolunteer);
-    courier = new HelperId(this.context, getLang(this.context).volunteer);
+    @Column({ caption: use.language.clearVolunteer })
+    clearVoulenteer: boolean;
+    @Column()
+    courier: HelperId;
+    get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {
         super(context, Families, {
             dialogColumns: async () => [
-                this.clearVoulenteer,
-                { column: this.courier, visible: () => !this.clearVoulenteer.value }
+                this.$.clearVoulenteer,
+                { column: this.$.courier, visible: () => !this.clearVoulenteer }
             ],
 
             title: getLang(context).updateDefaultVolunteer,
             forEach: async fd => {
-                if (this.clearVoulenteer.value) {
-                    fd.fixedCourier.value = '';
+                if (this.clearVoulenteer) {
+                    fd.fixedCourier = HelperId.empty(context);
                 }
                 else {
-                    fd.fixedCourier.value = this.courier.value;
+                    fd.fixedCourier = this.courier;
                 }
             },
 
         });
-        this.courier.value = '';
+        this.courier = HelperId.empty(context);
     }
 }
-export class SelfPickupStrategy {
-    static familyDefault = new SelfPickupStrategy(0, use.language.selfPickupStrategy_familyDefault, x => {
-        x.newDelivery.deliverStatus.value = x.family.defaultSelfPickup.value ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
-    });
-    static byCurrentDelivery = new SelfPickupStrategy(1, use.language.selfpickupStrategy_byCurrentDelivery, x => {
-        x.newDelivery.deliverStatus.value =
-            x.existingDelivery.deliverStatus.value == DeliveryStatus.SuccessPickedUp || x.existingDelivery.deliverStatus.value == DeliveryStatus.SelfPickup
-                ? DeliveryStatus.SelfPickup
-                : DeliveryStatus.ReadyForDelivery;
-    });
-    static yes = new SelfPickupStrategy(2, use.language.selfPickupStrategy_yes, x => {
-        x.newDelivery.deliverStatus.value = DeliveryStatus.SelfPickup
-    });
-    static no = new SelfPickupStrategy(3, use.language.selfpickupStrategy_no, x => {
-        x.newDelivery.deliverStatus.value = DeliveryStatus.ReadyForDelivery
-    });
 
-    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, family: Families }) => void) {
-
-    }
-}
-export class SelfPickupStrategyColumn extends ValueListColumn<SelfPickupStrategy>{
-    constructor(private showByCurrentDeliery = true) {
-        super(SelfPickupStrategy, { caption: use.language.selfPickupStrategy })
-    }
-    getDispaySettings(allowSelfPickup: boolean) {
-        this.value = allowSelfPickup ? this.showByCurrentDeliery ? SelfPickupStrategy.byCurrentDelivery : SelfPickupStrategy.familyDefault : SelfPickupStrategy.no;
-        return {
-            column: this,
-            valueList: this.getOptions().filter(x => this.showByCurrentDeliery || x.id != SelfPickupStrategy.byCurrentDelivery.id),
-            visible: () => allowSelfPickup
-        } as DataControlInfo
-    }
-}
 
 
 
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
     processedFamilies = new Map<string, boolean>();
-    __columns = getColumnsFromObject(this.orig);
+    __columns = getControllerDefs(this.orig);
 
     constructor(context: Context, public orig: ActionOnRows<Families>) {
         super(context, ActiveFamilyDeliveries, {
             forEach: async fd => {
-                if (this.processedFamilies.get(fd.family.value))
+                if (this.processedFamilies.get(fd.family))
                     return;
-                this.processedFamilies.set(fd.family.value, true);
-                let f = await context.for(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family.value)))
+                this.processedFamilies.set(fd.family, true);
+                let f = await context.for(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
                 if (f) {
                     await orig.args.forEach(f);
                     await f.save();

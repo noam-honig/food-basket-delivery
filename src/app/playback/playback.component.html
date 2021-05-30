@@ -4,10 +4,10 @@
       <app-date-range></app-date-range>
       <button (click)="select()" mat-raised-button color="primary">בחר</button>
     </ng-container>
-    <h3 *ngIf="showOrgTitle">{{settings.organisationName.value}}</h3>
+    <h3 *ngIf="showOrgTitle">{{settings.organisationName}}</h3>
     <div style="display:flex;justify-content: space-between;align-items: center;">
       <div *ngIf="showOrgLogo">
-        <div><img src="{{settings.logoUrl.value}}">
+        <div><img src="{{settings.logoUrl}}">
         </div>
       </div>
 

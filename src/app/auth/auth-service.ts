@@ -4,8 +4,8 @@ import { DialogService, extractError } from "../select-popup/dialog";
 
 import { Helpers, HelperUserInfo } from "../helpers/helpers";
 
-import { JwtSessionManager, RouteHelperService } from '@remult/angular';
-import { ServerFunction, Context } from '@remult/core';
+import { openDialog, RouteHelperService } from '@remult/angular';
+import { ServerFunction, Context, UserInfo } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 
@@ -17,6 +17,8 @@ import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings"
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { Subject } from "rxjs";
 import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
+import { Phone } from "../model-shared/Phone";
+import { JwtHelperService } from "@auth0/angular-jwt";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 @Injectable()
@@ -32,7 +34,7 @@ export class AuthService {
         }
         else {
 
-            this.tokenHelper.signout();
+            this.signout();
             this.routeHelper.navigateToComponent((await import('../users/login/login.component')).LoginComponent);
             this.failedSmsSignInPhone = response.phone;
             return false;
@@ -41,8 +43,20 @@ export class AuthService {
     failedSmsSignInPhone: string = undefined;
     private setToken(token: string, remember: boolean) {
         let org = Sites.getOrganizationFromContext(this.context);
-        this.tokenHelper.setToken(token, remember);
+        if (token) {
+            this.context.setUser(<UserInfo>new JwtHelperService().decodeToken(token));
+            sessionStorage.setItem("auth_token", token);
+        }
+        else {
+            this.context.setUser(undefined);
+            sessionStorage.removeItem("auth_token");
+        }
     }
+    async signOut() {
+        this.setToken(undefined, true);
+        this.routeHelper.navigateToComponent((await (import('../users/login/login.component'))).LoginComponent);
+    }
+
     @ServerFunction({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
@@ -50,24 +64,24 @@ export class AuthService {
         let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
 
         if (h) {
-            r.phone = h.phone.value;
+            r.phone = h.phone.thePhone;
             let info = await buildHelperUserInfo(h, context);
             let userIsOk = false;
             if (context.user && JSON.stringify(context.user.roles) == JSON.stringify(info.roles) && context.user.id == info.id)
                 userIsOk = true;
-            if (!h.realStoredPassword.value && !h.userRequiresPassword())
+            if (!h.realStoredPassword && !h.userRequiresPassword())
                 userIsOk = true;
 
 
 
             if (userIsOk) {
-                h.lastSignInDate.value = new Date();
-                context._setUser(info);
+                h.lastSignInDate = new Date();
+                context.setUser(info);
 
                 await h.save();
                 return {
                     valid: true,
-                    authToken: buildToken(info, getSettings(context)),
+                    authToken: await buildToken(info, getSettings(context)),
                     requirePassword: false
                 } as LoginResponse
             }
@@ -78,7 +92,7 @@ export class AuthService {
     constructor(
         private dialog: DialogService,
 
-        private tokenHelper: JwtSessionManager,
+
         private context: Context,
         private routeHelper: RouteHelperService,
         public settings: ApplicationSettings,
@@ -86,20 +100,18 @@ export class AuthService {
     ) {
 
         AuthService.doSignOut = () => {
-
             this.signout();
         }
-            ;
-        
-        if (!settings.currentUserIsValidForAppLoadTest.value) {
-            tokenHelper.signout();
-        }
 
-        tokenHelper.tokenInfoChanged = () => {
+
+        if (!settings.currentUserIsValidForAppLoadTest) {
+            this.signout();
+        }
+        context.userChange.observe(() => {
             dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
             dialog.refreshFamiliesAndDistributionCenters();
-        };
-        tokenHelper.tokenInfoChanged();
+        });
+
         window.onmousemove = () => this.refreshUserState();
         window.onkeydown = () => this.refreshUserState();
         this.inactiveTimeout();
@@ -139,15 +151,15 @@ export class AuthService {
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
         }
         else {
-            this.tokenHelper.signout();
+            this.signout();
         }
         return loginResponse;
 
     }
 
     private async userAgreedToConfidentiality() {
-        if (this.settings.requireConfidentialityApprove.value) {
-            if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = {
+        if (this.settings.requireConfidentialityApprove) {
+            if (await openDialog(YesNoQuestionComponent, x => x.args = {
                 question: this.settings.lang.infoIsConfidential,
                 yesButtonText: this.settings.lang.confirm
             }, y => y.yes)) {
@@ -164,20 +176,20 @@ export class AuthService {
 
         let r: loginResult = {};
         let settings = getSettings(context);
-        let h = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(args.phone));
+        let h = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(args.phone)));
         if (!h) {
             r.newUser = true;
             return r;
         }
 
 
-        let userHasPassword = h.realStoredPassword.value.length > 0;
+        let userHasPassword = h.realStoredPassword.length > 0;
         if (userHasPassword && !args.password) {
             r.needPasswordToLogin = true;
             return r;
         }
         if (userHasPassword && args.password) {
-            if (!Helpers.passwordHelper.verify(args.password, h.realStoredPassword.value)) {
+            if (!(await import('password-hash')).verify(args.password, h.realStoredPassword)) {
                 r.invalidPassword = true;
                 return r;
             }
@@ -187,7 +199,7 @@ export class AuthService {
         let result: HelperUserInfo = await buildHelperUserInfo(h, context);
 
 
-        context._setUser(result);
+        context.setUser(result);
 
 
 
@@ -199,13 +211,13 @@ export class AuthService {
                 }
                 return r;
             }
-            h.password.value = args.newPassword;
+            h.password = args.newPassword;
             try {
                 await h.save();
                 args.password = args.newPassword;
             }
             catch (error) {
-                let message = h.password.validationError;
+                let message = h.$.password.error;
                 if (!message)
                     message = extractError(error);
                 r.requiredToSetPassword = true;
@@ -214,7 +226,7 @@ export class AuthService {
             }
         }
 
-        if (userHasPassword && settings.daysToForcePasswordChange.value > 0 && (!h.passwordChangeDate.value || new Date().getTime() > h.passwordChangeDate.value.getTime() + 86400000 * settings.daysToForcePasswordChange.value)) {
+        if (userHasPassword && settings.daysToForcePasswordChange > 0 && (!h.passwordChangeDate || new Date().getTime() > h.passwordChangeDate.getTime() + 86400000 * settings.daysToForcePasswordChange)) {
             r.requiredToSetPassword = true;
             r.requiredToSetPasswordReason = settings.lang.passwordExpired;
             return r;
@@ -228,12 +240,12 @@ export class AuthService {
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
                 r.requiredToSetPasswordReason = settings.lang.adminRequireToSetPassword;
-                if (!(h.admin.value || h.distCenterAdmin.value || h.labAdmin.value))
+                if (!(h.admin || h.distCenterAdmin || h.labAdmin))
                     settings.lang.indieRequireToSetPassword;
                 ok = false;
 
             }
-            if (settings.requireEULA.value && !h.EULASignDate.value && !args.EULASigned) {
+            if (settings.requireEULA && !h.EULASignDate && !args.EULASigned) {
                 r.requiredToSignEULA = true;
                 ok = false;
             }
@@ -244,21 +256,21 @@ export class AuthService {
 
 
 
-        if (args.EULASigned && !h.EULASignDate.value) {
-            h.EULASignDate.value = new Date();
+        if (args.EULASigned && !h.EULASignDate) {
+            h.EULASignDate = new Date();
             await h.save();
         }
 
 
-        h.lastSignInDate.value = new Date();
+        h.lastSignInDate = new Date();
         await h.save();
-        return { authToken: buildToken(result, settings) };
+        return { authToken: await buildToken(result, settings) };
     }
     static doSignOut: () => void;
 
 
     async signout() {
-        this.tokenHelper.signout();
+        this.signout();
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
@@ -270,11 +282,11 @@ export class AuthService {
 
 
     inactiveTimeout() {
-        if (this.settings.timeToDisconnect.value > 0)
-            this.userActivity = setTimeout(() => this.userInactive.next(undefined), this.settings.timeToDisconnect.value * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS);
+        if (this.settings.timeToDisconnect > 0)
+            this.userActivity = setTimeout(() => this.userInactive.next(undefined), this.settings.timeToDisconnect * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS);
     }
     async serverTokenRenewal() {
-        if (this.settings.timeToDisconnect.value > 0) {
+        if (this.settings.timeToDisconnect > 0) {
             if (this.context.isSignedIn())
                 try {
                     let r = await AuthService.renewToken();
@@ -290,7 +302,7 @@ export class AuthService {
             setTimeout(async () => {
 
                 this.serverTokenRenewal();
-            }, this.settings.timeToDisconnect.value * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
+            }, this.settings.timeToDisconnect * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
         }
     }
     @ServerFunction({ allowed: c => c.isSignedIn() })
@@ -334,14 +346,14 @@ export interface loginArgs {
 
 async function buildHelperUserInfo(h: Helpers, context: Context) {
     let result: HelperUserInfo = {
-        id: h.id.value,
+        id: h.id,
         roles: [Sites.getOrgRole(context)],
-        name: h.name.value,
-        distributionCenter: h.distributionCenter.value,
-        theHelperIAmEscortingId: h.theHelperIAmEscorting.value,
-        escortedHelperName: h.theHelperIAmEscorting.value ? (await context.for(Helpers).lookupAsync(h.theHelperIAmEscorting)).name.value : ''
+        name: h.name,
+        distributionCenter: h.distributionCenter.evilGetId(),
+        theHelperIAmEscortingId: h.theHelperIAmEscorting.evilGetId(),
+        escortedHelperName: h.theHelperIAmEscorting ? (await (h.theHelperIAmEscorting.waitLoad())).name : ''
     };
-    if (h.admin.value) {
+    if (h.admin) {
         if (Sites.isOverviewSchema(context))
             result.roles.push(Roles.overview);
         else {
@@ -349,23 +361,24 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
             result.roles.push(Roles.distCenterAdmin);
         }
     }
-    if (h.distCenterAdmin.value) {
+    if (h.distCenterAdmin) {
         result.roles.push(Roles.distCenterAdmin);
     }
     if (getSettings(context).isSytemForMlt()) {
-        if (h.labAdmin.value || h.admin.value)
+        if (h.labAdmin || h.admin)
             result.roles.push(Roles.lab);
-        if (h.isIndependent.value || h.admin.value || h.distCenterAdmin.value)
+        if (h.isIndependent || h.admin || h.distCenterAdmin)
             result.roles.push(Roles.indie);
     }
 
     return result;
 }
-function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
-    if (settings.timeToDisconnect.value) {
-        return Helpers.helper.createSecuredTokenBasedOn(result, { expiresIn: settings.timeToDisconnect.value * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
+async function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
+    let t = (await import('jsonwebtoken'));
+    if (settings.timeToDisconnect) {
+        return t.sign(result, process.env.TOKEN_SIGN_KEY, { expiresIn: settings.timeToDisconnect * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
     }
     else
-        return Helpers.helper.createSecuredTokenBasedOn(result);
+        return t.sign(result, process.env.TOKEN_SIGN_KEY);
 
 }

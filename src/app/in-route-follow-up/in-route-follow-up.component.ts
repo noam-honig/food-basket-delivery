@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BusyService } from '@remult/angular';
-import { Context, Column, DataControlInfo, StringColumn, EntityWhere } from '@remult/core';
-import { InRouteHelpers, HelperCommunicationHistory } from './in-route-helpers';
-import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
+import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
+import { Context,  EntityWhere } from '@remult/core';
+import { InRouteHelpers } from './in-route-helpers';
+
 import { use } from '../translate';
-import { Helpers } from '../helpers/helpers';
+import { HelperId, Helpers } from '../helpers/helpers';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { helperHistoryInfo } from '../delivery-history/delivery-history.component';
+
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { saveToExcel } from '../shared/saveToExcel';
@@ -22,7 +22,7 @@ import { Roles } from '../auth/roles';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService,private dialog:DialogService) { }
+  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
 
   searchString: string = '';
   clearSearch() {
@@ -30,14 +30,14 @@ export class InRouteFollowUpComponent implements OnInit {
     this.helpers.reloadData();
   }
 
-  helpers = this.context.for(InRouteHelpers).gridSettings({
-    get: {
-      limit: 25,
-      where: h => {
-        let r = h.name.isContains(this.searchString);
-        return r.and(this.currentOption.where(h));
-      }
+  helpers = new GridSettings(this.context.for(InRouteHelpers), {
+
+
+    where: h => {
+      let r = h.name.contains(this.searchString);
+      return r.and(this.context.for(InRouteHelpers).translateWhereToFilter(this.currentOption.where));
     },
+
     rowsInPage: 25,
     knowTotalRows: true,
     showFilter: true,
@@ -47,9 +47,9 @@ export class InRouteFollowUpComponent implements OnInit {
       click: () => saveToExcel(this.settings, this.context.for(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
     }],
     rowCssClass: x => {
-      if ((!x.seenFirstAssign.value) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(3)))
+      if ((!x.seenFirstAssign) && (!x.lastCommunicationDate || x.lastCommunicationDate < daysAgo(3)))
         return 'communicationProblem';
-      else if ((x.minAssignDate.value < daysAgo(5)) && (!x.lastCommunicationDate.value || x.lastCommunicationDate.value < daysAgo(5)))
+      else if ((x.minAssignDate < daysAgo(5)) && (!x.lastCommunicationDate || x.lastCommunicationDate < daysAgo(5)))
         return 'addressProblem';
       else
         return '';
@@ -66,8 +66,8 @@ export class InRouteFollowUpComponent implements OnInit {
       name: use.language.ActiveDeliveries,
       visible: h => !h.isNew(),
       click: async h => {
-        this.context.openDialog(GridDialogComponent, x => x.args = {
-          title: use.language.deliveriesFor + ' ' + h.name.value,
+        openDialog(GridDialogComponent, x => x.args = {
+          title: use.language.deliveriesFor + ' ' + h.name,
           buttons: [
             {
               text: 'תכתובות',
@@ -78,13 +78,13 @@ export class InRouteFollowUpComponent implements OnInit {
               click: () => h.showAssignment()
             }
           ],
-          settings: this.context.for(ActiveFamilyDeliveries).gridSettings({
+          settings: new GridSettings(this.context.for(ActiveFamilyDeliveries), {
             numOfColumnsInGrid: 7,
             knowTotalRows: true,
             rowCssClass: fd => fd.deliverStatus.getCss(),
 
             columnSettings: fd => {
-              let r: DataControlInfo[] = [
+              let r: DataControlInfo<ActiveFamilyDeliveries>[] = [
                 fd.name,
                 fd.address,
                 { column: fd.internalDeliveryComment, width: '400' },
@@ -98,12 +98,12 @@ export class InRouteFollowUpComponent implements OnInit {
                 fd.courierComments,
                 { column: fd.courierComments, width: '400' }
               ]
-              r.push(...fd.columns.toArray().filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.defs.caption.localeCompare(b.defs.caption)));
+              r.push(...[...fd].filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.caption.localeCompare(b.caption)));
               return r;
             },
 
-            where: fd => fd.courier.isEqualTo(h.id).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-            orderBy: fd => [{ column: fd.deliveryStatusDate, descending: true }],
+            where: fd => fd.courier.isEqualTo(new HelperId(h.id, this.context)).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            orderBy: fd => fd.deliveryStatusDate.descending(),
             rowsInPage: 25
 
           })
@@ -131,7 +131,7 @@ export class InRouteFollowUpComponent implements OnInit {
     },
     {
       name: use.language.freezeHelper,
-      visible: () => this.context.isAllowed(Roles.admin)&&this.settings.isSytemForMlt(),
+      visible: () => this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt(),
       click: async h => this.editFreezeDate(h)
     },]
   });
@@ -165,11 +165,11 @@ export class InRouteFollowUpComponent implements OnInit {
   private freezeDateEntry(h: InRouteHelpers) {
     let r: DataControlInfo<Helpers>[] = [
       {
-        column: h.frozenTill,
+        column: h.$.frozenTill,
         width: '150'
       },
       {
-        column: h.internalComment,
+        column: h.$.internalComment,
         width: '150'
       },
     ];
@@ -177,12 +177,12 @@ export class InRouteFollowUpComponent implements OnInit {
   }
 
   async editFreezeDate(h: InRouteHelpers) {
-    this.context.openDialog(InputAreaComponent, x => x.args = {
+    openDialog(InputAreaComponent, x => x.args = {
       title: use.language.freezeHelper,
       ok: async () => {
         let helper = await this.context.for(Helpers).findId(h.id);
-        helper.frozenTill.value = h.frozenTill.value;
-        helper.internalComment.value = h.internalComment.value;
+        helper.frozenTill = h.frozenTill;
+        helper.internalComment = h.internalComment;
         await helper.save();
         this.helpers.reloadData();
       },

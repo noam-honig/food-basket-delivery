@@ -1,198 +1,54 @@
-import * as radweb from '@remult/core';
-import { Entity, Column, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, ColumnOptions, SqlCommand, SqlResult, AndFilter, Context, StringColumn } from '@remult/core';
+
+import { Entity, Column, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, SqlCommand, SqlResult, AndFilter, Context, Storable, ValueConverter, InputTypes, EntityColumn, ColumnSettings, ColumnDefinitions, EntityDefinitions, rowHelper, Repository, ColumnDefinitionsOf, filterOf, StoreAsStringValueConverter, filterOptions, comparableFilterItem, supportsContains, ClassType } from '@remult/core';
 import { TranslationOptions, use } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
-import { isDesktop } from '../shared/utils';
-import { getSettings } from '../manage/ApplicationSettings';
+import { EmailSvc, isDesktop } from '../shared/utils';
 import { isDate } from 'util';
+import { DataControl } from '@remult/angular';
 
 
 
 
-export interface HasAsyncGetTheValue {
-  getTheValue(): Promise<string>;
-}
 
-export class EmailColumn extends radweb.StringColumn {
-  constructor(settingsOrCaption?: ColumnOptions<string>) {
-    super({
-      dataControlSettings: () => ({
-        click: () => window.open('mailto:' + this.displayValue),
-        allowClick: () => !!this.displayValue,
-        clickIcon: 'email',
-        inputType: 'email',
-        width: '250',
-        forceEqualFilter: false
-      })
-    }, settingsOrCaption);
-    if (!this.defs.caption)
-      this.defs.caption = use.language.email;
+
+
+@Storable({
+  valueConverter: () => new StoreAsStringValueConverter<Email>(x => x.address, x => new Email(x)),
+  caption: use.language.email
+})
+@DataControl<any, Email>({
+  click: (x, col) => window.open('mailto:' + col.displayValue),
+  allowClick: (x, col) => !!col.displayValue,
+  clickIcon: 'email',
+  inputType: InputTypes.email,
+  width: '250',
+  forceEqualFilter: false
+})
+export class Email {
+  async Send(subject: string, message: string, context: Context) {
+    await EmailSvc.sendMail(subject, message, this.address, context);
+  }
+  constructor(public readonly address: string) {
+
   }
 }
-export class PhoneColumn extends radweb.StringColumn {
-  constructor(settingsOrCaption?: ColumnOptions<string>) {
-    super({
-      dataControlSettings: () => ({
-        click: () => window.open('tel:' + this.displayValue),
-        allowClick: () => !!this.displayValue,
-        clickIcon: 'phone',
-        inputType: 'tel',
-        forceEqualFilter: false
-      })
-    }, settingsOrCaption);
-  }
-  get displayValue() {
-    return PhoneColumn.formatPhone(this.value);
-  }
-  static fixPhoneInput(s: string, context: Context) {
-    if (!s)
-      return s;
-    let orig = s;
-    s = s.replace(/\D/g, '');
-    if (orig.startsWith('+'))
-      return '+' + s;
-    let forWho = getSettings(context).forWho.value;
-    if (forWho && forWho.args.suppressPhoneZeroAddition)
-      return s;
-    if (s.length == 9 && s[0] != '0' && s[0] != '3')
-      s = '0' + s;
-    return s;
-  }
-  sendWhatsapp(context: Context, message = "") {
-    PhoneColumn.sendWhatsappToPhone(this.value, message, context);
-  }
 
-  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context) {
-    phone = PhoneColumn.fixPhoneInput(phone, context);
-    if (phone.startsWith('0')) {
-      phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
-    }
-    if (getSettings(context).forWho.value.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
-      phone = getSettings(context).getInternationalPhonePrefix() + phone;
-
-    if (phone.startsWith('+'))
-      phone = phone.substr(1);
-
-    window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
-  }
-
-  static formatPhone(s: string) {
-    if (!s)
-      return s;
-    let x = s.replace(/\D/g, '');
-    if (x.length < 9 || x.length > 10)
-      return s;
-    if (x.length < 10 && !x.startsWith('0'))
-      x = '0' + x;
-    x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
-
-    x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
-
-    return x;
-  }
-  static validatePhone(col: StringColumn, context: Context) {
-    if (!col.value || col.value == '')
-      return;
-    if (getLang(context).languageCode != 'iw')
-      if (col.value.length < 10)
-        col.validationError = getLang(context).invalidPhoneNumber;
-      else
-        return;
-
-    if (!isPhoneValidForIsrael(col.value)) {
-      col.validationError = getLang(context).invalidPhoneNumber;
-    }
-    /*
-        if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
-          if (col.displayValue.length != 12) {
-            col.validationError = getLang(context).invalidPhoneNumber;
-          }
-    
-        } else if (col.displayValue.startsWith('0')) {
-          if (col.displayValue.length != 11) {
-            col.validationError = getLang(context).invalidPhoneNumber;
-          }
-        }
-        else {
-          col.validationError = getLang(context).invalidPhoneNumber;
-        }
-      */
-  }
+export function DateTimeColumn<T = any>(settings?: ColumnSettings<Date, T>) {
+  return Column<T, Date>({
+    ...{ displayValue: (e, x) => x ? x.toLocaleString("he-il") : '' },
+    ...settings
+  })
 }
-export function isPhoneValidForIsrael(input: string) {
-  if (input) {
-    let st1 = input.match(/^0(5\d|7\d|[2,3,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
-    return st1 != null;
-  }
-}
-export class DateTimeColumn extends radweb.DateTimeColumn {
-
-
-  getStringForInputTime() {
-    if (!this.value)
-      return '';
-    return this.padZero(this.value.getHours()) + ':' + this.padZero(this.value.getMinutes());
-  }
-  getStringForInputDate() {
-    if (!this.value)
-      return '';
-
-    return this.rawValue.substring(0, 10);
-    return this.padZero(this.value.getHours()) + ':' + this.padZero(this.value.getMinutes());
-  }
-  padZero(v: number) {
-    var result = '';
-    if (v < 10)
-      result = '0';
-    result += v;
-    return result;
-  }
-  timeInputChangeEvent(e: any) {
-    var hour = 0;
-    var minutes = 0;
-    var timeString: string = e.target.value;
-    if (timeString.length >= 5) {
-      hour = +timeString.substring(0, 2);
-      minutes = +timeString.substring(3, 5);
-
-    }
-
-    this.value = new Date(this.value.getFullYear(), this.value.getMonth(), this.value.getDate(), hour, minutes);
-
-  }
-  dateInputChangeEvent(e: any) {
-    var newDate: Date = e.target.valueAsDate;
-    var hours = 0;
-    var minutes = 0;
-    if (this.value) {
-      hours = this.value.getHours();
-      minutes = this.value.getMinutes();
-
-    }
-    this.value = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), hours, minutes);
-
-  }
-  relativeDateName(context: Context, d?: Date) {
-    if (!d)
-      d = this.value;
-    return relativeDateName(context, { d });
-  }
-  get displayValue() {
-    if (this.value)
-      return this.value.toLocaleString("he-il");
-    return '';
-  }
-
+export function ChangeDateColumn<T = any>(settings?: ColumnSettings<Date, T>) {
+  return DateTimeColumn<T>({
+    ...{ allowApiUpdate: false },
+    ...settings
+  })
 }
 
-export class changeDate extends DateTimeColumn {
 
-  constructor(settingsOrCaption?: ColumnOptions<Date>) {
-    super(settingsOrCaption);
-    this.defs.allowApiUpdate = false;
-  }
-}
+
 
 
 export class SqlBuilder {
@@ -209,10 +65,10 @@ export class SqlBuilder {
       val = '';
     return '\'' + val.replace(/'/g, '\'\'') + '\'';
   }
-  private dict = new Map<Column, string>();
+  private dict = new Map<ColumnDefinitions, string>();
 
 
-  private entites = new Map<Entity, string>();
+  private entites = new Map<SqlDefs, string>();
 
   sumWithAlias(what: any, alias: string, ...when: any[]) {
     if (when && when.length > 0) {
@@ -223,9 +79,9 @@ export class SqlBuilder {
     }
   }
 
-  addEntity(e: Entity, alias?: string) {
+  addEntity(e: SqlDefs, alias?: string) {
     if (alias) {
-      for (const c of e.columns) {
+      for (const c of e.defs.columns) {
         this.dict.set(c, alias);
       }
 
@@ -249,12 +105,14 @@ export class SqlBuilder {
 
   getItemSql(e: any) {
     if (this.dict.has(e))
-      return this.dict.get(e) + '.' + e.defs.dbName;
+      return this.dict.get(e) + '.' + e.dbName;
     let v = e;
-    if (e instanceof Entity)
+    if (e.dbName)
+      v = e.dbName;
+    if (e.defs){
       v = e.defs.dbName;
-    if (e instanceof Column)
-      v = e.defs.dbName;
+    }
+
 
     let f = e as Filter;
     if (f && f.__applyToConsumer) {
@@ -268,34 +126,34 @@ export class SqlBuilder {
     }
     return v;
   }
-  eq<T>(a: Column<T>, b: T | Column<T>) {
+  eq<T>(a: ColumnDefinitions<T>, b: T | ColumnDefinitions<T>) {
     return this.build(a, ' = ', b);
   }
   eqAny(a: string, b: any) {
     return this.build(a, ' = ', b);
   }
-  ne<T>(a: Column<T>, b: T | Column<T>) {
+  ne<T>(a: ColumnDefinitions<T>, b: T | ColumnDefinitions<T>) {
     return this.build(a, ' <> ', b);
   }
-  notNull(col: Column) {
+  notNull(col: ColumnDefinitions) {
     return this.build(col, ' is not null');
   }
 
 
-  gt<T>(a: Column<T>, b: T | Column<T>) {
+  gt<T>(a: ColumnDefinitions<T>, b: T | ColumnDefinitions<T>) {
     return this.build(a, ' > ', b);
   }
-  gtAny(a: Column, b: any | any) {
+  gtAny(a: ColumnDefinitions, b: any | any) {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {
-    return args.map(x => this.getItemSql(x)).filter(x => x != undefined && x != '').join(' and ');
+    return args.filter(x => x != undefined).map(x => this.getItemSql(x)).filter(x => x != undefined && x != '').join(' and ');
   }
   or(...args: any[]): string {
     return "(" + args.map(x => this.getItemSql(x)).join(' or ') + ")";
   }
   private last = 1;
-  getEntityAlias(e: Entity) {
+  getEntityAlias(e: SqlDefs) {
     let result = this.entites.get(e);
     if (result)
       return result;
@@ -306,7 +164,7 @@ export class SqlBuilder {
 
 
   }
-  columnSumInnerSelect(rootEntity: Entity, col: Column<Number>, query: FromAndWhere) {
+  columnSumInnerSelect(rootEntity: SqlDefs, col: ColumnDefinitions<Number>, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("sum(", col, ")")],
       from: query.from,
@@ -316,7 +174,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnCount(rootEntity: Entity, query: FromAndWhere) {
+  columnCount(rootEntity: SqlDefs, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("count(*)")],
       from: query.from,
@@ -326,7 +184,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnCountWithAs(rootEntity: Entity, query: FromAndWhere, colName: string) {
+  columnCountWithAs(rootEntity: SqlDefs, query: FromAndWhere, colName: string) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("count(*) ", colName)],
       from: query.from,
@@ -336,7 +194,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnMaxWithAs(rootEntity: Entity, column: Column, query: FromAndWhere, colName: string) {
+  columnMaxWithAs(rootEntity: SqlDefs, column: ColumnDefinitions, query: FromAndWhere, colName: string) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("max(", column, ") ", colName)],
       from: query.from,
@@ -346,7 +204,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnInnerSelect(rootEntity: Entity, query: QueryBuilder) {
+  columnInnerSelect(rootEntity: SqlDefs, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ' limit 1)';
   }
@@ -360,7 +218,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  countDistinctInnerSelect(col: Column, query: FromAndWhere, mappedColumn: any) {
+  countDistinctInnerSelect(col: ColumnDefinitions, query: FromAndWhere, mappedColumn: any) {
     return this.build("(", this.query({
       select: () => [this.build("count(distinct ", col, ")")],
       from: query.from,
@@ -372,13 +230,13 @@ export class SqlBuilder {
   }
 
 
-  countDistinct(col: Column, mappedColumn: Column<number>) {
+  countDistinct(col: ColumnDefinitions, mappedColumn: ColumnDefinitions<number>) {
     return this.build("count (distinct ", col, ") ", mappedColumn)
   }
   count() {
     return this.func('count', '*');
   }
-  minInnerSelect(col: Column, query: FromAndWhere, mappedColumn: Column) {
+  minInnerSelect(col: ColumnDefinitions, query: FromAndWhere, mappedColumn: ColumnDefinitions) {
     return this.build('(', this.query({
       select: () => [this.build("min(", col, ")")],
       from: query.from,
@@ -388,7 +246,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  maxInnerSelect(col: Column, query: FromAndWhere, mappedColumn: Column) {
+  maxInnerSelect(col: ColumnDefinitions, query: FromAndWhere, mappedColumn: ColumnDefinitions) {
     return this.build('(', this.query({
       select: () => [this.build("max(", col, ")")],
       from: query.from,
@@ -398,7 +256,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  columnDbName(rootEntity: Entity, query: QueryBuilder) {
+  columnDbName(rootEntity: SqlDefs, query: QueryBuilder) {
     this.addEntity(rootEntity, rootEntity.defs.dbName);
     return '(' + this.query(query) + ')';
   }
@@ -415,16 +273,16 @@ export class SqlBuilder {
     return '(' + this.query(query1) + ' union  all ' + this.query(query2) + ')';
   }
 
-  in(col: Column, ...values: any[]) {
+  in(col: ColumnDefinitions, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
   }
   not(arg0: string): any {
     return this.build(' not (', arg0, ')');
   }
-  delete(e: Entity, ...where: string[]) {
+  delete(e: SqlDefs, ...where: string[]) {
     return this.build('delete from ', e, ' where ', this.and(...where));
   }
-  update(e: Entity, info: UpdateInfo) {
+  update(e: SqlDefs, info: UpdateInfo) {
     let result = [];
     result.push('update ', e, ' ', this.getEntityAlias(e), ' set ');
 
@@ -433,7 +291,7 @@ export class SqlBuilder {
       from = this.build(' from ', info.from, ' ', this.getEntityAlias(info.from));
     }
     let set = info.set();
-    result.push(set.map(a => this.build(this.build(a[0].defs.dbName, ' = ', a[1]))));
+    result.push(set.map(a => this.build(this.build(a[0].dbName, ' = ', a[1]))));
     if (from)
       result.push(from);
 
@@ -447,7 +305,7 @@ export class SqlBuilder {
     let result = [];
     result.push('insert into ', info.into, ' ');
 
-    result.push('(', info.set().map(a => a[0].defs.dbName), ') ');
+    result.push('(', info.set().map(a => a[0].dbName), ') ');
     result.push(this.query({
       select: () => info.set().map(a => a[1]),
       from: info.from,
@@ -487,10 +345,9 @@ export class SqlBuilder {
       where.push(...query.where());
     }
     {
-      let before = new Filter(x => { });
-      let x = query.from.__decorateWhere(before);
-      if (x != before)
-        where.push(x);
+      if (query.from.defs.evilOriginalSettings.fixedFilter) {
+        where.push(query.from.defs.evilOriginalSettings.fixedFilter(query.from.defs.columns.createFilterOf()));
+      }
     }
     if (where.length > 0)
       result.push(' where ', this.and(...where));
@@ -505,7 +362,7 @@ export class SqlBuilder {
       result.push(' order by ', query.orderBy.map(x => {
         var f = x as SortSegment;
         if (f && f.column) {
-          return this.build(f.column, ' ', f.descending ? 'desc' : '')
+          return this.build(f.column, ' ', f.isDescending ? 'desc' : '')
         }
         else return x;
 
@@ -534,13 +391,13 @@ export class SqlBuilder {
 
   }
 
-  innerSelect(builder: QueryBuilder, col: Column) {
+  innerSelect(builder: QueryBuilder, col: ColumnDefinitions) {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
 class myDummySQLCommand implements SqlCommand {
 
-  execute(sql: string): Promise<radweb.SqlResult> {
+  execute(sql: string): Promise<SqlResult> {
     throw new Error("Method not implemented.");
   }
   addParameterAndReturnSqlToken(val: any): string {
@@ -596,37 +453,109 @@ export class delayWhileTyping {
   }
 }
 
+class a {
+  b: string;
+}
+
+export type SqlDefs<T = unknown> = ColumnDefinitionsOf<T> & filterOf<T> & { defs: EntityDefinitions };
+export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T> {
+  let defs: EntityDefinitions;
+  let re = repo as Repository<T>;
+  if (re && re.defs)
+    defs = re.defs;
+  else
+    defs = repo as EntityDefinitions;
+  let r = {
+    defs,
+    idColumn: defs.columns.idColumn,
+    [Symbol.iterator]: () => defs.columns[Symbol.iterator](),
+    find: defs.columns.find
+  };
+  let f = defs.columns.createFilterOf();
+
+  for (const col of defs.columns) {
+    r[col.key] = new myBridge(f[col.key] as unknown as filterOptions<any> & comparableFilterItem<any> & supportsContains<any>, col)
+  }
+  return r as unknown as SqlDefs<T>;
+}
+class myBridge implements filterOptions<any>, comparableFilterItem<any>, supportsContains<any>, ColumnDefinitions {
+  constructor(private filter: filterOptions<any> & comparableFilterItem<any> & supportsContains<any>, private defs: ColumnDefinitions) {
+
+  }
+  isEqualTo(val: any): Filter {
+    return this.filter.isEqualTo(val);
+  }
+  isDifferentFrom(val: any) {
+    return this.filter.isDifferentFrom(val);
+  }
+  isIn(val: any[]): Filter {
+    return this.filter.isIn(val);
+  }
+  isNotIn(val: any[]): Filter {
+    return this.filter.isNotIn(val);
+  }
+  isLessOrEqualTo(val: any): Filter {
+    return this.filter.isLessOrEqualTo(val);
+  }
+  isLessThan(val: any): Filter {
+    return this.filter.isLessThan(val);
+  }
+  isGreaterThan(val: any): Filter {
+    return this.filter.isGreaterThan(val);
+  }
+  isGreaterOrEqualTo(val: any): Filter {
+    return this.filter.isGreaterOrEqualTo(val);
+  }
+  contains(val: string): Filter {
+    return this.filter.contains(val);
+  }
+
+  key = this.defs.key;
+  target = this.defs.target;
+  dataType = this.defs.dataType;
+  caption = this.defs.caption;
+  inputType = this.defs.inputType;
+  allowNull = this.defs.allowNull;
+  isServerExpression = this.defs.isServerExpression;
+  dbReadOnly = this.defs.dbReadOnly;
+  get dbName() { return this.defs.dbName; }
+  valueConverter = this.defs.valueConverter;
+  evilOriginalSettings = this.defs.evilOriginalSettings;
+
+}
+
+
 export interface QueryBuilder {
   select: () => any[];
-  from: Entity;
-  crossJoin?: () => Entity[];
+  from: SqlDefs;
+  crossJoin?: () => SqlDefs[];
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
   where?: () => any[];
-  orderBy?: (Column | SortSegment)[];
+  orderBy?: (ColumnDefinitions | SortSegment)[];
   groupBy?: () => any[];
   having?: () => any[];
 }
 export interface FromAndWhere {
-  from: Entity;
-  crossJoin?: () => Entity[];
+  from: SqlDefs;
+  crossJoin?: () => SqlDefs[];
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
   where?: () => any[];
 }
 export interface UpdateInfo {
-  set: () => [Column, any][],
+  set: () => [ColumnDefinitions, any][],
   where?: () => any[];
-  from?: Entity;
+  from?: SqlDefs;
 }
 export interface InsertInfo {
-  into: Entity;
-  set: () => [Column, any][];
-  from: Entity;
+  into: SqlDefs;
+  set: () => [ColumnDefinitions, any][];
+  from: SqlDefs;
   where?: () => any[];
 }
 export interface JoinInfo {
-  to: Entity;
+  to: SqlDefs;
   on: () => any[];
 }
 
@@ -641,20 +570,10 @@ export function relativeDateName(context: Context, args: { d?: Date, dontShowTim
   return moment(d).locale(getLang(context).languageCodeHe).fromNow();
 
 }
-export function wasChanged(...columns: Column[]) {
-  for (const c of columns) {
-    if (c.value != c.originalValue) {
-      if (c.value instanceof Date && c.originalValue instanceof Date) {
-        if (c.value.valueOf() != c.originalValue.valueOf())
-          return true;
-      } else
-        return true;
-    }
-  }
-}
-export function logChanges(e: Entity, context: Context, args?: {
-  excludeColumns?: Column[],
-  excludeValues?: Column[]
+
+export function logChanges(e: rowHelper<any>, context: Context, args?: {
+  excludeColumns?: EntityColumn<any, any>[],
+  excludeValues?: EntityColumn<any, any>[]
 }) {
   if (!args) {
     args = {};
@@ -667,13 +586,15 @@ export function logChanges(e: Entity, context: Context, args?: {
   let cols = '';
   let vals = '';
   for (const c of e.columns) {
-    if (wasChanged(c)) {
+    if (c.wasChanged()) {
       if (!args.excludeColumns.includes(c)) {
         cols += c.defs.key + "|";
         if (!args.excludeValues.includes(c)) {
-          vals += c.defs.key + "=" + c.value;
-          if (!e.isNew())
-            vals += " was (" + c.originalValue + ")";
+          vals += c.defs.key + "=" + c.displayValue;
+          if (!e.isNew()) {
+
+            vals += " was (" + c.defs.valueConverter.toJson(c.originalValue) + ")";
+          }
           vals += "|";
         }
       }
@@ -688,7 +609,7 @@ export function logChanges(e: Entity, context: Context, args?: {
     }
     catch {
     }
-    p += "/" + e.defs.name + "/" + e.columns.idColumn.value;
+    p += "/" + e.repository.defs.key + "/" + e.columns.idColumn.value;
     if (e.isNew()) {
       p += "(new)";
     }
@@ -699,17 +620,11 @@ export function logChanges(e: Entity, context: Context, args?: {
   }
 
 }
-export function required(col: StringColumn, message?: string) {
-  if (!col.value || col.value.length < 1) {
-    if (!message) {
-      message = "אנא הזן ערך";
-    }
-    col.validationError = message;
-  }
-}
-export function getValueFromResult(r: any, col: Column) {
-  let result = r[col.defs.dbName.toLowerCase()];
+
+export function getValueFromResult(r: any, col: ColumnDefinitions) {
+  let result = r[col.dbName.toLowerCase()];
   if (result === undefined)
-    console.error("couldn't find " + col.defs.key, r);
+    console.error("couldn't find " + col.key, r);
   return result;
 }
+

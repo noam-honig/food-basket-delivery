@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { Column } from '@remult/core';
+import { Column, EntityColumn } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 
@@ -12,7 +12,7 @@ import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from
 })
 export class AddressInputComponent implements AfterViewInit {
 
-  @Input() column: Column;
+  @Input() column: EntityColumn<string>;
   @Input() autoInit: boolean = false;
   constructor(private settings: ApplicationSettings, private zone: NgZone) { }
   initAddressAutoComplete = false;
@@ -27,7 +27,7 @@ export class AddressInputComponent implements AfterViewInit {
     if (this.initAddressAutoComplete)
       return;
     this.initAddressAutoComplete = true;
-    let b = this.settings.forWho.value.args.bounds;
+    let b = this.settings.forWho.args.bounds;
     let bounds = new google.maps.LatLngBounds(new google.maps.LatLng(b.west, b.south), new google.maps.LatLng(b.east, b.north));
     const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, { bounds: bounds }
     );
@@ -75,7 +75,7 @@ export class AddressInputComponent implements AfterViewInit {
 
   }
   getError(){
-    return this.column.validationError;
+    return this.column.error;
   }
 
   ngAfterViewInit() {
@@ -93,7 +93,7 @@ export class AddressInputComponent implements AfterViewInit {
       super();
     }
     isErrorState() {
-      return !!this.parent.column.validationError;
+      return !!this.parent.column.error;
     }
   }(this);
 

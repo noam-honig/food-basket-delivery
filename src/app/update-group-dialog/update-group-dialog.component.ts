@@ -3,8 +3,10 @@ import { Context } from '@remult/core';
 import { Groups } from '../manage/groups';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
-import { GroupsColumn } from '../families/families';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { InputControl } from '../../../../radweb/projects/angular';
+import { GroupsValue } from '../families/families';
 
 @Component({
   selector: 'app-update-group-dialog',
@@ -25,7 +27,7 @@ export class UpdateGroupDialogComponent implements OnInit {
     groups: string,
     ok: (s: string) => void
   }) {
-    this.groups.value = args.groups;
+    this.groups.value = new GroupsValue( args.groups);
     this.ok = args.ok;
   }
   ok: (s: string) => void;
@@ -35,17 +37,17 @@ export class UpdateGroupDialogComponent implements OnInit {
     this.availableGroups = await this.context.for(Groups).find({ limit: 1000 });
   }
 
-  groups = new GroupsColumn(this.context);
+  groups = new InputControl<GroupsValue>({dataType:GroupsValue});
   selected(group: string) {
-    return this.groups.selected(group);
+    return this.groups.value.selected(group);
   }
   select(group: string) {
     if (!this.selected(group)) {
-      this.groups.addGroup(group);
+      this.groups.value.addGroup(group);
 
     }
     else {
-      this.groups.removeGroup(group);
+      this.groups.value.removeGroup(group);
       if (this.selected(group))
         this.dialog.messageDialog("לא הצלחתי לבטל את הקבוצה " + group + " כנראה שהיא לא מופיעה בפני עצמה אלא כחלק משם קבוצה אחרת, אנא וודא שיש פסיקים בין הקבוצות");
 
@@ -58,7 +60,7 @@ export class UpdateGroupDialogComponent implements OnInit {
     this.dialogRef.close();
   }
   async confirm() {
-    await this.ok(this.groups.value);
+    await this.ok(this.groups.value.evilGet());
     this.dialogRef.close();
   }
 }

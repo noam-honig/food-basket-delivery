@@ -5,9 +5,9 @@
 
 
   </div>
-  <div *ngIf="f.courierComments.value">
-    <h4 style="display:inline">{{settings.lang.volunteerComment}}</h4> - {{f.courierComments.value}}
-    ({{f.courierCommentsDate.relativeDateName(context)}})
+  <div *ngIf="f.courierComments">
+    <h4 style="display:inline">{{settings.lang.volunteerComment}}</h4> - {{f.courierComments}}
+    ({{courierCommentsDateRelativeDate()}})
 
   </div>
   <div>
@@ -19,18 +19,18 @@
     <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton"
       (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
-  <a *ngIf="settings.showTzToVolunteer.value" (click)="showTz()" style="display:block">הצג מספר זהות</a>
+  <a *ngIf="settings.showTzToVolunteer" (click)="showTz()" style="display:block">הצג מספר זהות</a>
   <ng-container *ngIf="!hideSal">
-    <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.basketType.displayValue}}
+    <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.$.basketType.displayValue}}
   </ng-container>
 
-  <div *ngIf="f.deliveryComments.value">
+  <div *ngIf="f.deliveryComments">
     <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
     <div class="emphesize-comment">
-      <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments.value}}
+      <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments}}
     </div>
   </div>
-  <div *ngIf="f.courierBeenHereBefore.value">
+  <div *ngIf="f.courierBeenHereBefore">
     <mat-icon color="green" style="vertical-align: middle">repeat</mat-icon>
     {{settings.lang.repeatFamilyNotice}}
   </div>
@@ -41,7 +41,7 @@
       <img src="assets/google_maps_icon.png" *ngIf="!useWaze()">
     </span>
     <div style="flex-grow:1;padding:0 5px;">
-      <ng-container *ngIf="!f.addressOk.value">
+      <ng-container *ngIf="!f.addressOk">
         <mat-icon style="margin-right:5px" color="accent">warning
         </mat-icon>
         {{settings.lang.inacurateAddress}}
@@ -53,31 +53,31 @@
 
 
         <span style="display:block"> {{f.getAddressDescription()}} </span>
-        <ng-container *ngIf="f.floor.value||f.appartment.value">
+        <ng-container *ngIf="f.floor||f.appartment">
 
         </ng-container>
-        <ng-container *ngIf="f.floor.value">
-          {{f.floor.defs.caption}} {{f.floor.value}}
+        <ng-container *ngIf="f.floor">
+          {{f.$.floor.defs.caption}} {{f.floor}}
         </ng-container>
-        <ng-container *ngIf="f.appartment.value">
-          {{f.appartment.defs.caption}} {{f.appartment.value}}
+        <ng-container *ngIf="f.appartment">
+          {{f.$.appartment.defs.caption}} {{f.appartment}}
         </ng-container>
-        <ng-container *ngIf="f.entrance.value">
-          {{f.entrance.defs.caption}} {{f.entrance.value}}
+        <ng-container *ngIf="f.entrance">
+          {{f.$.entrance.defs.caption}} {{f.entrance}}
         </ng-container>
 
 
 
 
       </a>
-      <ng-container *ngIf="f.buildingCode.value">
+      <ng-container *ngIf="f.buildingCode">
         <div >
-          {{settings.lang.buildingCode}}:  <strong class="emphesize-comment"> {{f.buildingCode.value}}</strong>
+          {{settings.lang.buildingCode}}:  <strong class="emphesize-comment"> {{f.buildingCode}}</strong>
         </div>
       </ng-container>
-      <ng-container *ngIf="f.addressComment.value">
+      <ng-container *ngIf="f.addressComment">
         <div class="emphesize-comment">
-          <strong style="color:red;">{{settings.lang.notice}} </strong> {{f.addressComment.value}}
+          <strong style="color:red;">{{settings.lang.notice}} </strong> {{f.addressComment}}
         </div>
       </ng-container>
     </div>
@@ -103,12 +103,12 @@
 
   </div>
 
-  <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer.value">
-    <h4 *ngIf="f.phone1.value || f.phone2.value||f.phone3.value||f.phone4.value">{{settings.lang.phones}}:</h4>
+  <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer">
+    <h4 *ngIf="f.phone1 || f.phone2||f.phone3||f.phone4">{{settings.lang.phones}}:</h4>
     <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
-      <div *ngIf="phone.value" class="phone-container">
+      <div *ngIf="phone" class="phone-container">
         <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-          (click)="sendWhatsapp(phone.value)" *ngIf="phone.value.startsWith('05')">
+          (click)="sendWhatsapp(phone)" *ngIf="phone.startsWith('05')">
           <img src="assets/whatsapp.png">
         </span>
         <button mat-mini-fab style="vertical-align: middle" color="primary" (click)="callPhone(phone)">
@@ -116,15 +116,15 @@
         </button>
         <div>
           <a (click)="callPhone(phone)">{{phone.displayValue}}</a>
-          <span *ngIf="phone==f.phone1 && f.phone1Description.value">{{', '+f.phone1Description.value}}</span>
-          <span *ngIf="phone==f.phone2 && f.phone2Description.value">{{', '+f.phone2Description.value}}</span>
-          <span *ngIf="phone==f.phone3 && f.phone3Description.value">{{', '+f.phone3Description.value}}</span>
-          <span *ngIf="phone==f.phone4 && f.phone4Description.value">{{', '+f.phone4Description.value}}</span>
+          <span *ngIf="phone==f.phone1 && f.phone1Description">{{', '+f.phone1Description}}</span>
+          <span *ngIf="phone==f.phone2 && f.phone2Description">{{', '+f.phone2Description}}</span>
+          <span *ngIf="phone==f.phone3 && f.phone3Description">{{', '+f.phone3Description}}</span>
+          <span *ngIf="phone==f.phone4 && f.phone4Description">{{', '+f.phone4Description}}</span>
         </div>
       </div>
     </ng-container>
   </ng-container>
-  <ng-container *ngIf="settings.usePhoneProxy.value">
+  <ng-container *ngIf="settings.usePhoneProxy">
     <div class="phone-container">
       <a (click)="privateCall()">
         <button mat-mini-fab style="vertical-align: middle" color="primary">
@@ -133,7 +133,7 @@
       </a>
       <div>
         <a (click)="privateCall()">לחץ לחיוג מאובטח למשפחה</a>,
-        {{f.phone1Description.value?f.phone1Description.value:f.name.value}}
+        {{f.phone1Description?f.phone1Description:f.name}}
       </div>
     </div>
   </ng-container>

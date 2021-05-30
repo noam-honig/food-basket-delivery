@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context, AndFilter } from '@remult/core';
+import { Context, AndFilter, filterOf } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';
 
 
 import { Filter } from '@remult/core';
-import { BusyService } from '@remult/angular';
+import { BusyService, openDialog } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
@@ -21,6 +21,7 @@ import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { filterDistCenter } from '../manage/distribution-centers';
 @Component({
     selector: 'app-news',
     templateUrl: './news.component.html',
@@ -49,20 +50,20 @@ export class NewsComponent implements OnInit, OnDestroy {
     }
     shouldShowNeedsWork = new Map<string, boolean>();
     showNeedsWork(n: ActiveFamilyDeliveries) {
-        if (!this.shouldShowNeedsWork.has(n.id.value)) {
-            this.shouldShowNeedsWork.set(n.id.value, n.needsWork.value);
+        if (!this.shouldShowNeedsWork.has(n.id)) {
+            this.shouldShowNeedsWork.set(n.id, n.needsWork);
         }
-        return this.shouldShowNeedsWork.get(n.id.value);
+        return this.shouldShowNeedsWork.get(n.id);
 
     }
     needWorkWasChanged(n: ActiveFamilyDeliveries, args: MatCheckboxChange) {
-        n.needsWork.value = !args.checked;
-        this.busy.donotWait(async ()=> await n.save());
+        n.needsWork = !args.checked;
+        this.busy.donotWait(async () => await n.save());
     }
-   
+
     async showHelper(n: ActiveFamilyDeliveries) {
-        this.context.openDialog(
-            HelperAssignmentComponent, s => s.argsHelper = this.context.for(Helpers).lookup(n.courier));
+        openDialog(
+            HelperAssignmentComponent, s => s.argsHelper = n.courier.item);
     }
     destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {
@@ -76,7 +77,7 @@ export class NewsComponent implements OnInit, OnDestroy {
             this.filters.setToNeedsWork();
         }
         this.refresh();
-        this.familySources.push(...(await this.context.for(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id.value, name: x.name.value } as familySource }));
+        this.familySources.push(...(await this.context.for(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id, name: x.name } as familySource }));
 
     }
     newsRows = 50;
@@ -85,10 +86,10 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.busy.donotWait(async () => {
             this.news = await this.context.for(FamilyDeliveries).find({
                 where: n => {
-                    return new AndFilter(this.filters.where(n), n.distributionCenter.filter(this.dialog.distCenter.value));
+                    return new AndFilter(this.filters.where(n), filterDistCenter(n.distributionCenter, this.dialog.distCenter, this.context));
 
 
-                }, orderBy: n => [{ column: n.deliveryStatusDate, descending: true }], limit: this.newsRows
+                }, orderBy: n => n.deliveryStatusDate.descending(), limit: this.newsRows
             });
         });
     }
@@ -97,7 +98,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.refresh();
     }
     icon(n: ActiveFamilyDeliveries) {
-        switch (n.deliverStatus.value) {
+        switch (n.deliverStatus) {
             case DeliveryStatus.ReadyForDelivery:
 
                 break;
@@ -110,19 +111,18 @@ export class NewsComponent implements OnInit, OnDestroy {
             case DeliveryStatus.FailedDoNotWant:
 
             case DeliveryStatus.FailedNotReady:
-            case DeliveryStatus.FailedTooFar: 
+            case DeliveryStatus.FailedTooFar:
 
             case DeliveryStatus.FailedOther:
                 return 'error';
 
         }
         return "create";
-        return n.deliverStatus.displayValue;
     }
 }
 export interface NewsFilter {
     name: string;
-    where?: (rowType: ActiveFamilyDeliveries) => Filter;
+    where?: (rowType: filterOf<ActiveFamilyDeliveries>) => Filter;
 }
 interface familySource {
     name: string;

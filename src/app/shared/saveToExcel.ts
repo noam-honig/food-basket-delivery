@@ -1,18 +1,19 @@
-import { Entity, Column, GridSettings, Context, SpecificEntityHelper, } from '@remult/core';
-import { BusyService } from '@remult/angular';
+import { Entity, Column,  Context, EntityBase,  Repository, EntityColumn, DateOnlyValueConverter} from '@remult/core';
+import { BusyService, GridSettings } from '@remult/angular';
 
-import { HasAsyncGetTheValue, DateTimeColumn } from "../model-shared/types";
+import {  DateTimeColumn } from "../model-shared/types";
+import { LookupValue } from "../model-shared/LookupValue";
 import { foreachSync } from "./utils";
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(settings: ApplicationSettings,
-  context: SpecificEntityHelper<any, E>,
+export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
+  context: Repository<E>,
   grid: T,
   fileName: string,
   busy: BusyService,
-  hideColumn?: (e: E, c: Column) => boolean,
-  excludeColumn?: (e: E, c: Column) => boolean,
+  hideColumn?: (e: E, c: EntityColumn<any>) => boolean,
+  excludeColumn?: (e: E, c: EntityColumn<any>) => boolean,
   moreColumns?: (e: E, addColumn: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx');
@@ -32,7 +33,7 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(s
 
     let maxChar = 'A';
     let titleRow = 1;
-    if (settings.requireConfidentialityApprove.value) {
+    if (settings.requireConfidentialityApprove) {
       titleRow = 2;
       ws["C1"] = {
         v: settings.lang.infoIsConfidential
@@ -90,19 +91,18 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(s
             }
           }
         };
-        for (const c of f.columns) {
+        for (const c of f.$) {
           try {
             if (!excludeColumn(<E>f, c)) {
               let v = c.displayValue;
               if (v == undefined)
                 v = '';
-              let getv: HasAsyncGetTheValue = <any>c as HasAsyncGetTheValue;
-              if (getv && getv.getTheValue) {
-                v = await getv.getTheValue();
-              }
+              if (c.value instanceof LookupValue)
+                await c.value.waitLoad();
+              
 
-              if (c instanceof DateTimeColumn) {
-                addColumn('תאריך ' + c.defs.caption, c.value ? c.getStringForInputDate() : undefined, "d", false);
+              if (c.defs.dataType == Date) {
+                addColumn('תאריך ' + c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
                 addColumn('שעת ' + c.defs.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
                 addColumn('מלא ' + c.defs.caption, c.displayValue, "s", true);
               }
@@ -112,7 +112,7 @@ export async function saveToExcel<E extends Entity, T extends GridSettings<E>>(s
             }
           } catch (err) {
 
-            console.error(err, c.defs.key, context.toApiPojo(<E>f));
+            console.error(err, c.defs.key, f._.toApiPojo());
           }
         }
 

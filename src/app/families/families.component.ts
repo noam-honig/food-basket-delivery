@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, GridSettings, DataControlSettings, DataControlInfo, DataAreaSettings, StringColumn, BoolColumn, Filter, ServerFunction, unpackWhere, packWhere, Column, dataAreaSettings, IDataAreaSettings, DataArealColumnSetting, GridButton, Allowed, EntityWhere, SqlDatabase, controllerAllowed } from '@remult/core';
+import { AndFilter, Filter, filterOf, ServerFunction, SqlDatabase } from '@remult/core';
 
-import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
+import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp, GroupsValue } from './families';
 
 import { YesNo } from "./YesNo";
 
@@ -10,41 +10,37 @@ import { YesNo } from "./YesNo";
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 
-import { DomSanitizer, Title } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 
-import { BusyService } from '@remult/angular';
+import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { PhoneColumn, SqlBuilder } from '../model-shared/types';
-import { Helpers } from '../helpers/helpers';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { Phone } from "../model-shared/Phone";
 import { Route } from '@angular/router';
 
 import { Context } from '@remult/core';
 
-import { FamilyDeliveries, ActiveFamilyDeliveries } from './FamilyDeliveries';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { Roles, distCenterAdminGuard, AdminGuard } from '../auth/roles';
+import { Roles, AdminGuard } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { TranslationOptions, use } from '../translate';
-import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { ApplicationSettings, getCustomColumnVisible, getSettings } from '../manage/ApplicationSettings';
 
-import { FamilyStatus, FamilyStatusColumn } from './FamilyStatus';
+import { FamilyStatus } from './FamilyStatus';
 import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
 
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
-import { MatAccordion } from '@angular/material/expansion';
 import { sortColumns } from '../shared/utils';
-import { getLang } from '../sites/sites';
 import { columnOrderAndWidthSaver } from './columnOrderAndWidthSaver';
+import { BasketTypeId } from './BasketType';
+import { use } from '../translate';
 
 
 
@@ -58,13 +54,13 @@ export class FamiliesComponent implements OnInit {
     @ServerFunction({ allowed: Roles.admin })
     static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder();
-        let f = context.for(Families).create();
+        let f = SqlFor(context.for(Families));
         let r = await db.execute(sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
             where: () => [f.status.isEqualTo(FamilyStatus.Active)],
             groupBy: () => [f.city],
-            orderBy: [{ column: f.city, descending: false }]
+            orderBy: [{ column: f.city }]
 
         }));
         return r.rows.map(x => ({
@@ -199,7 +195,7 @@ export class FamiliesComponent implements OnInit {
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
 
-    families = this.context.for(Families).gridSettings({
+    families = new GridSettings(this.context.for(Families), {
         showFilter: true,
         allowUpdate: true,
         allowInsert: this.isAdmin,
@@ -208,10 +204,9 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType.value = '';
-                f.quantity.value = 1;
-
-                f.special.value = YesNo.No;
+                f.basketType = new BasketTypeId('', this.context);
+                f.quantity = 1;
+                f.special = YesNo.No;
             } else {
 
             }
@@ -241,7 +236,7 @@ export class FamiliesComponent implements OnInit {
                 addFilter(this.statTabs[index].rule(f));
             }
             if (this.searchString) {
-                addFilter(f.name.isContains(this.searchString));
+                addFilter(f.name.contains(this.searchString));
             }
 
             return result;
@@ -268,7 +263,7 @@ export class FamiliesComponent implements OnInit {
                         f.showFamilyDialog({ focusOnAddress: true });
                     },
                     cssClass: f => {
-                        if (!f.addressOk.value)
+                        if (!f.addressOk)
                             return 'addressProblem';
                         return '';
                     }
@@ -305,7 +300,7 @@ export class FamiliesComponent implements OnInit {
                 families.addressByGoogle,
                 {
                     caption: this.settings.lang.googleApiProblem,
-                    getValue: f => f.address.getGeocodeInformation().whyProblem()
+                    getValue: f => f.addressHelper.getGeocodeInformation().whyProblem()
                 },
                 families.phone1Description,
                 families.phone2,
@@ -321,8 +316,7 @@ export class FamiliesComponent implements OnInit {
                 families.status,
                 families.statusUser,
                 families.statusDate,
-
-                families.getPreviousDeliveryColumn(),
+                Families.getPreviousDeliveryColumn(families),
                 families.previousDeliveryComment,
                 families.previousDeliveryDate,
                 families.socialWorker,
@@ -340,7 +334,7 @@ export class FamiliesComponent implements OnInit {
 
             ];
             for (const c of [families.custom1, families.custom2, families.custom3, families.custom4]) {
-                if (c.visible) {
+                if (getCustomColumnVisible(c)) {
                     r.push(c);
                 }
             }
@@ -396,7 +390,7 @@ export class FamiliesComponent implements OnInit {
             }, {
                 name: this.settings.lang.mergeFamilies,
                 click: async () => {
-                    await this.context.openDialog(MergeFamiliesComponent, x => x.families = [...this.families.selectedRows], y => {
+                    await openDialog(MergeFamiliesComponent, x => x.families = [...this.families.selectedRows], y => {
                         if (y.merged)
                             this.refresh();
                     });
@@ -430,7 +424,7 @@ export class FamiliesComponent implements OnInit {
                 name: this.settings.lang.sendWhatsAppToFamily,
                 click: f => sendWhatsappToFamily(f, this.context),
                 visible: f => canSendWhatsapp(f),
-                icon:'textsms'
+                icon: 'textsms'
             }
             ,
             {
@@ -519,7 +513,7 @@ export class FamiliesComponent implements OnInit {
             stats: [],
             moreStats: [],
             refreshStats: async x => {
-                let areas = await AreaColumn.getAreas();
+                let areas = await Families.getAreas();
                 this.prepComplexStats(areas.map(g => ({ name: g.area, count: g.count })),
                     x,
                     (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isEqualTo(g.name)),
@@ -610,13 +604,13 @@ export class FamiliesComponent implements OnInit {
         if (this.suspend)
             return;
 
-        this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(st => {
+        this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.evilGetId()).then(st => {
 
             this.groupsTotals.stats.splice(0);
             this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
                 this.groupsTotals,
-                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isContains(g.name)),
-                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(g.name)));
+                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.contains(g.name)),
+                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(new GroupsValue(g.name))));
 
 
 
@@ -628,8 +622,8 @@ export class FamiliesComponent implements OnInit {
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
-        equalToFilter: (f: Families, item: type) => Filter,
-        differentFromFilter: (f: Families, item: type) => AndFilter
+        equalToFilter: (f: filterOf<Families>, item: type) => Filter,
+        differentFromFilter: (f: filterOf<Families>, item: type) => AndFilter
     ) {
         stats.stats.splice(0);
         stats.moreStats.splice(0);
@@ -717,19 +711,19 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: Families) => Filter,
+    rule: (f: filterOf<Families>) => Filter,
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
 export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.for(Families), gs, name, busy, (f, c) => c == f.id || c == f.addressApiResult, (f, c) => false, async (f, addColumn) => {
-        let x = f.address.getGeocodeInformation();
-        let street = f.address.value;
+    await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.for(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+        let x = f.addressHelper.getGeocodeInformation();
+        let street = f.address;
         let house = '';
         let lastName = '';
         let firstName = '';
-        if (f.name.value != undefined)
-            lastName = f.name.value.trim();
+        if (f.name != undefined)
+            lastName = f.name.trim();
         let i = lastName.lastIndexOf(' ');
         if (i >= 0) {
             firstName = lastName.substring(i, lastName.length).trim();
@@ -754,20 +748,20 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
         addColumn("X" + use.language.firstName, firstName, 's');
         addColumn("X" + use.language.streetName, street, 's');
         addColumn("X" + use.language.houseNumber, house, 's');
-        function fixPhone(p: PhoneColumn) {
-            if (!p.value)
+        function fixPhone(p: Phone) {
+            if (!p || !p.thePhone)
                 return '';
             else
-                return p.value.replace(/\D/g, '');
+                return p.thePhone.replace(/\D/g, '');
         }
         addColumn("X" + use.language.phone1, fixPhone(f.phone1), 's');
         addColumn("X" + use.language.phone2, fixPhone(f.phone2), 's');
         addColumn("X" + use.language.phone3, fixPhone(f.phone3), 's');
         addColumn("X" + use.language.phone4, fixPhone(f.phone4), 's');
-        addColumn("X" + use.language.phone1 + 'orig', f.phone1.value, 's');
-        addColumn("X" + use.language.phone2 + 'orig', f.phone2.value, 's');
-        addColumn("X" + use.language.phone3 + 'orig', f.phone3.value, 's');
-        addColumn("X" + use.language.phone4 + 'orig', f.phone4.value, 's');
+        addColumn("X" + use.language.phone1 + 'orig', f.phone1.thePhone, 's');
+        addColumn("X" + use.language.phone2 + 'orig', f.phone2.thePhone, 's');
+        addColumn("X" + use.language.phone3 + 'orig', f.phone3.thePhone, 's');
+        addColumn("X" + use.language.phone4 + 'orig', f.phone4.thePhone, 's');
         await f.basketType.addBasketTypes(f.quantity, addColumn);
     });
 }

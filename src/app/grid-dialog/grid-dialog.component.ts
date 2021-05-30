@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { IDataAreaSettings, DataAreaSettings, GridSettings } from '@remult/core';
-import { DialogConfig } from '@remult/angular';
+import { DialogConfig, GridSettings } from '@remult/angular';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 

@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { ServerFunction, Context, DateTimeColumn, SqlDatabase, DateColumn } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase, DateValueConverter, DateOnlyValueConverter } from '@remult/core';
 import { Roles } from '../auth/roles';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DateRangeComponent } from '../date-range/date-range.component';
@@ -17,7 +17,7 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class PlaybackComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings,public dialog:DialogService) { }
+  constructor(public settings: ApplicationSettings, public dialog: DialogService) { }
   public pieChartLabels: string[] = [];
   public pieChartData: number[] = [];
   public colors: Array<any> = [
@@ -125,11 +125,11 @@ export class PlaybackComponent implements OnInit {
         prevStep = newStat;
       }
       if (f.courierTime && startStatus != this.statuses.selfPickup) {
-        addTimeLineStep(this.statuses.onTheWay, DateTimeColumn.stringToDate(f.courierTime));
+        addTimeLineStep(this.statuses.onTheWay, DateValueConverter.fromJson(f.courierTime));
       }
       let stat = this.statuses.getBy(f.status, f.courier);
       if (stat != startStatus)
-        addTimeLineStep(stat, DateTimeColumn.stringToDate(f.statusTime));
+        addTimeLineStep(stat, DateValueConverter.fromJson(f.statusTime));
 
     }
     this.map.fitBounds(this.bounds);
@@ -243,9 +243,11 @@ export class PlaybackComponent implements OnInit {
 
   @ServerFunction({ allowed: Roles.admin })
   static async GetTimeline(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
-    let f = context.for(FamilyDeliveries).create();
-    var fromDateDate = DateColumn.stringToDate(fromDate);
-    var toDateDate = DateColumn.stringToDate(toDate);
+    let f = SqlFor(context.for(FamilyDeliveries));
+
+
+    var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
+    var toDateDate = DateOnlyValueConverter.fromJson(toDate);
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
 
     let sql = new SqlBuilder();
@@ -254,7 +256,7 @@ export class PlaybackComponent implements OnInit {
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {
-        let where = [f.deliverStatus.isActiveDelivery().and(f.deliverStatus.isAResultStatus().and(f.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(f.deliveryStatusDate.isLessThan(toDateDate))))];
+        let where = [(DeliveryStatus.isAResultStatus(f.deliverStatus).and(f.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(f.deliveryStatusDate.isLessThan(toDateDate))))];
         return where;
       },
       orderBy: [f.addressLatitude, f.addressLongitude]
@@ -267,8 +269,8 @@ export class PlaybackComponent implements OnInit {
         lng: +x[r.getColumnKeyInResultForIndexInSelect(2)],
         status: +x[r.getColumnKeyInResultForIndexInSelect(3)],
         courier: x[r.getColumnKeyInResultForIndexInSelect(4)],
-        courierTime: DateTimeColumn.dateToString(x[r.getColumnKeyInResultForIndexInSelect(5)]),
-        statusTime: DateTimeColumn.dateToString(x[r.getColumnKeyInResultForIndexInSelect(6)])
+        courierTime: DateValueConverter.toJson(x[r.getColumnKeyInResultForIndexInSelect(5)]),
+        statusTime: DateValueConverter.toJson(x[r.getColumnKeyInResultForIndexInSelect(6)])
       } as familyQueryResult;
 
     }) as familyQueryResult[];

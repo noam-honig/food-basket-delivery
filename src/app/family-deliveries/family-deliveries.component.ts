@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, DataControlSettings, Filter, AndFilter, packWhere, ServerFunction, unpackWhere, EntityWhere, GridButton, RowButton, GridSettings, DataControlInfo, SqlDatabase } from '@remult/core';
-import { BusyService, RouteHelperService } from '@remult/angular';
+import { Context, Filter, AndFilter, ServerFunction, SqlDatabase, filterOf } from '@remult/core';
+import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -10,27 +10,30 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent }
 
 import * as chart from 'chart.js';
 import { colors } from '../families/stats-action';
-import { BasketType } from '../families/BasketType';
+import { BasketType, BasketTypeId } from '../families/BasketType';
 
 
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
-import { canSendWhatsapp, Families, sendWhatsappToFamily } from '../families/families';
+import { canSendWhatsapp, Families, GroupsValue, sendWhatsappToFamily } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ArchiveDeliveries, DeleteDeliveries, NewDelivery, UpdateBasketType, UpdateCourier, UpdateDeliveriesStatus, UpdateDistributionCenter, UpdateFamilyDefaults, UpdateQuantity } from './family-deliveries-actions';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getCustomColumnVisible } from '../manage/ApplicationSettings';
 import { TranslationOptions, use } from '../translate'
-import { Helpers } from '../helpers/helpers';
+import { HelperId, Helpers } from '../helpers/helpers';
 
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
-import { PhoneColumn, SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { Phone } from "../model-shared/Phone";
 import { Groups } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.component';
+import { DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
+import { SelectHelperComponent } from '../select-helper/select-helper.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -63,7 +66,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
   async newFamily() {
     let f = this.context.for(Families).create();
-    f.name.value = this.searchString;
+    f.name = this.searchString;
     f.showFamilyDialog({
       onSave: async () => {
         await f.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
@@ -82,7 +85,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
   basketStats: statsOnTabBasket = {
     name: getLang(this.context).remainingByBaskets,
-    rule: f => f.readyAndSelfPickup(),
+    rule: f => FamilyDeliveries.readyAndSelfPickup(f, this.context),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -92,7 +95,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   assignedButNotOutBaskets: statsOnTabBasket = {
     name: getLang(this.context).assignedButNotOutBaskets,
-    rule: f => f.onTheWayFilter().and(f.messageStatus.isEqualTo(MessageStatus.notSent)),
+    rule: f => FamilyDeliveries.onTheWayFilter(f, this.context).and(f.messageStatus.isEqualTo(MessageStatus.notSent)),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -123,7 +126,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   basketsDelivered: statsOnTabBasket = {
     name: getLang(this.context).deliveredByBaskets,
-    rule: f => f.deliverStatus.isSuccess(),
+    rule: f => DeliveryStatus.isSuccess(f.deliverStatus),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -135,7 +138,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   cityStats: statsOnTab = {
     name: getLang(this.context).remainingByCities,
     showTotal: true,
-    rule: f => f.readyFilter(),
+    rule: f => FamilyDeliveries.readyFilter(f, this.context),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -170,7 +173,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.basketsDelivered,
     {
       name: getLang(this.context).remainingByGroups,
-      rule: f => f.readyFilter(),
+      rule: f => FamilyDeliveries.readyFilter(f, this.context),
       stats: [
         this.stats.ready,
         this.stats.special
@@ -178,11 +181,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.value, true);
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.evilGetId(), true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
-          (f, g) => f.groups.isContains(g).and(f.readyFilter()),
-          (f, g) => f.groups.isDifferentFrom(g).and(f.groups.isDifferentFrom('')).and(f.readyFilter()));
+          (f, g) => f.groups.contains(g).and(FamilyDeliveries.readyFilter(f, this.context)),
+          (f, g) => f.groups.isDifferentFrom(new GroupsValue(g)).and(f.groups.isDifferentFrom(new GroupsValue(''))).and(FamilyDeliveries.readyFilter(f, this.context)));
       }
     },
     {
@@ -195,11 +198,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.value);
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.evilGetId());
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
-          (f, g) => f.groups.isContains(g),
-          (f, g) => f.groups.isDifferentFrom(g).and(f.groups.isDifferentFrom('')));
+          (f, g) => f.groups.contains(g),
+          (f, g) => f.groups.isDifferentFrom(new GroupsValue(g)).and(f.groups.isDifferentFrom(new GroupsValue(''))));
       }
     },
     this.cityStats,
@@ -330,7 +333,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     if (this.suspend)
       return;
 
-    this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.value).then(st => {
+    this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.evilGetId()).then(st => {
       this.basketStats.stats.splice(0);
       this.cityStats.stats.splice(0);
       this.cityStats.moreStats.splice(0);
@@ -338,7 +341,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
       this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedDeliveries, (f, id) =>
-        f.readyFilter().and(f.basketType.isEqualTo(id)));
+        FamilyDeliveries.readyFilter(f, this.context).and(f.basketType.isEqualTo(id)));
       this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, (f, id) =>
         f.basketType.isEqualTo(id));
       this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.smsNotSent, (f, id) =>
@@ -346,22 +349,22 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.basketStatsCalc(st.baskets, this.selfPickupBaskets, b => b.selfPickup, (f, id) =>
         f.basketType.isEqualTo(id).and(this.selfPickupBaskets.rule(f)));
       this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successDeliveries, (f, id) =>
-        f.deliverStatus.isSuccess().and(f.basketType.isEqualTo(id)));
+        DeliveryStatus.isSuccess(f.deliverStatus).and(f.basketType.isEqualTo(id)));
       this.prepComplexStats(st.cities, this.cityStats,
-        (f, c) => f.readyFilter().and(f.city.isEqualTo(c)),
-        (f, c) => f.readyFilter().and(f.city.isDifferentFrom(c)));
+        (f, c) => FamilyDeliveries.readyFilter(f, this.context).and(f.city.isEqualTo(c)),
+        (f, c) => FamilyDeliveries.readyFilter(f, this.context).and(f.city.isDifferentFrom(c)));
 
       this.updateChart();
     }));
   }
-  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: ActiveFamilyDeliveries, id: string) => Filter) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: filterOf<ActiveFamilyDeliveries>, id: BasketTypeId) => Filter) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
     stats.totalBoxes2 = 0;
 
     baskets.forEach(b => {
-      let fs = new FamilyDeliveresStatistics(b.name, f => equalToFilter(f, b.id),
+      let fs = new FamilyDeliveresStatistics(b.name, f => equalToFilter(f, new BasketTypeId(b.id, this.context)),
         undefined);
       fs.value = getCount(b);
       stats.stats.push(fs);
@@ -375,8 +378,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   private prepComplexStats<type extends { name: string, count: number }>(
     cities: type[],
     stats: statsOnTab,
-    equalToFilter: (f: ActiveFamilyDeliveries, item: string) => Filter,
-    differentFromFilter: (f: ActiveFamilyDeliveries, item: string) => AndFilter
+    equalToFilter: (f: filterOf<ActiveFamilyDeliveries>, item: string) => Filter,
+    differentFromFilter: (f: filterOf<ActiveFamilyDeliveries>, item: string) => AndFilter
   ) {
     stats.stats.splice(0);
     stats.moreStats.splice(0);
@@ -438,7 +441,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     public route: RouteHelperService
   ) {
 
-    if (!settings.usingSelfPickupModule.value)
+    if (!settings.usingSelfPickupModule)
       this.statTabs.splice(this.statTabs.indexOf(this.selfPickupBaskets), 1);
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
     dialog.onStatusChange(() => this.refreshStats(), this.destroyHelper);
@@ -448,7 +451,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
 
-  deliveries = this.context.for(ActiveFamilyDeliveries).gridSettings({
+  deliveries = new GridSettings(this.context.for(ActiveFamilyDeliveries), {
     showFilter: true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
@@ -477,10 +480,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         addFilter(this.statTabs[index].rule(f));
       }
       if (this.searchString) {
-        addFilter(f.name.isContains(this.searchString));
+        addFilter(f.name.contains(this.searchString));
       }
 
-      addFilter(f.filterDistCenterAndAllowed(this.dialog.distCenter.value));
+      addFilter(filterDistCenter(f.distributionCenter, this.dialog.distCenter, this.context));
       return result;
     }
     , orderBy: f => f.name
@@ -523,7 +526,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           caption: getLang(this.context).deliverySummary,
           column: deliveries.deliverStatus,
           readOnly: true,
-          valueList: deliveries.deliverStatus.getOptions()
+          valueList: DeliveryStatus.converter.getOptions()
           ,
           getValue: f => f.getDeliveryDescription(),
           width: '300'
@@ -586,7 +589,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.receptionComments
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
-        if (c.visible) {
+        if (getCustomColumnVisible(c)) {
           r.push(c);
         }
       }
@@ -652,7 +655,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async () => {
 
           let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-          await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.id || c == d.family, undefined,
+          await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
             async (fd, addColumn) => {
               await fd.basketType.addBasketTypes(fd.quantity, addColumn);
               fd.addStatusExcelColumn(addColumn);
@@ -697,19 +700,19 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     let result: groupStats[] = [];
     await context.for(Groups).find({
       limit: 1000,
-      orderBy: f => [{ column: f.name }]
+      orderBy: f => f.name
     }).then(groups => {
       for (const g of groups) {
         let x: groupStats = {
-          name: g.name.value,
+          name: g.name,
           totalReady: 0
         };
         result.push(x);
         pendingStats.push(context.for(ActiveFamilyDeliveries).count(f => {
-          let r = f.groups.isContains(x.name).and(
-            f.filterDistCenterAndAllowed(distCenter));
+          let r = f.groups.contains(x.name).and(
+            filterDistCenter(f.distributionCenter, new DistributionCenterId(distCenter, context), context));
           if (readyOnly)
-            return r.and(f.readyFilter());
+            return r.and(FamilyDeliveries.readyFilter(f, context));
           return r;
         }).then(r => x.totalReady = r));
 
@@ -719,21 +722,23 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return result;
   }
   @ServerFunction({ allowed: Roles.lab })
-  static async getDeliveriesByPhone(phoneNum: string, context?: Context, db?: SqlDatabase) {
+  static async getDeliveriesByPhone(phoneNumIn: string, context?: Context, db?: SqlDatabase) {
+    let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder();
-    let fd = context.for(FamilyDeliveries).create();
+    
+    let fd = SqlFor(context.for(FamilyDeliveries));
     let result: string[] = [];
     let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
 
     for (const d of (await db.execute(sql1.query({
       from: fd,
       where: () => [
-        (courier != undefined ? fd.courier.isEqualTo(courier.id).and(fd.active()) :
+        (courier != undefined ? fd.courier.isEqualTo(new HelperId(courier.id, context)).and(FamilyDeliveries.active(fd)) :
           sql1.or(
-            fd.phone1.isEqualTo(phoneNum).and(fd.active()),
-            fd.phone2.isEqualTo(phoneNum).and(fd.active()),
-            fd.phone3.isEqualTo(phoneNum).and(fd.active()),
-            fd.phone4.isEqualTo(phoneNum).and(fd.active()))
+            fd.phone1.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
+            fd.phone2.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
+            fd.phone3.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
+            fd.phone4.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)))
         )
       ],
       select: () => [
@@ -743,7 +748,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await context.for(FamilyDeliveries).toPojoArray(await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(...result) }))
+    return await (await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiPojo());
   }
 
 
@@ -765,7 +770,7 @@ interface statsOnTab {
   stats: FamilyDeliveresStatistics[],
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
-  rule: (f: ActiveFamilyDeliveries) => Filter,
+  rule: (f: filterOf<ActiveFamilyDeliveries>) => Filter,
   fourthColumn: () => DataControlSettings,
   refreshStats?: (stats: statsOnTab) => Promise<void>
 }
@@ -779,7 +784,7 @@ export interface deliveryButtonsHelper {
   deliveries: () => GridSettings<FamilyDeliveries>,
   showAllBeforeNew?: boolean
 }
-export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
+export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.context.for(Families).findId(d.family);
 
@@ -795,20 +800,20 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
     await f.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
         if (args.settings.isSytemForMlt()) {
-          if (d.deliverStatus.value.isProblem) {
+          if (d.deliverStatus.isProblem) {
             let newDelivery = await args.context.for(ActiveFamilyDeliveries).findId(newDeliveryId);
             for (const otherFailedDelivery of await args.context.for(ActiveFamilyDeliveries).find({
-              where: fd => fd.family.isEqualTo(newDelivery.family).and(fd.deliverStatus.isProblem())
+              where: fd => fd.family.isEqualTo(newDelivery.family).and(DeliveryStatus.isProblem(fd.deliverStatus))
             })) {
-              await Families.addDelivery(otherFailedDelivery.family.value, {
-                basketType: otherFailedDelivery.basketType.value,
-                quantity: otherFailedDelivery.quantity.value,
-                courier: newDelivery.courier.value,
-                distCenter: newDelivery.distributionCenter.value,
+              await Families.addDelivery(otherFailedDelivery.family, {
+                basketType: otherFailedDelivery.basketType.evilGetId(),
+                quantity: otherFailedDelivery.quantity,
+                courier: newDelivery.courier.evilGetId(),
+                distCenter: newDelivery.distributionCenter.evilGetId(),
                 selfPickup: false,
-                comment: otherFailedDelivery.deliveryComments.value
+                comment: otherFailedDelivery.deliveryComments
               });
-              otherFailedDelivery.archive.value = true;
+              otherFailedDelivery.archive = true;
               await otherFailedDelivery.save();
             }
           }
@@ -824,7 +829,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       click: async d => {
         newDelivery(d)
       },
-      visible: d => args.context.isAllowed(Roles.admin) && !DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
+      visible: d => args.context.isAllowed(Roles.admin) && !d.deliverStatus.IsAResultStatus()
     },
     {
       textInMenu: () => getLang(args.context).newDelivery,
@@ -833,7 +838,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       click: async d => {
         newDelivery(d)
       },
-      visible: d => args.context.isAllowed(Roles.admin) && DeliveryStatus.IsAResultStatus(d.deliverStatus.value)
+      visible: d => args.context.isAllowed(Roles.admin) && d.deliverStatus.IsAResultStatus()
     },
     {
       name: getLang(args.context).sendWhatsAppToFamily,
@@ -846,35 +851,34 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       icon: 'person_search',
       showInLine: true,
       click: async d => {
-        await d.courier.showSelectDialog(async () => {
-          await d.save();
-
-
-
-          var fd = await args.context.for(ActiveFamilyDeliveries).find({
-            where: fd => {
-              let f = fd.id.isDifferentFrom(d.id).and(
-                fd.readyFilter()).and(
-                  d.distributionCenter.filter(args.dialog.distCenter.value));
-              if (d.addressOk.value)
-                return f.and(fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
-              else
-                return f.and(fd.family.isEqualTo(d.family).and(f));
-            }
-          });
-          if (fd.length > 0) {
-            if (await args.dialog.YesNoPromise(args.settings.lang.thereAreAdditional + " " + fd.length + " " + args.settings.lang.deliveriesAtSameAddress)) {
-              for (const f of fd) {
-                f.courier.value = d.courier.value;
-                await f.save();
+        await openDialog(SelectHelperComponent, x => x.args = {
+          onSelect: async selectedHelper => {
+            d.courier = new HelperId(selectedHelper.id, this.context)
+            await d.save();
+            var fd = await args.context.for(ActiveFamilyDeliveries).find({
+              where: fd => {
+                let f = fd.id.isDifferentFrom(d.id).and(
+                  FamilyDeliveries.readyFilter(fd, this.context)).and(
+                    filterDistCenter(fd.distributionCenter, args.dialog.distCenter, this.context));
+                if (d.addressOk)
+                  return f.and(fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
+                else
+                  return f.and(fd.family.isEqualTo(d.family).and(f));
               }
-              args.refresh();
+            });
+            if (fd.length > 0) {
+              if (await args.dialog.YesNoPromise(args.settings.lang.thereAreAdditional + " " + fd.length + " " + args.settings.lang.deliveriesAtSameAddress)) {
+                for (const f of fd) {
+                  f.courier = d.courier;
+                  await f.save();
+                }
+                args.refresh();
+              }
             }
           }
-
         });
       },
-      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => !d.deliverStatus.IsAResultStatus() && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).volunteerAssignments,
@@ -882,14 +886,14 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
       showInLine: true,
       click: async d => {
         let h = await args.context.for(Helpers).findId(d.courier);
-        await args.context.openDialog(
+        await openDialog(
           (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = h);
         args.refresh();
 
 
 
       },
-      visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => d.courier.isNotEmpty() && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).volunteerInfo,
@@ -902,21 +906,21 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
 
 
       },
-      visible: d => d.courier.value && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => d.courier.isNotEmpty() && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).cancelAsignment,
       showInLine: true,
       icon: 'person_add_disabled',
       click: async d => {
-        if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name.value)) {
+        if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name)) {
           {
-            d.courier.value = '';
+            d.courier = HelperId.empty(args.context);
             await d.save();
           }
         }
       },
-      visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value != ''
+      visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier.isNotEmpty()
     },
     {
       name: getLang(args.context).familyDeliveries,
@@ -933,29 +937,29 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
     {
       name: getLang(args.context).freezeDelivery,
       click: async d => {
-        if (await args.dialog.YesNoPromise(getLang(args.context).freezeDeliveryHelp + d.name.value + "?")) {
+        if (await args.dialog.YesNoPromise(getLang(args.context).freezeDeliveryHelp + d.name + "?")) {
           {
-            d.deliverStatus.value = DeliveryStatus.Frozen;
+            d.deliverStatus = DeliveryStatus.Frozen;
             await d.save();
           }
         }
       },
-      visible: d => d.deliverStatus.value == DeliveryStatus.ReadyForDelivery && d.courier.value == ''
+      visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier.isEmpty()
     },
     {
       name: getLang(args.context).unFreezeDelivery,
       click: async d => {
         {
-          d.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+          d.deliverStatus = DeliveryStatus.ReadyForDelivery;
           await d.save();
         }
       },
-      visible: d => d.deliverStatus.value == DeliveryStatus.Frozen
+      visible: d => d.deliverStatus == DeliveryStatus.Frozen
     },
     {
       name: getLang(args.context).deleteDelivery,
       click: async d => {
-        if (await args.dialog.YesNoPromise(getLang(args.context).shouldDeleteDeliveryFor + d.name.value)) {
+        if (await args.dialog.YesNoPromise(getLang(args.context).shouldDeleteDeliveryFor + d.name)) {
           {
             let fd = await args.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
             await fd.delete();
@@ -963,7 +967,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
           }
         }
       },
-      visible: d => !DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => !(d.deliverStatus.IsAResultStatus()) && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).archiveDelivery,
@@ -973,28 +977,20 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper) {
         if (await args.dialog.YesNoPromise(getLang(args.context).shouldArchiveDelivery)) {
           {
             let fd = await args.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
-            fd.archive.value = true;
+            fd.archive = true;
             await fd.save();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
         }
-      }, visible: d => !d.archive.value && DeliveryStatus.IsAResultStatus(d.deliverStatus.value) && args.context.isAllowed(Roles.distCenterAdmin)
+      }, visible: d => !d.archive && (d.deliverStatus.IsAResultStatus()) && args.context.isAllowed(Roles.distCenterAdmin)
 
     },
     {
       textInMenu: () => getLang(args.context).sendWhatsAppToFamily,
       click: async d => {
-        PhoneColumn.sendWhatsappToPhone(d.phone1.value,
-          getLang(args.context).hello + ' ' + d.name.value + ',', args.context);
+        d.phone1.sendWhatsapp(args.context, getLang(args.context).hello + ' ' + d.name + ',');
       },
       visible: d => d.phone1 && args.context.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt()
     }
-
-
-
-
-
   ] as RowButton<FamilyDeliveries>[]
-
 }
-

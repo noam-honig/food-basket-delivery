@@ -31,11 +31,11 @@
                 <div>
                     <mat-panel-title style="justify-content: space-between">
                         <div class="familyLine">
-                            <span *ngIf="i+1">{{i+1}}.&nbsp;</span>{{f.name.value}}
-                            <mat-icon color="accent" *ngIf="f.deliveryComments.value"> comment</mat-icon>
-                            <mat-icon color="accent" *ngIf="!f.addressOk.value">warning</mat-icon>
-                            <mat-icon color="green" *ngIf="f.courierBeenHereBefore.value">repeat</mat-icon>
-                            <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
+                            <span *ngIf="i+1">{{i+1}}.&nbsp;</span>{{f.name}}
+                            <mat-icon color="accent" *ngIf="f.deliveryComments"> comment</mat-icon>
+                            <mat-icon color="accent" *ngIf="!f.addressOk">warning</mat-icon>
+                            <mat-icon color="green" *ngIf="f.courierBeenHereBefore">repeat</mat-icon>
+                            <mat-icon *ngIf="f.courierComments"> comment</mat-icon>
                         </div>
 
                     </mat-panel-title>
@@ -58,14 +58,14 @@
                     <mat-expansion-panel-header style="background-color:lightgreen">
                         <div>
                             <mat-panel-title> <strong>{{settings.lang.thisIsTheDestination}}</strong> :
-                                {{familyLists.distCenter.name.value}}</mat-panel-title>
-                            <mat-panel-description>{{familyLists.distCenter.address.value}}</mat-panel-description>
+                                {{familyLists.distCenter.name}}</mat-panel-title>
+                            <mat-panel-description>{{familyLists.distCenter.address}}</mat-panel-description>
                         </div>
                     </mat-expansion-panel-header>
-                    <div *ngIf="familyLists.distCenter.comments.value">
+                    <div *ngIf="familyLists.distCenter.comments">
                         <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
                         <strong style="color:red">{{settings.lang.notice}} </strong>
-                        {{familyLists.distCenter.comments.value}}
+                        {{familyLists.distCenter.comments}}
                     </div>
                     <h4>{{settings.lang.address}}</h4>
                     <div style="display:flex">
@@ -75,37 +75,37 @@
                         </span>
                         <div style="flex-grow:1;padding:0 5px;">
                             <a (click)="familyLists.distCenter.openWaze()">
-                                <span style="display:block"> {{familyLists.distCenter.address.value}} </span>
+                                <span style="display:block"> {{familyLists.distCenter.address}} </span>
                             </a>
                         </div>
                     </div>
 
-                    <h4 *ngIf="familyLists.distCenter.phone1.value || familyLists.distCenter.phone2.value">
+                    <h4 *ngIf="familyLists.distCenter.phone1 || familyLists.distCenter.phone2">
                         {{settings.lang.phones}}:
                     </h4>
-                    <div *ngIf="familyLists.distCenter.phone1.value" class="phone-container">
-                        <a href="tel:{{familyLists.distCenter.phone1.value}}">
+                    <div *ngIf="familyLists.distCenter.phone1" class="phone-container">
+                        <a href="tel:{{familyLists.distCenter.phone1}}">
                             <button mat-mini-fab style="vertical-align: middle" color="primary">
                                 <mat-icon>call</mat-icon>
                             </button>
                         </a>
                         <div>
                             <a
-                                href="tel:{{familyLists.distCenter.phone1.value}}">{{familyLists.distCenter.phone1.displayValue}}</a>,
-                            {{familyLists.distCenter.phone1Description.value?familyLists.distCenter.phone1Description.value:familyLists.distCenter.name.value}}
+                                href="tel:{{familyLists.distCenter.phone1}}">{{familyLists.distCenter.phone1.displayValue}}</a>,
+                            {{familyLists.distCenter.phone1Description?familyLists.distCenter.phone1Description:familyLists.distCenter.name}}
                         </div>
                     </div>
 
-                    <div *ngIf="familyLists.distCenter.phone2.value" class="phone-container">
-                        <a href="tel:{{familyLists.distCenter.phone2.value}}">
+                    <div *ngIf="familyLists.distCenter.phone2" class="phone-container">
+                        <a href="tel:{{familyLists.distCenter.phone2}}">
                             <button mat-mini-fab style="vertical-align: middle" color="primary">
                                 <mat-icon>call</mat-icon>
                             </button>
                         </a>
                         <div>
                             <a
-                                href="tel:{{familyLists.distCenter.phone2.value}}">{{familyLists.distCenter.phone2.displayValue}}</a>,
-                            {{familyLists.distCenter.phone2Description.value?familyLists.distCenter.phone2Description.value:familyLists.distCenter.name.value}}
+                                href="tel:{{familyLists.distCenter.phone2}}">{{familyLists.distCenter.phone2.displayValue}}</a>,
+                            {{familyLists.distCenter.phone2Description?familyLists.distCenter.phone2Description:familyLists.distCenter.name}}
                         </div>
                     </div>
 
@@ -124,14 +124,14 @@
                         <mat-panel-title style="justify-content: space-between">
                             <div class="familyLine">
                                 {{getBasketsDescription(f, 'delivered')}}
-                                <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
+                                <mat-icon *ngIf="f.courierComments"> comment</mat-icon>
                             </div>
     
                         </mat-panel-title>
     
                         <mat-panel-description style="justify-content: space-evenly; align-items: stretch;">
                             <div style="white-space: nowrap;">
-                                {{f.name.value}}
+                                {{f.name}}
                             </div>
     
                             <div style="white-space: nowrap;">
@@ -154,20 +154,20 @@
                 <div>
                     <mat-panel-title style="justify-content: space-between">
                         <div class="familyLine">
-                            {{getBasketsDescription(f, 'problem')}} מהתורם {{f.name.value}}
+                            {{getBasketsDescription(f, 'problem')}} מהתורם {{f.name}}
                             ({{f.getAddressDescription() }})
-                            <mat-icon *ngIf="f.courierComments.value"> comment</mat-icon>
+                            <mat-icon *ngIf="f.courierComments"> comment</mat-icon>
                         </div>
 
                     </mat-panel-title>
 
                     <mat-panel-description style="justify-content: space-evenly; align-items: stretch;">
                         <div style="white-space: nowrap;">
-                            {{f.deliverStatus.displayValue}}
+                            {{f.$.deliverStatus.displayValue}}
                         </div>
 
-                        <div *ngIf="f.courierComments.value" style="white-space: nowrap;">
-                            ({{f.courierComments.displayValue}})
+                        <div *ngIf="f.courierComments" style="white-space: nowrap;">
+                            ({{f.$.courierComments.displayValue}})
                         </div>
                     </mat-panel-description>
                 </div>
@@ -180,7 +180,7 @@
         <span class="mat-card-title">
                 יש לעדכן לאחר מסירה בנקודת איסוף<br>
                 התרומה: {{getBasketsDescription(selectedFamily, 'delivered')}}<br>
-                מהתרום: {{selectedFamily.name.value}}
+                מהתרום: {{selectedFamily.name}}
         </span>
         <button mat-raised-button class="myButton" color="accent" (click)="undoDeliveredToFamily()">
             רגע - בכלל לא אספתי את זה
@@ -194,11 +194,11 @@
     </div>
 
     <div class="grow-item" *ngIf="display==deliveryInfo">
-        <span class="mat-card-title"> {{selectedFamily.name.value}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
+        <span class="mat-card-title"> {{selectedFamily.name}} מחכה ליצירת קשר ממך לתיאום איסוף התרומה</span>
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
         <ul>
             <li *ngFor="let i of deliveriesForFamily">
-                {{i.quantity.value}} X {{i.basketType.displayValue}}
+                {{i.quantity}} X {{i.$.basketType.displayValue}}
             </li>
         </ul>
         <button mat-raised-button class="myButton" color="accent" (click)="deliveredToFamily()">
@@ -213,7 +213,7 @@
         </button>
     </div>
     <div class="grow-item" *ngIf="display==problemInfo">
-        <span class="mat-card-title"> מה היתה הבעייה באיסוף מ{{selectedFamily.name.value}}</span>
+        <span class="mat-card-title"> מה היתה הבעייה באיסוף מ{{selectedFamily.name}}</span>
         <app-family-info [f]="selectedFamily" [hideSal]="true"></app-family-info>
 
 

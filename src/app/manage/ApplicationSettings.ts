@@ -1,10 +1,26 @@
-import { StringColumn, NumberColumn, BoolColumn, ValueListColumn, ServerFunction, Allowed } from '@remult/core';
-import { GeocodeInformation, GetGeoInformation, AddressColumn } from "../shared/googleApiHelpers";
-import { Entity, Context, EntityClass } from '@remult/core';
-import { PhoneColumn, logChanges } from "../model-shared/types";
+import { ServerFunction, Allowed, EntityBase, Column, EntityColumn, Storable, ColumnDefinitions } from '@remult/core';
+import { DataControl } from '../../../../radweb/projects/angular';
+export function CustomColumn(info: () => customColumnInfo) {
+  return (target, key) => {
+    DataControl({
+      //valueList: info().values,
+      //     visible: () => info().visible
+    })(target, key);
+    return Column({
+      //caption: info().caption,
+      //    allowApiUpdate: info().role,
+
+    })(target, key);
+  };
+}
+
+import { GeocodeInformation, GetGeoInformation, AddressHelper } from "../shared/googleApiHelpers";
+import { Entity, Context } from '@remult/core';
+import { logChanges } from "../model-shared/types";
+import { Phone } from "../model-shared/Phone";
 import { Roles } from "../auth/roles";
-import { DeliveryStatusColumn, DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, TranslationOptionsColumn, Language, use, TranslationOptions } from "../translate";
+import { DeliveryStatus } from "../families/DeliveryStatus";
+import { translationConfig, Language, use, TranslationOptions } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -12,22 +28,47 @@ import { Injectable } from '@angular/core';
 import { BasketType } from '../families/BasketType';
 import { HttpClient } from '@angular/common/http';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
-import { routeStrategyColumn } from '../asign-family/route-strategy';
-import { NumberContext } from 'twilio/lib/rest/pricing/v1/voice/number';
+import { routeStrategy } from '../asign-family/route-strategy';
+import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
+
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 
-@EntityClass
-export class ApplicationSettings extends Entity<number>  {
+@Entity<ApplicationSettings>({
+  key: 'ApplicationSettings',
+  allowApiRead: true,
+  allowApiUpdate: Roles.admin,
+  saving: async (self) => {
+
+    if (self.context.onServer) {
+
+      await self.addressHelper.updateApiResultIfChanged();
+
+      for (const l of [self.$.message1Link, self.$.message2Link]) {
+        if (l.value) {
+          if (l.value.trim().indexOf(':') < 0)
+            l.value = 'http://' + l.value.trim();
+        }
+      }
+      self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone, self.context));
+      if (self.forWho)
+        setLangForSite(Sites.getValidSchemaFromContext(self.context), self.forWho);
+      setSettingsForSite(Sites.getValidSchemaFromContext(self.context), self);
+      logChanges(self._, self.context, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest] });
+    }
+  }
+})
+export class ApplicationSettings extends EntityBase {
 
   getInternationalPhonePrefix() {
-    let r = this.forWho.value.args.internationalPrefixForSmsAndAws;
+    let r = this.forWho.args.internationalPrefixForSmsAndAws;
     if (!r)
       r = '+972';
     return r;
   }
   googleMapCountry() {
-    let r = this.forWho.value.args.googleMapCountry;
+    let r = this.forWho.args.googleMapCountry;
     if (!r)
       r = 'IL';
     return r;
@@ -37,7 +78,7 @@ export class ApplicationSettings extends Entity<number>  {
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(fd.isAllowedForUser()));
+    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(FamilyDeliveries.isAllowedForUser(fd, context)));
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
@@ -63,53 +104,60 @@ export class ApplicationSettings extends Entity<number>  {
     return this.lang.languageCode == 'iw' && !this.isSytemForMlt();
   }
 
-  id = new NumberColumn();
-  organisationName = new StringColumn(this.lang.organizationName);
-  validateSmsContent(c: StringColumn) {
-    return;
-    if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
-      c.validationError = this.lang.mustIncludeUrlKeyError;
-  }
-  smsText = new StringColumn({
-    caption: this.lang.smsMessageContentCaption, validate: () => {
-      this.validateSmsContent(this.smsText);
+  @Column()
+  id: number;
+  @Column({ caption: use.language.organizationName })
+  organisationName: string;
 
-    }
-  });
-  reminderSmsText = new StringColumn({
-    caption: this.lang.smsReminderMessageContentCaption,
-    validate: () => {
-      this.validateSmsContent(this.reminderSmsText);
-    }
-  });
-  registerFamilyReplyEmailText = new StringColumn({
-    caption: this.lang.emailDonorContentCaption,
-    validate: () => {
-      this.validateSmsContent(this.registerFamilyReplyEmailText);
-    }
-  });
-  registerHelperReplyEmailText = new StringColumn({
-    caption: this.lang.emailHelperContentCaption,
-    validate: () => {
-      this.validateSmsContent(this.registerHelperReplyEmailText);
-    }
-  });
-  gmailUserName = new StringColumn({ caption: "gMail UserName", includeInApi: Roles.admin });
-  gmailPassword = new StringColumn({ caption: "gMail password", includeInApi: Roles.admin });
-  logoUrl = new StringColumn(this.lang.logoUrl);
-  addressApiResult = new StringColumn();
-  address = new AddressColumn(this.context, this.addressApiResult, this.lang.deliveryCenterAddress);
-  commentForSuccessDelivery = new StringColumn(this.lang.successMessageColumnName);
-  commentForSuccessLeft = new StringColumn(this.lang.leftByDoorMessageColumnName);
-  commentForProblem = new StringColumn(this.lang.problemCommentColumnName);
-  messageForDoneDelivery = new StringColumn(this.lang.messageForVolunteerWhenDoneCaption);
 
-  helpText = new StringColumn(this.lang.helpName);
-  helpPhone = new PhoneColumn(this.lang.helpPhone);
-  phoneStrategy = new StringColumn();
+  @Column({
+    caption: use.language.smsMessageContentCaption, validate: validateSmsContent
+  })
+  smsText: string;
+  @Column({
+    caption: use.language.smsReminderMessageContentCaption,
+    validate: validateSmsContent
+  })
+  reminderSmsText: string;
+  @Column({
+    caption: use.language.emailDonorContentCaption,
+    validate: validateSmsContent
+  })
+  registerFamilyReplyEmailText: string;
+  @Column({
+    caption: use.language.emailHelperContentCaption,
+    validate: validateSmsContent
+  })
+  registerHelperReplyEmailText: string;
+  @Column({ caption: "gMail UserName", includeInApi: Roles.admin })
+  gmailUserName: string;
+  @Column({ caption: "gMail password", includeInApi: Roles.admin })
+  gmailPassword: string;
+  @Column({ caption: use.language.logoUrl })
+  logoUrl: string;
+  @Column()
+  addressApiResult: string;
+  @Column({ caption: use.language.deliveryCenterAddress })
+  address: string;
+  addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
+  @Column({ caption: use.language.successMessageColumnName })
+  commentForSuccessDelivery: string;
+  @Column({ caption: use.language.leftByDoorMessageColumnName })
+  commentForSuccessLeft: string;
+  @Column({ caption: use.language.problemCommentColumnName })
+  commentForProblem: string;
+  @Column({ caption: use.language.messageForVolunteerWhenDoneCaption })
+  messageForDoneDelivery: string;
+  @Column({ caption: use.language.helpName })
+  helpText: string;
+  @Column({ caption: use.language.helpPhone })
+  helpPhone: Phone;
+  @Column()
+  phoneStrategy: string;
+
   getPhoneStrategy(): PhoneItem[] {
     try {
-      return JSON.parse(this.phoneStrategy.value).map(x => {
+      return JSON.parse(this.phoneStrategy).map(x => {
         return {
           name: x.name,
           phone: x.phone,
@@ -124,126 +172,181 @@ export class ApplicationSettings extends Entity<number>  {
   }
   getQuestions(): qaItem[] {
     try {
-      return JSON.parse(this.commonQuestions.value);
+      return JSON.parse(this.commonQuestions);
     }
     catch
     {
       return [];
     }
   }
-  commonQuestions = new StringColumn();
-  dataStructureVersion = new NumberColumn({ allowApiUpdate: false });
-  deliveredButtonText = new StringColumn(this.lang.successButtonSettingName);
-  message1Text = new StringColumn(this.lang.freeText1ForVolunteer);
-  message1Link = new StringColumn(this.lang.urlFreeText1);
-  message1OnlyWhenDone = new BoolColumn(this.lang.showText1OnlyWhenDone);
-  message2Text = new StringColumn(this.lang.freeText2ForVolunteer);
-  message2Link = new StringColumn(this.lang.urlFreeText2);
-  message2OnlyWhenDone = new BoolColumn(this.lang.showText2OnlyWhenDone);
-  forWho = new TranslationOptionsColumn();
-  _old_for_soliders = new BoolColumn({ dbName: 'forSoldiers' });
+  @Column()
+  commonQuestions: string;
+  @Column({ allowApiUpdate: false })
+  dataStructureVersion: number;
+  @Column({ caption: use.language.successButtonSettingName })
+  deliveredButtonText: string;
+  @Column({ caption: use.language.freeText1ForVolunteer })
+  message1Text: string;
+  @Column({ caption: use.language.urlFreeText1 })
+  message1Link: string;
+  @Column({ caption: use.language.showText1OnlyWhenDone })
+  message1OnlyWhenDone: boolean;
+  @Column({ caption: use.language.freeText2ForVolunteer })
+  message2Text: string;
+  @Column({ caption: use.language.urlFreeText2 })
+  message2Link: string;
+  @Column({ caption: use.language.showText2OnlyWhenDone })
+  message2OnlyWhenDone: boolean;
+  @Column()
+  forWho: TranslationOptions;
+  @Column({ dbName: 'forSoldiers' })
+  _old_for_soliders: boolean;
+  @Column({ caption: use.language.enableSelfPickupModule })
+  usingSelfPickupModule: boolean;
 
-  usingSelfPickupModule = new BoolColumn(this.lang.enableSelfPickupModule);
   isSytemForMlt() {
-    return this.forWho.value == TranslationOptions.donors;
+    return this.forWho == TranslationOptions.donors;
   }
 
-  showCompanies = new BoolColumn(this.lang.showVolunteerCompany);
-  manageEscorts = new BoolColumn(this.lang.activateEscort);
-  showHelperComment = new BoolColumn(this.lang.showHelperComment);
-  showGroupsOnAssing = new BoolColumn(this.lang.filterFamilyGroups);
-  showCityOnAssing = new BoolColumn(this.lang.filterCity);
-  showAreaOnAssing = new BoolColumn(this.lang.filterRegion);
-  showBasketOnAssing = new BoolColumn(this.lang.filterBasketType);
-  showNumOfBoxesOnAssing = new BoolColumn(this.lang.selectNumberOfFamilies);
-  showLeftThereButton = new BoolColumn(this.lang.showLeftByHouseButton);
-  redTitleBar = new BoolColumn(this.lang.redTitleBar);
-  defaultPrefixForExcelImport = new StringColumn(this.lang.defaultPhonePrefixForExcelImport);
-  checkIfFamilyExistsInDb = new BoolColumn(this.lang.checkIfFamilyExistsInDb);
-  removedFromListStrategy = new RemovedFromListExcelImportStrategyColumn(this.context);
-  checkIfFamilyExistsInFile = new BoolColumn(this.lang.checkIfFamilyExistsInFile);
-  excelImportAutoAddValues = new BoolColumn(this.lang.excelImportAutoAddValues);
-  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = new BoolColumn(this.lang.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery);
-  checkDuplicatePhones = new BoolColumn(this.lang.checkDuplicatePhones);
-  volunteerCanUpdateComment = new BoolColumn(this.lang.volunteerCanUpdateComment);
-  volunteerCanUpdateDeliveryComment = new BoolColumn(this.lang.volunteerCanUpdateDeliveryComment);
-  hideFamilyPhoneFromVolunteer = new BoolColumn(this.lang.hideFamilyPhoneFromVolunteer);
+  @Column({ caption: use.language.showVolunteerCompany })
+  showCompanies: boolean;
+  @Column({ caption: use.language.activateEscort })
+  manageEscorts: boolean;
+  @Column({ caption: use.language.showHelperComment })
+  showHelperComment: boolean;
+  @Column({ caption: use.language.filterFamilyGroups })
+  showGroupsOnAssing: boolean;
+  @Column({ caption: use.language.filterCity })
+  showCityOnAssing: boolean;
+  @Column({ caption: use.language.filterRegion })
+  showAreaOnAssing: boolean;
+  @Column({ caption: use.language.filterBasketType })
+  showBasketOnAssing: boolean;
+  @Column({ caption: use.language.selectNumberOfFamilies })
+  showNumOfBoxesOnAssing: boolean;
+  @Column({ caption: use.language.showLeftByHouseButton })
+  showLeftThereButton: boolean;
+  @Column({ caption: use.language.redTitleBar })
+  redTitleBar: boolean;
+  @Column({ caption: use.language.defaultPhonePrefixForExcelImport })
+  defaultPrefixForExcelImport: string;
+  @Column({ caption: use.language.checkIfFamilyExistsInDb })
+  checkIfFamilyExistsInDb: boolean;
+  @Column()
+  removedFromListStrategy: RemovedFromListExcelImportStrategy;
+  @Column({ caption: use.language.checkIfFamilyExistsInFile })
+  checkIfFamilyExistsInFile: boolean;
+  @Column({ caption: use.language.excelImportAutoAddValues })
+  excelImportAutoAddValues: boolean;
+  @Column({ caption: use.language.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery })
+  excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery: boolean;
+  @Column({ caption: use.language.checkDuplicatePhones })
+  checkDuplicatePhones: boolean;
+  @Column({ caption: use.language.volunteerCanUpdateComment })
+  volunteerCanUpdateComment: boolean;
+  @Column({ caption: use.language.volunteerCanUpdateDeliveryComment })
+  volunteerCanUpdateDeliveryComment: boolean;
+  @Column({ caption: use.language.hideFamilyPhoneFromVolunteer })
+  hideFamilyPhoneFromVolunteer: boolean;
+
   static serverHasPhoneProxy = false;
-  usePhoneProxy = new BoolColumn({ allowApiUpdate: false });
-  showOnlyLastNamePartToVolunteer = new BoolColumn(this.lang.showOnlyLastNamePartToVolunteer);
-  showTzToVolunteer = new BoolColumn(this.lang.showTzToVolunteer);
-  allowSendSuccessMessageOption = new BoolColumn({ caption: this.lang.allowSendSuccessMessageOption, allowApiUpdate: false });
-  sendSuccessMessageToFamily = new BoolColumn(this.lang.sendSuccessMessageToFamily);
-  successMessageText = new StringColumn(this.lang.successMessageText);
-  requireEULA = new BoolColumn(this.lang.requireEULA);
-  requireConfidentialityApprove = new BoolColumn(this.lang.requireConfidentialityApprove);
-  requireComplexPassword = new BoolColumn(this.lang.requireComplexPassword);
-  timeToDisconnect = new NumberColumn(this.lang.timeToDisconnect);
-  daysToForcePasswordChange = new NumberColumn(this.lang.daysToForcePasswordChange);
-  showDeliverySummaryToVolunteerOnFirstSignIn = new BoolColumn(this.lang.showDeliverySummaryToVolunteerOnFirstSignIn);
+  @Column({ allowApiUpdate: false })
+  usePhoneProxy: boolean;
+  @Column({ caption: use.language.showOnlyLastNamePartToVolunteer })
+  showOnlyLastNamePartToVolunteer: boolean;
+  @Column({ caption: use.language.showTzToVolunteer })
+  showTzToVolunteer: boolean;
+  @Column({ caption: use.language.allowSendSuccessMessageOption, allowApiUpdate: false })
+  allowSendSuccessMessageOption: boolean;
+  @Column({ caption: use.language.sendSuccessMessageToFamily })
+  sendSuccessMessageToFamily: boolean;
+  @Column({ caption: use.language.successMessageText })
+  successMessageText: string;
+  @Column({ caption: use.language.requireEULA })
+  requireEULA: boolean;
+  @Column({ caption: use.language.requireConfidentialityApprove })
+  requireConfidentialityApprove: boolean;
+  @Column({ caption: use.language.requireComplexPassword })
+  requireComplexPassword: boolean;
+  @Column({ caption: use.language.timeToDisconnect })
+  timeToDisconnect: number;
+  @Column({ caption: use.language.daysToForcePasswordChange })
+  daysToForcePasswordChange: number;
+  @Column({ caption: use.language.showDeliverySummaryToVolunteerOnFirstSignIn })
+  showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
+  @Column({ caption: use.language.showDistCenterAsEndAddressForVolunteer })
+  showDistCenterAsEndAddressForVolunteer: boolean;
+  @Column()
+  routeStrategy: routeStrategy;
+  @Column({ caption: use.language.maxDeliveriesBeforeBusy })
+  BusyHelperAllowedFreq_nom: number;
+  @Column({ caption: use.language.daysCountForBusy })
+  BusyHelperAllowedFreq_denom: number;
+  @Column({ caption: use.language.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee })
+  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
+  @Column({ caption: use.language.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself })
+  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
 
-  showDistCenterAsEndAddressForVolunteer = new BoolColumn(this.lang.showDistCenterAsEndAddressForVolunteer);
-  routeStrategy = new routeStrategyColumn();
 
-  BusyHelperAllowedFreq_nom = new NumberColumn(this.lang.maxDeliveriesBeforeBusy);
-  BusyHelperAllowedFreq_denom = new NumberColumn(this.lang.daysCountForBusy);
-  MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = new NumberColumn(this.lang.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee);
-  MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself = new NumberColumn(this.lang.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself);
+  @Column({
+    caption: use.language.defaultStatusType
+  })
+  @DataControl({
+    valueList: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]
+  })
+  defaultStatusType: DeliveryStatus;
 
-  defaultStatusType = new DeliveryStatusColumn(this.context, {
-    caption: this.lang.defaultStatusType
-  }, [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]);
 
-  boxes1Name = new StringColumn(this.lang.boxes1NameCaption);
-  boxes2Name = new StringColumn(this.lang.boxes2NameCaption);
-  familyCustom1Caption = new StringColumn({ caption: this.lang.customColumn + " 1 " + this.lang.caption, includeInApi: Roles.admin });
-  familyCustom1Values = new StringColumn({ caption: this.lang.customColumn + " 1 " + this.lang.optionalValues, includeInApi: Roles.admin });
-  familyCustom2Caption = new StringColumn({ caption: this.lang.customColumn + " 2 " + this.lang.caption, includeInApi: Roles.admin });
-  familyCustom2Values = new StringColumn({ caption: this.lang.customColumn + " 2 " + this.lang.optionalValues, includeInApi: Roles.admin });
-  familyCustom3Caption = new StringColumn({ caption: this.lang.customColumn + " 3 " + this.lang.caption, includeInApi: Roles.admin });
-  familyCustom3Values = new StringColumn({ caption: this.lang.customColumn + " 3 " + this.lang.optionalValues, includeInApi: Roles.admin });
-  familyCustom4Caption = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.caption, includeInApi: Roles.admin });
-  familyCustom4Values = new StringColumn({ caption: this.lang.customColumn + " 4 " + this.lang.optionalValues, includeInApi: Roles.admin });
-  currentUserIsValidForAppLoadTest = new BoolColumn({ serverExpression: () => this.context.isSignedIn() });
-  questionForVolunteer1Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 1 " + this.lang.caption });
-  questionForVolunteer1Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 1 " + this.lang.optionalValues });
-  questionForVolunteer2Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 2 " + this.lang.caption });
-  questionForVolunteer2Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 2 " + this.lang.optionalValues });
-  questionForVolunteer3Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 3 " + this.lang.caption });
-  questionForVolunteer3Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 3 " + this.lang.optionalValues });
-  questionForVolunteer4Caption = new StringColumn({ caption: this.lang.questionForVolunteer + " 4 " + this.lang.caption });
-  questionForVolunteer4Values = new StringColumn({ caption: this.lang.questionForVolunteer + " 4 " + this.lang.optionalValues });
+  @Column({ caption: use.language.boxes1NameCaption })
+  boxes1Name: string;
+  @Column({ caption: use.language.boxes2NameCaption })
+  boxes2Name: string;
+  @Column({ caption: use.language.customColumn + " 1 " + use.language.caption, includeInApi: Roles.admin })
+  familyCustom1Caption: string;
+  @Column({ caption: use.language.customColumn + " 1 " + use.language.optionalValues, includeInApi: Roles.admin })
+  familyCustom1Values: string;
+  @Column({ caption: use.language.customColumn + " 2 " + use.language.caption, includeInApi: Roles.admin })
+  familyCustom2Caption: string;
+  @Column({ caption: use.language.customColumn + " 2 " + use.language.optionalValues, includeInApi: Roles.admin })
+  familyCustom2Values: string;
+  @Column({ caption: use.language.customColumn + " 3 " + use.language.caption, includeInApi: Roles.admin })
+  familyCustom3Caption: string;
+  @Column({ caption: use.language.customColumn + " 3 " + use.language.optionalValues, includeInApi: Roles.admin })
+  familyCustom3Values: string;
+  @Column({ caption: use.language.customColumn + " 4 " + use.language.caption, includeInApi: Roles.admin })
+  familyCustom4Caption: string;
+  @Column({ caption: use.language.customColumn + " 4 " + use.language.optionalValues, includeInApi: Roles.admin })
+  familyCustom4Values: string;
+  @Column<ApplicationSettings>({ serverExpression: (self) => self.context.isSignedIn() })
+  currentUserIsValidForAppLoadTest: boolean;
+  @Column({ caption: use.language.questionForVolunteer + " 1 " + use.language.caption })
+  questionForVolunteer1Caption: string;
+  @Column({ caption: use.language.questionForVolunteer + " 1 " + use.language.optionalValues })
+  questionForVolunteer1Values: string;
+  @Column({ caption: use.language.questionForVolunteer + " 2 " + use.language.caption })
+  questionForVolunteer2Caption: string;
+  @Column({ caption: use.language.questionForVolunteer + " 2 " + use.language.optionalValues })
+  questionForVolunteer2Values: string;
+  @Column({ caption: use.language.questionForVolunteer + " 3 " + use.language.caption })
+  questionForVolunteer3Caption: string;
+  @Column({ caption: use.language.questionForVolunteer + " 3 " + use.language.optionalValues })
+  questionForVolunteer3Values: string;
+  @Column({ caption: use.language.questionForVolunteer + " 4 " + use.language.caption })
+  questionForVolunteer4Caption: string;
+  @Column({ caption: use.language.questionForVolunteer + " 4 " + use.language.optionalValues })
+  questionForVolunteer4Values: string;
+  @Column({ includeInApi: Roles.admin })
+  createBasketsForAllFamiliesInCreateEvent: boolean;
+  @Column({ includeInApi: Roles.admin })
+  includeGroupsInCreateEvent: string;
+  @Column({ includeInApi: Roles.admin })
+  excludeGroupsInCreateEvent: string;
 
-  createBasketsForAllFamiliesInCreateEvent = new BoolColumn({ includeInApi: Roles.admin });
-  includeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
-  excludeGroupsInCreateEvent = new StringColumn({ includeInApi: Roles.admin });
 
 
 
   constructor(private context: Context) {
-    super({
-      name: 'ApplicationSettings',
-      allowApiRead: true,
-      allowApiUpdate: Roles.admin,
-      saving: async () => {
-        if (context.onServer) {
-
-          await this.address.updateApiResultIfChanged();
-
-          for (const l of [this.message1Link, this.message2Link]) {
-            if (l.value) {
-              if (l.value.trim().indexOf(':') < 0)
-                l.value = 'http://' + l.value.trim();
-            }
-          }
-          this.helpPhone.value = PhoneColumn.fixPhoneInput(this.helpPhone.value,context);
-          if (this.forWho.value)
-            setLangForSite(Sites.getValidSchemaFromContext(context), this.forWho.value);
-          setSettingsForSite(Sites.getValidSchemaFromContext(context), this);
-          logChanges(this, context, { excludeColumns: [this.currentUserIsValidForAppLoadTest] });
-        }
-      }
-    })
+    super()
   }
 
   static get(context: Context) {
@@ -261,37 +364,37 @@ export class ApplicationSettings extends Entity<number>  {
 export class PhoneOption {
 
   static assignerOrOrg = new PhoneOption("assignerOrOrg", "הטלפון ממנו יצא הSMS", async args => {
-    if (args.settings.helpText.value) {
-      args.addPhone(args.settings.helpText.value, args.settings.helpPhone.displayValue);
+    if (args.settings.helpText) {
+      args.addPhone(args.settings.helpText, args.settings.$.helpPhone.displayValue);
     }
     else {
-      let h = await args.context.for((await import('../helpers/helpers')).Helpers).lookupAsync(args.d.courierAssignUser)
-      args.addPhone(h.name.value, h.phone.displayValue);
+      let h = await args.d.courierAssignUser.waitLoad();
+      args.addPhone(h.name, h.phone.displayValue);
     }
   });
   static familyHelpPhone = new PhoneOption("familyHelpPhone", "איש קשר לבירור כפי שמוגדר למשפחה", async args => {
-    if (args.family.socialWorker.value && args.family.socialWorkerPhone1.value) {
-      args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone1.displayValue);
+    if (args.family.socialWorker && args.family.socialWorkerPhone1) {
+      args.addPhone(args.family.socialWorker, args.family.socialWorkerPhone1.displayValue);
     }
-    if (args.family.socialWorker.value && args.family.socialWorkerPhone2.value) {
-      args.addPhone(args.family.socialWorker.value, args.family.socialWorkerPhone2.displayValue);
+    if (args.family.socialWorker && args.family.socialWorkerPhone2) {
+      args.addPhone(args.family.socialWorker, args.family.socialWorkerPhone2.displayValue);
     }
   });
   static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
-    if (args.family.fixedCourier.value && args.d.courier.value != args.family.fixedCourier.value) {
-      let h = await args.context.for((await import('../helpers/helpers')).Helpers).findId(args.family.fixedCourier.value);
-      args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name.value, h.phone.displayValue);
+    if (args.family.fixedCourier && args.d.courier != args.family.fixedCourier) {
+      let h = await args.context.for((await import('../helpers/helpers')).Helpers).findId(args.family.fixedCourier);
+      args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name, h.phone.displayValue);
     }
   });
 
 
   static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
-    if (args.family.familySource.value) {
-      let s = await args.context.for(FamilySources).findFirst(x => x.id.isEqualTo(args.family.familySource.value));
-      if (s && s.phone.value) {
-        let name = s.contactPerson.value;
+    if (args.family.familySource) {
+      let s = await args.family.familySource.waitLoad();
+      if (s && s.phone) {
+        let name = s.contactPerson;
         if (!name || name.length == 0) {
-          name = s.name.value;
+          name = s.name;
         }
         args.addPhone(name, s.phone.displayValue);
       }
@@ -299,7 +402,7 @@ export class PhoneOption {
   });
   static otherPhone = new PhoneOption("otherPhone", "טלפון אחר", async args => {
     if (args.phoneItem.phone) {
-      args.addPhone(args.phoneItem.name, PhoneColumn.formatPhone(args.phoneItem.phone));
+      args.addPhone(args.phoneItem.name, Phone.formatPhone(args.phoneItem.phone));
     }
   });
   constructor(public key: string, public name: string, public build: ((args: phoneBuildArgs) => Promise<void>)) {
@@ -340,9 +443,9 @@ export class SettingsService {
     this.instance = await ApplicationSettings.getAsync(this.context);
     setSettingsForSite(Sites.getValidSchemaFromContext(this.context), this.instance);
 
-    translationConfig.forWho = this.instance.forWho.value;
-    DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule.value;
-    (await import('../helpers/helpers')).Helpers.usingCompanyModule = this.instance.showCompanies.value;
+    translationConfig.forWho = this.instance.forWho;
+    DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;
+    (await import('../helpers/helpers')).Helpers.usingCompanyModule = this.instance.showCompanies;
 
     PhoneOption.assignerOrOrg.name = this.instance.lang.assignerOrOrg;
     PhoneOption.familyHelpPhone.name = this.instance.lang.familyHelpPhone;
@@ -354,8 +457,8 @@ export class SettingsService {
     RemovedFromListExcelImportStrategy.ignore.caption = this.instance.lang.RemovedFromListExcelImportStrategy_ignore;
 
 
-    BasketType.boxes1Name = this.instance.boxes1Name.value;
-    BasketType.boxes2Name = this.instance.boxes2Name.value;
+    BasketType.boxes1Name = this.instance.boxes1Name;
+    BasketType.boxes2Name = this.instance.boxes2Name;
     setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values, Roles.admin);
     setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values, Roles.admin);
     setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values, Roles.admin);
@@ -369,50 +472,31 @@ export class SettingsService {
   }
 
 }
+@Storable({ valueConverter: () => new ValueListValueConverter(RemovedFromListExcelImportStrategy) })
 export class RemovedFromListExcelImportStrategy {
   static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
   static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
   static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם והוסף משפחה חדשה');
   constructor(public id: number, public caption: string) { }
 }
-class RemovedFromListExcelImportStrategyColumn extends ValueListColumn<RemovedFromListExcelImportStrategy>{
-  constructor(context: Context) {
-    super(RemovedFromListExcelImportStrategy, {
-      caption: getLang(context).existsInRemovedFromListStrategy
-      , dataControlSettings: () => ({
-        valueList: this.getOptions(),
 
-      })
-    })
-  }
-
-}
 
 
 export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
 export const questionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
-export class CustomColumn extends StringColumn {
 
-  constructor(private info: customColumnInfo) {
-    super({
-      caption: info.caption,
-      allowApiUpdate: info.role,
-      dataControlSettings: () => ({
-        valueList: info.values,
-        visible: () => info.visible
-      })
-    });
-  }
-  visible = this.info.visible;
+export function getCustomColumnVisible(defs: ColumnDefinitions) {
+  return true;
 }
-export function setCustomColumnInfo(v: customColumnInfo, caption: StringColumn, values: StringColumn, role: Allowed) {
 
-  v.visible = !!caption.value;
-  v.caption = caption.value;
+export function setCustomColumnInfo(v: customColumnInfo, caption: string, values: string, role: Allowed) {
+
+  v.visible = !!caption;
+  v.caption = caption;
   v.values = undefined;
   v.role = role;
-  if (values.value) {
-    v.values = values.value.split(',').map(x => x.trim());
+  if (values) {
+    v.values = values.split(',').map(x => x.trim());
   }
 }
 const settingsForSite = new Map<string, ApplicationSettings>();
@@ -438,10 +522,15 @@ interface customColumnInfo {
 }
 export function includePhoneInApi(context: Context) {
   var s = getSettings(context);
-  if (!s.hideFamilyPhoneFromVolunteer.value)
+  if (!s.hideFamilyPhoneFromVolunteer)
     return true;
   if (context.isAllowed(Roles.distCenterAdmin))
     return true
   return false;
 
+}
+export function validateSmsContent(entity: any, c: EntityColumn<string, any>) {
+  return;
+  if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
+    c.error = this.lang.mustIncludeUrlKeyError;
 }

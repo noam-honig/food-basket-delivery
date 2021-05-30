@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { BusyService } from '@remult/angular';
-import { ServerFunction, Context, SqlDatabase, StringColumn, Column } from '@remult/core';
-import { Helpers, HelpersBase } from '../helpers/helpers';
+import { BusyService, InputControl, openDialog } from '@remult/angular';
+import { ServerFunction, Context, SqlDatabase, Column } from '@remult/core';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { SqlBuilder, relativeDateName, getValueFromResult } from '../model-shared/types';
+import { SqlBuilder, relativeDateName, getValueFromResult, SqlFor } from '../model-shared/types';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
@@ -18,7 +18,7 @@ import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings'
   styleUrls: ['./shipment-assign-screen.component.scss']
 })
 export class ShipmentAssignScreenComponent implements OnInit {
-  filterBasket = new StringColumn('סינון');
+  filterBasket = new InputControl<string>({ caption: 'סינון' });
   sortDir = 1;
   sortByVolunteers() {
     this.sortDir = -this.sortDir;
@@ -54,14 +54,14 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   async showAssignment(rh: relevantHelper) {
     let h = await this.context.for(Helpers).findId(rh.helper.id);
-    this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+    openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.readyFilter().and(fd.id.isIn(...f.deliveries.map(x => x.id)))
+        where: fd => FamilyDeliveries.readyFilter(fd, this.context).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier.value = h.id;
+        fd.courier = new HelperId(h.id, this.context);
         await fd.save();
       }
     });
@@ -73,9 +73,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
   async cancelAssignHelper(f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(f.assignedHelper.id).and(fd.id.isIn(...f.deliveries.map(x => x.id)))
+        where: fd => fd.courier.isEqualTo(new HelperId(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier.value = '';
+        fd.courier = HelperId.empty(this.context);
         await fd.save();
       }
     });
@@ -84,14 +84,14 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async searchHelper(f: familyInfo) {
-    await this.context.openDialog(SelectHelperComponent, x => x.args = {
+    await openDialog(SelectHelperComponent, x => x.args = {
       location: f.location,
       familyId: f.id,
       searchByDistance: true,
       onSelect: async selectedHelper => {
-        let h = this.data.helpers[selectedHelper.id.value];
+        let h = this.data.helpers[selectedHelper.id];
         if (!h) {
-          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this.context.for(Helpers).findId(selectedHelper.id.value));;
+          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this.context.for(Helpers).findId(selectedHelper.id));;
           this.data[h.id] = h;
         }
         this.assignHelper(h, f);
@@ -173,62 +173,63 @@ export class ShipmentAssignScreenComponent implements OnInit {
       helpers: {},
       unAssignedFamilies: {}
     };
-    
-    let i=0;
+
+    let i = 0;
     //collect helpers
-    for  (let h of await context.for(Helpers).find({ where: h => h.active().and(h.preferredDistributionAreaAddress.isDifferentFrom('')),limit:1000 })) {
-      result.helpers[h.id.value] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
+    for (let h of await context.for(Helpers).find({ where: h => Helpers.active(h).and(h.preferredDistributionAreaAddress.isDifferentFrom('')), limit: 1000 })) {
+      result.helpers[h.id] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
       i++;
     }
-    
+
     //remove busy helpers
     {
-      let fd = context.for(FamilyDeliveries).create();
+      let fd = SqlFor(context.for(FamilyDeliveries));
       let sql = new SqlBuilder();
       let busyLimitdate = new Date();
-      busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom.value);
+      busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
 
 
       for (let busy of (await db.execute(sql.query({
         select: () => [fd.courier],
         from: fd,
-        where: () => [fd.deliverStatus.isAResultStatus().and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
+        where: () => [DeliveryStatus.isAResultStatus(fd.deliverStatus).and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
         groupBy: () => [fd.courier],
-        having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(context).BusyHelperAllowedFreq_nom.value)]
+        having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(context).BusyHelperAllowedFreq_nom)]
       }))).rows) {
         result.helpers[busy.courier] = undefined;
       }
     }
-    
+
     {
       let sql = new SqlBuilder();
-      let fd = context.for(FamilyDeliveries).create();
+
+      let fd = SqlFor(context.for(FamilyDeliveries));
       for (let r of (await db.execute(sql.query({
-        select: () => [sql.build("distinct " , fd.courier), fd.family],
+        select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
-        where: () => [fd.deliverStatus.isProblem().and(fd.courier.isDifferentFrom(''))]
+        where: () => [DeliveryStatus.isProblem(fd.deliverStatus).and(fd.courier.isDifferentFrom(HelperId.empty(context)))]
 
       }))).rows) {
         let x = result.helpers[getValueFromResult(r, fd.courier)];
         if (x) {
-          x.problemFamilies[getValueFromResult(r,fd.family)] = true;
+          x.problemFamilies[getValueFromResult(r, fd.family)] = true;
         }
       }
     }
-   
-    
+
+
     //highlight new Helpers
     {
       let sql = new SqlBuilder();
-      let h = context.for(Helpers).create();
-      let fd = context.for(FamilyDeliveries).create();
+      let h = SqlFor(context.for(Helpers));
+      let fd = SqlFor(context.for(FamilyDeliveries));
       for (let helper of (await db.execute(sql.query({
         select: () => [h.id],
         from: h,
         where: () => [sql.build(h.id, ' not in (', sql.query({
           select: () => [fd.courier],
           from: fd,
-          where: () => [fd.deliverStatus.isSuccess()]
+          where: () => [DeliveryStatus.isSuccess(fd.deliverStatus)]
         }), ')')]
 
       }))).rows) {
@@ -240,8 +241,8 @@ export class ShipmentAssignScreenComponent implements OnInit {
     }
     {
       let sql = new SqlBuilder();
-      let fd = context.for(ActiveFamilyDeliveries).create();
-      
+      let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+
       let sqlResult = await db.execute(
         sql.query({
           select: () => [
@@ -276,7 +277,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
           deliveries: [{
             basketTypeId: getValueFromResult(r, fd.basketType),
             quantity: getValueFromResult(r, fd.quantity),
-            basketTypeName: (await context.for(BasketType).lookupAsync(x=>x.id.isEqualTo( getValueFromResult(r, fd.basketType)))).name.value,
+            basketTypeName: (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name,
             id: getValueFromResult(r, fd.id)
 
           }],
@@ -307,19 +308,19 @@ export class ShipmentAssignScreenComponent implements OnInit {
         }
       }
     }
-    
+
     return result;
   }
 
 
   private static helperInfoFromHelper(h: Helpers): helperInfo {
     return {
-      id: h.id.value,
-      name: h.name.value,
-      location1: h.preferredDistributionAreaAddress.ok() ? h.preferredDistributionAreaAddress.location() : undefined,
-      address1: h.preferredDistributionAreaAddress.value,
-      address2: h.preferredFinishAddress.value,
-      location2: h.preferredFinishAddress.ok() ? h.preferredFinishAddress.location() : undefined,
+      id: h.id,
+      name: h.name,
+      location1: h.preferredDistributionAreaAddressHelper.ok() ? h.preferredDistributionAreaAddressHelper.location() : undefined,
+      address1: h.preferredDistributionAreaAddress,
+      address2: h.preferredFinishAddress,
+      location2: h.preferredFinishAddressHelper.ok() ? h.preferredFinishAddressHelper.location() : undefined,
       families: [],
       problemFamilies: {},
       relevantFamilies: []

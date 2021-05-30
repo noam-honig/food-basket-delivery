@@ -1,0 +1,107 @@
+import { DataControl } from "@remult/angular";
+import { Context, EntityColumn, InputTypes, Storable,StoreAsStringValueConverter } from "@remult/core";
+import { getSettings } from "../manage/ApplicationSettings";
+import { getLang } from "../sites/sites";
+
+@Storable<Phone>({
+    displayValue: (e, x) => x.displayValue,
+    valueConverter: () => Phone.converter,
+    inputType: InputTypes.tel
+  })
+  @DataControl<any, Phone>({
+    click: (e, x) => window.open('tel:' + x.displayValue),
+    allowClick: (e, x) => !!x.displayValue,
+    clickIcon: 'phone',
+    inputType: InputTypes.tel,
+    forceEqualFilter: false
+  })
+  export class Phone {
+    constructor(public thePhone: string) {
+  
+    }
+    get displayValue() {
+      return Phone.formatPhone(this.thePhone);
+    }
+  
+    static converter = new StoreAsStringValueConverter<Phone>(x => x.thePhone, x => new Phone(x));
+    static fixPhoneInput(s: string, context: Context) {
+      if (!s)
+        return s;
+      let orig = s;
+      s = s.replace(/\D/g, '');
+      if (orig.startsWith('+'))
+        return '+' + s;
+      let forWho = getSettings(context).forWho;
+      if (forWho && forWho.args.suppressPhoneZeroAddition)
+        return s;
+      if (s.length == 9 && s[0] != '0' && s[0] != '3')
+        s = '0' + s;
+      return s;
+    }
+    sendWhatsapp(context: Context, message = "") {
+      Phone.sendWhatsappToPhone(this.thePhone, message, context);
+    }
+  
+    static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context) {
+      phone = Phone.fixPhoneInput(phone, context);
+      if (phone.startsWith('0')) {
+        phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
+      }
+      if (getSettings(context).forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
+        phone = getSettings(context).getInternationalPhonePrefix() + phone;
+  
+      if (phone.startsWith('+'))
+        phone = phone.substr(1);
+  
+      window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
+    }
+  
+    static formatPhone(s: string) {
+      if (!s)
+        return s;
+      let x = s.replace(/\D/g, '');
+      if (x.length < 9 || x.length > 10)
+        return s;
+      if (x.length < 10 && !x.startsWith('0'))
+        x = '0' + x;
+      x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
+  
+      x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
+  
+      return x;
+    }
+    static validatePhone(col: EntityColumn<Phone>, context: Context) {
+      if (!col.value || col.value.thePhone == '')
+        return;
+      if (getLang(context).languageCode != 'iw')
+        if (col.value.thePhone.length < 10)
+          col.error = getLang(context).invalidPhoneNumber;
+        else
+          return;
+  
+      if (!isPhoneValidForIsrael(col.value.thePhone)) {
+        col.error = getLang(context).invalidPhoneNumber;
+      }
+      /*
+          if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
+            if (col.displayValue.length != 12) {
+              col.validationError = getLang(context).invalidPhoneNumber;
+            }
+      
+          } else if (col.displayValue.startsWith('0')) {
+            if (col.displayValue.length != 11) {
+              col.validationError = getLang(context).invalidPhoneNumber;
+            }
+          }
+          else {
+            col.validationError = getLang(context).invalidPhoneNumber;
+          }
+        */
+    }
+  }
+  export function isPhoneValidForIsrael(input: string) {
+    if (input) {
+      let st1 = input.match(/^0(5\d|7\d|[2,3,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
+      return st1 != null;
+    }
+  }

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { IDataAreaSettings, DataAreaSettings } from '@remult/core';
+
 import { DialogService } from '../dialog';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
+import { DataAreaSettings, IDataAreaSettings } from '../../../../../radweb/projects/angular';
 
 
 @Component({

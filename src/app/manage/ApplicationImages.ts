@@ -1,21 +1,22 @@
-import { StringColumn, NumberColumn } from '@remult/core';
-import { Entity, Context, EntityClass } from '@remult/core';
+
+import { Entity, Context, EntityBase, Column } from '@remult/core';
 import { Roles } from '../auth/roles';
-@EntityClass
-export class ApplicationImages extends Entity<number>  {
-  id = new NumberColumn();
-  base64Icon = new StringColumn("איקון דף base64");
-  base64PhoneHomeImage = new StringColumn("איקון דף הבית בטלפון base64");
-  constructor() {
-    super({
-      name: 'ApplicationImages',
-      allowApiRead: Roles.admin,
-      allowApiUpdate: Roles.admin
-    });
-  }
+@Entity({
+  key: 'ApplicationImages',
+  allowApiRead: Roles.admin,
+  allowApiUpdate: Roles.admin
+})
+export class ApplicationImages extends EntityBase {
+  @Column()
+  id: number;
+  @Column({ caption: "איקון דף base64" })
+  base64Icon: string;
+  @Column({ caption: "איקון דף הבית בטלפון base64" })
+  base64PhoneHomeImage: string;
+
 
   static get(context: Context) {
-    context.for(ApplicationImages).lookup(app => app.id.isEqualTo(1));
+    context.for(ApplicationImages).lookupId(1);
   }
   static async getAsync(context: Context): Promise<ApplicationImages> {
     return context.for(ApplicationImages).findFirst(undefined);

@@ -1,8 +1,8 @@
-//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
+import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, JWTCookieAuthorizationHelper, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer, initExpress } from '@remult/server';
+import { ExpressBridge, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer, initExpress } from '@remult/core/server';
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -10,20 +10,28 @@ import { ServerEvents } from './server-events';
 import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import '../app.module';
-import { ServerContext, DateColumn, SqlDatabase } from '@remult/core';
+import { ServerContext, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { Sites, setLangForSite } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
-import { preparePostgressQueueStorage } from "@remult/server-postgres";
- 
+import { preparePostgresQueueStorage } from "../../../../radweb/projects/core/postgres";
+import * as forceHttps from 'express-force-https';
+import * as jwt from 'express-jwt';
+import * as compression from 'compression';
+
+
 
 serverInit().then(async (dataSource) => {
-//
+    //
 
     let app = express();
+    app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
+    app.use(compression());
+    if (!process.env.DEV_MODE)
+        app.use(forceHttps);
     function getContext(req: express.Request, sendDs?: (ds: SqlDatabase) => void) {
         //@ts-ignore
         let r = new ExpressRequestBridgeToDataApiRequest(req);
@@ -31,7 +39,7 @@ serverInit().then(async (dataSource) => {
         context.setReq(r);
         let ds = dataSource(context);
         context.setDataProvider(ds);
-        if (sendDs) 
+        if (sendDs)
             sendDs(ds);
         return context;
     }
@@ -59,9 +67,9 @@ serverInit().then(async (dataSource) => {
         if (fs.existsSync(index)) {
             let x = '';
             let settings = (await ApplicationSettings.getAsync(context));
-            setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho.value);
+            setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho);
             setSettingsForSite(Sites.getValidSchemaFromContext(context), settings);
-            x = settings.organisationName.value;
+            x = settings.organisationName;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
             let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;
             if (!key)
@@ -110,16 +118,16 @@ s.parentNode.insertBefore(b, s);})();
             result = result.replace(/GOOGLE_PIXEL_TAG_ID/g, tagid);
 
 
-            if (settings.forWho.value.args.leftToRight) {
+            if (settings.forWho.args.leftToRight) {
                 result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
             }
-            if (settings.forWho.value.args.languageCode) {
-                let lang = settings.forWho.value.args.languageCode;
+            if (settings.forWho.args.languageCode) {
+                let lang = settings.forWho.args.languageCode;
                 result = result.replace(/&language=iw&/, `&language=${lang}&`)
                     .replace(/טוען/g, 'Loading');
             }
-            if (settings.forWho.value.args.languageFile) {
-                let lang = settings.forWho.value.args.languageFile;
+            if (settings.forWho.args.languageFile) {
+                let lang = settings.forWho.args.languageFile;
                 result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`);
 
             }
@@ -157,27 +165,27 @@ s.parentNode.insertBefore(b, s);})();
 
 
     let eb = initExpress(
-        //@ts-ignore
         app,
-        dataSource, {
-        disableHttpsForDevOnly: process.env.DISABLE_HTTPS == "true",
-        disableAutoApi: Sites.multipleSites,
-        queueStorage: await preparePostgressQueueStorage(dataSource(new ServerContext()))
-    }); 
+        {
+            dataProvider:dataSource,
+            disableAutoApi: Sites.multipleSites,
+            queueStorage: await preparePostgresQueueStorage(dataSource(new ServerContext()))
+        });
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
-    Helpers.helper = new JWTCookieAuthorizationHelper(eb, process.env.TOKEN_SIGN_KEY);
-   
+
+
 
     if (Sites.multipleSites) {
         let createSchemaApi = async schema => {
-            let area = eb.addArea('/' + schema + '/api', async req => {
+            let area = eb.addArea('/' + schema + '/api', req => {
                 if (req.user) {
                     let context = new ServerContext();
                     context.setReq(req);
-                    if (!context.isAllowed(Sites.getOrgRole(context)))
-                        req.user = undefined;
+                    if (context.isAllowed(Sites.getOrgRole(context)))
+                        return true;
                 }
+                return false;
             });
             registerActionsOnServer(area, dataSource);
             registerEntitiesOnServer(area, dataSource);
@@ -197,13 +205,16 @@ s.parentNode.insertBefore(b, s);})();
 
         };
         {
-            let area = eb.addArea('/' + Sites.guestSchema + '/api', async req => {
+            let area = eb.addArea('/' + Sites.guestSchema + '/api', req => {
                 if (req.user) {
                     let context = new ServerContext();
                     context.setReq(req);
-                    if (!context.isAllowed(Sites.getOrgRole(context)))
-                        req.user = undefined;
+                    if (context.isAllowed(Sites.getOrgRole(context)))
+                        return true;
+
+
                 }
+                return false;
             });
             registerActionsOnServer(area, dataSource);
             registerEntitiesOnServer(area, dataSource);
@@ -248,7 +259,7 @@ function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds:
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
             let context = getContext(req);
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage.value;
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage;
             res.contentType('png');
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -277,7 +288,7 @@ function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds:
         try {
             let context = getContext(req);
             res.contentType('ico');
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon.value;
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon;
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;
@@ -294,7 +305,7 @@ function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds:
     });
 
 
-    
+
 }
 
 

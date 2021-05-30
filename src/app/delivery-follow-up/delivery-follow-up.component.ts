@@ -4,9 +4,9 @@ import { AndFilter, ServerFunction, SqlDatabase } from '@remult/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 
-import { BusyService } from '@remult/angular';
+import { BusyService, openDialog } from '@remult/angular';
 import { Filter } from '@remult/core';
-import { Helpers } from '../helpers/helpers';
+import { HelperId, Helpers } from '../helpers/helpers';
 
 
 import { Context } from '@remult/core';
@@ -14,9 +14,9 @@ import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { allCentersToken } from '../manage/distribution-centers';
+import { allCentersToken, DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
-import { SqlBuilder, relativeDateName } from '../model-shared/types';
+import { SqlBuilder, relativeDateName, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -35,7 +35,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   async deliveryDetails(c: helperFollowupInfo) {
     let h = await this.context.for(Helpers).findId(c.id);
-    await this.context.openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
+    await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
     this.refresh();
   }
 
@@ -45,14 +45,14 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     this.currentlHelper = c;
     let h = await this.context.for(Helpers).lookupAsync(h => h.id.isEqualTo(c.id));;
     if (h.isNew()) {//if there is a row with an invalid helper id - I want it to at least work
-      h.id.value = c.id;
+      h.id = c.id;
     }
 
     this.familyLists.initForHelper(h);
 
   }
   seeAllCenters() {
-    return this.dialog.distCenter.value == allCentersToken;
+    return this.dialog.distCenter.isAllCentersToken();
   }
   searchString: string;
   showHelper(h: helperFollowupInfo) {
@@ -141,7 +141,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   hasChart = true;
   async refreshStats() {
-    this.helpers = await DeliveryFollowUpComponent.helpersStatus(this.dialog.distCenter.value);
+    this.helpers = await DeliveryFollowUpComponent.helpersStatus(this.dialog.distCenter.evilGetId());
     this.updateChart();
 
   }
@@ -166,10 +166,11 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async helpersStatus(distCenter: string, context?: Context, db?: SqlDatabase) {
-    let fd = context.for(FamilyDeliveries).create();
-    let h = context.for(Helpers).create();
+    let fd = SqlFor(context.for(FamilyDeliveries));
+
+    let h = SqlFor(context.for(Helpers));
     var sql = new SqlBuilder();
-    sql.addEntity(fd,'fd');
+    sql.addEntity(fd, 'fd');
     let r = await db.execute(log(sql.build(sql.query({
       from: fd,
       outerJoin: () => [{ to: h, on: () => [sql.eq(fd.courier, h.id)] }],
@@ -183,12 +184,12 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.columnWithAlias(sql.func('max', fd.courierAssingTime), 'maxasign'),
         sql.sumWithAlias(1, 'deliveries', fd.deliverStatus.isDifferentFrom(DeliveryStatus.SelfPickup).and(fd.deliverStatus.isDifferentFrom(DeliveryStatus.SuccessPickedUp))),
         sql.sumWithAlias(1, 'inprogress', fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-        sql.sumWithAlias(1, 'problem', fd.deliverStatus.isProblem())
+        sql.sumWithAlias(1, 'problem', DeliveryStatus.isProblem(fd.deliverStatus))
 
       ],
-      where: () => [ sql.eq(fd.archive,false),fd.courier.isDifferentFrom('').and(fd.distributionCenter.filter(distCenter))],
+      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(HelperId.empty(context)).and(filterDistCenter(fd.distributionCenter, new DistributionCenterId(distCenter, context), context))],
 
-    }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment,h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime),' desc')));
+    }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];
@@ -258,7 +259,7 @@ export interface helperFollowupInfo {
   viewedSms: boolean
 
 }
-function log(what:string){
+function log(what: string) {
   //console.log(what);
   return what;
 }

@@ -1,7 +1,7 @@
 import { Express, Response } from 'express';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { Context, ServerContext } from '@remult/core';
-import { ExpressRequestBridgeToDataApiRequest } from '@remult/server';
+import { ExpressRequestBridgeToDataApiRequest } from '@remult/core/server';
 import { Sites } from '../sites/sites';
 import { HelperUserInfo } from '../helpers/helpers';
 import { Roles } from '../auth/roles';

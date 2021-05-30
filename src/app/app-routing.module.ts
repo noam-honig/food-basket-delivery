@@ -33,7 +33,7 @@ import { PlaybackComponent } from './playback/playback.component';
 import { OverviewComponent } from './overview/overview.component';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 
-import { GeocodeComponent } from './geocode/geocode.component';
+
 
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
@@ -114,7 +114,7 @@ export const routes: Routes = [
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true } },
-  { path: 'geocode', component: GeocodeComponent, canActivate: [AdminGuard], data: { name: 'geocode', hide: true } },
+  
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
   { path: 'register-donor-cc', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true, isCC: true } },

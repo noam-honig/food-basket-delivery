@@ -28,12 +28,12 @@
 </mat-card>
 <mat-card *ngIf="helper&&alreadyEscortingDriver">
     <mat-card-title>
-        מוגדר כמלווה של {{alreadyEscortingDriver.name.value}}
+        מוגדר כמלווה של {{alreadyEscortingDriver.name}}
     </mat-card-title>
     <button mat-raised-button color="primary" (click)="clearEscort()"> בטל שיוך כמלווה</button>
     <button mat-raised-button color="accent" (click)="sendSms()" style="margin-right:5px;"> שלח הודעת SMS</button>
 </mat-card>
-<mat-card *ngIf="helper &&!helper.theHelperIAmEscorting.value&&helper.name.value">
+<mat-card *ngIf="helper &&!helper.theHelperIAmEscorting&&helper.name">
     <mat-card-title>
         נהגים ללא מלווים
     </mat-card-title>
@@ -42,8 +42,8 @@
     </mat-card-subtitle>
     <mat-nav-list>
         <mat-list-item *ngFor="let h of optionalDrivers" (click)="assignForDriver(h)">
-            {{h.name.value}} -
-            {{h.deliveriesInProgress.value}}
+            {{h.name}} -
+            {{h.deliveriesInProgress}}
             <mat-divider></mat-divider>
         </mat-list-item>
     </mat-nav-list>

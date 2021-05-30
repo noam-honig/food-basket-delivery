@@ -16,8 +16,8 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string, cont
         secure: false,
         requireTLS: true,
         auth: {
-            user: settings.gmailUserName.value,
-            pass: settings.gmailPassword.value
+            user: settings.gmailUserName,
+            pass: settings.gmailPassword
         }
     });
 

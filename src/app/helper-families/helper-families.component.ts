@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ServerFunction, StringColumn, GridButton, BoolColumn, ServerContext, SqlDatabase, DataAreaSettings } from '@remult/core';
-import { BusyService } from '@remult/angular';
+import { ServerFunction, ServerContext, SqlDatabase, EntityColumn } from '@remult/core';
+import { BusyService, DataAreaSettings, GridButton, InputControl, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -17,15 +17,16 @@ import { use, TranslationOptions } from '../translate';
 import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { isGpsAddress, Location, toLongLat, GetDistanceBetween, getCurrentLocation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { Families } from '../families/families';
 import { MatTabGroup } from '@angular/material/tabs';
-import { routeStrategyColumn } from '../asign-family/route-strategy';
+
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { PhoneColumn, SqlBuilder, getValueFromResult } from '../model-shared/types';
+import { SqlBuilder, getValueFromResult, SqlFor, relativeDateName } from '../model-shared/types';
+import { Phone } from "../model-shared/Phone";
 import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
@@ -38,9 +39,10 @@ import { UpdateArea } from '../families/familyActions';
 
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { DistributionCenters } from '../manage/distribution-centers';
+import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
-import { FamilySources } from '../families/FamilySources';
+import { FamilySourceId, FamilySources } from '../families/FamilySources';
+import { routeStrategy } from '../asign-family/route-strategy';
 
 
 @Component({
@@ -64,7 +66,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.tab.selectedIndex = 1;
   }
   trackBy(i: number, f: ActiveFamilyDeliveries) {
-    return f.id.value;
+    return f.id;
   }
   signs = ["🙂", "👌", "😉", "😍", "🤩", "💖", "👍", "🙏"];
   visibleSigns: string[] = [];
@@ -97,17 +99,17 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async refreshRoute() {
-    var useCurrentLocation = new BoolColumn(use.language.useCurrentLocationForStart);
-    var strategy = new routeStrategyColumn();
-    strategy.value = this.settings.routeStrategy.value;
+    var useCurrentLocation = new InputControl<boolean>({ caption: use.language.useCurrentLocationForStart });
+    var strategy = new InputControl<routeStrategy>({ dataType: routeStrategy });
+    strategy.value = this.settings.routeStrategy;
 
-    await this.context.openDialog(InputAreaComponent, x => x.args = {
+    await openDialog(InputAreaComponent, x => x.args = {
       title: use.language.replanRoute,
       settings: {
         columnSettings: () => [
           { column: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
-          { column: this.familyLists.helper.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
-          { column: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress.value || this.familyLists.helper.preferredFinishAddress.value.trim().length == 0 || this.settings.isSytemForMlt() }
+          { column: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
+          { column: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
         ]
       },
       ok: async () => {
@@ -123,7 +125,9 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   }
-
+  reminderSmsRelativeDate() {
+    return relativeDateName(this.context, { d: this.familyLists.helper.reminderSmsDate });
+  }
 
 
   @ServerFunction({ allowed: Roles.indie })
@@ -131,10 +135,12 @@ export class HelperFamiliesComponent implements OnInit {
     if (!getSettings(context).isSytemForMlt())
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
-    let fd = context.for(ActiveFamilyDeliveries).create();
+
+    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+
     let sql = new SqlBuilder();
     let settings = await ApplicationSettings.getAsync(context);
-    let privateDonation = selfAssign ? (await context.for(FamilySources).lookupAsync(x => x.name.isEqualTo('תרומה פרטית'))).id.value : '';
+    let privateDonation = selfAssign ? (await context.for(FamilySources).lookupAsync(x => x.name.isEqualTo('תרומה פרטית'))).id : '';
 
     for (const r of (await db.execute(sql.query({
       select: () => [
@@ -149,14 +155,14 @@ export class HelperFamiliesComponent implements OnInit {
       from: fd,
       where: () => {
         if (selfAssign) {
-          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo('')).and((fd.familySource.isIn('', privateDonation)))];
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(HelperId.empty(context))).and((fd.familySource.isIn([new FamilySourceId('', context), new FamilySourceId(privateDonation, context)])))];
         } else {
-          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(''))];
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(HelperId.empty(context)))];
         }
       }
     }))).rows) {
       let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
-      let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name.value;
+      let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name;
       if (existing) {
         existing.name += ", " + getValueFromResult(r, fd.quantity) + " X " + basketName;
         existing.item.totalItems += getValueFromResult(r, fd.quantity);
@@ -202,11 +208,11 @@ export class HelperFamiliesComponent implements OnInit {
       let removeFam = -1;
 
       do {
-        removeFam = result.findIndex(f => f.item.totalItems > settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee.value);
+        removeFam = result.findIndex(f => f.item.totalItems > settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee);
         if (removeFam >= 0) {
           result.splice(removeFam, 1);
         }
-      } while (removeFam >=0)
+      } while (removeFam >= 0)
     }
     result.splice(15);
     return result;
@@ -219,7 +225,7 @@ export class HelperFamiliesComponent implements OnInit {
     await this.updateCurrentLocation(true);
     let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation, false));
 
-    await this.context.openDialog(SelectListComponent, x => {
+    await openDialog(SelectListComponent, x => {
       x.args = {
         title: use.language.closestDeliveries + ' (' + use.language.mergeFamilies + ')',
         multiSelect: true,
@@ -233,7 +239,7 @@ export class HelperFamiliesComponent implements OnInit {
               }
               await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
               await this.familyLists.refreshRoute({
-                strategyId: this.settings.routeStrategy.value.id,
+                strategyId: this.settings.routeStrategy.id,
                 volunteerLocation: this.volunteerLocation
               });
               if (this.familyLists)
@@ -253,11 +259,11 @@ export class HelperFamiliesComponent implements OnInit {
   getHelpText() {
     var r = this.settings.lang.ifYouNeedAnyHelpPleaseCall;
     r += " ";
-    if (this.settings.helpText.value && this.settings.helpPhone.value)
-      return r + this.settings.helpText.value + ", " + this.settings.helpPhone.displayValue;
+    if (this.settings.helpText && this.settings.helpPhone)
+      return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
       var h = this.context.for(Helpers).lookup(h => h.id.isEqualTo(this.context.user.id));
-      return r + h.name.value + ", " + h.phone.displayValue;
+      return r + h.name + ", " + h.phone.displayValue;
     }
   }
 
@@ -280,7 +286,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async cancelAssign(f: ActiveFamilyDeliveries) {
     this.dialog.analytics('Cancel Assign');
-    f.courier.value = '';
+    f.courier = HelperId.empty(this.context);
     await f.save();
     this.familyLists.reload();
     this.assignmentCanceled.emit();
@@ -290,7 +296,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
-        await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id.value);
+        await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id);
         this.familyLists.reload();
         this.assignmentCanceled.emit();
       });
@@ -302,41 +308,41 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
-    let dist = '';
+    let dist = new DistributionCenterId('', context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => fd.onTheWayFilter().and(fd.courier.isEqualTo(id)),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(new HelperId(id, context))),
       forEachRow: async fd => {
-        fd.courier.value = '';
+        fd.courier = HelperId.empty(context);
         fd._disableMessageToUsers = true;
-        dist = fd.distributionCenter.value;
+        dist = fd.distributionCenter;
         await fd.save();
       }
     });
-    await Families.SendMessageToBrowsers(getLang(context).cancelAssignmentForHelperFamilies, context, dist);
+    await dist.SendMessageToBrowser(getLang(context).cancelAssignmentForHelperFamilies, context);
   }
   distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) {
     if (i == 0) { return undefined; }
-    if (!f.addressOk.value)
+    if (!f.addressOk)
       return undefined;
     let of = this.familyLists.toDeliver[i - 1];
-    if (!of.addressOk.value)
+    if (!of.addressOk)
       return undefined;
     return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
-    return of.addressLatitude.value == f.addressLatitude.value && of.addressLongitude.value == f.addressLongitude.value;
+    return of.addressLatitude == f.addressLatitude && of.addressLongitude == f.addressLongitude;
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(id: string, context?: Context) {
-    let dist = '';
+    let dist = new DistributionCenterId('', context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => fd.onTheWayFilter().and(fd.courier.isEqualTo(id)),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(new HelperId(id, context))),
       forEachRow: async fd => {
-        dist = fd.distributionCenter.value;
-        fd.deliverStatus.value = DeliveryStatus.Success;
+        dist = fd.distributionCenter;
+        fd.deliverStatus = DeliveryStatus.Success;
         fd._disableMessageToUsers = true;
         await fd.save();
       }
     });
-    await Families.SendMessageToBrowsers(use.language.markAllDeliveriesAsSuccesfull, context, dist);
+    await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, context);
   }
   notMLT() {
     return !this.settings.isSytemForMlt();
@@ -349,7 +355,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok all');
-        await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id.value);
+        await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id);
         this.familyLists.reload();
       });
     });
@@ -360,7 +366,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   moveBasketsToOtherVolunteer() {
-    this.context.openDialog(
+    openDialog(
       SelectHelperComponent, s => s.args = {
         filter: h => h.id.isDifferentFrom(this.familyLists.helper.id),
         hideRecent: true,
@@ -376,58 +382,58 @@ export class HelperFamiliesComponent implements OnInit {
     this.otherDependentVolunteers = [];
 
     this.busy.donotWaitNonAsync(async () => {
-      if (this.familyLists.helper.leadHelper.value) {
-        this.otherDependentVolunteers.push(await this.context.for(Helpers).lookupAsync(this.familyLists.helper.leadHelper));
+      if (this.familyLists.helper.leadHelper) {
+        this.otherDependentVolunteers.push(await (this.familyLists.helper.leadHelper.waitLoad()));
       }
-      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.id) }));
+      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(new HelperId(this.familyLists.helper.id, this.context)) }));
     });
   }
   otherDependentVolunteers: Helpers[] = [];
 
-  allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery.value; };
+  allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
-    this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
+    this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.$.commentForSuccessDelivery);
   }
   async leftThere(f: ActiveFamilyDeliveries) {
-    this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
+    this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.$.commentForSuccessLeft);
   }
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async sendSuccessMessageToFamily(deliveryId: string, context?: ServerContext) {
     var settings = getSettings(context);
-    if (!settings.allowSendSuccessMessageOption.value)
+    if (!settings.allowSendSuccessMessageOption)
       return;
-    if (!settings.sendSuccessMessageToFamily.value)
+    if (!settings.sendSuccessMessageToFamily)
       return;
-    let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn(DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere)));
+    let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
     if (!fd)
       console.log("did not send sms to " + deliveryId + " failed to find delivery");
-    if (!fd.phone1.value)
+    if (!fd.phone1)
       return;
-    if (!fd.phone1.value.startsWith("05"))
+    if (!fd.phone1.thePhone.startsWith("05"))
       return;
-    let phone = PhoneColumn.fixPhoneInput(fd.phone1.value, context);
+    let phone = Phone.fixPhoneInput(fd.phone1.thePhone, context);
     if (phone.length != 10) {
       console.log(phone + " doesn't match sms structure");
       return;
     }
 
 
-    await new SendSmsUtils().sendSms(phone, settings.helpPhone.value, SendSmsAction.getSuccessMessage(settings.successMessageText.value, settings.organisationName.value, fd.name.value), context.getOrigin(), Sites.getOrganizationFromContext(context), settings);
+    await new SendSmsUtils().sendSms(phone, settings.helpPhone.thePhone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), context.getOrigin(), Sites.getOrganizationFromContext(context), settings);
   }
-  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => Column) {
-    this.context.openDialog(GetVolunteerFeedback, x => x.args = {
+  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => EntityColumn<string>) {
+    openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
-      comment: f.courierComments.value,
+      comment: f.courierComments,
       helpText,
       questionsArea: new DataAreaSettings({
         columnSettings: () => [
-          f.a1, f.a2, f.a3, f.a4
+          f.$.a1, f.$.a2, f.$.a3, f.$.a4
         ]
       }),
       ok: async (comment) => {
         if (!f.isNew()) {
-          f.deliverStatus.value = status;
-          f.courierComments.value = comment;
+          f.deliverStatus = status;
+          f.courierComments = comment;
           f.checkNeedsWork();
           try {
             await f.save();
@@ -437,8 +443,8 @@ export class HelperFamiliesComponent implements OnInit {
             if (this.familyLists.toDeliver.length == 0) {
               this.dialog.messageDialog(this.allDoneMessage());
             }
-            if (this.settings.allowSendSuccessMessageOption.value && this.settings.sendSuccessMessageToFamily.value)
-              HelperFamiliesComponent.sendSuccessMessageToFamily(f.id.value);
+            if (this.settings.allowSendSuccessMessageOption && this.settings.sendSuccessMessageToFamily)
+              HelperFamiliesComponent.sendSuccessMessageToFamily(f.id);
 
           }
           catch (err) {
@@ -447,7 +453,7 @@ export class HelperFamiliesComponent implements OnInit {
         }
       },
       cancel: () => {
-        f.undoChanges()
+        f._.undoChanges()
       }
     });
 
@@ -467,21 +473,21 @@ export class HelperFamiliesComponent implements OnInit {
     if (!q || q.length == 0) {
       showUpdateFail = true;
     } else {
-      showUpdateFail = await this.context.openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
+      showUpdateFail = await openDialog(CommonQuestionsComponent, x => x.init(this.familyLists.allFamilies[0]), x => x.updateFailedDelivery);
     }
     if (showUpdateFail)
-      this.context.openDialog(GetVolunteerFeedback, x => x.args = {
+      openDialog(GetVolunteerFeedback, x => x.args = {
         family: f,
-        comment: f.courierComments.value,
+        comment: f.courierComments,
         showFailStatus: true,
 
-        helpText: s => s.commentForProblem,
+        helpText: s => s.$.commentForProblem,
 
         ok: async (comment, status) => {
           if (f.isNew())
             return;
-          f.deliverStatus.value = status;
-          f.courierComments.value = comment;
+          f.deliverStatus = status;
+          f.courierComments = comment;
           f.checkNeedsWork();
           try {
             await f.save();
@@ -501,37 +507,37 @@ export class HelperFamiliesComponent implements OnInit {
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true;
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
-    let to = this.familyLists.helper.name.value;
-    await SendSmsAction.SendSms(this.familyLists.helper.id.value, reminder);
-    if (this.familyLists.helper.escort.value) {
-      to += ' ול' + this.familyLists.escort.name.value;
-      await SendSmsAction.SendSms(this.familyLists.helper.escort.value, reminder);
+    let to = this.familyLists.helper.name;
+    await SendSmsAction.SendSms(this.familyLists.helper.id, reminder);
+    if (this.familyLists.helper.escort) {
+      to += ' ול' + this.familyLists.escort.name;
+      await SendSmsAction.SendSms(this.familyLists.helper.escort.evilGetId(), reminder);
     }
     this.dialog.Info(use.language.smsMessageSentTo + " " + to);
     this.assignSmsSent.emit();
     if (reminder)
-      this.familyLists.helper.reminderSmsDate.value = new Date();
+      this.familyLists.helper.reminderSmsDate = new Date();
   }
 
   async sendWhatsapp() {
-    PhoneColumn.sendWhatsappToPhone(this.smsPhone, this.smsMessage, this.context);
+    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, this.context);
     await this.updateMessageSent("Whatsapp");
   }
   async customSms() {
     let h = this.familyLists.helper;
-    let phone = h.phone.value;
+    let phone = h.phone.thePhone;
     if (phone.startsWith('0')) {
       phone = '972' + phone.substr(1);
     }
-    await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => new StringColumn(),
+    await openDialog(GetVolunteerFeedback, x => x.args = {
+      helpText: () => new InputControl<string>({}),
       ok: async (comment) => {
-        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id.value, comment);
+        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id, comment);
         this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },
       hideLocation: true,
-      title: 'שלח הודעת ל' + h.name.value,
+      title: 'שלח הודעת ל' + h.name,
       family: undefined,
       comment: this.smsMessage
     });
@@ -559,15 +565,15 @@ export class HelperFamiliesComponent implements OnInit {
     }
   }
   async callHelper() {
-    location.href = 'tel:' + this.familyLists.helper.phone.value;
+    location.href = 'tel:' + this.familyLists.helper.phone;
     if (this.settings.isSytemForMlt()) {
-      await this.context.openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
+      await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
         save: async (comment) => {
           let hist = this.context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-          hist.volunteer.value = this.familyLists.helper.id.value;
-          hist.comment.value = comment;
+          hist.volunteer = new HelperId(this.familyLists.helper.id, this.context);
+          hist.comment = comment;
           await hist.save();
         },
         comment: 'התקשרתי'
@@ -577,7 +583,7 @@ export class HelperFamiliesComponent implements OnInit {
     }
   }
   callEscort() {
-    window.open('tel:' + this.familyLists.escort.phone.value);
+    window.open('tel:' + this.familyLists.escort.phone);
   }
   async updateMessageSent(type: string) {
 
@@ -595,14 +601,14 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
-    this.context.openDialog(EditCommentDialogComponent, x => x.args = {
-      comment: f.courierComments.value,
+    openDialog(EditCommentDialogComponent, x => x.args = {
+      comment: f.courierComments,
 
 
       save: async comment => {
         if (f.isNew())
           return;
-        f.courierComments.value = comment;
+        f.courierComments = comment;
         f.checkNeedsWork();
         await f.save();
         this.dialog.analytics('Update Comment');
@@ -611,12 +617,12 @@ export class HelperFamiliesComponent implements OnInit {
 
     });
   }
-  routeStart = this.settings.address.getGeocodeInformation();
+  routeStart = this.settings.addressHelper.getGeocodeInformation();
   async showRouteOnGoogleMaps() {
 
     if (this.familyLists.toDeliver.length > 0) {
 
-      let endOnDist = this.settings.routeStrategy.value.args.endOnDistributionCenter;
+      let endOnDist = this.settings.routeStrategy.args.endOnDistributionCenter;
       let url = 'https://www.google.com/maps/dir';
       if (!endOnDist)
         if (this.volunteerLocation) {
@@ -626,7 +632,7 @@ export class HelperFamiliesComponent implements OnInit {
           url += "/" + encodeURI((this.routeStart).getAddress());
 
       for (const f of this.familyLists.toDeliver) {
-        url += '/' + encodeURI(isGpsAddress(f.address.value) ? f.address.value : f.addressByGoogle.value);
+        url += '/' + encodeURI(isGpsAddress(f.address) ? f.address : f.addressByGoogle);
       }
       if (endOnDist)
         url += "/" + encodeURI((this.routeStart).getAddress());
@@ -635,7 +641,7 @@ export class HelperFamiliesComponent implements OnInit {
     //window.open(url,'_blank');
   }
   async returnToDeliver(f: ActiveFamilyDeliveries) {
-    f.deliverStatus.value = DeliveryStatus.ReadyForDelivery;
+    f.deliverStatus = DeliveryStatus.ReadyForDelivery;
     try {
       await f.save();
       this.dialog.analytics('Return to Deliver');

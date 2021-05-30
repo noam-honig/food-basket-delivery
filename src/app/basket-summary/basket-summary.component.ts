@@ -21,23 +21,23 @@ export class BasketSummaryComponent implements OnInit {
   async ngOnInit() {
     let hash = new Map<string, basketStats>();
     for (const delivery of this.families.toDeliver) {
-      let b = await this.context.for(BasketType).lookupAsync(delivery.basketType);
-      let b1 = b.boxes.value * delivery.quantity.value;
-      let b2 = b.boxes2.value * delivery.quantity.value;
+      let b = await delivery.basketType.waitLoad();
+      let b1 = b.boxes * delivery.quantity;
+      let b2 = b.boxes2 * delivery.quantity;
       this.boxes1 += b1;
       this.boxes2 += b2;
-      if (delivery.deliveryComments.value) {
-        this.comments.push({ comment: delivery.deliveryComments.value, family: delivery.name.value });
+      if (delivery.deliveryComments) {
+        this.comments.push({ comment: delivery.deliveryComments, family: delivery.name });
       }
-      let s = hash.get(delivery.basketType.value);
+      let s = hash.get(delivery.basketType.evilGetId());
       if (!s) {
         s = {
-          name: b.name.value,
+          name: b.name,
           boxes1: 0,
           boxes2: 0
         };
         this.totals.push(s);
-        hash.set(delivery.basketType.value, s);
+        hash.set(delivery.basketType.evilGetId(), s);
       }
       s.boxes1 += b1;
       s.boxes2 += b2;

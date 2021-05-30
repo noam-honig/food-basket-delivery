@@ -1,4 +1,4 @@
-<h1 mat-dialog-title *ngIf="family">{{settings.lang.mergeForFamily}} {{family.name.value}}</h1>
+<h1 mat-dialog-title *ngIf="family">{{settings.lang.mergeForFamily}} {{family.name}}</h1>
 <div mat-dialog-content>
     <table class="table table-bordered my-table" *ngIf="gs">
         <tr *ngFor="let c of gs.columns.items">
@@ -8,10 +8,10 @@
                 </div>
             </td>
             <td *ngFor="let f of families">
-                <div *ngIf="f.columns.find(c.column).displayValue==c.column.displayValue; else elseBlock" class="green">
-                    {{f.columns.find(c.column).displayValue}}</div>
-                <ng-template #elseBlock><span class="red"> {{f.columns.find(c.column).displayValue}}</span>
-                    <mat-icon style="color:green" (click)="c.column.value = f.columns.find(c.column).value">done
+                <div *ngIf="f.$.find(c.column).displayValue==family.$.find( c.column).displayValue; else elseBlock" class="green">
+                    {{f.$.find(c.column).displayValue}}</div>
+                <ng-template #elseBlock><span class="red"> {{f.$.find(c.column).displayValue}}</span>
+                    <mat-icon style="color:green" (click)="c.column.value = f.$.find(c.column).value">done
                     </mat-icon>
                 </ng-template>
             </td>

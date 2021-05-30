@@ -2,15 +2,13 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { DistributionMap, infoOnMap } from '../distribution-map/distribution-map.component';
+import { DistributionMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { BusyService } from '@remult/angular';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import MarkerClusterer from '@google/markerclustererplus';
 import { Helpers } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
-import { DistributionCenters } from '../manage/distribution-centers';
 import { Location } from '../shared/googleApiHelpers';
 
 //import 'googlemaps';
@@ -45,10 +43,10 @@ export class MapComponent implements OnInit, OnDestroy {
             });
             // console.timeEnd('load families to map');
             if (!this.hasFamilies && this.helper) {
-                if (this.helper.preferredDistributionAreaAddress.ok())
-                    this.map.setCenter(this.helper.preferredDistributionAreaAddress.location())
-                else if (this.helper.preferredFinishAddress.ok())
-                    this.map.setCenter(this.helper.preferredFinishAddress.location())
+                if (this.helper.preferredDistributionAreaAddressHelper.ok())
+                    this.map.setCenter(this.helper.preferredDistributionAreaAddressHelper.location())
+                else if (this.helper.preferredFinishAddressHelper.ok())
+                    this.map.setCenter(this.helper.preferredFinishAddressHelper.location())
                 else
                     this.fitBounds();
             }
@@ -176,11 +174,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
             this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: start, icon: 'https://labs.google.com/ridefinder/images/mm_20_purple.png' }));
             this.helper = helper;
-            if (helper.preferredDistributionAreaAddress.ok()) {
-                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredDistributionAreaAddress.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }));
+            if (helper.preferredDistributionAreaAddressHelper.ok()) {
+                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredDistributionAreaAddressHelper.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }));
             }
-            if (helper.preferredFinishAddress.ok()) {
-                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredFinishAddress.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }))
+            if (helper.preferredFinishAddressHelper.ok()) {
+                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredFinishAddressHelper.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }))
             }
         }
 
@@ -191,12 +189,12 @@ export class MapComponent implements OnInit, OnDestroy {
         let prevIndex: number;
 
         families.forEach(f => {
-            let pi = prevFamilies.findIndex(x => x.id.value == f.id.value);
+            let pi = prevFamilies.findIndex(x => x.id == f.id);
             if (pi >= 0)
                 prevFamilies.splice(pi, 1);
-            let marker = this.setFamilyOnMap(f.id.value, f.addressLatitude.value, f.addressLongitude.value);
+            let marker = this.setFamilyOnMap(f.id, f.addressLatitude, f.addressLongitude);
             try {
-                if (f.deliverStatus.value == DeliveryStatus.ReadyForDelivery)
+                if (f.deliverStatus == DeliveryStatus.ReadyForDelivery)
                     this.bounds.extend(marker.getPosition());
                 else
                     secondaryBounds.extend(marker.getPosition());
@@ -206,7 +204,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
 
-            switch (f.deliverStatus.value) {
+            switch (f.deliverStatus) {
                 case DeliveryStatus.ReadyForDelivery:
                     let currentIndex = ++i;
                     if (prevMarker == undefined || JSON.stringify(prevMarker.getPosition()) != JSON.stringify(marker.getPosition())) {
@@ -240,7 +238,7 @@ export class MapComponent implements OnInit, OnDestroy {
             }
         });
         for (const f of prevFamilies) {
-            var m = this.dict.get(f.id.value);
+            var m = this.dict.get(f.id);
             if (m) {
                 m.setIcon('https://maps.google.com/mapfiles/ms/micons/yellow-dot.png');
                 m.setLabel('');
@@ -263,7 +261,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private async initMap() {
         if (!this.mapInit) {
             if (!this.center) {
-                var x = (await ApplicationSettings.get(this.context)).address.location();
+                var x = (await ApplicationSettings.get(this.context)).addressHelper.location();
                 this.center = new google.maps.LatLng(x.lat, x.lng);
             }
             var mapProp: google.maps.MapOptions = {

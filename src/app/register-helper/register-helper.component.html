@@ -12,13 +12,15 @@
                 <h5>*נא למלא את הטופס בעברית.</h5>
             </div>
             <data-control [column]="helper.name"></data-control>
-            <app-address-input [column]="helper.preferredDistributionAreaAddress" [autoInit]="true"></app-address-input>
-            <app-address-input [column]="helper.preferredFinishAddress" [autoInit]="true"></app-address-input>
+            <app-address-input [column]="helper.preferredDistributionAreaAddress"
+                caption="כתובת שנדע לחבר לך תורמים קרובים" [autoInit]="true"></app-address-input>
+            <app-address-input [column]="helper.preferredFinishAddress" caption="איזור נוסף ממנו נח לך לאסוף תרומות?"
+                [autoInit]=" true"></app-address-input>
             <data-area [settings]="area"></data-area>
             <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>
         </div>
         <div *ngIf="isDone">
             <H2>תודה רבה!</H2>
         </div>
-</mat-card>
+    </mat-card>
 </div>

@@ -1,4 +1,5 @@
-import { DataControlInfo, DataControlSettings, Column, Context, GridSettings } from "@remult/core";
+import {  Column, Context } from "@remult/core";
+import { DataControlInfo, DataControlSettings, GridSettings } from "../../../../radweb/projects/angular";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {

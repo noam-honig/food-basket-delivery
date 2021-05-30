@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { Context, DataAreaSettings } from '@remult/core';
+import { Context,  EntityColumn } from '@remult/core';
 import { Column } from '@remult/core';
 
 import { DialogService } from '../select-popup/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { DataAreaSettings } from '../../../../radweb/projects/angular';
 
 @Component({
   selector: 'app-update-comment',
@@ -17,7 +18,7 @@ export class GetVolunteerFeedback implements OnInit {
   public args: {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
-    helpText: (s: ApplicationSettings) => Column
+    helpText: (s: ApplicationSettings) => EntityColumn<string>,
     hideLocation?: boolean,
     title?: string,
     comment: string,
@@ -67,7 +68,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       this.args.title = this.settings.lang.thankYou;
     if (this.args.showFailStatus) {
 
-      this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id.value);
+      this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id);
 
     }
   }

@@ -13,27 +13,27 @@
     <div>
         <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
             *ngIf="familyLists.toDeliver.length&&settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
-        <a href="{{settings.message1Link.value}}" target="_blank" class="no-print" style="display: block"
-            *ngIf="!settings.message1OnlyWhenDone.value || familyLists.toDeliver.length==0">{{settings.message1Text.value}}</a>
-        <ng-container *ngIf="!settings.message2OnlyWhenDone.value || familyLists.toDeliver.length==0">
-            <a href="{{settings.message2Link.value}}" target="_blank" class="no-print"
-                *ngIf="settings.message2Link.value" style="display: block">{{settings.message2Text.value}}</a>
-            <span *ngIf="!settings.message2Link.value">
-                {{settings.message2Text.value}}
+        <a href="{{settings.message1Link}}" target="_blank" class="no-print" style="display: block"
+            *ngIf="!settings.message1OnlyWhenDone || familyLists.toDeliver.length==0">{{settings.message1Text}}</a>
+        <ng-container *ngIf="!settings.message2OnlyWhenDone || familyLists.toDeliver.length==0">
+            <a href="{{settings.message2Link}}" target="_blank" class="no-print"
+                *ngIf="settings.message2Link" style="display: block">{{settings.message2Text}}</a>
+            <span *ngIf="!settings.message2Link">
+                {{settings.message2Text}}
             </span>
         </ng-container>
     </div>
     
-    <mat-card *ngIf="settings.showDistCenterAsEndAddressForVolunteer.value&&familyLists.distCenter">
-        <mat-card-title>{{settings.lang.pickupLocation}}: {{familyLists.distCenter.name.value}}</mat-card-title>
-        <div class="phone-container" *ngIf="  familyLists.distCenter.address.ok()">
-            <span (click)="familyLists.distCenter.address.openWaze()">
+    <mat-card *ngIf="settings.showDistCenterAsEndAddressForVolunteer&&familyLists.distCenter">
+        <mat-card-title>{{settings.lang.pickupLocation}}: {{familyLists.distCenter.name}}</mat-card-title>
+        <div class="phone-container" *ngIf="  familyLists.distCenter.addressHelper.ok()">
+            <span (click)="familyLists.distCenter.addressHelper.openWaze()">
                 <img src="assets/waze.png">
 
             </span>
             <div>
-                <a (click)="familyLists.distCenter.address.openWaze()">
-                    <span style="display:block"> {{familyLists.distCenter.address.value}} </span>
+                <a (click)="familyLists.distCenter.addressHelper.openWaze()">
+                    <span style="display:block"> {{familyLists.distCenter.address}} </span>
                 </a>
             </div>
         </div>
@@ -48,22 +48,22 @@
         <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
         <mat-accordion multi>
             <mat-expansion-panel *ngFor="let e of events" [class.registered]="!volunteerInEvent(e).isNew()"
-                [attr.myId]="e.id.value">
+                [attr.myId]="e.id">
                 <mat-expansion-panel-header [class.registered]="!volunteerInEvent(e).isNew()">
                     <div style="display:flex;flex-direction: column;">
-                        <mat-panel-title *ngIf="e.name.value"> {{e.name.value}} <mat-icon
+                        <mat-panel-title *ngIf="e.name"> {{e.name}} <mat-icon
                                 *ngIf="!volunteerInEvent(e).isNew()" style="color:green">done</mat-icon>
                         </mat-panel-title>
                         <mat-panel-title>
-                            {{e.eventDate.displayValue}}<span *ngIf="e.startTime.value">,
-                                {{e.startTime.value}}</span><span *ngIf="e.endTime.value"> -
-                                {{e.endTime.value}}</span>
+                            {{e.$.eventDate.displayValue}}<span *ngIf="e.startTime">,
+                                {{e.startTime}}</span><span *ngIf="e.endTime"> -
+                                {{e.endTime}}</span>
                         </mat-panel-title>
 
                     </div>
                 </mat-expansion-panel-header>
                 <div>
-                    {{e.description.value}}
+                    {{e.description}}
                 </div>
                 <div>
                     <div class="phone-container" *ngIf="getAddress(e).ok()">
@@ -73,37 +73,37 @@
                         </span>
                         <div>
                             <a (click)="getAddress(e).openWaze()">
-                                <span style="display:block"> {{getAddress(e).value}} </span>
+                                <span style="display:block"> {{getAddress(e)}} </span>
                             </a>
                         </div>
                     </div>
 
 
-                    <div class="phone-container" *ngIf="getPhone(e).value">
+                    <div class="phone-container" *ngIf="getPhone(e).thePhone">
                         <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-                            (click)="sendWhatsapp(getPhone(e).value)">
+                            (click)="sendWhatsapp(getPhone(e).thePhone)">
                             <img src="assets/whatsapp.png">
                         </span>
-                        <a href="tel:{{getPhone(e).value}}">
+                        <a href="tel:{{getPhone(e).thePhone}}">
                             <button mat-mini-fab style="vertical-align: middle" color="primary">
                                 <mat-icon>call</mat-icon>
                             </button>
                         </a>
                         <div>
-                            <a href="tel:{{getPhone(e).value}}">{{getPhone(e).displayValue}}</a>,
-                            {{e.phone1.value? e.phone1Description.value:settings.helpText.value}}
+                            <a href="tel:{{getPhone(e).thePhone}}">{{getPhone(e).displayValue}}</a>,
+                            {{e.phone1? e.phone1Description:settings.helpText}}
                         </div>
                     </div>
 
                 </div>
-                <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers.value}}<span
-                        *ngIf="e.requiredVolunteers.value"> /{{e.requiredVolunteers.value}} </span></div>
+                <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers}}<span
+                        *ngIf="e.requiredVolunteers"> /{{e.requiredVolunteers}} </span></div>
                 <button mat-raised-button color="primary"
-                    *ngIf="volunteerInEvent(e).isNew() && (e.registeredVolunteers.value<e.requiredVolunteers.value||e.requiredVolunteers.value==0)"
+                    *ngIf="volunteerInEvent(e).isNew() && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
                     (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
                 </button>
                 <span mat-raised-button color="primary"
-                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers.value>=e.requiredVolunteers.value&&e.requiredVolunteers.value>0">{{settings.lang.eventIsFull}}
+                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
                 </span>
                 <span *ngIf="!volunteerInEvent(e).isNew()">
                     {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>

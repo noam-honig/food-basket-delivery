@@ -1,45 +1,37 @@
-import { HasAsyncGetTheValue, PhoneColumn } from "../model-shared/types";
+import { Phone } from "../model-shared/Phone";
+import { LookupValue } from "../model-shared/LookupValue";
 
-import { Context, EntityClass, IdEntity, StringColumn, IdColumn, ColumnOptions, DecorateDataColumnSettings } from '@remult/core';
+import { Context, IdEntity, Entity, Storable, Column, StoreAsStringValueConverter } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { getLang } from '../sites/sites';
+import { DataControl, getValueList } from "@remult/angular";
+import { use } from "../translate";
 
-@EntityClass
+@Entity<FamilySources>({
+  key: "FamilySources",
+  allowApiRead: context => context.isSignedIn(),
+  allowApiCrud: Roles.admin,
+  defaultOrderBy: self => self.name
+})
 export class FamilySources extends IdEntity {
-  name = new StringColumn({ caption: getLang(this.context).familySourceName });
-  contactPerson = new StringColumn({ caption: getLang(this.context).contactPersonName });
-  phone = new PhoneColumn({ caption: getLang(this.context).phone });
-  constructor(private context: Context) {
-    super({
-      name: "FamilySources",
-      allowApiRead: context.isSignedIn(),
-      allowApiCRUD: Roles.admin
-    });
-  }
+  @Column({ caption: use.language.familySourceName })
+  name: string;
+  @Column({ caption: use.language.contactPersonName })
+  contactPerson: string;
+  @Column({ caption: use.language.phone })
+  phone: Phone;
+
 }
-export class FamilySourceId extends IdColumn implements HasAsyncGetTheValue {
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
-    super({
-      dataControlSettings: () =>
-        ({
-          valueList:
-            this.context.for(FamilySources).getValueList({
-              orderBy: (f: FamilySources) => {
-                return [{ column: f.name }];
 
-              }
-            })
-        })
-    }, settingsOrCaption);
+@DataControl({
+  valueList: context => getValueList(context.for(FamilySources))
+})
+@Storable<FamilySourceId>({
+  valueConverter: c => new StoreAsStringValueConverter<FamilySourceId>(x => x.id, x => new FamilySourceId(x, c)),
+  displayValue: (e, val) => val.item.name
+})
+export class FamilySourceId extends LookupValue<FamilySources>  {
+  constructor(id: string, private context: Context) {
+    super(id, context.for(FamilySources));
   }
-  get displayValue() {
-    return this.context.for(FamilySources).lookup(this).name.value;
-  }
-  async getTheValue() {
-    let r = await this.context.for(FamilySources).lookupAsync(this);
-    if (r && r.name && r.name.value)
-      return r.name.value;
-    return '';
-  }
-
 }

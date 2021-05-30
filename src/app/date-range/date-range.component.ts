@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { DateColumn, DataAreaSettings, BoolColumn } from '@remult/core';
+import { DataAreaSettings, InputControl } from '../../../../radweb/projects/angular';
+import { DateOnlyValueConverter } from '../../../../radweb/projects/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 var fullDayValue = 24 * 60 * 60 * 1000;
 @Component({
@@ -11,8 +12,9 @@ export class DateRangeComponent implements OnInit {
 
   @Input() rangeWeekly: boolean = false;
   @Output() dateChanged = new EventEmitter<void>();
-  fromDate = new DateColumn({
+  fromDate = new InputControl<Date>({
     caption: this.settings.lang.fromDate,
+    valueConverter: () => DateOnlyValueConverter,
     valueChange: () => {
 
       if (this.toDate.value < this.fromDate.value) {
@@ -21,8 +23,11 @@ export class DateRangeComponent implements OnInit {
 
     }
   });
-  toDate = new DateColumn(this.settings.lang.toDate);
-  
+  toDate = new InputControl<Date>({
+    caption: this.settings.lang.toDate,
+    valueConverter: () => DateOnlyValueConverter
+  });
+
   rangeArea = new DataAreaSettings({
     columnSettings: () => [[this.fromDate, this.toDate]],
   });
@@ -69,10 +74,10 @@ export class DateRangeComponent implements OnInit {
       this.fromDate.value = lastWeek;
       this.toDate.value = today;
     }
-    else  {
+    else {
       this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
       this.toDate.value = this.getEndOfMonth();
-    } 
+    }
   }
 
 }

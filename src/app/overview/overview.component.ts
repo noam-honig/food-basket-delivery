@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, ServerFunction, DateColumn, Entity, SqlDatabase, StringColumn, ServerContext, ServerProgress } from '@remult/core';
+import { Context, ServerFunction, Entity, SqlDatabase, ServerContext, ServerProgress } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
-import { SitesEntity, SchemaIdColumn } from '../sites/sites.entity';
+import { SitesEntity } from '../sites/sites.entity';
+import { InputControl, openDialog } from '../../../../radweb/projects/angular';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
   selector: 'app-overview',
@@ -32,7 +34,7 @@ export class OverviewComponent implements OnInit {
     return !this.searchString || s.name.includes(this.searchString);
   }
   showSiteInfo(s: siteItem) {
-    this.context.openDialog(SiteOverviewComponent, x => x.args = { site: s, statistics: this.overview.statistics });
+    openDialog(SiteOverviewComponent, x => x.args = { site: s, statistics: this.overview.statistics });
   }
   doSort(s: dateRange) {
     this.sortBy = s.caption;
@@ -117,8 +119,9 @@ export class OverviewComponent implements OnInit {
     };
 
     var builder = new SqlBuilder();
-    let f = context.for(ActiveFamilyDeliveries).create();
-    let fd = context.for(FamilyDeliveries).create();
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd = SqlFor(context.for(FamilyDeliveries));
+
 
 
     let soFar = 0;
@@ -126,7 +129,7 @@ export class OverviewComponent implements OnInit {
       progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
-      var as = context.for(ApplicationSettings, dp).create();
+      var as = SqlFor(context.for(ApplicationSettings));
 
       let cols: any[] = [as.organisationName, as.logoUrl];
 
@@ -137,10 +140,10 @@ export class OverviewComponent implements OnInit {
 
 
         } else if (dateRange.caption == onTheWay) {
-          cols.push(builder.countInnerSelect({ from: f, where: () => [f.onTheWayFilter()] }, key));
+          cols.push(builder.countInnerSelect({ from: f, where: () => [FamilyDeliveries.onTheWayFilter(f, context)] }, key));
         }
         else
-          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(fd.deliverStatus.isAResultStatus()))), ') ', key));
+          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(DeliveryStatus.isAResultStatus(fd.deliverStatus)))), ') ', key));
 
       }
 
@@ -175,9 +178,9 @@ export class OverviewComponent implements OnInit {
 
   }
   async createNewSchema() {
-    let id = new SchemaIdColumn();
-    let name = new StringColumn('שם הארגון');
-    this.context.openDialog(InputAreaComponent, x => x.args = {
+    let id = new InputControl<string>({ caption: 'id' });
+    let name = new InputControl<string>({ caption: 'שם הארגון' });
+    openDialog(InputAreaComponent, x => x.args = {
       title: 'הוספת סביבה חדשה',
       settings: {
         columnSettings: () => [id, name]
@@ -230,20 +233,20 @@ export class OverviewComponent implements OnInit {
       let oh = await context.for(Helpers).findId(context.user.id);
       let db = await OverviewComponent.createDbSchema(id);
       let otherContext = new ServerContext(db);
-      otherContext._setUser(context.user);
+      otherContext.setUser(context.user);
       let h = await otherContext.for(Helpers).create();
-      h.name.value = oh.name.value;
-      h.realStoredPassword.value = oh.realStoredPassword.value;
-      h.phone.value = oh.phone.value;
-      h.admin.value = oh.admin.value;
+      h.name = oh.name;
+      h.realStoredPassword = oh.realStoredPassword;
+      h.phone = oh.phone;
+      h.admin = oh.admin;
       await h.save();
       let settings = await ApplicationSettings.getAsync(otherContext);
 
-      settings.organisationName.value = name;
+      settings.organisationName = name;
       await settings.save();
 
       let s = context.for(SitesEntity).create();
-      s.id.value = id;
+      s.id = id;
       await s.save();
 
 

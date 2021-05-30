@@ -14,7 +14,7 @@
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    {{settings.lang.organizationInfo}} - {{settings.organisationName.value}}
+                    {{settings.lang.organizationInfo}} - {{settings.organisationName}}
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
@@ -31,7 +31,7 @@
             </mat-card>
             <mat-card>
                 <mat-card-title>
-                    {{settings.smsText.defs.caption}}
+                    {{settings.$.smsText.defs.caption}}
                 </mat-card-title>
                 {{settings.lang.smsTextHelpTitle}}
                 <ul>
@@ -42,26 +42,26 @@
                     <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
                     <li>!אתר! - {{settings.lang.replaceBySiteUrl}}</li>
                 </ul>
-                <textarea [(ngModel)]="settings.smsText.value" class="form-control"></textarea>
+                <textarea [(ngModel)]="settings.smsText" class="form-control"></textarea>
                 <H4>{{settings.lang.sampleMessage}}</H4>
                 <pre>{{testSms()}}</pre>
             </mat-card>
             <mat-card>
                 <mat-card-title>
-                    {{settings.reminderSmsText.defs.caption}}
+                    {{settings.$.reminderSmsText.defs.caption}}
                 </mat-card-title>
                 {{settings.lang.reminderSmsTextHelp}}
-                <textarea [(ngModel)]="settings.reminderSmsText.value" class="form-control" lines=3></textarea>
+                <textarea [(ngModel)]="settings.reminderSmsText" class="form-control" lines=3></textarea>
 
                 <h4>{{settings.lang.sampleReminderSms}}</h4>
                 <pre>{{testSmsReminder()}}</pre>
             </mat-card>
             <mat-card *ngIf="settings.isSytemForMlt()">
                 <mat-card-title>
-                    {{settings.registerFamilyReplyEmailText.defs.caption}}
+                    {{settings.$.registerFamilyReplyEmailText.defs.caption}}
                 </mat-card-title>
                 {{settings.lang.registerFamilyReplyEmailText}}
-                <textarea [(ngModel)]="settings.registerFamilyReplyEmailText.value" class="form-control"
+                <textarea [(ngModel)]="settings.registerFamilyReplyEmailText" class="form-control"
                     lines=3></textarea>
 
                 <h4>{{settings.lang.sampleMessage}}</h4>
@@ -69,10 +69,10 @@
             </mat-card>
             <mat-card *ngIf="settings.isSytemForMlt()">
                 <mat-card-title>
-                    {{settings.registerHelperReplyEmailText.defs.caption}}
+                    {{settings.$.registerHelperReplyEmailText.defs.caption}}
                 </mat-card-title>
                 {{settings.lang.registerHelperReplyEmailText}}
-                <textarea [(ngModel)]="settings.registerHelperReplyEmailText.value" class="form-control"
+                <textarea [(ngModel)]="settings.registerHelperReplyEmailText" class="form-control"
                     lines=3></textarea>
 
                 <h4>{{settings.lang.sampleMessage}}</h4>
@@ -85,14 +85,14 @@
                 <data-area [settings]="emailConfiguration"></data-area>
                 <button mat-raised-button (click)="sendTestEmail()">שלח מייל נסיון</button>
             </mat-card>
-            <mat-card *ngIf="settings.allowSendSuccessMessageOption.value&&settings.helpPhone.value">
+            <mat-card *ngIf="settings.allowSendSuccessMessageOption&&settings.helpPhone">
                 <mat-card-title>
                     הודעה למשפחה על מסירה מוצלחת
                 </mat-card-title>
                 <data-control [column]="settings.sendSuccessMessageToFamily"></data-control>
-                <ng-container *ngIf="settings.sendSuccessMessageToFamily.value">
+                <ng-container *ngIf="settings.sendSuccessMessageToFamily">
                     הודעה זו תשלח למשפחה כאשר התנדב לוחץ על כפתור נמסר בהצלחה
-                    <textarea [(ngModel)]="settings.successMessageText.value" class="form-control" lines=3></textarea>
+                    <textarea [(ngModel)]="settings.successMessageText" class="form-control" lines=3></textarea>
 
                     <h4>הודעה לדוגמא</h4>
                     <pre>{{testSuccessSms()}}</pre>
@@ -264,7 +264,7 @@
             <mat-card>
                 <mat-card-title>{{settings.lang.iconForWebSite}} (favicon.ico)</mat-card-title>
                 <br>
-                <input type="file" id="icon" (change)="onFileChange('icon',images.currentRow.base64Icon)">
+                <input type="file" id="icon" (change)="onFileChange('icon',images.currentRow.$.base64Icon)">
                 <br>
                 <img [src]="getIcon()" *ngIf="this.images.currentRow">
             </mat-card>
@@ -274,7 +274,7 @@
                 <mat-card-title>
                     {{settings.lang.logoForWebsiteAndPhone}} - (apple-icon-120x120.png)</mat-card-title>
                 <br>
-                <input type="file" id="logo" (change)="onFileChange('logo',images.currentRow.base64PhoneHomeImage)">
+                <input type="file" id="logo" (change)="onFileChange('logo',images.currentRow.$.base64PhoneHomeImage)">
                 <br>
                 <img [src]="getLogo()" *ngIf="this.images.currentRow">
                 <br>

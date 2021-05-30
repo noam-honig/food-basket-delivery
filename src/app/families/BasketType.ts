@@ -1,74 +1,68 @@
 
 
-import { StringColumn, IdColumn, IdEntity, BoolColumn, NumberColumn, DecorateDataColumnSettings, NumberColumnOptions } from '@remult/core';
+import { Column, ColumnSettings, Entity, IdEntity, Storable, StoreAsStringValueConverter } from '@remult/core';
 
-import { HasAsyncGetTheValue } from "../model-shared/types";
-import { Context, EntityClass } from '@remult/core';
-import { ColumnOptions } from '@remult/core';
+import { LookupValue } from "../model-shared/LookupValue";
+import { Context, } from '@remult/core';
+
 import { Roles } from "../auth/roles";
 import { use } from '../translate';
 import { getLang } from '../sites/sites';
+import { DataControl, getValueList } from '@remult/angular';
 
-@EntityClass
+@Entity<BasketType>({
+  key: "BasketType",
+  allowApiRead: context => context.isSignedIn(),
+  allowApiCrud: Roles.admin,
+  saving: async (self) => {
+    if ((!self.boxes || self.boxes < 1) && (!self.boxes2 || self.boxes2 < 1))
+      self.boxes = 1;
+  },
+  defaultOrderBy: x => x.name
+})
 export class BasketType extends IdEntity {
 
-  name = new StringColumn({ caption: getLang(this.context).basketTypeName });
+  @Column({ caption: use.language.basketTypeName })
+  name: string;
+  @Column({ caption: BasketType.boxes1Name })
+  boxes: number = 1;
+  @Column({ caption: BasketType.boxes2Name })
+  boxes2: number = 0;
 
-  boxes = new NumberColumn({ caption: BasketType.boxes1Name, defaultValue: 1 });
-  boxes2 = new NumberColumn({ caption: BasketType.boxes2Name, defaultValue: 0 });
   constructor(private context: Context) {
-    super({
-      name: "BasketType",
-      allowApiRead: context.isSignedIn(),
-      allowApiCRUD: Roles.admin,
-      saving: async () => {
-        if ((!this.boxes.value || this.boxes.value < 1) && (!this.boxes2.value || this.boxes2.value < 1))
-          this.boxes.value = 1;
-      }
-    });
+    super();
   }
-  static boxes1Name = !use?'':use.language.boxes1Name;
-  static boxes2Name = !use?'':use.language.boxes2Name;
+  static boxes1Name = !use ? '' : use.language.boxes1Name;
+  static boxes2Name = !use ? '' : use.language.boxes2Name;
 }
-export class BasketId extends IdColumn implements HasAsyncGetTheValue {
-  async addBasketTypes(quantity: NumberColumn, addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
-    let r = await this.context.for(BasketType).lookupAsync(this);
-    if (r) {
 
-      addColumn(BasketType.boxes1Name, r.boxes.value ? (r.boxes.value * quantity.value).toString() : '', 'n');
-      addColumn(BasketType.boxes2Name, r.boxes2.value ? (r.boxes2.value * quantity.value).toString() : '', 'n');
+
+@Storable<BasketTypeId>({
+  valueConverter: c => new StoreAsStringValueConverter<BasketTypeId>(x => x.id, x => new BasketTypeId(x, c)),
+  displayValue: (e, v) => v.item.name,
+  caption: use.language.basketType
+})
+@DataControl({
+  valueList: context => getValueList(context.for(BasketType)),
+  width: '100'
+})
+export class BasketTypeId extends LookupValue<BasketType>{
+  evilGetId(): string {
+    return this.id;
+  }
+  constructor(id: string, context: Context) {
+    super(id, context.for(BasketType));
+  }
+  async addBasketTypes(quantity: number, addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+    let r = await this.waitLoad();
+    if (r) {
+      addColumn(BasketType.boxes1Name, r.boxes ? (r.boxes * quantity).toString() : '', 'n');
+      addColumn(BasketType.boxes2Name, r.boxes2 ? (r.boxes2 * quantity).toString() : '', 'n');
     }
   }
-  constructor(private context: Context, settingsOrCaption?: ColumnOptions<string>) {
-    super(settingsOrCaption, {
-      dataControlSettings: () =>
-        ({
-          valueList: this.context.for(BasketType).getValueList({
-            orderBy: (f: BasketType) => {
-              return [{ column: f.name }];
-            }
-          })
-          , width: '100'
-        }),
-    });
-    if (!this.defs.caption)
-      this.defs.caption = getLang(context).basketType;
-  }
-  get displayValue() {
-    return this.context.for(BasketType).lookup(this).name.value;
-  }
-  async getTheValue() {
-    let r = await this.context.for(BasketType).lookupAsync(this);
-    if (r && r.name && r.name.value)
-      return r.name.value;
-    return '';
-  }
 }
 
-export class QuantityColumn extends NumberColumn {
-  constructor(context:Context, settingsOrCaption?: NumberColumnOptions) {
-    super(settingsOrCaption);
-    if (!this.defs.caption)
-      this.defs.caption = getLang(context).quantity;
-  }
+
+export function QuantityColumn<T>(settings?: ColumnSettings) {
+  return Column<T, number>({ caption: use.language.quantity, ...settings });
 }

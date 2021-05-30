@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Context } from "@remult/core";
+import { GridSettings, openDialog } from "../../../../radweb/projects/angular";
 import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
 import { HelperGifts } from "./HelperGifts";
 @Component({
@@ -9,19 +10,19 @@ import { HelperGifts } from "./HelperGifts";
 })
 export class HelperGiftsComponent implements OnInit {
   constructor(private context: Context) { }
-  gifts = this.context.for(HelperGifts).gridSettings({
+  gifts = new GridSettings(this.context.for(HelperGifts),{
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 7,
 
-    orderBy: hg => [{ column: hg.dateGranted, descending: false }],
+    orderBy: hg =>  hg.dateGranted,
     rowsInPage: 100
     ,
     gridButtons: [
       {
         name: "יבוא מאקסל",
         click: () => {
-          this.context.openDialog(
+          openDialog(
             GeneralImportFromExcelComponent,
             x =>
             (x.args = {

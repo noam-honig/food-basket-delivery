@@ -39,17 +39,17 @@ export class SendSmsAction {
 
     public static async documentHelperMessage(reminder: Boolean, h: Helpers, context: Context, type: string) {
         if (reminder)
-            h.reminderSmsDate.value = new Date();
+            h.reminderSmsDate = new Date();
         else
-            h.smsDate.value = new Date();
+            h.smsDate = new Date();
         await h.save();
         let hist = context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-        hist.volunteer.value = h.id.value;
+        hist.volunteer = h.helperId();
         if (reminder) {
-            hist.comment.value = 'Reminder ' + type;
+            hist.comment = 'Reminder ' + type;
         }
         else
-            hist.comment.value = 'Link ' + type;
+            hist.comment = 'Link ' + type;
         await hist.save();
     }
 
@@ -70,30 +70,30 @@ export class SendSmsAction {
             let message = '';
             let settings = await ApplicationSettings.getAsync(ds);
             if (reminder) {
-                message = settings.reminderSmsText.value;
+                message = settings.reminderSmsText;
 
             }
             else {
 
-                message = settings.smsText.value;
+                message = settings.smsText;
                 if (!message || message.trim().length == 0) {
                     message = getLang(ds).defaultSmsText;
                 }
             }
-            let url = origin + '/x/' + helper.shortUrlKey.value;
-            message = SendSmsAction.getMessage(message, settings.organisationName.value, '', helper.name.value, senderName, url);
+            let url = origin + '/x/' + helper.shortUrlKey;
+            message = SendSmsAction.getMessage(message, settings.organisationName, '', helper.name, senderName, url);
             let sender = await SendSmsAction.getSenderPhone(ds);
 
-            await then(helper.phone.value, message, sender, url);
+            await then(helper.phone.thePhone, message, sender, url);
             var x = 1 + 1;
 
         }
     }
     public static async getSenderPhone(context: Context) {
-        let sender = (await ApplicationSettings.getAsync(context)).helpPhone.value;
+        let sender = (await ApplicationSettings.getAsync(context)).helpPhone.thePhone;
         if (!sender || sender.length < 3) {
             let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id)));
-            sender = currentUser.phone.value;
+            sender = currentUser.phone.thePhone;
         }
         return sender;
     }
@@ -153,7 +153,7 @@ export class SendSmsUtils {
 
 
         try {
-            let prefix = settings.forWho.value.args.internationalPrefixForSmsAndAws;
+            let prefix = settings.forWho.args.internationalPrefixForSmsAndAws;
             if (!prefix)
                 prefix = "+972";
             let internationalPhone = phone;
@@ -161,9 +161,9 @@ export class SendSmsUtils {
                 internationalPhone = internationalPhone.substring(1, 1000);
             if (!internationalPhone.startsWith('+'))
                 internationalPhone = prefix + internationalPhone;
-            if (settings.forWho.value.args.internationalPrefixForSmsAndAws) {
+            if (settings.forWho.args.internationalPrefixForSmsAndAws) {
                 if (SendSmsUtils.twilioSendSms) {
-                    let r = await SendSmsUtils.twilioSendSms(internationalPhone, text, settings.forWho.value);
+                    let r = await SendSmsUtils.twilioSendSms(internationalPhone, text, settings.forWho);
 
                     console.log(r);
                 }

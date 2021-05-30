@@ -1,9 +1,9 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Context, DataAreaSettings, ServerFunction } from '@remult/core';
+import { Column, Context, getControllerDefs, ServerFunction } from '@remult/core';
 
 
-import { BusyService } from '@remult/angular';
+import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
@@ -71,8 +71,8 @@ export class DialogService {
 
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context, private routeReuseStrategy: RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
-        if (this.distCenter.value === undefined)
-            this.distCenter.value = allCentersToken;
+        if (this.distCenter === undefined)
+            this.distCenter = DistributionCenterId.allCentersToken(context) ;
 
     }
     refreshFamiliesAndDistributionCenters() {
@@ -95,8 +95,8 @@ export class DialogService {
 
     }
     async getDistCenter(loc: Location) {
-        if (this.distCenter.value != allCentersToken)
-            return this.distCenter.value;
+        if (!this.distCenter.isAllCentersToken())
+            return this.distCenter;
         if (!this.allCenters)
             this.allCenters = await this.context.for(DistributionCenters).find();
         return findClosestDistCenter(loc, this.context, this.allCenters);
@@ -104,22 +104,24 @@ export class DialogService {
     }
     private allCenters: DistributionCenters[];
 
+    @Column({
 
-    distCenter = new DistributionCenterId(this.context, {
-
-        valueChange: () => {
-            if (this.context.isSignedIn())
-                this.refreshDistCenter.next();
-        }
-    }, true);
+        /*   valueChange: () => {
+               if (this.context.isSignedIn())
+                   this.refreshDistCenter.next();*/
+    })
+    @DataControl({
+        valueList: context => DistributionCenterId.getValueList(context, true)
+    })
+    distCenter: DistributionCenterId;
     distCenterArea: DataAreaSettings;
     hasManyCenters = false;
     canSeeCenter() {
         var dist = '';
         if (this.context.user)
             dist = (<HelperUserInfo>this.context.user).distributionCenter;
-        if (!this.context.isAllowed(Roles.admin) && this.distCenter.value != dist) {
-            this.distCenter.value = dist;
+        if (!this.context.isAllowed(Roles.admin) && !this.distCenter.matchesCurrentUser()) {
+            this.distCenter = DistributionCenterId.forCurrentUser(this.context);
         }
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }
@@ -133,9 +135,9 @@ export class DialogService {
             this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
-            this.distCenterArea = new DataAreaSettings({ columnSettings: () => [this.distCenter] });
+            this.distCenterArea = new DataAreaSettings({ columnSettings: () => [getControllerDefs(this).columns.distCenter] });
             if (!this.hasManyCenters)
-                this.distCenter.value = allCentersToken;
+                this.distCenter = new DistributionCenterId(allCentersToken, this.context);
         }
     }
 
@@ -172,20 +174,20 @@ export class DialogService {
         }
     }
     async messageDialog(what: string) {
-        return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => {
+        return await openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => {
             y.question = what;
             y.confirmOnly = true;
         }, x => x.yes);
     }
     async YesNoQuestion(question: string, onYes: () => void) {
-        this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, x => x.args = {
+        openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, x => x.args = {
             question: question,
             onYes: onYes,
             showOnlyConfirm: !onYes
         });
     }
     async YesNoPromise(question: string) {
-        return await this.context.openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
+        return await openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => y.args = { question: question }, x => x.yes);
     }
     confirmDelete(of: string) {
         return this.YesNoPromise(use.language.confirmDeleteOf + " " + of + "?");
@@ -263,7 +265,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorTime = new Date().valueOf();
         try {
             var s = await this.context.for((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
-            if (s && this.context.user && !s.currentUserIsValidForAppLoadTest.value) {
+            if (s && this.context.user && !s.currentUserIsValidForAppLoadTest) {
                 let AuthService = (await import("../auth/auth-service")).AuthService;
                 AuthService.doSignOut();
                 this.dialog.Error(s.lang.sessionExpiredPleaseRelogin);

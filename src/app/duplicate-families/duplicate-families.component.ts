@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, EntityWhere, AndFilter, packWhere, Column, BoolColumn, DataAreaSettings } from '@remult/core';
-import { BusyService } from '@remult/angular';
-import { PhoneColumn, SqlBuilder } from '../model-shared/types';
+import { ServerFunction, Context, SqlDatabase, ColumnDefinitions } from '@remult/core';
+import { BusyService, DataAreaSettings, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { Phone } from "../model-shared/Phone";
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';
@@ -20,11 +21,11 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class DuplicateFamiliesComponent implements OnInit {
 
-  address = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
-  name = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
-  phone = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
-  onlyActive = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.activeDeliveries, defaultValue: true })
-  tz = new BoolColumn({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
+  address = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
+  name = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
+  phone = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
+  onlyActive = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.activeDeliveries, defaultValue: () => true })
+  tz = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
   area = new DataAreaSettings({ columnSettings: () => [[this.address, this.name, this.phone, this.tz, this.onlyActive]] });
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
@@ -61,14 +62,14 @@ export class DuplicateFamiliesComponent implements OnInit {
     this.post = () => this.sortByCount();
   }
   async showFamilies(d: duplicateFamilies) {
-    await this.context.openDialog(GridDialogComponent, x => x.args = {
+    await openDialog(GridDialogComponent, x => x.args = {
       title: this.settings.lang.familiesAt + d.address,
       stateName: 'duplicate-families',
       buttons: [{
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
       }],
-      settings: this.context.for(Families).gridSettings({
+      settings: new GridSettings(this.context.for(Families), {
         columnSettings: f => {
           let r = [
             f.name,
@@ -85,8 +86,8 @@ export class DuplicateFamiliesComponent implements OnInit {
 
 
 
-          ] as Column[];
-          for (const c of f.columns) {
+          ] as ColumnDefinitions[];
+          for (const c of f) {
             if (!r.includes(c) && c != f.id)
               r.push(c);
           }
@@ -99,7 +100,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere: f => x.args.settings.getFilterWithSelectedRows().where(f),
+              userWhere: f => this.context.for(Families).translateWhereToFilter(x.args.settings.getFilterWithSelectedRows().where),
               settings: this.settings
             }))
           , {
@@ -129,7 +130,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         ],
 
         rowsInPage: 25,
-        where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(...d.ids.split(','))),
+        where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(d.ids.split(','))),
         orderBy: f => f.name
 
 
@@ -153,7 +154,7 @@ export class DuplicateFamiliesComponent implements OnInit {
       await this.dialog.Error(this.settings.lang.tooManyFamiliesForMerge);
       return;
     }
-    await this.context.openDialog(MergeFamiliesComponent, y => y.families = items, y => {
+    await openDialog(MergeFamiliesComponent, y => y.families = items, y => {
       if (y.merged)
         x.args.settings.reloadData();
     });
@@ -164,8 +165,8 @@ export class DuplicateFamiliesComponent implements OnInit {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";
     let sql = new SqlBuilder();
-    let f = context.for(Families).create();
-    let fd = context.for(ActiveFamilyDeliveries).create();
+    let f = SqlFor(context.for(Families));
+    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
     let q = '';
     for (const tz of [f.tz, f.tz2]) {
       for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {
@@ -230,7 +231,7 @@ export class DuplicateFamiliesComponent implements OnInit {
     return (await db.execute(q)).rows.map(x => ({
       address: x['address'],
       name: x['name'],
-      phone: PhoneColumn.formatPhone(x['phone']),
+      phone: Phone.formatPhone(x['phone']),
       tz: x['tz'],
       count: +x['c'],
       ids: x['ids'].split(',').filter((val, index, self) => self.indexOf(val) == index).join(',')

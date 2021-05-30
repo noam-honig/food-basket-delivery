@@ -5,12 +5,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule, routes } from './app-routing.module';
 import { AppComponent, routeMap } from './app.component';
-import { RemultModule, JwtSessionManager } from '@remult/angular';
+import { RemultModule } from '@remult/angular';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
+import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 
 import { DialogService, ShowDialogOnErrorErrorHandler } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
@@ -66,7 +67,7 @@ import { OverviewComponent } from './overview/overview.component';
 import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 import { CommonQuestionsComponent } from './common-questions/common-questions.component';
-import { GeocodeComponent } from './geocode/geocode.component';
+
 import { SelectListComponent } from './select-list/select-list.component';
 import { TokenReplacerComponent } from './token-replacer/token-replacer.component';
 import { TestMapComponent } from './test-map/test-map.component';
@@ -166,7 +167,6 @@ export class MyHammerConfig extends HammerGestureConfig {
     TransitionGroupItemDirective,
     AssignEscortComponent,
     CommonQuestionsComponent,
-    GeocodeComponent,
     SelectListComponent,
     TokenReplacerComponent,
     TestMapComponent,
@@ -207,7 +207,10 @@ export class MyHammerConfig extends HammerGestureConfig {
     AppRoutingModule,
     ChartsModule,
     ScrollDispatchModule,
-    PlatformModule
+    PlatformModule,
+    JwtModule.forRoot({
+      config: { tokenGetter: () => sessionStorage.getItem('auth_token') }
+    })
 
 
   ],
@@ -233,7 +236,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [JwtSessionManager, SettingsService,Context],
+      deps: [JwtHelperService, SettingsService,Context],
       useFactory: initApp,
       multi: true,
 
@@ -271,11 +274,11 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: JwtSessionManager, settings: SettingsService,context:Context) {
+export function initApp(session: JwtHelperService, settings: SettingsService,context:Context) {
   return async () => {
 
     try {
-      session.loadSessionFromCookie(Sites.getOrganizationFromContext(context));
+      //session.loadSessionFromCookie(Sites.getOrganizationFromContext(context));
 
       await settings.init();
 
@@ -294,7 +297,6 @@ export function initApp(session: JwtSessionManager, settings: SettingsService,co
       routeMap.set(HelpersComponent, l.HelpersComponent);
       routeMap.set(DeliveryHistoryComponent, l.DeliveryHistoryComponent);
       routeMap.set(PlaybackComponent, l.PlaybackComponent);
-      routeMap.set(GeocodeComponent, l.GeocodeComponent);
       routeMap.set(ImportFromExcelComponent, l.ImportFromExcelComponent);
       routeMap.set(ImportHelpersFromExcelComponent, l.ImportHelpersFromExcelComponent);
       routeMap.set(DuplicateFamiliesComponent, l.DuplicateFamiliesComponent);

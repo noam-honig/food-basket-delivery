@@ -1,4 +1,5 @@
-import { GridSettings, DataControlSettings } from '@remult/core';
+
+import { DataControlSettings, getColumnDefinition, GridSettings } from '../../../../radweb/projects/angular';
 import { sortColumns } from '../shared/utils';
 
 const storageEntryName = 'grid-state';
@@ -21,7 +22,7 @@ export class columnOrderAndWidthSaver {
             let cols = items.map(x => {
                 let r: DataControlSettings;
                 if (x.key) {
-                    r = this.grid.columns.items.find(c => c.column && c.column.defs.key == x.key);
+                    r = this.grid.columns.items.find(c => c.column && getColumnDefinition( c.column).key == x.key);
                 } else {
                     r = this.grid.columns.items.find(c => !c.column && c.caption == x.caption);
                 }
@@ -39,7 +40,7 @@ export class columnOrderAndWidthSaver {
                 const element = this.grid.columns.items[index];
                 if (element)
                     if (element.column) {
-                        x.push({ key: element.column.defs.key, width: element.width });
+                        x.push({ key: getColumnDefinition( element.column).key, width: element.width });
                     }
                     else
                         x.push({ caption: element.caption, width: element.width });

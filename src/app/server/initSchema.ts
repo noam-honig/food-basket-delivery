@@ -1,15 +1,15 @@
 
-import { PostgresDataProvider, PostgresPool } from '@remult/server-postgres';
+import { PostgresDataProvider, PostgresPool } from '@remult/core/postgres';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, SqlDatabase, Column } from '@remult/core';
+import { ServerContext, SqlDatabase, Column, ColumnDefinitions } from '@remult/core';
 import '../app.module';
 
 
 
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
@@ -24,24 +24,26 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    let createFamilyIndex = async (name: string, ...columns: Column[]) => {
+    let createFamilyIndex = async (name: string, ...columns: ColumnDefinitions[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
-    let createDeliveryIndex = async (name: string, ...columns: Column[]) => {
+    let createDeliveryIndex = async (name: string, ...columns: ColumnDefinitions[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
     }
 
-    let f = context.for(Families).create();
+
+    let f = SqlFor(context.for(Families));
     //create index for family deliveries if required
-    var fd = context.for(FamilyDeliveries).create();
+
+    var fd = SqlFor(context.for(FamilyDeliveries));
 
 
 
     if ((await context.for(BasketType).count() == 0)) {
         let h = context.for(BasketType).create();
-        h.setEmptyIdForNewRow();
-        h.name.value = 'רגיל';
-        h.boxes.value = 1;
+        h.id = '';
+        h.name = 'רגיל';
+        h.boxes = 1;
         await h.save();
     }
 
@@ -49,7 +51,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     /*await context.for(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
         let g = ff.getGeocodeInformation();
-        ff.addressOk.value = !g.partialMatch();
+        ff.addressOk = !g.partialMatch();
         ff.addressLongitude.value = g.location().lng;
         ff.addressLatitude.value = g.location().lat;
         ff.city.value = ff.getGeocodeInformation().getCity();
@@ -59,117 +61,117 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
     let l = getLang(context);
     if (settings.isNew()) {
-        settings.id.value = 1;
-        settings.organisationName.value = l.defaultOrgName;;
-        settings.logoUrl.value = '/assets/apple-touch-icon.png';
-        settings.smsText.value = l.defaultSmsText;
+        settings.id = 1;
+        settings.organisationName = l.defaultOrgName;;
+        settings.logoUrl = '/assets/apple-touch-icon.png';
+        settings.smsText = l.defaultSmsText;
     }
-    if (!settings.reminderSmsText.value)
-        settings.reminderSmsText.value = l.reminderSmsText;
+    if (!settings.reminderSmsText)
+        settings.reminderSmsText = l.reminderSmsText;
 
-    if (!settings.commentForSuccessDelivery.value)
-        settings.commentForSuccessDelivery.value = l.commentForSuccessDelivery;
-    if (!settings.commentForSuccessLeft.value)
-        settings.commentForSuccessLeft.value = l.commentForSuccessLeft;
-    if (!settings.commentForProblem.value)
-        settings.commentForProblem.value = l.commentForProblem;
-    if (!settings.messageForDoneDelivery.value) {
-        settings.messageForDoneDelivery.value = l.messageForDoneDelivery;
+    if (!settings.commentForSuccessDelivery)
+        settings.commentForSuccessDelivery = l.commentForSuccessDelivery;
+    if (!settings.commentForSuccessLeft)
+        settings.commentForSuccessLeft = l.commentForSuccessLeft;
+    if (!settings.commentForProblem)
+        settings.commentForProblem = l.commentForProblem;
+    if (!settings.messageForDoneDelivery) {
+        settings.messageForDoneDelivery = l.messageForDoneDelivery;
     }
-    if (!settings.deliveredButtonText.value) {
-        settings.deliveredButtonText.value = l.deliveredButtonText;
+    if (!settings.deliveredButtonText) {
+        settings.deliveredButtonText = l.deliveredButtonText;
     }
-    if (!settings.boxes1Name.value)
-        settings.boxes1Name.value = l.boxes1Name;
-    if (!settings.boxes2Name.value)
-        settings.boxes2Name.value = l.boxes2Name;
+    if (!settings.boxes1Name)
+        settings.boxes1Name = l.boxes1Name;
+    if (!settings.boxes2Name)
+        settings.boxes2Name = l.boxes2Name;
     await settings.save();
 
 
     let images = await context.for(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
     if (!images) {
         images = context.for(ApplicationImages).create();
-        images.id.value = 1;
+        images.id = 1;
         await images.save();
     }
     if ((await context.for(DistributionCenters).count() == 0)) {
         let h = context.for(DistributionCenters).create();
-        h.setEmptyIdForNewRow();
-        h.name.value = l.defaultDistributionListName;
-        h.address.value = settings.address.value;
+        h.id = '';
+        h.name = l.defaultDistributionListName;
+        h.address = settings.address;
         await h.save();
     }
-    if (settings.dataStructureVersion.value == 0) {
-        settings.dataStructureVersion.value = 1;
+    if (settings.dataStructureVersion == 0) {
+        settings.dataStructureVersion = 1;
         await settings.save();
 
 
     }
-    if (settings.dataStructureVersion.value == 1) {
+    if (settings.dataStructureVersion == 1) {
 
-        settings.dataStructureVersion.value = 2;
+        settings.dataStructureVersion = 2;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 2) {
+    if (settings.dataStructureVersion == 2) {
 
-        let f = context.for(Families).create();
+        let f =SqlFor(  context.for(Families));
         dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
-        settings.dataStructureVersion.value = 3;
+        settings.dataStructureVersion = 3;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 3) {
+    if (settings.dataStructureVersion == 3) {
 
-        settings.dataStructureVersion.value = 4;
+        settings.dataStructureVersion = 4;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 4) {
+    if (settings.dataStructureVersion == 4) {
         console.log("updating update date");
-        let f = context.for(Families).create();
+        let f = SqlFor( context.for(Families));
         dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
-        settings.dataStructureVersion.value = 5;
+        settings.dataStructureVersion = 5;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 5) {
+    if (settings.dataStructureVersion == 5) {
 
-        settings.dataStructureVersion.value = 6;
+        settings.dataStructureVersion = 6;
         await settings.save();
 
     }
-    if (settings.dataStructureVersion.value == 6) {
-        settings.showLeftThereButton.value = true;
-        settings.dataStructureVersion.value = 7;
+    if (settings.dataStructureVersion == 6) {
+        settings.showLeftThereButton = true;
+        settings.dataStructureVersion = 7;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 7) {
-        settings.dataStructureVersion.value = 8;
+    if (settings.dataStructureVersion == 7) {
+        settings.dataStructureVersion = 8;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 8) {
-        if (org && settings.logoUrl.value == '/assets/apple-touch-icon.png') {
-            settings.logoUrl.value = '/' + org + settings.logoUrl.value;
+    if (settings.dataStructureVersion == 8) {
+        if (org && settings.logoUrl == '/assets/apple-touch-icon.png') {
+            settings.logoUrl = '/' + org + settings.logoUrl;
         }
-        settings.dataStructureVersion.value = 9;
+        settings.dataStructureVersion = 9;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 9) {
+    if (settings.dataStructureVersion == 9) {
         if ((await context.for(Families).count()) > 0)
             await dataSource.execute(sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
-        settings.dataStructureVersion.value = 10;
+        settings.dataStructureVersion = 10;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 10) {
-        settings.checkDuplicatePhones.value = true;
-        settings.checkIfFamilyExistsInDb.value = true;
-        settings.checkIfFamilyExistsInFile.value = true;
-        settings.removedFromListStrategy.value = RemovedFromListExcelImportStrategy.displayAsError;
-        settings.dataStructureVersion.value = 11;
+    if (settings.dataStructureVersion == 10) {
+        settings.checkDuplicatePhones = true;
+        settings.checkIfFamilyExistsInDb = true;
+        settings.checkIfFamilyExistsInFile = true;
+        settings.removedFromListStrategy = RemovedFromListExcelImportStrategy.displayAsError;
+        settings.dataStructureVersion = 11;
         await settings.save();
     }
-    if (settings.dataStructureVersion.value == 11) {
+    if (settings.dataStructureVersion == 11) {
         await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
         //create index if required
         await dataSource.execute(sql.build('drop index if exists f_1  '));
@@ -191,11 +193,11 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
         await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
         await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
-        settings.dataStructureVersion.value = 12;
+        settings.dataStructureVersion = 12;
         await settings.save();
     }
     let version = async (ver: number, what: () => Promise<void>) => {
-        if (settings.dataStructureVersion.value < ver) {
+        if (settings.dataStructureVersion < ver) {
             try {
                 console.log('start version ', ver, org);
                 await what();
@@ -205,7 +207,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 throw err;
 
             }
-            settings.dataStructureVersion.value = ver;
+            settings.dataStructureVersion = ver;
             await settings.save();
         }
     }
@@ -222,26 +224,26 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             }));
     })
 
-    if (settings.dataStructureVersion.value == 13) {
+    if (settings.dataStructureVersion == 13) {
         await pagedRowsIterator(context.for(Families), {
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
-                let g = f.address.getGeocodeInformation();
-                f.addressByGoogle.value = g.getAddress();
-                f.drivingLatitude.value = g.location().lat;
-                f.drivingLongitude.value = g.location().lng;
+                let g = f.addressHelper.getGeocodeInformation();
+                f.addressByGoogle = g.getAddress();
+                f.drivingLatitude = g.location().lat;
+                f.drivingLongitude = g.location().lng;
                 await f.save();
             },
             where: x => undefined,
 
         });
-        settings.dataStructureVersion.value = 14;
+        settings.dataStructureVersion = 14;
         await settings.save();
     }
 
     await version(15, async () => {
-        let fromArchive = (col: Column) =>
-            [col, 'archive_' + col.defs.dbName] as [Column, any];
+        let fromArchive = (col: ColumnDefinitions) =>
+            [col, 'archive_' + col.dbName] as [ColumnDefinitions, any];
         if ((await context.for(Families).count()) > 0)
             await dataSource.execute(sql.update(fd, {
                 set: () => [
@@ -279,7 +281,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 into: fd,
                 from: f,
                 set: () => {
-                    let r: [Column, any][] = [
+                    let r: [ColumnDefinitions, any][] = [
                         [fd.id, f.id],
                         [fd.family, f.id],
                         [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],
@@ -326,7 +328,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                         fd.phone4Description
 
                     ]) {
-                        r.push([c, c.defs.dbName])
+                        r.push([c, c.dbName])
                     }
                     return r;
                 },
@@ -346,7 +348,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await version(20, async () => {
         let dc = await context.for(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
         for await (const d of dc) {
-            d.name.value = 'חלוקת מזון';
+            d.name = 'חלוקת מזון';
             await d.save();
         }
     });
@@ -363,8 +365,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             where: f => f.addressOk.isEqualTo(false),
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
-                f.addressOk.value = !f.address.getGeocodeInformation().partialMatch();
-                if (f.addressOk.value)
+                f.addressOk = !f.addressHelper.getGeocodeInformation().partialMatch();
+                if (f.addressOk)
                     await f.save();
             }
         });
@@ -374,7 +376,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             from: fd,
             select: () => [fd.id],
             innerJoin: () => [{ to: f, on: () => [sql.eq(f.id, fd.family)] }],
-            where: () => [fd.active(), sql.or(sql.ne(fd.addressByGoogle, f.addressByGoogle), sql.ne(fd.addressOk, f.addressOk))]
+            where: () => [FamilyDeliveries.active(fd), sql.or(sql.ne(fd.addressByGoogle, f.addressByGoogle), sql.ne(fd.addressOk, f.addressOk))]
         }));
         console.log("fixing deliveries mismatch with family info ", r.rows.length);
         for (const id of r.rows.map(x => x.id)) {
@@ -385,20 +387,20 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         }
     });
     await version(24, async () => {
-        settings.forWho.value = settings._old_for_soliders.value ? TranslationOptions.soldiers : TranslationOptions.Families;
+        settings.forWho = settings._old_for_soliders ? TranslationOptions.soldiers : TranslationOptions.Families;
         await settings.save();
     });
     await version(25, async () => {
-        settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery.value = true;
+        settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery = true;
         await settings.save();
     });
     await version(26, async () => {
-        settings.successMessageText.value = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
+        settings.successMessageText = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
         await settings.save();
 
     });
     await version(27, async () => {
-        settings.successMessageText.value = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
+        settings.successMessageText = "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!";
         await settings.save();
 
     });
@@ -426,7 +428,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-    setLangForSite(org, settings.forWho.value);
+    setLangForSite(org, settings.forWho);
     setSettingsForSite(org, settings);
 
 }

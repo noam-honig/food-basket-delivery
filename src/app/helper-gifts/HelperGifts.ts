@@ -1,72 +1,87 @@
-import { BoolColumn, Context, DateColumn, EntityClass, IdEntity, NumberColumn, ServerFunction, StringColumn } from "@remult/core";
-import { BusyService } from '@remult/angular';
+import {  Column, Context,  Entity,  IdEntity,  ServerFunction } from "@remult/core";
+import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
-import { changeDate, wasChanged } from "../model-shared/types";
+import { ChangeDateColumn } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { HelperId, HelperIdReadonly, Helpers } from "../helpers/helpers";
+import { HelperId,  HelperIdUtils, Helpers } from "../helpers/helpers";
 import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
+import { use } from "../translate";
 
-@EntityClass
+@Entity<HelperGifts>({
+    key: "HelperGifts",
+    allowApiRead: context => context.isSignedIn(),
+    allowApiUpdate: context => context.isSignedIn(),
+    allowApiInsert: Roles.admin,
+    apiDataFilter: (self, context) => {
+        if (context.isAllowed(Roles.admin))
+            return undefined;
+        return self.assignedToHelper.isEqualTo(new HelperId(context.user.id, context));
+    },
+    saving: (self) => {
+        if (self.isNew()) {
+            self.dateCreated = new Date();
+            self.userCreated = new HelperId(self.context.user.id, self.context);
+        }
+        else {
+            if (self.$.giftURL.wasChanged()) {
+                self.$.giftURL.error = 'ניתן לקלוט מתנות חדשות .לא ניתן לשנות לינק למתנה';
+                return;
+            }
+            if (self.$.assignedToHelper.wasChanged() && self.wasConsumed != false) {
+                self.$.giftURL.error = 'אין לשייך מתנה שכבר מומשה למתנדב אחר';
+                return;
+            }
+            if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper.isNotEmpty()) {
+                self.dateGranted = new Date();
+                self.assignedByUser = new HelperId(self.context.user.id, self.context);
+                self.wasConsumed = false;
+                self.wasClicked = false;
+            }
+            if (self.$.wasConsumed.wasChanged()) {
+                self.wasClicked = self.wasConsumed;
+            }
+        }
+    }
+})
 export class HelperGifts extends IdEntity {
 
-    giftURL = new StringColumn(getLang(this.context).myGiftsURL, { allowApiUpdate: Roles.admin });
-    dateCreated = new changeDate({ caption: getLang(this.context).createDate });
-    userCreated = new HelperIdReadonly(this.context, { caption: getLang(this.context).createUser });
-    assignedToHelper = new HelperId(this.context, { caption: getLang(this.context).volunteer, allowApiUpdate: Roles.admin }, { includeFrozen: true });
-    dateGranted = new changeDate({ caption: getLang(this.context).dateGranted });
-    assignedByUser = new HelperIdReadonly(this.context, { caption: getLang(this.context).assignUser });
-    wasConsumed = new BoolColumn('מתנה מומשה');
-    wasClicked = new BoolColumn();
+    @Column({ caption: use.language.myGiftsURL, allowApiUpdate: Roles.admin })
+    giftURL: string;
+    @ChangeDateColumn({ caption: use.language.createDate })
+    dateCreated: Date;
+    @Column({ caption: use.language.createUser, allowApiUpdate: false })
+    userCreated: HelperId;
+    @Column({ caption: use.language.volunteer, allowApiUpdate: Roles.admin })
+    @DataControl<HelperGifts, HelperId>({
+        click: (x, col) => {
+            HelperIdUtils.showSelectDialog(col, { includeFrozen: true });
+        }
+    })
+    assignedToHelper: HelperId;
+    @ChangeDateColumn({ caption: use.language.dateGranted })
+    dateGranted: Date;
+    @Column({ caption: use.language.assignUser, allowApiUpdate: false })
+    assignedByUser: HelperId;
+    @Column({ caption: 'מתנה מומשה' })
+    wasConsumed: boolean;
+    @Column()
+    wasClicked: boolean;
+
 
     constructor(private context: Context) {
-        super({
-            name: "HelperGifts",
-            allowApiRead: context.isSignedIn(),
-            allowApiUpdate: context.isSignedIn(),
-            allowApiInsert: Roles.admin,
-            apiDataFilter: () => {
-                if (context.isAllowed(Roles.admin))
-                    return undefined;
-                return this.assignedToHelper.isEqualTo(context.user.id);
-            },
-            saving: () => {
-                if (this.isNew()) {
-                    this.dateCreated.value = new Date();
-                    this.userCreated.value = this.context.user.id;
-                }
-                else {
-                    if (wasChanged(this.giftURL)) {
-                        this.giftURL.validationError = 'ניתן לקלוט מתנות חדשות .לא ניתן לשנות לינק למתנה';
-                        return;
-                    }
-                    if (wasChanged(this.assignedToHelper) && this.wasConsumed.value != false) {
-                        this.giftURL.validationError = 'אין לשייך מתנה שכבר מומשה למתנדב אחר';
-                        return;
-                    }
-                    if (wasChanged(this.assignedToHelper) && this.assignedToHelper.value != '') {
-                        this.dateGranted.value = new Date();
-                        this.assignedByUser.value = this.context.user.id;
-                        this.wasConsumed.value = false;
-                        this.wasClicked.value = false;
-                    }
-                    if (wasChanged(this.wasConsumed)) {
-                        this.wasClicked.value = this.wasConsumed.value;
-                    }
-                }
-            }
-        });
+        super();
     }
     @ServerFunction({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
-        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo('')) > 0) {
-            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(''));
+        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(new HelperId('', context))) > 0) {
+            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(new HelperId('', context)));
             if (g) {
-                g.assignedToHelper.value = helperId;
-                g.wasConsumed.value = false;
-                g.wasClicked.value = false;
+                g.assignedToHelper = new HelperId(helperId, context);
+                g.wasConsumed = false;
+                g.wasClicked = false;
                 await g.save();
                 return;
             }
@@ -77,29 +92,29 @@ export class HelperGifts extends IdEntity {
     @ServerFunction({ allowed: Roles.admin })
     static async importUrls(urls: string[], context?: Context) {
         for (const url of urls) {
-            let g = await context.for(HelperGifts).findFirst(g => g.giftURL.isContains(url.trim()));
+            let g = await context.for(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
             if (!g) {
                 g = context.for(HelperGifts).create();
-                g.giftURL.value = url;
+                g.giftURL = url;
                 await g.save();
             }
         }
     }
     @ServerFunction({ allowed: true })
     static async getMyPendingGiftsCount(helperId: string, context?: Context) {
-        let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(helperId).and(hg.wasConsumed.isEqualTo(false)) });
+        let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(new HelperId(helperId, context)).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @ServerFunction({ allowed: true })
     static async getMyFirstGiftURL(helperId: string, context?: Context) {
         let gifts = await context.for(HelperGifts).find({
-            where: hg => hg.assignedToHelper.isEqualTo(helperId).and(hg.wasConsumed.isEqualTo(false)),
+            where: hg => hg.assignedToHelper.isEqualTo(new HelperId(helperId, context)).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
         });
         if (gifts == null)
             return null;
-        return gifts[0].giftURL.value;
+        return gifts[0].giftURL;
     }
 };
 
@@ -108,14 +123,16 @@ export class HelperGifts extends IdEntity {
 
 
 export async function showUsersGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
-    context.openDialog(MyGiftsDialogComponent, x => x.args = {
+    openDialog(MyGiftsDialogComponent, x => x.args = {
         helperId: helperId
     });
 }
 
 export async function showHelperGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
-    let helperName = await (await context.for(Helpers).findFirst(h => h.id.isEqualTo(helperId))).name.value;
-    context.openDialog(GridDialogComponent, x => x.args = {
+    let hid = new HelperId(helperId, context);
+    await hid.waitLoad();
+    let helperName = hid.item.name;
+    openDialog(GridDialogComponent, x => x.args = {
         title: 'משאלות למתנדב:' + helperName,
 
         buttons: [{
@@ -126,11 +143,11 @@ export async function showHelperGifts(helperId: string, context: Context, settin
                 //this.refresh();
             },
         }],
-        settings: context.for(HelperGifts).gridSettings({
+        settings: new GridSettings(context.for(HelperGifts), {
             allowUpdate: true,
 
             rowsInPage: 50,
-            where: hg => hg.assignedToHelper.isEqualTo(helperId)
+            where: hg => hg.assignedToHelper.isEqualTo(hid)
             ,
             knowTotalRows: true,
             numOfColumnsInGrid: 10,

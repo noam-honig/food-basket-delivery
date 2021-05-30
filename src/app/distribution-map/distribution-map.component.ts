@@ -9,14 +9,14 @@ import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBound
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase, DataAreaSettings, GridButton, AndFilter, StringColumn } from '@remult/core';
+import { Context, SqlDatabase } from '@remult/core';
 import { ServerFunction } from '@remult/core';
-import { SqlBuilder } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 import { colors } from '../families/stats-action';
-import { BusyService } from '@remult/angular';
+import { BusyService, DataAreaSettings, GridButton, InputControl } from '@remult/angular';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 
@@ -24,10 +24,10 @@ import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang, Sites } from '../sites/sites';
-import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from '../manage/distribution-centers';
+import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
-import {  UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
+import { UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
 import { actionDialogNeeds } from '../families/familyActionsWiring';
 import { UpdateArea, UpdateAreaForDeliveries, updateGroup, updateGroupForDeliveries } from '../families/familyActions';
 import { AreaColumn, Families } from '../families/families';
@@ -86,7 +86,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
-      userWhere: x => x.id.isIn(...this.selectedDeliveries.map(x => x.id)),
+      userWhere: x => x.id.isIn(this.selectedDeliveries.map(x => x.id)),
       settings: this.settings
     })),
   ];
@@ -197,18 +197,20 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses(this.settings);
   selectedStatus: statusClass;
-  filterCourier = new HelperId(this.context, {
-    caption: this.settings.lang.volunteer,
-    valueChange: () => this.refreshDeliveries()
-  }, { filter: h => h.allDeliveires.isGreaterThan(0) });
+  filterCourier = new InputControl<string>({//sholud be HelperId
 
-  filterArea = new StringColumn({
-    caption: use.language.filterRegion,
-    defaultValue: use.language.allRegions,
+    caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
-    dataControlSettings: () => ({
-      valueList: async () => this.context.isAllowed(Roles.admin)? await AreaColumn.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))]):[]
-    })
+    click: () => { throw "Not Implemented" }
+  })
+
+  filterArea = new InputControl<string>({
+    caption: use.language.filterRegion,
+    defaultValue: () => use.language.allRegions,
+    valueChange: () => this.refreshDeliveries(),
+
+    valueList: async () => this.context.isAllowed(Roles.admin) ? await Families.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))]) : []
+
   });
   area = new DataAreaSettings();
   overviewMap = false;
@@ -222,7 +224,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       allInAlll = true;
     }
     else
-      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter.value, this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
+      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter.evilGetId(), this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
@@ -331,8 +333,8 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, basket?: string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
-    let f = context.for(ActiveFamilyDeliveries).create();
-    let h = context.for(Helpers).create();
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+    let h = SqlFor(context.for(Helpers));
     let sql = new SqlBuilder();
     sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(sql.query({
@@ -346,15 +348,15 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
 
       where: () => {
-        let where: any[] = [f.deliverStatus.isActiveDelivery().and(f.distributionCenter.isAllowedForUser())];
+        let where: any[] = [filterCenterAllowedForUser(f.distributionCenter, context)];
         if (distCenter !== undefined)
-          where.push(f.filterDistCenterAndAllowed(distCenter));
-        if (area!==undefined&&area!==null &&area!=getLang( context).allRegions) {
+          where.push(filterDistCenter(f.distributionCenter, new DistributionCenterId(distCenter, context), context));
+        if (area !== undefined && area !== null && area != getLang(context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
         if (onlyPotentialAsignment) {
-          where.push(f.readyFilter(city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
+          where.push(FamilyDeliveries.readyFilter(f, context, city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -374,10 +376,10 @@ export class DistributionMap implements OnInit, OnDestroy {
     }) as deliveryOnMap[];
   }
   @ServerFunction({ allowed: Roles.overview })
-  static async GetLocationsForOverview(context?: Context, db?: SqlDatabase) {
+  static async GetLocationsForOverview(context?: Context) {
 
     let result: deliveryOnMap[] = []
-    let f = context.for(FamilyDeliveries).create();
+    let f = SqlFor(context.for(FamilyDeliveries));
 
     let sql = new SqlBuilder();
     sql.addEntity(f, "fd");
@@ -389,7 +391,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus],
         from: f,
         where: () => {
-          let where = [f.deliverStatus.isSuccess().and(f.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
+          let where = [DeliveryStatus.isSuccess(f.deliverStatus).and(f.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
           return where;
         }
 
@@ -503,7 +505,7 @@ export class Statuses {
       case DeliveryStatus.FailedDoNotWant.id:
 
       case DeliveryStatus.FailedNotReady.id:
-      case DeliveryStatus.FailedTooFar.id: 
+      case DeliveryStatus.FailedTooFar.id:
 
       case DeliveryStatus.FailedOther.id:
       case DeliveryStatus.Frozen.id:

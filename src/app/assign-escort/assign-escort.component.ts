@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Context, DataAreaSettings } from '@remult/core';
-import { Helpers, HelperUserInfo, HelpersBase } from '../helpers/helpers';
+import { Context } from '@remult/core';
+import { Helpers, HelperUserInfo, HelpersBase, HelperId } from '../helpers/helpers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { DialogService } from '../select-popup/dialog';
@@ -8,6 +8,8 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { environment } from '../../environments/environment';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Phone } from "../model-shared/Phone";
+import { DataAreaSettings, openDialog } from '../../../../radweb/projects/angular';
 
 @Component({
   selector: 'app-assign-escort',
@@ -30,14 +32,14 @@ export class AssignEscortComponent implements OnInit {
     this.clearHelperInfo(false);
 
     if (this.phone.length == 10) {
-      let h = await this.context.for(HelpersAndStats).findFirst(h => h.phone.isEqualTo(this.phone));
+      let h = await this.context.for(HelpersAndStats).findFirst(h => h.phone.isEqualTo(new Phone(this.phone)));
       if (h) {
 
         this.initHelper(h);
       }
       else {
         let h = this.context.for(Helpers).create();
-        h.phone.value = this.phone;
+        h.phone = new Phone(this.phone);
         this.initHelper(h);
       }
 
@@ -49,12 +51,12 @@ export class AssignEscortComponent implements OnInit {
     }
 
     let h = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(driver.id));
-    h.escort.value = this.helper.id.value;
+    h.escort = new HelperId(this.helper.id, this.context);
     await h.save();
-    if (await this.context.openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name.value }, x => x.yes)) {
-      await SendSmsAction.SendSms(this.helper.id.value, false);
+    if (await openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name }, x => x.yes)) {
+      await SendSmsAction.SendSms(this.helper.id, false);
     }
-    this.dialog.Info(this.helper.name.value + " הוגדר כמלווה של " + this.helper.name.value);
+    this.dialog.Info(this.helper.name + " הוגדר כמלווה של " + this.helper.name);
     this.clearHelperInfo();
 
   }
@@ -63,12 +65,12 @@ export class AssignEscortComponent implements OnInit {
     this.clearHelperInfo();
   }
   async sendSms() {
-    await SendSmsAction.SendSms(this.helper.id.value, false);
-    this.dialog.Info("נשלחה הודעת SMS למלווה " + this.helper.name.value);
+    await SendSmsAction.SendSms(this.helper.id, false);
+    this.dialog.Info("נשלחה הודעת SMS למלווה " + this.helper.name);
     this.clearHelperInfo();
   }
   async clearEscort() {
-    this.alreadyEscortingDriver.escort.value = '';
+    this.alreadyEscortingDriver.escort = HelperId.empty(this.context);
     await this.alreadyEscortingDriver.save();
     let h = await this.context.for(HelpersAndStats).findFirst(h => h.id.isEqualTo(this.helper.id));
     this.clearHelperInfo();
@@ -81,13 +83,13 @@ export class AssignEscortComponent implements OnInit {
     if (!h.isNew()) {
       let assignedFamilies = 0;
       if (h instanceof HelpersAndStats)
-        assignedFamilies = h.deliveriesInProgress.value;
+        assignedFamilies = h.deliveriesInProgress;
       else
-        assignedFamilies = await (await this.context.for(HelpersAndStats).findFirst(x => x.id.isEqualTo(h.id))).deliveriesInProgress.value
+        assignedFamilies = await (await this.context.for(HelpersAndStats).findFirst(x => x.id.isEqualTo(h.id))).deliveriesInProgress
       if (assignedFamilies > 0) {
-        await this.context.openDialog(YesNoQuestionComponent, x =>
+        await openDialog(YesNoQuestionComponent, x =>
           x.args = {
-            question: "למתנדב " + h.name.value + " כבר מוגדרות משפחות, לא ניתן להגדיר אותו כמלווה",
+            question: "למתנדב " + h.name + " כבר מוגדרות משפחות, לא ניתן להגדיר אותו כמלווה",
             showOnlyConfirm: true
           }
         );
@@ -97,38 +99,38 @@ export class AssignEscortComponent implements OnInit {
       Helpers.addToRecent(h);
     }
     this.helper = h;
-    this.phone = h.phone.value;
+    this.phone = h.phone.thePhone;
     this.area = new DataAreaSettings<Helpers>({
       columnSettings: () => {
         let r = [];
-        if (this.settings.showCompanies.value)
+        if (this.settings.showCompanies)
           r.push([this.helper.name, this.helper.company]);
         else r.push([this.helper.name]);
-        if (this.settings.showHelperComment.value)
+        if (this.settings.showHelperComment)
           r.push(this.helper.eventComment);
-        
-        
+
+
 
         return r;
       }
     });
-    if (this.helper.theHelperIAmEscorting.value) {
-      this.alreadyEscortingDriver = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.helper.theHelperIAmEscorting));
+    if (this.helper.theHelperIAmEscorting.isNotEmpty()) {
+      this.alreadyEscortingDriver = await this.helper.theHelperIAmEscorting.waitLoad();
     } else {
       this.optionalDrivers = await this.context.for(HelpersAndStats).find({
         where: h =>
           h.needEscort.isEqualTo(true)
-            .and(h.escort.isEqualTo('')
-              .and(h.theHelperIAmEscorting.isEqualTo('')))
+            .and(h.escort.isEqualTo(HelperId.empty(this.context))
+              .and(h.theHelperIAmEscorting.isEqualTo(HelperId.empty(this.context))))
             .and(h.id.isDifferentFrom(this.helper.id)),
-        orderBy: h => [{ column: h.deliveriesInProgress, descending: true }, h.name]
+        orderBy: h => [h.deliveriesInProgress.descending(), h.name]
       });
     }
   }
-  
+
   findHelper() {
-    this.context.openDialog(SelectHelperComponent, s => s.args = {
-      
+    openDialog(SelectHelperComponent, s => s.args = {
+
       onSelect: async h => {
         if (h) {
 

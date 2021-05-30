@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
-import { BusyService, DialogConfig } from '@remult/angular';
-import { Context, DataControlSettings, DataAreaSettings, GridSettings, StringColumn, ServerFunction, ServerContext, DataArealColumnSetting } from '@remult/core';
+import { BusyService, DataArealColumnSetting, DataAreaSettings, DialogConfig, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { Context, ServerFunction, ServerContext } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -12,7 +12,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { PreviewFamilyComponent } from '../preview-family/preview-family.component';
 import { DialogService } from '../select-popup/dialog';
-import { wasChanged } from '../model-shared/types';
+
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Helpers } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
@@ -62,9 +62,9 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     dialogRef.afterClosed().toPromise().then(() => {
       if (!this.confirmed)
         if (!this.args.userCanUpdateButDontSave) {
-          this.families.currentRow.undoChanges();
+          this.families.currentRow._.undoChanges();
           if (this.delivery)
-            this.delivery.undoChanges();
+            this.delivery._.undoChanges();
         }
     });
   }
@@ -87,19 +87,19 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   getAddressDescription() {
     let f = this.families.currentRow;
-    if (f.address.value == f.address.originalValue)
+    if (f.$.address.wasChanged())
       return f.getAddressDescription();
-    return f.address.originalValue;
+    return f.$.address.originalValue;
   }
 
   addressOpen() {
     this.addressInput.initAddress(x => {
       this.onMapLocation = x.location;
-      this.families.currentRow.addressByGoogle.value = x.addressByGoogle;
-      this.families.currentRow.city.value = x.city;
-      this.families.currentRow.addressOk.value = true;
-      this.families.currentRow.autoCompleteResult.value = JSON.stringify({
-        address: this.families.currentRow.address.value,
+      this.families.currentRow.addressByGoogle = x.addressByGoogle;
+      this.families.currentRow.city = x.city;
+      this.families.currentRow.addressOk = true;
+      this.families.currentRow.autoCompleteResult = JSON.stringify({
+        address: this.families.currentRow.address,
         result: x.autoCompleteResult
       } as autoCompleteResult);
     });
@@ -112,44 +112,44 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async sendSmsToCourier() {
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
 
-    await this.context.openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => new StringColumn(),
+    await openDialog(GetVolunteerFeedback, x => x.args = {
+      helpText: () => new InputControl<string>({}),
       ok: async (comment) => {
-        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.value, comment);
+        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.evilGetId(), comment);
         this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },
       hideLocation: true,
-      title: 'שלח הודעת ל' + h.name.value,
+      title: 'שלח הודעת ל' + h.name,
       family: this.args.familyDelivery,
-      comment: 'שלום ' + h.name.value + '\nבקשר למשפחת "' + this.args.familyDelivery.name.value + '" מ "' + this.args.familyDelivery.address.value + '"\n'
+      comment: 'שלום ' + h.name + '\nבקשר למשפחת "' + this.args.familyDelivery.name + '" מ "' + this.args.familyDelivery.address + '"\n'
     });
   }
   @ServerFunction({ allowed: Roles.admin })
   static async SendCustomMessageToCourier(courier: string, message: string, context?: ServerContext) {
     let h = await context.for(Helpers).findId(courier);
-    await new SendSmsUtils().sendSms(h.phone.value, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
+    await new SendSmsUtils().sendSms(h.phone.thePhone, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
 
   }
   preview() {
     let fd = this.args.familyDelivery;
     if (!fd)
-      fd = this.args.family.createDelivery(this.dialog.distCenter.value);
+      fd = this.args.family.createDelivery(this.dialog.distCenter.evilGetId());
     this.args.family.updateDelivery(fd);
-    this.context.openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
+    openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }
   updateInfo() {
     let f = this.families.currentRow;
-    this.context.openDialog(InputAreaComponent, x => x.args = {
-      title: 'פרטי עדכונים עבור ' + f.name.value,
+    openDialog(InputAreaComponent, x => x.args = {
+      title: 'פרטי עדכונים עבור ' + f.name,
       ok: () => { },
       settings: {
         columnSettings: () => {
           let r: DataArealColumnSetting<any>[] =
             [
-              f.createDate, f.createUser,
-              f.lastUpdateDate, f.lastUpdateUser,
-              f.statusDate, f.statusUser
+              f.$.createDate, f.$.createUser,
+              f.$.lastUpdateDate, f.$.lastUpdateUser,
+              f.$.statusDate, f.$.statusUser
             ];
           if (this.args.familyDelivery) {
             let fd = this.args.familyDelivery;
@@ -157,12 +157,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
               {
                 getValue: () => 'עדכונים למשלוח'
               },
-              fd.deliveryStatusDate,
-              fd.deliveryStatusUser,
-              fd.courierAssingTime,
-              fd.courierAssignUser,
-              fd.createDate,
-              fd.createUser
+              fd.$.deliveryStatusDate,
+              fd.$.deliveryStatusUser,
+              fd.$.courierAssingTime,
+              fd.$.courierAssignUser,
+              fd.$.createDate,
+              fd.$.createUser
             )
           }
           return r;
@@ -185,12 +185,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       await this.delivery.save();
     }
     this.confirmed = true;
-    this.reloadDeliveries = wasChanged(this.families.currentRow.status);
+    this.reloadDeliveries = this.families.currentRow.$.status.wasChanged();
     if (!this.refreshDeliveryStatistics)
       this.refreshDeliveryStatistics = this.reloadDeliveries;
     await this.families.currentRow.save();
     if (this.delivery)
-      this.delivery.reload();
+      this.delivery._.reload();
 
 
     this.dialogRef.close();
@@ -211,18 +211,18 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
   }
   showNewDelivery() {
-    return this.delivery && DeliveryStatus.IsAResultStatus(this.delivery.deliverStatus.value);
+    return this.delivery && this.delivery.deliverStatus.IsAResultStatus();
   }
 
 
 
-  families = this.context.for(Families).gridSettings({ allowUpdate: true });
+  families = new GridSettings(this.context.for(Families), { allowUpdate: true });
 
   delivery: ActiveFamilyDeliveries;
 
   async showDuplicate(dup: duplicateFamilyInfo) {
     let f = await this.context.for(Families).findId(dup.id);
-    this.context.openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
+    openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
     return displayDupInfo(info, this.context);
@@ -241,15 +241,15 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   onMapLocation: Location;
   showOnMap() {
     if (!this.onMapLocation)
-      this.onMapLocation = this.families.currentRow.address.location();
-    this.context.openDialog(ShowOnMapComponent, x => x.args = {
+      this.onMapLocation = this.families.currentRow.addressHelper.location();
+    openDialog(ShowOnMapComponent, x => x.args = {
       location: this.onMapLocation,
       save: s => {
-        if (!isGpsAddress(this.args.family.address.value))
-          this.args.family.addressComment.value = (this.args.family.address.value + " " + this.args.family.addressComment.value).trim()
-        this.args.family.address.value = s.lat.toFixed(6) + "," + s.lng.toFixed(6);
+        if (!isGpsAddress(this.args.family.address))
+          this.args.family.addressComment = (this.args.family.address + " " + this.args.family.addressComment).trim()
+        this.args.family.address = s.lat.toFixed(6) + "," + s.lng.toFixed(6);
         this.onMapLocation = s
-        this.args.family.addressByGoogle.value = "יתעדכן בשמירה";
+        this.args.family.addressByGoogle = "יתעדכן בשמירה";
       }
     });
   }
@@ -257,13 +257,13 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
         this.args.familyDelivery = await this.context.for(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
-        this.args.familyId = this.args.familyDelivery.family.value;
+        this.args.familyId = this.args.familyDelivery.family;
       }
 
     }
     if (!this.args.family) {
       if (this.args.familyDelivery) {
-        this.args.familyId = this.args.familyDelivery.family.value;
+        this.args.familyId = this.args.familyDelivery.family;
       }
       if (this.args.familyId)
         this.args.family = await this.context.for(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
@@ -316,10 +316,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         [families.birthDate, {
           caption: 'גיל',
           getValue: (f) => {
-            if (!f.birthDate.value) {
+            if (!f.birthDate) {
               return '';
             }
-            return Math.round((new Date().valueOf() - f.birthDate.value.valueOf()) / (365 * 86400000))
+            return Math.round((new Date().valueOf() - f.birthDate.valueOf()) / (365 * 86400000))
           }
         }],
         families.iDinExcel
@@ -334,10 +334,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
           families.entrance
         ],
         families.addressComment,
-        [families.buildingCode,families.area],
+        [families.buildingCode, families.area],
         families.addressByGoogle,
-        [families.addressOk, families.city,families.postalCode]
-        
+        [families.addressOk, families.city, families.postalCode]
+
       ]
     });
 
@@ -362,7 +362,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
           f.defaultSelfPickup,
           f.fixedCourier,
           f.special
-        ].filter(x => this.settings.usingSelfPickupModule.value ? true : x != f.defaultSelfPickup)
+        ].filter(x => this.settings.usingSelfPickupModule ? true : x != f.defaultSelfPickup)
     });
     if (this.delivery) {
       this.deliverInfo = new DataAreaSettings(this.delivery.deilveryDetailsAreaSettings(this.dialog));

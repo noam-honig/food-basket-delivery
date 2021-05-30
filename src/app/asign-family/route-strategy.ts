@@ -1,15 +1,17 @@
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
-import { ValueListColumn, UrlBuilder, Context } from "@remult/core";
+import { UrlBuilder, Context, Storable } from "@remult/core";
 import { use, } from "../translate";
 import { Location, toLongLat, GetDistanceBetween } from "../shared/googleApiHelpers"
 import * as fetch from 'node-fetch';
-import { wasChanged } from "../model-shared/types";
+
 import { foreachSync } from "../shared/utils";
 import { Helpers } from "../helpers/helpers";
 import { getLang } from "../sites/sites";
+import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
 
 
 
+@Storable({ valueConverter: () => routeStrategy.converter })
 export class routeStrategy {
     static endOnIsolated = new routeStrategy(0, !use ? "" : use.language.startAtDistributionCenterAndEndOnRemoteFamily, {
         getRouteEnd: (start, addresses) => addresses[addresses.length - 1].location
@@ -42,18 +44,9 @@ export class routeStrategy {
         if (!args.legsForDistance)
             args.legsForDistance = x => x;
     }
+    static converter = new ValueListValueConverter(routeStrategy);
 }
-export class routeStrategyColumn extends ValueListColumn<routeStrategy>{
 
-    constructor() {
-        super(routeStrategy, {
-            caption: use.language.routeOptimization,
-            dataControlSettings: () => ({
-                valueList: this.getOptions()
-            })
-        });
-    }
-}
 export interface familiesInRoute {
     location: Location;
     longlat: string;
@@ -128,11 +121,11 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         return result;
     if (strategy == routeStrategy.basedOnAssignOrder) {
         result.families = families;
-        result.families.sort((a, b) => a.courierAssingTime.value.valueOf() - b.courierAssingTime.value.valueOf());
+        result.families.sort((a, b) => a.courierAssingTime.valueOf() - b.courierAssingTime.valueOf());
         let i = 0;
         for (const f of result.families) {
             i++;
-            f.routeOrder.value = i;
+            f.routeOrder = i;
             if (f.wasChanged())
                 await f.save();
         }
@@ -151,7 +144,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
                     families: [],
                     location: location,
                     longlat: longlat,
-                    address: f.address.value
+                    address: f.address
                 };
                 map.set(longlat, loc);
                 addresses.push(loc);
@@ -162,13 +155,13 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
     for (const f of addresses) {
         if (f.families.length > 0)
             f.families.sort((a, b) => {
-                if (a.floor.value == b.floor.value) {
-                    return (+b.appartment.value - +a.appartment.value);
+                if (a.floor == b.floor) {
+                    return (+b.appartment - +a.appartment);
                 }
-                let r = +b.floor.value - +a.floor.value;
+                let r = +b.floor - +a.floor;
                 if (r != 0)
                     return r;
-                return b.floor.value.localeCompare(a.floor.value);
+                return b.floor.localeCompare(a.floor);
             });
     }
     let distCenterLocation = await (await families[0].distributionCenter.getRouteStartGeo()).location();
@@ -207,8 +200,8 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
 
 
     let destination = strategy.args.getRouteEnd(distCenterLocation, addresses);
-    if (!(await import("../manage/ApplicationSettings")).getSettings(context).isSytemForMlt() && helper.preferredFinishAddress.ok()) {
-        destination = helper.preferredFinishAddress.location();
+    if (!(await import("../manage/ApplicationSettings")).getSettings(context).isSytemForMlt() && helper.preferredFinishAddressHelper.ok()) {
+        destination = helper.preferredFinishAddressHelper.location();
     }
 
     let r = await getRouteInfo(addresses, useGoogle, toLongLat(routeStart), toLongLat(destination), context);
@@ -219,8 +212,8 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         await foreachSync(r.routes[0].waypoint_order, async (p: number) => {
             let waypoint = addresses[p];
             for (const f of waypoint.families) {
-                if (f.routeOrder.value != i) {
-                    f.routeOrder.value = i;
+                if (f.routeOrder != i) {
+                    f.routeOrder = i;
                     await f.save();
                 }
                 i++;
@@ -237,22 +230,22 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         }
         result.stats.totalKm = Math.round(result.stats.totalKm / 1000);
         result.stats.totalTime = Math.round(result.stats.totalTime / 60);
-        helper.totalKm.value = result.stats.totalKm;
-        helper.totalTime.value = result.stats.totalTime;
+        helper.totalKm = result.stats.totalKm;
+        helper.totalTime = result.stats.totalTime;
     }
     else {
         result.ok = true;
         let i = 1;
         for (const addre of addresses) {
             for (const f of addre.families) {
-                f.routeOrder.value = i++;
-                if (wasChanged(f.routeOrder))
+                f.routeOrder = i++;
+                if (f.$.routeOrder.wasChanged())
                     await f.save();
             }
         }
 
     }
-    families.sort((a, b) => a.routeOrder.value - b.routeOrder.value);
+    families.sort((a, b) => a.routeOrder - b.routeOrder);
     result.families = families;
 
     await helper.save();

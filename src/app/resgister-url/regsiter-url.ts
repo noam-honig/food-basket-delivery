@@ -1,66 +1,68 @@
-import { Context, EntityClass, IdEntity, ServerFunction, SqlDatabase, SqlResult, StringColumn } from "@remult/core";
+import { Column, ColumnDefinitions, Context, Entity, EntityDefinitions, IdEntity, ServerFunction, SqlDatabase, SqlResult } from "@remult/core";
 import { Roles } from "../auth/roles";
-import { SqlBuilder } from "../model-shared/types";
+import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/types";
 import { Helpers } from "../helpers/helpers";
 import { Families } from "../families/families";
 
-@EntityClass
+@Entity({
+    key: "RegisterURL",
+    allowApiCrud: Roles.admin,
+})
 export class RegisterURL extends IdEntity {
 
-    URL = new StringColumn("URL" ,{allowApiUpdate:Roles.admin});
-    prettyName = new StringColumn("שם ייחודי לדוחות" ,{allowApiUpdate:Roles.distCenterAdmin})
+    @Column({ caption: "URL", allowApiUpdate: Roles.admin })
+    URL: string;
+    @Column({ caption: "שם ייחודי לדוחות", allowApiUpdate: Roles.distCenterAdmin })
+    prettyName: string
 
     constructor(private context: Context) {
-        super({
-            name: "RegisterURL",
-            allowApiCRUD: Roles.admin,
-        });
+        super();
     }
 
-    urlPrettyName(url:string) {
+    urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
-        return this.context.for(RegisterURL).findFirst(g=>g.URL.isContains(s));
+        return this.context.for(RegisterURL).findFirst(g => g.URL.contains(s));
     }
 
-    @ServerFunction({allowed:Roles.admin})
-    static async loadUrlsFromTables(context?:Context, db?: SqlDatabase){
+    @ServerFunction({ allowed: Roles.admin })
+    static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
 
-        let h = context.for(Helpers).create();
-        let f = context.for(Families).create();
-        let u = context.for(RegisterURL).create();
+        let h =SqlFor( context.for(Helpers));
+        let f =SqlFor( context.for(Families));
+        let u =SqlFor( context.for(RegisterURL));
         let sql = new SqlBuilder();
         let urls = [];
 
-        async function loadUrls(sql: SqlBuilder, table: IdEntity, field: StringColumn){
+        async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: ColumnDefinitions) {
             let q = sql.query({
-                select: () => [sql.build('distinct ', urlDbOperator(field.defs.dbName), ' as url')],
+                select: () => [sql.build('distinct ', urlDbOperator(field.dbName), ' as url')],
                 from: table,
-                outerJoin: () => [{ to: u, on: () => [sql.build(field, ' like textcat(textcat(\'%\',',u.URL,'),\'%\')' )] }],
+                outerJoin: () => [{ to: u, on: () => [sql.build(field, ' like textcat(textcat(\'%\',', u.URL, '),\'%\')')] }],
                 where: () => [sql.build(u.URL, ' is null')]
             })
             let r = (await db.execute(q));
-            r.rows.forEach(x=>urls.push(x.url));
+            r.rows.forEach(x => urls.push(x.url));
         }
 
         await loadUrls(sql, f, f.custom1);
         await loadUrls(sql, h, h.referredBy);
 
         for (const url of urls) {
-            if ((url!=undefined)&&(url!=''))  {
-                let g = await context.for(RegisterURL).findFirst(g=>g.URL.isContains(url.trim()));
-                if (!g){
+            if ((url != undefined) && (url != '')) {
+                let g = await context.for(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
+                if (!g) {
                     console.log("adding entry for: ", url);
                     g = context.for(RegisterURL).create();
-                    g.URL.value = url;
-                    g.prettyName.value = url;
+                    g.URL = url;
+                    g.prettyName = url;
                     await g.save();
                 }
             }
-        }   
+        }
     }
 };
 
-export function urlDbOperator(fieldDBName: string) : string {
+export function urlDbOperator(fieldDBName: string): string {
     return 'split_part(' + fieldDBName + ', \'/\', 3)'
 }
 

@@ -1,71 +1,65 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 import { ServerContext, InMemoryDataProvider,  myServerAction, actionInfo } from '@remult/core';
-import { JwtSessionManager } from '@remult/angular';
+
 import { Helpers } from '../helpers/helpers';
 import { Roles } from './roles';
 import { AuthService } from './auth-service';
-import { JWTCookieAuthorizationHelper } from '@remult/server/jwt-cookie-authoerization-helper';
+import { Phone } from "../model-shared/Phone";
+
 
 
 
 const PHONE = '0507330590';
 
 describe('users and security', () => {
-    Helpers.passwordHelper = {
-        generateHash: x => x,
-        verify: (a, b) => a == b
-    };
-    Helpers.helper = new JWTCookieAuthorizationHelper({
-
-        addRequestProcessor: (a) => { }
-    }, "asdfasdfsa");
+   
     actionInfo.runningOnServer = true;
     it("user can only update their own info", async(async () => {
         let { c, context } = await getHelperContext();
         let h = await c.findFirst();
-        h.name.value = '123';
+        h.name = '123';
         await expectFail(() => h.save());
-        context._setUser({
+        context.setUser({
             id: 'stam',
             name: 'stam',
             roles: []
         });
         await expectFail(() => h.save());
-        context._setUser({
-            id: h.id.value,
+        context.setUser({
+            id: h.id,
             name: 'stam',
             roles: []
         });
         await h.save();
         h = await c.findFirst();
-        expect(h.name.value).toBe('123');
+        expect(h.name).toBe('123');
     }));
     it("admin can update anyone", async(async () => {
         let { c, context } = await getHelperContext();
         let h = await c.findFirst();
-        h.name.value = '123';
-        context._setUser({
+        h.name = '123';
+        context.setUser({
             id: 'stam',
             name: 'stam',
             roles: [Roles.admin]
         });
         await h.save();
-        expect(h.name.value).toBe('123');
+        expect(h.name).toBe('123');
     }));
     it("admin can only be updated with admin privilege", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.admin.value = true; h.password.value = '123' }
+            setValues: h => { h.admin = true; h.password = '123' }
         });
         let h = await c.findFirst();
-        h.password.value = '456';
-        context._setUser({
-            id: h.id.value,
+        h.password = '456';
+        context.setUser({
+            id: h.id,
             name: 'stam',
             roles: []
         });
         await expectFail(() => h.save());
-        context._setUser({
-            id: h.id.value,
+        context.setUser({
+            id: h.id,
             name: 'stam',
             roles: [Roles.admin]
         });
@@ -85,13 +79,13 @@ describe('users and security', () => {
         if (!r.authToken) {
             throw 'should have worked';
         }
-        let jwt = new JwtSessionManager(context);
-        jwt.setToken(r.authToken);
+        //let jwt = new AuthService(context);
+       // jwt.setToken(r.authToken);
         expect(context.user.name).toBe('test');
     }));
     it("test login for admin without a password", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.admin.value = true; }
+            setValues: h => { h.admin = true; }
         });
 
         let r = await AuthService.login({
@@ -105,7 +99,7 @@ describe('users and security', () => {
     }));
     it("test login  with invalid password", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; }
+            setValues: h => { h.password = '123'; }
         });
 
         let r = await AuthService.login({
@@ -119,7 +113,7 @@ describe('users and security', () => {
     }));
     it("test login  with valid password", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; }
+            setValues: h => { h.password = '123'; }
         });
 
         let r = await AuthService.login({
@@ -134,7 +128,7 @@ describe('users and security', () => {
     }));
     it("change password to same password should fail", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; }
+            setValues: h => { h.password = '123'; }
         });
 
         let r = await AuthService.login({
@@ -148,7 +142,7 @@ describe('users and security', () => {
     }));
     it("change password should work", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; }
+            setValues: h => { h.password = '123'; }
         });
 
         let r = await AuthService.login({
@@ -163,7 +157,7 @@ describe('users and security', () => {
     }));
     it("sign in from sms and renewLease should stay with no privileges or even fail", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
+            setValues: h => { h.password = '123'; h.admin = true; h.shortUrlKey = '1234567890' }
         });
 
         let r = await AuthService.loginFromSms('1234567890', context);
@@ -172,28 +166,28 @@ describe('users and security', () => {
     }));
     it("sign in from sms, for a user with a password or with privliges, should move to login screen", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
+            setValues: h => { h.password = '123'; h.admin = true; h.shortUrlKey = '1234567890' }
         });
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(false);
     }));
     it("helper can sign in from sms", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.admin.value = false; h.shortUrlKey.value = '1234567890' }
+            setValues: h => { h.admin = false; h.shortUrlKey = '1234567890' }
         });
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(true);
     }));
     it("helper with password cannot sign in from sms", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; h.admin.value = false; h.shortUrlKey.value = '1234567890' }
+            setValues: h => { h.password = '123'; h.admin = false; h.shortUrlKey = '1234567890' }
         });
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(false);
     }));
     it("signed in user should sign in ok", async(async () => {
         let { c, context } = await getHelperContext({
-            setValues: h => { h.password.value = '123'; h.admin.value = true; h.shortUrlKey.value = '1234567890' }
+            setValues: h => { h.password = '123'; h.admin = true; h.shortUrlKey = '1234567890' }
         });
         let l = await AuthService.login({
             phone: PHONE,
@@ -203,8 +197,8 @@ describe('users and security', () => {
         }, context);
         if (!l.authToken)
             throw l;
-        let jwt = new JwtSessionManager(context);
-        jwt.setToken(l.authToken);
+        //let jwt = new JwtSessionManager(context);
+        //jwt.setToken(l.authToken);
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(true);
     }));
@@ -217,17 +211,17 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     var context = new ServerContext(mem);
     let c = context.for(Helpers);
     let h = c.create();
-    h.name.value = 'test';
-    h.phone.value = PHONE;
-    h.realStoredPassword.value = '';
+    h.name = 'test';
+    h.phone = new Phone( PHONE);
+    h.realStoredPassword = '';
     if (args.setValues)
         args.setValues(h);
     let disableAdmin = true;
-    if (h.admin.value)
+    if (h.admin)
         disableAdmin = false;
     await h.save();
     if (disableAdmin)
-        mem.rows[h.defs.name][0].admin = false;// because by default the first user is admin, and we don't want that for tests
+        mem.rows[h._.repository.defs.key][0].admin = false;// because by default the first user is admin, and we don't want that for tests
     return { c, context };
 }
 

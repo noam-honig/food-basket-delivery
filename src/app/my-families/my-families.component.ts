@@ -5,7 +5,7 @@ import { Route } from '@angular/router';
 import { RouteHelperService } from '@remult/angular';
 import { Context } from '@remult/core';
 
-import { Helpers, HelperUserInfo } from '../helpers/helpers';
+import { HelperId, Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
 
@@ -14,7 +14,7 @@ import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { PhoneColumn } from '../model-shared/types';
+import { Phone } from "../model-shared/Phone";
 
 
 
@@ -49,17 +49,17 @@ export class MyFamiliesComponent implements OnInit {
       else done += "3";
 
       await this.familyLists.initForHelper(helper);
-      if (this.settings.showDeliverySummaryToVolunteerOnFirstSignIn.value) {
-        let comments = this.familyLists.toDeliver.filter(d => d.deliveryComments.value);
+      if (this.settings.showDeliverySummaryToVolunteerOnFirstSignIn) {
+        let comments = this.familyLists.toDeliver.filter(d => d.deliveryComments);
         if (comments) {
           let date = new Date().toDateString();
           let displayed: { id: string, comment: string, displayedOn: string }[] = [];
           let storageValue = localStorage.getItem("last-summary-display");
           if (storageValue)
             displayed = JSON.parse(storageValue);
-          if (comments.filter(x => !displayed.find(d => d.id == x.id.value && d.comment == x.deliveryComments.value && d.displayedOn == date)).length>0) {
+          if (comments.filter(x => !displayed.find(d => d.id == x.id && d.comment == x.deliveryComments && d.displayedOn == date)).length > 0) {
             await this.familyLists.showBasketSummary();
-            displayed = comments.map(x => ({ id: x.id.value, comment: x.deliveryComments.value, displayedOn: date }));
+            displayed = comments.map(x => ({ id: x.id, comment: x.deliveryComments, displayedOn: date }));
             localStorage.setItem("last-summary-display", JSON.stringify(displayed));
 
           }
@@ -85,12 +85,12 @@ export class MyFamiliesComponent implements OnInit {
 
   volunteerEvents = new Map<string, volunteersInEvent>();
   volunteerInEvent(e: Event) {
-    let r = this.volunteerEvents.get(e.id.value);
+    let r = this.volunteerEvents.get(e.id);
     if (!r) {
-      this.volunteerEvents.set(e.id.value, r = this.context.for(volunteersInEvent).create());
-      this.context.for(volunteersInEvent).findFirst(ve => ve.eventId.isEqualTo(e.id).and(ve.helper.isEqualTo(this.familyLists.helper.id))).then(ev => {
+      this.volunteerEvents.set(e.id, r = this.context.for(volunteersInEvent).create());
+      this.context.for(volunteersInEvent).findFirst(ve => ve.eventId.isEqualTo(e.id).and(ve.helper.isEqualTo(new HelperId(this.familyLists.helper.id, this.context)))).then(ev => {
         if (ev) {
-          this.volunteerEvents.set(e.id.value, ev);
+          this.volunteerEvents.set(e.id, ev);
           let index = this.events.indexOf(e);
           if (index >= 0) {
             this.lines.forEach((x, i) => {
@@ -104,34 +104,34 @@ export class MyFamiliesComponent implements OnInit {
     return r;
   }
   getAddress(e: Event) {
-    if (e.address.ok())
-      return e.address;
-    return this.settings.address;
+    if (e.addressHelper.ok())
+      return e.addressHelper;
+    return this.settings.addressHelper;
   }
   getPhone(e: Event) {
-    if (e.phone1.value)
+    if (e.phone1)
       return e.phone1;
     return this.settings.helpPhone;
   }
   sendWhatsapp(phone: string) {
-    PhoneColumn.sendWhatsappToPhone(phone, '', this.context);
+    Phone.sendWhatsappToPhone(phone, '', this.context);
   }
 
   async registerToEvent(e: Event) {
     let ev = this.volunteerInEvent(e);
     if (ev.isNew()) {
-      ev.eventId.value = e.id.value;
-      ev.helper.value = this.familyLists.helper.id.value;
+      ev.eventId = e.id;
+      ev.helper = new HelperId(this.familyLists.helper.id, this.context);
       await ev.save();
-      e.registeredVolunteers.value++;
+      e.registeredVolunteers++;
     }
   }
   async cancelEvent(e: Event) {
     let ev = this.volunteerInEvent(e);
     if (!ev.isNew()) {
       await ev.delete();
-      e.registeredVolunteers.value--;
-      this.volunteerEvents.set(e.id.value, undefined);
+      e.registeredVolunteers--;
+      this.volunteerEvents.set(e.id, undefined);
     }
   }
   events: Event[] = [];

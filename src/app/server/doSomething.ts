@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 
-import { SqlDatabase, Column } from '@remult/core';
+import { SqlDatabase, Column, EntityColumn } from '@remult/core';
 import * as AWS from 'aws-sdk';
 
 
@@ -131,7 +131,8 @@ class htmlReport {
     addRow(...what: any[]) {
         this.result += "\r\n<tr>";
         for (let v of what) {
-            if (v instanceof Column)
+            let z = v as EntityColumn<any>;
+            if (z.displayValue)
                 v = v.displayValue;
             if (v === undefined)
                 v = '';
@@ -164,17 +165,15 @@ async function buildDocs() {
 
     for (const type of list) {
 
-        var e = c.for(type).create();
-        s += "\n\n## " + e.defs.name + `
+        var e = c.for(type).defs;
+        s += "\n\n## " + e.key + `
 | name | caption | type | extra info |
 | --- | --- | --- | --- |
 `;
         for (const c of e.columns) {
             let extra = '';
-            if (c.defs.allowApiUpdate === false)
-                extra += " readonly";
-
-            s += "| " + c.defs.key + " | " + c.defs.caption + " | " + c.constructor.name.replace(/Column/g, '') + " | " + extra + " |\n";
+            
+            s += "| " + c.key + " | " + c.caption + " | " + c.constructor.name.replace(/Column/g, '') + " | " + extra + " |\n";
         }
     }
     fs.writeFileSync("./docs/model.md", s);

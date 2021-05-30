@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
-import { BusyService } from '@remult/angular';
-import { Context, Column, GridSettings, ServerFunction } from '@remult/core';
+import { BusyService, GridSettings, openDialog } from '@remult/angular';
+import { Context, Column, ServerFunction, EntityColumns, EntityColumn, ColumnDefinitions } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';
@@ -21,16 +21,16 @@ export class MergeFamiliesComponent implements OnInit {
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
-    this.families.sort((a, b) => b.createDate.value.valueOf() - a.createDate.value.valueOf());
-    this.families.sort((a, b) => a.status.value.id - b.status.value.id);
-    this.family = await this.context.for(Families).findId(this.families[0].id.value);
+    this.families.sort((a, b) => b.createDate.valueOf() - a.createDate.valueOf());
+    this.families.sort((a, b) => a.status.id - b.status.id);
+    this.family = await this.context.for(Families).findId(this.families[0].id);
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
-  updateSimilarColumns(getCols: (f: Families) => Column[][]) {
-    let eCols = getCols(this.family);
+  updateSimilarColumns(getCols: (f: EntityColumns<Families>) => EntityColumn<any>[][]) {
+    let eCols = getCols(this.family.$);
     for (const f of this.families) {
-      for (const c of getCols(f)) {
+      for (const c of getCols(f.$)) {
         if (c[0].value) {
           let digits = c[0].value.replace(/\D/g, '');
           let found = false;
@@ -83,56 +83,56 @@ export class MergeFamiliesComponent implements OnInit {
       this.updateSimilarColumns(f => [[f.phone1, f.phone1Description], [f.phone2, f.phone2Description], [f.phone3, f.phone3Description], [f.phone4, f.phone4Description]]);
     }
 
-    for (const c of this.family.columns) {
-      if (c.defs.allowApiUpdate === undefined || this.context.isAllowed(c.defs.allowApiUpdate)) {
+    for (const c of this.family.$) {
+      //if (c.defs.allowApiUpdate === undefined || this.context.isAllowed(c.defs.allowApiUpdate)) {
         switch (c) {
-          case this.family.addressApiResult:
-          case this.family.addressLatitude:
-          case this.family.addressLongitude:
-          case this.family.addressByGoogle:
-          case this.family.addressOk:
-          case this.family.drivingLongitude:
-          case this.family.drivingLatitude:
-          case this.family.previousDeliveryComment:
-          case this.family.previousDeliveryDate:
-          case this.family.previousDeliveryStatus:
-          case this.family.nextBirthday:
-          case this.family.city:
-          case this.family.numOfActiveReadyDeliveries:
+          case this.family.$.addressApiResult:
+          case this.family.$.addressLatitude:
+          case this.family.$.addressLongitude:
+          case this.family.$.addressByGoogle:
+          case this.family.$.addressOk:
+          case this.family.$.drivingLongitude:
+          case this.family.$.drivingLatitude:
+          case this.family.$.previousDeliveryComment:
+          case this.family.$.previousDeliveryDate:
+          case this.family.$.previousDeliveryStatus:
+          case this.family.$.nextBirthday:
+          case this.family.$.city:
+          case this.family.$.numOfActiveReadyDeliveries:
             continue;
 
         }
         for (const f of this.families) {
-          if (f.columns.find(c).value != c.value) {
+          if (f.$.find(c.defs).value != c.value) {
             if (!c.value && updateValue)
-              c.value = f.columns.find(c).value;
-            this.columnsToCompare.push(c);
+              c.value = f.$.find(c.defs).value;
+            this.columnsToCompare.push(c.defs);
             break;
           }
         }
-      }
+     // }
     }
-    this.gs = this.context.for(Families).gridSettings({ allowUpdate: true, columnSettings: () => this.columnsToCompare });
+    this.gs = new GridSettings(this.context.for(Families), { allowUpdate: true, columnSettings: () => this.columnsToCompare });
     for (const c of this.gs.columns.items) {
-      this.width.set(c.column, this.gs.columns.__dataControlStyle(c));
+      this.width.set(c.column as any, this.gs.columns.__dataControlStyle(c));
     }
 
   }
-  gs: GridSettings;
-  getColWidth(c: Column) {
+  gs: GridSettings<Families>;
+  getColWidth(c: ColumnDefinitions) {
     let x = this.width.get(c);
     if (!x)
       x = '200px';
     return x;
   }
   async updateFamily(f: Families) {
-    await this.context.openDialog(UpdateFamilyDialogComponent, x => {
+    await openDialog(UpdateFamilyDialogComponent, x => {
       x.args = { family: f, userCanUpdateButDontSave: true }
     });
     this.rebuildCompare(false);
   }
   async updateCurrentFamily() {
-    await this.context.openDialog(UpdateFamilyDialogComponent, x => {
+    await openDialog(UpdateFamilyDialogComponent, x => {
       x.args = { family: this.family, userCanUpdateButDontSave: true }
     });
     this.rebuildCompare(false);
@@ -140,10 +140,10 @@ export class MergeFamiliesComponent implements OnInit {
   async confirm() {
     try {
       await this.family.save();
-      await MergeFamiliesComponent.mergeFamilies(this.families.map(x => x.id.value));
+      await MergeFamiliesComponent.mergeFamilies(this.families.map(x => x.id));
       this.merged = true;
       this.dialogRef.close();
-      let deliveries = await this.context.for(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(fd.deliverStatus.isNotAResultStatus()))
+      let deliveries = await this.context.for(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)))
       if (deliveries > 0) {
 
         await this.family.showDeliveryHistoryDialog({
@@ -169,7 +169,7 @@ export class MergeFamiliesComponent implements OnInit {
 
     for (const oldId of ids) {
       for await (const fd of context.for(FamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(oldId) })) {
-        fd.family.value = id;
+        fd.family = id;
         newFamily.updateDelivery(fd);
         await fd.save();
       }
@@ -178,7 +178,7 @@ export class MergeFamiliesComponent implements OnInit {
   }
 
 
-  columnsToCompare: Column[] = [];
-  width = new Map<Column, string>();
+  columnsToCompare: ColumnDefinitions[] = [];
+  width = new Map<ColumnDefinitions, string>();
 
 }

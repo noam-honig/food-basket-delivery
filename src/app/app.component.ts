@@ -48,7 +48,7 @@ export class AppComponent {
     this.lang = settings.lang;
     this.toolbarColor = 'primary';
 
-    if (settings.redTitleBar.value) {
+    if (settings.redTitleBar) {
       this.toolbarColor = 'accent';
     }
 
@@ -80,7 +80,7 @@ export class AppComponent {
   }
   prevLogoUrl = '';
   getLogo() {
-    let result = ApplicationSettings.get(this.context).logoUrl.value;
+    let result = ApplicationSettings.get(this.context).logoUrl;
     if (result) {
       this.prevLogoUrl = result;
     }
@@ -97,7 +97,7 @@ export class AppComponent {
       if (this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
         return this.activeRoute.snapshot.firstChild.data.name;
     }
-    return ApplicationSettings.get(this.context).organisationName.value;
+    return ApplicationSettings.get(this.context).organisationName;
   }
   toolbarColor = 'primary';
   showSideBar() {
@@ -123,7 +123,7 @@ export class AppComponent {
       return;
     if (!DeliveryStatus.usingSelfPickupModule && route.component == SelfPickupComponent)
       return false;
-    if (route.component == AssignEscortComponent && !this.settings.manageEscorts.value)
+    if (route.component == AssignEscortComponent && !this.settings.manageEscorts)
       return false;
     return this.helper.canNavigateToRoute(route);
   }
