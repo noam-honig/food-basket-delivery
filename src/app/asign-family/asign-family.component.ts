@@ -445,7 +445,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
                                 let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(FamilyDeliveries.readyFilter(f, this.context)));
-                                f.courier = new HelperId(this.helper.id, this.context);
+                                f.courier = this.helper.helperId();
                                 await f.save();
                             }
                             await this.familyLists.initForHelper(this.helper)
@@ -972,7 +972,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     private async performSpecificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
         await this.verifyHelperExistance();
-        f.courier = new HelperId(this.helper.id, this.context);
+        f.courier = this.helper.helperId();
         f.deliverStatus = DeliveryStatus.ReadyForDelivery;
         this.dialog.analytics(analyticsName);
         await f.save();

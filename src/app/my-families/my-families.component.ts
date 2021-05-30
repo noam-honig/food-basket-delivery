@@ -88,7 +88,7 @@ export class MyFamiliesComponent implements OnInit {
     let r = this.volunteerEvents.get(e.id);
     if (!r) {
       this.volunteerEvents.set(e.id, r = this.context.for(volunteersInEvent).create());
-      this.context.for(volunteersInEvent).findFirst(ve => ve.eventId.isEqualTo(e.id).and(ve.helper.isEqualTo(new HelperId(this.familyLists.helper.id, this.context)))).then(ev => {
+      this.context.for(volunteersInEvent).findFirst(ve => ve.eventId.isEqualTo(e.id).and(ve.helper.isEqualTo(this.familyLists.helper.helperId()))).then(ev => {
         if (ev) {
           this.volunteerEvents.set(e.id, ev);
           let index = this.events.indexOf(e);
@@ -121,7 +121,7 @@ export class MyFamiliesComponent implements OnInit {
     let ev = this.volunteerInEvent(e);
     if (ev.isNew()) {
       ev.eventId = e.id;
-      ev.helper = new HelperId(this.familyLists.helper.id, this.context);
+      ev.helper = this.familyLists.helper.helperId();
       await ev.save();
       e.registeredVolunteers++;
     }

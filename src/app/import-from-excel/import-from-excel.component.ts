@@ -739,7 +739,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                         else {
 
-                            await h.lookupAndInsert(Helpers, h => h.name, v, h => new HelperId(h.id, this.context), h.fd.$.courier, x => {
+                            await h.lookupAndInsert(Helpers, h => h.name, v, h => h.helperId(), h.fd.$.courier, x => {
                                 x._disableDuplicateCheck = true;
                             });
                         }
@@ -754,7 +754,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.gotVolunteerPhone = true;
                 v = Phone.fixPhoneInput(v, this.context);
-                await h.lookupAndInsert(Helpers, h => h.phone, new Phone(v), h => new HelperId(h.id, this.context), h.fd.$.courier, x => {
+                await h.lookupAndInsert(Helpers, h => h.phone, new Phone(v), h => h.helperId(), h.fd.$.courier, x => {
                     x.name = 'מתנדב ' + v;
                 });
             }, columns: [this.fd.courier]

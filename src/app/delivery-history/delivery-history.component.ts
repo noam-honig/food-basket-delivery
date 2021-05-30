@@ -96,7 +96,7 @@ export class DeliveryHistoryComponent implements OnInit {
           if (await openDialog(YesNoQuestionComponent, q => q.args = {
             question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
           }, q => q.yes)) {
-            if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(new HelperId('', this.context))) >= rows.length) {
+            if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(HelperId.empty(this.context))) >= rows.length) {
               for (const h of rows) {
                 await HelperGifts.assignGift(h.courier);
               }

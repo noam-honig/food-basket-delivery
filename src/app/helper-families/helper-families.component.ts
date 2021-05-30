@@ -385,7 +385,7 @@ export class HelperFamiliesComponent implements OnInit {
       if (this.familyLists.helper.leadHelper) {
         this.otherDependentVolunteers.push(await (this.familyLists.helper.leadHelper.waitLoad()));
       }
-      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(new HelperId(this.familyLists.helper.id, this.context)) }));
+      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.helperId()) }));
     });
   }
   otherDependentVolunteers: Helpers[] = [];
@@ -572,7 +572,7 @@ export class HelperFamiliesComponent implements OnInit {
 
         save: async (comment) => {
           let hist = this.context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-          hist.volunteer = new HelperId(this.familyLists.helper.id, this.context);
+          hist.volunteer = this.familyLists.helper.helperId();
           hist.comment = comment;
           await hist.save();
         },

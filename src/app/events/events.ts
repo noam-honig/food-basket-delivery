@@ -20,6 +20,24 @@ import { AddressHelper } from "../shared/googleApiHelpers";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
+
+
+@Storable({
+    caption: use.language.eventStatus,
+    defaultValue: () => eventStatus.active,
+    valueConverter: () => new ValueListValueConverter(eventStatus)
+})
+
+export class eventStatus {
+    static active = new eventStatus(0, use.language.activeEventStatus);
+    static preparation = new eventStatus(5, use.language.eventPreparation);
+    static archive = new eventStatus(9, use.language.archiveEventStatus);
+
+    constructor(public id: number, public caption: string) {
+
+    }
+}
+
 @Entity<Event>({
     key: 'events',
     allowApiCrud: Roles.admin,
@@ -49,7 +67,7 @@ export class Event extends IdEntity {
                 click: () => openDialog(SelectHelperComponent, y => y.args = {
                     onSelect: async h => {
                         let eh = this.context.for(volunteersInEvent).create();
-                        eh.helper = new HelperId(h.id, this.context);
+                        eh.helper = h.helperId();
                         eh.eventId = this.id;
                         await eh.save();
                         x.args.settings.reloadData()
@@ -196,13 +214,13 @@ export class Event extends IdEntity {
     apiDataFilter: (self, context) => {
         if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return undefined;
-        return self.helper.isEqualTo(new HelperId(context.user.id, context));
+        return self.helper.isEqualTo(HelperId.currentUser(context));
     }
     ,
     saving: (self) => {
         if (self.isNew() && self.context.onServer) {
             self.createDate = new Date();
-            self.createUser = new HelperId(self.context.user.id, self.context);
+            self.createUser = HelperId.currentUser(self.context);
         }
     }
 })
@@ -309,20 +327,3 @@ export class volunteersInEvent extends IdEntity {
 }
 
 
-
-
-@Storable({
-    caption: use.language.eventStatus,
-    defaultValue: () => eventStatus.active,
-    valueConverter: () => new ValueListValueConverter(eventStatus)
-})
-
-export class eventStatus {
-    static active = new eventStatus(0, use.language.activeEventStatus);
-    static preparation = new eventStatus(5, use.language.eventPreparation);
-    static archive = new eventStatus(9, use.language.archiveEventStatus);
-
-    constructor(public id: number, public caption: string) {
-
-    }
-}

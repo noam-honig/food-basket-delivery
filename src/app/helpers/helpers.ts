@@ -1,7 +1,7 @@
 
 import { Context, IdEntity, UserInfo, Filter, Entity, Column, ServerMethod, ColumnSettings, DateOnlyValueConverter, StoreAsStringValueConverter, filterOf, Validators, InputTypes, EntityColumn, Storable, ColumnDefinitions, ColumnDefinitionsOf } from '@remult/core';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
-import { DateTimeColumn, SqlBuilder, logChanges,  ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
+import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
 import { isPhoneValidForIsrael, Phone } from "../model-shared/Phone";
 import { LookupValue } from "../model-shared/LookupValue";
 
@@ -43,6 +43,58 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
             caption: use.language.company,
             ...settings
         })(target, key);
+    }
+}
+@Storable<HelperId>({
+    valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => x.id, x => new HelperId(x, c)),
+    displayValue: (e, x) => x.getValue(),
+    caption: use.language.volunteer
+})
+@DataControl<any, HelperId>({
+    getValue: (e, val) => val.value.getValue(),
+    hideDataOnInput: true,
+    width: '200',
+    click: async (e, col) => HelperIdUtils.showSelectDialog(col, {}, undefined)
+})
+export class HelperId extends LookupValue<Helpers>  {
+    isEmpty() {
+        return this.id == '';
+    }
+    static empty(context: Context): HelperId {
+        return new HelperId('', context);
+    }
+    evilGetId(): string {
+        return this.id;
+    }
+    static currentUser(context: Context): HelperId {
+        return new HelperId(context.user.id, context);
+    }
+    isNotEmpty() {
+        return this.id != '';
+    }
+    isCurrentUser(): boolean {
+        return this.id == this.context.user.id;
+    }
+    constructor(id: string, private context: Context) {
+        super(id, context.for(Helpers));
+    }
+    getValue() {
+        return this.item.name;
+    }
+    getPhone() {
+        return this.item.$.phone.displayValue;
+    }
+    async getTheName() {
+        let r = await this.waitLoad();
+        if (r && r.name && r.name)
+            return r.name;
+        return '';
+    }
+    async getTheValue() {
+        let r = await this.waitLoad();
+        if (r && r.name && r.name && r.phone)
+            return r.name + ' ' + r.phone;
+        return '';
     }
 }
 
@@ -179,8 +231,8 @@ export abstract class HelpersBase extends IdEntity {
     allowApiInsert: true,
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
-        if (self.escort == new HelperId(self.id, self.context)) {
-            self.escort = new HelperId('', self.context);
+        if (self.escort == self.helperId()) {
+            self.escort = HelperId.empty(self.context);
         }
 
         if (self.context.onServer) {
@@ -248,16 +300,16 @@ export abstract class HelpersBase extends IdEntity {
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
             if (!self.needEscort)
-                self.escort = new HelperId('', self.context);
+                self.escort = HelperId.currentUser(self.context);
             if (self.$.escort.wasChanged()) {
                 if (self.$.escort.originalValue) {
                     let h = await self.context.for(Helpers).lookupIdAsync(self.$.escort.originalValue);
-                    h.theHelperIAmEscorting = new HelperId('', self.context);
+                    h.theHelperIAmEscorting = HelperId.currentUser(self.context);
                     await h.save();
                 }
                 if (self.escort) {
-                    let h = await self.context.for(Helpers).lookupIdAsync(self.escort);
-                    h.theHelperIAmEscorting = new HelperId(self.id, self.context);
+                    let h = await self.escort.waitLoad();
+                    h.theHelperIAmEscorting = self.helperId();
                     await h.save();
                 }
             }
@@ -537,7 +589,7 @@ export class Helpers extends HelpersBase {
         if (otherFamilies.length > 0) {
             if (await dialog.YesNoPromise(use.language.thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + use.language.familiesDotCancelTheseAssignments)) {
                 for (const f of otherFamilies) {
-                    f.fixedCourier = new HelperId('', this.context);
+                    f.fixedCourier = HelperId.empty(this.context);
                     await f.save();
                     i++;
                 }
@@ -699,58 +751,7 @@ export class Helpers extends HelpersBase {
 
 }
 
-@Storable<HelperId>({
-    valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => x.id, x => new HelperId(x, c)),
-    displayValue: (e, x) => x.getValue(),
-    caption: use.language.volunteer
-})
-@DataControl<any, HelperId>({
-    getValue: (e, val) => val.value.getValue(),
-    hideDataOnInput: true,
-    width: '200',
-    click: async (e, col) => HelperIdUtils.showSelectDialog(col, {}, undefined)
-})
-export class HelperId extends LookupValue<Helpers>  {
-    isEmpty() {
-        return this.id == '';
-    }
-    static empty(context: Context): HelperId {
-        return new HelperId('', context);
-    }
-    evilGetId(): string {
-        return this.id;
-    }
-    static currentUser(context: Context): HelperId {
-        return new HelperId(context.user.id, context);
-    }
-    isNotEmpty() {
-        return this.id != '';
-    }
-    isCurrentUser(): boolean {
-        return this.id == this.context.user.id;
-    }
-    constructor(id: string, private context: Context) {
-        super(id, context.for(Helpers));
-    }
-    getValue() {
-        return this.item.name;
-    }
-    getPhone() {
-        return this.item.$.phone.displayValue;
-    }
-    async getTheName() {
-        let r = await this.waitLoad();
-        if (r && r.name && r.name)
-            return r.name;
-        return '';
-    }
-    async getTheValue() {
-        let r = await this.waitLoad();
-        if (r && r.name && r.name && r.phone)
-            return r.name + ' ' + r.phone;
-        return '';
-    }
-}
+
 export class HelperIdUtils {
 
     constructor(protected context: Context, private args: {
@@ -778,7 +779,7 @@ export class HelperIdUtils {
                 includeFrozen: args.includeFrozen,
                 searchClosestDefaultFamily: args.searchClosestDefaultFamily
                 , onSelect: s => {
-                    col.value = new HelperId((s ? s.id : ''), x.context);
+                    col.value = s ? new HelperId(s.id, x.context) : HelperId.empty(x.context);
                     if (onSelect)
                         onSelect();
                 }

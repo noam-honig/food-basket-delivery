@@ -128,7 +128,7 @@ export class UserFamiliesList {
         if (!this.helper.isNew()) {
             this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({
                 where: f => {
-                    let r = f.courier.isEqualTo(new HelperId(this.helper.id, this.context));
+                    let r = f.courier.isEqualTo(this.helper.helperId());
                     if (this.settings.isSytemForMlt())
                         return r;
                     return r.and(f.visibleToCourier.isEqualTo(true))

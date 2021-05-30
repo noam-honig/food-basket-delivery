@@ -1,18 +1,19 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import '../app/manage/ApplicationSettings';
 
 
 import { ServerContext, IdEntity, Context } from '@remult/core';
 import { SqlBuilder, QueryBuilder, SqlFor } from './model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "./model-shared/Phone";
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
-import { parseAddress, Families, parseUrlInAddress } from './families/families';
-import { BasketType } from './families/BasketType';
 import { fixPhone, processPhone, phoneResult, parseAndUpdatePhone } from './import-from-excel/import-from-excel.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';
 import { validSchemaName } from './sites/sites';
 import { MergeFamiliesComponent } from './merge-families/merge-families.component';
 import { FamilyStatus } from './families/FamilyStatus';
+import { parseAddress, Families, parseUrlInAddress } from './families/families';
+import { BasketType } from './families/BasketType';
 
 describe('AppComponent', () => {
   var context = new ServerContext();

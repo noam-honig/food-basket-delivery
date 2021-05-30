@@ -19,12 +19,24 @@ import { use } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings, openDialog } from "../../../../radweb/projects/angular";
-import { SelectHelperComponent } from "../select-helper/select-helper.component";
+
 import { Groups } from "../manage/groups";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
 
 
+@Storable({
+    valueConverter: () => new ValueListValueConverter(MessageStatus),
+    caption: use.language.messageStatus
+})
+export class MessageStatus {
+    static noVolunteer = new MessageStatus(0, use.language.noAssignedVolunteer);
+    static notSent = new MessageStatus(1, use.language.smsNotSent);
+    static notOpened = new MessageStatus(2, use.language.smsNotOpened);
+    static opened = new MessageStatus(3, use.language.smsOpened);
+    constructor(public id: number, public caption: string) {
 
+    }
+}
 @Entity<FamilyDeliveries>({
     key: 'FamilyDeliveries',
     dbName: 'FamilyDeliveries',
@@ -186,8 +198,8 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.distCenterAdmin
     })
     @DataControl<FamilyDeliveries, HelperId>({
-        click: (self) => openDialog(SelectHelperComponent, x => x.args = {
-            onSelect: helper => self.courier = new HelperId(helper.id, self.context),
+        click: async (self) => openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
+            onSelect: helper => self.courier = helper.helperId(),
             location: self.getDrivingLocation(),
             familyId: self.family
         })
@@ -511,7 +523,7 @@ export class FamilyDeliveries extends IdEntity {
                 if (user.theHelperIAmEscortingId)
                     add(self.courier.isEqualTo(new HelperId(user.theHelperIAmEscortingId, context)).and(self.visibleToCourier.isEqualTo(true)));
                 else
-                    add(self.courier.isEqualTo(new HelperId(user.id, context)).and(self.visibleToCourier.isEqualTo(true)));
+                    add(self.courier.isEqualTo(HelperId.currentUser(context)).and(self.visibleToCourier.isEqualTo(true)));
             }
         }
         return result;
@@ -537,7 +549,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     static readyAndSelfPickup(self: filterOf<FamilyDeliveries>, context: Context) {
         let where = self.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]).and(
-            self.courier.isEqualTo(new HelperId('', context)));
+            self.courier.isEqualTo(HelperId.empty(context)));
         return where;
 
     }
@@ -586,7 +598,7 @@ export class FamilyDeliveries extends IdEntity {
 
     static readyFilter(self: filterOf<FamilyDeliveries>, context: Context, city?: string, group?: string, area?: string, basket?: string) {
         let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-            self.courier.isEqualTo(new HelperId('', context))).and(filterCenterAllowedForUser(self.distributionCenter, context));
+            self.courier.isEqualTo(HelperId.empty(context))).and(filterCenterAllowedForUser(self.distributionCenter, context));
         if (group)
             where = where.and(self.groups.contains(group));
         if (city) {
@@ -600,7 +612,7 @@ export class FamilyDeliveries extends IdEntity {
         return where;
     }
     static onTheWayFilter(self: filterOf<FamilyDeliveries>, context: Context) {
-        return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(new HelperId('', context)));
+        return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(HelperId.empty(context)));
     }
 
 
@@ -764,16 +776,3 @@ function logChanged(context: Context, col: EntityColumn<any>, dateCol: EntityCol
 }
 
 
-@Storable({
-    valueConverter: () => new ValueListValueConverter(MessageStatus),
-    caption: use.language.messageStatus
-})
-export class MessageStatus {
-    static noVolunteer = new MessageStatus(0, use.language.noAssignedVolunteer);
-    static notSent = new MessageStatus(1, use.language.smsNotSent);
-    static notOpened = new MessageStatus(2, use.language.smsNotOpened);
-    static opened = new MessageStatus(3, use.language.smsOpened);
-    constructor(public id: number, public caption: string) {
-
-    }
-}

@@ -1,3 +1,4 @@
+import '../app/manage/ApplicationSettings';
 import { NgModule, Injectable, ErrorHandler } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes, RouteReuseStrategy, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';

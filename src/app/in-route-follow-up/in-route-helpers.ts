@@ -20,12 +20,12 @@ import { DataControl, GridSettings, openDialog } from "@remult/angular";
     defaultOrderBy: (self) => self.minAssignDate,
     dbName: (self, context) => {
         let sql = new SqlBuilder();
-        
-        let f =SqlFor(context.for(ActiveFamilyDeliveries));
-        let history =SqlFor( context.for(FamilyDeliveries));
-        let com =SqlFor( context.for(HelperCommunicationHistory));
-        let h = SqlFor(context.for(Helpers)) ;
-        let h2 =SqlFor( context.for(Helpers));
+
+        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+        let history = SqlFor(context.for(FamilyDeliveries));
+        let com = SqlFor(context.for(HelperCommunicationHistory));
+        let h = SqlFor(context.for(Helpers));
+        let h2 = SqlFor(context.for(Helpers));
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
@@ -208,7 +208,7 @@ export class InRouteHelpers extends IdEntity {
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = new HelperId(self.context.user.id, self.context);
+            self.createUser = HelperId.currentUser(self.context);
         }
     }
 })

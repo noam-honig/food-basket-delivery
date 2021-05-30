@@ -27,7 +27,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { allCentersToken, DistributionCenterId, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
-import { SelectHelperComponent } from "../select-helper/select-helper.component";
+
 
 
 
@@ -46,7 +46,60 @@ declare type factoryFor<T> = {
   new(...args: any[]): T;
 }
 
+@Storable<GroupsValue>({
+  valueConverter: () => new StoreAsStringValueConverter(x => x.value, x => new GroupsValue(x)),
+  caption: use.language.familyGroup,
+})
+@DataControl<any, GroupsValue>({
+  forceEqualFilter: false,
+  width: '300',
+  click: async (row, col) => {
+    openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
+      s.init({
+        groups: col.value.value,
+        ok: x => col.value = new GroupsValue(x)
+      })
+    });
+  }
 
+})
+export class GroupsValue {
+  replace(val: string) {
+    this.value = val;
+  }
+  constructor(private value: string) {
+
+  }
+  evilGet() {
+    return this.value;
+  }
+  listGroups() {
+    if (!this.value)
+      return [];
+    return this.value.split(',');
+  }
+  removeGroup(group: string) {
+    let groups = this.value.split(",").map(x => x.trim());
+    let index = groups.indexOf(group);
+    if (index >= 0) {
+      groups.splice(index, 1);
+      this.value = groups.join(", ");
+    }
+  }
+  addGroup(group: string) {
+    if (this.value)
+      this.value += ', ';
+    else
+      this.value = '';
+    this.value += group;
+  }
+  selected(group: string) {
+    if (!this.value)
+      return false;
+    return this.value.indexOf(group) >= 0;
+  }
+
+}
 
 @Entity<Families>(
   {
@@ -79,16 +132,16 @@ declare type factoryFor<T> = {
         }
         if (self.isNew()) {
           self.createDate = new Date();
-          self.createUser = new HelperId(self.context.user.id, self.context);
+          self.createUser = HelperId.currentUser(self.context);
         }
         if (self.$.status.wasChanged()) {
           self.statusDate = new Date();
-          self.statusUser = new HelperId(self.context.user.id, self.context);
+          self.statusUser = HelperId.currentUser(self.context);
         }
 
         if (!self._suppressLastUpdateDuringSchemaInit) {
           self.lastUpdateDate = new Date();
-          self.lastUpdateUser = new HelperId(self.context.user.id, self.context);
+          self.lastUpdateUser = HelperId.currentUser(self.context);
         }
 
 
@@ -272,7 +325,7 @@ export class Families extends IdEntity {
     if (args.copyFrom) {
       selfPickup.value = args.copyFrom.deliverStatus == DeliveryStatus.SuccessPickedUp;
       if (args.copyFrom.deliverStatus.isProblem)
-        newDelivery.courier = new HelperId('', this.context);
+        newDelivery.courier = HelperId.empty(this.context);
     }
 
 
@@ -562,11 +615,11 @@ export class Families extends IdEntity {
   statusUser: HelperId;
   @Column({ caption: use.language.defaultVolunteer })
   @DataControl<Families, HelperId>({
-    click: (e, col) => {
-      openDialog(SelectHelperComponent, x => x.args = {
+    click: async (e, col) => {
+      openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
         searchClosestDefaultFamily: true,
         location: e.addressHelper.location(),
-        onSelect: selected => col.value = new HelperId(selected.id, e.context)
+        onSelect: selected => col.value = selected.helperId()
       });
     }
   })
@@ -1046,60 +1099,7 @@ export function AreaColumn() {
 
 
 
-@Storable<GroupsValue>({
-  valueConverter: () => new StoreAsStringValueConverter(x => x.value, x => new GroupsValue(x)),
-  caption: use.language.familyGroup,
-})
-@DataControl<any, GroupsValue>({
-  forceEqualFilter: false,
-  width: '300',
-  click: async (row, col) => {
-    openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
-      s.init({
-        groups: col.value.value,
-        ok: x => col.value = new GroupsValue(x)
-      })
-    });
-  }
 
-})
-export class GroupsValue {
-  replace(val: string) {
-    this.value = val;
-  }
-  constructor(private value: string) {
-
-  }
-  evilGet() {
-    return this.value;
-  }
-  listGroups() {
-    if (!this.value)
-      return [];
-    return this.value.split(',');
-  }
-  removeGroup(group: string) {
-    let groups = this.value.split(",").map(x => x.trim());
-    let index = groups.indexOf(group);
-    if (index >= 0) {
-      groups.splice(index, 1);
-      this.value = groups.join(", ");
-    }
-  }
-  addGroup(group: string) {
-    if (this.value)
-      this.value += ', ';
-    else
-      this.value = '';
-    this.value += group;
-  }
-  selected(group: string) {
-    if (!this.value)
-      return false;
-    return this.value.indexOf(group) >= 0;
-  }
-
-}
 export function parseUrlInAddress(address: string) {
   let x = address.toLowerCase();
   let search = 'https://maps.google.com/maps?q=';

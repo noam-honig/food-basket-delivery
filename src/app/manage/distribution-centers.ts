@@ -3,12 +3,12 @@ import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location, Ad
 import { Phone } from "../model-shared/Phone";
 import { LookupValue } from "../model-shared/LookupValue";
 import { Roles } from "../auth/roles";
-import { HelperUserInfo } from "../helpers/helpers";
+import { HelperId, HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from "../../../../radweb/projects/angular";
 import { use } from "../translate";
-import { Families } from "../families/families";
+
 
 
 
@@ -57,6 +57,7 @@ export class DistributionCenters extends IdEntity {
   isFrozen: boolean;
   @Column()
   archive: boolean;
+  createUser:HelperId
 
   static isActive(e: filterOf<DistributionCenters>) {
     return e.isFrozen.isEqualTo(false).and(e.archive.isEqualTo(false));
@@ -113,7 +114,8 @@ export class DistributionCenterId extends LookupValue<DistributionCenters>{
     return this.id;
   }
   async SendMessageToBrowser(message: string, context: Context) {
-    await Families.SendMessageToBrowsers(message, context, this.id);
+    
+    await ( await import('../families/families')).Families.SendMessageToBrowsers(message, context, this.id);
   }
   isAllCentersToken() {
     return this.id != allCentersToken;

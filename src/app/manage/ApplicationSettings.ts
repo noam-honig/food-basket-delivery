@@ -31,7 +31,15 @@ import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
 import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
 
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+
+@Storable({ valueConverter: () => new ValueListValueConverter(RemovedFromListExcelImportStrategy) })
+export class RemovedFromListExcelImportStrategy {
+  static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
+  static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
+  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם והוסף משפחה חדשה');
+  constructor(public id: number, public caption: string) { }
+}
+
 
 
 
@@ -78,7 +86,7 @@ export class ApplicationSettings extends EntityBase {
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(FamilyDeliveries.isAllowedForUser(fd, context)));
+    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser(fd, context)));
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
@@ -472,14 +480,6 @@ export class SettingsService {
   }
 
 }
-@Storable({ valueConverter: () => new ValueListValueConverter(RemovedFromListExcelImportStrategy) })
-export class RemovedFromListExcelImportStrategy {
-  static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
-  static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
-  static ignore = new RemovedFromListExcelImportStrategy(2, 'התעלם והוסף משפחה חדשה');
-  constructor(public id: number, public caption: string) { }
-}
-
 
 
 export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];

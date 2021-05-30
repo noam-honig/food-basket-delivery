@@ -229,9 +229,9 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
 export class ArchiveHelper {
     showDelivered = false;
-    markOnTheWayAsDelivered = new InputControl<boolean>({ key: 'markOnTheWayAsDelivered', visible: () => this.showDelivered });
+    markOnTheWayAsDelivered = new InputControl<boolean>({ dataType: Boolean, key: 'markOnTheWayAsDelivered', visible: () => this.showDelivered });
     showSelfPickup = false;
-    markSelfPickupAsDelivered = new InputControl<boolean>({ key: 'markSelfPickupAsDelivered', visible: () => this.showSelfPickup });
+    markSelfPickupAsDelivered = new InputControl<boolean>({ dataType: Boolean, key: 'markSelfPickupAsDelivered', visible: () => this.showSelfPickup });
 
     constructor(private context: Context) { }
     getColumns() {
@@ -343,6 +343,27 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     }
 }
 
+@Storable({
+    valueConverter: () => new ValueListValueConverter(HelperStrategy),
+    defaultValue: () => HelperStrategy.familyDefault,
+    caption: use.language.volunteer
+})
+class HelperStrategy {
+    static familyDefault = new HelperStrategy(0, use.language.volunteerByFamilyDefault, x => { });
+    static currentHelper = new HelperStrategy(1, use.language.volunteerByCrrentDelivery, x => {
+        x.newDelivery.courier = x.existingDelivery.courier;
+    });
+    static noHelper = new HelperStrategy(2, use.language.noVolunteer, x => {
+        x.newDelivery.courier = HelperId.empty(x.context);
+    });
+    static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
+        x.newDelivery.courier = x.helper;
+    });
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelperId, context: Context }) => void) {
+
+    }
+}
+
 @ServerController({
     allowed: Roles.admin,
     key: 'newDeliveryForDeliveries'
@@ -445,25 +466,5 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
 
 
         });
-    }
-}
-@Storable({
-    valueConverter: () => new ValueListValueConverter(HelperStrategy),
-    defaultValue: () => HelperStrategy.familyDefault,
-    caption: use.language.volunteer
-})
-class HelperStrategy {
-    static familyDefault = new HelperStrategy(0, use.language.volunteerByFamilyDefault, x => { });
-    static currentHelper = new HelperStrategy(1, use.language.volunteerByCrrentDelivery, x => {
-        x.newDelivery.courier = x.existingDelivery.courier;
-    });
-    static noHelper = new HelperStrategy(2, use.language.noVolunteer, x => {
-        x.newDelivery.courier = HelperId.empty(x.context);
-    });
-    static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
-        x.newDelivery.courier = x.helper;
-    });
-    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelperId, context: Context }) => void) {
-
     }
 }

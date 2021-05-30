@@ -143,6 +143,28 @@ export class NewDelivery extends ActionOnRows<Families> {
         });
     }
 }
+@Storable({
+    caption: use.language.action,
+    valueConverter: () => new ValueListValueConverter(UpdateGroupStrategy)
+})
+export class UpdateGroupStrategy {
+    static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
+        if (!col.selected(val))
+            col.addGroup(val);
+    });
+    static remove = new UpdateGroupStrategy(1, use.language.removeGroupAssignmentVerb, (col, val) => {
+        if (col.selected(val))
+            col.removeGroup(val);
+    });
+    static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val) => {
+        col.replace(val);
+    });
+
+    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsValue, val: string) => void) {
+
+    }
+}
+
 @ServerController({
     allowed: Roles.admin,
     key: 'updateGroup'
@@ -173,27 +195,6 @@ export class updateGroup extends ActionOnRows<Families> {
     }
 }
 
-@Storable({
-    caption: use.language.action,
-    valueConverter: () => new ValueListValueConverter(UpdateGroupStrategy)
-})
-export class UpdateGroupStrategy {
-    static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
-        if (!col.selected(val))
-            col.addGroup(val);
-    });
-    static remove = new UpdateGroupStrategy(1, use.language.removeGroupAssignmentVerb, (col, val) => {
-        if (col.selected(val))
-            col.removeGroup(val);
-    });
-    static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val) => {
-        col.replace(val);
-    });
-
-    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsValue, val: string) => void) {
-
-    }
-}
 
 
 

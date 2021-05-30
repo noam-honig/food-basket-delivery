@@ -51,7 +51,7 @@ export class AssignEscortComponent implements OnInit {
     }
 
     let h = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(driver.id));
-    h.escort = new HelperId(this.helper.id, this.context);
+    h.escort = this.helper.helperId();
     await h.save();
     if (await openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name }, x => x.yes)) {
       await SendSmsAction.SendSms(this.helper.id, false);

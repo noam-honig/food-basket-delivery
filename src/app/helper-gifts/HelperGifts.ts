@@ -1,9 +1,9 @@
-import {  Column, Context,  Entity,  IdEntity,  ServerFunction } from "@remult/core";
+import { Column, Context, Entity, IdEntity, ServerFunction } from "@remult/core";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { HelperId,  HelperIdUtils, Helpers } from "../helpers/helpers";
+import { HelperId, HelperIdUtils, Helpers } from "../helpers/helpers";
 import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
@@ -18,12 +18,12 @@ import { use } from "../translate";
     apiDataFilter: (self, context) => {
         if (context.isAllowed(Roles.admin))
             return undefined;
-        return self.assignedToHelper.isEqualTo(new HelperId(context.user.id, context));
+        return self.assignedToHelper.isEqualTo(HelperId.currentUser(context));
     },
     saving: (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = new HelperId(self.context.user.id, self.context);
+            self.userCreated = HelperId.currentUser(self.context);
         }
         else {
             if (self.$.giftURL.wasChanged()) {
@@ -36,7 +36,7 @@ import { use } from "../translate";
             }
             if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper.isNotEmpty()) {
                 self.dateGranted = new Date();
-                self.assignedByUser = new HelperId(self.context.user.id, self.context);
+                self.assignedByUser = HelperId.currentUser(self.context);
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
@@ -76,8 +76,8 @@ export class HelperGifts extends IdEntity {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
-        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(new HelperId('', context))) > 0) {
-            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(new HelperId('', context)));
+        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(HelperId.currentUser(context))) > 0) {
+            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(HelperId.currentUser(context)));
             if (g) {
                 g.assignedToHelper = new HelperId(helperId, context);
                 g.wasConsumed = false;

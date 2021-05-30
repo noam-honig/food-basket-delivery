@@ -270,7 +270,7 @@ export class AuthService {
 
 
     async signout() {
-        this.signout();
+        this.setToken(undefined,true);
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
