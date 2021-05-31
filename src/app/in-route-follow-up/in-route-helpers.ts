@@ -111,7 +111,7 @@ export class InRouteHelpers extends IdEntity {
 
                 columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
 
-                where: hist => hist.volunteer.isEqualTo(new HelperId(this.id, this.context)),
+                where: hist => hist.volunteer.isEqualTo(HelperId.fromJson(this.id, this.context)),
                 orderBy: fd => fd.createDate.descending(),
                 rowsInPage: 25
 
@@ -125,7 +125,7 @@ export class InRouteHelpers extends IdEntity {
 
             save: async (comment) => {
                 let hist = this.context.for(HelperCommunicationHistory).create();
-                hist.volunteer = new HelperId(this.id, this.context);
+                hist.volunteer = HelperId.fromJson(this.id, this.context);
                 hist.comment = comment;
                 await hist.save();
                 this._.reload();

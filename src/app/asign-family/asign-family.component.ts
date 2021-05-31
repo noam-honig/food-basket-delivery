@@ -124,7 +124,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
     async initHelper(helper: Helpers) {
-        if (helper.theHelperIAmEscorting&&helper.theHelperIAmEscorting.isNotEmpty()) {
+        if (helper.theHelperIAmEscorting&&helper.theHelperIAmEscorting) {
             let other = await helper.theHelperIAmEscorting.waitLoad();
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name + '?'
@@ -401,7 +401,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.donotWait(async () => {
             let f = await this.context.for(ActiveFamilyDeliveries).findId(familyId);
-            if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier.isEmpty()) {
+            if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier) {
                 this.performSpecificFamilyAssignment(f, 'assign based on map');
             }
         });
@@ -516,7 +516,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let fd = SqlFor(context.for(FamilyDeliveries));
         if (info.helperId) {
             let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(filterDistCenter(f.distributionCenter, infoDistCenter, context)).and(FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, new HelperId(info.helperId, context)), ' limit 30'));
+                filterRepeatFamilies(sql, f, fd, HelperId.fromJson(info.helperId, context)), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
@@ -600,7 +600,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
     static async RefreshRoute(helperIdIn: string, args: refreshRouteArgs, context?: Context) {
-        let helperId = new HelperId(helperIdIn, context);
+        let helperId = HelperId.fromJson(helperIdIn, context);
         if (!context.isAllowed(Roles.distCenterAdmin)) {
             if (!helperId.isCurrentUser()) {
                 throw "Not Allowed";
@@ -666,7 +666,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!info.helperId)
             throw 'invalid helper';
-        let helper = new HelperId(info.helperId, context);
+        let helper = HelperId.fromJson(info.helperId, context);
         let distCenter = new DistributionCenterId(info.distCenter, context);
         let basketType = info.basketType === undefined ? undefined : new BasketTypeId(info.basketType, context);
         await helper.waitLoad();
@@ -927,7 +927,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     addSpecial() {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-            f.courier.isEqualTo(HelperId.empty(this.context)).and(f.special.isEqualTo(YesNo.Yes))), 'special');
+            f.courier.isEqualTo(null).and(f.special.isEqualTo(YesNo.Yes))), 'special');
     }
     addFamily(filter: (f: filterOf<ActiveFamilyDeliveries>) => Filter, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
         openDialog(SelectFamilyComponent, x => x.args = {
@@ -950,7 +950,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         await this.performSpecificFamilyAssignment(f, analyticsName);
                     };
 
-                    if (f.courier.isNotEmpty()) {
+                    if (f.courier) {
                         if (selectStreet)
                             return;
                         let c = await f.courier.getTheName();
@@ -1015,7 +1015,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 if (added > args.quantity)
                     break;
             }
-            fd.courier = new HelperId(args.helper, context);
+            fd.courier = HelperId.fromJson(args.helper, context);
             await fd.save();
         }
     }

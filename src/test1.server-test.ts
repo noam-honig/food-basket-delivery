@@ -101,7 +101,7 @@ async function init() {
                 city: '',
                 distCenter: '',
                 group: '',
-                helperId: helperId.evilGetId(),
+                helperId: HelperId.toJson( helperId),
                 numOfBaskets: 1,
                 preferRepeatFamilies: false
             }, context, sql);

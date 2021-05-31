@@ -59,7 +59,8 @@ export class RemovedFromListExcelImportStrategy {
             l.value = 'http://' + l.value.trim();
         }
       }
-      self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone, self.context));
+      if (self.helpPhone)
+        self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone, self.context));
       if (self.forWho)
         setLangForSite(Sites.getValidSchemaFromContext(self.context), self.forWho);
       setSettingsForSite(Sites.getValidSchemaFromContext(self.context), self);

@@ -114,7 +114,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 2) {
 
-        let f =SqlFor(  context.for(Families));
+        let f = SqlFor(context.for(Families));
         dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -128,7 +128,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 4) {
         console.log("updating update date");
-        let f = SqlFor( context.for(Families));
+        let f = SqlFor(context.for(Families));
         dataSource.execute(sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -422,6 +422,16 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             set: () => [[f.area, sql.func('trim', f.area)]]
         }))
 
+    });
+    await version(31, async () => {
+        await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
+
+    });
+    await version(32, async () => {
+        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]],where:()=>[sql.eq(fd.courier,sql.str(""))] }));
+    });
+    await version(33, async () => {
+        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]],where:()=>[sql.build(fd.courier," is null")] }));
     });
 
 

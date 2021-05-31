@@ -14,7 +14,7 @@ import { PreviewFamilyComponent } from '../preview-family/preview-family.compone
 import { DialogService } from '../select-popup/dialog';
 
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
-import { Helpers } from '../helpers/helpers';
+import { HelperId, Helpers } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Sites } from '../sites/sites';
@@ -115,7 +115,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     await openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new InputControl<string>({}),
       ok: async (comment) => {
-        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier.evilGetId(), comment);
+        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(HelperId.toJson(this.args.familyDelivery.courier), comment);
         this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },

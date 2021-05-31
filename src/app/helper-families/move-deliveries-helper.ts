@@ -35,8 +35,8 @@ export class moveDeliveriesHelper {
         let t = new PromiseThrottle(10);
         let settings = getSettings(context);
         let i = 0;
-        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(new HelperId(from, context)).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
-            fd.courier = new HelperId(to, context);
+        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(HelperId.fromJson(from, context)).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
+            fd.courier = HelperId.fromJson(to, context);
             fd._disableMessageToUsers = true;
             await t.push(fd.save());
             i++;

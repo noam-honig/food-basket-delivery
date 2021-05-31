@@ -728,7 +728,7 @@ export class ImportFromExcelComponent implements OnInit {
                 h.laterSteps.push({
                     step: 3, what: async () => {
                         if (h.gotVolunteerPhone) {
-                            if (h.fd.courier.isNotEmpty()) {
+                            if (h.fd.courier) {
                                 let help = await h.fd.courier.waitLoad();
                                 if (!help.isNew()) {
                                     help.name = v;

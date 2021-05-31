@@ -73,7 +73,7 @@ export class FamilyInfoComponent implements OnInit {
   }
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
-    return this.partOfAssign && f.courier.isNotEmpty() && f.deliverStatus == DeliveryStatus.ReadyForDelivery;
+    return this.partOfAssign && f.courier && f.deliverStatus == DeliveryStatus.ReadyForDelivery;
   }
   showFamilyPickedUp(f: ActiveFamilyDeliveries) {
     return f.deliverStatus == DeliveryStatus.SelfPickup || f.deliverStatus == DeliveryStatus.ReadyForDelivery && !f.courier && this.selfPickupScreen;

@@ -153,7 +153,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
             title: getLang(context).updateVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer) {
-                    fd.courier = HelperId.empty(context);
+                    fd.courier = null;
                 }
                 else {
                     fd.courier = this.courier;
@@ -171,7 +171,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
             },
 
         });
-        this.courier = HelperId.empty(this.context);
+        this.courier = null;
     }
 }
 @ServerController({
@@ -262,7 +262,7 @@ export class ArchiveHelper {
         return result;
     }
     async forEach(f: ActiveFamilyDeliveries) {
-        if (f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier.isNotEmpty() && this.markOnTheWayAsDelivered)
+        if (f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier && this.markOnTheWayAsDelivered)
             f.deliverStatus = DeliveryStatus.Success;
         if (f.deliverStatus == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)
             f.deliverStatus = DeliveryStatus.SuccessPickedUp;
@@ -354,7 +354,7 @@ class HelperStrategy {
         x.newDelivery.courier = x.existingDelivery.courier;
     });
     static noHelper = new HelperStrategy(2, use.language.noVolunteer, x => {
-        x.newDelivery.courier = HelperId.empty(x.context);
+        x.newDelivery.courier = null;
     });
     static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
         x.newDelivery.courier = x.helper;

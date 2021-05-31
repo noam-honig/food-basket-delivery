@@ -527,7 +527,7 @@ export class FamilyDeliveries extends IdEntity {
                 add(filterCenterAllowedForUser(self.distributionCenter, context));
             else {
                 if (user.theHelperIAmEscortingId)
-                    add(self.courier.isEqualTo(new HelperId(user.theHelperIAmEscortingId, context)).and(self.visibleToCourier.isEqualTo(true)));
+                    add(self.courier.isEqualTo(HelperId.fromJson(user.theHelperIAmEscortingId, context)).and(self.visibleToCourier.isEqualTo(true)));
                 else
                     add(self.courier.isEqualTo(HelperId.currentUser(context)).and(self.visibleToCourier.isEqualTo(true)));
             }
@@ -553,9 +553,9 @@ export class FamilyDeliveries extends IdEntity {
         }
         return r;
     }
-    static readyAndSelfPickup(self: filterOf<FamilyDeliveries>, context: Context) {
+    static readyAndSelfPickup(self: filterOf<FamilyDeliveries>) {
         let where = self.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]).and(
-            self.courier.isEqualTo(HelperId.empty(context)));
+            self.courier.isEqualTo(null));
         return where;
 
     }
@@ -604,7 +604,7 @@ export class FamilyDeliveries extends IdEntity {
 
     static readyFilter(self: filterOf<FamilyDeliveries>, context: Context, city?: string, group?: string, area?: string, basket?: string) {
         let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-            self.courier.isEqualTo(HelperId.empty(context))).and(filterCenterAllowedForUser(self.distributionCenter, context));
+            self.courier.isEqualTo(null)).and(filterCenterAllowedForUser(self.distributionCenter, context));
         if (group)
             where = where.and(self.groups.contains(group));
         if (city) {
@@ -618,7 +618,7 @@ export class FamilyDeliveries extends IdEntity {
         return where;
     }
     static onTheWayFilter(self: filterOf<FamilyDeliveries>, context: Context) {
-        return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(HelperId.empty(context)));
+        return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null));
     }
 
 

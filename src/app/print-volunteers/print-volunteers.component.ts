@@ -3,6 +3,7 @@ import { BusyService } from '@remult/angular';
 import { Context, ServerFunction } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { HelperId } from '../helpers/helpers';
 import { PromiseThrottle } from '../shared/utils';
 
 @Component({
@@ -27,10 +28,10 @@ export class PrintVolunteersComponent implements OnInit {
     let total = 0;
     let volunteers: volunteer[] = [];
     for await (const d of context.for(ActiveFamilyDeliveries).iterate()) {
-      let v = volunteers.find(v => v.id == d.courier.evilGetId());
+      let v = volunteers.find(v => v.id == HelperId.toJson(d.courier));
       if (!v) {
         v = {
-          id: d.courier.evilGetId(),
+          id: HelperId.toJson(d.courier),
           name: await d.courier.getTheName(),
           quantity: 0
         }

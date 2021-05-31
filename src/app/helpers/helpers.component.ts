@@ -330,9 +330,9 @@ ${url}
   @ServerFunction({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
     for await (const h of context.for(Helpers).iterate()) {
-      h.escort = HelperId.empty(context);
+      h.escort = null;
       h.needEscort = false;
-      h.theHelperIAmEscorting = HelperId.empty(context);;
+      h.theHelperIAmEscorting = null;
       await h.save();
     }
   }

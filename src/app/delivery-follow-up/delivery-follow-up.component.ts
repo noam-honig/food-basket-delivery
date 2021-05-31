@@ -187,7 +187,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.sumWithAlias(1, 'problem', DeliveryStatus.isProblem(fd.deliverStatus))
 
       ],
-      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(HelperId.empty(context)).and(filterDistCenter(fd.distributionCenter, new DistributionCenterId(distCenter, context), context))],
+      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(filterDistCenter(fd.distributionCenter, new DistributionCenterId(distCenter, context), context))],
 
     }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {

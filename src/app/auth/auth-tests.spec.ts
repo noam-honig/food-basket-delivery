@@ -3,7 +3,7 @@ import { ServerContext, InMemoryDataProvider, myServerAction, actionInfo } from 
 
 import { Helpers } from '../helpers/helpers';
 import { Roles } from './roles';
-import { AuthService } from './auth-service';
+import { AuthService, TokenService } from './auth-service';
 import { Phone } from "../model-shared/Phone";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -208,8 +208,7 @@ describe('users and security', () => {
 function getAuthService(context: ServerContext) {
     var s = new ApplicationSettings(context);
     s.currentUserIsValidForAppLoadTest = true;
-    let jwt = new AuthService(undefined, context, undefined,
-        s, undefined);
+    let jwt = new TokenService( context);
     return jwt;
 }
 

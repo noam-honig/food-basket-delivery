@@ -180,7 +180,7 @@ export class MltFamiliesComponent implements OnInit {
     for (const id of deliveryIds) {
 
       let fd = await context.for(ActiveFamilyDeliveries).findId(id);
-      if (fd.courier.isNotEmpty() && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
+      if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
         fd.courier = HelperId.currentUser(context);
         await fd.save();
       }

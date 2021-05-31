@@ -380,7 +380,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
             title: getLang(context).updateDefaultVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer) {
-                    fd.fixedCourier = HelperId.empty(context);
+                    fd.fixedCourier = null;
                 }
                 else {
                     fd.fixedCourier = this.courier;
@@ -388,7 +388,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
             },
 
         });
-        this.courier = HelperId.empty(context);
+        this.courier = null;
     }
 }
 

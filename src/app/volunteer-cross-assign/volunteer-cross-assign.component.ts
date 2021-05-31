@@ -56,7 +56,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
         where: fd => FamilyDeliveries.readyFilter(fd, this.context).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = new HelperId(h.id, this.context);
+        fd.courier = HelperId.fromJson(h.id, this.context);
         await fd.save();
       }
     });
@@ -69,9 +69,9 @@ export class VolunteerCrossAssignComponent implements OnInit {
   async cancelAssignHelper(f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(new HelperId(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => fd.courier.isEqualTo(HelperId.fromJson(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = HelperId.empty(this.context);
+        fd.courier = null;
         await fd.save();
       }
     });

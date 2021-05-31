@@ -73,7 +73,7 @@ export class FamilyDeliveryStats {
         sql.addEntity(f, "FamilyDeliveries")
         let baskets = await db.execute(sql.build(sql.query({
             select: () => [f.basketType,
-            sql.build('sum (', sql.case([{ when: [FamilyDeliveries.readyAndSelfPickup(f, context)], then: f.quantity }], 0), ') a'),
+            sql.build('sum (', sql.case([{ when: [FamilyDeliveries.readyAndSelfPickup(f)], then: f.quantity }], 0), ') a'),
             sql.build('sum (', f.quantity, ') b'),
             sql.build('sum (', sql.case([{ when: [DeliveryStatus.isSuccess(f.deliverStatus)], then: f.quantity }], 0), ') c'),
             sql.build('sum (', sql.case([{ when: [f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup)], then: f.quantity }], 0), ') d'),

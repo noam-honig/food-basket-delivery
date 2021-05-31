@@ -2,7 +2,7 @@ import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
-import { Helpers, HelperUserInfo } from "../helpers/helpers";
+import { HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { ServerFunction, Context, UserInfo } from '@remult/core';
@@ -379,7 +379,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         roles: [Sites.getOrgRole(context)],
         name: h.name,
         distributionCenter: h.distributionCenter.evilGetId(),
-        theHelperIAmEscortingId: h.theHelperIAmEscorting.evilGetId(),
+        theHelperIAmEscortingId:HelperId.toJson( h.theHelperIAmEscorting),
         escortedHelperName: h.theHelperIAmEscorting ? (await (h.theHelperIAmEscorting.waitLoad())).name : ''
     };
     if (h.admin) {

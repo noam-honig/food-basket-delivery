@@ -61,7 +61,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
         where: fd => FamilyDeliveries.readyFilter(fd, this.context).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = new HelperId(h.id, this.context);
+        fd.courier = HelperId.fromJson(h.id, this.context);
         await fd.save();
       }
     });
@@ -73,9 +73,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
   async cancelAssignHelper(f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(new HelperId(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => fd.courier.isEqualTo(HelperId.fromJson(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = HelperId.empty(this.context);
+        fd.courier = null;
         await fd.save();
       }
     });
@@ -207,7 +207,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (let r of (await db.execute(sql.query({
         select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
-        where: () => [DeliveryStatus.isProblem(fd.deliverStatus).and(fd.courier.isDifferentFrom(HelperId.empty(context)))]
+        where: () => [DeliveryStatus.isProblem(fd.deliverStatus).and(fd.courier.isDifferentFrom(null))]
 
       }))).rows) {
         let x = result.helpers[getValueFromResult(r, fd.courier)];

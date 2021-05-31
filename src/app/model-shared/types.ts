@@ -402,6 +402,8 @@ class myDummySQLCommand implements SqlCommand {
     throw new Error("Method not implemented.");
   }
   addParameterAndReturnSqlToken(val: any): string {
+    if (val===null)
+    return "null";
     if (isDate(val))
       val = val.toISOString();
     if (typeof (val) == "string") {

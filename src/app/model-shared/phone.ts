@@ -16,7 +16,8 @@ import { getLang } from "../sites/sites";
   forceEqualFilter: false
 })
 export class Phone {
-  canSendWhatsapp() {
+ 
+  canSendWhatsapp() {//is mobile number
     return this.thePhone.startsWith('05');
   }
   constructor(public thePhone: string) {
@@ -26,7 +27,10 @@ export class Phone {
     return Phone.formatPhone(this.thePhone);
   }
 
-  static converter = new StoreAsStringValueConverter<Phone>(x => x.thePhone, x => new Phone(x));
+  static converter = new StoreAsStringValueConverter<Phone>(x => Phone.toJson(x), x => x ? new Phone(x) : null);
+  static toJson(x: Phone): string {
+    return x ? x.thePhone : '';
+  }
   static fixPhoneInput(s: string, context: Context) {
     if (!s)
       return s;

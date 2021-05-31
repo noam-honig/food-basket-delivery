@@ -70,7 +70,7 @@ export class AssignEscortComponent implements OnInit {
     this.clearHelperInfo();
   }
   async clearEscort() {
-    this.alreadyEscortingDriver.escort = HelperId.empty(this.context);
+    this.alreadyEscortingDriver.escort = null;
     await this.alreadyEscortingDriver.save();
     let h = await this.context.for(HelpersAndStats).findFirst(h => h.id.isEqualTo(this.helper.id));
     this.clearHelperInfo();
@@ -114,14 +114,14 @@ export class AssignEscortComponent implements OnInit {
         return r;
       }
     });
-    if (this.helper.theHelperIAmEscorting.isNotEmpty()) {
+    if (this.helper.theHelperIAmEscorting) {
       this.alreadyEscortingDriver = await this.helper.theHelperIAmEscorting.waitLoad();
     } else {
       this.optionalDrivers = await this.context.for(HelpersAndStats).find({
         where: h =>
           h.needEscort.isEqualTo(true)
-            .and(h.escort.isEqualTo(HelperId.empty(this.context))
-              .and(h.theHelperIAmEscorting.isEqualTo(HelperId.empty(this.context))))
+            .and(h.escort.isEqualTo(null)
+              .and(h.theHelperIAmEscorting.isEqualTo(null)))
             .and(h.id.isDifferentFrom(this.helper.id)),
         orderBy: h => [h.deliveriesInProgress.descending(), h.name]
       });

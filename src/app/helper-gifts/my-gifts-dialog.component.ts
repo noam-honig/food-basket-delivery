@@ -29,7 +29,7 @@ export class MyGiftsDialogComponent implements OnInit {
     this.giftsUsed = 0;
     this.giftsAvailable = 0;
     this.theGifts =
-      await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(new HelperId(this.args.helperId, this.context)) }).then(
+      await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(HelperId.fromJson(this.args.helperId, this.context)) }).then(
         gifts => {
           return gifts.map(x => {
             if (x.wasConsumed)

@@ -85,7 +85,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
   basketStats: statsOnTabBasket = {
     name: getLang(this.context).remainingByBaskets,
-    rule: f => FamilyDeliveries.readyAndSelfPickup(f, this.context),
+    rule: f => FamilyDeliveries.readyAndSelfPickup(f),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -725,7 +725,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static async getDeliveriesByPhone(phoneNumIn: string, context?: Context, db?: SqlDatabase) {
     let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder();
-    
+
     let fd = SqlFor(context.for(FamilyDeliveries));
     let result: string[] = [];
     let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
@@ -808,7 +808,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
               await Families.addDelivery(otherFailedDelivery.family, {
                 basketType: otherFailedDelivery.basketType.evilGetId(),
                 quantity: otherFailedDelivery.quantity,
-                courier: newDelivery.courier.evilGetId(),
+                courier: HelperId.toJson(newDelivery.courier),
                 distCenter: newDelivery.distributionCenter.evilGetId(),
                 selfPickup: false,
                 comment: otherFailedDelivery.deliveryComments
@@ -893,7 +893,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
 
       },
-      visible: d => d.courier.isNotEmpty() && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => d.courier && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).volunteerInfo,
@@ -906,7 +906,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
 
       },
-      visible: d => d.courier.isNotEmpty() && args.context.isAllowed(Roles.distCenterAdmin)
+      visible: d => d.courier && args.context.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang(args.context).cancelAsignment,
@@ -915,12 +915,12 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.context).cancelAssignmentFor + d.name)) {
           {
-            d.courier = HelperId.empty(args.context);
+            d.courier = null;
             await d.save();
           }
         }
       },
-      visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier.isNotEmpty()
+      visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier
     },
     {
       name: getLang(args.context).familyDeliveries,
@@ -944,7 +944,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
           }
         }
       },
-      visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier.isEmpty()
+      visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier
     },
     {
       name: getLang(args.context).unFreezeDelivery,

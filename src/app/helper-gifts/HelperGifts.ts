@@ -34,7 +34,7 @@ import { use } from "../translate";
                 self.$.giftURL.error = 'אין לשייך מתנה שכבר מומשה למתנדב אחר';
                 return;
             }
-            if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper.isNotEmpty()) {
+            if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
                 self.assignedByUser = HelperId.currentUser(self.context);
                 self.wasConsumed = false;
@@ -79,7 +79,7 @@ export class HelperGifts extends IdEntity {
         if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(HelperId.currentUser(context))) > 0) {
             let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(HelperId.currentUser(context)));
             if (g) {
-                g.assignedToHelper = new HelperId(helperId, context);
+                g.assignedToHelper = HelperId.fromJson(helperId, context);
                 g.wasConsumed = false;
                 g.wasClicked = false;
                 await g.save();
@@ -102,14 +102,14 @@ export class HelperGifts extends IdEntity {
     }
     @ServerFunction({ allowed: true })
     static async getMyPendingGiftsCount(helperId: string, context?: Context) {
-        let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(new HelperId(helperId, context)).and(hg.wasConsumed.isEqualTo(false)) });
+        let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(HelperId.fromJson(helperId, context)).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @ServerFunction({ allowed: true })
     static async getMyFirstGiftURL(helperId: string, context?: Context) {
         let gifts = await context.for(HelperGifts).find({
-            where: hg => hg.assignedToHelper.isEqualTo(new HelperId(helperId, context)).and(hg.wasConsumed.isEqualTo(false)),
+            where: hg => hg.assignedToHelper.isEqualTo(HelperId.fromJson(helperId, context)).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
         });
         if (gifts == null)
@@ -129,7 +129,7 @@ export async function showUsersGifts(helperId: string, context: Context, setting
 }
 
 export async function showHelperGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
-    let hid = new HelperId(helperId, context);
+    let hid = HelperId.fromJson(helperId, context);
     await hid.waitLoad();
     let helperName = hid.item.name;
     openDialog(GridDialogComponent, x => x.args = {

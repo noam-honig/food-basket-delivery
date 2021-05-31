@@ -46,7 +46,7 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
     }
 }
 @Storable<HelperId>({
-    valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => x.id, x => new HelperId(x, c)),
+    valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => HelperId.toJson(x), x => HelperId.fromJson(x, c)),
     displayValue: (e, x) => x.getValue(),
     caption: use.language.volunteer
 })
@@ -55,23 +55,22 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
     hideDataOnInput: true,
     width: '200',
     click: async (e, col) => HelperIdUtils.showSelectDialog(col, {}, undefined)
-})
+})//
 export class HelperId extends LookupValue<Helpers>  {
-    isEmpty() {
-        return this.id == '';
-    }
-    static empty(context: Context): HelperId {
-        return new HelperId('', context);
-    }
-    evilGetId(): string {
-        return this.id;
-    }
+
+   
+   
     static currentUser(context: Context): HelperId {
         return new HelperId(context.user.id, context);
     }
-    isNotEmpty() {
-        return this.id != ''&&this.id!=undefined;
+
+    static toJson(x: HelperId) {
+        return x ? x.id : '';
     }
+    static fromJson(x: string, context: Context) {
+        return x ? new HelperId(x, context) : null;
+    }
+
     isCurrentUser(): boolean {
         return this.id == this.context.user.id;
     }
@@ -232,7 +231,7 @@ export abstract class HelpersBase extends IdEntity {
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
         if (self.escort == self.helperId()) {
-            self.escort = HelperId.empty(self.context);
+            self.escort = null;
         }
 
         if (self.context.onServer) {
@@ -300,14 +299,14 @@ export abstract class HelpersBase extends IdEntity {
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
             if (!self.needEscort)
-                self.escort = HelperId.empty(self.context);
+                self.escort = null;
             if (self.$.escort.wasChanged()) {
-                if (self.$.escort.originalValue&&self.$.escort.originalValue.isNotEmpty()) {
+                if (self.$.escort.originalValue && self.$.escort.originalValue) {
                     let h = await self.$.escort.originalValue.waitLoad();
                     h.theHelperIAmEscorting = HelperId.currentUser(self.context);
                     await h.save();
                 }
-                if (self.escort&& self.escort.isNotEmpty()) {
+                if (self.escort) {
                     let h = await self.escort.waitLoad();
                     h.theHelperIAmEscorting = self.helperId();
                     await h.save();
@@ -514,7 +513,7 @@ export class Helpers extends HelpersBase {
                     return r;
                 },
 
-                where: fd => fd.courier.isEqualTo(new HelperId(this.id, this.context)),
+                where: fd => fd.courier.isEqualTo(this.helperId()),
                 orderBy: fd => fd.deliveryStatusDate.descending(),
                 rowsInPage: 25
 
@@ -583,13 +582,13 @@ export class Helpers extends HelpersBase {
         });
 
         let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
-            where: f => f.fixedCourier.isEqualTo(new HelperId(this.id, this.context))
+            where: f => f.fixedCourier.isEqualTo(this.helperId())
                 .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
         });
         if (otherFamilies.length > 0) {
             if (await dialog.YesNoPromise(use.language.thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + use.language.familiesDotCancelTheseAssignments)) {
                 for (const f of otherFamilies) {
-                    f.fixedCourier = HelperId.empty(this.context);
+                    f.fixedCourier = null;
                     await f.save();
                     i++;
                 }
@@ -779,7 +778,7 @@ export class HelperIdUtils {
                 includeFrozen: args.includeFrozen,
                 searchClosestDefaultFamily: args.searchClosestDefaultFamily
                 , onSelect: s => {
-                    col.value = s ? new HelperId(s.id, x.context) : HelperId.empty(x.context);
+                    col.value = s ? s.helperId() : null;
                     if (onSelect)
                         onSelect();
                 }

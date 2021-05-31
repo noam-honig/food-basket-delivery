@@ -101,7 +101,7 @@ export class SelectHelperComponent implements OnInit {
 
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom(HelperId.empty(context)).and(DeliveryStatus.isAResultStatus(afd.deliverStatus))],
+        where: () => [afd.courier.isDifferentFrom(null).and(DeliveryStatus.isAResultStatus(afd.deliverStatus))],
         select: () => [
           sql.columnWithAlias("distinct " + sql.getItemSql(afd.family), 'fam'),
           sql.columnWithAlias(afd.courier, "courier"),
@@ -131,7 +131,7 @@ export class SelectHelperComponent implements OnInit {
       for (const d of (await db.execute(sql1.query({
         from: fd,
         where: () => [
-          fd.courier.isDifferentFrom(HelperId.empty(context))
+          fd.courier.isDifferentFrom(null)
             .and(DeliveryStatus.isAResultStatus(fd.deliverStatus))
             .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
         ],
@@ -154,7 +154,7 @@ export class SelectHelperComponent implements OnInit {
       let afd = SqlFor(context.for(Families));
       for (const d of (await db.execute(sql.query({
         from: afd,
-        where: () => [afd.fixedCourier.isDifferentFrom( HelperId.empty(context)).and(afd.status.isEqualTo(FamilyStatus.Active))],
+        where: () => [afd.fixedCourier.isDifferentFrom( null).and(afd.status.isEqualTo(FamilyStatus.Active))],
         select: () => [
           sql.columnWithAlias(afd.fixedCourier, "courier"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
@@ -177,7 +177,7 @@ export class SelectHelperComponent implements OnInit {
         where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
       })) {
         if (fd.courier) {
-          let h = helpers.get(fd.courier.evilGetId());
+          let h = helpers.get(HelperId.toJson(fd.courier));
           if (h) {
             h.hadProblem = true;
           }

@@ -67,7 +67,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
 
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
-      if (f.courier.isNotEmpty()) {
+      if (f.courier) {
         return 'משוייך למתנדב';
       } else {
         return '';

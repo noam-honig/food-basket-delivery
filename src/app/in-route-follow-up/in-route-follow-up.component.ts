@@ -102,7 +102,7 @@ export class InRouteFollowUpComponent implements OnInit {
               return r;
             },
 
-            where: fd => fd.courier.isEqualTo(new HelperId(h.id, this.context)).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            where: fd => fd.courier.isEqualTo(HelperId.fromJson(h.id, this.context)).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
             orderBy: fd => fd.deliveryStatusDate.descending(),
             rowsInPage: 25
 
