@@ -41,7 +41,7 @@ export class AuthService {
         }
     }
     failedSmsSignInPhone: string = undefined;
-    private setToken(token: string, remember: boolean) {
+    setToken(token: string, remember: boolean) {
         let org = Sites.getOrganizationFromContext(this.context);
         if (token) {
             this.context.setUser(<UserInfo>new JwtHelperService().decodeToken(token));
@@ -107,10 +107,11 @@ export class AuthService {
         if (!settings.currentUserIsValidForAppLoadTest) {
             this.signout();
         }
-        context.userChange.observe(() => {
-            dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
-            dialog.refreshFamiliesAndDistributionCenters();
-        });
+        if (dialog)
+            context.userChange.observe(() => {
+                dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
+                dialog.refreshFamiliesAndDistributionCenters();
+            });
 
         window.onmousemove = () => this.refreshUserState();
         window.onkeydown = () => this.refreshUserState();
@@ -270,7 +271,7 @@ export class AuthService {
 
 
     async signout() {
-        this.setToken(undefined,true);
+        this.setToken(undefined, true);
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));

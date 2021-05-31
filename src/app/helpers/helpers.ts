@@ -70,7 +70,7 @@ export class HelperId extends LookupValue<Helpers>  {
         return new HelperId(context.user.id, context);
     }
     isNotEmpty() {
-        return this.id != '';
+        return this.id != ''&&this.id!=undefined;
     }
     isCurrentUser(): boolean {
         return this.id == this.context.user.id;
@@ -300,14 +300,14 @@ export abstract class HelpersBase extends IdEntity {
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
             if (!self.needEscort)
-                self.escort = HelperId.currentUser(self.context);
+                self.escort = HelperId.empty(self.context);
             if (self.$.escort.wasChanged()) {
-                if (self.$.escort.originalValue) {
-                    let h = await self.context.for(Helpers).lookupIdAsync(self.$.escort.originalValue);
+                if (self.$.escort.originalValue&&self.$.escort.originalValue.isNotEmpty()) {
+                    let h = await self.$.escort.originalValue.waitLoad();
                     h.theHelperIAmEscorting = HelperId.currentUser(self.context);
                     await h.save();
                 }
-                if (self.escort) {
+                if (self.escort&& self.escort.isNotEmpty()) {
                     let h = await self.escort.waitLoad();
                     h.theHelperIAmEscorting = self.helperId();
                     await h.save();

@@ -9,12 +9,22 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Phone } from '../model-shared/Phone';
 
+function phoneDigits(val: Phone | string) {
+  let s = '';
+  if (val instanceof Phone) {
+    s = val.thePhone;
+  }
+  else s = val;
+  return s.replace(/\D/g, '');
+}
 @Component({
   selector: 'app-merge-families',
   templateUrl: './merge-families.component.html',
   styleUrls: ['./merge-families.component.scss']
 })
+
 export class MergeFamiliesComponent implements OnInit {
 
   constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) { }
@@ -29,14 +39,15 @@ export class MergeFamiliesComponent implements OnInit {
   }
   updateSimilarColumns(getCols: (f: EntityColumns<Families>) => EntityColumn<any>[][]) {
     let eCols = getCols(this.family.$);
+
     for (const f of this.families) {
       for (const c of getCols(f.$)) {
         if (c[0].value) {
-          let digits = c[0].value.replace(/\D/g, '');
+          let digits = phoneDigits( c[0].value);
           let found = false;
           for (const ec of eCols) {
             if (ec[0].value) {
-              let ecDigits = ec[0].value.replace(/\D/g, '');
+              let ecDigits = phoneDigits(ec[0].value);
 
               if (ecDigits == digits) {
                 found = true;
@@ -85,32 +96,32 @@ export class MergeFamiliesComponent implements OnInit {
 
     for (const c of this.family.$) {
       //if (c.defs.allowApiUpdate === undefined || this.context.isAllowed(c.defs.allowApiUpdate)) {
-        switch (c) {
-          case this.family.$.addressApiResult:
-          case this.family.$.addressLatitude:
-          case this.family.$.addressLongitude:
-          case this.family.$.addressByGoogle:
-          case this.family.$.addressOk:
-          case this.family.$.drivingLongitude:
-          case this.family.$.drivingLatitude:
-          case this.family.$.previousDeliveryComment:
-          case this.family.$.previousDeliveryDate:
-          case this.family.$.previousDeliveryStatus:
-          case this.family.$.nextBirthday:
-          case this.family.$.city:
-          case this.family.$.numOfActiveReadyDeliveries:
-            continue;
+      switch (c) {
+        case this.family.$.addressApiResult:
+        case this.family.$.addressLatitude:
+        case this.family.$.addressLongitude:
+        case this.family.$.addressByGoogle:
+        case this.family.$.addressOk:
+        case this.family.$.drivingLongitude:
+        case this.family.$.drivingLatitude:
+        case this.family.$.previousDeliveryComment:
+        case this.family.$.previousDeliveryDate:
+        case this.family.$.previousDeliveryStatus:
+        case this.family.$.nextBirthday:
+        case this.family.$.city:
+        case this.family.$.numOfActiveReadyDeliveries:
+          continue;
 
+      }
+      for (const f of this.families) {
+        if (f.$.find(c.defs).value != c.value) {
+          if (!c.value && updateValue)
+            c.value = f.$.find(c.defs).value;
+          this.columnsToCompare.push(c.defs);
+          break;
         }
-        for (const f of this.families) {
-          if (f.$.find(c.defs).value != c.value) {
-            if (!c.value && updateValue)
-              c.value = f.$.find(c.defs).value;
-            this.columnsToCompare.push(c.defs);
-            break;
-          }
-        }
-     // }
+      }
+      // }
     }
     this.gs = new GridSettings(this.context.for(Families), { allowUpdate: true, columnSettings: () => this.columnsToCompare });
     for (const c of this.gs.columns.items) {

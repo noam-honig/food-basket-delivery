@@ -269,31 +269,31 @@ describe('AppComponent', () => {
     expect(f.phone1Description).toBe(undefined);
     expect(f.phone2.thePhone).toBe('050-7467774');
     expect(f.phone2Description).toBe('(לריסה)');
-    expect(f.phone3.thePhone).toBe(undefined);
+    expect(f.phone3).toBe(undefined);
     expect(f.phone3Description).toBe(undefined);
   });
   it("updatePhone2", () => {
     let f = context.for(Families).create();
-    f.phone1.thePhone = '0507330590';
+    f.phone1 = new Phone('0507330590');
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('0507330590');
     expect(f.phone2.thePhone).toBe('04-8767772');
     expect(f.phone2Description).toBe(undefined);
     expect(f.phone3.thePhone).toBe('050-7467774');
     expect(f.phone3Description).toBe('(לריסה)');
-    expect(f.phone4.thePhone).toBe(undefined);
+    expect(f.phone4).toBe(undefined);
     expect(f.phone4Description).toBe(undefined);
   });
   it("updatePhone3", () => {
     let f = context.for(Families).create();
-    f.phone2.thePhone = '0507330590';
+    f.phone2 = new Phone('0507330590');
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('04-8767772');
     expect(f.phone1Description).toBe(undefined);
     expect(f.phone2.thePhone).toBe('0507330590');
     expect(f.phone3.thePhone).toBe('050-7467774');
     expect(f.phone3Description).toBe('(לריסה)');
-    expect(f.phone4.thePhone).toBe(undefined);
+    expect(f.phone4).toBe(undefined);
     expect(f.phone4Description).toBe(undefined);
   });
   it("properMerge4", () => {
@@ -301,11 +301,11 @@ describe('AppComponent', () => {
     let f2 = context.for(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
-    c.family.phone1.thePhone = '0507330590';
+    c.family.phone1 = new Phone('0507330590');
     c.families = [f, f2];
-    f.phone1.thePhone = '0507330590';
-    f2.phone1.thePhone = '0523307014';
-    f2.phone2.thePhone = '3';
+    f.phone1 = new Phone('0507330590');
+    f2.phone1 = new Phone('0523307014');
+    f2.phone2 = new Phone('3');
     c.rebuildCompare(true);
     expect(c.family.phone1.thePhone).toBe('0507330590');
     expect(c.family.phone2.thePhone).toBe('0523307014');
@@ -356,9 +356,9 @@ describe('AppComponent', () => {
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
     c.family = context.for(Families).create();
     c.families = [f, f2];
-    f.phone1.thePhone = '1';
+    f.phone1 = new Phone('1');
     f.phone1Description = 'd1';
-    f2.phone1.thePhone = '2';
+    f2.phone1 = new Phone('2');
     f2.phone1Description = 'd2';
     c.rebuildCompare(true);
     expect(c.family.phone1.thePhone).toBe('1');

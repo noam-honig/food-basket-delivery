@@ -1745,7 +1745,7 @@ export function parseAndUpdatePhone(input: string, f: Families, defaultPrefix: s
     let r = processPhone(input);
     let i = 1;
     for (const p of r) {
-        while (i <= 4 && f.$['phone' + i].value.thePhone)
+        while (i <= 4 && f.$['phone' + i].value && f.$['phone' + i].value.thePhone)
             i++;
         if (i == 4)
             return;

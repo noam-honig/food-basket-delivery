@@ -14,7 +14,7 @@ import { Helpers } from '../helpers/helpers';
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
-import {  SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
@@ -22,6 +22,9 @@ import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 
 declare const lang = '';
+export const initSettings = {
+    disableSchemaInit: false
+}
 
 export async function serverInit() {
     try {
@@ -55,7 +58,7 @@ export async function serverInit() {
 
 
         });
-       
+
         const accountSID = process.env.twilio_accountSID;
         const authToken = process.env.twilio_authToken;
         FamilyInfoComponent.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
@@ -103,7 +106,9 @@ export async function serverInit() {
         Sites.initOnServer();
         if (Sites.multipleSites) {
 
-            await verifySchemaExistance(pool, Sites.guestSchema);
+            if (!initSettings.disableSchemaInit) {
+                await verifySchemaExistance(pool, Sites.guestSchema);
+            }
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
             let context = new ServerContext();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
@@ -111,12 +116,14 @@ export async function serverInit() {
             context.setDataProvider(dp)
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
-            for (const entity of <ClassType<any>[]>[
-                ApplicationSettings,
-                ApplicationImages,
-                Helpers, SitesEntity]) {
-                await builder.createIfNotExist(context.for(entity).defs);
-                await builder.verifyAllColumns(context.for(entity).defs);
+            if (!initSettings.disableSchemaInit) {
+                for (const entity of <ClassType<any>[]>[
+                    ApplicationSettings,
+                    ApplicationImages,
+                    Helpers, SitesEntity]) {
+                    await builder.createIfNotExist(context.for(entity).defs);
+                    await builder.verifyAllColumns(context.for(entity).defs);
+                }
             }
             await SitesEntity.completeInit(context);
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
@@ -169,7 +176,7 @@ export async function serverInit() {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let context = new ServerContext();
-                    let h =SqlFor( context.for(Helpers));
+                    let h = SqlFor(context.for(Helpers));
                     var sql = new SqlBuilder();
                     let r = (await db.execute(sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];
@@ -215,8 +222,10 @@ async function InitSpecificSchema(pool: Pool, s: any) {
     await verifySchemaExistance(pool, s);
     let schemaPool = new PostgresSchemaWrapper(pool, s);
     let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
-    await new PostgresSchemaBuilder(db, s).verifyStructureOfAllEntities();
-    await initSchema(schemaPool, s);
+    if (!initSettings.disableSchemaInit) {
+        await new PostgresSchemaBuilder(db, s).verifyStructureOfAllEntities();
+        await initSchema(schemaPool, s);
+    }
     return db;
 }
 

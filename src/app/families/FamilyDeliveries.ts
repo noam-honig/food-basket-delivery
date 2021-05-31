@@ -81,7 +81,7 @@ export class MessageStatus {
 
             logChanged(self.context, self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
                 if (!self._disableMessageToUsers) {
-                    self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, await self.courier.getTheName(), self.context), self.context);
+                    self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.getTheName() : '', self.context), self.context);
                 }
             });
             logChanged(self.context, self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
@@ -89,7 +89,7 @@ export class MessageStatus {
         }
         if (self.context.onServer &&
             !self.deliverStatus.IsAResultStatus()
-            && self.$.deliverStatus.originalValue.IsAResultStatus()) {
+            && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
             let f = await self.context.for(Families).findId(self.family);
             if (f)
                 f.updateDelivery(self);
@@ -164,7 +164,10 @@ export class FamilyDeliveries extends IdEntity {
     @Column({
         allowApiUpdate: false,
         caption: use.language.familyName,
-        sqlExpression: (entity, context) => context.isAllowed(Roles.admin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')"
+        sqlExpression: (entity, context) => {
+            let r = context.isAllowed(Roles.admin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+            return r;
+        }
     })
     name: string;
 
@@ -192,7 +195,7 @@ export class FamilyDeliveries extends IdEntity {
         return this.distributionCenter.item.isFrozen
     }
     @Column()
-    deliverStatus: DeliveryStatus;
+    deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
     @Column({
         caption: use.language.volunteer,
         allowApiUpdate: Roles.distCenterAdmin

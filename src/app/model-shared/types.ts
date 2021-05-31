@@ -65,7 +65,7 @@ export class SqlBuilder {
       val = '';
     return '\'' + val.replace(/'/g, '\'\'') + '\'';
   }
-  private dict = new Map<ColumnDefinitions, string>();
+  private dict = new Map<any, string>();
 
 
   private entites = new Map<SqlDefs, string>();
@@ -83,6 +83,7 @@ export class SqlBuilder {
     if (alias) {
       for (const c of e.defs.columns) {
         this.dict.set(c, alias);
+        this.dict.set(e[c.key],alias);
       }
 
       this.entites.set(e, alias);

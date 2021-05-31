@@ -118,7 +118,7 @@ export class DistributionCenterId extends LookupValue<DistributionCenters>{
     await ( await import('../families/families')).Families.SendMessageToBrowsers(message, context, this.id);
   }
   isAllCentersToken() {
-    return this.id != allCentersToken;
+    return this.id == allCentersToken;
   }
   constructor(id: string, private context: Context) {
     super(id, context.for(DistributionCenters));

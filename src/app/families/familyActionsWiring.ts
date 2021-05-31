@@ -111,11 +111,13 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         where: EntityWhere<T>,
         count: number
     }) {
+        let p = new ServerProgress(undefined);
+        p.progress = () => { };
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: this.context.for(this.entity).packWhere(info.where)
-        });
+            packedWhere: this.context.for(this.entity).packWhere(info.where),
+        }, p);
 
         return r;
     }
@@ -134,6 +136,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {
+            console.log({ count, packCount: info.count,name:this.context.for(this.entity).defs.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;

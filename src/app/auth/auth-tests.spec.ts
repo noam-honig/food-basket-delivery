@@ -1,18 +1,20 @@
 import { TestBed, async, inject } from '@angular/core/testing';
-import { ServerContext, InMemoryDataProvider,  myServerAction, actionInfo } from '@remult/core';
+import { ServerContext, InMemoryDataProvider, myServerAction, actionInfo } from '@remult/core';
 
 import { Helpers } from '../helpers/helpers';
 import { Roles } from './roles';
 import { AuthService } from './auth-service';
 import { Phone } from "../model-shared/Phone";
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 
 
 const PHONE = '0507330590';
+process.env.TOKEN_SIGN_KEY = '1234';
 
 describe('users and security', () => {
-   
+
     actionInfo.runningOnServer = true;
     it("user can only update their own info", async(async () => {
         let { c, context } = await getHelperContext();
@@ -79,8 +81,8 @@ describe('users and security', () => {
         if (!r.authToken) {
             throw 'should have worked';
         }
-        //let jwt = new AuthService(context);
-       // jwt.setToken(r.authToken);
+        let jwt = getAuthService(context);
+        jwt.setToken(r.authToken, false);
         expect(context.user.name).toBe('test');
     }));
     it("test login for admin without a password", async(async () => {
@@ -197,12 +199,20 @@ describe('users and security', () => {
         }, context);
         if (!l.authToken)
             throw l;
-        //let jwt = new JwtSessionManager(context);
-        //jwt.setToken(l.authToken);
+        let jwt = getAuthService(context);
+        jwt.setToken(l.authToken,false);
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(true);
     }));
 });
+function getAuthService(context: ServerContext) {
+    var s = new ApplicationSettings(context);
+    s.currentUserIsValidForAppLoadTest = true;
+    let jwt = new AuthService(undefined, context, undefined,
+        s, undefined);
+    return jwt;
+}
+
 async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     if (!args) {
         args = {};
@@ -212,7 +222,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     let c = context.for(Helpers);
     let h = c.create();
     h.name = 'test';
-    h.phone = new Phone( PHONE);
+    h.phone = new Phone(PHONE);
     h.realStoredPassword = '';
     if (args.setValues)
         args.setValues(h);

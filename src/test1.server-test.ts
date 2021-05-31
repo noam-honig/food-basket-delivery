@@ -1,4 +1,8 @@
-import { actionInfo,  getControllerDefs,  myServerAction, ServerContext, ServerFunction, SqlDatabase } from "@remult/core";
+import { CustomModuleLoader } from '../../radweb/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/out-tsc/server-test/radweb/projects');
+import './app/manage/ApplicationSettings';
+
+import { actionInfo, getControllerDefs, myServerAction, ServerContext, ServerFunction, SqlDatabase } from "@remult/core";
 import { settings } from "cluster";
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
@@ -14,12 +18,14 @@ import { ArchiveDeliveries, DeleteDeliveries, UpdateDeliveriesStatus } from "./a
 import { FamilyDeliveriesComponent } from "./app/family-deliveries/family-deliveries.component";
 import { HelperId, Helpers, HelperUserInfo } from "./app/helpers/helpers";
 import { ApplicationSettings } from "./app/manage/ApplicationSettings";
-import { serverInit } from "./app/server/serverInit";
+import { initSettings, serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
 import { fitAsync, itAsync } from "./app/shared/test-helper";
 import { Sites } from "./app/sites/sites";
+//initSettings.disableSchemaInit = true;
 
 async function init() {
+
     let context = new ServerContext();
     context.setUser({
         id: 'admin',
@@ -27,12 +33,17 @@ async function init() {
         roles: [Roles.admin, Roles.distCenterAdmin]
     });
     actionInfo.runningOnServer = true;
+
     let sql: SqlDatabase;
 
 
     beforeAll(
         done => {
             serverInit().then(x => {
+                if (initSettings.disableSchemaInit) {
+                    SqlDatabase.LogToConsole = true;
+                    SqlDatabase.durationThreshold = 0;
+                }
                 let dp = Sites.getDataProviderForOrg("test");
                 sql = <any>dp;
                 context.setDataProvider(dp);
@@ -101,7 +112,7 @@ async function init() {
         }
         async function createDelivery(distanceFromRoot: number) {
             let d = context.for(ActiveFamilyDeliveries).create();
-            d.name = distanceFromRoot.toString();
+            d.internalDeliveryComment = distanceFromRoot.toString();
             d.addressLatitude = distanceFromRoot;
             d.family = distanceFromRoot.toString();
             await d.save();
@@ -113,7 +124,7 @@ async function init() {
             await createDelivery(5);
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
-            expect(r.families[0].name).toBe("10");
+            expect(r.families[0].internalDeliveryComment).toBe("10");
         });
         itAsync("chooses closest to previous delivery", async () => {
 
@@ -124,14 +135,14 @@ async function init() {
             await d.save();
             let r = await callAddBox();
             expect(r.families.length).toBe(2);
-            expect(r.families.some(d => d.name == '6')).toBeTruthy();;
-            expect(r.families.some(d => d.name == '5')).toBeTruthy();
+            expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
+            expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
         });
         itAsync("chooses closest to helper", async () => {
 
             await createDelivery(10);
             await createDelivery(5);
-            let h = await context.for(Helpers).findId(helperId);
+            let h = await helperId.waitLoad();
             h.addressApiResult = new GeocodeInformation({
 
                 status: "OK",
@@ -157,7 +168,7 @@ async function init() {
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
 
-            expect(r.families[0].name).toBe('5');
+            expect(r.families[0].internalDeliveryComment).toBe('5');
         });
         itAsync("prefer repeat family", async () => {
             await createDelivery(10);
@@ -169,7 +180,7 @@ async function init() {
             await createDelivery(5);
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
-            expect(r.families[0].name).toBe("5");
+            expect(r.families[0].internalDeliveryComment).toBe("5");
         });
         itAsync("prefer repeat family over helper preference", async () => {
             await createDelivery(10);
@@ -180,7 +191,7 @@ async function init() {
             await d.save();
             await createDelivery(5);
 
-            let h = await context.for(Helpers).findId(helperId);
+            let h = await helperId.waitLoad();
             h.addressApiResult = new GeocodeInformation({
 
                 status: "OK",
@@ -206,7 +217,7 @@ async function init() {
 
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
-            expect(r.families[0].name).toBe("5");
+            expect(r.families[0].internalDeliveryComment).toBe("5");
         });
     });
     describe("test update family status", () => {
@@ -335,6 +346,13 @@ async function init() {
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
+            let d = await f.createDelivery('a').save();
+            expect(d.distributionCenter.evilGetId()).toBe('a');
+        });
+        itAsync("test delete only works for user dist center", async () => {
+            let f = await context.for(Families).create();
+            f.name = "test";
+            await f.save();
             await f.createDelivery('a').save();
             await f.createDelivery('a').save();
             await f.createDelivery('b').save();
@@ -361,7 +379,7 @@ async function init() {
             let x = new ArchiveDeliveries(context);
             expect("wrong").toBe("right");
             //expect([...getControllerDefs(x).columns].includes(getControllerDefs( x.archiveHelper).columns.markOnTheWayAsDelivered)).toBe(true);
-            
+
         });
     });
 }
