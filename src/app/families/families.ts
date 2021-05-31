@@ -325,7 +325,7 @@ export class Families extends IdEntity {
     if (args.copyFrom) {
       selfPickup.value = args.copyFrom.deliverStatus == DeliveryStatus.SuccessPickedUp;
       if (args.copyFrom.deliverStatus.isProblem)
-        newDelivery.courier = HelperId.empty(this.context);
+        newDelivery.courier = null;
     }
 
 
@@ -365,7 +365,7 @@ export class Families extends IdEntity {
             basketType: newDelivery.basketType.evilGetId(),
             quantity: newDelivery.quantity,
             comment: newDelivery.deliveryComments,
-            courier: newDelivery.courier.evilGetId(),
+            courier: HelperId.toJson(newDelivery.courier),
             distCenter: newDelivery.distributionCenter.evilGetId(),
             selfPickup: selfPickup.value
 
@@ -403,7 +403,7 @@ export class Families extends IdEntity {
       fd.quantity = settings.quantity;
       fd.deliveryComments = settings.comment;
       fd.distributionCenter = new DistributionCenterId(settings.distCenter, context);
-      fd.courier = new HelperId(settings.courier, context);
+      fd.courier = HelperId.fromJson(settings.courier, context);
       if (settings.deliverStatus) fd.deliverStatus = settings.deliverStatus;
       if (settings.archive) fd.archive = settings.archive;
       if (settings.selfPickup)
@@ -845,7 +845,7 @@ export class Families extends IdEntity {
         }
         return getLang(context).theFamily + ' ' + n.name + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.caption;
       case 2:
-        if (n.courier.isNotEmpty())
+        if (n.courier)
           return getLang(context).theFamily + ' ' + n.name + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
         else
           return getLang(context).assignmentCanceledFor + " " + n.name;
@@ -887,7 +887,7 @@ export class Families extends IdEntity {
   duplicateFamilies: duplicateFamilyInfo[] = [];
 
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name, this.tz, this.tz2, this.phone1.thePhone, this.phone2.thePhone, this.phone3.thePhone, this.phone4.thePhone, this.id, false, this.address);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name, this.tz, this.tz2,Phone.toJson(this.phone1),  Phone.toJson(this.phone2), Phone.toJson( this.phone3), Phone.toJson( this.phone4), this.id, false, this.address);
     this.$.tz.error = undefined;
     this.$.tz2.error = undefined;
     this.$.phone1.error = undefined;
@@ -1175,7 +1175,7 @@ export interface autocompleteResult {
 export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phone?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-      if (p.thePhone && p.canSendWhatsapp()) {
+      if (p && p.canSendWhatsapp()) {
         phone = p.thePhone;
         break;
       }
@@ -1186,7 +1186,7 @@ export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phon
 }
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-    if (p.thePhone && p.canSendWhatsapp()) {
+    if (p && p.canSendWhatsapp()) {
       return true;
     }
   }

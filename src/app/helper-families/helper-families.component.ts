@@ -155,9 +155,9 @@ export class HelperFamiliesComponent implements OnInit {
       from: fd,
       where: () => {
         if (selfAssign) {
-          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(HelperId.empty(context))).and((fd.familySource.isIn([new FamilySourceId('', context), new FamilySourceId(privateDonation, context)])))];
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(null)).and((fd.familySource.isIn([new FamilySourceId('', context), new FamilySourceId(privateDonation, context)])))];
         } else {
-          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(HelperId.empty(context)))];
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(null))];
         }
       }
     }))).rows) {
@@ -286,7 +286,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async cancelAssign(f: ActiveFamilyDeliveries) {
     this.dialog.analytics('Cancel Assign');
-    f.courier = HelperId.empty(this.context);
+    f.courier = null;
     await f.save();
     this.familyLists.reload();
     this.assignmentCanceled.emit();
@@ -310,9 +310,9 @@ export class HelperFamiliesComponent implements OnInit {
   static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
     let dist = new DistributionCenterId('', context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(new HelperId(id, context))),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(HelperId.fromJson(id, context))),
       forEachRow: async fd => {
-        fd.courier = HelperId.empty(context);
+        fd.courier = null;
         fd._disableMessageToUsers = true;
         dist = fd.distributionCenter;
         await fd.save();
@@ -334,7 +334,7 @@ export class HelperFamiliesComponent implements OnInit {
   static async okAllForHelperOnServer(id: string, context?: Context) {
     let dist = new DistributionCenterId('', context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(new HelperId(id, context))),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(HelperId.fromJson(id, context))),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
         fd.deliverStatus = DeliveryStatus.Success;
@@ -409,7 +409,7 @@ export class HelperFamiliesComponent implements OnInit {
       console.log("did not send sms to " + deliveryId + " failed to find delivery");
     if (!fd.phone1)
       return;
-    if (!fd.phone1.thePhone.startsWith("05"))
+    if (!fd.phone1.canSendWhatsapp())
       return;
     let phone = Phone.fixPhoneInput(fd.phone1.thePhone, context);
     if (phone.length != 10) {
@@ -511,7 +511,7 @@ export class HelperFamiliesComponent implements OnInit {
     await SendSmsAction.SendSms(this.familyLists.helper.id, reminder);
     if (this.familyLists.helper.escort) {
       to += ' ול' + this.familyLists.escort.name;
-      await SendSmsAction.SendSms(this.familyLists.helper.escort.evilGetId(), reminder);
+      await SendSmsAction.SendSms(HelperId.toJson(this.familyLists.helper.escort), reminder);
     }
     this.dialog.Info(use.language.smsMessageSentTo + " " + to);
     this.assignSmsSent.emit();
