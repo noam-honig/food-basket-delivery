@@ -222,6 +222,9 @@ export class FamilyDeliveries extends IdEntity {
     special: YesNo;
     @ChangeDateColumn({ caption: use.language.deliveryStatusDate })
     deliveryStatusDate: Date;
+    relativeDeliveryStatusDate() {
+        return relativeDateName(this.context,{ d: this.deliveryStatusDate });
+    }
     @Column({ caption: use.language.courierAsignUser, allowApiUpdate: false })
     courierAssignUser: HelperId;
     @ChangeDateColumn({ caption: use.language.courierAsignDate })

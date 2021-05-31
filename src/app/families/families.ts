@@ -1175,7 +1175,7 @@ export interface autocompleteResult {
 export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phone?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-      if (p.thePhone && p.thePhone.startsWith('05')) {
+      if (p.thePhone && p.canSendWhatsapp()) {
         phone = p.thePhone;
         break;
       }
@@ -1186,7 +1186,7 @@ export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phon
 }
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-    if (p.thePhone && p.thePhone.startsWith('05')) {
+    if (p.thePhone && p.canSendWhatsapp()) {
       return true;
     }
   }

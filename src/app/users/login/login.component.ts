@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   name = new InputControl<string>({ caption: this.settings.lang.volunteerName });
   preferredDistributionArea = new InputControl<string>({ caption: this.settings.lang.preferredDistributionArea });
-  remember = new InputControl<boolean>({ caption: this.settings.lang.rememberMeOnThisDevice });
+  remember = new InputControl<boolean>({ dataType: Boolean, caption: this.settings.lang.rememberMeOnThisDevice });
   passwordArea = new DataAreaSettings({
     columnSettings: () => [{ column: this.password, inputType: 'password' }, this.remember]
   });

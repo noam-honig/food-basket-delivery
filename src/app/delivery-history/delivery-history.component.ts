@@ -45,8 +45,8 @@ export class DeliveryHistoryComponent implements OnInit {
   onlyArchived = new InputControl<boolean>({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: () => false })//this.settings.isSytemForMlt() })
   rangeArea = new DataAreaSettings({
     columnSettings: () => {
-      let defs = getControllerDefs(this);
-      return [defs.columns.onlyDone, defs.columns.onlyArchived]
+      
+      return [this.onlyDone, this.onlyArchived]
 
     },
   });

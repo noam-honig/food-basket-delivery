@@ -72,7 +72,7 @@ export class DialogService {
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context, private routeReuseStrategy: RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
-            this.distCenter = DistributionCenterId.allCentersToken(context) ;
+            this.distCenter = DistributionCenterId.allCentersToken(context);
 
     }
     refreshFamiliesAndDistributionCenters() {
@@ -135,7 +135,7 @@ export class DialogService {
             this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
-            this.distCenterArea = new DataAreaSettings({ columnSettings: () => [getControllerDefs(this).columns.distCenter] });
+            this.distCenterArea = new DataAreaSettings({ columnSettings: () => [getControllerDefs(this, this.context).columns.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = new DistributionCenterId(allCentersToken, this.context);
         }

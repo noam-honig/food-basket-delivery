@@ -17,7 +17,7 @@ import { DialogService, ShowDialogOnErrorErrorHandler } from './select-popup/dia
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
 import { LoginComponent } from './users/login/login.component';
 
-import { AuthService } from './auth/auth-service';
+import { AuthService, getToken, TokenService } from './auth/auth-service';
 
 import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { UpdateInfoComponent } from './users/update-info/update-info.component';
@@ -209,7 +209,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     ScrollDispatchModule,
     PlatformModule,
     JwtModule.forRoot({
-      config: { tokenGetter: () => sessionStorage.getItem('auth_token') }
+      config: { tokenGetter: getToken }
     })
 
 
@@ -220,6 +220,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
 
     NewsFilterService,
+    TokenService,
     AuthService,
     {
       provide: APP_BASE_HREF, useFactory: () => {
@@ -236,7 +237,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [JwtHelperService, SettingsService,Context],
+      deps: [TokenService, SettingsService,Context],
       useFactory: initApp,
       multi: true,
 
@@ -274,11 +275,11 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: JwtHelperService, settings: SettingsService,context:Context) {
+export function initApp(session: TokenService, settings: SettingsService,context:Context) {
   return async () => {
 
     try {
-      //session.loadSessionFromCookie(Sites.getOrganizationFromContext(context));
+      session.loadUserInfo();
 
       await settings.init();
 

@@ -137,7 +137,7 @@ export class DistributionCenterId extends LookupValue<DistributionCenters>{
     return (await ApplicationSettings.getAsync(this.context)).addressHelper.getGeocodeInformation();
   }
   static async getValueList(context: Context, showAllOptions = false) {
-
+    return [];
     let r = await getValueList<DistributionCenters>(context.for(DistributionCenters), {
       where: c => c.archive.isEqualTo(false)
     })

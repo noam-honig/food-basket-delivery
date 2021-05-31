@@ -108,7 +108,7 @@
     <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
       <div *ngIf="phone" class="phone-container">
         <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-          (click)="sendWhatsapp(phone)" *ngIf="phone.startsWith('05')">
+          (click)="sendWhatsapp(phone)" *ngIf=" phone.canSendWhatsapp()">
           <img src="assets/whatsapp.png">
         </span>
         <button mat-mini-fab style="vertical-align: middle" color="primary" (click)="callPhone(phone)">

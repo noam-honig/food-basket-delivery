@@ -30,8 +30,8 @@
         {{n.describe()}}
 
         <div *ngIf="showNeedsWork(n)" style="margin-top:7px">
-          <mat-checkbox [checked]="!n.needsWork.value" (change)="needWorkWasChanged(n,$event)"
-            [class.handled]="!n.needsWork.value" style="
+          <mat-checkbox [checked]="!n.needsWork" (change)="needWorkWasChanged(n,$event)"
+            [class.handled]="!n.needsWork" style="
           padding: 5px;
           
           border-radius: 7px;
@@ -42,7 +42,7 @@
         </div>
       </div>
     </mat-card-title>
-    <mat-card-subtitle>{{n.deliveryStatusDate.relativeDateName()}}, {{settings.lang.updatedBy}}
+    <mat-card-subtitle>{{ n.relativeDeliveryStatusDate()}}, {{settings.lang.updatedBy}}
       {{n.deliveryStatusUser.getValue()}}
       <br>
       <a (click)="updateFamily(n)">
@@ -53,7 +53,7 @@
       </a>
 
 
-      <a (click)="showHelper(n)" *ngIf="n.courier.value" style="display:inline-block"> <button mat-icon-button>
+      <a (click)="showHelper(n)" *ngIf="n.courier" style="display:inline-block"> <button mat-icon-button>
           <mat-icon>list_alt</mat-icon>
         </button> {{settings.lang.deliveries}} {{settings.lang.for}} {{n.courier.getValue()}} </a>
     </mat-card-subtitle>

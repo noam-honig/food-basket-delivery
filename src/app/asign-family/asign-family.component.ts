@@ -124,8 +124,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
     async initHelper(helper: Helpers) {
-        if (helper.theHelperIAmEscorting) {
-            let other = await this.context.for(Helpers).findId(helper.theHelperIAmEscorting);
+        if (helper.theHelperIAmEscorting&&helper.theHelperIAmEscorting.isNotEmpty()) {
+            let other = await helper.theHelperIAmEscorting.waitLoad();
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name + '?'
             }, q => q.yes)) {

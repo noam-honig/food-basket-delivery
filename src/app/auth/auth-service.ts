@@ -21,13 +21,49 @@ import { Phone } from "../model-shared/Phone";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
+let staticToken = '';
+export function getToken() {
+    return staticToken;
+}
+@Injectable()
+export class TokenService {
+    constructor(private context: Context) {
+
+    }
+    keyInStorage: string;
+    loadUserInfo() {
+        let org = Sites.getOrganizationFromContext(this.context);
+        this.keyInStorage = "authorization/" + org;
+        let token = sessionStorage.getItem(this.keyInStorage);
+        if (!token)
+            token = localStorage.getItem(this.keyInStorage);
+        this.setToken(token, false);
+    }
+    setToken(token: string, remember: boolean) {
+
+        if (token) {
+            this.context.setUser(<UserInfo>new JwtHelperService().decodeToken(token));
+            sessionStorage.setItem(this.keyInStorage, token);
+        }
+        else {
+            this.context.setUser(undefined);
+            sessionStorage.removeItem(this.keyInStorage);
+            if (remember)
+                localStorage.removeItem(this.keyInStorage);
+        }
+        staticToken = token;
+
+    }
+}
+
 @Injectable()
 export class AuthService {
+
 
     async loginFromSms(key: string) {
         var response = await AuthService.loginFromSms(key);
         if (response.valid && await this.userAgreedToConfidentiality()) {
-            this.setToken(response.authToken, false);
+            this.tokenService.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             return true;
@@ -41,19 +77,9 @@ export class AuthService {
         }
     }
     failedSmsSignInPhone: string = undefined;
-    setToken(token: string, remember: boolean) {
-        let org = Sites.getOrganizationFromContext(this.context);
-        if (token) {
-            this.context.setUser(<UserInfo>new JwtHelperService().decodeToken(token));
-            sessionStorage.setItem("auth_token", token);
-        }
-        else {
-            this.context.setUser(undefined);
-            sessionStorage.removeItem("auth_token");
-        }
-    }
+
     async signOut() {
-        this.setToken(undefined, true);
+        this.tokenService.setToken(undefined, true);
         this.routeHelper.navigateToComponent((await (import('../users/login/login.component'))).LoginComponent);
     }
 
@@ -89,15 +115,17 @@ export class AuthService {
         }
         return r;
     }
+
     constructor(
         private dialog: DialogService,
-
+        private tokenService: TokenService,
 
         private context: Context,
         private routeHelper: RouteHelperService,
         public settings: ApplicationSettings,
         private zone: NgZone
     ) {
+
 
         AuthService.doSignOut = () => {
             this.signout();
@@ -136,7 +164,7 @@ export class AuthService {
                 loginResponse = {};
         }
         if (loginResponse.authToken) {
-            this.setToken(loginResponse.authToken, remember);
+            this.tokenService.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.failedSmsSignInPhone) {
                 this.failedSmsSignInPhone = null;
@@ -271,7 +299,7 @@ export class AuthService {
 
 
     async signout() {
-        this.setToken(undefined, true);
+        this.tokenService.setToken(undefined, true);
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
@@ -294,7 +322,7 @@ export class AuthService {
                     if (!r)
                         this.signout();
                     else
-                        this.setToken(r, this.remember);
+                        this.tokenService.setToken(r, this.remember);
 
                 }
                 catch {
