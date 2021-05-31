@@ -318,18 +318,18 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 columnSettings: () => {
                     let r = [];
                     if (this.settings.showCompanies)
-                        r.push([this.helper.name,
+                        r.push([this.helper.$.name,
                         {
-                            column: this.helper.company,
+                            column: this.helper.$.company,
                             click: () => this.findCompany(),
                             clickIcon: 'search'
                         }
                         ]);
-                    else r.push([this.helper.name]);
+                    else r.push([this.helper.$.name]);
                     if (this.settings.showHelperComment)
-                        r.push(this.helper.eventComment);
+                        r.push(this.helper.$.eventComment);
                     if (this.settings.manageEscorts) {
-                        r.push([this.helper.needEscort, this.helper.escort]);
+                        r.push([this.helper.$.needEscort, this.helper.$.escort]);
                     }
 
                     return r;
