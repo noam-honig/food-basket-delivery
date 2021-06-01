@@ -186,8 +186,10 @@ class donorForm {
   screen = new NumberColumn("מספר מסכים");
   donationType = new StringColumn("סוג תרומה", {
     dataControlSettings: () => ({
-      valueList: [{ id: 'ac52f4b0-6896-4ae3-8cc0-18ed17136e38', caption: 'תרומה פרטית' },
-      { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }]
+      valueList: [
+//        { id: 'ac52f4b0-6896-4ae3-8cc0-18ed17136e38', caption: 'תרומה פרטית' },
+        { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }
+      ]
     })
   })
 
