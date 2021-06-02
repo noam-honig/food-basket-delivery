@@ -15,9 +15,6 @@ export class ApplicationImages extends EntityBase {
   base64PhoneHomeImage: string;
 
 
-  static get(context: Context) {
-    context.for(ApplicationImages).lookupId(1);
-  }
   static async getAsync(context: Context): Promise<ApplicationImages> {
     return context.for(ApplicationImages).findFirst(undefined);
   }

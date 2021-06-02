@@ -39,7 +39,7 @@ export class BasketType extends IdEntity {
 
 @Storable<BasketTypeId>({
   valueConverter: c => new StoreAsStringValueConverter<BasketTypeId>(x => x.id, x => new BasketTypeId(x, c)),
-  displayValue: (e, v) => v.item.name,
+  displayValue: (e, v) => v.item ? v.item.name : '',
   caption: use.language.basketType
 })
 @DataControl({

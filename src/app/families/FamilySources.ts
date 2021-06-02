@@ -28,7 +28,7 @@ export class FamilySources extends IdEntity {
 })
 @Storable<FamilySourceId>({
   valueConverter: c => new StoreAsStringValueConverter<FamilySourceId>(x => x.id, x => new FamilySourceId(x, c)),
-  displayValue: (e, val) => val.item.name
+  displayValue: (e, val) =>val.item? val.item.name:''
 })
 export class FamilySourceId extends LookupValue<FamilySources>  {
   constructor(id: string, private context: Context) {

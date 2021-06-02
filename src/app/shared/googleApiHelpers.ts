@@ -24,7 +24,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         return new GeocodeInformation();
     }
     address = address.trim();
-    let cacheEntry = await context.for(GeocodeCache).lookupIdAsync(address);
+    let cacheEntry = await context.for(GeocodeCache).getCachedByIdAsync(address);
     if (!cacheEntry.isNew()) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);

@@ -86,8 +86,11 @@ export class UserFamiliesList {
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
-            boxes += iterator.basketType.item.boxes * iterator.quantity;
-            boxes2 += iterator.basketType.item.boxes2 * iterator.quantity;
+            let item = iterator.basketType.item;
+            if (item) {
+                boxes += item.boxes * iterator.quantity;
+                boxes2 += item.boxes2 * iterator.quantity;
+            }
         }
         if (this.toDeliver.length == 0)
             return this.settings.lang.noDeliveries;

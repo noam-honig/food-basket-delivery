@@ -167,7 +167,7 @@ s.parentNode.insertBefore(b, s);})();
     let eb = initExpress(
         app,
         {
-            dataProvider:dataSource,
+            dataProvider: dataSource,
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new ServerContext()))
         });
@@ -187,8 +187,8 @@ s.parentNode.insertBefore(b, s);})();
                 }
                 return false;
             });
-            registerActionsOnServer(area, dataSource);
-            registerEntitiesOnServer(area, dataSource);
+            registerActionsOnServer(area);
+            registerEntitiesOnServer(area);
             registerImageUrls(app, getContext, '/' + schema);
         };
         for (const schema of Sites.schemas) {
@@ -216,8 +216,8 @@ s.parentNode.insertBefore(b, s);})();
                 }
                 return false;
             });
-            registerActionsOnServer(area, dataSource);
-            registerEntitiesOnServer(area, dataSource);
+            registerActionsOnServer(area);
+            registerEntitiesOnServer(area);
         }
     }
     else {

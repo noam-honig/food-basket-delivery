@@ -47,7 +47,7 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
 }
 @Storable<HelperId>({
     valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => HelperId.toJson(x), x => HelperId.fromJson(x, c)),
-    displayValue: (e, x) => x.getValue(),
+    displayValue: (e, x) =>x? x.getValue():'',
     caption: use.language.volunteer
 })
 @DataControl<any, HelperId>({
@@ -56,6 +56,8 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
     width: '200',
     click: async (e, col) => HelperIdUtils.showSelectDialog(col, {}, undefined)
 })//
+
+
 export class HelperId extends LookupValue<Helpers>  {
 
    

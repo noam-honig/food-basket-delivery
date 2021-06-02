@@ -90,7 +90,7 @@ export function filterDistCenter(distCenterColumn: filterOptions<DistributionCen
 
 @Storable<DistributionCenterId>({
   valueConverter: c => new StoreAsStringValueConverter<DistributionCenterId>(x => x.id, x => new DistributionCenterId(x, c)),
-  displayValue: (e, v) => v.item.name,
+  displayValue: (e, v) =>v? v.item.name:'',
   defaultValue: (e, context) => new DistributionCenterId(context.user ? (<HelperUserInfo>context.user).distributionCenter : '', context)
 })
 @DataControl<any, DistributionCenterId>({
