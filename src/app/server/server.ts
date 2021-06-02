@@ -21,6 +21,7 @@ import { preparePostgresQueueStorage } from "../../../../radweb/projects/core/po
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
+import { AuthService } from '../auth/auth-service';
 
 
 
@@ -167,6 +168,9 @@ s.parentNode.insertBefore(b, s);})();
     let eb = initExpress(
         app,
         {
+            initRequest: async c => {
+                AuthService.initContext(c)
+            },
             dataProvider: dataSource,
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new ServerContext()))

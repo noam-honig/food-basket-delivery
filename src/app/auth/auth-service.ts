@@ -2,7 +2,7 @@ import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
-import { HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
+import { currentUser, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { ServerFunction, Context, UserInfo } from '@remult/core';
@@ -39,25 +39,35 @@ export class TokenService {
             token = localStorage.getItem(this.keyInStorage);
         this.setToken(token, false);
     }
-    setToken(token: string, remember: boolean) {
-
+    async setToken(token: string, remember: boolean) {
+        let user: UserInfo = undefined;
         if (token) {
-            this.context.setUser(<UserInfo>new JwtHelperService().decodeToken(token));
+            user = <UserInfo>new JwtHelperService().decodeToken(token);
             sessionStorage.setItem(this.keyInStorage, token);
         }
         else {
-            this.context.setUser(undefined);
+
             sessionStorage.removeItem(this.keyInStorage);
             if (remember)
                 localStorage.removeItem(this.keyInStorage);
         }
         staticToken = token;
+        await this.context.setUser(user);
 
     }
 }
 
 @Injectable()
 export class AuthService {
+    static initContext(context: Context) {
+        let h: HelperId;
+
+        if (context.isSignedIn()) {
+            h = new HelperId(context.user.id, context);
+        }
+        context.set(currentUser, h);
+
+    }
 
 
     async loginFromSms(key: string) {
@@ -379,7 +389,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         roles: [Sites.getOrgRole(context)],
         name: h.name,
         distributionCenter: h.distributionCenter.evilGetId(),
-        theHelperIAmEscortingId:HelperId.toJson( h.theHelperIAmEscorting),
+        theHelperIAmEscortingId: HelperId.toJson(h.theHelperIAmEscorting),
         escortedHelperName: h.theHelperIAmEscorting ? (await (h.theHelperIAmEscorting.waitLoad())).name : ''
     };
     if (h.admin) {

@@ -1,5 +1,5 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, Column, ServerMethod, ColumnSettings, DateOnlyValueConverter, StoreAsStringValueConverter, filterOf, Validators, InputTypes, EntityColumn, Storable, ColumnDefinitions, ColumnDefinitionsOf } from '@remult/core';
+import { Context, IdEntity, UserInfo, Filter, Entity, Column, ServerMethod, ColumnSettings, DateOnlyValueConverter, StoreAsStringValueConverter, filterOf, Validators, InputTypes, EntityColumn, Storable, ColumnDefinitions, ColumnDefinitionsOf, keyFor } from '@remult/core';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
 import { isPhoneValidForIsrael, Phone } from "../model-shared/Phone";
@@ -47,7 +47,7 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
 }
 @Storable<HelperId>({
     valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => HelperId.toJson(x), x => HelperId.fromJson(x, c)),
-    displayValue: (e, x) =>x? x.getValue():'',
+    displayValue: (e, x) => x ? x.getValue() : '',
     caption: use.language.volunteer
 })
 @DataControl<any, HelperId>({
@@ -60,9 +60,14 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
 
 export class HelperId extends LookupValue<Helpers>  {
 
-   
-   
+
+
     static currentUser(context: Context): HelperId {
+        let user = context.get(currentUser);
+        console.log({ user });
+        return user;
+
+
         return new HelperId(context.user.id, context);
     }
 
@@ -98,6 +103,7 @@ export class HelperId extends LookupValue<Helpers>  {
         return '';
     }
 }
+export const currentUser = new keyFor<HelperId>();
 
 export abstract class HelpersBase extends IdEntity {
     helperId() {

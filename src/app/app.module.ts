@@ -26,7 +26,7 @@ import { MyFamiliesComponent } from './my-families/my-families.component';
 import { AsignFamilyComponent } from './asign-family/asign-family.component';
 import { ManageComponent } from './manage/manage.component';
 import { FamilyInfoComponent } from './family-info/family-info.component';
-import { GetVolunteerFeedback  } from './update-comment/update-comment.component';
+import { GetVolunteerFeedback } from './update-comment/update-comment.component';
 import { DistributionMap } from './distribution-map/distribution-map.component';
 import { SelectHelperComponent } from './select-helper/select-helper.component';
 import { LoginFromSmsComponent } from './login-from-sms/login-from-sms.component';
@@ -85,7 +85,7 @@ import { RegisterDonorComponent } from './register-donor/register-donor.componen
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
-import { EditCommentDialogComponent  } from './edit-comment-dialog/edit-comment-dialog.component';
+import { EditCommentDialogComponent } from './edit-comment-dialog/edit-comment-dialog.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
@@ -98,6 +98,7 @@ import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
 import { Context } from '@remult/core';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
+import { currentUser, HelperId } from './helpers/helpers'
 
 
 
@@ -237,7 +238,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [TokenService, SettingsService,Context],
+      deps: [TokenService, SettingsService, Context],
       useFactory: initApp,
       multi: true,
 
@@ -275,11 +276,15 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: TokenService, settings: SettingsService,context:Context) {
+export function initApp(session: TokenService, settings: SettingsService, context: Context) {
   return async () => {
 
     try {
       session.loadUserInfo();
+      await context.userChange.observe(async () => {
+        await AuthService.initContext(context);
+        
+      });
 
       await settings.init();
 
@@ -312,7 +317,7 @@ export function initApp(session: TokenService, settings: SettingsService,context
 
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
       routeMap.set(RegisterURLComponent, l.RegisterURLComponent);
-      
+
 
 
 
