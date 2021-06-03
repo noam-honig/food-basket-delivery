@@ -13,14 +13,14 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { createElementCssSelector } from '@angular/compiler';
 
-import { HelperUserInfo, Helpers } from '../helpers/helpers';
+import { HelperUserInfo, Helpers, currentUser } from '../helpers/helpers';
 import { getLang, Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { Phone } from "../model-shared/Phone";
 import { Families } from '../families/families';
 import { UserFamiliesList } from '../my-families/user-families';
 import { openDialog } from '../../../../radweb/projects/angular';
-import { DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { relativeDateName } from '../model-shared/types';
 
 @Component({
@@ -105,7 +105,7 @@ export class FamilyInfoComponent implements OnInit {
     if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter = DistributionCenterId.forCurrentUser(this.context);
+        d.distributionCenter =this.context.get(currentUser).distributionCenter;
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }

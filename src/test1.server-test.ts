@@ -18,16 +18,16 @@ import { initSettings, serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
 import { fitAsync, itAsync } from "./app/shared/test-helper";
 import { Sites } from "./app/sites/sites";
+import { DistributionCenters } from './app/manage/distribution-centers';
+import { Phone } from './app/model-shared/Phone';
+import { AuthService } from './app/auth/auth-service';
 //initSettings.disableSchemaInit = true;
 
 async function init() {
 
     let context = new ServerContext();
-    context.setUser({
-        id: 'admin',
-        name: 'admin',
-        roles: [Roles.admin, Roles.distCenterAdmin]
-    });
+    let helperWhoIsAdmin: Helpers;
+    
     actionInfo.runningOnServer = true;
 
     let sql: SqlDatabase;
@@ -35,7 +35,7 @@ async function init() {
 
     beforeAll(
         done => {
-            serverInit().then(x => {
+            serverInit().then(async x => {
                 if (initSettings.disableSchemaInit) {
                     SqlDatabase.LogToConsole = true;
                     SqlDatabase.durationThreshold = 0;
@@ -43,6 +43,7 @@ async function init() {
                 let dp = Sites.getDataProviderForOrg("test");
                 sql = <any>dp;
                 context.setDataProvider(dp);
+               
                 done();
             });
         });
@@ -55,11 +56,15 @@ async function init() {
             ;
     });
     describe("the test", () => {
-        let helperId: Helpers;
+        
         beforeEach(async done => {
             for (const d of await context.for(FamilyDeliveries).find()) {
                 await d.delete();
             }
+            for (const d of await context.for(Helpers).find()) {
+                await d.delete();
+            }
+
 
             let as = await ApplicationSettings.getAsync(context);
             {
@@ -89,8 +94,15 @@ async function init() {
             let h = context.for(Helpers).create();
             h.name = 'a';
             h._disableOnSavingRow = true;
+            h.admin = true;
             await h.save();
-            helperId = h;
+            helperWhoIsAdmin = h;
+            context.setUser({
+                id: helperWhoIsAdmin.id,
+                name: 'admin',
+                roles: [Roles.admin, Roles.distCenterAdmin]
+            });
+            AuthService.initContext(context);
             done();
         });
         async function callAddBox() {
@@ -99,9 +111,9 @@ async function init() {
                 area: '',
                 basketType: '',
                 city: '',
-                distCenter: '',
+                distCenter: null,
                 group: '',
-                helperId: HelperId.toJson(helperId),
+                helperId: HelperId.toJson(helperWhoIsAdmin),
                 numOfBaskets: 1,
                 preferRepeatFamilies: false
             }, context, sql);
@@ -127,7 +139,7 @@ async function init() {
             await createDelivery(10);
             await createDelivery(5);
             let d = await createDelivery(6);
-            d.courier = helperId;
+            d.courier = helperWhoIsAdmin;
             await d.save();
             let r = await callAddBox();
             expect(r.families.length).toBe(2);
@@ -139,7 +151,7 @@ async function init() {
             await createDelivery(10);
             await createDelivery(5);
 
-            helperId.addressApiResult = new GeocodeInformation({
+            helperWhoIsAdmin.addressApiResult = new GeocodeInformation({
 
                 status: "OK",
                 results: [{
@@ -159,7 +171,10 @@ async function init() {
                     }
                 }]
             }).saveToString();
-            await helperId.save();
+            context.clearAllCache();
+            helperWhoIsAdmin._disableOnSavingRow=true;
+            await helperWhoIsAdmin.save();
+            
 
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
@@ -171,7 +186,7 @@ async function init() {
 
             let d = await createDelivery(5);
             d.deliverStatus = DeliveryStatus.Success;
-            d.courier = helperId;
+            d.courier = helperWhoIsAdmin;
             await d.save();
             await createDelivery(5);
             let r = await callAddBox();
@@ -183,12 +198,12 @@ async function init() {
 
             let d = await createDelivery(5);
             d.deliverStatus = DeliveryStatus.Success;
-            d.courier = helperId;
+            d.courier = helperWhoIsAdmin;
             await d.save();
             await createDelivery(5);
 
 
-            helperId.addressApiResult = new GeocodeInformation({
+            helperWhoIsAdmin.addressApiResult = new GeocodeInformation({
 
                 status: "OK",
                 results: [{
@@ -208,7 +223,7 @@ async function init() {
                     }
                 }]
             }).saveToString();
-            await helperId.save();
+            await helperWhoIsAdmin.save();
 
 
             let r = await callAddBox();
@@ -225,6 +240,9 @@ async function init() {
             for (const f of await context.for(Families).find()) {
                 await f.delete();
             }
+            for (const f of await context.for(Helpers).find()) {
+                await f.delete();
+            }
             done();
         });
         itAsync("update status, updatesStatus and deletes delivery", async () => {
@@ -232,11 +250,11 @@ async function init() {
             f.name = "test";
             await f.save();
 
-            let fd = f.createDelivery('');
+            let fd = f.createDelivery(null);
             fd.deliverStatus = DeliveryStatus.FailedBadAddress;
             await fd.save();
 
-            let fd2 = f.createDelivery('');
+            let fd2 = f.createDelivery(null);
             fd2.deliverStatus = DeliveryStatus.FailedBadAddress;
             await fd2.save();
 
@@ -261,7 +279,7 @@ async function init() {
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
-            let fd = f.createDelivery('');
+            let fd = f.createDelivery(null);
             await fd.save();
 
             expect(+await context.for(ActiveFamilyDeliveries).count(x => x.id.isEqualTo(fd.id))).toBe(1);
@@ -298,7 +316,7 @@ async function init() {
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
-            let fd = f.createDelivery('');
+            let fd = f.createDelivery(null);
             await fd.save();
 
             let b = new UpdateAreaForDeliveries(context);
@@ -320,7 +338,7 @@ async function init() {
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
-            let fd = f.createDelivery('');
+            let fd = f.createDelivery(null);
             fd.deliverStatus = DeliveryStatus.Success;
             await fd.save();
             var u = new DeleteDeliveries(context);
@@ -342,26 +360,49 @@ async function init() {
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
-            let d = await f.createDelivery('a').save();
-            expect(d.distributionCenter.evilGetId()).toBe('a');
+            let a = await context.for(DistributionCenters).create({
+                id: 'a',
+                name: 'a'
+            }).save();
+
+            let d = await f.createDelivery(a).save();
+            expect(d.distributionCenter.name).toBe('a');
         });
         itAsync("test delete only works for user dist center", async () => {
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
-            await f.createDelivery('a').save();
-            await f.createDelivery('a').save();
-            await f.createDelivery('b').save();
+            let a = await context.for(DistributionCenters).create({
+                id: 'a',
+                name: 'a'
+            }).save();
+            let b = await context.for(DistributionCenters).create({
+                id: 'b',
+                name: 'b'
+            }).save();
+            await f.createDelivery(a).save();
+            await f.createDelivery(a).save();
+            await f.createDelivery(b).save();
             let c2 = new ServerContext();
-            c2.setUser({
+            c2.setDataProvider(sql);
+            let distAdmin = await c2.for(Helpers).create({
                 id: 'distCenterAdmin',
+                name: 'distCenterAdmin',
+                distributionCenter: b,
+                phone : new Phone('1234') 
+            }).save();
+            
+            
+            c2.setUser({
+                id: distAdmin.id,
                 name: 'distCenterAdmin',
                 distributionCenter: 'b',
                 escortedHelperName: undefined,
                 theHelperIAmEscortingId: undefined,
                 roles: [Roles.distCenterAdmin]
             } as HelperUserInfo);
-            c2.setDataProvider(sql);
+            await AuthService.initContext(c2);
+            
             expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(3);
             var u = new DeleteDeliveries(c2);
             await u.internalForTestingCallTheServer({

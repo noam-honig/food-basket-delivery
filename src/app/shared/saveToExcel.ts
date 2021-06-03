@@ -1,8 +1,8 @@
-import { Entity, Column,  Context, EntityBase,  Repository, EntityColumn, DateOnlyValueConverter} from '@remult/core';
+import { Entity, Column, Context, EntityBase, Repository, EntityColumn, DateOnlyValueConverter } from '@remult/core';
 import { BusyService, GridSettings } from '@remult/angular';
 
-import {  DateTimeColumn } from "../model-shared/types";
-import { LookupValue } from "../model-shared/LookupValue";
+import { DateTimeColumn } from "../model-shared/types";
+
 import { foreachSync } from "./utils";
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -97,9 +97,9 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
               let v = c.displayValue;
               if (v == undefined)
                 v = '';
-              if (c.value instanceof LookupValue)
-                await c.value.waitLoad();
-              
+
+              await c.value.load();
+
 
               if (c.defs.dataType == Date) {
                 addColumn('תאריך ' + c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);

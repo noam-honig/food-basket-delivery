@@ -8,9 +8,9 @@ import { ServerEventAuthorizeAction } from "../server/server-event-authorize-act
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { TestComponentRenderer } from "@angular/core/testing";
-import { DistributionCenterId, DistributionCenters, allCentersToken, findClosestDistCenter } from "../manage/distribution-centers";
+import { DistributionCenters, findClosestDistCenter } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
-import { HelperUserInfo } from "../helpers/helpers";
+import { currentUser, HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 import { isString } from "util";
@@ -72,7 +72,7 @@ export class DialogService {
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context, private routeReuseStrategy: RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
-            this.distCenter = DistributionCenterId.allCentersToken(context);
+            this.distCenter = null;
 
     }
     refreshFamiliesAndDistributionCenters() {
@@ -95,7 +95,7 @@ export class DialogService {
 
     }
     async getDistCenter(loc: Location) {
-        if (!this.distCenter.isAllCentersToken())
+        if (this.distCenter != null)
             return this.distCenter;
         if (!this.allCenters)
             this.allCenters = await this.context.for(DistributionCenters).find();
@@ -111,9 +111,9 @@ export class DialogService {
                    this.refreshDistCenter.next();*/
     })
     @DataControl({
-        valueList: context => DistributionCenterId.getValueList(context, true)
+        valueList: context => DistributionCenters.getValueList(context, true)
     })
-    distCenter: DistributionCenterId;
+    distCenter: DistributionCenters;
     distCenterArea: DataAreaSettings;
     hasManyCenters = false;
     canSeeCenter() {
@@ -121,7 +121,7 @@ export class DialogService {
         if (this.context.user)
             dist = (<HelperUserInfo>this.context.user).distributionCenter;
         if (!this.context.isAllowed(Roles.admin) && !this.distCenter.matchesCurrentUser()) {
-            this.distCenter = DistributionCenterId.forCurrentUser(this.context);
+            this.distCenter = this.context.get(currentUser).distributionCenter;
         }
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }
@@ -137,7 +137,7 @@ export class DialogService {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
             this.distCenterArea = new DataAreaSettings({ columnSettings: () => [getControllerDefs(this, this.context).columns.distCenter] });
             if (!this.hasManyCenters)
-                this.distCenter = new DistributionCenterId(allCentersToken, this.context);
+                this.distCenter = null;
         }
     }
 

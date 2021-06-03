@@ -1,5 +1,5 @@
 import { Phone } from "../model-shared/Phone";
-import { LookupValue } from "../model-shared/LookupValue";
+
 
 import { Context, IdEntity, Entity, Storable, Column, StoreAsStringValueConverter } from '@remult/core';
 import { Roles } from "../auth/roles";

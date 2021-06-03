@@ -15,7 +15,7 @@ import { DialogService } from "../select-popup/dialog";
 import { saveToExcel } from '../shared/saveToExcel';
 import { getSettings } from "../manage/ApplicationSettings";
 
-import { allCentersToken, DistributionCenterId, DistributionCenters } from "../manage/distribution-centers";
+import {  DistributionCenters } from "../manage/distribution-centers";
 import { AddressHelper } from "../shared/googleApiHelpers";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
 import { DeliveryStatus } from "../families/DeliveryStatus";
@@ -45,8 +45,8 @@ export class eventStatus {
     saving: async (self) => {
         if (self.context.onServer) {
             await self.addressHelper.updateApiResultIfChanged();
-            if (self.distributionCenter.isAllCentersToken())
-                self.distributionCenter = new DistributionCenterId((await self.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false))).id, self.context);
+            if (self.distributionCenter==null)
+                self.distributionCenter =await DistributionCenters.getDefault(self.context);
         }
     },
 
@@ -182,7 +182,7 @@ export class Event extends IdEntity {
     @Column<Event>({
         allowApiUpdate: Roles.admin
     })
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
 
     @Column({ caption: use.language.phone1 })
     phone1: Phone;

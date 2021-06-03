@@ -9,7 +9,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
 
 
 @Component({
@@ -23,7 +23,7 @@ export class SelectFamilyComponent implements OnInit {
     where: (f: filterOf<ActiveFamilyDeliveries>) => Filter,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
-    distCenter: DistributionCenterId,
+    distCenter: DistributionCenters,
     allowShowAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;

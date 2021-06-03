@@ -10,6 +10,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
 import { Location } from '../shared/googleApiHelpers';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 //import 'googlemaps';
 
@@ -20,11 +21,11 @@ import { Location } from '../shared/googleApiHelpers';
 })
 export class MapComponent implements OnInit, OnDestroy {
     loadedPotentialFamilies: string[] = [];
-    async loadPotentialAsigment(city: string, group: string, distCenter: string, area: string, basketType: string) {
+    async loadPotentialAsigment(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: string) {
 
         await this.initMap();
 
-        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area, basketType);
+        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, DistributionCenters.toId(distCenter), area, basketType);
         for (const f of this.loadedPotentialFamilies) {
             let fi = this.dict.get(f);
             if (fi && fi.getIcon().toString().includes('yellow-dot.png')) {
@@ -157,7 +158,7 @@ export class MapComponent implements OnInit, OnDestroy {
     helper: Helpers;
     helperMarkers: google.maps.Marker[] = [];
     async test(families: ActiveFamilyDeliveries[], h: HelpersBase) {
-        let helper =await  h.getHelper();
+        let helper = await h.getHelper();
         var prevFamilies = this.prevFamilies;
         this.prevFamilies = [...families];
         this.hasFamilies = families.length > 0;
@@ -232,7 +233,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 case DeliveryStatus.FailedNotHome:
                 case DeliveryStatus.FailedDoNotWant:
                 case DeliveryStatus.FailedNotReady:
-                case DeliveryStatus.FailedTooFar: 
+                case DeliveryStatus.FailedTooFar:
                 case DeliveryStatus.FailedOther:
                     marker.setIcon('https://maps.google.com/mapfiles/ms/micons/red-pushpin.png');
                     break;

@@ -4,14 +4,14 @@ import { BusyService, DataControlInfo, GridSettings, InputControl, openDialog } 
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
-import { Helpers, HelperUserInfo } from '../helpers/helpers';
+import { currentUser, Helpers, HelperUserInfo } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
 import { getLang } from '../sites/sites';
 import { ActivatedRoute } from '@angular/router';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
-import { DistributionCenterId } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 @Component({
   selector: 'app-delivery-reception',
@@ -87,7 +87,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
             {
               d.archive = true;
               
-              d.distributionCenter = DistributionCenterId.forCurrentUser(this.context) 
+              d.distributionCenter = this.context.get(currentUser).distributionCenter; 
               d.deliverStatus = DeliveryStatus.Success;
               await d.save();
               await this.refreshFamilyGrid();
@@ -102,7 +102,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         showInLine: true,
         click: async d => {
           d.deliverStatus = DeliveryStatus.FailedOther;
-          d.distributionCenter = DistributionCenterId.forCurrentUser(this.context) ;
+          d.distributionCenter = this.context.get(currentUser).distributionCenter;
           this.editComment(d);
         }
         , textInMenu: () => getLang(this.context).notDelivered

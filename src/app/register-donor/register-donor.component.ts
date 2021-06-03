@@ -5,7 +5,7 @@ import { ServerFunction, Context, Column, ServerController, Storable, getControl
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
-import { allCentersToken } from '../manage/distribution-centers';
+
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
@@ -238,7 +238,7 @@ class donorForm {
           comment: '',
           basketType: type,
           courier: '',
-          distCenter: allCentersToken,
+          distCenter: null,
           quantity: q,
           selfPickup: isSelfDeliver,
         }, self.context);
@@ -261,7 +261,7 @@ class donorForm {
         comment: '',
         basketType: 'לא פורט',
         courier: '',
-        distCenter: allCentersToken,
+        distCenter: null,
         quantity: 1,
         selfPickup: false
       }, this.context);

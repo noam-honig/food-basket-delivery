@@ -15,7 +15,7 @@ import { Route } from '@angular/router';
 import { Families } from '../families/families';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser } from './distribution-centers';
+import { DistributionCenters, filterCenterAllowedForUser } from './distribution-centers';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -612,7 +612,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   @Column()
   name: string;
   @Column()
-  distCenter: DistributionCenterId;
+  distCenter: DistributionCenters;
   @Column()
   familiesCount: number;
 

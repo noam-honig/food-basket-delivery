@@ -9,6 +9,7 @@ import { Groups } from "../manage/groups";
 
 import { FamilyStatus } from './FamilyStatus';
 import { getLang } from '../sites/sites';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 
 export interface OutArgs {
@@ -34,8 +35,8 @@ export class Stats {
     active = new FaimilyStatistics(getLang(this.context).active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
     problem = new FaimilyStatistics(getLang(this.context).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false).and(f.defaultSelfPickup.isEqualTo(false))), colors.orange);
 
-    async getData(distCenter: string) {
-        let r = await Stats.getFamilyStats(distCenter);
+    async getData(distCenter: DistributionCenters) {
+        let r = await Stats.getFamilyStats(DistributionCenters.toId(distCenter));
         for (let s in this) {
             let x: any = this[s];
             if (x instanceof FaimilyStatistics) {

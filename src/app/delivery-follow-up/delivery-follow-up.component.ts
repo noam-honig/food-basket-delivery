@@ -14,7 +14,7 @@ import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { allCentersToken, DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SqlBuilder, relativeDateName, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -52,7 +52,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   }
   seeAllCenters() {
-    return this.dialog.distCenter.isAllCentersToken();
+    return !this.dialog.distCenter;
   }
   searchString: string;
   showHelper(h: helperFollowupInfo) {
@@ -141,7 +141,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   hasChart = true;
   async refreshStats() {
-    this.helpers = await DeliveryFollowUpComponent.helpersStatus(this.dialog.distCenter.evilGetId());
+    this.helpers = await DeliveryFollowUpComponent.helpersStatus(DistributionCenters.toId(this.dialog.distCenter));
     this.updateChart();
 
   }
@@ -165,7 +165,8 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async helpersStatus(distCenter: string, context?: Context, db?: SqlDatabase) {
+  static async helpersStatus(distCenterIn: string, context?: Context, db?: SqlDatabase) {
+    let distCenter = await DistributionCenters.fromId(distCenterIn, context);
     let fd = SqlFor(context.for(FamilyDeliveries));
 
     let h = SqlFor(context.for(Helpers));
@@ -187,7 +188,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.sumWithAlias(1, 'problem', DeliveryStatus.isProblem(fd.deliverStatus))
 
       ],
-      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(filterDistCenter(fd.distributionCenter, new DistributionCenterId(distCenter, context), context))],
+      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(filterDistCenter(fd.distributionCenter, distCenter, context))],
 
     }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {

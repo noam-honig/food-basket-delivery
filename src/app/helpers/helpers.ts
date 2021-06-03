@@ -3,7 +3,7 @@ import { Context, IdEntity, UserInfo, Filter, Entity, Column, ServerMethod, Colu
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
 import { isPhoneValidForIsrael, Phone } from "../model-shared/Phone";
-import { LookupValue } from "../model-shared/LookupValue";
+
 
 
 
@@ -27,7 +27,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { EmailSvc } from '../shared/utils';
 import { use } from '../translate';
-import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 
 
@@ -71,7 +71,7 @@ export const currentUser = new keyFor<Helpers>();
 
     displayValue: (e, x) => x ? x.name : '',
     caption: use.language.volunteer,
-    valueConverter: c => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null) 
+    valueConverter: c => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
 })
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
@@ -148,7 +148,7 @@ export abstract class HelpersBase extends IdEntity {
     shortUrlKey: string;
 
     @Column({ allowApiUpdate: Roles.admin })
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
 
     @Column({
         caption: use.language.helperComment,
@@ -281,10 +281,10 @@ export abstract class HelpersBase extends IdEntity {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = DistributionCenterId.forCurrentUser(self.context);
+                                self.distributionCenter = self.context.get(currentUser).distributionCenter;
                             }
                         }
-                        if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
+                        if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
                             canUpdate = true;
                         if (self.$.distCenterAdmin.originalValue || self.admin) {
                             if (!canUpdate)
@@ -722,14 +722,14 @@ export class Helpers extends HelpersBase {
         includeInApi: Roles.distCenterAdmin,
 
         validate: (self) => {
-            if (self.context.isAllowed(Roles.admin)) {
+            if (self.context.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
                 return;
             }
             if (self.$.distCenterAdmin)
                 if (self.$.admin.originalValue) {
                     self.$.distCenterAdmin.error = use.language.notAllowedToUpdateVolunteer;
                 }
-                else if (!self.distributionCenter.matchesCurrentUser()) {
+                else if (self.distributionCenter && !self.distributionCenter.matchesCurrentUser()) {
                     self.$.distributionCenter.error = use.language.notAllowedToUpdateVolunteer;
                 }
 

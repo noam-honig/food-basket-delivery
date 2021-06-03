@@ -32,7 +32,7 @@ import { Groups } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.component';
-import { DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 
 @Component({
@@ -181,7 +181,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.evilGetId(), true);
+        let areas = await FamilyDeliveriesComponent.getGroups(DistributionCenters.toId(this.dialog.distCenter), true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           (f, g) => f.groups.contains(g).and(FamilyDeliveries.readyFilter(f, this.context)),
@@ -198,7 +198,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter.evilGetId());
+        let areas = await FamilyDeliveriesComponent.getGroups(DistributionCenters.toId(this.dialog.distCenter));
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           (f, g) => f.groups.contains(g),
@@ -333,7 +333,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     if (this.suspend)
       return;
 
-    this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.evilGetId()).then(st => {
+    this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter).then(st => {
       this.basketStats.stats.splice(0);
       this.cityStats.stats.splice(0);
       this.cityStats.moreStats.splice(0);
@@ -698,6 +698,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static async getGroups(distCenter: string, readyOnly = false, context?: Context) {
     let pendingStats = [];
     let result: groupStats[] = [];
+    let dist =await  DistributionCenters.fromId(distCenter, context);
     await context.for(Groups).find({
       limit: 1000,
       orderBy: f => f.name
@@ -710,7 +711,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         result.push(x);
         pendingStats.push(context.for(ActiveFamilyDeliveries).count(f => {
           let r = f.groups.contains(x.name).and(
-            filterDistCenter(f.distributionCenter, new DistributionCenterId(distCenter, context), context));
+            filterDistCenter(f.distributionCenter, dist, context));
           if (readyOnly)
             return r.and(FamilyDeliveries.readyFilter(f, context));
           return r;
@@ -809,7 +810,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
                 basketType: otherFailedDelivery.basketType.id,
                 quantity: otherFailedDelivery.quantity,
                 courier: HelperId.toJson(newDelivery.courier),
-                distCenter: newDelivery.distributionCenter.evilGetId(),
+                distCenter: DistributionCenters.toId(newDelivery.distributionCenter),
                 selfPickup: false,
                 comment: otherFailedDelivery.deliveryComments
               });

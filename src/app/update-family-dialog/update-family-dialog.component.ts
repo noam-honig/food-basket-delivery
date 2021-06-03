@@ -134,7 +134,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   preview() {
     let fd = this.args.familyDelivery;
     if (!fd)
-      fd = this.args.family.createDelivery(this.dialog.distCenter.evilGetId());
+      fd = this.args.family.createDelivery(this.dialog.distCenter);
     this.args.family.updateDelivery(fd);
     openDialog(PreviewFamilyComponent, x => { x.argsFamily = fd });
   }

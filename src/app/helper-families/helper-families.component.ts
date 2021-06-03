@@ -39,9 +39,9 @@ import { UpdateArea } from '../families/familyActions';
 
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
-import {  FamilySources } from '../families/FamilySources';
+import { FamilySources } from '../families/FamilySources';
 import { routeStrategy } from '../asign-family/route-strategy';
 
 
@@ -308,7 +308,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
-    let dist = new DistributionCenterId('', context);
+    let dist:DistributionCenters = null;
     let helper = await HelperId.fromJson(id, context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
@@ -333,7 +333,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(id: string, context?: Context) {
-    let dist = new DistributionCenterId('', context);
+    let dist:DistributionCenters = null;
     let helper = await HelperId.fromJson(id, context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
@@ -344,7 +344,8 @@ export class HelperFamiliesComponent implements OnInit {
         await fd.save();
       }
     });
-    await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, context);
+    if (dist)
+      await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, context);
   }
   notMLT() {
     return !this.settings.isSytemForMlt();

@@ -7,7 +7,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from "../fami
 import { Families } from "../families/families";
 import { SqlBuilder, SqlFor } from "../model-shared/types";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { DistributionCenterId, allCentersToken, DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from "../manage/distribution-centers";
+import { DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from "../manage/distribution-centers";
 import { Groups } from "../manage/groups";
 import { colors } from "../families/stats-action";
 import { getLang } from '../sites/sites';
@@ -31,8 +31,8 @@ export class FamilyDeliveryStats {
     needWork = new FamilyDeliveresStatistics(getLang(this.context).requireFollowUp, f => f.needsWork.isEqualTo(true), colors.yellow);
 
 
-    async getData(distCenter: string) {
-        let r = await FamilyDeliveryStats.getFamilyDeliveryStatsFromServer(distCenter);
+    async getData(distCenter: DistributionCenters) {
+        let r = await FamilyDeliveryStats.getFamilyDeliveryStatsFromServer(DistributionCenters.toId(distCenter));
         for (let s in this) {
             let x: any = this[s];
             if (x instanceof FamilyDeliveresStatistics) {
@@ -61,7 +61,7 @@ export class FamilyDeliveryStats {
                 selfPickup: number,
             }[], cities: []
         };
-        let distCenter = new DistributionCenterId(distCenterString, context);
+        let distCenter = await DistributionCenters.fromId(distCenterString, context);
         let stats = new FamilyDeliveryStats(context);
         let pendingStats = [];
         for (let s in stats) {
@@ -107,7 +107,7 @@ export class FamilyDeliveryStats {
 
 
 
-        if (distCenter.isAllCentersToken())
+        if (distCenter==null)
             pendingStats.push(
                 context.for(CitiesStats).find({
                     orderBy: f => f.deliveries.descending()
@@ -150,7 +150,7 @@ export class FamilyDeliveresStatistics {
     }
 
     value = 0;
-    async saveTo(distCenter: DistributionCenterId, data: any, context: Context) {
+    async saveTo(distCenter: DistributionCenters, data: any, context: Context) {
         try {
 
             data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), filterDistCenter(f.distributionCenter, distCenter, context))).then(c => this.value = c);
@@ -211,7 +211,7 @@ export class CitiesStatsPerDistCenter extends EntityBase {
     @Column()
     city: string;
     @Column()
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
     @Column()
     families: number;
 

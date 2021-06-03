@@ -8,7 +8,7 @@ import { DeliveryStatus } from "./DeliveryStatus";
 import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
 
 import { Roles } from "../auth/roles";
-import { DistributionCenterId as DistributionCenterId, allCentersToken, DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
+import {  DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
 import { YesNo } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
@@ -62,8 +62,8 @@ export class MessageStatus {
         }
         if (self.quantity < 1)
             self.quantity = 1;
-        if (self.distributionCenter.isAllCentersToken())
-            self.distributionCenter = new DistributionCenterId((await self.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false))).id, self.context);
+        if (self.distributionCenter==null)
+            self.distributionCenter = await self.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
         if (self.$.courier.wasChanged())
             self.routeOrder = 0;
 
@@ -190,10 +190,10 @@ export class FamilyDeliveries extends IdEntity {
     @Column({
         allowApiUpdate: Roles.admin
     })
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
 
     isDistCenterInactive() {
-        return this.distributionCenter.item && this.distributionCenter.item.isFrozen
+        return this.distributionCenter && this.distributionCenter.isFrozen
     }
     @Column()
     deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;

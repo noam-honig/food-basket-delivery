@@ -1,6 +1,6 @@
 import { Context, AndFilter, EntityWhere, Column, EntityWhereItem, Storable, getControllerDefs } from "@remult/core";
 import { Roles } from "../auth/roles";
-import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
+import { DistributionCenters } from "../manage/distribution-centers";
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
@@ -8,7 +8,7 @@ import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring"
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { BasketType,  defaultBasketType,  QuantityColumn } from "../families/BasketType";
+import { BasketType, defaultBasketType, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
@@ -333,7 +333,7 @@ export class UpdateQuantity extends ActionOnFamilyDeliveries {
 })
 export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     @Column()
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
 
     constructor(context: Context) {
         super(context, {
@@ -389,7 +389,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     archiveHelper = new ArchiveHelper(this.context);
 
     @Column()
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
 
     @Column({ caption: use.language.distributionListAsCurrentDelivery })
     useCurrentDistributionCenter: boolean;
@@ -403,11 +403,11 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 this.basketType = context.get(defaultBasketType);
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
-                this.useCurrentDistributionCenter = component.dialog.distCenter.isAllCentersToken();
+                this.useCurrentDistributionCenter = component.dialog.distCenter == null;
                 return [
                     this.useExistingBasket,
                     [{ column: this.basketType, visible: () => !this.useExistingBasket }, { column: this.quantity, visible: () => !this.useExistingBasket }],
-                    { column: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter.isAllCentersToken() && component.dialog.hasManyCenters },
+                    { column: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
                     { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
                     this.helperStrategy,
                     { column: this.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
@@ -421,8 +421,8 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
             },
             validate: async () => {
                 if (!this.useCurrentDistributionCenter) {
-                    let dc = await this.distributionCenter.waitLoad();
-                    if (dc.isNew())
+                    
+                    if (!this.distributionCenter)
                         throw getLang(this.context).pleaseSelectDistributionList;
                 }
             },
@@ -446,7 +446,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 let f = await this.context.for(Families).findId(existingDelivery.family);
                 if (!f || f.status != FamilyStatus.Active)
                     return;
-                let newDelivery = f.createDelivery(existingDelivery.distributionCenter.evilGetId());
+                let newDelivery = f.createDelivery(existingDelivery.distributionCenter);
                 newDelivery._disableMessageToUsers = true;
                 newDelivery.copyFrom(existingDelivery);
                 if (!this.useExistingBasket) {

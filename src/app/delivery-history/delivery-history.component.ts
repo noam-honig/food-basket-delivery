@@ -24,7 +24,7 @@ import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { use } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { DistributionCenterId, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
 
 
 
@@ -45,7 +45,7 @@ export class DeliveryHistoryComponent implements OnInit {
   onlyArchived = new InputControl<boolean>({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: () => false })//this.settings.isSytemForMlt() })
   rangeArea = new DataAreaSettings({
     columnSettings: () => {
-      
+
       return [this.onlyDone, this.onlyArchived]
 
     },
@@ -185,7 +185,8 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue, this.dialog.distCenter.evilGetId(), this.onlyDone.value, this.onlyArchived.value);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue,
+      DistributionCenters.toId(this.dialog.distCenter), this.onlyDone.value, this.onlyArchived.value);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -312,9 +313,11 @@ export class DeliveryHistoryComponent implements OnInit {
 
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenter: string, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
+  static async getHelperHistoryInfo(fromDate: string, toDate: string, distCenterIn: string, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
+    let distCenter = await DistributionCenters.fromId(distCenterIn, context);
+
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
     var sql = new SqlBuilder();
     var fd = SqlFor(context.for(FamilyDeliveries));
@@ -324,7 +327,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(
-      fd.deliveryStatusDate.isLessThan(toDateDate)).and(filterDistCenter(fd.distributionCenter, new DistributionCenterId(distCenter, context), context));
+      fd.deliveryStatusDate.isLessThan(toDateDate)).and(filterDistCenter(fd.distributionCenter, distCenter, context));
     if (onlyDone)
       r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
     if (onlyArchived)

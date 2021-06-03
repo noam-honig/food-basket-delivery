@@ -20,6 +20,7 @@ import { DeliveryReceptionComponent } from "../delivery-reception/delivery-recep
 import { Phone } from "../model-shared/Phone";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { BasketType, defaultBasketType } from "../families/BasketType";
+import { DistributionCenters } from "../manage/distribution-centers";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 let staticToken = '';
@@ -45,12 +46,13 @@ export class TokenService {
         if (token) {
             user = <UserInfo>new JwtHelperService().decodeToken(token);
             sessionStorage.setItem(this.keyInStorage, token);
+            if (remember)
+                localStorage.setItem(this.keyInStorage, token);
         }
         else {
 
             sessionStorage.removeItem(this.keyInStorage);
-            if (remember)
-                localStorage.removeItem(this.keyInStorage);
+            localStorage.removeItem(this.keyInStorage);
         }
         staticToken = token;
         await this.context.setUser(user);
@@ -66,6 +68,7 @@ export class AuthService {
         if (context.isSignedIn()) {
             h = await context.for(Helpers).getCachedByIdAsync(context.user.id);
             await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers
+            await h.$.distributionCenter.load(); /// for all the current user distribution center filtering
             context.for(BasketType).find({ orderBy: x => x.id }).then(y => {
                 if (y.length > 0)
                     context.set(defaultBasketType, y[0]);
@@ -394,7 +397,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         id: h.id,
         roles: [Sites.getOrgRole(context)],
         name: h.name,
-        distributionCenter: h.distributionCenter.evilGetId(),
+        distributionCenter: DistributionCenters.toId(h.distributionCenter),
         theHelperIAmEscortingId: HelperId.toJson(h.theHelperIAmEscorting),
         escortedHelperName: h.theHelperIAmEscorting ? (await (h.$.theHelperIAmEscorting.load())).name : ''
     };

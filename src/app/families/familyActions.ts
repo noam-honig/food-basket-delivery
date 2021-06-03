@@ -2,7 +2,7 @@ import { Context, AndFilter, Storable, Column, getControllerDefs } from "@remult
 import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketType, defaultBasketType, QuantityColumn } from "./BasketType";
-import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
+import { DistributionCenters } from "../manage/distribution-centers";
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 
 import { FamilyStatus } from "./FamilyStatus";
@@ -61,7 +61,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @QuantityColumn()
     quantity: number;
     @Column()
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
     @Column({ caption: use.language.defaultVolunteer })
     useDefaultVolunteer: boolean = true;
     @Column()
@@ -77,8 +77,8 @@ export class NewDelivery extends ActionOnRows<Families> {
     constructor(context: Context) {
         super(context, Families, {
             validate: async () => {
-                let x = await this.distributionCenter.waitLoad();
-                if (this.distributionCenter.exists()) {
+                let x = await this.$.distributionCenter.load();
+                if (!this.distributionCenter) {
                     this.$.distributionCenter.error = getLang(this.context).mustSelectDistributionList;
                     throw this.$.distributionCenter.error;
                 }
@@ -87,8 +87,8 @@ export class NewDelivery extends ActionOnRows<Families> {
                 this.basketType = context.get(defaultBasketType);
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
-                if (this.distributionCenter.isAllCentersToken())
-                    this.distributionCenter = new DistributionCenterId('', context);
+                if (this.distributionCenter)
+                    this.distributionCenter = await DistributionCenters.getDefault(context);
                 return [
                     this.$.useFamilyBasket,
                     { column: this.$.basketType, visible: () => !this.useFamilyBasket },
@@ -119,7 +119,7 @@ export class NewDelivery extends ActionOnRows<Families> {
 
                 }
 
-                let fd = f.createDelivery(this.distributionCenter.evilGetId());
+                let fd = f.createDelivery(this.distributionCenter);
                 fd._disableMessageToUsers = true;
                 if (!this.useFamilyBasket) {
                     fd.basketType = this.basketType;

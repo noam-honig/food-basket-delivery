@@ -21,7 +21,7 @@ export class UserFamiliesList {
         if (this.allFamilies)
             this.map.test(this.allFamilies, this.helper);
     }
-    startAssignByMap(city: string, group: string, distCenter: string, area: string, basketType: string) {
+    startAssignByMap(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: string) {
 
         this.map.loadPotentialAsigment(city, group, distCenter, area, basketType);
         setTimeout(() => {
@@ -175,7 +175,7 @@ export class UserFamiliesList {
         this.allFamilies = this.allFamilies.filter(f => f.archive == false);
 
         if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer) {
-            this.allFamilies[0].distributionCenter.waitLoad().then(x => this.distCenter = x);
+            this.allFamilies[0].$.distributionCenter.load().then(x => this.distCenter = x);
         }
         else {
             this.distCenter = undefined;

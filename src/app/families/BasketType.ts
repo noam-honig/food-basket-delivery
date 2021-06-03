@@ -2,7 +2,7 @@
 
 import { Column, ColumnSettings, Entity, IdEntity, keyFor, Storable, StoreAsStringValueConverter } from '@remult/core';
 
-import { LookupValue } from "../model-shared/LookupValue";
+
 import { Context, } from '@remult/core';
 
 import { Roles } from "../auth/roles";

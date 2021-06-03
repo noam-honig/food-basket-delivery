@@ -604,7 +604,7 @@ export class FamiliesComponent implements OnInit {
         if (this.suspend)
             return;
 
-        this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter.evilGetId()).then(st => {
+        this.busy.donotWait(async () => this.stats.getData(this.dialog.distCenter).then(st => {
 
             this.groupsTotals.stats.splice(0);
             this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),

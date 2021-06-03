@@ -11,7 +11,7 @@ import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/help
 import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
 import { currentUser, HelperId, Helpers } from '../helpers/helpers';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { DialogService } from '../select-popup/dialog';
@@ -250,7 +250,7 @@ export class MltFamiliesComponent implements OnInit {
   async setDistCenterForFamily(dc: DistributionCenters) {
     for (const f of this.deliveriesForFamily) {
       f.deliverStatus = DeliveryStatus.Success;
-      f.distributionCenter = new DistributionCenterId(dc.id,this.context);
+      f.distributionCenter = dc;
       f.archive = true;
       await f.save();
     }
@@ -280,7 +280,7 @@ export class MltFamiliesComponent implements OnInit {
     if (!s.isSytemForMlt())
       throw "not allowed";
     for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.get(currentUser)) })) {
-      fd.distributionCenter =new DistributionCenterId(newDestinationId,context);
+      fd.distributionCenter =await DistributionCenters.fromId(newDestinationId,context);
       await fd.save();
     }
   }

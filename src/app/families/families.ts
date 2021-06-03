@@ -25,7 +25,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 
 
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
-import { allCentersToken, DistributionCenterId, findClosestDistCenter } from "../manage/distribution-centers";
+import { DistributionCenters, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 
 
@@ -309,7 +309,7 @@ export class Families extends IdEntity {
       }
     }
 
-    let newDelivery = this.createDelivery(await (await dialog.getDistCenter(this.addressHelper.location())).evilGetId());
+    let newDelivery = this.createDelivery(await dialog.getDistCenter(this.addressHelper.location()));
     let arciveCurrentDelivery = new InputControl<boolean>({
       caption: getLang(this.context).archiveCurrentDelivery,
       defaultValue: () => true
@@ -366,7 +366,7 @@ export class Families extends IdEntity {
             quantity: newDelivery.quantity,
             comment: newDelivery.deliveryComments,
             courier: HelperId.toJson(newDelivery.courier),
-            distCenter: newDelivery.distributionCenter.evilGetId(),
+            distCenter: DistributionCenters.toId(newDelivery.distributionCenter),
             selfPickup: selfPickup.value
 
           });
@@ -396,13 +396,14 @@ export class Families extends IdEntity {
   }, context?: Context) {
     let f = await context.for(Families).findId(familyId);
     if (f) {
-      if (settings.distCenter == allCentersToken)
-        settings.distCenter = await (await findClosestDistCenter(f.addressHelper.location(), context)).evilGetId();
-      let fd = f.createDelivery(settings.distCenter);
+      let distCenter = await DistributionCenters.fromId(settings.distCenter, context);
+      if (!distCenter)
+        distCenter = await findClosestDistCenter(f.addressHelper.location(), context);
+      let fd = f.createDelivery(distCenter);
       fd.basketType = await BasketType.fromId(settings.basketType, context);
       fd.quantity = settings.quantity;
       fd.deliveryComments = settings.comment;
-      fd.distributionCenter = new DistributionCenterId(settings.distCenter, context);
+      fd.distributionCenter = distCenter;
       fd.courier = await HelperId.fromJson(settings.courier, context);
       if (settings.deliverStatus) fd.deliverStatus = settings.deliverStatus;
       if (settings.archive) fd.archive = settings.archive;
@@ -415,10 +416,10 @@ export class Families extends IdEntity {
     throw getLang(context).familyWasNotFound;
 
   }
-  createDelivery(distCenter: string) {
+  createDelivery(distCenter: DistributionCenters) {
     let fd = this.context.for(FamilyDeliveries).create();
     fd.family = this.id;
-    fd.distributionCenter = new DistributionCenterId(distCenter, this.context);
+    fd.distributionCenter = distCenter;
     fd.special = this.special;
     fd.basketType = this.basketType;
     fd.quantity = this.quantity;

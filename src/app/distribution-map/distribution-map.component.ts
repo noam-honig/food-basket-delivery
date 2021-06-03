@@ -24,7 +24,7 @@ import { Helpers, HelperId } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang, Sites } from '../sites/sites';
-import { DistributionCenterId, DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
@@ -225,7 +225,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       allInAlll = true;
     }
     else
-      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter.evilGetId(), this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
+      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined,DistributionCenters.toId( this.dialog.distCenter), this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
@@ -331,10 +331,12 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.calcSelectedDeliveries();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, basketIn?: string, context?: Context, db?: SqlDatabase) {
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenterIn?: string, area?: string, basketIn?: string, context?: Context, db?: SqlDatabase) {
+    let distCenter = await DistributionCenters.fromId(distCenterIn, context);
     if (!distCenter)
-      distCenter = '';
+      distCenter = await DistributionCenters.getDefault(context);
     let basket = await BasketType.fromId(basketIn, context);
+
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let h = SqlFor(context.for(Helpers));
     let sql = new SqlBuilder();
@@ -352,7 +354,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       where: () => {
         let where: any[] = [filterCenterAllowedForUser(f.distributionCenter, context)];
         if (distCenter !== undefined)
-          where.push(filterDistCenter(f.distributionCenter, new DistributionCenterId(distCenter, context), context));
+          where.push(filterDistCenter(f.distributionCenter, distCenter, context));
         if (area !== undefined && area !== null && area != getLang(context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }

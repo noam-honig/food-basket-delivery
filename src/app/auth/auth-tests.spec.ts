@@ -18,14 +18,16 @@ describe('users and security', () => {
     actionInfo.runningOnServer = true;
     it("user can only update their own info", async(async () => {
         let { c, context } = await getHelperContext();
+        let h2 = await c.create({ id: 'stam', name: 'stam', admin: false, phone: new Phone("123") }).save();
         let h = await c.findFirst();
         h.name = '123';
         await expectFail(() => h.save());
         context.setUser({
-            id: 'stam',
+            id: h2.id,
             name: 'stam',
             roles: []
         });
+
         await expectFail(() => h.save());
         context.setUser({
             id: h.id,
@@ -38,10 +40,11 @@ describe('users and security', () => {
     }));
     it("admin can update anyone", async(async () => {
         let { c, context } = await getHelperContext();
+        let h2 = await c.create({ id: 'stam', name: 'stam', admin: true, phone: new Phone("123") }).save();
         let h = await c.findFirst();
         h.name = '123';
         context.setUser({
-            id: 'stam',
+            id: h2.id,
             name: 'stam',
             roles: [Roles.admin]
         });
@@ -200,7 +203,7 @@ describe('users and security', () => {
         if (!l.authToken)
             throw l;
         let jwt = getAuthService(context);
-        jwt.setToken(l.authToken,false);
+        jwt.setToken(l.authToken, false);
         let r = await AuthService.loginFromSms('1234567890', context);
         expect(r.valid).toBe(true);
     }));
@@ -208,7 +211,7 @@ describe('users and security', () => {
 function getAuthService(context: ServerContext) {
     var s = new ApplicationSettings(context);
     s.currentUserIsValidForAppLoadTest = true;
-    let jwt = new TokenService( context);
+    let jwt = new TokenService(context);
     return jwt;
 }
 
@@ -218,6 +221,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     }
     let mem = new InMemoryDataProvider();
     var context = new ServerContext(mem);
+    await context.userChange.observe(async () => AuthService.initContext(context));
     let c = context.for(Helpers);
     let h = c.create();
     h.name = 'test';

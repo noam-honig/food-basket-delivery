@@ -5,7 +5,7 @@ import { RouteHelperService, BusyService, DataControl, openDialog } from '@remul
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
 
-import { allCentersToken, DistributionCenterId, DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -37,7 +37,7 @@ export class CreateNewEvent {
     createNewDelivery: boolean;
     @Column()
     @DataControl({ visible: () => false })
-    distributionCenter: DistributionCenterId;
+    distributionCenter: DistributionCenters;
     @Column({ caption: use.language.moreOptions })
     @DataControl<CreateNewEvent>({ visible: (self) => self.createNewDelivery })
     moreOptions: boolean;
@@ -86,7 +86,7 @@ export class CreateNewEvent {
         let r = 0;
         if (this.createNewDelivery) {
             r = await this.iterateFamilies(async f => {
-                let fd = await f.createDelivery(this.distributionCenter.evilGetId());
+                let fd = await f.createDelivery(this.distributionCenter);
                 fd._disableMessageToUsers = true;
                 if (this.moreOptions) {
                     if (!this.useFamilyBasket)
@@ -150,11 +150,9 @@ export class CreateNewEvent {
         }
         this.distributionCenter = dialog.distCenter;
 
-        if (this.distributionCenter.isAllCentersToken()) {
-            let centers = await this.context.for(DistributionCenters).find({ where: x => DistributionCenters.isActive(x) });
-            if (centers.length == 1)
-                this.distributionCenter = new DistributionCenterId(centers[0].id, this.context);
-            else {
+        if (!this.distributionCenter) {
+            this.distributionCenter = await DistributionCenters.getDefault(this.context);
+            if (!this.distributionCenter) {
                 await dialog.Error(getLang(this.context).pleaseSelectDistributionList);
                 return;
             }
