@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model
 import { Phone } from "../model-shared/Phone";
 
 import { Context, IdEntity, Filter, AndFilter, Column, Entity, DecimalValueConverter, Storable, filterOf, EntityColumn } from '@remult/core';
-import { BasketTypeId, QuantityColumn } from "./BasketType";
+import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
@@ -176,7 +176,7 @@ export class FamilyDeliveries extends IdEntity {
         caption: use.language.basketType,
         allowApiUpdate: Roles.admin
     })
-    basketType: BasketTypeId;
+    basketType: BasketType;
     @Column({
         caption: use.language.quantity,
         allowApiUpdate: Roles.admin
@@ -193,7 +193,7 @@ export class FamilyDeliveries extends IdEntity {
     distributionCenter: DistributionCenterId;
 
     isDistCenterInactive() {
-        return this.distributionCenter.item&&this.distributionCenter.item.isFrozen
+        return this.distributionCenter.item && this.distributionCenter.item.isFrozen
     }
     @Column()
     deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
@@ -600,11 +600,11 @@ export class FamilyDeliveries extends IdEntity {
         return this.deliverStatus.caption;
     }
     describe() {
-        return Families.GetUpdateMessage(this, 1, this.courier&&this.courier.name, this.context);
+        return Families.GetUpdateMessage(this, 1, this.courier && this.courier.name, this.context);
     }
 
 
-    static readyFilter(self: filterOf<FamilyDeliveries>, context: Context, city?: string, group?: string, area?: string, basket?: string) {
+    static readyFilter(self: filterOf<FamilyDeliveries>, context: Context, city?: string, group?: string, area?: string, basket?: BasketType) {
         let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             self.courier.isEqualTo(null)).and(filterCenterAllowedForUser(self.distributionCenter, context));
         if (group)
@@ -614,8 +614,8 @@ export class FamilyDeliveries extends IdEntity {
         }
         if (area !== undefined && area != getLang(context).allRegions)
             where = where.and(self.area.isEqualTo(area));
-        if (basket != undefined && basket != 'undefined')
-            where = where.and(self.basketType.isEqualTo(new BasketTypeId(basket, context)))
+        if (basket != null)
+            where = where.and(self.basketType.isEqualTo(basket))
 
         return where;
     }

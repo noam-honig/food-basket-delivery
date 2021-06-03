@@ -1,6 +1,6 @@
 
 
-import { Column, ColumnSettings, Entity, IdEntity, Storable, StoreAsStringValueConverter } from '@remult/core';
+import { Column, ColumnSettings, Entity, IdEntity, keyFor, Storable, StoreAsStringValueConverter } from '@remult/core';
 
 import { LookupValue } from "../model-shared/LookupValue";
 import { Context, } from '@remult/core';
@@ -10,6 +10,16 @@ import { use } from '../translate';
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from '@remult/angular';
 
+
+@Storable<BasketType>({
+  valueConverter: c => new StoreAsStringValueConverter<any>(x => x!=undefined ? x : '', x => x||x=='' ? x : null),
+  displayValue: (e, v) => v ? v.name : '',
+  caption: use.language.basketType
+})
+@DataControl({
+  valueList: context => getValueList(context.for(BasketType)),
+  width: '100'
+})
 @Entity<BasketType>({
   key: "BasketType",
   allowApiRead: context => context.isSignedIn(),
@@ -21,6 +31,9 @@ import { DataControl, getValueList } from '@remult/angular';
   defaultOrderBy: x => x.name
 })
 export class BasketType extends IdEntity {
+  static async fromId(id: string, context: Context) {
+    return id === undefined ? null : await context.for(BasketType).getCachedByIdAsync(id);
+  }
 
   @Column({ caption: use.language.basketTypeName })
   name: string;
@@ -29,36 +42,12 @@ export class BasketType extends IdEntity {
   @Column({ caption: BasketType.boxes2Name })
   boxes2: number = 0;
 
-  constructor(private context: Context) {
-    super();
-  }
   static boxes1Name = !use ? '' : use.language.boxes1Name;
   static boxes2Name = !use ? '' : use.language.boxes2Name;
-}
 
-
-@Storable<BasketTypeId>({
-  valueConverter: c => new StoreAsStringValueConverter<BasketTypeId>(x => x.id, x => new BasketTypeId(x, c)),
-  displayValue: (e, v) => v.item ? v.item.name : '',
-  caption: use.language.basketType
-})
-@DataControl({
-  valueList: context => getValueList(context.for(BasketType)),
-  width: '100'
-})
-export class BasketTypeId extends LookupValue<BasketType>{
-  evilGetId(): string {
-    return this.id;
-  }
-  constructor(id: string, context: Context) {
-    super(id, context.for(BasketType));
-  }
-  async addBasketTypes(quantity: number, addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
-    let r = await this.waitLoad();
-    if (r) {
-      addColumn(BasketType.boxes1Name, r.boxes ? (r.boxes * quantity).toString() : '', 'n');
-      addColumn(BasketType.boxes2Name, r.boxes2 ? (r.boxes2 * quantity).toString() : '', 'n');
-    }
+  addBasketTypes(quantity: number, addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
+    addColumn(BasketType.boxes1Name, this.boxes ? (this.boxes * quantity).toString() : '', 'n');
+    addColumn(BasketType.boxes2Name, this.boxes2 ? (this.boxes2 * quantity).toString() : '', 'n');
   }
 }
 
@@ -66,3 +55,5 @@ export class BasketTypeId extends LookupValue<BasketType>{
 export function QuantityColumn<T>(settings?: ColumnSettings) {
   return Column<T, number>({ caption: use.language.quantity, ...settings });
 }
+
+export const defaultBasketType = new keyFor<BasketType>();

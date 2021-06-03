@@ -35,6 +35,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 import { use } from '../translate';
+import { BasketType } from '../families/BasketType';
 
 @Component({
   selector: 'app-distribution-map',
@@ -330,9 +331,10 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.calcSelectedDeliveries();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, basket?: string, context?: Context, db?: SqlDatabase) {
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: string, area?: string, basketIn?: string, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = '';
+    let basket = await BasketType.fromId(basketIn, context);
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let h = SqlFor(context.for(Helpers));
     let sql = new SqlBuilder();

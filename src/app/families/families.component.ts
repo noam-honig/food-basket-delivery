@@ -39,7 +39,7 @@ import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, Upda
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { sortColumns } from '../shared/utils';
 import { columnOrderAndWidthSaver } from './columnOrderAndWidthSaver';
-import { BasketTypeId } from './BasketType';
+import { BasketType, defaultBasketType } from './BasketType';
 import { use } from '../translate';
 
 
@@ -204,7 +204,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = new BasketTypeId('', this.context);
+                f.basketType = this.context.get(defaultBasketType);
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {

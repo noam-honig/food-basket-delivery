@@ -39,6 +39,9 @@ export class FamilyDeliveryStats {
                 x.loadFrom(r.data);
             }
         }
+        await Promise.all(r.baskets.map(async b => {
+            b.basket = await BasketType.fromId(b.id, this.context);
+        }))
         return r;
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
@@ -46,6 +49,7 @@ export class FamilyDeliveryStats {
         let result = {
             data: {}, baskets: [] as {
                 id: string,
+                basket: BasketType,
                 name: string,
                 boxes: number,
                 boxes2: number,
@@ -67,8 +71,8 @@ export class FamilyDeliveryStats {
             }
         }
 
-        let f = SqlFor( context.for(ActiveFamilyDeliveries));
-        
+        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+
         let sql = new SqlBuilder();
         sql.addEntity(f, "FamilyDeliveries")
         let baskets = await db.execute(sql.build(sql.query({
@@ -95,7 +99,8 @@ export class FamilyDeliveryStats {
                 inEventDeliveries: +r['b'],
                 successDeliveries: +r['c'],
                 selfPickup: +r['d'],
-                smsNotSent: +r['e']
+                smsNotSent: +r['e'],
+                basket: undefined
 
             });
         }

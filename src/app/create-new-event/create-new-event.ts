@@ -12,7 +12,7 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { Families, GroupsValue } from '../families/families';
-import { BasketTypeId } from '../families/BasketType';
+import { BasketType } from '../families/BasketType';
 import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
 import { PromiseThrottle } from '../shared/utils';
 import { async } from 'rxjs/internal/scheduler/async';
@@ -54,7 +54,7 @@ export class CreateNewEvent {
     useFamilyBasket: boolean;
     @DataControl<CreateNewEvent>({ visible: self => !self.useFamilyBasket })
     @Column()
-    basketType: BasketTypeId;
+    basketType: BasketType;
 
 
     constructor(private context: Context) {

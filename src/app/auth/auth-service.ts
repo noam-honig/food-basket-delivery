@@ -19,6 +19,7 @@ import { Subject } from "rxjs";
 import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
 import { Phone } from "../model-shared/Phone";
 import { JwtHelperService } from "@auth0/angular-jwt";
+import { BasketType, defaultBasketType } from "../families/BasketType";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 let staticToken = '';
@@ -65,6 +66,10 @@ export class AuthService {
         if (context.isSignedIn()) {
             h = await context.for(Helpers).getCachedByIdAsync(context.user.id);
             await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers
+            context.for(BasketType).find({ orderBy: x => x.id }).then(y => {
+                if (y.length > 0)
+                    context.set(defaultBasketType, y[0]);
+            });
         }
         context.set(currentUser, h);
 

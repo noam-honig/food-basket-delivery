@@ -9,8 +9,8 @@ import { LookupValue } from "../model-shared/LookupValue";
 
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { BasketType, BasketTypeId } from '../families/BasketType';
-import {  FamilySources } from '../families/FamilySources';
+import { BasketType, defaultBasketType } from '../families/BasketType';
+import { FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { BusyService } from '@remult/angular';
@@ -238,17 +238,18 @@ export class ImportFromExcelComponent implements OnInit {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
+        let basket = await BasketType.fromId(i.basketType, context);
         let f = await context.for(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
         let fd = await context.for(ActiveFamilyDeliveries).findFirst(fd => {
             let r = fd.family.isEqualTo(i.duplicateFamilyInfo[0].id).and(fd.distributionCenter.isEqualTo(new DistributionCenterId(i.distCenter, context)).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
             if (compareBasketType)
-                return r.and(fd.basketType.isEqualTo(new BasketTypeId(i.basketType, context)));
+                return r.and(fd.basketType.isEqualTo(basket));
             return r;
 
         });
         if (!fd) {
             fd = f.createDelivery(i.distCenter);
-            fd.basketType = new BasketTypeId(i.basketType, context);
+            fd.basketType = basket;
         }
         let val = c.newValue;
         if (val === null)
@@ -479,7 +480,7 @@ export class ImportFromExcelComponent implements OnInit {
             phone3ForDuplicateCheck: f.phone3.thePhone,
             phone4ForDuplicateCheck: f.phone4.thePhone,
             distCenter: fd.distributionCenter.evilGetId(),
-            basketType: fd.basketType.evilGetId(),
+            basketType: fd.basketType.id,
             idInHagai: updatedFields.get(this.f.id) ? f.id : '',
             iDinExcel: f.iDinExcel,
 
@@ -526,7 +527,7 @@ export class ImportFromExcelComponent implements OnInit {
     settingsArea: DataAreaSettings = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery.value = true;
-        this.defaultBasketType.value = new BasketTypeId('', undefined);
+        this.defaultBasketType.value = this.context.get(defaultBasketType);
         this.distributionCenter.value = this.dialog.distCenter;
         if (this.distributionCenter.value.isAllCentersToken())
             this.distributionCenter.value = new DistributionCenterId((await this.context.for(DistributionCenters).findFirst(x => DistributionCenters.isActive(x))).id, this.context);
@@ -701,7 +702,7 @@ export class ImportFromExcelComponent implements OnInit {
             key: 'basketType',
             name: this.fd.basketType.caption,
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(BasketType, b => b.name, v, b => new BasketTypeId(b.id, this.context), h.fd.$.basketType);
+                await h.lookupAndInsert(BasketType, b => b.name, v, b => b, h.fd.$.basketType);
             }, columns: [this.fd.basketType]
         });
 
@@ -841,7 +842,7 @@ export class ImportFromExcelComponent implements OnInit {
     updateRows: excelRowInfo[] = [];
     addDelivery = new InputControl<boolean>({ caption: use.language.defineDeliveriesForFamiliesInExcel });
     compareBasketType = new InputControl<boolean>({ caption: use.language.ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery });
-    defaultBasketType = new InputControl<BasketTypeId>({ target: BasketTypeId });
+    defaultBasketType = new InputControl<BasketType>({ target: BasketType });
     distributionCenter = new InputControl<DistributionCenterId>({ target: DistributionCenterId });
     useFamilyMembersAsNumOfBaskets = new InputControl<boolean>({ caption: use.language.useFamilyMembersAsQuantity });
 
@@ -1529,11 +1530,12 @@ function onlyNameMatch(f: duplicateFamilyInfo) {
 
 async function compareValuesWithRow(context: Context, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
+    let basketType = await BasketType.fromId(info.basketType, context);
     let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(withFamily));
     let fd = await context.for(ActiveFamilyDeliveries).lookupAsync(fd => {
         let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(new DistributionCenterId(info.distCenter, context)).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
         if (compareBasketType)
-            return r.and(fd.basketType.isEqualTo(new BasketTypeId(info.basketType, context)));
+            return r.and(fd.basketType.isEqualTo(basketType));
         return r;
     });
     for (const columnMemberName of columnsInCompareMemeberName) {

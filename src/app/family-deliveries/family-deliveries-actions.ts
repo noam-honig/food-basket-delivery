@@ -8,7 +8,7 @@ import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring"
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { BasketType, BasketTypeId, QuantityColumn } from "../families/BasketType";
+import { BasketType,  defaultBasketType,  QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
@@ -301,7 +301,7 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
 })
 export class UpdateBasketType extends ActionOnFamilyDeliveries {
     @Column()
-    basketType: BasketTypeId;
+    basketType: BasketType;
 
     constructor(context: Context) {
         super(context, {
@@ -372,7 +372,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     @Column({ caption: use.language.useBusketTypeFromCurrentDelivery })
     useExistingBasket: boolean = true;
     @Column()
-    basketType: BasketTypeId;
+    basketType: BasketType;
     @QuantityColumn()
     quantity: number;
     @Column()
@@ -400,7 +400,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     constructor(context: Context) {
         super(context, {
             dialogColumns: async (component) => {
-                this.basketType = new BasketTypeId('', context);
+                this.basketType = context.get(defaultBasketType);
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 this.useCurrentDistributionCenter = component.dialog.distCenter.isAllCentersToken();

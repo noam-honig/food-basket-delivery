@@ -2,13 +2,13 @@ import { DeliveryStatus } from "./DeliveryStatus";
 import { YesNo } from "./YesNo";
 
 import { FamilySources } from "./FamilySources";
-import { BasketTypeId, QuantityColumn } from "./BasketType";
+import { BasketType, QuantityColumn } from "./BasketType";
 import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
 import { Column, Context, ServerFunction, StoreAsStringValueConverter, IdEntity, SqlDatabase, Filter, Entity, Validators, DateOnlyValueConverter, Storable, DecimalValueConverter, ColumnDefinitions, ColumnDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataArealColumnSetting, DataControl, DataControlSettings, GridSettings, InputControl, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
-import { currentUser, HelperId, Helpers,  HelpersBase } from "../helpers/helpers";
+import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
@@ -362,7 +362,7 @@ export class Families extends IdEntity {
         },
         ok: async () => {
           let newId = await Families.addDelivery(newDelivery.family, {
-            basketType: newDelivery.basketType.evilGetId(),
+            basketType: newDelivery.basketType.id,
             quantity: newDelivery.quantity,
             comment: newDelivery.deliveryComments,
             courier: HelperId.toJson(newDelivery.courier),
@@ -399,7 +399,7 @@ export class Families extends IdEntity {
       if (settings.distCenter == allCentersToken)
         settings.distCenter = await (await findClosestDistCenter(f.addressHelper.location(), context)).evilGetId();
       let fd = f.createDelivery(settings.distCenter);
-      fd.basketType = new BasketTypeId(settings.basketType, context);
+      fd.basketType = await BasketType.fromId(settings.basketType, context);
       fd.quantity = settings.quantity;
       fd.deliveryComments = settings.comment;
       fd.distributionCenter = new DistributionCenterId(settings.distCenter, context);
@@ -521,7 +521,7 @@ export class Families extends IdEntity {
 
   nextBirthday: Date
   @Column({ caption: use.language.defaultBasketType })
-  basketType: BasketTypeId;
+  basketType: BasketType;
   @Column({ caption: use.language.defaultQuantity, allowApiUpdate: Roles.admin })
   quantity: number;
   @Column({ includeInApi: true, caption: use.language.familySource })

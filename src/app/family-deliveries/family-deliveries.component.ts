@@ -10,7 +10,7 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent }
 
 import * as chart from 'chart.js';
 import { colors } from '../families/stats-action';
-import { BasketType, BasketTypeId } from '../families/BasketType';
+import { BasketType } from '../families/BasketType';
 
 
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
@@ -357,14 +357,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.updateChart();
     }));
   }
-  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, id: string }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: filterOf<ActiveFamilyDeliveries>, id: BasketTypeId) => Filter) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, basket: BasketType }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: filterOf<ActiveFamilyDeliveries>, id: BasketType) => Filter) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
     stats.totalBoxes2 = 0;
 
     baskets.forEach(b => {
-      let fs = new FamilyDeliveresStatistics(b.name, f => equalToFilter(f, new BasketTypeId(b.id, this.context)),
+      let fs = new FamilyDeliveresStatistics(b.name, f => equalToFilter(f, b.basket),
         undefined);
       fs.value = getCount(b);
       stats.stats.push(fs);
@@ -806,7 +806,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
               where: fd => fd.family.isEqualTo(newDelivery.family).and(DeliveryStatus.isProblem(fd.deliverStatus))
             })) {
               await Families.addDelivery(otherFailedDelivery.family, {
-                basketType: otherFailedDelivery.basketType.evilGetId(),
+                basketType: otherFailedDelivery.basketType.id,
                 quantity: otherFailedDelivery.quantity,
                 courier: HelperId.toJson(newDelivery.courier),
                 distCenter: newDelivery.distributionCenter.evilGetId(),

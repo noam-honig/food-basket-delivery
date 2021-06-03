@@ -19,9 +19,9 @@ export class BasketSummaryComponent implements OnInit {
   boxes2 = 0;
   comments: { comment: string, family: string }[] = [];
   async ngOnInit() {
-    let hash = new Map<string, basketStats>();
+    let hash = new Map<BasketType, basketStats>();
     for (const delivery of this.families.toDeliver) {
-      let b = await delivery.basketType.waitLoad();
+      let b = await delivery.$.basketType.load();
       let b1 = b.boxes * delivery.quantity;
       let b2 = b.boxes2 * delivery.quantity;
       this.boxes1 += b1;
@@ -29,7 +29,7 @@ export class BasketSummaryComponent implements OnInit {
       if (delivery.deliveryComments) {
         this.comments.push({ comment: delivery.deliveryComments, family: delivery.name });
       }
-      let s = hash.get(delivery.basketType.evilGetId());
+      let s = hash.get(delivery.basketType);
       if (!s) {
         s = {
           name: b.name,
@@ -37,7 +37,7 @@ export class BasketSummaryComponent implements OnInit {
           boxes2: 0
         };
         this.totals.push(s);
-        hash.set(delivery.basketType.evilGetId(), s);
+        hash.set(delivery.basketType, s);
       }
       s.boxes1 += b1;
       s.boxes2 += b2;

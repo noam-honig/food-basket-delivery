@@ -4,7 +4,7 @@ import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 
 @Storable<Phone>({
-  displayValue: (e, x) => x.displayValue,
+  displayValue: (e, x) =>x&& x.displayValue,
   valueConverter: () => Phone.converter,
   inputType: InputTypes.tel
 })

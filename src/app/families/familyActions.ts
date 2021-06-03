@@ -1,7 +1,7 @@
 import { Context, AndFilter, Storable, Column, getControllerDefs } from "@remult/core";
 import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
-import { BasketTypeId, QuantityColumn } from "./BasketType";
+import { BasketType, defaultBasketType, QuantityColumn } from "./BasketType";
 import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 
@@ -53,7 +53,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @Column({ caption: use.language.useFamilyDefaultBasketType })
     useFamilyBasket: boolean = true;
     @Column()
-    basketType: BasketTypeId;
+    basketType: BasketType;
     @Column({ caption: use.language.useFamilyQuantity })
     useFamilyQuantity: boolean = true;
     @Column({ caption: use.language.useFamilyMembersAsQuantity })
@@ -84,7 +84,7 @@ export class NewDelivery extends ActionOnRows<Families> {
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType = new BasketTypeId('', context);
+                this.basketType = context.get(defaultBasketType);
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 if (this.distributionCenter.isAllCentersToken())
@@ -268,7 +268,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 })
 export class UpdateBasketType extends ActionOnRows<Families> {
     @Column()
-    basket: BasketTypeId;
+    basket: BasketType;
 
     constructor(context: Context) {
         super(context, Families, {
