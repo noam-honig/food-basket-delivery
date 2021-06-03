@@ -1,4 +1,4 @@
-import {  Column, Context } from "@remult/core";
+import { Column, ColumnDefinitions, Context } from "@remult/core";
 import { DataControlInfo, DataControlSettings, GridSettings } from "../../../../radweb/projects/angular";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
@@ -8,6 +8,7 @@ export async function foreachSync<T>(array: T[], action: (item: T) => Promise<vo
 }
 
 export function sortColumns(list: GridSettings<any>, columns: DataControlInfo<any>[]) {
+
   if (list.origList && list.origList.length > 0)
     list.resetColumns();
   list.columns.items.sort((a, b) => a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0);
@@ -15,8 +16,9 @@ export function sortColumns(list: GridSettings<any>, columns: DataControlInfo<an
   for (let index = 0; index < columns.length; index++) {
     const origItem = columns[index];
     let item: DataControlSettings<any>;
-    if (origItem instanceof Column) {
-      item = list.columns.items.find(x => x.column == origItem);
+    let defs = origItem as ColumnDefinitions<any>;
+    if (defs && defs.dataType) {
+      item = list.columns.items.find(x => x.column == defs);
     }
     else item = origItem;
     let origIndex = list.columns.items.indexOf(item);
@@ -42,27 +44,27 @@ export function isDesktop() {
 
 export class PromiseThrottle {
   constructor(private howMany: number) {
-      //this.howMany = 0;
+    //this.howMany = 0;
   }
   todo = [];
   async push(p: Promise<any>) {
-      this.todo.push(p);
-      if (this.todo.length > this.howMany) {
-          await Promise.all(this.todo);
-          this.todo = [];
-      }
+    this.todo.push(p);
+    if (this.todo.length > this.howMany) {
+      await Promise.all(this.todo);
+      this.todo = [];
+    }
 
   }
   async done() {
-      await Promise.all(this.todo);
+    await Promise.all(this.todo);
   }
 }
 
-export class EmailSvc{
-  
+export class EmailSvc {
+
   constructor() {
-    
+
   }
-  static sendMail: (subject: string, message: string, email: string,context:Context) => Promise<boolean>;
+  static sendMail: (subject: string, message: string, email: string, context: Context) => Promise<boolean>;
 
 }

@@ -36,7 +36,7 @@ export class columnOrderAndWidthSaver {
             if (this.suspend)
                 return;
             let x: storedColumn[] = [];
-            for (let index = 0; index < this.grid.columns.numOfColumnsInGrid; index++) {
+            for (let index = 0; index <= this.grid.columns.numOfColumnsInGrid; index++) {
                 const element = this.grid.columns.items[index];
                 if (element)
                     if (element.column) {

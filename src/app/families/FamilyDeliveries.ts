@@ -192,7 +192,7 @@ export class FamilyDeliveries extends IdEntity {
     distributionCenter: DistributionCenterId;
 
     isDistCenterInactive() {
-        return this.distributionCenter.item.isFrozen
+        return this.distributionCenter.item&&this.distributionCenter.item.isFrozen
     }
     @Column()
     deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;

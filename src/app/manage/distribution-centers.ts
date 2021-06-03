@@ -57,7 +57,7 @@ export class DistributionCenters extends IdEntity {
   isFrozen: boolean;
   @Column()
   archive: boolean;
-  createUser:HelpersBase;
+  createUser: HelpersBase;
 
   static isActive(e: filterOf<DistributionCenters>) {
     return e.isFrozen.isEqualTo(false).and(e.archive.isEqualTo(false));
@@ -90,13 +90,16 @@ export function filterDistCenter(distCenterColumn: filterOptions<DistributionCen
 
 @Storable<DistributionCenterId>({
   valueConverter: c => new StoreAsStringValueConverter<DistributionCenterId>(x => x.id, x => new DistributionCenterId(x, c)),
-  displayValue: (e, v) =>v? v.item.name:'',
-  defaultValue: (e, context) => new DistributionCenterId(context.user ? (<HelperUserInfo>context.user).distributionCenter : '', context)
+  displayValue: (e, v) => v.item ? v.item.name : '',
+  defaultValue: (e, context) => new DistributionCenterId(context.user ? (<HelperUserInfo>context.user).distributionCenter : '', context),
+  caption: use.language.distributionList
+
 })
 @DataControl<any, DistributionCenterId>({
-  getValue: (e, val) => val.displayValue,
   hideDataOnInput: true,
-  valueList: context => DistributionCenterId.getValueList(context),
+  valueList: context => {
+    return DistributionCenterId.getValueList(context)
+  },
   width: '150',
 })
 export class DistributionCenterId extends LookupValue<DistributionCenters>{
@@ -114,8 +117,8 @@ export class DistributionCenterId extends LookupValue<DistributionCenters>{
     return this.id;
   }
   async SendMessageToBrowser(message: string, context: Context) {
-    
-    await ( await import('../families/families')).Families.SendMessageToBrowsers(message, context, this.id);
+
+    await (await import('../families/families')).Families.SendMessageToBrowsers(message, context, this.id);
   }
   isAllCentersToken() {
     return this.id == allCentersToken;
@@ -137,7 +140,6 @@ export class DistributionCenterId extends LookupValue<DistributionCenters>{
     return (await ApplicationSettings.getAsync(this.context)).addressHelper.getGeocodeInformation();
   }
   static async getValueList(context: Context, showAllOptions = false) {
-    return [];
     let r = await getValueList<DistributionCenters>(context.for(DistributionCenters), {
       where: c => c.archive.isEqualTo(false)
     })

@@ -3,7 +3,7 @@ import { LookupValue } from "../model-shared/LookupValue";
 
 import { Context, IdEntity, Entity, Storable, Column, StoreAsStringValueConverter } from '@remult/core';
 import { Roles } from "../auth/roles";
-import { getLang } from '../sites/sites';
+
 import { DataControl, getValueList } from "@remult/angular";
 import { use } from "../translate";
 
