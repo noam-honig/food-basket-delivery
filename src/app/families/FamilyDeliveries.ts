@@ -6,7 +6,7 @@ import { BasketTypeId, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
-import { FamilySourceId } from "./FamilySources";
+
 import { Roles } from "../auth/roles";
 import { DistributionCenterId as DistributionCenterId, allCentersToken, DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
 import { YesNo } from "./YesNo";
@@ -22,6 +22,7 @@ import { DataControl, IDataAreaSettings, openDialog } from "../../../../radweb/p
 
 import { Groups } from "../manage/groups";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
+import { FamilySources } from "./FamilySources";
 
 
 @Storable({
@@ -259,7 +260,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false,
         caption: use.language.familySource
     })
-    familySource: FamilySourceId;
+    familySource: FamilySources;
     @Column({
         includeInApi: Roles.distCenterAdmin,
         allowApiUpdate: false

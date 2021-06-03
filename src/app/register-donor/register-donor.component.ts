@@ -15,7 +15,8 @@ import { ServerMethod } from '@remult/core';
 import { DataAreaSettings, DataControl, openDialog } from '../../../../radweb/projects/angular';
 import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
 import { use } from '../translate';
-import { FamilySourceId } from '../families/FamilySources';
+import { FamilySources } from '../families/FamilySources';
+
 
 declare var gtag;
 declare var fbq;
@@ -202,7 +203,7 @@ class donorForm {
     { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }]
 
   })
-  donationType: FamilySourceId;
+  donationType: FamilySources;
   @Column()
   docref: string;
 

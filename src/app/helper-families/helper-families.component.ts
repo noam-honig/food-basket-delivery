@@ -41,7 +41,7 @@ import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
-import { FamilySourceId, FamilySources } from '../families/FamilySources';
+import {  FamilySources } from '../families/FamilySources';
 import { routeStrategy } from '../asign-family/route-strategy';
 
 
@@ -140,7 +140,7 @@ export class HelperFamiliesComponent implements OnInit {
 
     let sql = new SqlBuilder();
     let settings = await ApplicationSettings.getAsync(context);
-    let privateDonation = selfAssign ? (await context.for(FamilySources).lookupAsync(x => x.name.isEqualTo('תרומה פרטית'))).id : '';
+    let privateDonation = selfAssign ? (await context.for(FamilySources).lookupAsync(x => x.name.isEqualTo('תרומה פרטית'))) : null;
 
     for (const r of (await db.execute(sql.query({
       select: () => [
@@ -155,7 +155,7 @@ export class HelperFamiliesComponent implements OnInit {
       from: fd,
       where: () => {
         if (selfAssign) {
-          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(null)).and((fd.familySource.isIn([new FamilySourceId('', context), new FamilySourceId(privateDonation, context)])))];
+          return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(null)).and((fd.familySource.isIn([null, privateDonation])))];
         } else {
           return [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(fd.courier.isEqualTo(null))];
         }

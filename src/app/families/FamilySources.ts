@@ -7,6 +7,13 @@ import { Roles } from "../auth/roles";
 import { DataControl, getValueList } from "@remult/angular";
 import { use } from "../translate";
 
+@DataControl({
+  valueList: context => getValueList(context.for(FamilySources))
+})
+@Storable<FamilySources>({
+  valueConverter: c => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null),
+  displayValue: (e, val) => val ? val.name : ''
+})
 @Entity<FamilySources>({
   key: "FamilySources",
   allowApiRead: context => context.isSignedIn(),
@@ -23,15 +30,3 @@ export class FamilySources extends IdEntity {
 
 }
 
-@DataControl({
-  valueList: context => getValueList(context.for(FamilySources))
-})
-@Storable<FamilySourceId>({
-  valueConverter: c => new StoreAsStringValueConverter<FamilySourceId>(x => x.id, x => new FamilySourceId(x, c)),
-  displayValue: (e, val) =>val.item? val.item.name:''
-})
-export class FamilySourceId extends LookupValue<FamilySources>  {
-  constructor(id: string, private context: Context) {
-    super(id, context.for(FamilySources));
-  }
-}

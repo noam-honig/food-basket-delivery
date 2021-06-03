@@ -10,7 +10,7 @@ import { LookupValue } from "../model-shared/LookupValue";
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
 import { BasketType, BasketTypeId } from '../families/BasketType';
-import { FamilySourceId, FamilySources } from '../families/FamilySources';
+import {  FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { BusyService } from '@remult/angular';
@@ -717,7 +717,7 @@ export class ImportFromExcelComponent implements OnInit {
             key: 'familySource',
             name: this.f.familySource.caption,
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(FamilySources, f => f.name, v, f => new FamilySourceId(f.id, this.context), f.$.familySource);
+                await h.lookupAndInsert(FamilySources, f => f.name, v, f => f, f.$.familySource);
             }, columns: [this.f.familySource]
         });
 

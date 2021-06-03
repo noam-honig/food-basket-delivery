@@ -1,7 +1,7 @@
 import { DeliveryStatus } from "./DeliveryStatus";
 import { YesNo } from "./YesNo";
 
-import { FamilySourceId } from "./FamilySources";
+import { FamilySources } from "./FamilySources";
 import { BasketTypeId, QuantityColumn } from "./BasketType";
 import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
@@ -525,7 +525,7 @@ export class Families extends IdEntity {
   @Column({ caption: use.language.defaultQuantity, allowApiUpdate: Roles.admin })
   quantity: number;
   @Column({ includeInApi: true, caption: use.language.familySource })
-  familySource: FamilySourceId;
+  familySource: FamilySources;
   @Column({ caption: use.language.familyHelpContact })
   socialWorker: string;
   @Column({ caption: use.language.familyHelpPhone1 })

@@ -4,8 +4,9 @@ import { NewsFilter } from './news.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { filterOf } from '../../../../radweb/projects/core';
-import { FamilySourceId } from '../families/FamilySources';
+
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { FamilySources } from '../families/FamilySources';
 @Injectable()
 export class NewsFilterService {
     constructor(private settings: ApplicationSettings) {
@@ -34,7 +35,7 @@ export class NewsFilterService {
         where: f => f.courierComments.isDifferentFrom('').and(DeliveryStatus.isAResultStatus(f.deliverStatus)).and(f.archive.isEqualTo(false))
     }];
     currentFilter: NewsFilter = this.filters[0];
-    currentFamilySource: FamilySourceId = undefined;
+    currentFamilySource: FamilySources = undefined;
     where(n: filterOf<ActiveFamilyDeliveries>) {
         if (this.currentFamilySource) {
             if (this.currentFilter.where)

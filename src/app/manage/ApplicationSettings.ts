@@ -399,7 +399,7 @@ export class PhoneOption {
 
   static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
     if (args.family.familySource) {
-      let s = await args.family.familySource.waitLoad();
+      let s = await args.family.$.familySource.load();
       if (s && s.phone) {
         let name = s.contactPerson;
         if (!name || name.length == 0) {

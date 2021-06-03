@@ -6,7 +6,7 @@ import { DistributionCenterId, DistributionCenters, allCentersToken } from "../m
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 
 import { FamilyStatus } from "./FamilyStatus";
-import { FamilySourceId } from "./FamilySources";
+
 import { ActionOnRows, packetServerUpdateInfo } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
@@ -16,6 +16,7 @@ import { ServerController } from "@remult/core";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
 import { DataControl, getValueList } from "../../../../radweb/projects/angular";
 import { Groups } from "../manage/groups";
+import { FamilySources } from "./FamilySources";
 
 @Storable({
     valueConverter: () => new ValueListValueConverter(SelfPickupStrategy),
@@ -351,7 +352,7 @@ export class UpdateQuantity extends ActionOnRows<Families> {
 })
 export class UpdateFamilySource extends ActionOnRows<Families> {
     @Column()
-    familySource: FamilySourceId;
+    familySource: FamilySources;
 
     constructor(context: Context) {
         super(context, Families, {
