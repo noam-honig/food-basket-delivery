@@ -1,11 +1,11 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, ServerFunction, SqlDatabase, AndFilter, EntityColumn, filterOf, EntityDefinitions, IntValueConverter } from '@remult/core';
+import { UrlBuilder, Filter, ServerFunction, SqlDatabase, AndFilter, EntityColumn, filterOf, EntityDefinitions, IntValueConverter, ServerController, Column, ServerMethod } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
-import { HelperId, Helpers } from '../helpers/helpers';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { DialogService, DestroyHelper, extractError } from '../select-popup/dialog';
 import { UserFamiliesList } from '../my-families/user-families';
 
@@ -123,9 +123,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
-    async initHelper(helper: Helpers) {
-        if (helper.theHelperIAmEscorting&&helper.theHelperIAmEscorting) {
-            let other = await helper.theHelperIAmEscorting.waitLoad();
+    async initHelper(helper: HelpersBase) {
+        if (helper.theHelperIAmEscorting && helper.theHelperIAmEscorting) {
+            let other = await helper.$.theHelperIAmEscorting.load();
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name + '?'
             }, q => q.yes)) {
@@ -145,7 +145,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             Helpers.addToRecent(helper);
             await this.refreshList();
             if (helper.leadHelper && this.familyLists.toDeliver.length == 0) {
-                let from = await helper.leadHelper.waitLoad();
+                let from = await helper.$.leadHelper.load();
                 new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(from, this.familyLists.helper, false
                     , this.settings.lang.for + " \"" + this.familyLists.helper.name + "\" " + this.settings.lang.isDefinedAsLeadVolunteerOf + " \"" + from.name + "\".")
             }
@@ -197,7 +197,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
 
     showHelperInput = true;
-    specificToHelper(h: Helpers) {
+    specificToHelper(h: HelpersBase) {
         this.showHelperInput = false;
         this.phone = h.phone.thePhone;
         this.initHelper(h);
@@ -297,7 +297,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     filterGroup = '';
     groups: GroupsStats[] = [];
     phone: string;
-    helper: Helpers;
+    helper: HelpersBase;
 
     area: DataAreaSettings = new DataAreaSettings({});
     changeShowCompany() {
@@ -445,7 +445,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
                                 let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(FamilyDeliveries.readyFilter(f, this.context)));
-                                f.courier = this.helper.helperId();
+                                f.courier = this.helper;
                                 await f.save();
                             }
                             await this.familyLists.initForHelper(this.helper)
@@ -516,7 +516,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let fd = SqlFor(context.for(FamilyDeliveries));
         if (info.helperId) {
             let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(filterDistCenter(f.distributionCenter, infoDistCenter, context)).and(FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, info.filterBasket).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, HelperId.fromJson(info.helperId, context)), ' limit 30'));
+                filterRepeatFamilies(sql, f, fd, await HelperId.fromJson(info.helperId, context)), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
@@ -595,24 +595,23 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         result.baskets.sort((a, b) => b.unassignedFamilies - a.unassignedFamilies);
 
-
+        
         return result;
     }
     @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
     static async RefreshRoute(helperIdIn: string, args: refreshRouteArgs, context?: Context) {
-        let helperId = HelperId.fromJson(helperIdIn, context);
+        let h = await HelperId.fromJson(helperIdIn, context);
         if (!context.isAllowed(Roles.distCenterAdmin)) {
-            if (!helperId.isCurrentUser()) {
+            if (!h.isCurrentUser()) {
                 throw "Not Allowed";
             }
         }
         if (!args)
             args = {};
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
-            where: f => f.courier.isEqualTo(helperId).and(
+            where: f => f.courier.isEqualTo(h).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
-        let h = await helperId.waitLoad();
 
         let strategy = (await ApplicationSettings.getAsync(context)).routeStrategy;
         if (args.strategyId)
@@ -666,12 +665,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!info.helperId)
             throw 'invalid helper';
-        let helper = HelperId.fromJson(info.helperId, context);
+        let helper = await HelperId.fromJson(info.helperId, context);
+        if (!helper)
+            throw "helper does not exist";
         let distCenter = new DistributionCenterId(info.distCenter, context);
         let basketType = info.basketType === undefined ? undefined : new BasketTypeId(info.basketType, context);
-        await helper.waitLoad();
-        if (!helper.exists())
-            throw "helper does not exist";
 
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helper).and(
@@ -817,8 +815,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             if (waitingFamilies.length > 0) {
-                let preferArea = helper.item.preferredDistributionAreaAddressHelper.ok();
-                let preferEnd = helper.item.preferredFinishAddressHelper.ok();
+                let preferArea = helper.preferredDistributionAreaAddressHelper.ok();
+                let preferEnd = helper.preferredFinishAddressHelper.ok();
                 if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt() && (preferArea || preferEnd))) {
 
                     let distCenter = settings.addressHelper.location();
@@ -829,14 +827,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         var lastDist: number;
                         for (const f of waitingFamilies) {
                             if (preferArea) {
-                                let dist = GetDistanceBetween(f, helper.item.preferredDistributionAreaAddressHelper.location());
+                                let dist = GetDistanceBetween(f, helper.preferredDistributionAreaAddressHelper.location());
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
                                 }
                             }
                             if (preferEnd) {
-                                let dist = GetDistanceBetween(f, helper.item.preferredFinishAddressHelper.location());
+                                let dist = GetDistanceBetween(f, helper.preferredFinishAddressHelper.location());
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
@@ -953,7 +951,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (f.courier) {
                         if (selectStreet)
                             return;
-                        let c = await f.courier.getTheName();
+                        let c = await f.courier;
                         this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
                             f.name + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
                             f.deliverStatus.caption + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name + '?', async () => {
@@ -972,7 +970,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     private async performSpecificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
         await this.verifyHelperExistance();
-        f.courier = this.helper.helperId();
+        f.courier = this.helper;
         f.deliverStatus = DeliveryStatus.ReadyForDelivery;
         this.dialog.analytics(analyticsName);
         await f.save();
@@ -1015,7 +1013,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 if (added > args.quantity)
                     break;
             }
-            fd.courier = HelperId.fromJson(args.helper, context);
+            fd.courier = await HelperId.fromJson(args.helper, context);
             await fd.save();
         }
     }
@@ -1185,7 +1183,7 @@ export interface BasketInfo {
     unassignedFamilies: number;
 
 }
-function filterRepeatFamilies(sql: SqlBuilder, f: SqlDefs<ActiveFamilyDeliveries>, fd: SqlDefs<FamilyDeliveries>, helperId: HelperId) {
+function filterRepeatFamilies(sql: SqlBuilder, f: SqlDefs<ActiveFamilyDeliveries>, fd: SqlDefs<FamilyDeliveries>, helperId: Helpers) {
     return sql.build(f.family, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
 
 }

@@ -67,6 +67,9 @@ function log(s: string) {
     }
 })
 export class HelpersAndStats extends HelpersBase {
+    getHelper(): Promise<Helpers> {
+        return this.context.for(Helpers).getCachedByIdAsync(this.id);
+    }
 
     @Column({
         dbReadOnly: true,

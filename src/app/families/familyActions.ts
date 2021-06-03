@@ -3,7 +3,7 @@ import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketTypeId, QuantityColumn } from "./BasketType";
 import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
-import { HelperId } from "../helpers/helpers";
+import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 
 import { FamilyStatus } from "./FamilyStatus";
 import { FamilySourceId } from "./FamilySources";
@@ -64,7 +64,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @Column({ caption: use.language.defaultVolunteer })
     useDefaultVolunteer: boolean = true;
     @Column()
-    courier: HelperId;
+    courier: HelpersBase;
     @Column()
     @DataControl({ valueList: new ValueListValueConverter(SelfPickupStrategy).getOptions().filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
     selfPickup: SelfPickupStrategy;
@@ -368,7 +368,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     @Column({ caption: use.language.clearVolunteer })
     clearVoulenteer: boolean;
     @Column()
-    courier: HelperId;
+    courier: HelpersBase;
     get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {
         super(context, Families, {

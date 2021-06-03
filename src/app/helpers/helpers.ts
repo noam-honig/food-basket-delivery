@@ -45,69 +45,78 @@ export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
         })(target, key);
     }
 }
-@Storable<HelperId>({
-    valueConverter: c => new StoreAsStringValueConverter<HelperId>(x => HelperId.toJson(x), x => HelperId.fromJson(x, c)),
-    displayValue: (e, x) => x ? x.getValue() : '',
-    caption: use.language.volunteer
-})
-@DataControl<any, HelperId>({
-    getValue: (e, val) => val.value.getValue(),
-    hideDataOnInput: true,
-    width: '200',
-    click: async (e, col) => HelperIdUtils.showSelectDialog(col, {}, undefined)
-})//
-
-
-export class HelperId extends LookupValue<Helpers>  {
 
 
 
-    static currentUser(context: Context): HelperId {
-        let user = context.get(currentUser);
-        console.log({ user });
-        return user;
+export class HelperId {
 
 
-        return new HelperId(context.user.id, context);
-    }
-
-    static toJson(x: HelperId) {
+    static toJson(x: HelpersBase) {
         return x ? x.id : '';
     }
-    static fromJson(x: string, context: Context) {
-        return x ? new HelperId(x, context) : null;
+    static fromJson(x: string, context: Context): Promise<Helpers> {
+        if (!x)
+            return null;
+        return context.for(Helpers).getCachedByIdAsync(x)
     }
 
+
+
+
+
+}
+export const currentUser = new keyFor<Helpers>();
+
+@Storable<HelpersBase>({
+
+    displayValue: (e, x) => x ? x.name : '',
+    caption: use.language.volunteer,
+    valueConverter: c => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null) 
+})
+@DataControl<any, Helpers>({
+    getValue: (e, val) => val.value ? val.value.name : '',
+    hideDataOnInput: true,
+    width: '200',
+    click: async (e, col) => HelpersBase.showSelectDialog(col, {})
+})
+@Entity<HelpersBase>({
+    key: "HelpersBase",
+    dbName: "Helpers",
+    allowApiCrud: false,
+    allowApiRead: c => c.isSignedIn(),
+    apiDataFilter: (self, context) => {
+        if (!context.isSignedIn())
+            return self.id.isEqualTo("No User");
+        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
+            return self.id.isIn([context.get(currentUser).id, context.get(currentUser).theHelperIAmEscorting.id, context.get(currentUser).escort.id])
+
+    }
+})
+export abstract class HelpersBase extends IdEntity {
+
+    static async showSelectDialog(col: EntityColumn<HelpersBase>, args: {
+        filter?: (helper: filterOf<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
+        location?: () => Location,
+        familyId?: () => string,
+        includeFrozen?: boolean,
+        searchClosestDefaultFamily?: boolean
+    }, onSelect?: () => void) {
+        openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
+            x => x.args = {
+                filter: args.filter, location: args.location ? args.location() : undefined,
+                familyId: args.familyId ? args.familyId() : undefined,
+                includeFrozen: args.includeFrozen,
+                searchClosestDefaultFamily: args.searchClosestDefaultFamily
+                , onSelect: async s => {
+                    col.value = s ? s : null;
+                    if (onSelect)
+                        onSelect();
+                }
+            })
+    }
+    abstract getHelper(): Promise<Helpers>;
     isCurrentUser(): boolean {
         return this.id == this.context.user.id;
-    }
-    constructor(id: string, private context: Context) {
-        super(id, context.for(Helpers));
-    }
-    getValue() {
-        return this.item.name;
-    }
-    getPhone() {
-        return this.item.$.phone.displayValue;
-    }
-    async getTheName() {
-        let r = await this.waitLoad();
-        if (r && r.name && r.name)
-            return r.name;
-        return '';
-    }
-    async getTheValue() {
-        let r = await this.waitLoad();
-        if (r && r.name && r.name && r.phone)
-            return r.name + ' ' + r.phone;
-        return '';
-    }
-}
-export const currentUser = new keyFor<HelperId>();
-
-export abstract class HelpersBase extends IdEntity {
-    helperId() {
-        return new HelperId(this.id, this.context);
     }
 
     constructor(protected context: Context) {
@@ -158,7 +167,7 @@ export abstract class HelpersBase extends IdEntity {
         caption: use.language.assignedDriver,
         allowApiUpdate: Roles.admin
     })
-    theHelperIAmEscorting: HelperId;
+    theHelperIAmEscorting: HelpersBase;
 
 
 
@@ -166,13 +175,13 @@ export abstract class HelpersBase extends IdEntity {
         caption: use.language.escort
         , allowApiUpdate: Roles.admin
     })
-    escort: HelperId;
+    escort: HelpersBase;
 
     @Column({
         caption: use.language.leadHelper
         , allowApiUpdate: Roles.admin
     })
-    leadHelper: HelperId;
+    leadHelper: HelpersBase;
     @Column({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
@@ -230,16 +239,19 @@ export abstract class HelpersBase extends IdEntity {
     }
 }
 
+
 @Entity<Helpers>({
     key: "Helpers",
-    allowApiRead: true,
+    allowApiRead: context => context.isSignedIn(),
     allowApiDelete: context => context.isSignedIn(),
     allowApiUpdate: context => context.isSignedIn(),
     allowApiInsert: true,
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
-        if (self.escort == self.helperId()) {
-            self.escort = null;
+        await self.$.escort.load();
+        if (self.escort) {
+            if (self.escort.id == self.id)
+                self.escort = null;
         }
 
         if (self.context.onServer) {
@@ -309,14 +321,13 @@ export abstract class HelpersBase extends IdEntity {
             if (!self.needEscort)
                 self.escort = null;
             if (self.$.escort.wasChanged()) {
-                if (self.$.escort.originalValue && self.$.escort.originalValue) {
-                    let h = await self.$.escort.originalValue.waitLoad();
-                    h.theHelperIAmEscorting = HelperId.currentUser(self.context);
-                    await h.save();
+                let h = await self.$.escort.load();
+                if (self.$.escort.originalValue) {
+                    self.$.escort.originalValue.theHelperIAmEscorting = self.context.get(currentUser);
+                    await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
-                    let h = await self.escort.waitLoad();
-                    h.theHelperIAmEscorting = self.helperId();
+                    h.theHelperIAmEscorting = self;
                     await h.save();
                 }
             }
@@ -352,6 +363,10 @@ export abstract class HelpersBase extends IdEntity {
     }
 })
 export class Helpers extends HelpersBase {
+
+    async getHelper(): Promise<Helpers> {
+        return this;
+    }
     async displayEditDialog(dialog: DialogService, busy: BusyService) {
         let settings = getSettings(this.context);
         await openDialog(InputAreaComponent, x => x.args = {
@@ -521,7 +536,7 @@ export class Helpers extends HelpersBase {
                     return r;
                 },
 
-                where: fd => fd.courier.isEqualTo(this.helperId()),
+                where: fd => fd.courier.isEqualTo(this),
                 orderBy: fd => fd.deliveryStatusDate.descending(),
                 rowsInPage: 25
 
@@ -590,7 +605,7 @@ export class Helpers extends HelpersBase {
         });
 
         let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
-            where: f => f.fixedCourier.isEqualTo(this.helperId())
+            where: f => f.fixedCourier.isEqualTo(this)
                 .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
         });
         if (otherFamilies.length > 0) {
@@ -758,44 +773,6 @@ export class Helpers extends HelpersBase {
 
 }
 
-
-export class HelperIdUtils {
-
-    constructor(protected context: Context, private args: {
-        getId: () => string,
-        getIdColumn: () => EntityColumn<string>,
-        filter?: (helper: import('../delivery-follow-up/HelpersAndStats').HelpersAndStats) => Filter,
-        location?: () => Location,
-        familyId?: () => string,
-        includeFrozen?: boolean,
-        searchClosestDefaultFamily?: boolean
-    }) {
-
-    }
-    static async showSelectDialog(col: EntityColumn<HelperId>, args: {
-        filter?: (helper: filterOf<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
-        location?: () => Location,
-        familyId?: () => string,
-        includeFrozen?: boolean,
-        searchClosestDefaultFamily?: boolean
-    }, onSelect?: () => void) {
-        openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-            x => x.args = {
-                filter: args.filter, location: args.location ? args.location() : undefined,
-                familyId: args.familyId ? args.familyId() : undefined,
-                includeFrozen: args.includeFrozen,
-                searchClosestDefaultFamily: args.searchClosestDefaultFamily
-                , onSelect: s => {
-                    col.value = s ? s.helperId() : null;
-                    if (onSelect)
-                        onSelect();
-                }
-            })
-    }
-
-
-
-}
 
 
 

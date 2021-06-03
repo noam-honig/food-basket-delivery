@@ -3,7 +3,7 @@ import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angu
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
-import { HelperId, Helpers } from "../helpers/helpers";
+import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 import { SqlBuilder, DateTimeColumn, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -67,7 +67,7 @@ export class Event extends IdEntity {
                 click: () => openDialog(SelectHelperComponent, y => y.args = {
                     onSelect: async h => {
                         let eh = this.context.for(volunteersInEvent).create();
-                        eh.helper = h.helperId();
+                        eh.helper = await h;
                         eh.eventId = this.id;
                         await eh.save();
                         x.args.settings.reloadData()
@@ -214,13 +214,13 @@ export class Event extends IdEntity {
     apiDataFilter: (self, context) => {
         if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return undefined;
-        return self.helper.isEqualTo(HelperId.currentUser(context));
+        return self.helper.isEqualTo(context.get(currentUser));
     }
     ,
     saving: (self) => {
         if (self.isNew() && self.context.onServer) {
             self.createDate = new Date();
-            self.createUser = HelperId.currentUser(self.context);
+            self.createUser = self.context.get(currentUser);
         }
     }
 })
@@ -228,7 +228,7 @@ export class volunteersInEvent extends IdEntity {
     @Column()
     eventId: string;
     @Column()
-    helper: HelperId;
+    helper: HelpersBase;
 
     @Column<volunteersInEvent>({
         caption: use.language.volunteerName, sqlExpression: (selfDefs, context) => {
@@ -317,7 +317,7 @@ export class volunteersInEvent extends IdEntity {
     @ChangeDateColumn({ caption: use.language.createDate })
     createDate: Date;
     @Column({ caption: use.language.createUser, allowApiUpdate: false })
-    createUser: HelperId;
+    createUser: Helpers;
 
 
 

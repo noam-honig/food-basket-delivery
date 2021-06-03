@@ -733,7 +733,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     for (const d of (await db.execute(sql1.query({
       from: fd,
       where: () => [
-        (courier != undefined ? fd.courier.isEqualTo(courier.helperId()).and(FamilyDeliveries.active(fd)) :
+        (courier != undefined ? fd.courier.isEqualTo(courier).and(FamilyDeliveries.active(fd)) :
           sql1.or(
             fd.phone1.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
             fd.phone2.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
@@ -853,7 +853,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         await openDialog(SelectHelperComponent, x => x.args = {
           onSelect: async selectedHelper => {
-            d.courier = selectedHelper.helperId();
+            d.courier = selectedHelper;
             await d.save();
             var fd = await args.context.for(ActiveFamilyDeliveries).find({
               where: fd => {

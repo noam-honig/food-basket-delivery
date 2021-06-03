@@ -169,7 +169,7 @@ s.parentNode.insertBefore(b, s);})();
         app,
         {
             initRequest: async c => {
-                AuthService.initContext(c)
+                await AuthService.initContext(c)
             },
             dataProvider: dataSource,
             disableAutoApi: Sites.multipleSites,

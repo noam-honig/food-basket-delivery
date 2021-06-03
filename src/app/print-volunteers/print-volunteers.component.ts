@@ -28,11 +28,12 @@ export class PrintVolunteersComponent implements OnInit {
     let total = 0;
     let volunteers: volunteer[] = [];
     for await (const d of context.for(ActiveFamilyDeliveries).iterate()) {
-      let v = volunteers.find(v => v.id == HelperId.toJson(d.courier));
+      await d.$.courier.load();
+      let v = volunteers.find(v => d.courier && v.id == d.courier.id);
       if (!v) {
         v = {
-          id: HelperId.toJson(d.courier),
-          name: await d.courier.getTheName(),
+          id: d.courier.id,
+          name: d.courier.name,
           quantity: 0
         }
         volunteers.push(v);

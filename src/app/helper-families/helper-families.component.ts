@@ -309,8 +309,9 @@ export class HelperFamiliesComponent implements OnInit {
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
     let dist = new DistributionCenterId('', context);
+    let helper = await HelperId.fromJson(id, context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(HelperId.fromJson(id, context))),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         fd.courier = null;
         fd._disableMessageToUsers = true;
@@ -333,8 +334,9 @@ export class HelperFamiliesComponent implements OnInit {
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(id: string, context?: Context) {
     let dist = new DistributionCenterId('', context);
+    let helper = await HelperId.fromJson(id, context);
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(HelperId.fromJson(id, context))),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
         fd.deliverStatus = DeliveryStatus.Success;
@@ -383,12 +385,12 @@ export class HelperFamiliesComponent implements OnInit {
 
     this.busy.donotWaitNonAsync(async () => {
       if (this.familyLists.helper.leadHelper) {
-        this.otherDependentVolunteers.push(await (this.familyLists.helper.leadHelper.waitLoad()));
+        this.otherDependentVolunteers.push(await (this.familyLists.helper.$.leadHelper.load()));
       }
-      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper.helperId()) }));
+      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
     });
   }
-  otherDependentVolunteers: Helpers[] = [];
+  otherDependentVolunteers: HelpersBase[] = [];
 
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
@@ -515,8 +517,9 @@ export class HelperFamiliesComponent implements OnInit {
     }
     this.dialog.Info(use.language.smsMessageSentTo + " " + to);
     this.assignSmsSent.emit();
-    if (reminder)
+    if (reminder) {
       this.familyLists.helper.reminderSmsDate = new Date();
+    }
   }
 
   async sendWhatsapp() {
@@ -572,7 +575,7 @@ export class HelperFamiliesComponent implements OnInit {
 
         save: async (comment) => {
           let hist = this.context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-          hist.volunteer = this.familyLists.helper.helperId();
+          hist.volunteer = this.familyLists.helper;
           hist.comment = comment;
           await hist.save();
         },

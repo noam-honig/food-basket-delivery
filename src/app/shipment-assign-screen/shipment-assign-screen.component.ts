@@ -61,7 +61,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
         where: fd => FamilyDeliveries.readyFilter(fd, this.context).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = HelperId.fromJson(h.id, this.context);
+        fd.courier = await HelperId.fromJson(h.id, this.context);
         await fd.save();
       }
     });
@@ -71,9 +71,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
+    let helper = await HelperId.fromJson(f.assignedHelper.id, this.context);
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(HelperId.fromJson(f.assignedHelper.id, this.context)).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
         fd.courier = null;
         await fd.save();

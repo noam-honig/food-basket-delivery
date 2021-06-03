@@ -1,6 +1,6 @@
 import { ServerFunction } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
@@ -37,14 +37,15 @@ export class SendSmsAction {
 
 
 
-    public static async documentHelperMessage(reminder: Boolean, h: Helpers, context: Context, type: string) {
+    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, context: Context, type: string) {
+        let h = await hi.getHelper();
         if (reminder)
             h.reminderSmsDate = new Date();
         else
             h.smsDate = new Date();
         await h.save();
         let hist = context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-        hist.volunteer = h.helperId();
+        hist.volunteer = h;
         if (reminder) {
             hist.comment = 'Reminder ' + type;
         }
@@ -53,8 +54,8 @@ export class SendSmsAction {
         await hist.save();
     }
 
-    static async generateMessage(ds: Context, helper: Helpers, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
-
+    static async generateMessage(ds: Context, helperIn: HelpersBase, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
+        let helper = await helperIn.getHelper();
         if (!origin) {
             throw 'Couldnt determine origin for sms';
         }

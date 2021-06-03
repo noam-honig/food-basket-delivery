@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
-import { Context,  EntityWhere } from '@remult/core';
+import { Context, EntityWhere } from '@remult/core';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';
@@ -66,6 +66,7 @@ export class InRouteFollowUpComponent implements OnInit {
       name: use.language.ActiveDeliveries,
       visible: h => !h.isNew(),
       click: async h => {
+        let helper = await h.helper();
         openDialog(GridDialogComponent, x => x.args = {
           title: use.language.deliveriesFor + ' ' + h.name,
           buttons: [
@@ -102,7 +103,7 @@ export class InRouteFollowUpComponent implements OnInit {
               return r;
             },
 
-            where: fd => fd.courier.isEqualTo(HelperId.fromJson(h.id, this.context)).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            where: fd => fd.courier.isEqualTo(helper).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
             orderBy: fd => fd.deliveryStatusDate.descending(),
             rowsInPage: 25
 

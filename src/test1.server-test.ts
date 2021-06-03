@@ -55,7 +55,7 @@ async function init() {
             ;
     });
     describe("the test", () => {
-        let helperId: HelperId;
+        let helperId: Helpers;
         beforeEach(async done => {
             for (const d of await context.for(FamilyDeliveries).find()) {
                 await d.delete();
@@ -90,7 +90,7 @@ async function init() {
             h.name = 'a';
             h._disableOnSavingRow = true;
             await h.save();
-            helperId = h.helperId();
+            helperId = h;
             done();
         });
         async function callAddBox() {
@@ -101,7 +101,7 @@ async function init() {
                 city: '',
                 distCenter: '',
                 group: '',
-                helperId: HelperId.toJson( helperId),
+                helperId: HelperId.toJson(helperId),
                 numOfBaskets: 1,
                 preferRepeatFamilies: false
             }, context, sql);
@@ -138,8 +138,8 @@ async function init() {
 
             await createDelivery(10);
             await createDelivery(5);
-            let h = await helperId.waitLoad();
-            h.addressApiResult = new GeocodeInformation({
+
+            helperId.addressApiResult = new GeocodeInformation({
 
                 status: "OK",
                 results: [{
@@ -159,7 +159,7 @@ async function init() {
                     }
                 }]
             }).saveToString();
-            await h.save();
+            await helperId.save();
 
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
@@ -187,8 +187,8 @@ async function init() {
             await d.save();
             await createDelivery(5);
 
-            let h = await helperId.waitLoad();
-            h.addressApiResult = new GeocodeInformation({
+
+            helperId.addressApiResult = new GeocodeInformation({
 
                 status: "OK",
                 results: [{
@@ -208,7 +208,7 @@ async function init() {
                     }
                 }]
             }).saveToString();
-            await h.save();
+            await helperId.save();
 
 
             let r = await callAddBox();

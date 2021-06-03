@@ -51,7 +51,7 @@ export class AssignEscortComponent implements OnInit {
     }
 
     let h = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(driver.id));
-    h.escort = this.helper.helperId();
+    h.escort = await this.helper.getHelper();
     await h.save();
     if (await openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name }, x => x.yes)) {
       await SendSmsAction.SendSms(this.helper.id, false);
@@ -77,7 +77,7 @@ export class AssignEscortComponent implements OnInit {
     this.initHelper(h);
 
   }
-  alreadyEscortingDriver: Helpers;
+  alreadyEscortingDriver: HelpersBase;
   async initHelper(h: HelpersBase) {
 
     if (!h.isNew()) {
@@ -115,7 +115,7 @@ export class AssignEscortComponent implements OnInit {
       }
     });
     if (this.helper.theHelperIAmEscorting) {
-      this.alreadyEscortingDriver = await this.helper.theHelperIAmEscorting.waitLoad();
+      this.alreadyEscortingDriver = await this.helper.$.theHelperIAmEscorting.load();
     } else {
       this.optionalDrivers = await this.context.for(HelpersAndStats).find({
         where: h =>

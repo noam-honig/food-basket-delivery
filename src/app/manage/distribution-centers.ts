@@ -3,7 +3,7 @@ import { GeocodeInformation, GetGeoInformation, GetDistanceBetween, Location, Ad
 import { Phone } from "../model-shared/Phone";
 import { LookupValue } from "../model-shared/LookupValue";
 import { Roles } from "../auth/roles";
-import { HelperId, HelperUserInfo } from "../helpers/helpers";
+import { HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from "../../../../radweb/projects/angular";
@@ -57,7 +57,7 @@ export class DistributionCenters extends IdEntity {
   isFrozen: boolean;
   @Column()
   archive: boolean;
-  createUser:HelperId
+  createUser:HelpersBase;
 
   static isActive(e: filterOf<DistributionCenters>) {
     return e.isFrozen.isEqualTo(false).and(e.archive.isEqualTo(false));

@@ -28,8 +28,9 @@ export class MyGiftsDialogComponent implements OnInit {
   async ngOnInit() {
     this.giftsUsed = 0;
     this.giftsAvailable = 0;
+    let helper = await HelperId.fromJson(this.args.helperId, this.context);
     this.theGifts =
-      await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(HelperId.fromJson(this.args.helperId, this.context)) }).then(
+      await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(helper) }).then(
         gifts => {
           return gifts.map(x => {
             if (x.wasConsumed)

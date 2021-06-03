@@ -7,7 +7,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
 import { BusyService } from '@remult/angular';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
 import { Location } from '../shared/googleApiHelpers';
 
@@ -156,7 +156,8 @@ export class MapComponent implements OnInit, OnDestroy {
     prevFamilies: ActiveFamilyDeliveries[] = [];
     helper: Helpers;
     helperMarkers: google.maps.Marker[] = [];
-    async test(families: ActiveFamilyDeliveries[], helper: Helpers) {
+    async test(families: ActiveFamilyDeliveries[], h: HelpersBase) {
+        let helper =await  h.getHelper();
         var prevFamilies = this.prevFamilies;
         this.prevFamilies = [...families];
         this.hasFamilies = families.length > 0;

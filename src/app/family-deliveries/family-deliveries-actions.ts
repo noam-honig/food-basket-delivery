@@ -1,7 +1,7 @@
 import { Context, AndFilter, EntityWhere, Column, EntityWhereItem, Storable, getControllerDefs } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { DistributionCenterId, DistributionCenters, allCentersToken } from "../manage/distribution-centers";
-import { HelperId } from "../helpers/helpers";
+import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring";
@@ -135,7 +135,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     @Column({ caption: use.language.clearVolunteer })
     clearVoulenteer: boolean;
     @Column()
-    courier: HelperId;
+    courier: HelpersBase;
     @Column({ caption: use.language.setAsDefaultVolunteer })
     updateAlsoAsFixed: boolean;
     get $() { return getControllerDefs(this).columns };
@@ -359,7 +359,7 @@ class HelperStrategy {
     static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
         x.newDelivery.courier = x.helper;
     });
-    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelperId, context: Context }) => void) {
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelpersBase, context: Context }) => void) {
 
     }
 }
@@ -378,7 +378,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     @Column()
     helperStrategy: HelperStrategy;
     @Column()
-    helper: HelperId;
+    helper: HelpersBase;
     @Column({ caption: use.language.archiveCurrentDelivery })
     autoArchive: boolean = true;
     @Column({ caption: use.language.newDeliveryForAll })

@@ -365,7 +365,7 @@ export class FamiliesComponent implements OnInit {
             ]
             return r;
         },
-        gridButtons: test([
+        gridButtons: ([
             ...[
                 new NewDelivery(this.context),
                 new updateGroup(this.context),

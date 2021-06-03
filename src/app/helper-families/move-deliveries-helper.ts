@@ -14,8 +14,8 @@ export class moveDeliveriesHelper {
     constructor(private context: Context, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
 
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '') {
-
-        let deliveries = await this.context.for(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from.helperId()).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
+        
+        let deliveries = await this.context.for(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
         if (deliveries > 0)
             this.dialog.YesNoQuestion(extraMessage + " " + this.settings.lang.transfer + " " + deliveries + " " + this.settings.lang.deliveriesFrom + '"' + from.name + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + to.name + '"', async () => {
 
@@ -23,7 +23,7 @@ export class moveDeliveriesHelper {
                 if (message) {
                     this.dialog.Info(message);
                     this.reload();
-                    let h = await to.helperId().waitLoad();
+                    let h = to;
                     if (showToHelperAssignmentWhenDone)
                         await openDialog((await import("../helper-assignment/helper-assignment.component")).HelperAssignmentComponent, x => x.argsHelper = h);
                 }
@@ -35,8 +35,9 @@ export class moveDeliveriesHelper {
         let t = new PromiseThrottle(10);
         let settings = getSettings(context);
         let i = 0;
-        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(HelperId.fromJson(from, context)).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
-            fd.courier = HelperId.fromJson(to, context);
+        let helperFrom = await HelperId.fromJson(from, context);
+        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(helperFrom).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
+            fd.courier = await HelperId.fromJson(to, context);
             fd._disableMessageToUsers = true;
             await t.push(fd.save());
             i++;

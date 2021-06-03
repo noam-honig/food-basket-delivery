@@ -3,7 +3,7 @@ import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, relativeDateName, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { Helpers, HelperId } from "../helpers/helpers";
+import { Helpers, HelperId, currentUser, HelpersBase } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
@@ -76,7 +76,11 @@ import { DataControl, GridSettings, openDialog } from "@remult/angular";
     }
 })
 export class InRouteHelpers extends IdEntity {
+    async helper() {
+        return this.context.for(Helpers).getCachedByIdAsync(this.id);
+    }
     async showHistory() {
+        let h= await this.helper();
         await openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
             title: 'היסטוריה עבור ' + this.name,
             buttons: [{
@@ -111,7 +115,7 @@ export class InRouteHelpers extends IdEntity {
 
                 columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
 
-                where: hist => hist.volunteer.isEqualTo(HelperId.fromJson(this.id, this.context)),
+                where: hist => hist.volunteer.isEqualTo(h),
                 orderBy: fd => fd.createDate.descending(),
                 rowsInPage: 25
 
@@ -120,12 +124,13 @@ export class InRouteHelpers extends IdEntity {
         this._.reload();
     }
     async addCommunication(reload: () => void) {
+        
         await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
             title: 'הוסף תכתובת',
 
             save: async (comment) => {
                 let hist = this.context.for(HelperCommunicationHistory).create();
-                hist.volunteer = HelperId.fromJson(this.id, this.context);
+                hist.volunteer = await this.helper();
                 hist.comment = comment;
                 await hist.save();
                 this._.reload();
@@ -208,7 +213,7 @@ export class InRouteHelpers extends IdEntity {
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = HelperId.currentUser(self.context);
+            self.createUser = self.context.get(currentUser);
         }
     }
 })
@@ -216,9 +221,9 @@ export class HelperCommunicationHistory extends IdEntity {
     @ChangeDateColumn({ caption: use.language.createDate })
     createDate: Date;
     @Column({ caption: use.language.createUser })
-    createUser: HelperId;
+    createUser: HelpersBase;
     @Column({ caption: use.language.volunteer })
-    volunteer: HelperId;
+    volunteer: HelpersBase;
     @Column({
         caption: "הערה",
     })

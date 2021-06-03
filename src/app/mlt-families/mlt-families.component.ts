@@ -9,7 +9,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
 import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
-import { HelperId, Helpers } from '../helpers/helpers';
+import { currentUser, HelperId, Helpers } from '../helpers/helpers';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DistributionCenterId, DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
@@ -105,7 +105,7 @@ export class MltFamiliesComponent implements OnInit {
   async countFamilies() {
     let consumed: string[] = []
     let list: FamilyDeliveries[] = await this.context.for(FamilyDeliveries).find(
-      { where: fd => fd.courier.isEqualTo(HelperId.currentUser(this.context)).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
+      { where: fd => fd.courier.isEqualTo(this.context.get(currentUser)).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -181,7 +181,7 @@ export class MltFamiliesComponent implements OnInit {
 
       let fd = await context.for(ActiveFamilyDeliveries).findId(id);
       if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-        fd.courier = HelperId.currentUser(context);
+        fd.courier = context.get(currentUser);
         await fd.save();
       }
     }
@@ -279,7 +279,7 @@ export class MltFamiliesComponent implements OnInit {
     let s = getSettings(context);
     if (!s.isSytemForMlt())
       throw "not allowed";
-    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(HelperId.currentUser(context)) })) {
+    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.get(currentUser)) })) {
       fd.distributionCenter =new DistributionCenterId(newDestinationId,context);
       await fd.save();
     }

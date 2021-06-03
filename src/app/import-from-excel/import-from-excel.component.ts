@@ -729,7 +729,7 @@ export class ImportFromExcelComponent implements OnInit {
                     step: 3, what: async () => {
                         if (h.gotVolunteerPhone) {
                             if (h.fd.courier) {
-                                let help = await h.fd.courier.waitLoad();
+                                let help = await h.fd.$.courier.load();
                                 if (!help.isNew()) {
                                     help.name = v;
                                     if (help.wasChanged())
@@ -739,7 +739,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                         else {
 
-                            await h.lookupAndInsert(Helpers, h => h.name, v, h => h.helperId(), h.fd.$.courier, x => {
+                            await h.lookupAndInsert(Helpers, h => h.name, v, h => h, h.fd.$.courier, x => {
                                 x._disableDuplicateCheck = true;
                             });
                         }
@@ -754,7 +754,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.gotVolunteerPhone = true;
                 v = Phone.fixPhoneInput(v, this.context);
-                await h.lookupAndInsert(Helpers, h => h.phone, new Phone(v), h => h.helperId(), h.fd.$.courier, x => {
+                await h.lookupAndInsert(Helpers, h => h.phone, new Phone(v), h => h, h.fd.$.courier, x => {
                     x.name = 'מתנדב ' + v;
                 });
             }, columns: [this.fd.courier]

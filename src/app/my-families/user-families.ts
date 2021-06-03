@@ -40,7 +40,7 @@ export class UserFamiliesList {
         return this.helper.phone.displayValue;
     }
     helper: Helpers;
-    escort: Helpers;
+    escort: HelpersBase;
     prevRouteStats: routeStats;
     routeStats: routeStats;
     setRouteStats(stats: routeStats) {
@@ -58,7 +58,7 @@ export class UserFamiliesList {
         return " (" + -r + "-) ";
     }
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
-    async initForHelper(helper: Helpers) {
+    async initForHelper(helper: HelpersBase) {
         if (helper != this.helper) {
             this.initHelper(helper);
             if (helper) {
@@ -69,11 +69,11 @@ export class UserFamiliesList {
         await this.reload();
 
     }
-    private async initHelper(h: Helpers) {
-        this.helper = h;
+    private async initHelper(h: HelpersBase) {
+        this.helper = await h.getHelper();
         this.escort = undefined;
         if (this.helper && h.escort) {
-            this.escort = await h.escort.waitLoad()
+            this.escort = await h.$.escort.load()
         }
 
     }
@@ -112,7 +112,7 @@ export class UserFamiliesList {
         return r;
 
     }
-    async initForFamilies(helper: Helpers, familiesPocoArray: any[]) {
+    async initForFamilies(helper: HelpersBase, familiesPocoArray: any[]) {
         this.initHelper(helper);
         let newFamilies = await Promise.all(familiesPocoArray.map(x => this.context.for(ActiveFamilyDeliveries).fromPojo(x)));
         newFamilies.push(...this.delivered);
@@ -128,10 +128,10 @@ export class UserFamiliesList {
     highlightNewFamilies = false;
     lastHelperId = undefined;
     async reload() {
-        if (!this.helper.isNew()) {
+        if (this.helper && !this.helper.isNew()) {
             this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({
                 where: f => {
-                    let r = f.courier.isEqualTo(this.helper.helperId());
+                    let r = f.courier.isEqualTo(this.helper);
                     if (this.settings.isSytemForMlt())
                         return r;
                     return r.and(f.visibleToCourier.isEqualTo(true))
@@ -158,6 +158,7 @@ export class UserFamiliesList {
     distCenter: DistributionCenters;
 
     async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs) {
+        
         await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id, args).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {

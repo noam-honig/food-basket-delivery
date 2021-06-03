@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -20,7 +20,7 @@ import { DialogConfig } from '@remult/angular';
 
 })
 export class HelperAssignmentComponent implements OnInit {
-  public argsHelper: Helpers;
+  public argsHelper: HelpersBase;
   constructor(
     private dialogRef: MatDialogRef<any>,
     public settings:ApplicationSettings,

@@ -59,11 +59,12 @@ export class TokenService {
 
 @Injectable()
 export class AuthService {
-    static initContext(context: Context) {
-        let h: HelperId;
+    static async initContext(context: Context) {
+        let h: Helpers;
 
         if (context.isSignedIn()) {
-            h = new HelperId(context.user.id, context);
+            h = await context.for(Helpers).getCachedByIdAsync(context.user.id);
+            await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers
         }
         context.set(currentUser, h);
 
@@ -390,7 +391,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         name: h.name,
         distributionCenter: h.distributionCenter.evilGetId(),
         theHelperIAmEscortingId: HelperId.toJson(h.theHelperIAmEscorting),
-        escortedHelperName: h.theHelperIAmEscorting ? (await (h.theHelperIAmEscorting.waitLoad())).name : ''
+        escortedHelperName: h.theHelperIAmEscorting ? (await (h.$.theHelperIAmEscorting.load())).name : ''
     };
     if (h.admin) {
         if (Sites.isOverviewSchema(context))

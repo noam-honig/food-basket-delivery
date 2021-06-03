@@ -5,7 +5,7 @@ import { Context, IdEntity, Filter, AndFilter, Column, Entity, DecimalValueConve
 import { BasketTypeId, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
+import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
 import { FamilySourceId } from "./FamilySources";
 import { Roles } from "../auth/roles";
 import { DistributionCenterId as DistributionCenterId, allCentersToken, DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
@@ -55,9 +55,9 @@ export class MessageStatus {
 
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = HelperId.currentUser(self.context);
+            self.createUser = self.context.get(currentUser);
             self.deliveryStatusDate = new Date();
-            self.deliveryStatusUser = HelperId.currentUser(self.context);
+            self.deliveryStatusUser = self.context.get(currentUser);
         }
         if (self.quantity < 1)
             self.quantity = 1;
@@ -72,7 +72,7 @@ export class MessageStatus {
                 logChanged(self.context, self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
                     if (!self._disableMessageToUsers) {
                         self.distributionCenter.SendMessageToBrowser(
-                            Families.GetUpdateMessage(self, 2, await self.courier.getTheName(), self.context), self.context);
+                            Families.GetUpdateMessage(self, 2, await self.courier.name, self.context), self.context);
                     }
                 }
                 );
@@ -81,7 +81,7 @@ export class MessageStatus {
 
             logChanged(self.context, self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
                 if (!self._disableMessageToUsers) {
-                    self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.getTheName() : '', self.context), self.context);
+                    self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.name : '', self.context), self.context);
                 }
             });
             logChanged(self.context, self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
@@ -202,12 +202,12 @@ export class FamilyDeliveries extends IdEntity {
     })
     @DataControl<FamilyDeliveries, HelperId>({
         click: async (self) => openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
-            onSelect: helper => self.courier = helper.helperId(),
+            onSelect: helper => self.courier = helper,
             location: self.getDrivingLocation(),
             familyId: self.family
         })
     })
-    courier: HelperId;
+    courier: HelpersBase;
     @Column({ caption: use.language.commentsWritteByVolunteer })
     courierComments: string;
     @ChangeDateColumn()
@@ -223,25 +223,25 @@ export class FamilyDeliveries extends IdEntity {
     @ChangeDateColumn({ caption: use.language.deliveryStatusDate })
     deliveryStatusDate: Date;
     relativeDeliveryStatusDate() {
-        return relativeDateName(this.context,{ d: this.deliveryStatusDate });
+        return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
     @Column({ caption: use.language.courierAsignUser, allowApiUpdate: false })
-    courierAssignUser: HelperId;
+    courierAssignUser: Helpers;
     @ChangeDateColumn({ caption: use.language.courierAsignDate })
     courierAssingTime: Date;
     @ChangeDateColumn({ caption: use.language.statusChangeUser })
-    deliveryStatusUser: HelperId;
+    deliveryStatusUser: HelpersBase;
     @ChangeDateColumn({ includeInApi: Roles.admin, caption: use.language.deliveryCreateDate })
     createDate: Date;
     @Column({ includeInApi: Roles.admin, caption: use.language.deliveryCreateUser, allowApiUpdate: false })
-    createUser: HelperId;
+    createUser: HelpersBase;
     @Column({
         caption: use.language.requireFollowUp
     })
     needsWork: boolean;
 
     @Column({ caption: use.language.requireFollowUpUpdateUser })
-    needsWorkUser: HelperId;
+    needsWorkUser: HelpersBase;
     @ChangeDateColumn({ caption: use.language.requireFollowUpUpdateDate })
     needsWorkDate: Date;
     @Column({
@@ -407,7 +407,7 @@ export class FamilyDeliveries extends IdEntity {
     @ChangeDateColumn({ includeInApi: Roles.admin, caption: use.language.archiveDate })
     archiveDate: Date;
     @Column({ includeInApi: Roles.admin, caption: use.language.archiveUser })
-    archiveUser: HelperId;
+    archiveUser: HelpersBase;
     @Column({
         sqlExpression: (selfDefs, context) => {
             var sql = new SqlBuilder();
@@ -517,7 +517,8 @@ export class FamilyDeliveries extends IdEntity {
     static isAllowedForUser(self: filterOf<FamilyDeliveries>, context: Context) {
         if (!context.isSignedIn())
             return self.id.isEqualTo('no rows');
-        let user = <HelperUserInfo>context.user;
+        let user = context.get(currentUser);
+        user.theHelperIAmEscorting;
         let result: Filter;
         let add = (f: Filter) => result = new AndFilter(f, result);
 
@@ -526,10 +527,10 @@ export class FamilyDeliveries extends IdEntity {
             if (context.isAllowed(Roles.distCenterAdmin))
                 add(filterCenterAllowedForUser(self.distributionCenter, context));
             else {
-                if (user.theHelperIAmEscortingId)
-                    add(self.courier.isEqualTo(HelperId.fromJson(user.theHelperIAmEscortingId, context)).and(self.visibleToCourier.isEqualTo(true)));
+                if (user.theHelperIAmEscorting)
+                    add(self.courier.isEqualTo(user.theHelperIAmEscorting).and(self.visibleToCourier.isEqualTo(true)));
                 else
-                    add(self.courier.isEqualTo(HelperId.currentUser(context)).and(self.visibleToCourier.isEqualTo(true)));
+                    add(self.courier.isEqualTo(user).and(self.visibleToCourier.isEqualTo(true)));
             }
         }
         return result;
@@ -538,7 +539,7 @@ export class FamilyDeliveries extends IdEntity {
     getShortDeliveryDescription() {
         return this.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
     }
-    staticGetShortDescription(deliverStatus: DeliveryStatus, deliveryStatusDate: Date, courier: HelperId, courierComments: string) {
+    staticGetShortDescription(deliverStatus: DeliveryStatus, deliveryStatusDate: Date, courier: HelpersBase, courierComments: string) {
         let r = deliverStatus.caption + " ";
         if (deliverStatus.IsAResultStatus() && deliveryStatusDate) {
             if (deliveryStatusDate.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
@@ -549,7 +550,7 @@ export class FamilyDeliveries extends IdEntity {
                 r += ": " + courierComments;
             }
             if (courier && deliverStatus != DeliveryStatus.SelfPickup && deliverStatus != DeliveryStatus.SuccessPickedUp)
-                r += ' ' + getLang(this.context).by + ' ' + courier.getValue();
+                r += ' ' + getLang(this.context).by + ' ' + courier.name;
         }
         return r;
     }
@@ -566,7 +567,7 @@ export class FamilyDeliveries extends IdEntity {
         switch (this.deliverStatus) {
             case DeliveryStatus.ReadyForDelivery:
                 if (this.courier) {
-                    let c = this.courier.item;
+                    let c = this.courier;
 
                     let r = ((this.messageStatus == MessageStatus.opened ? use.language.onTheWay : use.language.assigned) + ': ' + c.name + (c.eventComment ? ' (' + c.eventComment + ')' : '') + ', ' + use.language.assigned + ' ' + relativeDateName(this.context, { d: this.courierAssingTime })) + " ";
                     switch (this.messageStatus) {
@@ -592,13 +593,13 @@ export class FamilyDeliveries extends IdEntity {
                 let duration = '';
                 if (this.courierAssingTime && this.deliveryStatusDate)
                     duration = ' ' + getLang(this.context).within + ' ' + Math.round((this.deliveryStatusDate.valueOf() - this.courierAssingTime.valueOf()) / 60000) + " " + getLang(this.context).minutes;
-                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang(this.context).by + ' ' + this.courier.getValue() : '') + ' ' + relativeDateName(this.context, { d: this.deliveryStatusDate }) + duration;
+                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang(this.context).by + ' ' + this.courier : '') + ' ' + relativeDateName(this.context, { d: this.deliveryStatusDate }) + duration;
 
         }
         return this.deliverStatus.caption;
     }
     describe() {
-        return Families.GetUpdateMessage(this, 1, this.courier.getValue(), this.context);
+        return Families.GetUpdateMessage(this, 1, this.courier&&this.courier.name, this.context);
     }
 
 
@@ -773,10 +774,10 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
-function logChanged(context: Context, col: EntityColumn<any>, dateCol: EntityColumn<Date>, user: EntityColumn<HelperId>, wasChanged: (() => void)) {
+function logChanged(context: Context, col: EntityColumn<any>, dateCol: EntityColumn<Date>, user: EntityColumn<HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
-        user.value = HelperId.currentUser(context);
+        user.value = context.get(currentUser);
         wasChanged();
     }
 }

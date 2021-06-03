@@ -8,7 +8,7 @@ import { Phone } from "../model-shared/Phone";
 import { Column, Context, ServerFunction, StoreAsStringValueConverter, IdEntity, SqlDatabase, Filter, Entity, Validators, DateOnlyValueConverter, Storable, DecimalValueConverter, ColumnDefinitions, ColumnDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataArealColumnSetting, DataControl, DataControlSettings, GridSettings, InputControl, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
-import { HelperId, Helpers } from "../helpers/helpers";
+import { currentUser, HelperId, Helpers,  HelpersBase } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
@@ -132,16 +132,16 @@ export class GroupsValue {
         }
         if (self.isNew()) {
           self.createDate = new Date();
-          self.createUser = HelperId.currentUser(self.context);
+          self.createUser = self.context.get(currentUser);
         }
         if (self.$.status.wasChanged()) {
           self.statusDate = new Date();
-          self.statusUser = HelperId.currentUser(self.context);
+          self.statusUser = self.context.get(currentUser);
         }
 
         if (!self._suppressLastUpdateDuringSchemaInit) {
           self.lastUpdateDate = new Date();
-          self.lastUpdateUser = HelperId.currentUser(self.context);
+          self.lastUpdateUser = self.context.get(currentUser);
         }
 
 
@@ -339,7 +339,7 @@ export class Families extends IdEntity {
               newDelivery.$.deliveryComments];
             if (dialog.hasManyCenters)
               r.push(newDelivery.$.distributionCenter);
-            r.push(newDelivery.courier);
+            r.push(newDelivery.$.courier);
             if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus()) {
               r.push(arciveCurrentDelivery);
             }
@@ -403,7 +403,7 @@ export class Families extends IdEntity {
       fd.quantity = settings.quantity;
       fd.deliveryComments = settings.comment;
       fd.distributionCenter = new DistributionCenterId(settings.distCenter, context);
-      fd.courier = HelperId.fromJson(settings.courier, context);
+      fd.courier = await HelperId.fromJson(settings.courier, context);
       if (settings.deliverStatus) fd.deliverStatus = settings.deliverStatus;
       if (settings.archive) fd.archive = settings.archive;
       if (settings.selfPickup)
@@ -612,18 +612,18 @@ export class Families extends IdEntity {
   @ChangeDateColumn({ caption: use.language.statusChangeDate })
   statusDate: Date;
   @Column({ caption: use.language.statusChangeUser, allowApiUpdate: false })
-  statusUser: HelperId;
+  statusUser: Helpers;
   @Column({ caption: use.language.defaultVolunteer })
-  @DataControl<Families, HelperId>({
+  @DataControl<Families, HelpersBase>({
     click: async (e, col) => {
       openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
         searchClosestDefaultFamily: true,
         location: e.addressHelper.location(),
-        onSelect: selected => col.value = selected.helperId()
+        onSelect: async selected => col.value = selected
       });
     }
   })
-  fixedCourier: HelperId;
+  fixedCourier: HelpersBase;
   @CustomColumn(() => customColumnInfo[1])
   custom1: string;
   @CustomColumn(() => customColumnInfo[2])
@@ -794,11 +794,11 @@ export class Families extends IdEntity {
   @ChangeDateColumn({ caption: use.language.createDate })
   createDate: Date;
   @Column({ allowApiUpdate: false, caption: use.language.createUser })
-  createUser: HelperId;
+  createUser: HelpersBase;
   @ChangeDateColumn({ caption: use.language.lastUpdateDate })
   lastUpdateDate: Date;
   @Column({ allowApiUpdate: false, caption: use.language.lastUpdateUser })
-  lastUpdateUser: HelperId;
+  lastUpdateUser: HelpersBase;
 
 
 
@@ -887,7 +887,7 @@ export class Families extends IdEntity {
   duplicateFamilies: duplicateFamilyInfo[] = [];
 
   async checkDuplicateFamilies() {
-    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name, this.tz, this.tz2,Phone.toJson(this.phone1),  Phone.toJson(this.phone2), Phone.toJson( this.phone3), Phone.toJson( this.phone4), this.id, false, this.address);
+    this.duplicateFamilies = await Families.checkDuplicateFamilies(this.name, this.tz, this.tz2, Phone.toJson(this.phone1), Phone.toJson(this.phone2), Phone.toJson(this.phone3), Phone.toJson(this.phone4), this.id, false, this.address);
     this.$.tz.error = undefined;
     this.$.tz2.error = undefined;
     this.$.phone1.error = undefined;
@@ -1023,7 +1023,7 @@ export interface duplicateFamilyInfo {
 
 export interface FamilyUpdateInfo {
   name: string,
-  courier: HelperId,
+  courier: HelpersBase,
   deliverStatus: DeliveryStatus,
   courierAssingTime: Date,
   deliveryStatusDate: Date,

@@ -377,7 +377,7 @@ export class PhoneOption {
       args.addPhone(args.settings.helpText, args.settings.$.helpPhone.displayValue);
     }
     else {
-      let h = await args.d.courierAssignUser.waitLoad();
+      let h = await args.d.$.courierAssignUser.load();
       args.addPhone(h.name, h.phone.displayValue);
     }
   });
