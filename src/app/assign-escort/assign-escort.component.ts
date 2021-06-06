@@ -54,7 +54,7 @@ export class AssignEscortComponent implements OnInit {
     h.escort = await this.helper.getHelper();
     await h.save();
     if (await openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name }, x => x.yes)) {
-      await SendSmsAction.SendSms(this.helper.id, false);
+      await SendSmsAction.SendSms(this.helper, false);
     }
     this.dialog.Info(this.helper.name + " הוגדר כמלווה של " + this.helper.name);
     this.clearHelperInfo();
@@ -65,7 +65,7 @@ export class AssignEscortComponent implements OnInit {
     this.clearHelperInfo();
   }
   async sendSms() {
-    await SendSmsAction.SendSms(this.helper.id, false);
+    await SendSmsAction.SendSms(this.helper, false);
     this.dialog.Info("נשלחה הודעת SMS למלווה " + this.helper.name);
     this.clearHelperInfo();
   }

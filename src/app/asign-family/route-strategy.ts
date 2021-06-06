@@ -11,7 +11,7 @@ import { ValueListValueConverter } from "../../../../radweb/projects/core/src/co
 
 
 
-@Storable({ valueConverter: () => routeStrategy.converter })
+@Storable({ valueConverter: () => new ValueListValueConverter(routeStrategy) })
 export class routeStrategy {
     static endOnIsolated = new routeStrategy(0, !use ? "" : use.language.startAtDistributionCenterAndEndOnRemoteFamily, {
         getRouteEnd: (start, addresses) => addresses[addresses.length - 1].location
@@ -44,7 +44,6 @@ export class routeStrategy {
         if (!args.legsForDistance)
             args.legsForDistance = x => x;
     }
-    static converter = new ValueListValueConverter(routeStrategy);
 }
 
 export interface familiesInRoute {

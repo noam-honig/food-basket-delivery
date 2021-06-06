@@ -508,10 +508,10 @@ export class HelperFamiliesComponent implements OnInit {
     this.helperGotSms = true;
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
     let to = this.familyLists.helper.name;
-    await SendSmsAction.SendSms(this.familyLists.helper.id, reminder);
-    if (this.familyLists.helper.escort) {
+    await SendSmsAction.SendSms(this.familyLists.helper, reminder);
+    if (await this.familyLists.helper.$.escort.load()) {
       to += ' ול' + this.familyLists.escort.name;
-      await SendSmsAction.SendSms(HelperId.toJson(this.familyLists.helper.escort), reminder);
+      await SendSmsAction.SendSms(this.familyLists.helper.escort, reminder);
     }
     this.dialog.Info(use.language.smsMessageSentTo + " " + to);
     this.assignSmsSent.emit();

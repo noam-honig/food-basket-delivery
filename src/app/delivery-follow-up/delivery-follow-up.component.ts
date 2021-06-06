@@ -103,7 +103,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
         for (const h of this.helpers) {
           if (!h.smsWasSent) {
-            await SendSmsAction.SendSms(h.id, false);
+            await SendSmsAction.SendSms(await HelperId.fromJson(h.id, this.context), false);
           }
         }
       });

@@ -5,7 +5,7 @@ import { getLang } from "../sites/sites";
 
 @Storable<Phone>({
   displayValue: (e, x) =>x&& x.displayValue,
-  valueConverter: () => Phone.converter,
+  valueConverter: () => new StoreAsStringValueConverter<Phone>(x => Phone.toJson(x), x => x ? new Phone(x) : null),
   inputType: InputTypes.tel
 })
 @DataControl<any, Phone>({
@@ -27,7 +27,6 @@ export class Phone {
     return Phone.formatPhone(this.thePhone);
   }
 
-  static converter = new StoreAsStringValueConverter<Phone>(x => Phone.toJson(x), x => x ? new Phone(x) : null);
   static toJson(x: Phone): string {
     return x ? x.thePhone : '';
   }

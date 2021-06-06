@@ -19,10 +19,9 @@ export class SendSmsAction {
             .replace('!משפחה!', family);
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async SendSms(helperId: string, reminder: Boolean, context?: ServerContext) {
+    static async SendSms(h: HelpersBase, reminder: Boolean, context?: ServerContext) {
 
         try {
-            let h = await context.for(Helpers).findId(helperId);
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
 
                 new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));

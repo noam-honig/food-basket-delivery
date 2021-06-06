@@ -24,7 +24,7 @@ import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { SendSmsAction } from '../asign-family/send-sms-action';
+
 import { EmailSvc } from '../shared/utils';
 import { use } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
@@ -651,7 +651,7 @@ export class Helpers extends HelpersBase {
 
 
         if (settings.registerHelperReplyEmailText && settings.registerHelperReplyEmailText != '') {
-            let message = SendSmsAction.getMessage(settings.registerHelperReplyEmailText,
+            let message =  (await import('../asign-family/send-sms-action')).SendSmsAction.getMessage(settings.registerHelperReplyEmailText,
                 settings.organisationName, '', this.name, this.context.user.name, '');
 
             try {
@@ -791,4 +791,6 @@ export function validatePasswordColumn(context: Context, password: EntityColumn<
             password.error = l.passwordCharsRequirement;
     }
 }
+
+
 
