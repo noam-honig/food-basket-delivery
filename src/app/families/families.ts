@@ -361,14 +361,10 @@ export class Families extends IdEntity {
           }
         },
         ok: async () => {
-          let newId = await Families.addDelivery(newDelivery.family, {
-            basketType: newDelivery.basketType.id,
+          let newId = await Families.addDelivery(newDelivery.family, newDelivery.basketType, newDelivery.distributionCenter, newDelivery.courier, {
             quantity: newDelivery.quantity,
             comment: newDelivery.deliveryComments,
-            courier: HelperId.toJson(newDelivery.courier),
-            distCenter: DistributionCenters.toId(newDelivery.distributionCenter),
             selfPickup: selfPickup.value
-
           });
           if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus() && arciveCurrentDelivery.value) {
             args.copyFrom.archive = true;
@@ -384,27 +380,24 @@ export class Families extends IdEntity {
     });
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async addDelivery(familyId: string, settings: {
-    basketType: string,
+  static async addDelivery(familyId: string, basketType: BasketType, distCenter: DistributionCenters, courier: HelpersBase, settings: {
     quantity: number,
     comment: string,
-    distCenter: string,
-    courier: string,
     selfPickup: boolean,
     deliverStatus?: DeliveryStatus,
     archive?: boolean
   }, context?: Context) {
     let f = await context.for(Families).findId(familyId);
     if (f) {
-      let distCenter = await DistributionCenters.fromId(settings.distCenter, context);
+
       if (!distCenter)
         distCenter = await findClosestDistCenter(f.addressHelper.location(), context);
       let fd = f.createDelivery(distCenter);
-      fd.basketType = await BasketType.fromId(settings.basketType, context);
+      fd.basketType = basketType;
       fd.quantity = settings.quantity;
       fd.deliveryComments = settings.comment;
       fd.distributionCenter = distCenter;
-      fd.courier = await HelperId.fromJson(settings.courier, context);
+      fd.courier = courier;
       if (settings.deliverStatus) fd.deliverStatus = settings.deliverStatus;
       if (settings.archive) fd.archive = settings.archive;
       if (settings.selfPickup)

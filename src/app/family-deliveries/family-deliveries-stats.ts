@@ -32,7 +32,7 @@ export class FamilyDeliveryStats {
 
 
     async getData(distCenter: DistributionCenters) {
-        let r = await FamilyDeliveryStats.getFamilyDeliveryStatsFromServer(DistributionCenters.toId(distCenter));
+        let r = await FamilyDeliveryStats.getFamilyDeliveryStatsFromServer(distCenter);
         for (let s in this) {
             let x: any = this[s];
             if (x instanceof FamilyDeliveresStatistics) {
@@ -45,7 +45,7 @@ export class FamilyDeliveryStats {
         return r;
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async getFamilyDeliveryStatsFromServer(distCenterString: string, context?: Context, db?: SqlDatabase) {
+    static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
         let result = {
             data: {}, baskets: [] as {
                 id: string,
@@ -61,7 +61,6 @@ export class FamilyDeliveryStats {
                 selfPickup: number,
             }[], cities: []
         };
-        let distCenter = await DistributionCenters.fromId(distCenterString, context);
         let stats = new FamilyDeliveryStats(context);
         let pendingStats = [];
         for (let s in stats) {

@@ -225,7 +225,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       allInAlll = true;
     }
     else
-      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined,DistributionCenters.toId( this.dialog.distCenter), this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
+      deliveries = await DistributionMap.GetDeliveriesLocation(false, undefined, undefined, this.dialog.distCenter, this.filterArea.value != use.language.allRegions ? this.filterArea.value : undefined);
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
@@ -331,11 +331,9 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.calcSelectedDeliveries();
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenterIn?: string, area?: string, basketIn?: string, context?: Context, db?: SqlDatabase) {
-    let distCenter = await DistributionCenters.fromId(distCenterIn, context);
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
     if (!distCenter)
       distCenter = await DistributionCenters.getDefault(context);
-    let basket = await BasketType.fromId(basketIn, context);
 
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let h = SqlFor(context.for(Helpers));

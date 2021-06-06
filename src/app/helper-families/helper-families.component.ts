@@ -296,7 +296,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
-        await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper.id);
+        await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper);
         this.familyLists.reload();
         this.assignmentCanceled.emit();
       });
@@ -307,9 +307,8 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.busy, this.familyLists.toDeliver, this.dialog);
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async cancelAssignAllForHelperOnServer(id: string, context?: Context) {
-    let dist:DistributionCenters = null;
-    let helper = await HelperId.fromJson(id, context);
+  static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Context) {
+    let dist: DistributionCenters = null;
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
@@ -332,9 +331,9 @@ export class HelperFamiliesComponent implements OnInit {
     return of.addressLatitude == f.addressLatitude && of.addressLongitude == f.addressLongitude;
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async okAllForHelperOnServer(id: string, context?: Context) {
-    let dist:DistributionCenters = null;
-    let helper = await HelperId.fromJson(id, context);
+  static async okAllForHelperOnServer(helper: HelpersBase, context?: Context) {
+    let dist: DistributionCenters = null;
+
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
@@ -358,7 +357,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok all');
-        await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper.id);
+        await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper);
         this.familyLists.reload();
       });
     });

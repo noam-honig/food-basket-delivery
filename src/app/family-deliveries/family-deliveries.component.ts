@@ -181,7 +181,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(DistributionCenters.toId(this.dialog.distCenter), true);
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter, true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           (f, g) => f.groups.contains(g).and(FamilyDeliveries.readyFilter(f, this.context)),
@@ -198,7 +198,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(DistributionCenters.toId(this.dialog.distCenter));
+        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           (f, g) => f.groups.contains(g),
@@ -695,10 +695,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   });
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async getGroups(distCenter: string, readyOnly = false, context?: Context) {
+  static async getGroups(dist: DistributionCenters, readyOnly = false, context?: Context) {
     let pendingStats = [];
     let result: groupStats[] = [];
-    let dist =await  DistributionCenters.fromId(distCenter, context);
     await context.for(Groups).find({
       limit: 1000,
       orderBy: f => f.name
@@ -806,11 +805,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
             for (const otherFailedDelivery of await args.context.for(ActiveFamilyDeliveries).find({
               where: fd => fd.family.isEqualTo(newDelivery.family).and(DeliveryStatus.isProblem(fd.deliverStatus))
             })) {
-              await Families.addDelivery(otherFailedDelivery.family, {
-                basketType: otherFailedDelivery.basketType.id,
+              await Families.addDelivery(otherFailedDelivery.family, otherFailedDelivery.basketType, otherFailedDelivery.distributionCenter, otherFailedDelivery.courier, {
                 quantity: otherFailedDelivery.quantity,
-                courier: HelperId.toJson(newDelivery.courier),
-                distCenter: DistributionCenters.toId(newDelivery.distributionCenter),
                 selfPickup: false,
                 comment: otherFailedDelivery.deliveryComments
               });

@@ -71,7 +71,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.helperFamilies.switchToMap();
 
             setTimeout(() => {
-                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter, this.filterArea, this.basketType.id);
+                this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter, this.filterArea, this.basketType.basket);
             }, 50);
         }, 50);
 
@@ -124,8 +124,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
     async initHelper(helper: HelpersBase) {
-        if (helper.theHelperIAmEscorting && helper.theHelperIAmEscorting) {
-            let other = await helper.$.theHelperIAmEscorting.load();
+        let other = await helper.$.theHelperIAmEscorting.load();
+        if (other) {
+
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
                 question: helper.name + ' ' + this.settings.lang.isDefinedAsEscortOf + ' ' + other.name + '. ' + this.settings.lang.displayFamiliesOf + ' ' + other.name + '?'
             }, q => q.yes)) {
@@ -237,13 +238,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     this.groups.push({ name: this.filterGroup, familiesCount: 0 });
                 }
             });
-            let r = (await AsignFamilyComponent.getBasketStatus({
+            let r = (await AsignFamilyComponent.getBasketStatus(this.helper, this.basketType.basket, this.dialog.distCenter, {
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
-                filterArea: this.filterArea,
-                filterBasket: this.basketType.id,
-                helperId: this.helper ? this.helper.id : '',
-                distCenter:DistributionCenters.toId( this.dialog.distCenter)
+                filterArea: this.filterArea
             }));
             this.baskets = [this.allBaskets];
             this.baskets.push(...await Promise.all(r.baskets.map(async x => ({
@@ -427,16 +425,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             basket = undefined;
         await this.verifyHelperExistance();
         try {
-            let x = await AsignFamilyComponent.AddBox({
-                basketType: basket ? basket.id : undefined,
-                helperId: this.helper.id,
+            let x = await AsignFamilyComponent.AddBox(this.helper, basket.basket, this.dialog.distCenter, {
                 group: this.filterGroup,
                 city: this.filterCity,
                 area: this.filterArea,
                 numOfBaskets: allRepeat ? this.repeatFamilies.length : this.numOfBaskets,
                 preferRepeatFamilies: this.preferRepeatFamilies && this.repeatFamilies.length > 0,
-                allRepeat: allRepeat,
-                distCenter: DistributionCenters.toId(this.dialog.distCenter)
+                allRepeat: allRepeat
             });
             if (x.addedBoxes) {
                 this.familyLists.initForFamilies(this.helper, x.families);
@@ -489,7 +484,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
 
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async getBasketStatus(info: GetBasketStatusActionInfo, context?: Context, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
+    static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo, context?: Context, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
 
         let result: GetBasketStatusActionResponse = {
             baskets: [],
@@ -498,12 +493,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             special: 0,
             repeatFamilies: []
         };
-        let infoDistCenter = await DistributionCenters.fromId(info.distCenter, context);
-        let basket = await BasketType.fromId(info.filterBasket, context);
+
+
 
         let countFamilies = (additionalWhere?: (f: filterOf<ActiveFamilyDeliveries>) => Filter) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
-                let where = FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, basket).and(filterDistCenter(f.distributionCenter, infoDistCenter, context));
+                let where = FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, basket).and(filterDistCenter(f.distributionCenter, distCenter, context));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
                 }
@@ -518,15 +513,15 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let sql = new SqlBuilder();
         let f = SqlFor(context.for(ActiveFamilyDeliveries));
         let fd = SqlFor(context.for(FamilyDeliveries));
-        if (info.helperId) {
-            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(filterDistCenter(f.distributionCenter, infoDistCenter, context)).and(FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, await HelperId.fromJson(info.helperId, context)), ' limit 30'));
+        if (helper) {
+            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(filterDistCenter(f.distributionCenter, distCenter, context)).and(FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
+                filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
 
 
-        if (info.distCenter == null) {
+        if (!distCenter) {
             for await (let c of context.for(CitiesStats).iterate({
                 orderBy: ff => ff.city,
             })) {
@@ -546,7 +541,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         } else {
             for await (let c of context.for(CitiesStatsPerDistCenter).iterate({
                 orderBy: ff => ff.city,
-                where: ff => filterDistCenter(ff.distributionCenter, infoDistCenter, context)
+                where: ff => filterDistCenter(ff.distributionCenter, distCenter, context)
             })) {
                 var ci = {
                     name: c.city,
@@ -568,7 +563,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sql.columnWithAlias(sql.func('count ', '*'), 'c')
             ],
             from: f,
-            where: () => [filterDistCenter(f.distributionCenter, infoDistCenter, context), FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, undefined, basket)]
+            where: () => [filterDistCenter(f.distributionCenter, distCenter, context), FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, undefined, basket)]
         }), ' group by ', f.area, ' order by ', f.area)));
         result.areas = groupBy.rows.map(x => {
             let r: CityInfo = {
@@ -585,7 +580,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             sql.build('count (', f.quantity, ') b'),
             ],
             from: f,
-            where: () => [filterDistCenter(f.distributionCenter, infoDistCenter, context), FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea)]
+            where: () => [filterDistCenter(f.distributionCenter, distCenter, context), FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea)]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -604,17 +599,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return result;
     }
     @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
-    static async RefreshRoute(helperIdIn: string, args: refreshRouteArgs, context?: Context) {
-        let h = await HelperId.fromJson(helperIdIn, context);
+    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, context?: Context) {
+
         if (!context.isAllowed(Roles.distCenterAdmin)) {
-            if (!h.isCurrentUser()) {
+            if (!helper.isCurrentUser()) {
                 throw "Not Allowed";
             }
         }
         if (!args)
             args = {};
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
-            where: f => f.courier.isEqualTo(h).and(
+            where: f => f.courier.isEqualTo(helper).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
 
@@ -623,7 +618,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             routeStrategy.converter.byId(args.strategyId);
         if (!strategy)
             throw "Invalid Strategy";
-        let r = await optimizeRoute(h, existingFamilies, context, !args.doNotUseGoogle, strategy, args.volunteerLocation);
+        let r = await optimizeRoute(await helper.getHelper(), existingFamilies, context, !args.doNotUseGoogle, strategy, args.volunteerLocation);
         r.families = r.families.filter(f => f.checkAllowedForUser());
         r.families = await Promise.all(r.families.map(x => x._.toApiPojo()));
         return r;
@@ -660,7 +655,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async AddBox(info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
+    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
             families: [],
@@ -668,13 +663,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             routeStats: undefined,
             familiesInSameAddress: []
         }
-        if (!info.helperId)
-            throw 'invalid helper';
-        let helper = await HelperId.fromJson(info.helperId, context);
         if (!helper)
             throw "helper does not exist";
-        let distCenter = await DistributionCenters.fromId(info.distCenter, context);
-        let basketType = await BasketType.fromId(info.basketType, context);
 
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helper).and(
@@ -738,7 +728,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             let where = FamilyDeliveries.readyFilter(f, context, info.city, info.group, info.area).and(
                 f.special.isDifferentFrom(YesNo.Yes).and(filterDistCenter(f.distributionCenter, distCenter, context))
             );
-            if (info.basketType != undefined)
+            if (basketType)
                 where = where.and(
                     f.basketType.isEqualTo(basketType));
             return where;
@@ -820,9 +810,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             if (waitingFamilies.length > 0) {
-                let preferArea = helper.preferredDistributionAreaAddressHelper.ok();
-                let preferEnd = helper.preferredFinishAddressHelper.ok();
-                
+                let moreHelperInfo = await helper.getHelper();
+                let preferArea = moreHelperInfo.preferredDistributionAreaAddressHelper.ok();
+                let preferEnd = moreHelperInfo.preferredFinishAddressHelper.ok();
+
                 if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt() && (preferArea || preferEnd))) {
 
                     let distCenter = settings.addressHelper.location();
@@ -833,14 +824,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         var lastDist: number;
                         for (const f of waitingFamilies) {
                             if (preferArea) {
-                                let dist = GetDistanceBetween(f, helper.preferredDistributionAreaAddressHelper.location());
+                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredDistributionAreaAddressHelper.location());
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
                                 }
                             }
                             if (preferEnd) {
-                                let dist = GetDistanceBetween(f, helper.preferredFinishAddressHelper.location());
+                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredFinishAddressHelper.location());
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
@@ -959,7 +950,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                             return;
                         let c = await f.courier;
                         this.dialog.YesNoQuestion(this.settings.lang.theFamily + ' ' +
-                            f.name + this.settings.lang.isAlreadyAsignedTo + ' ' + c + ' ' + this.settings.lang.onStatus + ' ' +
+                            f.name + this.settings.lang.isAlreadyAsignedTo + ' ' + c.name + ' ' + this.settings.lang.onStatus + ' ' +
                             f.deliverStatus.caption + '. ' + this.settings.lang.shouldAssignTo + ' ' + this.helper.name + '?', async () => {
                                 await ok();
                             });
@@ -987,16 +978,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     private async assignMultipleFamilies(ids: string[], quantity = 0) {
         await this.verifyHelperExistance();
-        await AsignFamilyComponent.assignMultipleFamilies({
-            helper: this.helper.id,
+        await AsignFamilyComponent.assignMultipleFamilies(this.helper, {
             ids,
             quantity
         });
         this.refreshList();
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async assignMultipleFamilies(args: {
-        helper: string,
+    static async assignMultipleFamilies(helper: HelpersBase, args: {
         ids: string[],
         quantity: number,
     }, context?: Context) {
@@ -1019,7 +1008,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 if (added > args.quantity)
                     break;
             }
-            fd.courier = await HelperId.fromJson(args.helper, context);
+            fd.courier = helper;
             await fd.save();
         }
     }
@@ -1053,12 +1042,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => FamilyDeliveries.readyFilter(f, this.context, this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'street', true);
     }
     async addBuilding() {
-        let rows = await AsignFamilyComponent.selectBuildings({
+        let rows = await AsignFamilyComponent.selectBuildings(this.basketType.basket, this.dialog.distCenter, {
             filterCity: this.filterCity,
             filterArea: this.filterArea,
-            filterGroup: this.filterGroup,
-            basketTypeId: this.basketType.id,
-            distCenter: DistributionCenters.toId(this.dialog.distCenter)
+            filterGroup: this.filterGroup
         });
         if (rows.length == 0) {
             this.dialog.Error(this.settings.lang.noDeliveriesLeft);
@@ -1092,20 +1079,16 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async selectBuildings(args: {
+    static async selectBuildings(basket: BasketType, distCenter: DistributionCenters, args: {
         filterCity: string,
         filterGroup: string,
-        filterArea: string,
-        basketTypeId: string,
-        distCenter: string
+        filterArea: string
     },
         context?: Context,
         db?: SqlDatabase
     ) {
         var sql = new SqlBuilder();
         var fd = SqlFor(context.for(ActiveFamilyDeliveries));
-        let basket = await BasketType.fromId(args.basketTypeId, context);
-        let distCenter = await DistributionCenters.fromId(args.distCenter, context);
 
         let result = await db.execute(sql.query({
             from: fd,
@@ -1131,16 +1114,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 }
 
 export interface AddBoxInfo {
-    basketType: string;
     group: string;
-    helperId: string;
     city: string;
     area: string;
     numOfBaskets: number;
     preferRepeatFamilies: boolean;
     allRepeat: boolean;
-    distCenter: string;
-
 }
 export interface AddBoxResponse {
     families: any[];
@@ -1174,9 +1153,6 @@ export interface GetBasketStatusActionInfo {
     filterGroup: string;
     filterCity: string;
     filterArea: string;
-    filterBasket: string;
-    helperId: string;
-    distCenter: string;
 }
 export interface GetBasketStatusActionResponse {
     baskets: BasketInfo[];
@@ -1192,7 +1168,7 @@ export interface BasketInfo {
     unassignedFamilies: number;
 
 }
-function filterRepeatFamilies(sql: SqlBuilder, f: SqlDefs<ActiveFamilyDeliveries>, fd: SqlDefs<FamilyDeliveries>, helperId: Helpers) {
+function filterRepeatFamilies(sql: SqlBuilder, f: SqlDefs<ActiveFamilyDeliveries>, fd: SqlDefs<FamilyDeliveries>, helperId: HelpersBase) {
     return sql.build(f.family, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
 
 }

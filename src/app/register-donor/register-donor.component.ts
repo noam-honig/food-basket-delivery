@@ -16,6 +16,7 @@ import { DataAreaSettings, DataControl, openDialog } from '../../../../radweb/pr
 import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
 import { use } from '../translate';
 import { FamilySources } from '../families/FamilySources';
+import { BasketType } from '../families/BasketType';
 
 
 declare var gtag;
@@ -234,11 +235,9 @@ class donorForm {
     async function addDelivery(type: string, q: number, isSelfDeliver: boolean) {
       if (q > 0) {
         quantity += q;
-        await Families.addDelivery(f.id, {
+
+        await Families.addDelivery(f.id, await self.context.for(BasketType).getCachedByIdAsync(type), null, null, {
           comment: '',
-          basketType: type,
-          courier: '',
-          distCenter: null,
           quantity: q,
           selfPickup: isSelfDeliver,
         }, self.context);
@@ -257,11 +256,8 @@ class donorForm {
     await addDelivery('מסך', this.screen, this.selfDeliver);
 
     if (quantity == 0) {
-      await Families.addDelivery(f.id, {
+      await Families.addDelivery(f.id, await self.context.for(BasketType).getCachedByIdAsync('לא פורט'), null, null, {
         comment: '',
-        basketType: 'לא פורט',
-        courier: '',
-        distCenter: null,
         quantity: 1,
         selfPickup: false
       }, this.context);

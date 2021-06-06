@@ -3,7 +3,7 @@ import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angu
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { currentUser, HelperId,  Helpers, HelpersBase } from "../helpers/helpers";
+import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
@@ -60,7 +60,7 @@ export class HelperGifts extends IdEntity {
             HelpersBase.showSelectDialog(col, { includeFrozen: true });
         }
     })
-    assignedToHelper: Helpers;
+    assignedToHelper: HelpersBase;
     @ChangeDateColumn({ caption: use.language.dateGranted })
     dateGranted: Date;
     @Column({ caption: use.language.assignUser, allowApiUpdate: false })
@@ -76,10 +76,11 @@ export class HelperGifts extends IdEntity {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
+        let helper = await HelperId.fromJson(helperId, context);
         if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.get(currentUser))) > 0) {
             let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.get(currentUser)));
             if (g) {
-                g.assignedToHelper = await HelperId.fromJson(helperId, context);
+                g.assignedToHelper = helper;
                 g.wasConsumed = false;
                 g.wasClicked = false;
                 await g.save();
@@ -101,15 +102,13 @@ export class HelperGifts extends IdEntity {
         }
     }
     @ServerFunction({ allowed: true })
-    static async getMyPendingGiftsCount(helperId: string, context?: Context) {
-        let h = await HelperId.fromJson(helperId, context);
+    static async getMyPendingGiftsCount(h: Helpers, context?: Context) {
         let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @ServerFunction({ allowed: true })
-    static async getMyFirstGiftURL(helperId: string, context?: Context) {
-        let h = await HelperId.fromJson(helperId, context);
+    static async getMyFirstGiftURL(h: HelpersBase, context?: Context) {
         let gifts = await context.for(HelperGifts).find({
             where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
@@ -130,8 +129,8 @@ export async function showUsersGifts(helperId: string, context: Context, setting
     });
 }
 
-export async function showHelperGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
-    let hid = await HelperId.fromJson(helperId, context);
+export async function showHelperGifts(hid: Helpers, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+
 
     let helperName = hid.name;
     openDialog(GridDialogComponent, x => x.args = {
@@ -141,7 +140,7 @@ export async function showHelperGifts(helperId: string, context: Context, settin
             text: 'הענק משאלה',
             visible: () => context.isAllowed(Roles.admin),
             click: async x => {
-                await HelperGifts.assignGift(helperId);
+                await HelperGifts.assignGift(hid.id);
                 //this.refresh();
             },
         }],

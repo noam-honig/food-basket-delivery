@@ -21,7 +21,7 @@ export class UserFamiliesList {
         if (this.allFamilies)
             this.map.test(this.allFamilies, this.helper);
     }
-    startAssignByMap(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: string) {
+    startAssignByMap(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: BasketType) {
 
         this.map.loadPotentialAsigment(city, group, distCenter, area, basketType);
         setTimeout(() => {
@@ -160,7 +160,7 @@ export class UserFamiliesList {
 
     async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs) {
         
-        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper.id, args).then(r => {
+        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper, args).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {
                 this.setRouteStats(r.stats);

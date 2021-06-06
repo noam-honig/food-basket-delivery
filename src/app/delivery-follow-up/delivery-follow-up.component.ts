@@ -141,7 +141,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
   hasChart = true;
   async refreshStats() {
-    this.helpers = await DeliveryFollowUpComponent.helpersStatus(DistributionCenters.toId(this.dialog.distCenter));
+    this.helpers = await DeliveryFollowUpComponent.helpersStatus(this.dialog.distCenter);
     this.updateChart();
 
   }
@@ -165,8 +165,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async helpersStatus(distCenterIn: string, context?: Context, db?: SqlDatabase) {
-    let distCenter = await DistributionCenters.fromId(distCenterIn, context);
+  static async helpersStatus(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
     let fd = SqlFor(context.for(FamilyDeliveries));
 
     let h = SqlFor(context.for(Helpers));

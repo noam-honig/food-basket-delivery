@@ -14,12 +14,12 @@ export class moveDeliveriesHelper {
     constructor(private context: Context, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
 
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '') {
-        
+
         let deliveries = await this.context.for(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
         if (deliveries > 0)
             this.dialog.YesNoQuestion(extraMessage + " " + this.settings.lang.transfer + " " + deliveries + " " + this.settings.lang.deliveriesFrom + '"' + from.name + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + to.name + '"', async () => {
 
-                let message = await moveDeliveriesHelper.moveDeliveriesBetweenVolunteers(from.id, to.id);
+                let message = await moveDeliveriesHelper.moveDeliveriesBetweenVolunteers(from, to);
                 if (message) {
                     this.dialog.Info(message);
                     this.reload();
@@ -31,13 +31,13 @@ export class moveDeliveriesHelper {
             });
     }
     @ServerFunction({ allowed: Roles.admin })
-    static async moveDeliveriesBetweenVolunteers(from: string, to: string, context?: Context) {
+    static async moveDeliveriesBetweenVolunteers(helperFrom: HelpersBase, to: HelpersBase, context?: Context) {
         let t = new PromiseThrottle(10);
         let settings = getSettings(context);
         let i = 0;
-        let helperFrom = await HelperId.fromJson(from, context);
+
         for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(helperFrom).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
-            fd.courier = await HelperId.fromJson(to, context);
+            fd.courier = to;
             fd._disableMessageToUsers = true;
             await t.push(fd.save());
             i++;
@@ -45,8 +45,8 @@ export class moveDeliveriesHelper {
         await t.done();
         if (i) {
             let m = i + " " + settings.lang.deliveries + " " + settings.lang.movedFrom + " " +
-                (await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(from))).name + " " + settings.lang.to + " " +
-                (await context.for(Helpers).lookupAsync(x => x.id.isEqualTo(to))).name
+                helperFrom.name + " " + settings.lang.to + " " +
+                to.name
             Families.SendMessageToBrowsers(m, context, '');
             return m;
         }

@@ -68,8 +68,8 @@ export class MltFamiliesComponent implements OnInit {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.user.id);
-    this.thisHelper = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(this.context.user.id));
+    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.get(currentUser));
+    this.thisHelper = this.context.get(currentUser);
     this.myPhoneNumber = this.thisHelper.phone;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
     this.distCentersButtons = [];
@@ -275,12 +275,12 @@ export class MltFamiliesComponent implements OnInit {
 
 
   @ServerFunction({ allowed: c => c.isSignedIn() })
-  static async changeDestination(newDestinationId: string, context?: Context) {
+  static async changeDestination(newDestinationId: DistributionCenters, context?: Context) {
     let s = getSettings(context);
     if (!s.isSytemForMlt())
       throw "not allowed";
     for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.get(currentUser)) })) {
-      fd.distributionCenter =await DistributionCenters.fromId(newDestinationId,context);
+      fd.distributionCenter =newDestinationId;
       await fd.save();
     }
   }

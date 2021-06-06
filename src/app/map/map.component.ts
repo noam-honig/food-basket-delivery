@@ -11,6 +11,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';
 import { Location } from '../shared/googleApiHelpers';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { BasketType } from '../families/BasketType';
 
 //import 'googlemaps';
 
@@ -21,11 +22,11 @@ import { DistributionCenters } from '../manage/distribution-centers';
 })
 export class MapComponent implements OnInit, OnDestroy {
     loadedPotentialFamilies: string[] = [];
-    async loadPotentialAsigment(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: string) {
+    async loadPotentialAsigment(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: BasketType) {
 
         await this.initMap();
 
-        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, DistributionCenters.toId(distCenter), area, basketType);
+        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area, basketType);
         for (const f of this.loadedPotentialFamilies) {
             let fi = this.dict.get(f);
             if (fi && fi.getIcon().toString().includes('yellow-dot.png')) {
