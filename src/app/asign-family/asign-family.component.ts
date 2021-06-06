@@ -226,7 +226,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     async refreshBaskets() {
         await this.busy.donotWait(async () => {
             let groups: Promise<GroupsStats[]>;
-            if (this.dialog.distCenter == null) {
+            if (!this.dialog.distCenter) {
                 groups = this.context.for(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
             }
             else
@@ -402,7 +402,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.donotWait(async () => {
             let f = await this.context.for(ActiveFamilyDeliveries).findId(familyId);
-            if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier) {
+            if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && !f.courier) {
                 this.performSpecificFamilyAssignment(f, 'assign based on map');
             }
         });
@@ -599,7 +599,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return result;
     }
     @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
-    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, context?: Context) {
+    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy, context?: Context) {
 
         if (!context.isAllowed(Roles.distCenterAdmin)) {
             if (!helper.isCurrentUser()) {
@@ -612,10 +612,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             where: f => f.courier.isEqualTo(helper).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
+        if (!strategy)
+            strategy = (await ApplicationSettings.getAsync(context)).routeStrategy;
 
-        let strategy = (await ApplicationSettings.getAsync(context)).routeStrategy;
-        if (args.strategyId)
-            routeStrategy.converter.byId(args.strategyId);
         if (!strategy)
             throw "Invalid Strategy";
         let r = await optimizeRoute(await helper.getHelper(), existingFamilies, context, !args.doNotUseGoogle, strategy, args.volunteerLocation);
@@ -1181,6 +1180,5 @@ export interface CityInfo {
 
 export interface refreshRouteArgs {
     doNotUseGoogle?: boolean,
-    strategyId?: number,
     volunteerLocation?: Location
 }

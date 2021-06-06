@@ -26,7 +26,7 @@ import { AuthService } from '../auth/auth-service';
 
 
 serverInit().then(async (dataSource) => {
-    //
+    
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));

@@ -117,9 +117,8 @@ export class HelperFamiliesComponent implements OnInit {
         if (this.familyLists.helper.wasChanged())
           await this.familyLists.helper.save();
         await this.familyLists.refreshRoute({
-          strategyId: strategy.value.id,
           volunteerLocation: this.volunteerLocation
-        });
+        }, strategy.value);
       }
     });
 
@@ -239,7 +238,6 @@ export class HelperFamiliesComponent implements OnInit {
               }
               await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
               await this.familyLists.refreshRoute({
-                strategyId: this.settings.routeStrategy.id,
                 volunteerLocation: this.volunteerLocation
               });
               if (this.familyLists)
@@ -535,7 +533,7 @@ export class HelperFamiliesComponent implements OnInit {
     await openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new InputControl<string>({}),
       ok: async (comment) => {
-        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper.id, comment);
+        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper, comment);
         this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },

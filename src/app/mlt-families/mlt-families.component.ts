@@ -160,7 +160,6 @@ export class MltFamiliesComponent implements OnInit {
                 }
                 await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
                 await this.familyLists.refreshRoute({
-                  strategyId: this.settings.routeStrategy.id,
                   volunteerLocation: volunteerLocation
                 });
                 await this.familyLists.reload();
@@ -280,7 +279,7 @@ export class MltFamiliesComponent implements OnInit {
     if (!s.isSytemForMlt())
       throw "not allowed";
     for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.get(currentUser)) })) {
-      fd.distributionCenter =newDestinationId;
+      fd.distributionCenter = newDestinationId;
       await fd.save();
     }
   }

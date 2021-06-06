@@ -6,8 +6,8 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context } from '@remult/core';
-import { RouteHelperService, NotSignedInGuard, InputControl, DataAreaSettings } from '@remult/angular';
+import { Column, Context, getControllerDefs, InputTypes } from '@remult/core';
+import { RouteHelperService, NotSignedInGuard, InputControl, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
@@ -15,6 +15,7 @@ import { Sites } from '../../sites/sites';
 import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/Phone";
+import { use } from '../../translate';
 
 
 
@@ -25,40 +26,57 @@ import { Phone } from "../../model-shared/Phone";
 })
 export class LoginComponent implements OnInit, AfterViewInit {
   static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
-  phone = new InputControl<Phone>({ caption: this.settings.lang.phone, dataType: Phone });
-  password = new InputControl<string>({ caption: this.settings.lang.password });
-  newPassword = new InputControl<string>({ caption: this.settings.lang.password });
-  confirmPassword = new InputControl<string>({ caption: this.settings.lang.confirmPassword });
-  confirmEula = new InputControl<boolean>({ caption: this.settings.lang.IConfirmEula });
-
-  name = new InputControl<string>({ caption: this.settings.lang.volunteerName });
-  preferredDistributionArea = new InputControl<string>({ caption: this.settings.lang.preferredDistributionArea });
-  remember = new InputControl<boolean>({ dataType: Boolean, caption: this.settings.lang.rememberMeOnThisDevice });
+  @DataControl({ allowClick: () => false })
+  @Column({ caption: use.language.phone, dataType: Phone })
+  phone: Phone;
+  @Column<LoginComponent>({
+    caption: use.language.password,
+    inputType: InputTypes.password
+  })
+  password: string;
+  @Column<LoginComponent>({
+    caption: use.language.password,
+    inputType: InputTypes.password
+  })
+  newPassword: string;
+  @Column<LoginComponent>({
+    caption: use.language.confirmPassword,
+    inputType: InputTypes.password
+  })
+  confirmPassword: string;
+  @Column<LoginComponent>({
+    caption: use.language.IConfirmEula,
+    inputType: InputTypes.password
+  })
+  confirmEula: boolean;
+  @Column({ caption: use.language.volunteerName })
+  name: string;
+  @Column({ caption: use.language.preferredDistributionArea })
+  preferredDistributionArea: string;
+  @Column({ caption: use.language.rememberMeOnThisDevice })
+  remember: boolean;
   passwordArea = new DataAreaSettings({
-    columnSettings: () => [{ column: this.password, inputType: 'password' }, this.remember]
+    columnSettings: () => [{ column: this.$.password }, this.$.remember]
   });
   phoneArea = new DataAreaSettings({
-    columnSettings: () => [{ column: this.phone, inputType: 'tel' }, this.remember]
+    columnSettings: () => [this.$.phone, this.$.remember]
   });
-
+  get $() { return getControllerDefs(this).columns }
   nameArea = new DataAreaSettings({
-    columnSettings: () => [this.name]
+    columnSettings: () => [this.$.name]
   });
   setPasswordArea = new DataAreaSettings({
     columnSettings: () => [
-      { column: this.newPassword, inputType: 'password', visible: () => this.loginResult.requiredToSetPassword },
-      { column: this.confirmPassword, inputType: 'password', visible: () => this.loginResult.requiredToSetPassword },
-      { column: this.confirmEula, visible: () => this.loginResult.requiredToSignEULA }
+      { column: this.$.newPassword, visible: () => this.loginResult.requiredToSetPassword },
+      { column: this.$.confirmPassword, visible: () => this.loginResult.requiredToSetPassword },
+      { column: this.$.confirmEula, visible: () => this.loginResult.requiredToSignEULA }
     ]
   });
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
-    private router: RouteHelperService,
     private context: Context,
-    private routeReuseStrategy: RouteReuseStrategy,
-    public settings: ApplicationSettings,
-    private zone: NgZone
+    public settings: ApplicationSettings
   ) { }
   ngAfterViewInit(): void {
     if (this.phoneForm) {
@@ -89,12 +107,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
   async doLogin() {
     let prev = this.loginResult;
     this.loginResult = await this.auth.login({
-      phone: this.phone.value.thePhone,
-      password: this.password.value,
-      newPassword: this.newPassword.value,
-      EULASigned: this.confirmEula.value
+      phone: this.phone.thePhone,
+      password: this.password,
+      newPassword: this.newPassword,
+      EULASigned: this.confirmEula
 
-    }, this.remember.value);
+    }, this.remember);
     if (prev.requiredToSignEULA)
       this.loginResult.requiredToSignEULA = true;
     if (this.loginResult.newUser) {
@@ -124,15 +142,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
 
   phoneState = new loginState(async () => {
-    this.phone.value = new Phone((await import('../../model-shared/phone')).Phone.fixPhoneInput(this.phone.value.thePhone, this.context));
-    if (!this.phone.value || this.phone.value.thePhone.length < 10) {
+    this.phone = new Phone((await import('../../model-shared/phone')).Phone.fixPhoneInput(this.phone.thePhone, this.context));
+    if (!this.phone || this.phone.thePhone.length < 10) {
       this.dialog.Error(this.settings.lang.invalidPhoneNumber);
       return;
     }
-    this.password.value = '';
-    this.newPassword.value = '';
-    this.confirmPassword.value = '';
-    this.confirmEula.value = false;
+    this.password = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.confirmEula = false;
     this.doLogin();
   });
   passwordState = new loginState(async () => {
@@ -141,25 +159,25 @@ export class LoginComponent implements OnInit, AfterViewInit {
   updatePasswordAndEulaState = new loginState(async () => {
 
     if (this.loginResult.requiredToSetPassword) {
-      if (this.newPassword.value == this.password.value) {
-        this.newPassword.error = this.settings.lang.newPasswordMustBeNew;
+      if (this.newPassword == this.password) {
+        this.$.newPassword.error = this.settings.lang.newPasswordMustBeNew;
         this.dialog.Error(this.settings.lang.newPasswordMustBeNew);
         return;
 
       }
-      if (!this.newPassword.value || this.newPassword.value != this.confirmPassword.value) {
-        this.newPassword.error = this.settings.lang.passwordDoesntMatchConfirmPassword;
+      if (!this.newPassword || this.newPassword != this.confirmPassword) {
+        this.$.newPassword.error = this.settings.lang.passwordDoesntMatchConfirmPassword;
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
         return;
       }
-      validatePasswordColumn(this.context, this.newPassword);
-      if (this.newPassword.error) {
-        this.dialog.Error(this.newPassword.error);
+      validatePasswordColumn(this.context, this.$.newPassword);
+      if (this.$.newPassword.error) {
+        this.dialog.Error(this.$.newPassword.error);
         return;
       }
     }
 
-    if (this.loginResult.requiredToSignEULA && !this.confirmEula.value) {
+    if (this.loginResult.requiredToSignEULA && !this.confirmEula) {
       this.dialog.Error(this.settings.lang.mustConfirmEula);
       return;
     }
@@ -168,9 +186,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
   newUserState = new loginState(async () => {
     try {
       let h = this.context.for(Helpers).create();
-      h.phone = this.phone.value;
-      h.name = this.name.value;
-      h.preferredDistributionAreaAddress = this.preferredDistributionArea.value;
+      h.phone = this.phone;
+      h.name = this.name;
+      h.preferredDistributionAreaAddress = this.preferredDistributionArea;
       await h.save();
       this.doLogin();
 
@@ -186,7 +204,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     if (this.auth.failedSmsSignInPhone) {
-      this.phone.value = new Phone(this.auth.failedSmsSignInPhone);
+      this.phone = new Phone(this.auth.failedSmsSignInPhone);
       this.doLogin();
     }
   }

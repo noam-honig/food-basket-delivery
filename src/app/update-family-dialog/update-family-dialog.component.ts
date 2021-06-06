@@ -14,7 +14,7 @@ import { PreviewFamilyComponent } from '../preview-family/preview-family.compone
 import { DialogService } from '../select-popup/dialog';
 
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
-import { HelperId, Helpers } from '../helpers/helpers';
+import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { Sites } from '../sites/sites';
@@ -115,7 +115,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     await openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => new InputControl<string>({}),
       ok: async (comment) => {
-        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(HelperId.toJson(this.args.familyDelivery.courier), comment);
+        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier, comment);
         this.dialog.Info("הודעה נשלחה");
       },
       cancel: () => { },
@@ -126,8 +126,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
   }
   @ServerFunction({ allowed: Roles.admin })
-  static async SendCustomMessageToCourier(courier: string, message: string, context?: ServerContext) {
-    let h = await context.for(Helpers).findId(courier);
+  static async SendCustomMessageToCourier(h: HelpersBase, message: string, context?: ServerContext) {   
     await new SendSmsUtils().sendSms(h.phone.thePhone, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
 
   }

@@ -9,7 +9,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
-import { routeStats } from "../asign-family/route-strategy";
+import { routeStats, routeStrategy } from "../asign-family/route-strategy";
 import { openDialog } from "../../../../radweb/projects/angular";
 
 
@@ -86,7 +86,7 @@ export class UserFamiliesList {
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
-            
+
             let item = iterator.basketType;
             if (item) {
                 boxes += item.boxes * iterator.quantity;
@@ -158,9 +158,9 @@ export class UserFamiliesList {
 
     distCenter: DistributionCenters;
 
-    async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs) {
-        
-        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper, args).then(r => {
+    async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs, strategy?: routeStrategy) {
+
+        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper, args, strategy).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {
                 this.setRouteStats(r.stats);
