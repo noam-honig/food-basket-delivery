@@ -1,7 +1,7 @@
 import { Express, Response } from 'express';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { Context, ServerContext } from '@remult/core';
-import { ExpressRequestBridgeToDataApiRequest } from '@remult/core/server';
+import { ExpressBridge } from '@remult/core/server';
 import { Sites } from '../sites/sites';
 import { HelperUserInfo } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
@@ -28,7 +28,7 @@ class userInSite {
     constructor(private distCenter: string,
         public response: Response,
         private canSeeAllDistCenters: boolean) {
-            this.sendLiveMessage();
+        this.sendLiveMessage();
 
     }
     sendLiveMessage() {
@@ -44,12 +44,10 @@ class userInSite {
 export class ServerEvents {
     sites = new Map<string, userInSite[]>();
 
-    constructor(private app: Express) {
-        this.app.get('/*/api/stream', (req, res) => {
-            //@ts-ignore
-            let r = new ExpressRequestBridgeToDataApiRequest(req);
-            let context = new ServerContext();
-            context.setReq(r);
+    constructor(private app: Express, getBridge: () => ExpressBridge) {
+        this.app.get('/*/api/stream', async (req, res) => {
+
+            let context = await getBridge().getValidContext(req);
             let org = Sites.getOrganizationFromContext(context);
             res.writeHead(200, {
                 "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',

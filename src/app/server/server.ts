@@ -2,7 +2,7 @@ import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModu
 let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, ExpressRequestBridgeToDataApiRequest, registerEntitiesOnServer, registerActionsOnServer, initExpress } from '@remult/core/server';
+import { ExpressBridge, registerEntitiesOnServer, registerActionsOnServer, initExpress } from '@remult/core/server';
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -26,24 +26,14 @@ import { AuthService } from '../auth/auth-service';
 
 
 serverInit().then(async (dataSource) => {
-    
+
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
     app.use(compression());
     if (!process.env.DEV_MODE)
         app.use(forceHttps);
-    function getContext(req: express.Request, sendDs?: (ds: SqlDatabase) => void) {
-        //@ts-ignore
-        let r = new ExpressRequestBridgeToDataApiRequest(req);
-        let context = new ServerContext();
-        context.setReq(r);
-        let ds = dataSource(context);
-        context.setDataProvider(ds);
-        if (sendDs)
-            sendDs(ds);
-        return context;
-    }
+
     let redirect: string[] = [];
     {
         let x = process.env.REDIRECT;
@@ -52,7 +42,7 @@ serverInit().then(async (dataSource) => {
     }
 
     async function sendIndex(res: express.Response, req: express.Request) {
-        let context = getContext(req);
+        let context = await eb.getValidContext(req);
         let org = Sites.getOrganizationFromContext(context);
         if (redirect.includes(org)) {
             res.redirect(process.env.REDIRECT_TARGET + org);
@@ -152,7 +142,7 @@ s.parentNode.insertBefore(b, s);})();
 
 
     if (!process.env.DISABLE_SERVER_EVENTS) {
-        let serverEvents = new ServerEvents(app);
+        let serverEvents = new ServerEvents(app, () => eb);
 
 
         let lastMessage = new Date();
@@ -193,7 +183,7 @@ s.parentNode.insertBefore(b, s);})();
             });
             registerActionsOnServer(area);
             registerEntitiesOnServer(area);
-            registerImageUrls(app, getContext, '/' + schema);
+            registerImageUrls(app, eb.getValidContext, '/' + schema);
         };
         for (const schema of Sites.schemas) {
             createSchemaApi(schema);
@@ -225,7 +215,7 @@ s.parentNode.insertBefore(b, s);})();
         }
     }
     else {
-        registerImageUrls(app, getContext, '');
+        registerImageUrls(app, eb.getValidContext, '');
     }
 
 
@@ -259,10 +249,10 @@ export interface monitorResult {
     helpers: number;
 }
 
-function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds: SqlDatabase) => void) => ServerContext, sitePrefix: string) {
+function registerImageUrls(app, getContext: (req: express.Request) => Promise<ServerContext>, sitePrefix: string) {
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
-            let context = getContext(req);
+            let context = await getContext(req);
             let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage;
             res.contentType('png');
             if (imageBase) {
@@ -290,7 +280,7 @@ function registerImageUrls(app, getContext: (req: express.Request, sendDs?: (ds:
     })
     app.use(sitePrefix + '/favicon.ico', async (req, res) => {
         try {
-            let context = getContext(req);
+            let context = await getContext(req);
             res.contentType('ico');
             let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon;
             if (imageBase) {
