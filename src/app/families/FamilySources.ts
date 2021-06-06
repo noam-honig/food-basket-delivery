@@ -11,7 +11,7 @@ import { use } from "../translate";
   valueList: context => getValueList(context.for(FamilySources))
 })
 @Storable<FamilySources>({
-  valueConverter: c => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null),
+  valueConverter: () => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null),
   displayValue: (e, val) => val ? val.name : ''
 })
 @Entity<FamilySources>({

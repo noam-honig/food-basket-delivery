@@ -1057,7 +1057,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         item: r
                     }))
                     , onSelect: async r => {
-                        let q = new InputControl<number>({ caption: this.settings.lang.quantity, valueConverter: () => IntValueConverter });
+                        let q = new InputControl<number>({dataType:Number, caption: this.settings.lang.quantity });
                         q.value = r.item.quantity;
                         await openDialog(InputAreaComponent, x => x.args = {
                             settings: {

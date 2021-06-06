@@ -29,22 +29,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
   @DataControl({ allowClick: () => false })
   @Column({ caption: use.language.phone, dataType: Phone })
   phone: Phone;
-  @Column<LoginComponent>({
+  @Column({
     caption: use.language.password,
     inputType: InputTypes.password
   })
   password: string;
-  @Column<LoginComponent>({
+  @Column({
     caption: use.language.password,
     inputType: InputTypes.password
   })
   newPassword: string;
-  @Column<LoginComponent>({
+  @Column({
     caption: use.language.confirmPassword,
     inputType: InputTypes.password
   })
   confirmPassword: string;
-  @Column<LoginComponent>({
+  @Column({
     caption: use.language.IConfirmEula,
     inputType: InputTypes.password
   })

@@ -71,7 +71,7 @@ export const currentUser = new keyFor<Helpers>();
 
     displayValue: (e, x) => x ? x.name : '',
     caption: use.language.volunteer,
-    valueConverter: c => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
+    valueConverter: () => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
 })
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
