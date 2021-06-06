@@ -106,14 +106,11 @@ async function init() {
             done();
         });
         async function callAddBox() {
-            return await AsignFamilyComponent.AddBox({
+            return await AsignFamilyComponent.AddBox(helperWhoIsAdmin,null,null,{
                 allRepeat: false,
                 area: '',
-                basketType: '',
                 city: '',
-                distCenter: null,
                 group: '',
-                helperId: HelperId.toJson(helperWhoIsAdmin),
                 numOfBaskets: 1,
                 preferRepeatFamilies: false
             }, context, sql);
