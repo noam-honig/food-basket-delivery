@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { SignedInGuard, RouteHelperService, InputControl, GridSettings } from '@remult/angular';
+import { SignedInGuard, RouteHelperService, InputField, GridSettings } from '@remult/angular';
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
@@ -30,7 +30,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
   static route: Route = { path: 'update-info', component: UpdateInfoComponent, canActivate: [SignedInGuard] };
 
-  confirmPassword = new InputControl<string>({ caption: this.settings.lang.confirmPassword, inputType: 'password', defaultValue: () => Helpers.emptyPassword });
+  confirmPassword = new InputField<string>({ caption: this.settings.lang.confirmPassword, inputType: 'password', defaultValue: () => Helpers.emptyPassword });
   helpers = new GridSettings(this.context.for(Helpers), {
     numOfColumnsInGrid: 0,
     allowUpdate: true,

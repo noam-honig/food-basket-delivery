@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { Context, Filter, AndFilter, EntityWhere, Column, ServerFunction, SqlDatabase } from '@remult/core';
-import { BusyService, DataControlInfo, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { Context } from '@remult/core';
+import { BusyService, DataControlInfo, GridSettings, InputField, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -39,15 +39,15 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     ,
     columnSettings: deliveries => {
       let r = [
-        { column: deliveries.name, width: '100' },
-        { column: deliveries.basketType, width: '80' },
+        { field: deliveries.name, width: '100' },
+        { field: deliveries.basketType, width: '80' },
         {
-          column: deliveries.quantity,
+          field: deliveries.quantity,
           width: '50'
         },
-        { column: deliveries.receptionComments, width: '100' },
+        { field: deliveries.receptionComments, width: '100' },
         deliveries.distributionCenter,
-        { column: deliveries.deliverStatus, width: '110' },
+        { field: deliveries.deliverStatus, width: '110' },
 
         deliveries.deliveryComments,
         deliveries.internalDeliveryComment,
@@ -56,12 +56,12 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         deliveries.messageStatus,
 
         deliveries.createUser,
-        { column: deliveries.createDate, width: '150' },
+        { field: deliveries.createDate, width: '150' },
 
         deliveries.floor,
         deliveries.appartment,
         deliveries.entrance,
-        { column: deliveries.addressComment },
+        { field: deliveries.addressComment },
         deliveries.area,
         deliveries.phone1,
         deliveries.phone1Description,
@@ -71,7 +71,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        { column: deliveries.courier, width: '100' }
+        { field: deliveries.courier, width: '100' }
       ]
 
       return r;
@@ -86,8 +86,8 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
           if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
             {
               d.archive = true;
-              
-              d.distributionCenter = this.context.get(currentUser).distributionCenter; 
+
+              d.distributionCenter = this.context.get(currentUser).distributionCenter;
               d.deliverStatus = DeliveryStatus.Success;
               await d.save();
               await this.refreshFamilyGrid();
@@ -110,7 +110,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     ]
   });
 
-  phone = new InputControl<string>({ caption: "טלפון של תורם או מתנדב", inputType: 'tel' });
+  phone = new InputField<string>({ caption: "טלפון של תורם או מתנדב", inputType: 'tel' });
 
   constructor(
     private context: Context,
@@ -122,7 +122,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   private receptionCommentEntry(deliveries: FamilyDeliveries) {
     let r: DataControlInfo<FamilyDeliveries>[] = [
       {
-        column: deliveries.$.receptionComments,
+        field: deliveries.$.receptionComments,
         width: '150'
       },
     ];
@@ -142,7 +142,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
       cancel: () => {
       },
       settings: {
-        columnSettings: () => this.receptionCommentEntry(d)
+        fields: () => this.receptionCommentEntry(d)
       }
     });
   }

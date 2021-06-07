@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { BusyService, GridSettings, openDialog } from '@remult/angular';
-import { Context, Column, ServerFunction, EntityColumns, EntityColumn, ColumnDefinitions } from '@remult/core';
+import { Context, ServerFunction, EntityFields, EntityField, FieldDefinitions } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';
@@ -37,13 +37,13 @@ export class MergeFamiliesComponent implements OnInit {
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
-  updateSimilarColumns(getCols: (f: EntityColumns<Families>) => EntityColumn<any>[][]) {
+  updateSimilarColumns(getCols: (f: EntityFields<Families>) => EntityField<any>[][]) {
     let eCols = getCols(this.family.$);
 
     for (const f of this.families) {
       for (const c of getCols(f.$)) {
         if (c[0].value) {
-          let digits = phoneDigits( c[0].value);
+          let digits = phoneDigits(c[0].value);
           let found = false;
           for (const ec of eCols) {
             if (ec[0].value) {
@@ -125,12 +125,12 @@ export class MergeFamiliesComponent implements OnInit {
     }
     this.gs = new GridSettings(this.context.for(Families), { allowUpdate: true, columnSettings: () => this.columnsToCompare });
     for (const c of this.gs.columns.items) {
-      this.width.set(c.column as any, this.gs.columns.__dataControlStyle(c));
+      this.width.set(c.field as any, this.gs.columns.__dataControlStyle(c));
     }
 
   }
   gs: GridSettings<Families>;
-  getColWidth(c: ColumnDefinitions) {
+  getColWidth(c: FieldDefinitions) {
     let x = this.width.get(c);
     if (!x)
       x = '200px';
@@ -189,7 +189,7 @@ export class MergeFamiliesComponent implements OnInit {
   }
 
 
-  columnsToCompare: ColumnDefinitions[] = [];
-  width = new Map<ColumnDefinitions, string>();
+  columnsToCompare: FieldDefinitions[] = [];
+  width = new Map<FieldDefinitions, string>();
 
 }

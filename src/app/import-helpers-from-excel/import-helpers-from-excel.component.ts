@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Column, ColumnDefinitions, ColumnDefinitionsOf, Entity, EntityColumn, ServerFunction } from '@remult/core';
+import { FieldDefinitions, FieldDefinitionsOf, Entity, EntityField, ServerFunction } from '@remult/core';
 import { Context } from '@remult/core';
 
 
@@ -50,13 +50,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       return '';
     return val.w.trim();
   }
-  columnsInCompare: ColumnDefinitions[] = [];
+  columnsInCompare: FieldDefinitions[] = [];
 
   totalRows: number;
   filename: string;
 
 
-  getColInfo(i: excelRowInfo, col: ColumnDefinitions) {
+  getColInfo(i: excelRowInfo, col: FieldDefinitions) {
     return ExcelHelper.actualGetColInfo(i, col.key);
   }
 
@@ -104,7 +104,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
 
   }
-  async updateAllCol(col: ColumnDefinitions) {
+  async updateAllCol(col: FieldDefinitions) {
     let count = this.getColUpdateCount(col);
     let message = "האם לעדכן את השדה " + col.caption + " ל" + count + " מתנדבים?";
 
@@ -148,7 +148,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
     return rowsToUpdate;
   }
-  async updateCol(i: excelRowInfo, col: ColumnDefinitions) {
+  async updateCol(i: excelRowInfo, col: FieldDefinitions) {
     await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.key, this.context);
   }
   static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Context) {
@@ -164,13 +164,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     c.existingDisplayValue = await getColumnDisplayValue(f.$.find(colMemberName));
     c.existingValue = f.$.find(colMemberName).value;
   }
-  async clearColumnUpdate(i: excelRowInfo, col: ColumnDefinitions) {
+  async clearColumnUpdate(i: excelRowInfo, col: FieldDefinitions) {
     let c = this.getColInfo(i, col);
     c.newDisplayValue = c.existingDisplayValue;
     c.newValue = c.existingValue;
   }
 
-  getColUpdateCount(col: ColumnDefinitions) {
+  getColUpdateCount(col: FieldDefinitions) {
     let i = 0;
     let key = col.key;
     for (const r of this.updateRows) {
@@ -324,7 +324,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   updateRowsPage: number;
   existingFamiliesPage: number;
   errorRowsPage: number;
-  helper: ColumnDefinitionsOf< Helpers>;
+  helper: FieldDefinitionsOf<Helpers>;
   @ViewChild("stepper", { static: true }) stepper: MatStepper;
 
   async ngOnInit() {
@@ -334,14 +334,14 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-    let updateCol = (col: EntityColumn<any>, val: string, seperator: string = ' ') => {
+    let updateCol = (col: EntityField<any>, val: string, seperator: string = ' ') => {
 
       if (col.value) {
         col.value = (col.value + seperator + val).trim();
       } else
         col.value = val;
     }
-    this.helper = this.context.for(Helpers).defs.columns;
+    this.helper = this.context.for(Helpers).defs.fields;
     if (false) {
       try {
         this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));
@@ -362,7 +362,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       }
     }
 
-    let addColumn = (col: ColumnDefinitions, searchNames?: string[]) => {
+    let addColumn = (col: FieldDefinitions, searchNames?: string[]) => {
       this.columns.push({
         key: col.key,
         name: col.caption,
@@ -427,7 +427,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let usedPhone = new Map<number, number>();
     this.stepper.next();
     await this.busy.doWhileShowingBusy(async () => {
-      let updatedColumns = new Map<ColumnDefinitions, boolean>();
+      let updatedColumns = new Map<FieldDefinitions, boolean>();
 
       for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
         if (cu)
@@ -694,7 +694,7 @@ interface columnUpdater {
   name: string;
   searchNames?: string[];
   updateFamily: (val: string, f: Helpers, h: columnUpdateHelper) => Promise<void>;
-  columns: ColumnDefinitions[];
+  columns: FieldDefinitions[];
 }
 class columnUpdateHelper {
   constructor(private context: Context, private dialog: DialogService) {
@@ -702,7 +702,7 @@ class columnUpdateHelper {
   }
   laterSteps: laterSteps[] = [];
 
-  
+
 }
 interface excelRowInfo {
   rowInExcel: number;
@@ -727,7 +727,7 @@ interface serverCheckResults {
   updateRows: excelRowInfo[],
   errorRows: excelRowInfo[]
 }
-async function getColumnDisplayValue(c: EntityColumn<any>) {
+async function getColumnDisplayValue(c: EntityField<any>) {
   let v = c.displayValue;
   return v.trim();
 }

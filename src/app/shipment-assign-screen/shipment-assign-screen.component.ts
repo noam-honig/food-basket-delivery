@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { BusyService, InputControl, openDialog } from '@remult/angular';
-import { ServerFunction, Context, SqlDatabase, Column } from '@remult/core';
+import { BusyService, InputField, openDialog } from '@remult/angular';
+import { ServerFunction, Context, SqlDatabase } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -18,7 +18,7 @@ import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings'
   styleUrls: ['./shipment-assign-screen.component.scss']
 })
 export class ShipmentAssignScreenComponent implements OnInit {
-  filterBasket = new InputControl<string>({ caption: 'סינון' });
+  filterBasket = new InputField<string>({ caption: 'סינון' });
   sortDir = 1;
   sortByVolunteers() {
     this.sortDir = -this.sortDir;

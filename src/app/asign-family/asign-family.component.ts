@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, ServerFunction, SqlDatabase, AndFilter, EntityColumn, filterOf, EntityDefinitions, IntValueConverter, ServerController, Column, ServerMethod } from '@remult/core';
+import { UrlBuilder, Filter, ServerFunction, SqlDatabase, AndFilter, EntityField, filterOf } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -23,7 +23,7 @@ import { BasketType } from '../families/BasketType';
 
 import { SqlBuilder, SqlDefs, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
-import { BusyService, DataAreaSettings, InputControl, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, DataAreaSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';
@@ -316,7 +316,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     private initArea() {
         if (this.helper)
             this.area = new DataAreaSettings({
-                columnSettings: () => {
+                fields: () => {
                     let r = [];
                     if (this.settings.showCompanies)
                         r.push([this.helper.$.name,
@@ -366,7 +366,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
 
-    filterOptions: EntityColumn<boolean>[] = [];
+    filterOptions: EntityField<boolean>[] = [];
     async ngOnInit() {
 
 
@@ -1057,11 +1057,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         item: r
                     }))
                     , onSelect: async r => {
-                        let q = new InputControl<number>({dataType:Number, caption: this.settings.lang.quantity });
+                        let q = new InputField<number>({ dataType: Number, caption: this.settings.lang.quantity });
                         q.value = r.item.quantity;
                         await openDialog(InputAreaComponent, x => x.args = {
                             settings: {
-                                columnSettings: () => [q]
+                                fields: () => [q]
                             },
                             title: this.settings.lang.quantity + " " + this.settings.lang.for + " " + r.item.address,
                             cancel: () => { },

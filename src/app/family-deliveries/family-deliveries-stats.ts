@@ -1,5 +1,5 @@
 
-import { Filter, AndFilter, Context, ServerFunction, Entity, SqlDatabase, Column, EntityBase, filterOf } from "@remult/core";
+import { Filter, AndFilter, Context, ServerFunction, Entity, SqlDatabase, EntityBase, filterOf } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -11,6 +11,7 @@ import { DistributionCenters, filterCenterAllowedForUser, filterDistCenter } fro
 import { Groups } from "../manage/groups";
 import { colors } from "../families/stats-action";
 import { getLang } from '../sites/sites';
+import { Field } from '../translate';
 
 export class FamilyDeliveryStats {
     constructor(private context: Context) { }
@@ -106,7 +107,7 @@ export class FamilyDeliveryStats {
 
 
 
-        if (distCenter==null)
+        if (distCenter == null)
             pendingStats.push(
                 context.for(CitiesStats).find({
                     orderBy: f => f.deliveries.descending()
@@ -184,9 +185,9 @@ export interface groupStats {
     }
 })
 export class CitiesStats {
-    @Column()
+    @Field()
     city: string;
-    @Column()
+    @Field()
     deliveries: number;
 }
 @Entity<CitiesStatsPerDistCenter>({
@@ -207,11 +208,11 @@ export class CitiesStats {
 })
 
 export class CitiesStatsPerDistCenter extends EntityBase {
-    @Column()
+    @Field()
     city: string;
-    @Column()
+    @Field()
     distributionCenter: DistributionCenters;
-    @Column()
+    @Field()
     families: number;
 
 }

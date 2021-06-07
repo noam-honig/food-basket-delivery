@@ -1,6 +1,6 @@
-import { Filter, Storable, filterOptions } from '@remult/core';
+import { Filter, filterOptions } from '@remult/core';
 
-import { use } from '../translate';
+import { use, ValueListFieldType } from '../translate';
 
 import { getSettings } from '../manage/ApplicationSettings';
 import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
@@ -9,7 +9,7 @@ import { DataControl } from '../../../../radweb/projects/angular';
 
 @DataControl({
   valueList: async context => {
-    let op = new ValueListValueConverter(DeliveryStatus).getOptions();
+    let op = DeliveryStatus.converter.getOptions();
     // if (chooseFrom)
     //   op = chooseFrom.map(x => {
     //     return {
@@ -32,8 +32,7 @@ import { DataControl } from '../../../../radweb/projects/angular';
   , width: '150'
 
 })
-@Storable<DeliveryStatus>({
-  valueConverter: () =>  DeliveryStatus.converter,
+@ValueListFieldType(DeliveryStatus, {
   displayValue: (e, val) => val.caption,
   caption: use.language.deliveryStatus
 })

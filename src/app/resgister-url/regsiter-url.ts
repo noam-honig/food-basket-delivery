@@ -1,8 +1,9 @@
-import { Column, ColumnDefinitions, Context, Entity, EntityDefinitions, IdEntity, ServerFunction, SqlDatabase, SqlResult } from "@remult/core";
+import { FieldDefinitions, Context, Entity, EntityDefinitions, IdEntity, ServerFunction, SqlDatabase, SqlResult } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/types";
 import { Helpers } from "../helpers/helpers";
 import { Families } from "../families/families";
+import { Field } from '../translate';
 
 @Entity({
     key: "RegisterURL",
@@ -10,9 +11,9 @@ import { Families } from "../families/families";
 })
 export class RegisterURL extends IdEntity {
 
-    @Column({ caption: "URL", allowApiUpdate: Roles.admin })
+    @Field({ caption: "URL", allowApiUpdate: Roles.admin })
     URL: string;
-    @Column({ caption: "שם ייחודי לדוחות", allowApiUpdate: Roles.distCenterAdmin })
+    @Field({ caption: "שם ייחודי לדוחות", allowApiUpdate: Roles.distCenterAdmin })
     prettyName: string
 
     constructor(private context: Context) {
@@ -27,13 +28,13 @@ export class RegisterURL extends IdEntity {
     @ServerFunction({ allowed: Roles.admin })
     static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
 
-        let h =SqlFor( context.for(Helpers));
-        let f =SqlFor( context.for(Families));
-        let u =SqlFor( context.for(RegisterURL));
+        let h = SqlFor(context.for(Helpers));
+        let f = SqlFor(context.for(Families));
+        let u = SqlFor(context.for(RegisterURL));
         let sql = new SqlBuilder();
         let urls = [];
 
-        async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: ColumnDefinitions) {
+        async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldDefinitions) {
             let q = sql.query({
                 select: () => [sql.build('distinct ', urlDbOperator(field.dbName), ' as url')],
                 from: table,

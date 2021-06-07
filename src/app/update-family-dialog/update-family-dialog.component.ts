@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
-import { BusyService, DataArealColumnSetting, DataAreaSettings, DialogConfig, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { BusyService, DataAreaFieldsSetting, DataAreaSettings, DialogConfig, GridSettings, InputField, openDialog } from '@remult/angular';
 import { Context, ServerFunction, ServerContext } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
@@ -113,7 +113,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
 
     await openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => new InputControl<string>({}),
+      helpText: () => '',
       ok: async (comment) => {
         await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier, comment);
         this.dialog.Info("הודעה נשלחה");
@@ -143,8 +143,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       title: 'פרטי עדכונים עבור ' + f.name,
       ok: () => { },
       settings: {
-        columnSettings: () => {
-          let r: DataArealColumnSetting<any>[] =
+        fields: () => {
+          let r: DataAreaFieldsSetting<any>[] =
             [
               f.$.createDate, f.$.createUser,
               f.$.lastUpdateDate, f.$.lastUpdateUser,
@@ -277,19 +277,19 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     this.familiesInfo = this.families.addArea({
-      columnSettings: families => [
+      fields: families => [
         families.name
       ],
     });
     this.extraFamilyInfo = this.families.addArea({
-      columnSettings: families => [
+      fields: families => [
         families.groups,
         [families.status, families.familyMembers]
 
       ]
     });
     this.extraFamilyInfo2 = this.families.addArea({
-      columnSettings: families => [
+      fields: families => [
         families.email,
         [
           families.tz,
@@ -325,7 +325,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       ]
     });
     this.familiesAddress = this.families.addArea({
-      columnSettings: families => [
+      fields: families => [
 
         [
           families.appartment,
@@ -341,7 +341,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
 
     this.phones = this.families.addArea({
-      columnSettings: families => [
+      fields: families => [
         [
           families.phone1,
           families.phone1Description],
@@ -354,7 +354,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       ]
     });
     this.deliveryDefaults = this.families.addArea({
-      columnSettings: f =>
+      fields: f =>
         [
           [f.basketType, f.quantity],
           f.deliveryComments,

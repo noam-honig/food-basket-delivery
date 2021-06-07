@@ -1,4 +1,4 @@
-import { Column, Context, Entity, IdEntity, ServerFunction } from "@remult/core";
+import { Context, Entity, IdEntity, ServerFunction } from "@remult/core";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
@@ -8,7 +8,7 @@ import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
-import { use } from "../translate";
+import { Field, use } from "../translate";
 
 @Entity<HelperGifts>({
     key: "HelperGifts",
@@ -48,13 +48,13 @@ import { use } from "../translate";
 })
 export class HelperGifts extends IdEntity {
 
-    @Column({ caption: use.language.myGiftsURL, allowApiUpdate: Roles.admin })
+    @Field({ caption: use.language.myGiftsURL, allowApiUpdate: Roles.admin })
     giftURL: string;
     @ChangeDateColumn({ caption: use.language.createDate })
     dateCreated: Date;
-    @Column({ caption: use.language.createUser, allowApiUpdate: false })
+    @Field({ caption: use.language.createUser, allowApiUpdate: false })
     userCreated: Helpers;
-    @Column({ caption: use.language.volunteer, allowApiUpdate: Roles.admin })
+    @Field({ caption: use.language.volunteer, allowApiUpdate: Roles.admin })
     @DataControl<HelperGifts, Helpers>({
         click: (x, col) => {
             HelpersBase.showSelectDialog(col, { includeFrozen: true });
@@ -63,11 +63,11 @@ export class HelperGifts extends IdEntity {
     assignedToHelper: HelpersBase;
     @ChangeDateColumn({ caption: use.language.dateGranted })
     dateGranted: Date;
-    @Column({ caption: use.language.assignUser, allowApiUpdate: false })
+    @Field({ caption: use.language.assignUser, allowApiUpdate: false })
     assignedByUser: Helpers;
-    @Column({ caption: 'מתנה מומשה' })
+    @Field({ caption: 'מתנה מומשה' })
     wasConsumed: boolean;
-    @Column()
+    @Field()
     wasClicked: boolean;
 
 

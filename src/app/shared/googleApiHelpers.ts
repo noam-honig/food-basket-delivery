@@ -1,6 +1,6 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder,  Entity,  Context,  EntityColumn, EntityBase, Column } from '@remult/core';
-
+import { UrlBuilder, Entity, Context, EntityField, EntityBase } from '@remult/core';
+import { Field } from '../translate';
 
 
 
@@ -94,16 +94,16 @@ export async function GetGeoInformation(address: string, context: Context) {
     key: "GeocodeCache",
     allowApiRead: false,
     allowApiCrud: false,
-    includeInApi:false
+    includeInApi: false
 })
 export class GeocodeCache extends EntityBase {
-    @Column()
-    id:string;
-    @Column()
-    googleApiResult:string;
+    @Field()
+    id: string;
+    @Field()
+    googleApiResult: string;
     @DateTimeColumn()
-    createDate:Date;
-    
+    createDate: Date;
+
     constructor() {
         super();
     }
@@ -368,7 +368,7 @@ export function GetDistanceBetween(a: Location, b: Location) {
 
 export class AddressHelper {
 
-    constructor(private context: Context, private addressColumn: () => EntityColumn<string, any>, private apiResultColumn: () => EntityColumn<string, any>) {
+    constructor(private context: Context, private addressColumn: () => EntityField<string, any>, private apiResultColumn: () => EntityField<string, any>) {
 
 
     }

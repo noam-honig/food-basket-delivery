@@ -1,5 +1,5 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Column, Entity } from '@remult/core';
+import { Entity } from '@remult/core';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 
@@ -8,7 +8,7 @@ import { Context } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang } from '../sites/sites';
-import { use } from "../translate";
+import { use, Field } from "../translate";
 import { filterCenterAllowedForUser } from "../manage/distribution-centers";
 
 
@@ -71,12 +71,12 @@ export class HelpersAndStats extends HelpersBase {
         return this.context.for(Helpers).getCachedByIdAsync(this.id);
     }
 
-    @Column({
+    @Field({
         dbReadOnly: true,
         caption: use.language.delveriesInProgress
     })
     deliveriesInProgress: number;
-    @Column({
+    @Field({
         dbReadOnly: true,
         caption: use.language.families
     })

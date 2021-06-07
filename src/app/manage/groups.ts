@@ -1,6 +1,6 @@
-import { IdEntity, Context, Entity, Column } from "@remult/core";
+import { IdEntity, Context, Entity } from "@remult/core";
 import { Roles } from "../auth/roles";
-import { use } from "../translate";
+import { Field, use } from "../translate";
 
 @Entity({
   key: "groups",
@@ -9,6 +9,6 @@ import { use } from "../translate";
 })
 export class Groups extends IdEntity {
 
-  @Column({ caption: use.language.group })
+  @Field({ caption: use.language.group })
   name: string;
 }

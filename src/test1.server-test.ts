@@ -1,7 +1,7 @@
 import { CustomModuleLoader } from '../../radweb/src/app/server/CustomModuleLoader';
 let moduleLoader = new CustomModuleLoader('/out-tsc/server-test/radweb/projects');
 import './app/manage/ApplicationSettings';
-import { actionInfo, ServerContext, SqlDatabase } from "@remult/core";
+import {  ServerContext, SqlDatabase } from "@remult/core";
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
 import { Roles } from "./app/auth/roles";
@@ -21,6 +21,7 @@ import { Sites } from "./app/sites/sites";
 import { DistributionCenters } from './app/manage/distribution-centers';
 import { Phone } from './app/model-shared/Phone';
 import { AuthService } from './app/auth/auth-service';
+import { actionInfo } from '../../radweb/projects/core/src/server-action';
 //initSettings.disableSchemaInit = true;
 
 async function init() {

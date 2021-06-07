@@ -11,18 +11,18 @@
                 <H3>כל מה שצריך זה למלא טופס זה</H3>
                 <h5 style="color:green">במידה וציוד המחשבים ברשותך מלפני שנת 2010, לא נוכל לאסוף אותו. תודה על הכוונה!</h5>
             </div>
-            <data-control [column]="donor.name"></data-control>
+            <data-control [field]="donor.name"></data-control>
 
             <h5 *ngIf="showCCMessage()" style="text-align:center; color:#3753F6">המתנדבים שלנו מגיעים לאסוף 3 פריטים ומעלה. תרומה של פריט או שניים ניתן להביא ישירות לנקודות האיסוף שלנו</h5>
             <h5 style="text-align:center; color:#3753F6">נקודות איסוף מחשבים של המיזם פרוסות בארץ מצפון עד דרום!
                 נשמח ממש אם יש באפשרותך להביא את הציוד לאחת מהן</h5>
             <div class="rowDiv">
-                <data-control style="color:#f66d37" [column]="donor.selfDeliver"></data-control>
+                <data-control style="color:#f66d37" [field]="donor.selfDeliver"></data-control>
                 <a mat-raised-button color="accent" href="https://www.mitchashvim.org.il/labs" target="_blank">רשימת מעבדות</a>
             </div>
             <h5 style="text-align:center">אם אין באפשרותך להגיע למעבדה, מתנדבי המיזם יגיעו לאסוף הציוד ממך</h5>
             <data-area [settings]="area"></data-area>
-            <app-address-input [column]="donor.address" [autoInit]="true"></app-address-input>
+            <app-address-input [field]="donor.address" [autoInit]="true"></app-address-input>
             <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>
         </div>
         <div *ngIf="isDone">

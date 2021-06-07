@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular
 import * as copy from 'copy-to-clipboard';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Context, EntityColumn, ServerFunction } from '@remult/core';
+import { Context, EntityField, ServerFunction } from '@remult/core';
 
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -84,7 +84,7 @@ export class FamilyInfoComponent implements OnInit {
     {
       family: f,
       comment: f.courierComments,
-      helpText: s => s.$.commentForSuccessDelivery,
+      helpText: s => s.commentForSuccessDelivery,
       ok: async (comment) => {
         f.deliverStatus = DeliveryStatus.SuccessPickedUp;
         f.courierComments = comment;
@@ -105,7 +105,7 @@ export class FamilyInfoComponent implements OnInit {
     if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter =this.context.get(currentUser).distributionCenter;
+        d.distributionCenter = this.context.get(currentUser).distributionCenter;
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }
@@ -124,7 +124,7 @@ export class FamilyInfoComponent implements OnInit {
 
 
   }
-  callPhone(col: EntityColumn<Phone>) {
+  callPhone(col: EntityField<Phone>) {
     this.dialog.analytics("Call " + col.defs.key);
     window.location.href = "tel:" + col;
   }

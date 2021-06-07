@@ -1,5 +1,5 @@
-import { Entity, Context, EntityBase, Column } from "@remult/core";
-
+import { Entity, Context, EntityBase } from "@remult/core";
+import { Field } from '../translate';
 import { Roles } from "../auth/roles";
 import { Sites } from "./sites";
 
@@ -20,11 +20,11 @@ import { Sites } from "./sites";
     }
 })
 export class SitesEntity extends EntityBase {
-    @Column()
+    @Field()
     id: string;
-    @Column({ caption: 'מועד הוספה', allowApiUpdate: false })
+    @Field({ caption: 'מועד הוספה', allowApiUpdate: false })
     createDate: Date;
-    @Column()
+    @Field()
     createUser: string;
 
     constructor(private context: Context) {

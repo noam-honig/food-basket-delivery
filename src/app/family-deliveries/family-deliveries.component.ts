@@ -492,11 +492,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       let r = [
 
         {
-          column: deliveries.name,
+          field: deliveries.name,
           width: '200'
         },
         {
-          column: deliveries.address,
+          field: deliveries.address,
           width: '250',
           cssClass: f => {
             if (!f.addressOk.value)
@@ -505,7 +505,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           }
         },
         {
-          column: deliveries.basketType,
+          field: deliveries.basketType,
           cssClass: f => {
             if (f.isLargeQuantity())
               return 'largeDelivery';
@@ -513,7 +513,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           }
         },
         {
-          column: deliveries.quantity,
+          field: deliveries.quantity,
           width: '50',
           cssClass: f => {
             if (f.isLargeQuantity())
@@ -524,16 +524,16 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
         this.deliverySummary = {
           caption: getLang(this.context).deliverySummary,
-          column: deliveries.deliverStatus,
+          field: deliveries.deliverStatus,
           readOnly: true,
           valueList: DeliveryStatus.converter.getOptions()
           ,
           getValue: f => f.getDeliveryDescription(),
           width: '300'
         },
-        { column: deliveries.createDate, width: '150' },
+        { field: deliveries.createDate, width: '150' },
         {
-          column: deliveries.distributionCenter,
+          field: deliveries.distributionCenter,
           cssClass: f => {
             if (f.isDistCenterInactive())
               return 'addressProblem'
@@ -541,11 +541,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
               return '';
           }
         },
-        this.statusColumn = { column: deliveries.deliverStatus },
+        this.statusColumn = { field: deliveries.deliverStatus },
 
 
 
-        this.groupsColumn = { column: deliveries.groups },
+        this.groupsColumn = { field: deliveries.groups },
 
 
         deliveries.deliveryComments,
@@ -556,13 +556,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
         deliveries.familySource,
 
-        { column: deliveries.addressOk, width: '110' },
+        { field: deliveries.addressOk, width: '110' },
         deliveries.floor,
         deliveries.appartment,
         deliveries.entrance,
-        { column: deliveries.buildingCode, width: '50' },
-        { column: deliveries.addressComment },
-        { column: deliveries.city, width: '100' },
+        { field: deliveries.buildingCode, width: '50' },
+        { field: deliveries.addressComment },
+        { field: deliveries.city, width: '100' },
         deliveries.area,
         deliveries.phone1,
         deliveries.phone1Description,
@@ -572,20 +572,20 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        { column: deliveries.courier, width: (this.settings.isSytemForMlt() ? '300' : '100') },
+        { field: deliveries.courier, width: (this.settings.isSytemForMlt() ? '300' : '100') },
 
         deliveries.courierAssignUser,
-        { column: deliveries.courierAssingTime, width: '150' },
-        { column: deliveries.deliveryStatusUser, width: '100' },
+        { field: deliveries.courierAssingTime, width: '150' },
+        { field: deliveries.deliveryStatusUser, width: '100' },
         deliveries.deliveryStatusDate,
-        { column: deliveries.courierComments, width: '300' },
-        { column: deliveries.internalDeliveryComment, width: '400' },
+        { field: deliveries.courierComments, width: '300' },
+        { field: deliveries.internalDeliveryComment, width: '400' },
         deliveries.needsWork,
         deliveries.needsWorkDate,
         deliveries.needsWorkUser,
         deliveries.fixedCourier,
         deliveries.familyMembers,
-        { column: deliveries.messageStatus, width: '130' },
+        { field: deliveries.messageStatus, width: '130' },
         deliveries.receptionComments
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {

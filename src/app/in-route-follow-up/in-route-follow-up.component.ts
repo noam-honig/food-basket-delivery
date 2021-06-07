@@ -88,7 +88,7 @@ export class InRouteFollowUpComponent implements OnInit {
               let r: DataControlInfo<ActiveFamilyDeliveries>[] = [
                 fd.name,
                 fd.address,
-                { column: fd.internalDeliveryComment, width: '400' },
+                { field: fd.internalDeliveryComment, width: '400' },
 
                 fd.courierAssingTime,
                 fd.deliverStatus,
@@ -97,7 +97,7 @@ export class InRouteFollowUpComponent implements OnInit {
                 fd.quantity,
                 fd.distributionCenter,
                 fd.courierComments,
-                { column: fd.courierComments, width: '400' }
+                { field: fd.courierComments, width: '400' }
               ]
               r.push(...[...fd].filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.caption.localeCompare(b.caption)));
               return r;
@@ -166,11 +166,11 @@ export class InRouteFollowUpComponent implements OnInit {
   private freezeDateEntry(h: InRouteHelpers) {
     let r: DataControlInfo<Helpers>[] = [
       {
-        column: h.$.frozenTill,
+        field: h.$.frozenTill,
         width: '150'
       },
       {
-        column: h.$.internalComment,
+        field: h.$.internalComment,
         width: '150'
       },
     ];
@@ -190,7 +190,7 @@ export class InRouteFollowUpComponent implements OnInit {
       cancel: () => {
       },
       settings: {
-        columnSettings: () => this.freezeDateEntry(h)
+        fields: () => this.freezeDateEntry(h)
       }
     });
   }

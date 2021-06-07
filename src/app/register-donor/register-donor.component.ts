@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "../model-shared/Phone";
-import { ServerFunction, Context, Column, ServerController, Storable, getControllerDefs, Validators } from '@remult/core';
+import { ServerFunction, Context, ServerController, getControllerDefs, Validators } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -14,9 +14,10 @@ import { ActivatedRoute } from '@angular/router';
 import { ServerMethod } from '@remult/core';
 import { DataAreaSettings, DataControl, openDialog } from '../../../../radweb/projects/angular';
 import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
-import { use } from '../translate';
+import { Field, FieldType } from '../translate';
 import { FamilySources } from '../families/FamilySources';
 import { BasketType } from '../families/BasketType';
+import { ValueListFieldType } from '../../../../radweb/projects/core/src/remult3';
 
 
 declare var gtag;
@@ -65,7 +66,7 @@ export class RegisterDonorComponent implements OnInit {
   isDone = false;
   donor = new donorForm(this.context);
   area = new DataAreaSettings({
-    columnSettings: () =>
+    fields: () =>
       [
         [this.donor.$.computer, this.donor.$.computerAge],
         [this.donor.$.laptop, this.donor.$.laptopAge],
@@ -134,9 +135,7 @@ export class RegisterDonorComponent implements OnInit {
 
 }
 
-@Storable({
-  valueConverter: () => new ValueListValueConverter(EquipmentAge),
-})
+@ValueListFieldType(EquipmentAge)
 @DataControl({
   width: '100'
 })
@@ -156,12 +155,12 @@ class donorForm {
 
   }
   get $() { return getControllerDefs(this).columns }
-  @Column({
+  @Field({
     caption: "שם מלא",
     validate: Validators.required.withMessage("אנא הזן ערך")
   })
   name: string;
-  @Column<donorForm, Phone>({
+  @Field<donorForm, Phone>({
     caption: "טלפון",
     inputType: 'tel',
     validate: (self, col) => {
@@ -171,16 +170,16 @@ class donorForm {
     }
   })
   phone: Phone;
-  @Column({
+  @Field({
     caption: "דואל",
     inputType: 'email'
   })
   email: Email;
 
 
-  @Column({ caption: "אגיע עצמאית לנקודת האיסוף" })
+  @Field({ caption: "אגיע עצמאית לנקודת האיסוף" })
   selfDeliver: boolean;
-  @Column<donorForm, string>({
+  @Field<donorForm, string>({
     caption: "כתובת",
     validate: (e, col) => {
       Validators.required(e, col, "אנא הזן ערך");
@@ -188,24 +187,24 @@ class donorForm {
   })
   address: string;
 
-  @Column({ caption: "מספר מחשבים נייחים" })
+  @Field({ caption: "מספר מחשבים נייחים" })
   computer: number;
-  @Column({ caption: "גיל המחשב החדש ביותר" })
+  @Field({ caption: "גיל המחשב החדש ביותר" })
   computerAge: EquipmentAge;
-  @Column({ caption: "מספר לפטופים" })
+  @Field({ caption: "מספר לפטופים" })
   laptop: number;
-  @Column({ caption: "גיל הלפטופ החדש ביותר" })
+  @Field({ caption: "גיל הלפטופ החדש ביותר" })
   laptopAge: EquipmentAge;
-  @Column({ caption: "מספר מסכים" })
+  @Field({ caption: "מספר מסכים" })
   screen: number;
-  @Column({ caption: "סוג תרומה" })
+  @Field({ caption: "סוג תרומה" })
   @DataControl({
     valueList: [{ id: 'ac52f4b0-6896-4ae3-8cc0-18ed17136e38', caption: 'תרומה פרטית' },
     { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }]
 
   })
   donationType: FamilySources;
-  @Column()
+  @Field()
   docref: string;
 
 

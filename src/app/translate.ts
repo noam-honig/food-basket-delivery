@@ -1,21 +1,46 @@
 
-import {  Context, Storable } from '@remult/core';
+import { Context, FieldSettings, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, ClassType } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
-import { Sites } from './sites/sites';
+import { getLang, Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
-import { ValueListValueConverter } from '../../../radweb/projects/core/src/column';
+
+
 
 export class myBounds {
   constructor(public west: number, public south: number, public east: number, public north: number) {
 
   }
 }
+export interface TranslatedCaption {
+  translation?: (l: Language) => string;
+}
+function adjustSettings(settings: FieldSettings & TranslatedCaption) {
+  if (settings && settings.translation) {
+    settings.caption = (context) => settings.translation(getLang(context));
+  }
+  return settings;
+}
+export function Field<T = any, colType = any>(settings?: FieldSettings<colType, T> & TranslatedCaption) {
+  return origField<T, colType>(adjustSettings(settings));
+}
+export function DateOnlyField<T = any>(settings?: FieldSettings<Date, T> & TranslatedCaption) {
+  return origDateOnlyField<T>(adjustSettings(settings));
+}
+
+export function FieldType<valueType = any>(settings?: FieldSettings<valueType, any> & TranslatedCaption) {
+  return origFieldType<valueType>(adjustSettings(settings));
+}
+export function ValueListFieldType<T = any, colType extends ValueListItem = any>(type: ClassType<colType>, settings?: FieldSettings<colType, T> & TranslatedCaption) {
+  return origValueListFieldType<colType>(type, adjustSettings(settings));
+}
+
+
 //https://gist.github.com/graydon/11198540
 const israel = new myBounds(34.2654333839, 29.5013261988, 35.8363969256, 33.2774264593);
-@Storable({ valueConverter:()=> new ValueListValueConverter(TranslationOptions) })
+@ValueListFieldType(TranslationOptions)
 export class TranslationOptions {
 
 

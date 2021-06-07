@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, AndFilter, DateOnlyValueConverter, ColumnDefinitionsOf } from '@remult/core';
-import { BusyService, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { Context, AndFilter,  FieldDefinitionsOf, DateOnlyValueConverter } from '@remult/core';
+import { BusyService, GridSettings, InputField, openDialog } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
@@ -48,14 +48,14 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          let archiveCurrentEvent = new InputControl<boolean>({ caption: this.settings.lang.archiveCurrentEvent });
+          let archiveCurrentEvent = new InputField<boolean>({ caption: this.settings.lang.archiveCurrentEvent });
           archiveCurrentEvent.value = true;
-          let date = new InputControl<Date>({ caption: this.settings.lang.eventDate, valueConverter: () => DateOnlyValueConverter });
+          let date = new InputField<Date>({ caption: this.settings.lang.eventDate, valueConverter:  DateOnlyValueConverter });
           date.value = new Date();
           await openDialog(InputAreaComponent, x => x.args = {
             title: this.settings.lang.duplicateEvents,
             settings: {
-              columnSettings: () => [archiveCurrentEvent, date]
+              fields: () => [archiveCurrentEvent, date]
             },
             ok: async () => {
               await this.busy.doWhileShowingBusy(async () => {
@@ -110,7 +110,7 @@ export class EventsComponent implements OnInit {
           openDialog(InputAreaComponent, x => x.args = {
             title: this.settings.lang.eventInfo,
             settings: {
-              columnSettings: () => this.eventDisplayColumns(e._.repository.defs.columns)
+              fields: () => this.eventDisplayColumns(e._.repository.defs.fields)
             },
             ok: () => e.save(),
             cancel: () => e._.undoChanges(),
@@ -131,7 +131,7 @@ export class EventsComponent implements OnInit {
       }
     ]
   });
-  private eventDisplayColumns(e: ColumnDefinitionsOf<Event>) {
+  private eventDisplayColumns(e: FieldDefinitionsOf<Event>) {
     return [
       e.name,
       { width: '100', column: e.registeredVolunteers },

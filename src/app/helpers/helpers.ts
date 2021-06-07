@@ -1,5 +1,5 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, Column, ServerMethod, ColumnSettings, DateOnlyValueConverter, StoreAsStringValueConverter, filterOf, Validators, InputTypes, EntityColumn, Storable, ColumnDefinitions, ColumnDefinitionsOf, keyFor } from '@remult/core';
+import { Context, IdEntity, UserInfo, Filter, Entity, ServerMethod, FieldSettings, DateOnlyValueConverter, StoreAsStringValueConverter, filterOf, Validators, InputTypes, EntityField, FieldDefinitions, FieldDefinitionsOf, keyFor } from '@remult/core';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
 import { isPhoneValidForIsrael, Phone } from "../model-shared/Phone";
@@ -26,19 +26,20 @@ import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { EmailSvc } from '../shared/utils';
-import { use } from '../translate';
+import { use, Field, FieldType } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { DateOnlyField } from '../../../../radweb/projects/core/src/remult3';
 
 
 
-export function CompanyColumn<T = any>(settings?: ColumnSettings<string, T>) {
+export function CompanyColumn<T = any>(settings?: FieldSettings<string, T>) {
     return (target, key) => {
         DataControl<any, string>({
             width: '300',
             click: async (e, col) => openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => col.value = x)
         })(target, key);
 
-        return Column<T, string>({
+        return Field<T, string>({
 
             caption: use.language.company,
             ...settings
@@ -67,11 +68,11 @@ export class HelperId {
 }
 export const currentUser = new keyFor<Helpers>();
 
-@Storable<HelpersBase>({
+@FieldType<HelpersBase>({
 
     displayValue: (e, x) => x ? x.name : '',
     caption: use.language.volunteer,
-    valueConverter: () => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
+    valueConverter: new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
 })
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
@@ -94,7 +95,7 @@ export const currentUser = new keyFor<Helpers>();
 })
 export abstract class HelpersBase extends IdEntity {
 
-    static async showSelectDialog(col: EntityColumn<HelpersBase>, args: {
+    static async showSelectDialog(col: EntityField<HelpersBase>, args: {
         filter?: (helper: filterOf<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
         location?: () => Location,
         familyId?: () => string,
@@ -123,7 +124,7 @@ export abstract class HelpersBase extends IdEntity {
 
         super();
     }
-    @Column<HelpersBase>({
+    @Field<HelpersBase>({
         caption: use.language.volunteerName,
         validate: (h) => {
             if (!h.name)
@@ -132,7 +133,7 @@ export abstract class HelpersBase extends IdEntity {
     })
     name: string;
 
-    @Column({ caption: use.language.phone })
+    @Field({ caption: use.language.phone })
     phone: Phone;
     @DateTimeColumn({ caption: use.language.smsDate })
     smsDate: Date;
@@ -140,30 +141,30 @@ export abstract class HelpersBase extends IdEntity {
 
     @CompanyColumn()
     company: string;
-    @Column({ allowApiUpdate: Roles.distCenterAdmin })
+    @Field({ allowApiUpdate: Roles.distCenterAdmin })
     totalKm: number;
-    @Column({ allowApiUpdate: Roles.distCenterAdmin })
+    @Field({ allowApiUpdate: Roles.distCenterAdmin })
     totalTime: number;
-    @Column({ includeInApi: Roles.distCenterAdmin })
+    @Field({ includeInApi: Roles.distCenterAdmin })
     shortUrlKey: string;
 
-    @Column({ allowApiUpdate: Roles.admin })
+    @Field({ allowApiUpdate: Roles.admin })
     distributionCenter: DistributionCenters;
 
-    @Column({
+    @Field({
         caption: use.language.helperComment,
         allowApiUpdate: Roles.admin
     })
     eventComment: string;
 
-    @Column({
+    @Field({
         caption: use.language.needEscort,
         allowApiUpdate: Roles.admin
     })
     needEscort: boolean;
 
 
-    @Column({
+    @Field({
         caption: use.language.assignedDriver,
         allowApiUpdate: Roles.admin
     })
@@ -171,43 +172,43 @@ export abstract class HelpersBase extends IdEntity {
 
 
 
-    @Column({
+    @Field({
         caption: use.language.escort
         , allowApiUpdate: Roles.admin
     })
     escort: HelpersBase;
 
-    @Column({
+    @Field({
         caption: use.language.leadHelper
         , allowApiUpdate: Roles.admin
     })
     leadHelper: HelpersBase;
-    @Column({
+    @Field({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         caption: use.language.myGiftsURL
     })
     myGiftsURL: string;
-    @Column({
+    @Field({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
     })
     archive: boolean;
 
-    @Column({
+    @Field({
         allowApiUpdate: context => context.isSignedIn(),
         includeInApi: context => context.isSignedIn(),
         caption: use.language.frozenTill,
-        valueConverter: () => DateOnlyValueConverter
     })
+    @DateOnlyField()
     frozenTill: Date;
-    @Column({
+    @Field({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         caption: use.language.helperInternalComment
     })
     internalComment: string;
-    @Column<Helpers>({
+    @Field<Helpers>({
         sqlExpression: (selfDefs) => {
             let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
@@ -378,11 +379,11 @@ export class Helpers extends HelpersBase {
                 this._.undoChanges();
             },
             settings: {
-                columnSettings: () => Helpers.selectColumns(this._.repository.defs.columns, this.context).map(map => {
+                fields: () => Helpers.selectColumns(this._.repository.defs.fields, this.context).map(map => {
 
                     return ({
                         ...map,
-                        column: this.$.find(map.column as any)
+                        field: this.$.find(map.field as any)
                     })
                 })
             },
@@ -393,78 +394,78 @@ export class Helpers extends HelpersBase {
 
         });
     }
-    static selectColumns(self: ColumnDefinitionsOf<Helpers>, context: Context) {
+    static selectColumns(self: FieldDefinitionsOf<Helpers>, context: Context) {
         let settings = getSettings(context);
         let r: DataControlSettings<Helpers>[] = [
             {
-                column: self.name,
+                field: self.name,
                 width: '150'
             },
             {
-                column: self.phone,
+                field: self.phone,
                 width: '150'
             },
         ];
         r.push({
-            column: self.eventComment,
+            field: self.eventComment,
             width: '120'
         });
 
         if (context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
-                column: self.isIndependent,
+                field: self.isIndependent,
                 width: '120'
             });
         };
 
         if (context.isAllowed(Roles.admin)) {
             r.push({
-                column: self.admin,
+                field: self.admin,
                 width: '160'
             });
 
         }
         if (context.isAllowed(Roles.distCenterAdmin)) {
             r.push({
-                column: self.distCenterAdmin, width: '160'
+                field: self.distCenterAdmin, width: '160'
             });
         }
         let hadCenter = false;
         if (context.isAllowed(Roles.lab) && settings.isSytemForMlt()) {
             r.push({
-                column: self.labAdmin, width: '120'
+                field: self.labAdmin, width: '120'
             });
             hadCenter = true;
             r.push({
-                column: self.distributionCenter, width: '150',
+                field: self.distributionCenter, width: '150',
             });
         }
 
         r.push({
-            column: self.preferredDistributionAreaAddress, width: '120',
+            field: self.preferredDistributionAreaAddress, width: '120',
         });
         r.push({
-            column: self.preferredFinishAddress, width: '120',
+            field: self.preferredFinishAddress, width: '120',
         });
         r.push(self.createDate);
 
         if (context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
-                column: self.frozenTill, width: '120'
+                field: self.frozenTill, width: '120'
             });
             r.push({
-                column: self.internalComment, width: '120'
+                field: self.internalComment, width: '120'
             });
         }
 
         if (context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
-                column: self.referredBy, width: '120'
+                field: self.referredBy, width: '120'
             });
         }
 
         r.push({
-            column: self.company, width: '120'
+            field: self.company, width: '120'
         });
 
 
@@ -478,7 +479,7 @@ export class Helpers extends HelpersBase {
         }
 
         r.push({
-            column: self.socialSecurityNumber, width: '80'
+            field: self.socialSecurityNumber, width: '80'
         });
         r.push(self.leadHelper);
 
@@ -522,7 +523,7 @@ export class Helpers extends HelpersBase {
                 }],
                 rowCssClass: fd => fd.deliverStatus.getCss(),
                 columnSettings: fd => {
-                    let r: ColumnDefinitions[] = [
+                    let r: FieldDefinitions[] = [
                         fd.deliverStatus,
                         fd.deliveryStatusDate,
                         fd.basketType,
@@ -551,7 +552,7 @@ export class Helpers extends HelpersBase {
 
         super(context);
     }
-    @Column<Helpers>({
+    @Field<Helpers>({
         sqlExpression: (selfDefs) => {
             let self = SqlFor(selfDefs);
             let sql = new SqlBuilder();
@@ -565,22 +566,22 @@ export class Helpers extends HelpersBase {
     _disableDuplicateCheck = false;
     public static emptyPassword = 'password';
 
-    @Column({ caption: use.language.phone })
+    @Field({ caption: use.language.phone })
     phone: Phone;
     @ChangeDateColumn()
     lastSignInDate: Date;
-    @Column({
+    @Field({
         dbName: 'password',
         includeInApi: false
     })
     realStoredPassword: string;
-    @Column({ caption: use.language.socialSecurityNumber })
+    @Field({ caption: use.language.socialSecurityNumber })
     socialSecurityNumber: string;
-    @Column()
+    @Field()
     email: Email;
-    @Column()
+    @Field()
     addressApiResult: string;
-    @Column({ caption: use.language.preferredDistributionArea })
+    @Field({ caption: use.language.preferredDistributionArea })
     preferredDistributionAreaAddress: string;
     preferredDistributionAreaAddressHelper = new AddressHelper(this.context,
         () => this.$.preferredDistributionAreaAddress,
@@ -651,7 +652,7 @@ export class Helpers extends HelpersBase {
 
 
         if (settings.registerHelperReplyEmailText && settings.registerHelperReplyEmailText != '') {
-            let message =  (await import('../asign-family/send-sms-action')).SendSmsAction.getMessage(settings.registerHelperReplyEmailText,
+            let message = (await import('../asign-family/send-sms-action')).SendSmsAction.getMessage(settings.registerHelperReplyEmailText,
                 settings.organisationName, '', this.name, this.context.user.name, '');
 
             try {
@@ -662,9 +663,9 @@ export class Helpers extends HelpersBase {
         }
     }
 
-    @Column()
+    @Field()
     addressApiResult2: string;
-    @Column({
+    @Field({
 
         caption: use.language.preferredFinishAddress,
         dbName: 'preferredDistributionAreaAddress2'
@@ -677,7 +678,7 @@ export class Helpers extends HelpersBase {
 
 
 
-    @Column<Helpers>({
+    @Field<Helpers>({
         caption: use.language.password, inputType: InputTypes.password,
         serverExpression: (self) => self.realStoredPassword ? Helpers.emptyPassword : ''
     })
@@ -694,29 +695,29 @@ export class Helpers extends HelpersBase {
         caption: use.language.remiderSmsDate
     })
     reminderSmsDate: Date;
-    @Column({ includeInApi: Roles.admin })
+    @Field({ includeInApi: Roles.admin })
     referredBy: string;
-    @Column({
+    @Field({
         caption: use.language.admin,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
     })
     admin: boolean;
-    @Column({
+    @Field({
         caption: use.language.lab,
         allowApiUpdate: Roles.lab,
         includeInApi: Roles.lab
     })
     labAdmin: boolean;
-    @Column({
+    @Field({
         caption: use.language.indie,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin
     })
     isIndependent: boolean;
 
-    @Column<Helpers>({
+    @Field<Helpers>({
         caption: use.language.responsibleForAssign,
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
@@ -782,7 +783,7 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
-export function validatePasswordColumn(context: Context, password: EntityColumn<string>) {
+export function validatePasswordColumn(context: Context, password: EntityField<string>) {
     if (getSettings(context).requireComplexPassword) {
         var l = getLang(context);
         if (password.value.length < 8)

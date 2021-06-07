@@ -1,8 +1,8 @@
-import { Context, AndFilter, EntityWhere, Column, EntityWhereItem, Storable, getControllerDefs } from "@remult/core";
+import { Context, AndFilter, EntityWhere, EntityWhereItem, getControllerDefs } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
-import { use } from "../translate";
+import { use, Field, FieldType } from "../translate";
 import { getLang } from '../sites/sites';
 import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -13,8 +13,9 @@ import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
 import { ServerController } from "@remult/core";
-import { DataControl, InputControl } from "../../../../radweb/projects/angular";
+import { DataControl, InputField } from "../../../../radweb/projects/angular";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
+import { ValueListFieldType } from "../../../../radweb/projects/core/src/remult3";
 
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
@@ -46,9 +47,9 @@ function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliver
     key: 'deleteDeliveries'
 })
 export class DeleteDeliveries extends ActionOnFamilyDeliveries {
-    @Column({ caption: use.language.updateFamilyStatus })
+    @Field({ caption: use.language.updateFamilyStatus })
     updateFamilyStatus: boolean;
-    @Column()
+    @Field()
     status: FamilyStatus;
     get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {
@@ -76,15 +77,15 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     key: 'UpdateFamilyDefaults'
 })
 export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
-    @Column({ caption: use.language.defaultVolunteer })
+    @Field({ caption: use.language.defaultVolunteer })
     byCurrentCourier: boolean;
-    @Column({ caption: use.language.defaultBasketType })
+    @Field({ caption: use.language.defaultBasketType })
     basketType: boolean;
-    @Column({ caption: use.language.defaultQuantity })
+    @Field({ caption: use.language.defaultQuantity })
     quantity: boolean;
-    @Column({ caption: use.language.commentForVolunteer })
+    @Field({ caption: use.language.commentForVolunteer })
     comment: boolean;
-    @Column({ caption: use.language.selfPickup })
+    @Field({ caption: use.language.selfPickup })
     selfPickup: boolean;
 
     get $() { return getControllerDefs(this).columns };
@@ -132,11 +133,11 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     key: 'updateCourier'
 })
 export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
-    @Column({ caption: use.language.clearVolunteer })
+    @Field({ caption: use.language.clearVolunteer })
     clearVoulenteer: boolean;
-    @Column()
+    @Field()
     courier: HelpersBase;
-    @Column({ caption: use.language.setAsDefaultVolunteer })
+    @Field({ caption: use.language.setAsDefaultVolunteer })
     updateAlsoAsFixed: boolean;
     get $() { return getControllerDefs(this).columns };
     usedCouriers: string[] = [];
@@ -180,11 +181,11 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
 })
 export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
-    @Column()
+    @Field()
     status: DeliveryStatus;
-    @Column({ caption: use.language.internalComment })
+    @Field({ caption: use.language.internalComment })
     comment: string;
-    @Column({ caption: use.language.deleteExistingComment })
+    @Field({ caption: use.language.deleteExistingComment })
     deleteExistingComment: boolean;
 
 
@@ -229,9 +230,9 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
 export class ArchiveHelper {
     showDelivered = false;
-    markOnTheWayAsDelivered = new InputControl<boolean>({ dataType: Boolean, key: 'markOnTheWayAsDelivered', visible: () => this.showDelivered });
+    markOnTheWayAsDelivered = new InputField<boolean>({ dataType: Boolean, key: 'markOnTheWayAsDelivered', visible: () => this.showDelivered });
     showSelfPickup = false;
-    markSelfPickupAsDelivered = new InputControl<boolean>({ dataType: Boolean, key: 'markSelfPickupAsDelivered', visible: () => this.showSelfPickup });
+    markSelfPickupAsDelivered = new InputField<boolean>({ dataType: Boolean, key: 'markSelfPickupAsDelivered', visible: () => this.showSelfPickup });
 
     constructor(private context: Context) { }
     getColumns() {
@@ -300,7 +301,7 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     key: 'updateBasketType'
 })
 export class UpdateBasketType extends ActionOnFamilyDeliveries {
-    @Column()
+    @Field()
     basketType: BasketType;
 
     constructor(context: Context) {
@@ -332,7 +333,7 @@ export class UpdateQuantity extends ActionOnFamilyDeliveries {
     key: 'updateDistributionCenter'
 })
 export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
-    @Column()
+    @Field()
     distributionCenter: DistributionCenters;
 
     constructor(context: Context) {
@@ -343,11 +344,11 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     }
 }
 
-@Storable({
-    valueConverter: () => new ValueListValueConverter(HelperStrategy),
+@FieldType({
     defaultValue: () => HelperStrategy.familyDefault,
     caption: use.language.volunteer
 })
+@ValueListFieldType(HelperStrategy)
 class HelperStrategy {
     static familyDefault = new HelperStrategy(0, use.language.volunteerByFamilyDefault, x => { });
     static currentHelper = new HelperStrategy(1, use.language.volunteerByCrrentDelivery, x => {
@@ -369,29 +370,29 @@ class HelperStrategy {
     key: 'newDeliveryForDeliveries'
 })
 export class NewDelivery extends ActionOnFamilyDeliveries {
-    @Column({ caption: use.language.useBusketTypeFromCurrentDelivery })
+    @Field({ caption: use.language.useBusketTypeFromCurrentDelivery })
     useExistingBasket: boolean = true;
-    @Column()
+    @Field()
     basketType: BasketType;
     @QuantityColumn()
     quantity: number;
-    @Column()
+    @Field()
     helperStrategy: HelperStrategy;
-    @Column()
+    @Field()
     helper: HelpersBase;
-    @Column({ caption: use.language.archiveCurrentDelivery })
+    @Field({ caption: use.language.archiveCurrentDelivery })
     autoArchive: boolean = true;
-    @Column({ caption: use.language.newDeliveryForAll })
+    @Field({ caption: use.language.newDeliveryForAll })
     newDeliveryForAll: boolean;
-    @Column()
+    @Field()
     selfPickup: SelfPickupStrategy;
 
     archiveHelper = new ArchiveHelper(this.context);
 
-    @Column()
+    @Field()
     distributionCenter: DistributionCenters;
 
-    @Column({ caption: use.language.distributionListAsCurrentDelivery })
+    @Field({ caption: use.language.distributionListAsCurrentDelivery })
     useCurrentDistributionCenter: boolean;
     get $() {
         return getControllerDefs(this).columns;
@@ -421,7 +422,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
             },
             validate: async () => {
                 if (!this.useCurrentDistributionCenter) {
-                    
+
                     if (!this.distributionCenter)
                         throw getLang(this.context).pleaseSelectDistributionList;
                 }

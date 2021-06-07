@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, SqlDatabase, Column, ColumnDefinitions } from '@remult/core';
+import { ServerContext, SqlDatabase, FieldDefinitions } from '@remult/core';
 import '../app.module';
 
 
@@ -24,10 +24,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     let context = new ServerContext();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    let createFamilyIndex = async (name: string, ...columns: ColumnDefinitions[]) => {
+    let createFamilyIndex = async (name: string, ...columns: FieldDefinitions[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
-    let createDeliveryIndex = async (name: string, ...columns: ColumnDefinitions[]) => {
+    let createDeliveryIndex = async (name: string, ...columns: FieldDefinitions[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
     }
 
@@ -242,8 +242,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
 
     await version(15, async () => {
-        let fromArchive = (col: ColumnDefinitions) =>
-            [col, 'archive_' + col.dbName] as [ColumnDefinitions, any];
+        let fromArchive = (col: FieldDefinitions) =>
+            [col, 'archive_' + col.dbName] as [FieldDefinitions, any];
         if ((await context.for(Families).count()) > 0)
             await dataSource.execute(sql.update(fd, {
                 set: () => [
@@ -281,7 +281,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 into: fd,
                 from: f,
                 set: () => {
-                    let r: [ColumnDefinitions, any][] = [
+                    let r: [FieldDefinitions, any][] = [
                         [fd.id, f.id],
                         [fd.family, f.id],
                         [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],
@@ -428,10 +428,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     });
     await version(32, async () => {
-        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]],where:()=>[sql.eq(fd.courier,sql.str(""))] }));
+        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
     });
     await version(33, async () => {
-        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]],where:()=>[sql.build(fd.courier," is null")] }));
+        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [sql.build(fd.courier, " is null")] }));
     });
 
 

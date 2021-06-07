@@ -1,18 +1,18 @@
 
 
-import { Column, ColumnSettings, Entity, IdEntity, keyFor, Storable, StoreAsStringValueConverter } from '@remult/core';
+import { FieldSettings, Entity, IdEntity, keyFor, StoreAsStringValueConverter } from '@remult/core';
 
 
 import { Context, } from '@remult/core';
 
 import { Roles } from "../auth/roles";
-import { use } from '../translate';
+import { use, Field, FieldType } from '../translate';
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from '@remult/angular';
 
 
-@Storable<BasketType>({
-  valueConverter: c => new StoreAsStringValueConverter<any>(x => x!=undefined ? x : '', x => x||x=='' ? x : null),
+@FieldType<BasketType>({
+  valueConverter: new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
   displayValue: (e, v) => v ? v.name : '',
   caption: use.language.basketType
 })
@@ -35,11 +35,11 @@ export class BasketType extends IdEntity {
     return id === undefined ? null : await context.for(BasketType).getCachedByIdAsync(id);
   }
 
-  @Column({ caption: use.language.basketTypeName })
+  @Field({ caption: use.language.basketTypeName })
   name: string;
-  @Column({ caption: BasketType.boxes1Name })
+  @Field({ caption: BasketType.boxes1Name })
   boxes: number = 1;
-  @Column({ caption: BasketType.boxes2Name })
+  @Field({ caption: BasketType.boxes2Name })
   boxes2: number = 0;
 
   static boxes1Name = !use ? '' : use.language.boxes1Name;
@@ -52,8 +52,8 @@ export class BasketType extends IdEntity {
 }
 
 
-export function QuantityColumn<T>(settings?: ColumnSettings) {
-  return Column<T, number>({ caption: use.language.quantity, ...settings });
+export function QuantityColumn<T>(settings?: FieldSettings) {
+  return Field<T, number>({ caption: use.language.quantity, ...settings });
 }
 
 export const defaultBasketType = new keyFor<BasketType>();

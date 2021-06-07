@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, Column, EntityBase, getControllerDefs, DateOnlyValueConverter } from '@remult/core';
+import { Context, SqlDatabase, Field, EntityBase } from '@remult/core';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
 import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
@@ -12,7 +12,7 @@ import { Route } from '@angular/router';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { BusyService, DataAreaSettings, DataControlInfo, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { BusyService, DataAreaSettings, DataControlInfo, GridSettings, InputField, openDialog } from '@remult/angular';
 
 import { ServerFunction } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
@@ -41,10 +41,10 @@ export class DeliveryHistoryComponent implements OnInit {
 
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
-  onlyDone = new InputControl<boolean>({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: () => true })
-  onlyArchived = new InputControl<boolean>({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: () => false })//this.settings.isSytemForMlt() })
+  onlyDone = new InputField<boolean>({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: () => true })
+  onlyArchived = new InputField<boolean>({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: () => false })//this.settings.isSytemForMlt() })
   rangeArea = new DataAreaSettings({
-    columnSettings: () => {
+    fields: () => {
 
       return [this.onlyDone, this.onlyArchived]
 
@@ -128,46 +128,46 @@ export class DeliveryHistoryComponent implements OnInit {
       columnSettings: h => {
         let r = [
           {
-            column: h.name,
+            field: h.name,
             width: '150'
           },
           {
-            column: h.phone,
+            field: h.phone,
             width: '140'
           },
           {
-            column: h.company,
+            field: h.company,
             width: '150'
           },
           {
-            column: h.deliveries,
+            field: h.deliveries,
             width: '75'
           },
           {
-            column: h.succesful,
+            field: h.succesful,
             width: '75'
           },
           {
-            column: h.families,
+            field: h.families,
 
             width: '75'
           },
           {
-            column: h.dates,
+            field: h.dates,
             width: '75'
           }];
         if (settings.isSytemForMlt()) {
           r.push(
             {
-              column: h.selfassigned,
+              field: h.selfassigned,
               width: '75'
             },
             {
-              column: h.giftsConsumed,
+              field: h.giftsConsumed,
               width: '75'
             },
             {
-              column: h.giftsPending,
+              field: h.giftsPending,
               width: '75'
             }
           );
@@ -224,7 +224,7 @@ export class DeliveryHistoryComponent implements OnInit {
         d.name,
         {
           caption: this.settings.lang.deliverySummary,
-          column: d.deliverStatus,
+          field: d.deliverStatus,
           readOnly: true,
           getValue: f => f.getShortDeliveryDescription(),
           width: '300'
@@ -311,7 +311,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   @ServerFunction({ allowed: Roles.admin })
   static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
-    
+
 
     toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
     var sql = new SqlBuilder();
@@ -381,27 +381,27 @@ export class DeliveryHistoryComponent implements OnInit {
 })
 export class helperHistoryInfo extends EntityBase {
 
-  @Column()
+  @Field()
   courier: string;
-  @Column({ caption: use.language.volunteerName })
+  @Field({ caption: use.language.volunteerName })
   name: string;
-  @Column({ caption: use.language.phone })
+  @Field({ caption: use.language.phone })
   phone: Phone;
   @CompanyColumn()
   company: string;
-  @Column({ caption: use.language.deliveries })
+  @Field({ caption: use.language.deliveries })
   deliveries: number;
-  @Column({ caption: use.language.delveriesSuccesfull })
+  @Field({ caption: use.language.delveriesSuccesfull })
   succesful: number;
-  @Column({ caption: use.language.selfAssigned })
+  @Field({ caption: use.language.selfAssigned })
   selfassigned: number;
-  @Column({ caption: use.language.families })
+  @Field({ caption: use.language.families })
   families: number;
-  @Column({ caption: use.language.dates })
+  @Field({ caption: use.language.dates })
   dates: number;
-  @Column({ caption: 'מתנות שמומשו' })
+  @Field({ caption: 'מתנות שמומשו' })
   giftsConsumed: number;
-  @Column({ caption: 'מתנות זמינות' })
+  @Field({ caption: 'מתנות זמינות' })
   giftsPending: number;
 
 

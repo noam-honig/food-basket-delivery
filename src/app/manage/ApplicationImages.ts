@@ -1,5 +1,5 @@
 
-import { Entity, Context, EntityBase, Column } from '@remult/core';
+import { Entity, Context, EntityBase, Field } from '@remult/core';
 import { Roles } from '../auth/roles';
 @Entity({
   key: 'ApplicationImages',
@@ -7,11 +7,11 @@ import { Roles } from '../auth/roles';
   allowApiUpdate: Roles.admin
 })
 export class ApplicationImages extends EntityBase {
-  @Column()
+  @Field()
   id: number;
-  @Column({ caption: "איקון דף base64" })
+  @Field({ caption: "איקון דף base64" })
   base64Icon: string;
-  @Column({ caption: "איקון דף הבית בטלפון base64" })
+  @Field({ caption: "איקון דף הבית בטלפון base64" })
   base64PhoneHomeImage: string;
 
 

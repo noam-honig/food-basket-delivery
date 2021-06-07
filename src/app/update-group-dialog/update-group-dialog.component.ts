@@ -5,7 +5,7 @@ import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { InputControl } from '../../../../radweb/projects/angular';
+import { InputField } from '../../../../radweb/projects/angular';
 import { GroupsValue } from '../families/families';
 
 @Component({
@@ -37,7 +37,7 @@ export class UpdateGroupDialogComponent implements OnInit {
     this.availableGroups = await this.context.for(Groups).find({ limit: 1000 });
   }
 
-  groups = new InputControl<GroupsValue>({dataType:GroupsValue});
+  groups = new InputField<GroupsValue>({dataType:GroupsValue});
   selected(group: string) {
     return this.groups.value.selected(group);
   }

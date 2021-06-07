@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ServerFunction, Context, Column, ServerController, ServerMethod, getControllerDefs } from '@remult/core';
+import { ServerFunction, Context,  ServerController, ServerMethod, getControllerDefs } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
@@ -24,7 +24,7 @@ export class RegisterHelperComponent implements OnInit {
   helper = this.context.for(Helpers).create();
   
   area = new DataAreaSettings({
-    columnSettings: () => [
+    fields: () => [
       { column: this.helper.$.socialSecurityNumber, caption: "תעודת זהות (עבור ביטוח מתנדבים)" },
       { column: this.helper.$.phone, allowClick: () => false },
       { column: this.helper.$.email, allowClick: () => false },

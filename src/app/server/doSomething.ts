@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 
-import { SqlDatabase, Column, EntityColumn } from '@remult/core';
+import { SqlDatabase,   EntityField } from '@remult/core';
 import * as AWS from 'aws-sdk';
 
 
@@ -132,7 +132,7 @@ class htmlReport {
     addRow(...what: any[]) {
         this.result += "\r\n<tr>";
         for (let v of what) {
-            let z = v as EntityColumn<any>;
+            let z = v as EntityField<any>;
             if (z.displayValue)
                 v = v.displayValue;
             if (v === undefined)
@@ -171,7 +171,7 @@ async function buildDocs() {
 | name | caption | type | extra info |
 | --- | --- | --- | --- |
 `;
-        for (const c of e.columns) {
+        for (const c of e.fields) {
             let extra = '';
             
             s += "| " + c.key + " | " + c.caption + " | " + c.constructor.name.replace(/Column/g, '') + " | " + extra + " |\n";

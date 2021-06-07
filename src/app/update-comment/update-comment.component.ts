@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { Context,  EntityColumn } from '@remult/core';
-import { Column } from '@remult/core';
+import { Context } from '@remult/core';
+
 
 import { DialogService } from '../select-popup/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -18,7 +18,7 @@ export class GetVolunteerFeedback implements OnInit {
   public args: {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
-    helpText: (s: ApplicationSettings) => EntityColumn<string>,
+    helpText: (s: ApplicationSettings) => string,
     hideLocation?: boolean,
     title?: string,
     comment: string,
@@ -90,7 +90,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
 
   helpText() {
     let s = ApplicationSettings.get(this.context);
-    return this.args.helpText(s).value;
+    return this.args.helpText(s);
   }
 }
 

@@ -7,8 +7,8 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } from './ApplicationSettings';
 
 
-import { BusyService, DataAreaSettings, GridSettings, InputControl, openDialog } from '@remult/angular';
-import { Context, IdEntity, Entity, ServerFunction, ServerProgress, EntityColumn, Column, EntityBase, ColumnDefinitionsOf } from '@remult/core';
+import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
+import { Context, IdEntity, Entity, ServerFunction, ServerProgress, EntityField, EntityBase, FieldDefinitionsOf } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -27,6 +27,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { Groups } from './groups';
 import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
+import { Field } from '../translate';
 
 @Component({
   selector: 'app-manage',
@@ -130,7 +131,7 @@ export class ManageComponent implements OnInit {
           title: d.name,
           ok: async () => await d.save(),
           settings: {
-            columnSettings: () => [
+            fields: () => [
               d.$.name,
               d.$.address,
               {
@@ -161,7 +162,7 @@ export class ManageComponent implements OnInit {
       }
     }
     ],
-    columnSettings: (x: ColumnDefinitionsOf<DistributionCenters>) => [
+    columnSettings: (x: FieldDefinitionsOf<DistributionCenters>) => [
       x.name,
 
       {
@@ -240,7 +241,7 @@ export class ManageComponent implements OnInit {
 
 
 
-    columnSettings: () => [
+    fields: () => [
       this.settings.$.organisationName,
       this.settings.$.address,
       {
@@ -251,7 +252,7 @@ export class ManageComponent implements OnInit {
     ]
   });
   settingsMore = new DataAreaSettings({
-    columnSettings: s =>
+    fields: s =>
       [
         this.settings.$.helpText,
         this.settings.$.helpPhone
@@ -261,7 +262,7 @@ export class ManageComponent implements OnInit {
 
 
   settingsLogo = new DataAreaSettings({
-    columnSettings: s => [this.settings.$.logoUrl]
+    fields: s => [this.settings.$.logoUrl]
   });
   async saveAndPreview() {
     await this.save();
@@ -269,9 +270,9 @@ export class ManageComponent implements OnInit {
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments,
-      helpText: () => this.settings.$.commentForSuccessDelivery,
+      helpText: () => this.settings.commentForSuccessDelivery,
       questionsArea: new DataAreaSettings({
-        columnSettings: () => [
+        fields: () => [
           f.$.a1, f.$.a2, f.$.a3, f.$.a4
         ]
       }),
@@ -283,7 +284,7 @@ export class ManageComponent implements OnInit {
     });
   }
   settingsMessages = new DataAreaSettings({
-    columnSettings: s => [
+    fields: s => [
       this.settings.$.deliveredButtonText,
       this.settings.$.commentForSuccessDelivery,
       this.settings.$.commentForSuccessLeft,
@@ -300,7 +301,7 @@ export class ManageComponent implements OnInit {
     ]
   });
   settings2Messages = new DataAreaSettings({
-    columnSettings: s => [
+    fields: s => [
 
 
       this.settings.$.messageForDoneDelivery,
@@ -316,13 +317,13 @@ export class ManageComponent implements OnInit {
     ]
   });
   emailConfiguration = new DataAreaSettings({
-    columnSettings: () => [this.settings.$.gmailUserName, this.settings.$.gmailPassword]
+    fields: () => [this.settings.$.gmailUserName, this.settings.$.gmailPassword]
   });
   async sendTestEmail() {
-    var sc = new InputControl<string>({ caption: 'email' });
+    var sc = new InputField<string>({ caption: 'email' });
     await openDialog(InputAreaComponent, x => x.args = {
       settings: {
-        columnSettings: () => [sc]
+        fields: () => [sc]
       },
       title: 'בדיקת מייל',
       ok: async () => {
@@ -342,7 +343,7 @@ export class ManageComponent implements OnInit {
   }
 
   prefereces = new DataAreaSettings({
-    columnSettings: s => {
+    fields: s => {
       let r = [
         this.settings.$.requireEULA,
         this.settings.$.requireConfidentialityApprove,
@@ -488,7 +489,7 @@ export class ManageComponent implements OnInit {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage);
   }
-  onFileChange(id: string, column: EntityColumn<string>) {
+  onFileChange(id: string, column: EntityField<string>) {
     const inputNode: any = document.querySelector('#' + id);
 
     if (typeof (FileReader) !== 'undefined') {
@@ -508,7 +509,7 @@ export class ManageComponent implements OnInit {
       'data:image;base64,' + this.images.currentRow.base64Icon);
   }
   async deleteFamilies() {
-    let codeWord = new InputControl<string>({ caption: this.settings.lang.codeWord });
+    let codeWord = new InputField<string>({ caption: this.settings.lang.codeWord });
     let codeWords = ["נועם", "יעל", "עופרי", "מעיין", "איתמר", "יוני", "ניצן", "חגי", "נגה"];
     if (!(this.settings.lang.languageCode == 'iw')) {
       codeWords = ["Noam", "Yoni", "Itamar", "Maayan", "Nitzan", "Hagai", "Noga", "Ofri"]
@@ -522,7 +523,7 @@ export class ManageComponent implements OnInit {
     await openDialog(InputAreaComponent, x => {
       x.args = {
         title: this.settings.lang.toConfirmPleaseTypeTheCodeWord + '"' + correctCodeWord + '"',
-        settings: { columnSettings: () => [codeWord] }, ok: () => doIt = true, cancel: () => doIt = false
+        settings: { fields: () => [codeWord] }, ok: () => doIt = true, cancel: () => doIt = false
       }
     })
     if (!doIt)
@@ -584,10 +585,10 @@ export class ManageComponent implements OnInit {
   defaultOrderBy: (self) => self.name,
   key: 'GroupsStatsPerDistributionCenter',
   dbName: (self, context) => {
-    let f =SqlFor( context.for(ActiveFamilyDeliveries));
-    
-    let g =SqlFor( context.for(Groups));
-    let d =SqlFor( context.for(DistributionCenters));
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+
+    let g = SqlFor(context.for(Groups));
+    let d = SqlFor(context.for(DistributionCenters));
     let sql = new SqlBuilder();
     sql.addEntity(f, 'Families');
     sql.addEntity(g, 'groups');
@@ -609,11 +610,11 @@ export class ManageComponent implements OnInit {
   }
 })
 export class GroupsStatsPerDistributionCenter extends EntityBase implements GroupsStats {
-  @Column()
+  @Field()
   name: string;
-  @Column()
+  @Field()
   distCenter: DistributionCenters;
-  @Column()
+  @Field()
   familiesCount: number;
 
   constructor(private context: Context) {
@@ -650,9 +651,9 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   }
 })
 export class GroupsStatsForAllDeliveryCenters extends EntityBase implements GroupsStats {
-  @Column()
+  @Field()
   name: string;
-  @Column()
+  @Field()
   familiesCount: number;
 
   constructor(private context: Context) {

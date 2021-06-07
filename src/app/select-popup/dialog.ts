@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Column, Context, getControllerDefs, ServerFunction } from '@remult/core';
+import { Context, getControllerDefs, ServerFunction } from '@remult/core';
 
 
 import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
@@ -14,7 +14,7 @@ import { currentUser, HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 import { isString } from "util";
-import { use } from "../translate";
+import { use, Field } from "../translate";
 import { Location, GetDistanceBetween } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 
@@ -104,7 +104,7 @@ export class DialogService {
     }
     private allCenters: DistributionCenters[];
 
-    @Column({
+    @Field({
 
         /*   valueChange: () => {
                if (this.context.isSignedIn())
@@ -135,7 +135,7 @@ export class DialogService {
             this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
-            this.distCenterArea = new DataAreaSettings({ columnSettings: () => [getControllerDefs(this, this.context).columns.distCenter] });
+            this.distCenterArea = new DataAreaSettings({ fields: () => [getControllerDefs(this, this.context).columns.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = null;
         }

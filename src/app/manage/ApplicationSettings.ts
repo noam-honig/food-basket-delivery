@@ -1,4 +1,4 @@
-import { ServerFunction, Allowed, EntityBase, Column, EntityColumn, Storable, ColumnDefinitions } from '@remult/core';
+import { ServerFunction, Allowed, EntityBase, EntityField, FieldDefinitions } from '@remult/core';
 import { DataControl } from '../../../../radweb/projects/angular';
 export function CustomColumn(info: () => customColumnInfo) {
   return (target, key) => {
@@ -6,7 +6,7 @@ export function CustomColumn(info: () => customColumnInfo) {
       //valueList: info().values,
       //     visible: () => info().visible
     })(target, key);
-    return Column({
+    return Field({
       //caption: info().caption,
       //    allowApiUpdate: info().role,
 
@@ -20,7 +20,7 @@ import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, Language, use, TranslationOptions } from "../translate";
+import { translationConfig, Language, use, TranslationOptions, Field, FieldType } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -30,9 +30,10 @@ import { HttpClient } from '@angular/common/http';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
 import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
+import { ValueListFieldType } from '../../../../radweb/projects/core/src/remult3';
 
 
-@Storable({ valueConverter: () => new ValueListValueConverter(RemovedFromListExcelImportStrategy) })
+@ValueListFieldType(RemovedFromListExcelImportStrategy)
 export class RemovedFromListExcelImportStrategy {
   static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
   static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
@@ -113,55 +114,55 @@ export class ApplicationSettings extends EntityBase {
     return this.lang.languageCode == 'iw' && !this.isSytemForMlt();
   }
 
-  @Column()
+  @Field()
   id: number;
-  @Column({ caption: use.language.organizationName })
+  @Field({ caption: use.language.organizationName })
   organisationName: string;
 
 
-  @Column({
+  @Field({
     caption: use.language.smsMessageContentCaption, validate: validateSmsContent
   })
   smsText: string;
-  @Column({
+  @Field({
     caption: use.language.smsReminderMessageContentCaption,
     validate: validateSmsContent
   })
   reminderSmsText: string;
-  @Column({
+  @Field({
     caption: use.language.emailDonorContentCaption,
     validate: validateSmsContent
   })
   registerFamilyReplyEmailText: string;
-  @Column({
+  @Field({
     caption: use.language.emailHelperContentCaption,
     validate: validateSmsContent
   })
   registerHelperReplyEmailText: string;
-  @Column({ caption: "gMail UserName", includeInApi: Roles.admin })
+  @Field({ caption: "gMail UserName", includeInApi: Roles.admin })
   gmailUserName: string;
-  @Column({ caption: "gMail password", includeInApi: Roles.admin })
+  @Field({ caption: "gMail password", includeInApi: Roles.admin })
   gmailPassword: string;
-  @Column({ caption: use.language.logoUrl })
+  @Field({ caption: use.language.logoUrl })
   logoUrl: string;
-  @Column()
+  @Field()
   addressApiResult: string;
-  @Column({ caption: use.language.deliveryCenterAddress })
+  @Field({ caption: use.language.deliveryCenterAddress })
   address: string;
   addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
-  @Column({ caption: use.language.successMessageColumnName })
+  @Field({ caption: use.language.successMessageColumnName })
   commentForSuccessDelivery: string;
-  @Column({ caption: use.language.leftByDoorMessageColumnName })
+  @Field({ caption: use.language.leftByDoorMessageColumnName })
   commentForSuccessLeft: string;
-  @Column({ caption: use.language.problemCommentColumnName })
+  @Field({ caption: use.language.problemCommentColumnName })
   commentForProblem: string;
-  @Column({ caption: use.language.messageForVolunteerWhenDoneCaption })
+  @Field({ caption: use.language.messageForVolunteerWhenDoneCaption })
   messageForDoneDelivery: string;
-  @Column({ caption: use.language.helpName })
+  @Field({ caption: use.language.helpName })
   helpText: string;
-  @Column({ caption: use.language.helpPhone })
+  @Field({ caption: use.language.helpPhone })
   helpPhone: Phone;
-  @Column()
+  @Field()
   phoneStrategy: string;
 
   getPhoneStrategy(): PhoneItem[] {
@@ -188,116 +189,116 @@ export class ApplicationSettings extends EntityBase {
       return [];
     }
   }
-  @Column()
+  @Field()
   commonQuestions: string;
-  @Column({ allowApiUpdate: false })
+  @Field({ allowApiUpdate: false })
   dataStructureVersion: number;
-  @Column({ caption: use.language.successButtonSettingName })
+  @Field({ caption: use.language.successButtonSettingName })
   deliveredButtonText: string;
-  @Column({ caption: use.language.freeText1ForVolunteer })
+  @Field({ caption: use.language.freeText1ForVolunteer })
   message1Text: string;
-  @Column({ caption: use.language.urlFreeText1 })
+  @Field({ caption: use.language.urlFreeText1 })
   message1Link: string;
-  @Column({ caption: use.language.showText1OnlyWhenDone })
+  @Field({ caption: use.language.showText1OnlyWhenDone })
   message1OnlyWhenDone: boolean;
-  @Column({ caption: use.language.freeText2ForVolunteer })
+  @Field({ caption: use.language.freeText2ForVolunteer })
   message2Text: string;
-  @Column({ caption: use.language.urlFreeText2 })
+  @Field({ caption: use.language.urlFreeText2 })
   message2Link: string;
-  @Column({ caption: use.language.showText2OnlyWhenDone })
+  @Field({ caption: use.language.showText2OnlyWhenDone })
   message2OnlyWhenDone: boolean;
-  @Column()
+  @Field()
   forWho: TranslationOptions;
-  @Column({ dbName: 'forSoldiers' })
+  @Field({ dbName: 'forSoldiers' })
   _old_for_soliders: boolean;
-  @Column({ caption: use.language.enableSelfPickupModule })
+  @Field({ caption: use.language.enableSelfPickupModule })
   usingSelfPickupModule: boolean;
 
   isSytemForMlt() {
     return this.forWho == TranslationOptions.donors;
   }
 
-  @Column({ caption: use.language.showVolunteerCompany })
+  @Field({ caption: use.language.showVolunteerCompany })
   showCompanies: boolean;
-  @Column({ caption: use.language.activateEscort })
+  @Field({ caption: use.language.activateEscort })
   manageEscorts: boolean;
-  @Column({ caption: use.language.showHelperComment })
+  @Field({ caption: use.language.showHelperComment })
   showHelperComment: boolean;
-  @Column({ caption: use.language.filterFamilyGroups })
+  @Field({ caption: use.language.filterFamilyGroups })
   showGroupsOnAssing: boolean;
-  @Column({ caption: use.language.filterCity })
+  @Field({ caption: use.language.filterCity })
   showCityOnAssing: boolean;
-  @Column({ caption: use.language.filterRegion })
+  @Field({ caption: use.language.filterRegion })
   showAreaOnAssing: boolean;
-  @Column({ caption: use.language.filterBasketType })
+  @Field({ caption: use.language.filterBasketType })
   showBasketOnAssing: boolean;
-  @Column({ caption: use.language.selectNumberOfFamilies })
+  @Field({ caption: use.language.selectNumberOfFamilies })
   showNumOfBoxesOnAssing: boolean;
-  @Column({ caption: use.language.showLeftByHouseButton })
+  @Field({ caption: use.language.showLeftByHouseButton })
   showLeftThereButton: boolean;
-  @Column({ caption: use.language.redTitleBar })
+  @Field({ caption: use.language.redTitleBar })
   redTitleBar: boolean;
-  @Column({ caption: use.language.defaultPhonePrefixForExcelImport })
+  @Field({ caption: use.language.defaultPhonePrefixForExcelImport })
   defaultPrefixForExcelImport: string;
-  @Column({ caption: use.language.checkIfFamilyExistsInDb })
+  @Field({ caption: use.language.checkIfFamilyExistsInDb })
   checkIfFamilyExistsInDb: boolean;
-  @Column()
+  @Field()
   removedFromListStrategy: RemovedFromListExcelImportStrategy;
-  @Column({ caption: use.language.checkIfFamilyExistsInFile })
+  @Field({ caption: use.language.checkIfFamilyExistsInFile })
   checkIfFamilyExistsInFile: boolean;
-  @Column({ caption: use.language.excelImportAutoAddValues })
+  @Field({ caption: use.language.excelImportAutoAddValues })
   excelImportAutoAddValues: boolean;
-  @Column({ caption: use.language.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery })
+  @Field({ caption: use.language.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery })
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery: boolean;
-  @Column({ caption: use.language.checkDuplicatePhones })
+  @Field({ caption: use.language.checkDuplicatePhones })
   checkDuplicatePhones: boolean;
-  @Column({ caption: use.language.volunteerCanUpdateComment })
+  @Field({ caption: use.language.volunteerCanUpdateComment })
   volunteerCanUpdateComment: boolean;
-  @Column({ caption: use.language.volunteerCanUpdateDeliveryComment })
+  @Field({ caption: use.language.volunteerCanUpdateDeliveryComment })
   volunteerCanUpdateDeliveryComment: boolean;
-  @Column({ caption: use.language.hideFamilyPhoneFromVolunteer })
+  @Field({ caption: use.language.hideFamilyPhoneFromVolunteer })
   hideFamilyPhoneFromVolunteer: boolean;
 
   static serverHasPhoneProxy = false;
-  @Column({ allowApiUpdate: false })
+  @Field({ allowApiUpdate: false })
   usePhoneProxy: boolean;
-  @Column({ caption: use.language.showOnlyLastNamePartToVolunteer })
+  @Field({ caption: use.language.showOnlyLastNamePartToVolunteer })
   showOnlyLastNamePartToVolunteer: boolean;
-  @Column({ caption: use.language.showTzToVolunteer })
+  @Field({ caption: use.language.showTzToVolunteer })
   showTzToVolunteer: boolean;
-  @Column({ caption: use.language.allowSendSuccessMessageOption, allowApiUpdate: false })
+  @Field({ caption: use.language.allowSendSuccessMessageOption, allowApiUpdate: false })
   allowSendSuccessMessageOption: boolean;
-  @Column({ caption: use.language.sendSuccessMessageToFamily })
+  @Field({ caption: use.language.sendSuccessMessageToFamily })
   sendSuccessMessageToFamily: boolean;
-  @Column({ caption: use.language.successMessageText })
+  @Field({ caption: use.language.successMessageText })
   successMessageText: string;
-  @Column({ caption: use.language.requireEULA })
+  @Field({ caption: use.language.requireEULA })
   requireEULA: boolean;
-  @Column({ caption: use.language.requireConfidentialityApprove })
+  @Field({ caption: use.language.requireConfidentialityApprove })
   requireConfidentialityApprove: boolean;
-  @Column({ caption: use.language.requireComplexPassword })
+  @Field({ caption: use.language.requireComplexPassword })
   requireComplexPassword: boolean;
-  @Column({ caption: use.language.timeToDisconnect })
+  @Field({ caption: use.language.timeToDisconnect })
   timeToDisconnect: number;
-  @Column({ caption: use.language.daysToForcePasswordChange })
+  @Field({ caption: use.language.daysToForcePasswordChange })
   daysToForcePasswordChange: number;
-  @Column({ caption: use.language.showDeliverySummaryToVolunteerOnFirstSignIn })
+  @Field({ caption: use.language.showDeliverySummaryToVolunteerOnFirstSignIn })
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
-  @Column({ caption: use.language.showDistCenterAsEndAddressForVolunteer })
+  @Field({ caption: use.language.showDistCenterAsEndAddressForVolunteer })
   showDistCenterAsEndAddressForVolunteer: boolean;
-  @Column()
+  @Field()
   routeStrategy: routeStrategy;
-  @Column({ caption: use.language.maxDeliveriesBeforeBusy })
+  @Field({ caption: use.language.maxDeliveriesBeforeBusy })
   BusyHelperAllowedFreq_nom: number;
-  @Column({ caption: use.language.daysCountForBusy })
+  @Field({ caption: use.language.daysCountForBusy })
   BusyHelperAllowedFreq_denom: number;
-  @Column({ caption: use.language.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee })
+  @Field({ caption: use.language.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee })
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
-  @Column({ caption: use.language.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself })
+  @Field({ caption: use.language.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself })
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
 
 
-  @Column({
+  @Field({
     caption: use.language.defaultStatusType
   })
   @DataControl({
@@ -306,49 +307,49 @@ export class ApplicationSettings extends EntityBase {
   defaultStatusType: DeliveryStatus;
 
 
-  @Column({ caption: use.language.boxes1NameCaption })
+  @Field({ caption: use.language.boxes1NameCaption })
   boxes1Name: string;
-  @Column({ caption: use.language.boxes2NameCaption })
+  @Field({ caption: use.language.boxes2NameCaption })
   boxes2Name: string;
-  @Column({ caption: use.language.customColumn + " 1 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 1 " + use.language.caption, includeInApi: Roles.admin })
   familyCustom1Caption: string;
-  @Column({ caption: use.language.customColumn + " 1 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 1 " + use.language.optionalValues, includeInApi: Roles.admin })
   familyCustom1Values: string;
-  @Column({ caption: use.language.customColumn + " 2 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 2 " + use.language.caption, includeInApi: Roles.admin })
   familyCustom2Caption: string;
-  @Column({ caption: use.language.customColumn + " 2 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 2 " + use.language.optionalValues, includeInApi: Roles.admin })
   familyCustom2Values: string;
-  @Column({ caption: use.language.customColumn + " 3 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 3 " + use.language.caption, includeInApi: Roles.admin })
   familyCustom3Caption: string;
-  @Column({ caption: use.language.customColumn + " 3 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 3 " + use.language.optionalValues, includeInApi: Roles.admin })
   familyCustom3Values: string;
-  @Column({ caption: use.language.customColumn + " 4 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 4 " + use.language.caption, includeInApi: Roles.admin })
   familyCustom4Caption: string;
-  @Column({ caption: use.language.customColumn + " 4 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ caption: use.language.customColumn + " 4 " + use.language.optionalValues, includeInApi: Roles.admin })
   familyCustom4Values: string;
-  @Column<ApplicationSettings>({ serverExpression: (self) => self.context.isSignedIn() })
+  @Field<ApplicationSettings>({ serverExpression: (self) => self.context.isSignedIn() })
   currentUserIsValidForAppLoadTest: boolean;
-  @Column({ caption: use.language.questionForVolunteer + " 1 " + use.language.caption })
+  @Field({ caption: use.language.questionForVolunteer + " 1 " + use.language.caption })
   questionForVolunteer1Caption: string;
-  @Column({ caption: use.language.questionForVolunteer + " 1 " + use.language.optionalValues })
+  @Field({ caption: use.language.questionForVolunteer + " 1 " + use.language.optionalValues })
   questionForVolunteer1Values: string;
-  @Column({ caption: use.language.questionForVolunteer + " 2 " + use.language.caption })
+  @Field({ caption: use.language.questionForVolunteer + " 2 " + use.language.caption })
   questionForVolunteer2Caption: string;
-  @Column({ caption: use.language.questionForVolunteer + " 2 " + use.language.optionalValues })
+  @Field({ caption: use.language.questionForVolunteer + " 2 " + use.language.optionalValues })
   questionForVolunteer2Values: string;
-  @Column({ caption: use.language.questionForVolunteer + " 3 " + use.language.caption })
+  @Field({ caption: use.language.questionForVolunteer + " 3 " + use.language.caption })
   questionForVolunteer3Caption: string;
-  @Column({ caption: use.language.questionForVolunteer + " 3 " + use.language.optionalValues })
+  @Field({ caption: use.language.questionForVolunteer + " 3 " + use.language.optionalValues })
   questionForVolunteer3Values: string;
-  @Column({ caption: use.language.questionForVolunteer + " 4 " + use.language.caption })
+  @Field({ caption: use.language.questionForVolunteer + " 4 " + use.language.caption })
   questionForVolunteer4Caption: string;
-  @Column({ caption: use.language.questionForVolunteer + " 4 " + use.language.optionalValues })
+  @Field({ caption: use.language.questionForVolunteer + " 4 " + use.language.optionalValues })
   questionForVolunteer4Values: string;
-  @Column({ includeInApi: Roles.admin })
+  @Field({ includeInApi: Roles.admin })
   createBasketsForAllFamiliesInCreateEvent: boolean;
-  @Column({ includeInApi: Roles.admin })
+  @Field({ includeInApi: Roles.admin })
   includeGroupsInCreateEvent: string;
-  @Column({ includeInApi: Roles.admin })
+  @Field({ includeInApi: Roles.admin })
   excludeGroupsInCreateEvent: string;
 
 
@@ -486,7 +487,7 @@ export class SettingsService {
 export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
 export const questionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
 
-export function getCustomColumnVisible(defs: ColumnDefinitions) {
+export function getCustomColumnVisible(defs: FieldDefinitions) {
   return true;
 }
 
@@ -530,7 +531,7 @@ export function includePhoneInApi(context: Context) {
   return false;
 
 }
-export function validateSmsContent(entity: any, c: EntityColumn<string, any>) {
+export function validateSmsContent(entity: any, c: EntityField<string, any>) {
   return;
   if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
     c.error = this.lang.mustIncludeUrlKeyError;

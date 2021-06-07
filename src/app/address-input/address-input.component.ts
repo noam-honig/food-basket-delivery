@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { Column, EntityColumn } from '@remult/core';
+import {  EntityField } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 
@@ -12,7 +12,7 @@ import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from
 })
 export class AddressInputComponent implements AfterViewInit {
 
-  @Input() column: EntityColumn<string>;
+  @Input() field: EntityField<string>;
   @Input() autoInit: boolean = false;
   constructor(private settings: ApplicationSettings, private zone: NgZone) { }
   initAddressAutoComplete = false;
@@ -38,9 +38,9 @@ export class AddressInputComponent implements AfterViewInit {
 
       
       this.zone.run(() => {
-        this.column.value = this.addressInput.nativeElement.value;
-        this.column.value = getAddress({
-          formatted_address: this.column.value,
+        this.field.value = this.addressInput.nativeElement.value;
+        this.field.value = getAddress({
+          formatted_address: this.field.value,
           address_components: place.address_components
         });
         consumer({
@@ -75,7 +75,7 @@ export class AddressInputComponent implements AfterViewInit {
 
   }
   getError(){
-    return this.column.error;
+    return this.field.error;
   }
 
   ngAfterViewInit() {
@@ -93,7 +93,7 @@ export class AddressInputComponent implements AfterViewInit {
       super();
     }
     isErrorState() {
-      return !!this.parent.column.error;
+      return !!this.parent.field.error;
     }
   }(this);
 

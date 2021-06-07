@@ -1,4 +1,4 @@
-import { Entity, Column, Context, EntityBase, Repository, EntityColumn, DateOnlyValueConverter } from '@remult/core';
+import { Entity, Context, EntityBase, Repository, EntityField, DateOnlyValueConverter } from '@remult/core';
 import { BusyService, GridSettings } from '@remult/angular';
 
 import { DateTimeColumn } from "../model-shared/types";
@@ -12,8 +12,8 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
   grid: T,
   fileName: string,
   busy: BusyService,
-  hideColumn?: (e: E, c: EntityColumn<any>) => boolean,
-  excludeColumn?: (e: E, c: EntityColumn<any>) => boolean,
+  hideColumn?: (e: E, c: EntityField<any>) => boolean,
+  excludeColumn?: (e: E, c: EntityField<any>) => boolean,
   moreColumns?: (e: E, addColumn: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx');

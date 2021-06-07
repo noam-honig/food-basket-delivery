@@ -1,17 +1,17 @@
 import { Phone } from "../model-shared/Phone";
 
 
-import { Context, IdEntity, Entity, Storable, Column, StoreAsStringValueConverter } from '@remult/core';
+import { Context, IdEntity, Entity, StoreAsStringValueConverter } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 import { DataControl, getValueList } from "@remult/angular";
-import { use } from "../translate";
+import { use, Field, FieldType } from "../translate";
 
 @DataControl({
   valueList: context => getValueList(context.for(FamilySources))
 })
-@Storable<FamilySources>({
-  valueConverter: () => new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null),
+@FieldType<FamilySources>({
+  valueConverter: new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null),
   displayValue: (e, val) => val ? val.name : ''
 })
 @Entity<FamilySources>({
@@ -21,11 +21,11 @@ import { use } from "../translate";
   defaultOrderBy: self => self.name
 })
 export class FamilySources extends IdEntity {
-  @Column({ caption: use.language.familySourceName })
+  @Field({ caption: use.language.familySourceName })
   name: string;
-  @Column({ caption: use.language.contactPersonName })
+  @Field({ caption: use.language.contactPersonName })
   contactPerson: string;
-  @Column({ caption: use.language.phone })
+  @Field({ caption: use.language.phone })
   phone: Phone;
 
 }

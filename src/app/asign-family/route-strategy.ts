@@ -1,6 +1,6 @@
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
-import { UrlBuilder, Context, Storable } from "@remult/core";
-import { use, } from "../translate";
+import { UrlBuilder, Context } from "@remult/core";
+import { use, ValueListFieldType, } from "../translate";
 import { Location, toLongLat, GetDistanceBetween } from "../shared/googleApiHelpers"
 import * as fetch from 'node-fetch';
 
@@ -11,7 +11,7 @@ import { ValueListValueConverter } from "../../../../radweb/projects/core/src/co
 
 
 
-@Storable({ valueConverter: () => new ValueListValueConverter(routeStrategy) })
+@ValueListFieldType(routeStrategy)
 export class routeStrategy {
     static endOnIsolated = new routeStrategy(0, !use ? "" : use.language.startAtDistributionCenterAndEndOnRemoteFamily, {
         getRouteEnd: (start, addresses) => addresses[addresses.length - 1].location

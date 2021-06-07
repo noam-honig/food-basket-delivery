@@ -59,7 +59,7 @@ export class SelectCompanyComponent implements OnInit {
       from: h,
       select: () => [sql.build("distinct ", h.company)],
       where: () => [h.company.isGreaterThan('')],
-      orderBy: [{ column: h.company }]
+      orderBy: [{ field: h.company }]
 
     }));
     return r.rows.map(x => x.company);

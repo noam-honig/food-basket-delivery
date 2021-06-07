@@ -6,7 +6,7 @@ import { HelperId, Helpers } from './helpers';
 
 import { Route } from '@angular/router';
 
-import { ServerFunction, ServerContext, AndFilter, Column } from '@remult/core';
+import { ServerFunction, ServerContext, AndFilter, } from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
@@ -223,11 +223,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
   private freezeDateEntry(h: Helpers) {
     let r: DataControlInfo<Helpers>[] = [
       {
-        column: h.$.frozenTill,
+        field: h.$.frozenTill,
         width: '150'
       },
       {
-        column: h.$.internalComment,
+        field: h.$.internalComment,
         width: '150'
       },
     ];
@@ -243,7 +243,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       cancel: () => {
       },
       settings: {
-        columnSettings: () => this.freezeDateEntry(h)
+        fields: () => this.freezeDateEntry(h)
       }
     });
   }

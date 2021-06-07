@@ -6,8 +6,8 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Column, Context, getControllerDefs, InputTypes } from '@remult/core';
-import { RouteHelperService, NotSignedInGuard, InputControl, DataAreaSettings, DataControl } from '@remult/angular';
+import { Context, getControllerDefs, InputTypes } from '@remult/core';
+import { RouteHelperService, NotSignedInGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
@@ -15,7 +15,7 @@ import { Sites } from '../../sites/sites';
 import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/Phone";
-import { use } from '../../translate';
+import { use,Field } from '../../translate';
 
 
 
@@ -27,46 +27,46 @@ import { use } from '../../translate';
 export class LoginComponent implements OnInit, AfterViewInit {
   static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
   @DataControl({ allowClick: () => false })
-  @Column({ caption: use.language.phone, dataType: Phone })
+  @Field({ caption: use.language.phone, dataType: Phone })
   phone: Phone;
-  @Column({
+  @Field({
     caption: use.language.password,
     inputType: InputTypes.password
   })
   password: string;
-  @Column({
+  @Field({
     caption: use.language.password,
     inputType: InputTypes.password
   })
   newPassword: string;
-  @Column({
+  @Field({
     caption: use.language.confirmPassword,
     inputType: InputTypes.password
   })
   confirmPassword: string;
-  @Column({
+  @Field({
     caption: use.language.IConfirmEula,
     inputType: InputTypes.password
   })
   confirmEula: boolean;
-  @Column({ caption: use.language.volunteerName })
+  @Field({ caption: use.language.volunteerName })
   name: string;
-  @Column({ caption: use.language.preferredDistributionArea })
+  @Field({ caption: use.language.preferredDistributionArea })
   preferredDistributionArea: string;
-  @Column({ caption: use.language.rememberMeOnThisDevice })
+  @Field({ caption: use.language.rememberMeOnThisDevice })
   remember: boolean;
   passwordArea = new DataAreaSettings({
-    columnSettings: () => [{ column: this.$.password }, this.$.remember]
+    fields: () => [{ field: this.$.password }, this.$.remember]
   });
   phoneArea = new DataAreaSettings({
-    columnSettings: () => [this.$.phone, this.$.remember]
+    fields: () => [this.$.phone, this.$.remember]
   });
   get $() { return getControllerDefs(this).columns }
   nameArea = new DataAreaSettings({
-    columnSettings: () => [this.$.name]
+    fields: () => [this.$.name]
   });
   setPasswordArea = new DataAreaSettings({
-    columnSettings: () => [
+    fields: () => [
       { column: this.$.newPassword, visible: () => this.loginResult.requiredToSetPassword },
       { column: this.$.confirmPassword, visible: () => this.loginResult.requiredToSetPassword },
       { column: this.$.confirmEula, visible: () => this.loginResult.requiredToSignEULA }

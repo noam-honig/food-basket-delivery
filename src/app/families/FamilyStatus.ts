@@ -1,13 +1,5 @@
-import { Column, ValueListItem, Context, Storable } from '@remult/core';
-
-import { use, Language } from '../translate';
-import { getLang } from '../sites/sites';
-import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
-
-
-@Storable({
-  valueConverter: () => new ValueListValueConverter(FamilyStatus),
-  displayValue: (e, val) => val.caption,
+import { use, Language, ValueListFieldType } from '../translate';
+@ValueListFieldType(FamilyStatus, {
   caption: use.language.familyStatus
 })
 export class FamilyStatus {

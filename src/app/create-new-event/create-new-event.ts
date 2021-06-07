@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ServerFunction, Context, Column, ServerController, controllerAllowed, ServerMethod, ServerProgress, getControllerDefs } from '@remult/core';
+import { ServerFunction, Context, ServerController, controllerAllowed, ServerMethod, ServerProgress, getControllerDefs } from '@remult/core';
 import { RouteHelperService, BusyService, DataControl, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
@@ -17,7 +17,7 @@ import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
 import { PromiseThrottle } from '../shared/utils';
 import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { use } from '../translate';
+import { use, Field } from '../translate';
 
 
 function visible(when: () => boolean, caption?: string) {
@@ -33,27 +33,27 @@ function visible(when: () => boolean, caption?: string) {
 })
 export class CreateNewEvent {
     archiveHelper = new ArchiveHelper(this.context);
-    @Column({ caption: use.language.createNewDeliveryForAllFamilies })
+    @Field({ caption: use.language.createNewDeliveryForAllFamilies })
     createNewDelivery: boolean;
-    @Column()
+    @Field()
     @DataControl({ visible: () => false })
     distributionCenter: DistributionCenters;
-    @Column({ caption: use.language.moreOptions })
+    @Field({ caption: use.language.moreOptions })
     @DataControl<CreateNewEvent>({ visible: (self) => self.createNewDelivery })
     moreOptions: boolean;
-    @Column({ caption: use.language.includeGroups })
+    @Field({ caption: use.language.includeGroups })
     @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
 
     includeGroups: GroupsValue;
-    @Column({ caption: use.language.excludeGroups })
+    @Field({ caption: use.language.excludeGroups })
     @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
 
     excludeGroups: GroupsValue;
-    @Column({ caption: use.language.useFamilyDefaultBasketType })
+    @Field({ caption: use.language.useFamilyDefaultBasketType })
     @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
     useFamilyBasket: boolean;
     @DataControl<CreateNewEvent>({ visible: self => !self.useFamilyBasket })
-    @Column()
+    @Field()
     basketType: BasketType;
 
 
@@ -180,7 +180,7 @@ export class CreateNewEvent {
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {
-                columnSettings: () => [...this.$]
+                fields: () => [...this.$]
             },
             ok: async () => {
                 let deliveriesCreated = await this.createNewEvent();

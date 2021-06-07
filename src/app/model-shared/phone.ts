@@ -1,11 +1,12 @@
 import { DataControl } from "@remult/angular";
-import { Context, EntityColumn, InputTypes, Storable, StoreAsStringValueConverter } from "@remult/core";
+import { Context, EntityField, InputTypes, StoreAsStringValueConverter } from "@remult/core";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
+import { FieldType } from "../translate";
 
-@Storable<Phone>({
-  displayValue: (e, x) =>x&& x.displayValue,
-  valueConverter: () => new StoreAsStringValueConverter<Phone>(x => Phone.toJson(x), x => x ? new Phone(x) : null),
+@FieldType<Phone>({
+  displayValue: (e, x) => x && x.displayValue,
+  valueConverter:  new StoreAsStringValueConverter<Phone>(x => Phone.toJson(x), x => x ? new Phone(x) : null),
   inputType: InputTypes.tel
 })
 @DataControl<any, Phone>({
@@ -16,7 +17,7 @@ import { getLang } from "../sites/sites";
   forceEqualFilter: false
 })
 export class Phone {
- 
+
   canSendWhatsapp() {//is mobile number
     return this.thePhone.startsWith('05');
   }
@@ -76,7 +77,7 @@ export class Phone {
 
     return x;
   }
-  static validatePhone(col: EntityColumn<Phone>, context: Context) {
+  static validatePhone(col: EntityField<Phone>, context: Context) {
     if (!col.value || col.value.thePhone == '')
       return;
     if (getLang(context).languageCode != 'iw')

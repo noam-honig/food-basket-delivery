@@ -12,7 +12,7 @@ import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
 import { SitesEntity } from '../sites/sites.entity';
-import { InputControl, openDialog } from '../../../../radweb/projects/angular';
+import { InputField, openDialog } from '../../../../radweb/projects/angular';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
@@ -178,12 +178,12 @@ export class OverviewComponent implements OnInit {
 
   }
   async createNewSchema() {
-    let id = new InputControl<string>({ caption: 'id' });
-    let name = new InputControl<string>({ caption: 'שם הארגון' });
+    let id = new InputField<string>({ caption: 'id' });
+    let name = new InputField<string>({ caption: 'שם הארגון' });
     openDialog(InputAreaComponent, x => x.args = {
       title: 'הוספת סביבה חדשה',
       settings: {
-        columnSettings: () => [id, name]
+        fields: () => [id, name]
       },
       validate: async () => {
         let x = validSchemaName(id.value);

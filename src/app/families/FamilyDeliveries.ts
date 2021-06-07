@@ -1,21 +1,21 @@
 import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
 
-import { Context, IdEntity, Filter, AndFilter, Column, Entity, DecimalValueConverter, Storable, filterOf, EntityColumn } from '@remult/core';
+import { Context, IdEntity, Filter, AndFilter, Entity, DecimalValueConverter, filterOf, EntityField, DateOnlyField, DecimalField } from '@remult/core';
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
 
 import { Roles } from "../auth/roles";
-import {  DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
+import { DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
 import { YesNo } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { use } from "../translate";
+import { use, FieldType, Field, ValueListFieldType } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings, openDialog } from "../../../../radweb/projects/angular";
@@ -25,8 +25,7 @@ import { ValueListValueConverter } from "../../../../radweb/projects/core/src/co
 import { FamilySources } from "./FamilySources";
 
 
-@Storable({
-    valueConverter: () => new ValueListValueConverter(MessageStatus),
+@ValueListFieldType(MessageStatus, {
     caption: use.language.messageStatus
 })
 export class MessageStatus {
@@ -62,7 +61,7 @@ export class MessageStatus {
         }
         if (self.quantity < 1)
             self.quantity = 1;
-        if (self.distributionCenter==null)
+        if (self.distributionCenter == null)
             self.distributionCenter = await self.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
         if (self.$.courier.wasChanged())
             self.routeOrder = 0;
@@ -157,12 +156,12 @@ export class FamilyDeliveries extends IdEntity {
                 ));
     }
 
-    @Column({
+    @Field({
         caption: use.language.familyIdInHagaiApp,
         allowApiUpdate: false
     })
     family: string;
-    @Column({
+    @Field({
         allowApiUpdate: false,
         caption: use.language.familyName,
         sqlExpression: (entity, context) => {
@@ -172,12 +171,12 @@ export class FamilyDeliveries extends IdEntity {
     })
     name: string;
 
-    @Column({
+    @Field({
         caption: use.language.basketType,
         allowApiUpdate: Roles.admin
     })
     basketType: BasketType;
-    @Column({
+    @Field({
         caption: use.language.quantity,
         allowApiUpdate: Roles.admin
     })
@@ -187,7 +186,7 @@ export class FamilyDeliveries extends IdEntity {
         return getSettings(this.context).isSytemForMlt && (this.quantity > 10);
     }
 
-    @Column({
+    @Field({
         allowApiUpdate: Roles.admin
     })
     distributionCenter: DistributionCenters;
@@ -195,9 +194,9 @@ export class FamilyDeliveries extends IdEntity {
     isDistCenterInactive() {
         return this.distributionCenter && this.distributionCenter.isFrozen
     }
-    @Column()
+    @Field()
     deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
-    @Column({
+    @Field({
         caption: use.language.volunteer,
         allowApiUpdate: Roles.distCenterAdmin
     })
@@ -209,24 +208,24 @@ export class FamilyDeliveries extends IdEntity {
         })
     })
     courier: HelpersBase;
-    @Column({ caption: use.language.commentsWritteByVolunteer })
+    @Field({ caption: use.language.commentsWritteByVolunteer })
     courierComments: string;
     @ChangeDateColumn()
     courierCommentsDate: Date;
-    @Column({ caption: use.language.internalDeliveryComment, includeInApi: Roles.admin })
+    @Field({ caption: use.language.internalDeliveryComment, includeInApi: Roles.admin })
     internalDeliveryComment: string;
-    @Column({
+    @Field({
         allowApiUpdate: Roles.distCenterAdmin
     })
     routeOrder: number;
-    @Column({ includeInApi: Roles.admin, caption: use.language.specialAsignment })
+    @Field({ includeInApi: Roles.admin, caption: use.language.specialAsignment })
     special: YesNo;
     @ChangeDateColumn({ caption: use.language.deliveryStatusDate })
     deliveryStatusDate: Date;
     relativeDeliveryStatusDate() {
         return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
-    @Column({ caption: use.language.courierAsignUser, allowApiUpdate: false })
+    @Field({ caption: use.language.courierAsignUser, allowApiUpdate: false })
     courierAssignUser: Helpers;
     @ChangeDateColumn({ caption: use.language.courierAsignDate })
     courierAssingTime: Date;
@@ -234,160 +233,156 @@ export class FamilyDeliveries extends IdEntity {
     deliveryStatusUser: HelpersBase;
     @ChangeDateColumn({ includeInApi: Roles.admin, caption: use.language.deliveryCreateDate })
     createDate: Date;
-    @Column({ includeInApi: Roles.admin, caption: use.language.deliveryCreateUser, allowApiUpdate: false })
+    @Field({ includeInApi: Roles.admin, caption: use.language.deliveryCreateUser, allowApiUpdate: false })
     createUser: HelpersBase;
-    @Column({
+    @Field({
         caption: use.language.requireFollowUp
     })
     needsWork: boolean;
 
-    @Column({ caption: use.language.requireFollowUpUpdateUser })
+    @Field({ caption: use.language.requireFollowUpUpdateUser })
     needsWorkUser: HelpersBase;
     @ChangeDateColumn({ caption: use.language.requireFollowUpUpdateDate })
     needsWorkDate: Date;
-    @Column({
+    @Field({
         caption: use.language.commentForVolunteer,
         allowApiUpdate: Roles.admin
     })
     deliveryComments: string;
-    @Column({
+    @Field({
         caption: use.language.commentForReception,
         allowApiUpdate: Roles.lab
     })
     receptionComments: string;
-    @Column({
+    @Field({
         includeInApi: Roles.admin,
         allowApiUpdate: false,
         caption: use.language.familySource
     })
     familySource: FamilySources;
-    @Column({
+    @Field({
         includeInApi: Roles.distCenterAdmin,
         allowApiUpdate: false
     })
     groups: GroupsValue;
 
 
-    @Column({
+    @Field({
         caption: use.language.address,
         allowApiUpdate: false
     })
     address: string;
-    @Column({
+    @Field({
         caption: use.language.floor,
         allowApiUpdate: false
     })
     floor: string;
-    @Column({
+    @Field({
         caption: use.language.appartment,
         allowApiUpdate: false
     })
     appartment: string;
-    @Column({
+    @Field({
         caption: use.language.entrance,
         allowApiUpdate: false
     })
     entrance: string;
-    @Column({
+    @Field({
         caption: use.language.buildingCode,
         allowApiUpdate: false
     })
     buildingCode: string;
-    @Column({
+    @Field({
         caption: use.language.cityAutomaticallyUpdatedByGoogle
         , allowApiUpdate: false
     })
     city: string;
-    @Column({ caption: use.language.region, allowApiUpdate: false })
+    @Field({ caption: use.language.region, allowApiUpdate: false })
     area: string;
-    @Column({
+    @Field({
         caption: use.language.addressComment,
         allowApiUpdate: false
     })
     addressComment: string;
-    @Column({
-        valueConverter: () => DecimalValueConverter,
+    @DecimalField({
         allowApiUpdate: false
     })
     //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
     addressLongitude: number;
-    @Column({
-        valueConverter: () => DecimalValueConverter,
+    @DecimalField({
         allowApiUpdate: false
     })
     addressLatitude: number;
-    @Column({
-        valueConverter: () => DecimalValueConverter,
+    @DecimalField({
         allowApiUpdate: false
     })
     //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
     drivingLongitude: number;
-    @Column({
-        valueConverter: () => DecimalValueConverter,
+    @DecimalField({
         allowApiUpdate: false
     })
     drivingLatitude: number;
-    @Column({ caption: use.language.addressByGoogle, allowApiUpdate: false })
+    @Field({ caption: use.language.addressByGoogle, allowApiUpdate: false })
     addressByGoogle: string;
-    @Column({
+    @Field({
         caption: use.language.addressOk,
         allowApiUpdate: false
     })
     addressOk: boolean;
-    @Column({ caption: use.language.defaultVolunteer, allowApiUpdate: false })
+    @Field({ caption: use.language.defaultVolunteer, allowApiUpdate: false })
     fixedCourier: HelperId;
-    @Column({ caption: use.language.familyMembers, allowApiUpdate: false })
+    @Field({ caption: use.language.familyMembers, allowApiUpdate: false })
     familyMembers: number;
-    @Column({
+    @Field({
         caption: use.language.phone1, dbName: 'phone',
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone1: Phone;
-    @Column({
+    @Field({
         caption: use.language.phone1Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone1Description: string;
-    @Column({
+    @Field({
         caption: use.language.phone2,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone2: Phone;
-    @Column({
+    @Field({
         caption: use.language.phone2Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone2Description: string;
-    @Column({
+    @Field({
         caption: use.language.phone3,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone3: Phone;
-    @Column({
+    @Field({
         caption: use.language.phone3Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone3Description: string;
-    @Column({
+    @Field({
         caption: use.language.phone4,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone4: Phone;
-    @Column({
+    @Field({
         caption: use.language.phone4Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone4Description: string;
 
-    @Column({
+    @Field({
         sqlExpression: (self, context) => {
             var sql = new SqlBuilder();
 
@@ -403,13 +398,13 @@ export class FamilyDeliveries extends IdEntity {
         }
     })
     courierBeenHereBefore: boolean;
-    @Column({ allowApiUpdate: c => c.isAllowed([Roles.admin, Roles.lab]) || c.isSignedIn() && getSettings(c).isSytemForMlt() })
+    @Field({ allowApiUpdate: c => c.isAllowed([Roles.admin, Roles.lab]) || c.isSignedIn() && getSettings(c).isSytemForMlt() })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, caption: use.language.archiveDate })
     archiveDate: Date;
-    @Column({ includeInApi: Roles.admin, caption: use.language.archiveUser })
+    @Field({ includeInApi: Roles.admin, caption: use.language.archiveUser })
     archiveUser: HelpersBase;
-    @Column({
+    @Field({
         sqlExpression: (selfDefs, context) => {
             var sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
@@ -418,7 +413,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     })
     visibleToCourier: boolean;
-    @Column({
+    @Field({
         sqlExpression: (self, context) => {
             var sql = new SqlBuilder();
 
@@ -745,7 +740,7 @@ export class FamilyDeliveries extends IdEntity {
 
     deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings {
         return {
-            columnSettings: () =>
+            fields: () =>
                 [
                     [this.$.basketType, this.$.quantity],
                     [this.$.deliverStatus, this.$.deliveryStatusDate],
@@ -775,7 +770,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
-function logChanged(context: Context, col: EntityColumn<any>, dateCol: EntityColumn<Date>, user: EntityColumn<HelpersBase>, wasChanged: (() => void)) {
+function logChanged(context: Context, col: EntityField<any>, dateCol: EntityField<Date>, user: EntityField<HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.value = context.get(currentUser);

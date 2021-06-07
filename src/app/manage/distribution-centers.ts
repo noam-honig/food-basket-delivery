@@ -1,4 +1,4 @@
-import { IdEntity, Context, StoreAsStringValueConverter, AndFilter, Column, Entity, filterOf, filterOptions, Filter, ColumnSettings, Storable } from "@remult/core";
+import { IdEntity, Context, StoreAsStringValueConverter, AndFilter,  Entity, filterOf, filterOptions, Filter } from "@remult/core";
 import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/Phone";
 
@@ -7,12 +7,12 @@ import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from "../../../../radweb/projects/angular";
-import { use } from "../translate";
+import { use, FieldType, Field } from "../translate";
 
 
 
-@Storable<DistributionCenters>({
-  valueConverter: c => new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
+@FieldType<DistributionCenters>({
+  valueConverter: new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
   displayValue: (e, v) => v ? v.name : '',
   caption: use.language.distributionList
 
@@ -47,7 +47,7 @@ export class DistributionCenters extends IdEntity {
     if (distCenter != null)
       return await context.for(DistributionCenters).getCachedByIdAsync(distCenter);
   }
-  static  toId(distCenter: DistributionCenters) {
+  static toId(distCenter: DistributionCenters) {
     return distCenter ? distCenter.id : null;
   }
 
@@ -56,30 +56,30 @@ export class DistributionCenters extends IdEntity {
     super();
   }
 
-  @Column({ caption: use.language.distributionCenterName })
+  @Field({ caption: use.language.distributionCenterName })
   name: string;
-  @Column({ caption: use.language.distributionCenterUniqueId })
+  @Field({ caption: use.language.distributionCenterUniqueId })
   semel: string;
-  @Column()
+  @Field()
   addressApiResult: string;
-  @Column({
+  @Field({
     caption: use.language.deliveryCenterAddress
   })
   address: string;
   addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
-  @Column({ caption: use.language.distributionCenterComment })
+  @Field({ caption: use.language.distributionCenterComment })
   comments: string;
-  @Column({ caption: use.language.phone1 })
+  @Field({ caption: use.language.phone1 })
   phone1: Phone;
-  @Column({ caption: use.language.phone1Description })
+  @Field({ caption: use.language.phone1Description })
   phone1Description: string;
-  @Column({ caption: use.language.phone2 })
+  @Field({ caption: use.language.phone2 })
   phone2: Phone;
-  @Column({ caption: use.language.phone2Description })
+  @Field({ caption: use.language.phone2Description })
   phone2Description: string;
-  @Column({ caption: use.language.frozen })
+  @Field({ caption: use.language.frozen })
   isFrozen: boolean;
-  @Column()
+  @Field()
   archive: boolean;
   createUser: HelpersBase;
 

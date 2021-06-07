@@ -60,7 +60,7 @@ export class FamiliesComponent implements OnInit {
             select: () => [f.city, 'count (*) as count'],
             where: () => [f.status.isEqualTo(FamilyStatus.Active)],
             groupBy: () => [f.city],
-            orderBy: [{ column: f.city }]
+            orderBy: [{ field: f.city }]
 
         }));
         return r.rows.map(x => ({
@@ -252,11 +252,11 @@ export class FamiliesComponent implements OnInit {
             let r: DataControlInfo<Families>[] = [
 
                 {
-                    column: families.name,
+                    field: families.name,
                     width: '200'
                 },
                 {
-                    column: families.address,
+                    field: families.address,
                     width: '250',
                     clickIcon: 'edit',
                     click: (f) => {
@@ -276,7 +276,7 @@ export class FamiliesComponent implements OnInit {
                 families.familyMembers,
                 families.familySource,
                 {
-                    column: families.internalComment,
+                    field: families.internalComment,
                     width: '300'
                 },
                 families.tz,
@@ -288,12 +288,12 @@ export class FamiliesComponent implements OnInit {
                 families.createDate,
                 families.lastUpdateDate,
 
-                { column: families.addressOk, width: '70' },
-                { column: families.floor, width: '50' },
-                { column: families.appartment, width: '50' },
-                { column: families.entrance, width: '50' },
-                { column: families.buildingCode, width: '50' },
-                { column: families.addressComment },
+                { field: families.addressOk, width: '70' },
+                { field: families.floor, width: '50' },
+                { field: families.appartment, width: '50' },
+                { field: families.entrance, width: '50' },
+                { field: families.buildingCode, width: '50' },
+                { field: families.addressComment },
                 families.city,
                 families.area,
                 families.postalCode,

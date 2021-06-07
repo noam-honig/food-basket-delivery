@@ -101,7 +101,7 @@ export class AssignEscortComponent implements OnInit {
     this.helper = h;
     this.phone = h.phone.thePhone;
     this.area = new DataAreaSettings<Helpers>({
-      columnSettings: () => {
+      fields: () => {
         let r = [];
         if (this.settings.showCompanies)
           r.push([this.helper.name, this.helper.company]);

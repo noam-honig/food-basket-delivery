@@ -1,4 +1,4 @@
-import { Context, Column, Allowed, ServerFunction, AndFilter,  IdEntity, Filter, EntityWhere, EntityOrderBy, ServerMethod, ServerProgress, filterOf, EntityWhereItem, EntityBase, getControllerDefs, Repository, IterateOptions } from "@remult/core";
+import { Context, Allowed, ServerFunction, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, ServerMethod, ServerProgress, filterOf, EntityWhereItem, EntityBase, getControllerDefs, Repository, IterateOptions } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -8,7 +8,7 @@ import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
 import { controllerAllowed } from "@remult/core";
 import { Families } from "./families";
-import { DataArealColumnSetting, GridButton, openDialog } from "../../../../radweb/projects/angular";
+import { DataAreaFieldsSetting, GridButton, openDialog } from "../../../../radweb/projects/angular";
 
 
 
@@ -72,7 +72,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
                 await openDialog(InputAreaComponent, x => {
                     x.args = {
                         settings: {
-                            columnSettings: () => cols
+                            fields: () => cols
                         },
                         title: this.args.title,
                         helpText: this.args.help ? this.args.help() : undefined,
@@ -136,7 +136,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {
-            console.log({ count, packCount: info.count,name:this.context.for(this.entity).defs.caption });
+            console.log({ count, packCount: info.count, name: this.context.for(this.entity).defs.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;
@@ -170,7 +170,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
-    dialogColumns?: (component: actionDialogNeeds<T>) => Promise<DataArealColumnSetting<any>[]>,
+    dialogColumns?: (component: actionDialogNeeds<T>) => Promise<DataAreaFieldsSetting<any>[]>,
     visible?: (component: actionDialogNeeds<T>) => boolean,
     forEach: (f: T) => Promise<void>,
     onEnd?: () => Promise<void>,

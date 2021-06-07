@@ -1,4 +1,4 @@
-import { Context, AndFilter, Storable, Column, getControllerDefs } from "@remult/core";
+import { Context, AndFilter, getControllerDefs, ValueListFieldType } from "@remult/core";
 import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketType, defaultBasketType, QuantityColumn } from "./BasketType";
@@ -10,7 +10,7 @@ import { FamilyStatus } from "./FamilyStatus";
 import { ActionOnRows, packetServerUpdateInfo } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
-import { use } from "../translate";
+import { use, Field, FieldType } from "../translate";
 import { getLang } from '../sites/sites';
 import { ServerController } from "@remult/core";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
@@ -18,8 +18,7 @@ import { DataControl, getValueList } from "../../../../radweb/projects/angular";
 import { Groups } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 
-@Storable({
-    valueConverter: () => new ValueListValueConverter(SelfPickupStrategy),
+@ValueListFieldType(SelfPickupStrategy, {
     caption: use.language.selfPickupStrategy
 })
 export class SelfPickupStrategy {
@@ -50,26 +49,26 @@ export class SelfPickupStrategy {
     key: 'NewDelivery'
 })
 export class NewDelivery extends ActionOnRows<Families> {
-    @Column({ caption: use.language.useFamilyDefaultBasketType })
+    @Field({ caption: use.language.useFamilyDefaultBasketType })
     useFamilyBasket: boolean = true;
-    @Column()
+    @Field()
     basketType: BasketType;
-    @Column({ caption: use.language.useFamilyQuantity })
+    @Field({ caption: use.language.useFamilyQuantity })
     useFamilyQuantity: boolean = true;
-    @Column({ caption: use.language.useFamilyMembersAsQuantity })
+    @Field({ caption: use.language.useFamilyMembersAsQuantity })
     useFamilyMembersAsQuantity: boolean;
     @QuantityColumn()
     quantity: number;
-    @Column()
+    @Field()
     distributionCenter: DistributionCenters;
-    @Column({ caption: use.language.defaultVolunteer })
+    @Field({ caption: use.language.defaultVolunteer })
     useDefaultVolunteer: boolean = true;
-    @Column()
+    @Field()
     courier: HelpersBase;
-    @Column()
+    @Field()
     @DataControl({ valueList: new ValueListValueConverter(SelfPickupStrategy).getOptions().filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
     selfPickup: SelfPickupStrategy;
-    @Column({
+    @Field({
         caption: use.language.excludeGroups
     })
     get $() { return getControllerDefs(this).columns };
@@ -144,9 +143,8 @@ export class NewDelivery extends ActionOnRows<Families> {
         });
     }
 }
-@Storable({
-    caption: use.language.action,
-    valueConverter: () => new ValueListValueConverter(UpdateGroupStrategy)
+@ValueListFieldType(UpdateGroupStrategy, {
+    caption: use.language.action
 })
 export class UpdateGroupStrategy {
     static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
@@ -172,15 +170,15 @@ export class UpdateGroupStrategy {
 })
 export class updateGroup extends ActionOnRows<Families> {
 
-    @Column({
+    @Field({
         caption: use.language.familyGroup
 
     })
     @DataControl({
-        valueList: context => getValueList<Groups>(context.for(Groups), { idColumn: x => x.columns.name, captionColumn: x => x.columns.name })
+        valueList: context => getValueList<Groups>(context.for(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })
     })
     group: string;
-    @Column()
+    @Field()
     action: UpdateGroupStrategy;
     get $() { return getControllerDefs(this).columns }
     constructor(context: Context) {
@@ -204,15 +202,15 @@ export class updateGroup extends ActionOnRows<Families> {
     key: 'UpdateFamilyStatus'
 })
 export class UpdateStatus extends ActionOnRows<Families> {
-    @Column()
+    @Field()
     status: FamilyStatus = FamilyStatus.Active;
-    @Column({ caption: use.language.archiveFinishedDeliveries })
+    @Field({ caption: use.language.archiveFinishedDeliveries })
     archiveFinshedDeliveries: boolean = true;
-    @Column({ caption: use.language.deletePendingDeliveries })
+    @Field({ caption: use.language.deletePendingDeliveries })
     deletePendingDeliveries: boolean = true;
-    @Column({ caption: use.language.internalComment })
+    @Field({ caption: use.language.internalComment })
     comment: string;
-    @Column({ caption: use.language.deleteExistingComment })
+    @Field({ caption: use.language.deleteExistingComment })
     deleteExistingComment: boolean;
 
     get $() { return getControllerDefs(this).columns };
@@ -267,7 +265,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
     key: 'UpdateFamilyBasketType'
 })
 export class UpdateBasketType extends ActionOnRows<Families> {
-    @Column()
+    @Field()
     basket: BasketType;
 
     constructor(context: Context) {
@@ -283,9 +281,9 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     key: 'UpdateSelfPickup'
 })
 export class UpdateSelfPickup extends ActionOnRows<Families> {
-    @Column({ caption: use.language.selfPickup })
+    @Field({ caption: use.language.selfPickup })
     selfPickup: boolean;
-    @Column({ caption: use.language.updateExistingDeliveries })
+    @Field({ caption: use.language.updateExistingDeliveries })
     updateExistingDeliveries: boolean;
 
 
@@ -321,7 +319,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     key: 'UpdateArea'
 })
 export class UpdateArea extends ActionOnRows<Families> {
-    @Column({ caption: use.language.region })
+    @Field({ caption: use.language.region })
     area: string;
 
     constructor(context: Context) {
@@ -351,7 +349,7 @@ export class UpdateQuantity extends ActionOnRows<Families> {
     key: 'UpdateFamilySource'
 })
 export class UpdateFamilySource extends ActionOnRows<Families> {
-    @Column()
+    @Field()
     familySource: FamilySources;
 
     constructor(context: Context) {
@@ -366,9 +364,9 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
     key: 'UpdateDefaultVolunteer'
 })
 export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
-    @Column({ caption: use.language.clearVolunteer })
+    @Field({ caption: use.language.clearVolunteer })
     clearVoulenteer: boolean;
-    @Column()
+    @Field()
     courier: HelpersBase;
     get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {

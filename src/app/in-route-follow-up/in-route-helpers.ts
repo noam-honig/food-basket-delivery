@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, Column, ColumnDefinitions, DateOnlyValueConverter } from "@remult/core";
+import { IdEntity, Context, Entity, FieldDefinitions, DateOnlyValueConverter } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, relativeDateName, ChangeDateColumn, SqlFor } from "../model-shared/types";
@@ -10,9 +10,10 @@ import { HelperAssignmentComponent } from "../helper-assignment/helper-assignmen
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-dialog.component";
-import { use } from "../translate";
+import { use, Field } from "../translate";
 import { filterCenterAllowedForUser } from "../manage/distribution-centers";
 import { DataControl, GridSettings, openDialog } from "@remult/angular";
+import { DateOnlyField } from "../../../../radweb/projects/core/src/remult3";
 
 @Entity<InRouteHelpers>({
     key: 'in-route-helpers',
@@ -32,21 +33,21 @@ import { DataControl, GridSettings, openDialog } from "@remult/angular";
                 where: () => [filterCenterAllowedForUser(f.distributionCenter, context), sql.eq(f.courier, h.id), ...where()]
             }
         }
-        let comInnerSelect = (col: ColumnDefinitions, toCol: ColumnDefinitions) => {
+        let comInnerSelect = (col: FieldDefinitions, toCol: FieldDefinitions) => {
             return sql.innerSelect({
                 select: () => [col],
                 from: com,
                 where: () => [sql.eq(com.volunteer, h.id), sql.build(com.comment, ' not like \'%Link%\'')],
-                orderBy: [{ column: com.createDate, isDescending: true }]
+                orderBy: [{ field: com.createDate, isDescending: true }]
             }, toCol)
         }
-        let comHelperInnerSelect = (toCol: ColumnDefinitions) => {
+        let comHelperInnerSelect = (toCol: FieldDefinitions) => {
             return sql.innerSelect({
                 select: () => [h2.name],
                 from: com,
                 innerJoin: () => [{ to: h2, on: () => [sql.eq(com.createUser, h2.id)] }],
                 where: () => [sql.eq(com.volunteer, h.id), sql.build(com.comment, ' not like \'%Link%\'')],
-                orderBy: [{ column: com.createDate, isDescending: true }]
+                orderBy: [{ field: com.createDate, isDescending: true }]
             }, toCol)
         }
         return sql.build('(select *,',
@@ -80,7 +81,7 @@ export class InRouteHelpers extends IdEntity {
         return this.context.for(Helpers).getCachedByIdAsync(this.id);
     }
     async showHistory() {
-        let h= await this.helper();
+        let h = await this.helper();
         await openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
             title: 'היסטוריה עבור ' + this.name,
             buttons: [{
@@ -124,7 +125,7 @@ export class InRouteHelpers extends IdEntity {
         this._.reload();
     }
     async addCommunication(reload: () => void) {
-        
+
         await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
             title: 'הוסף תכתובת',
 
@@ -147,55 +148,54 @@ export class InRouteHelpers extends IdEntity {
         this._.reload();
 
     }
-    @Column({ caption: use.language.volunteerName })
+    @Field({ caption: use.language.volunteerName })
     name: string;
     relativeDate(val: Date) {
         return relativeDateName(this.context, { d: val });
     }
-    @Column<InRouteHelpers, Date>({
+    @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
         caption: "שיוך ראשון"
     })
     minAssignDate: Date;
-    @Column<InRouteHelpers, Date>({
+    @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
         caption: " תקשורת אחרונה"
     })
     lastCommunicationDate: Date;
-    @Column({ caption: "תקשורת אחרונה" })
+    @Field({ caption: "תקשורת אחרונה" })
     lastComment: string;
-    @Column({ caption: "תקשורת אחרונה על ידי" })
+    @Field({ caption: "תקשורת אחרונה על ידי" })
     lastCommunicationUser: string;
-    @Column<InRouteHelpers, Date>({
+    @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
         caption: 'כניסה אחרונה למערכת'
     })
     lastSignInDate: Date;
-    @Column({ caption: use.language.delveriesInProgress })
+    @Field({ caption: use.language.delveriesInProgress })
     @DataControl({ width: '100' })
     deliveriesInProgress: number;
-    @Column<InRouteHelpers, Date>({
+    @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
         caption: " שיוך אחרון"
     })
     maxAssignDate: Date;
-    @Column<InRouteHelpers, Date>({
+    @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
         caption: 'תאריך איסוף מוצלח אחרון'
     })
     lastCompletedDelivery: Date;
-    @Column({ caption: "איסופים מוצלחים" })
+    @Field({ caption: "איסופים מוצלחים" })
     @DataControl({ width: '100' })
     completedDeliveries: number;
-    @Column({ caption: 'ראה את השיוך הראשון' })
+    @Field({ caption: 'ראה את השיוך הראשון' })
     seenFirstAssign: boolean;
-    @Column({ caption: 'הערה פנימית' })
+    @Field({ caption: 'הערה פנימית' })
     internalComment: string;
-    @Column({ caption: 'ארגון' })
+    @Field({ caption: 'ארגון' })
     company: string;
-    @Column({
+    @DateOnlyField({
         caption: 'מוקפא עד לתאריך',
-        valueConverter: () => DateOnlyValueConverter
     })
     frozenTill: Date;
 
@@ -220,11 +220,11 @@ export class InRouteHelpers extends IdEntity {
 export class HelperCommunicationHistory extends IdEntity {
     @ChangeDateColumn({ caption: use.language.createDate })
     createDate: Date;
-    @Column({ caption: use.language.createUser })
+    @Field({ caption: use.language.createUser })
     createUser: HelpersBase;
-    @Column({ caption: use.language.volunteer })
+    @Field({ caption: use.language.volunteer })
     volunteer: HelpersBase;
-    @Column({
+    @Field({
         caption: "הערה",
     })
     @DataControl({ width: '400' })

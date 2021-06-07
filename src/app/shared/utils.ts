@@ -1,4 +1,4 @@
-import { Column, ColumnDefinitions, Context } from "@remult/core";
+import { FieldDefinitions, Context } from "@remult/core";
 import { DataControlInfo, DataControlSettings, GridSettings } from "../../../../radweb/projects/angular";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
@@ -16,9 +16,9 @@ export function sortColumns(list: GridSettings<any>, columns: DataControlInfo<an
   for (let index = 0; index < columns.length; index++) {
     const origItem = columns[index];
     let item: DataControlSettings<any>;
-    let defs = origItem as ColumnDefinitions<any>;
+    let defs = origItem as FieldDefinitions<any>;
     if (defs && defs.dataType) {
-      item = list.columns.items.find(x => x.column == defs);
+      item = list.columns.items.find(x => x.field == defs);
     }
     else item = origItem;
     let origIndex = list.columns.items.indexOf(item);

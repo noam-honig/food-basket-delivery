@@ -16,7 +16,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 import { colors } from '../families/stats-action';
-import { BusyService, DataAreaSettings, GridButton, InputControl } from '@remult/angular';
+import { BusyService, DataAreaSettings, GridButton, InputField } from '@remult/angular';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 
@@ -198,14 +198,14 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses(this.settings);
   selectedStatus: statusClass;
-  filterCourier = new InputControl<string>({//sholud be HelperId
+  filterCourier = new InputField<string>({//sholud be HelperId
 
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
     click: () => { throw "Not Implemented" }
   })
 
-  filterArea = new InputControl<string>({
+  filterArea = new InputField<string>({
     caption: use.language.filterRegion,
     defaultValue: () => use.language.allRegions,
     valueChange: () => this.refreshDeliveries(),
@@ -229,7 +229,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.statuses.statuses.forEach(element => {
       element.value = 0;
     });
-    this.area = new DataAreaSettings({ columnSettings: () => [[this.filterCourier, this.filterArea]] });
+    this.area = new DataAreaSettings({ fields: () => [[this.filterCourier, this.filterArea]] });
     let markers: google.maps.Marker[] = []
     let newIds = new Map<string, boolean>();
     deliveries.forEach(f => {

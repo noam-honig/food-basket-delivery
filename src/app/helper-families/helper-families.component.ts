@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ServerFunction, ServerContext, SqlDatabase, EntityColumn } from '@remult/core';
-import { BusyService, DataAreaSettings, GridButton, InputControl, openDialog } from '@remult/angular';
+import { ServerFunction, ServerContext, SqlDatabase, EntityField } from '@remult/core';
+import { BusyService, DataAreaSettings, GridButton, InputField, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';
@@ -12,7 +12,7 @@ import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { Context } from '@remult/core';
-import { Column } from '@remult/core';
+
 import { use, TranslationOptions } from '../translate';
 import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -99,14 +99,14 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async refreshRoute() {
-    var useCurrentLocation = new InputControl<boolean>({ caption: use.language.useCurrentLocationForStart });
-    var strategy = new InputControl<routeStrategy>({ dataType: routeStrategy });
+    var useCurrentLocation = new InputField<boolean>({ caption: use.language.useCurrentLocationForStart });
+    var strategy = new InputField<routeStrategy>({ dataType: routeStrategy });
     strategy.value = this.settings.routeStrategy;
 
     await openDialog(InputAreaComponent, x => x.args = {
       title: use.language.replanRoute,
       settings: {
-        columnSettings: () => [
+        fields: () => [
           { column: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
           { column: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
           { column: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
@@ -392,10 +392,10 @@ export class HelperFamiliesComponent implements OnInit {
 
   allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
-    this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.$.commentForSuccessDelivery);
+    this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
   }
   async leftThere(f: ActiveFamilyDeliveries) {
-    this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.$.commentForSuccessLeft);
+    this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async sendSuccessMessageToFamily(deliveryId: string, context?: ServerContext) {
@@ -420,13 +420,13 @@ export class HelperFamiliesComponent implements OnInit {
 
     await new SendSmsUtils().sendSms(phone, settings.helpPhone.thePhone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), context.getOrigin(), Sites.getOrganizationFromContext(context), settings);
   }
-  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => EntityColumn<string>) {
+  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments,
       helpText,
       questionsArea: new DataAreaSettings({
-        columnSettings: () => [
+        fields: () => [
           f.$.a1, f.$.a2, f.$.a3, f.$.a4
         ]
       }),
@@ -481,7 +481,7 @@ export class HelperFamiliesComponent implements OnInit {
         comment: f.courierComments,
         showFailStatus: true,
 
-        helpText: s => s.$.commentForProblem,
+        helpText: s => s.commentForProblem,
 
         ok: async (comment, status) => {
           if (f.isNew())
@@ -531,7 +531,7 @@ export class HelperFamiliesComponent implements OnInit {
       phone = '972' + phone.substr(1);
     }
     await openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => new InputControl<string>({}),
+      helpText: () => '',
       ok: async (comment) => {
         await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper, comment);
         this.dialog.Info("הודעה נשלחה");

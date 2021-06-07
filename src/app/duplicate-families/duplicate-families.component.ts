@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, ColumnDefinitions } from '@remult/core';
-import { BusyService, DataAreaSettings, GridSettings, InputControl, openDialog } from '@remult/angular';
+import { ServerFunction, Context, SqlDatabase,  FieldDefinitions } from '@remult/core';
+import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
 import { Families } from '../families/families';
@@ -21,12 +21,12 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class DuplicateFamiliesComponent implements OnInit {
 
-  address = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
-  name = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
-  phone = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
-  onlyActive = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.activeDeliveries, defaultValue: () => true })
-  tz = new InputControl<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
-  area = new DataAreaSettings({ columnSettings: () => [[this.address, this.name, this.phone, this.tz, this.onlyActive]] });
+  address = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
+  name = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
+  phone = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
+  onlyActive = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.activeDeliveries, defaultValue: () => true })
+  tz = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
+  area = new DataAreaSettings({ fields: () => [[this.address, this.name, this.phone, this.tz, this.onlyActive]] });
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
   }
@@ -86,7 +86,7 @@ export class DuplicateFamiliesComponent implements OnInit {
 
 
 
-          ] as ColumnDefinitions[];
+          ] as FieldDefinitions[];
           for (const c of f) {
             if (!r.includes(c) && c != f.id)
               r.push(c);
