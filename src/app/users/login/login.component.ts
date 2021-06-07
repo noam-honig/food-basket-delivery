@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   phoneArea = new DataAreaSettings({
     fields: () => [this.$.phone, this.$.remember]
   });
-  get $() { return getControllerDefs(this).columns }
+  get $() { return getControllerDefs(this,this.context).columns }
   nameArea = new DataAreaSettings({
     fields: () => [this.$.name]
   });

@@ -1,5 +1,5 @@
 /// <reference types="@types/googlemaps" />
-import * as chart from 'chart.js';
+// import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
 
@@ -410,7 +410,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     this.test();
   }
-  options: chart.ChartOptions = {
+  options: any = {
     responsive: true,
     maintainAspectRatio: false,
     legend: {

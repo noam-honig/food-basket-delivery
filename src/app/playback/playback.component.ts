@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
-import * as chart from 'chart.js';
+// import * as chart from 'chart.js';
 import { ServerFunction, Context, SqlDatabase, DateValueConverter, DateOnlyValueConverter } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
@@ -26,7 +26,7 @@ export class PlaybackComponent implements OnInit {
 
     }];
   public pieChartType: string = 'pie';
-  options: chart.ChartOptions = {
+  options: any = {
     responsive: true,
     maintainAspectRatio: false,
     legend: {

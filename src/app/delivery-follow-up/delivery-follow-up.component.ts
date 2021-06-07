@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { AndFilter, ServerFunction, SqlDatabase } from '@remult/core';
 import { UserFamiliesList } from '../my-families/user-families';
-import * as chart from 'chart.js';
+// import * as chart from 'chart.js';
 
 import { BusyService, openDialog } from '@remult/angular';
 import { Filter } from '@remult/core';
@@ -70,7 +70,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   public pieChartType: string = 'pie';
   currentStatFilter: DeliveryStatistic = undefined;
 
-  options: chart.ChartOptions = {
+  options: any = {
     responsive: true,
     maintainAspectRatio: false,
     legend: {
