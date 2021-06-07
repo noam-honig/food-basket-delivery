@@ -1,4 +1,4 @@
-import { Context, AndFilter, getControllerDefs, ValueListFieldType } from "@remult/core";
+import { Context, AndFilter, getControllerDefs } from "@remult/core";
 import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketType, defaultBasketType, QuantityColumn } from "./BasketType";
@@ -10,7 +10,7 @@ import { FamilyStatus } from "./FamilyStatus";
 import { ActionOnRows, packetServerUpdateInfo } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
-import { use, Field, FieldType } from "../translate";
+import { use, Field, ValueListFieldType } from "../translate";
 import { getLang } from '../sites/sites';
 import { ServerController } from "@remult/core";
 import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
@@ -19,7 +19,7 @@ import { Groups } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 
 @ValueListFieldType(SelfPickupStrategy, {
-    caption: use.language.selfPickupStrategy
+    translation: l => l.selfPickupStrategy
 })
 export class SelfPickupStrategy {
     static familyDefault = new SelfPickupStrategy(0, use.language.selfPickupStrategy_familyDefault, x => {
@@ -49,19 +49,19 @@ export class SelfPickupStrategy {
     key: 'NewDelivery'
 })
 export class NewDelivery extends ActionOnRows<Families> {
-    @Field({ caption: use.language.useFamilyDefaultBasketType })
+    @Field({ translation: l => l.useFamilyDefaultBasketType })
     useFamilyBasket: boolean = true;
     @Field()
     basketType: BasketType;
-    @Field({ caption: use.language.useFamilyQuantity })
+    @Field({ translation: l => l.useFamilyQuantity })
     useFamilyQuantity: boolean = true;
-    @Field({ caption: use.language.useFamilyMembersAsQuantity })
+    @Field({ translation: l => l.useFamilyMembersAsQuantity })
     useFamilyMembersAsQuantity: boolean;
     @QuantityColumn()
     quantity: number;
     @Field()
     distributionCenter: DistributionCenters;
-    @Field({ caption: use.language.defaultVolunteer })
+    @Field({ translation: l => l.defaultVolunteer })
     useDefaultVolunteer: boolean = true;
     @Field()
     courier: HelpersBase;
@@ -69,7 +69,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @DataControl({ valueList: new ValueListValueConverter(SelfPickupStrategy).getOptions().filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
     selfPickup: SelfPickupStrategy;
     @Field({
-        caption: use.language.excludeGroups
+        translation: l => l.excludeGroups
     })
     get $() { return getControllerDefs(this).columns };
     excludeGroups: GroupsValue;
@@ -144,7 +144,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     }
 }
 @ValueListFieldType(UpdateGroupStrategy, {
-    caption: use.language.action
+    translation: l => l.action
 })
 export class UpdateGroupStrategy {
     static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
@@ -171,7 +171,7 @@ export class UpdateGroupStrategy {
 export class updateGroup extends ActionOnRows<Families> {
 
     @Field({
-        caption: use.language.familyGroup
+        translation: l => l.familyGroup
 
     })
     @DataControl({
@@ -204,13 +204,13 @@ export class updateGroup extends ActionOnRows<Families> {
 export class UpdateStatus extends ActionOnRows<Families> {
     @Field()
     status: FamilyStatus = FamilyStatus.Active;
-    @Field({ caption: use.language.archiveFinishedDeliveries })
+    @Field({ translation: l => l.archiveFinishedDeliveries })
     archiveFinshedDeliveries: boolean = true;
-    @Field({ caption: use.language.deletePendingDeliveries })
+    @Field({ translation: l => l.deletePendingDeliveries })
     deletePendingDeliveries: boolean = true;
-    @Field({ caption: use.language.internalComment })
+    @Field({ translation: l => l.internalComment })
     comment: string;
-    @Field({ caption: use.language.deleteExistingComment })
+    @Field({ translation: l => l.deleteExistingComment })
     deleteExistingComment: boolean;
 
     get $() { return getControllerDefs(this).columns };
@@ -281,9 +281,9 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     key: 'UpdateSelfPickup'
 })
 export class UpdateSelfPickup extends ActionOnRows<Families> {
-    @Field({ caption: use.language.selfPickup })
+    @Field({ translation: l => l.selfPickup })
     selfPickup: boolean;
-    @Field({ caption: use.language.updateExistingDeliveries })
+    @Field({ translation: l => l.updateExistingDeliveries })
     updateExistingDeliveries: boolean;
 
 
@@ -319,7 +319,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     key: 'UpdateArea'
 })
 export class UpdateArea extends ActionOnRows<Families> {
-    @Field({ caption: use.language.region })
+    @Field({ translation: l => l.region })
     area: string;
 
     constructor(context: Context) {
@@ -364,7 +364,7 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
     key: 'UpdateDefaultVolunteer'
 })
 export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
-    @Field({ caption: use.language.clearVolunteer })
+    @Field({ translation: l => l.clearVolunteer })
     clearVoulenteer: boolean;
     @Field()
     courier: HelpersBase;

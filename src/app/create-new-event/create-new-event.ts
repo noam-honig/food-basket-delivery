@@ -33,23 +33,23 @@ function visible(when: () => boolean, caption?: string) {
 })
 export class CreateNewEvent {
     archiveHelper = new ArchiveHelper(this.context);
-    @Field({ caption: use.language.createNewDeliveryForAllFamilies })
+    @Field({ translation: l => l.createNewDeliveryForAllFamilies })
     createNewDelivery: boolean;
     @Field()
     @DataControl({ visible: () => false })
     distributionCenter: DistributionCenters;
-    @Field({ caption: use.language.moreOptions })
+    @Field({ translation: l => l.moreOptions })
     @DataControl<CreateNewEvent>({ visible: (self) => self.createNewDelivery })
     moreOptions: boolean;
-    @Field({ caption: use.language.includeGroups })
+    @Field({ translation: l => l.includeGroups })
     @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
 
     includeGroups: GroupsValue;
-    @Field({ caption: use.language.excludeGroups })
+    @Field({ translation: l => l.excludeGroups })
     @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
 
     excludeGroups: GroupsValue;
-    @Field({ caption: use.language.useFamilyDefaultBasketType })
+    @Field({ translation: l => l.useFamilyDefaultBasketType })
     @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
     useFamilyBasket: boolean;
     @DataControl<CreateNewEvent>({ visible: self => !self.useFamilyBasket })

@@ -41,7 +41,7 @@ export function CompanyColumn<T = any>(settings?: FieldSettings<string, T>) {
 
         return Field<T, string>({
 
-            caption: use.language.company,
+            translation: l => l.company,
             ...settings
         })(target, key);
     }
@@ -71,7 +71,7 @@ export const currentUser = new keyFor<Helpers>();
 @FieldType<HelpersBase>({
 
     displayValue: (e, x) => x ? x.name : '',
-    caption: use.language.volunteer,
+    translation: l => l.volunteer,
     valueConverter: new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
 })
 @DataControl<any, Helpers>({
@@ -125,7 +125,7 @@ export abstract class HelpersBase extends IdEntity {
         super();
     }
     @Field<HelpersBase>({
-        caption: use.language.volunteerName,
+        translation: l => l.volunteerName,
         validate: (h) => {
             if (!h.name)
                 h.$.name.error = getLang(h.context).nameIsTooShort;
@@ -133,9 +133,9 @@ export abstract class HelpersBase extends IdEntity {
     })
     name: string;
 
-    @Field({ caption: use.language.phone })
+    @Field({ translation: l => l.phone })
     phone: Phone;
-    @DateTimeColumn({ caption: use.language.smsDate })
+    @DateTimeColumn({ translation: l => l.smsDate })
     smsDate: Date;
 
 
@@ -152,20 +152,20 @@ export abstract class HelpersBase extends IdEntity {
     distributionCenter: DistributionCenters;
 
     @Field({
-        caption: use.language.helperComment,
+        translation: l => l.helperComment,
         allowApiUpdate: Roles.admin
     })
     eventComment: string;
 
     @Field({
-        caption: use.language.needEscort,
+        translation: l => l.needEscort,
         allowApiUpdate: Roles.admin
     })
     needEscort: boolean;
 
 
     @Field({
-        caption: use.language.assignedDriver,
+        translation: l => l.assignedDriver,
         allowApiUpdate: Roles.admin
     })
     theHelperIAmEscorting: HelpersBase;
@@ -173,20 +173,20 @@ export abstract class HelpersBase extends IdEntity {
 
 
     @Field({
-        caption: use.language.escort
+        translation: l => l.escort
         , allowApiUpdate: Roles.admin
     })
     escort: HelpersBase;
 
     @Field({
-        caption: use.language.leadHelper
+        translation: l => l.leadHelper
         , allowApiUpdate: Roles.admin
     })
     leadHelper: HelpersBase;
     @Field({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
-        caption: use.language.myGiftsURL
+        translation: l => l.myGiftsURL
     })
     myGiftsURL: string;
     @Field({
@@ -198,14 +198,14 @@ export abstract class HelpersBase extends IdEntity {
     @Field({
         allowApiUpdate: context => context.isSignedIn(),
         includeInApi: context => context.isSignedIn(),
-        caption: use.language.frozenTill,
+        translation: l => l.frozenTill,
     })
     @DateOnlyField()
     frozenTill: Date;
     @Field({
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
-        caption: use.language.helperInternalComment
+        translation: l => l.helperInternalComment
     })
     internalComment: string;
     @Field<Helpers>({
@@ -566,7 +566,7 @@ export class Helpers extends HelpersBase {
     _disableDuplicateCheck = false;
     public static emptyPassword = 'password';
 
-    @Field({ caption: use.language.phone })
+    @Field({ translation: l => l.phone })
     phone: Phone;
     @ChangeDateColumn()
     lastSignInDate: Date;
@@ -575,13 +575,13 @@ export class Helpers extends HelpersBase {
         includeInApi: false
     })
     realStoredPassword: string;
-    @Field({ caption: use.language.socialSecurityNumber })
+    @Field({ translation: l => l.socialSecurityNumber })
     socialSecurityNumber: string;
     @Field()
     email: Email;
     @Field()
     addressApiResult: string;
-    @Field({ caption: use.language.preferredDistributionArea })
+    @Field({ translation: l => l.preferredDistributionArea })
     preferredDistributionAreaAddress: string;
     preferredDistributionAreaAddressHelper = new AddressHelper(this.context,
         () => this.$.preferredDistributionAreaAddress,
@@ -667,7 +667,7 @@ export class Helpers extends HelpersBase {
     addressApiResult2: string;
     @Field({
 
-        caption: use.language.preferredFinishAddress,
+        translation: l => l.preferredFinishAddress,
         dbName: 'preferredDistributionAreaAddress2'
     })
     preferredFinishAddress: string;
@@ -679,11 +679,11 @@ export class Helpers extends HelpersBase {
 
 
     @Field<Helpers>({
-        caption: use.language.password, inputType: InputTypes.password,
+        translation: l => l.password, inputType: InputTypes.password,
         serverExpression: (self) => self.realStoredPassword ? Helpers.emptyPassword : ''
     })
     password: string;
-    @ChangeDateColumn({ caption: use.language.createDate })
+    @ChangeDateColumn({ translation: l => l.createDate })
     createDate: Date;
     @ChangeDateColumn()
     passwordChangeDate: Date;
@@ -692,33 +692,33 @@ export class Helpers extends HelpersBase {
     //    confidentialityConfirmDate = new changeDate();
 
     @DateTimeColumn({
-        caption: use.language.remiderSmsDate
+        translation: l => l.remiderSmsDate
     })
     reminderSmsDate: Date;
     @Field({ includeInApi: Roles.admin })
     referredBy: string;
     @Field({
-        caption: use.language.admin,
+        translation: l => l.admin,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         dbName: 'isAdmin'
     })
     admin: boolean;
     @Field({
-        caption: use.language.lab,
+        translation: l => l.lab,
         allowApiUpdate: Roles.lab,
         includeInApi: Roles.lab
     })
     labAdmin: boolean;
     @Field({
-        caption: use.language.indie,
+        translation: l => l.indie,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin
     })
     isIndependent: boolean;
 
     @Field<Helpers>({
-        caption: use.language.responsibleForAssign,
+        translation: l => l.responsibleForAssign,
         allowApiUpdate: Roles.distCenterAdmin,
         includeInApi: Roles.distCenterAdmin,
 

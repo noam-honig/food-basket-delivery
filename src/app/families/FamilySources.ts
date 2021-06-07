@@ -21,11 +21,11 @@ import { use, Field, FieldType } from "../translate";
   defaultOrderBy: self => self.name
 })
 export class FamilySources extends IdEntity {
-  @Field({ caption: use.language.familySourceName })
+  @Field({ translation: l => l.familySourceName })
   name: string;
-  @Field({ caption: use.language.contactPersonName })
+  @Field({ translation: l => l.contactPersonName })
   contactPerson: string;
-  @Field({ caption: use.language.phone })
+  @Field({ translation: l => l.phone })
   phone: Phone;
 
 }

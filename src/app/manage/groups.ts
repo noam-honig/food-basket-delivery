@@ -9,6 +9,6 @@ import { Field, use } from "../translate";
 })
 export class Groups extends IdEntity {
 
-  @Field({ caption: use.language.group })
+  @Field({ translation: l => l.group })
   name: string;
 }

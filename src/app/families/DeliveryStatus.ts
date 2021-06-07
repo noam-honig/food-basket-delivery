@@ -34,7 +34,7 @@ import { DataControl } from '../../../../radweb/projects/angular';
 })
 @ValueListFieldType(DeliveryStatus, {
   displayValue: (e, val) => val.caption,
-  caption: use.language.deliveryStatus
+  translation: l => l.deliveryStatus
 })
 export class DeliveryStatus {
   static usingSelfPickupModule: boolean = true;

@@ -1,6 +1,6 @@
 import { use, Language, ValueListFieldType } from '../translate';
 @ValueListFieldType(FamilyStatus, {
-  caption: use.language.familyStatus
+  translation: l => l.familyStatus
 })
 export class FamilyStatus {
 

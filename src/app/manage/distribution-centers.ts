@@ -14,7 +14,7 @@ import { use, FieldType, Field } from "../translate";
 @FieldType<DistributionCenters>({
   valueConverter: new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
   displayValue: (e, v) => v ? v.name : '',
-  caption: use.language.distributionList
+  translation: l => l.distributionList
 
 })
 @DataControl<any, DistributionCenters>({
@@ -56,28 +56,28 @@ export class DistributionCenters extends IdEntity {
     super();
   }
 
-  @Field({ caption: use.language.distributionCenterName })
+  @Field({ translation: l => l.distributionCenterName })
   name: string;
-  @Field({ caption: use.language.distributionCenterUniqueId })
+  @Field({ translation: l => l.distributionCenterUniqueId })
   semel: string;
   @Field()
   addressApiResult: string;
   @Field({
-    caption: use.language.deliveryCenterAddress
+    translation: l => l.deliveryCenterAddress
   })
   address: string;
   addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
-  @Field({ caption: use.language.distributionCenterComment })
+  @Field({ translation: l => l.distributionCenterComment })
   comments: string;
-  @Field({ caption: use.language.phone1 })
+  @Field({ translation: l => l.phone1 })
   phone1: Phone;
-  @Field({ caption: use.language.phone1Description })
+  @Field({ translation: l => l.phone1Description })
   phone1Description: string;
-  @Field({ caption: use.language.phone2 })
+  @Field({ translation: l => l.phone2 })
   phone2: Phone;
-  @Field({ caption: use.language.phone2Description })
+  @Field({ translation: l => l.phone2Description })
   phone2Description: string;
-  @Field({ caption: use.language.frozen })
+  @Field({ translation: l => l.frozen })
   isFrozen: boolean;
   @Field()
   archive: boolean;

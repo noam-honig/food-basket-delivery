@@ -116,26 +116,26 @@ export class ApplicationSettings extends EntityBase {
 
   @Field()
   id: number;
-  @Field({ caption: use.language.organizationName })
+  @Field({ translation: l => l.organizationName })
   organisationName: string;
 
 
   @Field({
-    caption: use.language.smsMessageContentCaption, validate: validateSmsContent
+    translation: l => l.smsMessageContentCaption, validate: validateSmsContent
   })
   smsText: string;
   @Field({
-    caption: use.language.smsReminderMessageContentCaption,
+    translation: l => l.smsReminderMessageContentCaption,
     validate: validateSmsContent
   })
   reminderSmsText: string;
   @Field({
-    caption: use.language.emailDonorContentCaption,
+    translation: l => l.emailDonorContentCaption,
     validate: validateSmsContent
   })
   registerFamilyReplyEmailText: string;
   @Field({
-    caption: use.language.emailHelperContentCaption,
+    translation: l => l.emailHelperContentCaption,
     validate: validateSmsContent
   })
   registerHelperReplyEmailText: string;
@@ -143,24 +143,24 @@ export class ApplicationSettings extends EntityBase {
   gmailUserName: string;
   @Field({ caption: "gMail password", includeInApi: Roles.admin })
   gmailPassword: string;
-  @Field({ caption: use.language.logoUrl })
+  @Field({ translation: l => l.logoUrl })
   logoUrl: string;
   @Field()
   addressApiResult: string;
-  @Field({ caption: use.language.deliveryCenterAddress })
+  @Field({ translation: l => l.deliveryCenterAddress })
   address: string;
   addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
-  @Field({ caption: use.language.successMessageColumnName })
+  @Field({ translation: l => l.successMessageColumnName })
   commentForSuccessDelivery: string;
-  @Field({ caption: use.language.leftByDoorMessageColumnName })
+  @Field({ translation: l => l.leftByDoorMessageColumnName })
   commentForSuccessLeft: string;
-  @Field({ caption: use.language.problemCommentColumnName })
+  @Field({ translation: l => l.problemCommentColumnName })
   commentForProblem: string;
-  @Field({ caption: use.language.messageForVolunteerWhenDoneCaption })
+  @Field({ translation: l => l.messageForVolunteerWhenDoneCaption })
   messageForDoneDelivery: string;
-  @Field({ caption: use.language.helpName })
+  @Field({ translation: l => l.helpName })
   helpText: string;
-  @Field({ caption: use.language.helpPhone })
+  @Field({ translation: l => l.helpPhone })
   helpPhone: Phone;
   @Field()
   phoneStrategy: string;
@@ -193,113 +193,113 @@ export class ApplicationSettings extends EntityBase {
   commonQuestions: string;
   @Field({ allowApiUpdate: false })
   dataStructureVersion: number;
-  @Field({ caption: use.language.successButtonSettingName })
+  @Field({ translation: l => l.successButtonSettingName })
   deliveredButtonText: string;
-  @Field({ caption: use.language.freeText1ForVolunteer })
+  @Field({ translation: l => l.freeText1ForVolunteer })
   message1Text: string;
-  @Field({ caption: use.language.urlFreeText1 })
+  @Field({ translation: l => l.urlFreeText1 })
   message1Link: string;
-  @Field({ caption: use.language.showText1OnlyWhenDone })
+  @Field({ translation: l => l.showText1OnlyWhenDone })
   message1OnlyWhenDone: boolean;
-  @Field({ caption: use.language.freeText2ForVolunteer })
+  @Field({ translation: l => l.freeText2ForVolunteer })
   message2Text: string;
-  @Field({ caption: use.language.urlFreeText2 })
+  @Field({ translation: l => l.urlFreeText2 })
   message2Link: string;
-  @Field({ caption: use.language.showText2OnlyWhenDone })
+  @Field({ translation: l => l.showText2OnlyWhenDone })
   message2OnlyWhenDone: boolean;
   @Field()
   forWho: TranslationOptions;
   @Field({ dbName: 'forSoldiers' })
   _old_for_soliders: boolean;
-  @Field({ caption: use.language.enableSelfPickupModule })
+  @Field({ translation: l => l.enableSelfPickupModule })
   usingSelfPickupModule: boolean;
 
   isSytemForMlt() {
     return this.forWho == TranslationOptions.donors;
   }
 
-  @Field({ caption: use.language.showVolunteerCompany })
+  @Field({ translation: l => l.showVolunteerCompany })
   showCompanies: boolean;
-  @Field({ caption: use.language.activateEscort })
+  @Field({ translation: l => l.activateEscort })
   manageEscorts: boolean;
-  @Field({ caption: use.language.showHelperComment })
+  @Field({ translation: l => l.showHelperComment })
   showHelperComment: boolean;
-  @Field({ caption: use.language.filterFamilyGroups })
+  @Field({ translation: l => l.filterFamilyGroups })
   showGroupsOnAssing: boolean;
-  @Field({ caption: use.language.filterCity })
+  @Field({ translation: l => l.filterCity })
   showCityOnAssing: boolean;
-  @Field({ caption: use.language.filterRegion })
+  @Field({ translation: l => l.filterRegion })
   showAreaOnAssing: boolean;
-  @Field({ caption: use.language.filterBasketType })
+  @Field({ translation: l => l.filterBasketType })
   showBasketOnAssing: boolean;
-  @Field({ caption: use.language.selectNumberOfFamilies })
+  @Field({ translation: l => l.selectNumberOfFamilies })
   showNumOfBoxesOnAssing: boolean;
-  @Field({ caption: use.language.showLeftByHouseButton })
+  @Field({ translation: l => l.showLeftByHouseButton })
   showLeftThereButton: boolean;
-  @Field({ caption: use.language.redTitleBar })
+  @Field({ translation: l => l.redTitleBar })
   redTitleBar: boolean;
-  @Field({ caption: use.language.defaultPhonePrefixForExcelImport })
+  @Field({ translation: l => l.defaultPhonePrefixForExcelImport })
   defaultPrefixForExcelImport: string;
-  @Field({ caption: use.language.checkIfFamilyExistsInDb })
+  @Field({ translation: l => l.checkIfFamilyExistsInDb })
   checkIfFamilyExistsInDb: boolean;
   @Field()
   removedFromListStrategy: RemovedFromListExcelImportStrategy;
-  @Field({ caption: use.language.checkIfFamilyExistsInFile })
+  @Field({ translation: l => l.checkIfFamilyExistsInFile })
   checkIfFamilyExistsInFile: boolean;
-  @Field({ caption: use.language.excelImportAutoAddValues })
+  @Field({ translation: l => l.excelImportAutoAddValues })
   excelImportAutoAddValues: boolean;
-  @Field({ caption: use.language.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery })
+  @Field({ translation: l => l.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery })
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery: boolean;
-  @Field({ caption: use.language.checkDuplicatePhones })
+  @Field({ translation: l => l.checkDuplicatePhones })
   checkDuplicatePhones: boolean;
-  @Field({ caption: use.language.volunteerCanUpdateComment })
+  @Field({ translation: l => l.volunteerCanUpdateComment })
   volunteerCanUpdateComment: boolean;
-  @Field({ caption: use.language.volunteerCanUpdateDeliveryComment })
+  @Field({ translation: l => l.volunteerCanUpdateDeliveryComment })
   volunteerCanUpdateDeliveryComment: boolean;
-  @Field({ caption: use.language.hideFamilyPhoneFromVolunteer })
+  @Field({ translation: l => l.hideFamilyPhoneFromVolunteer })
   hideFamilyPhoneFromVolunteer: boolean;
 
   static serverHasPhoneProxy = false;
   @Field({ allowApiUpdate: false })
   usePhoneProxy: boolean;
-  @Field({ caption: use.language.showOnlyLastNamePartToVolunteer })
+  @Field({ translation: l => l.showOnlyLastNamePartToVolunteer })
   showOnlyLastNamePartToVolunteer: boolean;
-  @Field({ caption: use.language.showTzToVolunteer })
+  @Field({ translation: l => l.showTzToVolunteer })
   showTzToVolunteer: boolean;
-  @Field({ caption: use.language.allowSendSuccessMessageOption, allowApiUpdate: false })
+  @Field({ translation: l => l.allowSendSuccessMessageOption, allowApiUpdate: false })
   allowSendSuccessMessageOption: boolean;
-  @Field({ caption: use.language.sendSuccessMessageToFamily })
+  @Field({ translation: l => l.sendSuccessMessageToFamily })
   sendSuccessMessageToFamily: boolean;
-  @Field({ caption: use.language.successMessageText })
+  @Field({ translation: l => l.successMessageText })
   successMessageText: string;
-  @Field({ caption: use.language.requireEULA })
+  @Field({ translation: l => l.requireEULA })
   requireEULA: boolean;
-  @Field({ caption: use.language.requireConfidentialityApprove })
+  @Field({ translation: l => l.requireConfidentialityApprove })
   requireConfidentialityApprove: boolean;
-  @Field({ caption: use.language.requireComplexPassword })
+  @Field({ translation: l => l.requireComplexPassword })
   requireComplexPassword: boolean;
-  @Field({ caption: use.language.timeToDisconnect })
+  @Field({ translation: l => l.timeToDisconnect })
   timeToDisconnect: number;
-  @Field({ caption: use.language.daysToForcePasswordChange })
+  @Field({ translation: l => l.daysToForcePasswordChange })
   daysToForcePasswordChange: number;
-  @Field({ caption: use.language.showDeliverySummaryToVolunteerOnFirstSignIn })
+  @Field({ translation: l => l.showDeliverySummaryToVolunteerOnFirstSignIn })
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
-  @Field({ caption: use.language.showDistCenterAsEndAddressForVolunteer })
+  @Field({ translation: l => l.showDistCenterAsEndAddressForVolunteer })
   showDistCenterAsEndAddressForVolunteer: boolean;
   @Field()
   routeStrategy: routeStrategy;
-  @Field({ caption: use.language.maxDeliveriesBeforeBusy })
+  @Field({ translation: l => l.maxDeliveriesBeforeBusy })
   BusyHelperAllowedFreq_nom: number;
-  @Field({ caption: use.language.daysCountForBusy })
+  @Field({ translation: l => l.daysCountForBusy })
   BusyHelperAllowedFreq_denom: number;
-  @Field({ caption: use.language.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee })
+  @Field({ translation: l => l.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee })
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
-  @Field({ caption: use.language.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself })
+  @Field({ translation: l => l.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself })
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
 
 
   @Field({
-    caption: use.language.defaultStatusType
+    translation: l => l.defaultStatusType
   })
   @DataControl({
     valueList: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]
@@ -307,43 +307,43 @@ export class ApplicationSettings extends EntityBase {
   defaultStatusType: DeliveryStatus;
 
 
-  @Field({ caption: use.language.boxes1NameCaption })
+  @Field({ translation: l => l.boxes1NameCaption })
   boxes1Name: string;
-  @Field({ caption: use.language.boxes2NameCaption })
+  @Field({ translation: l => l.boxes2NameCaption })
   boxes2Name: string;
-  @Field({ caption: use.language.customColumn + " 1 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
   familyCustom1Caption: string;
-  @Field({ caption: use.language.customColumn + " 1 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
   familyCustom1Values: string;
-  @Field({ caption: use.language.customColumn + " 2 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
   familyCustom2Caption: string;
-  @Field({ caption: use.language.customColumn + " 2 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
   familyCustom2Values: string;
-  @Field({ caption: use.language.customColumn + " 3 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
   familyCustom3Caption: string;
-  @Field({ caption: use.language.customColumn + " 3 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
   familyCustom3Values: string;
-  @Field({ caption: use.language.customColumn + " 4 " + use.language.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
   familyCustom4Caption: string;
-  @Field({ caption: use.language.customColumn + " 4 " + use.language.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
   familyCustom4Values: string;
   @Field<ApplicationSettings>({ serverExpression: (self) => self.context.isSignedIn() })
   currentUserIsValidForAppLoadTest: boolean;
-  @Field({ caption: use.language.questionForVolunteer + " 1 " + use.language.caption })
+  @Field({ translation: l => l.caption })
   questionForVolunteer1Caption: string;
-  @Field({ caption: use.language.questionForVolunteer + " 1 " + use.language.optionalValues })
+  @Field({ translation: l => l.optionalValues })
   questionForVolunteer1Values: string;
-  @Field({ caption: use.language.questionForVolunteer + " 2 " + use.language.caption })
+  @Field({ translation: l => l.caption })
   questionForVolunteer2Caption: string;
-  @Field({ caption: use.language.questionForVolunteer + " 2 " + use.language.optionalValues })
+  @Field({ translation: l => l.optionalValues })
   questionForVolunteer2Values: string;
-  @Field({ caption: use.language.questionForVolunteer + " 3 " + use.language.caption })
+  @Field({ translation: l => l.caption })
   questionForVolunteer3Caption: string;
-  @Field({ caption: use.language.questionForVolunteer + " 3 " + use.language.optionalValues })
+  @Field({ translation: l => l.optionalValues })
   questionForVolunteer3Values: string;
-  @Field({ caption: use.language.questionForVolunteer + " 4 " + use.language.caption })
+  @Field({ translation: l => l.caption })
   questionForVolunteer4Caption: string;
-  @Field({ caption: use.language.questionForVolunteer + " 4 " + use.language.optionalValues })
+  @Field({ translation: l => l.optionalValues })
   questionForVolunteer4Values: string;
   @Field({ includeInApi: Roles.admin })
   createBasketsForAllFamiliesInCreateEvent: boolean;

@@ -5,7 +5,7 @@ import { FamilySources } from "./FamilySources";
 import { BasketType, QuantityColumn } from "./BasketType";
 import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
-import { Context, ServerFunction, StoreAsStringValueConverter, IdEntity, SqlDatabase, Filter, Entity, Validators, DateOnlyValueConverter, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
+import { Context, ServerFunction, StoreAsStringValueConverter, IdEntity, SqlDatabase, Filter, Validators, DateOnlyValueConverter, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
@@ -16,7 +16,7 @@ import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/A
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { DateOnlyField, Field, FieldType, use } from "../translate";
+import { DateOnlyField, Field, FieldType, use, Entity } from "../translate";
 import { FamilyStatus } from "./FamilyStatus";
 
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
@@ -49,7 +49,7 @@ declare type factoryFor<T> = {
 
 @FieldType<GroupsValue>({
   valueConverter: new StoreAsStringValueConverter(x => x.value, x => new GroupsValue(x)),
-  caption: use.language.familyGroup,
+  translation: l => l.familyGroup,
 })
 @DataControl<any, GroupsValue>({
   forceEqualFilter: false,
@@ -105,7 +105,7 @@ export class GroupsValue {
 @Entity<Families>(
   {
     key: "Families",
-    caption: use.language.deliveries,
+    translation: l => l.deliveries,
     allowApiRead: Roles.admin,
     allowApiUpdate: Roles.admin,
     allowApiDelete: false,
@@ -481,7 +481,7 @@ export class Families extends IdEntity {
   _suppressLastUpdateDuringSchemaInit = false;
 
   @Field({
-    caption: use.language.familyName,
+    translation: l => l.familyName,
     //valueChange: () => this.delayCheckDuplicateFamilies(),
     validate: Validators.required.withMessage(use.language.nameIsTooShort)
   })
@@ -489,21 +489,21 @@ export class Families extends IdEntity {
 
 
   @Field({
-    caption: use.language.socialSecurityNumber,
+    translation: l => l.socialSecurityNumber,
     //    valueChange: () => this.delayCheckDuplicateFamilies()
   })
   tz: string;
   @Field({
-    caption: use.language.spouceSocialSecurityNumber,
+    translation: l => l.spouceSocialSecurityNumber,
     //valueChange: () => this.delayCheckDuplicateFamilies()
   })
   tz2: string;
-  @Field({ caption: use.language.familyMembers })
+  @Field({ translation: l => l.familyMembers })
   familyMembers: number;
-  @DateOnlyField({ caption: use.language.birthDate })
+  @DateOnlyField({ translation: l => l.birthDate })
   birthDate: Date;
   @DateOnlyField<Families>({
-    caption: use.language.nextBirthDay,
+    translation: l => l.nextBirthDay,
     sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
     displayValue: self => {
@@ -514,33 +514,33 @@ export class Families extends IdEntity {
   })
 
   nextBirthday: Date
-  @Field({ caption: use.language.defaultBasketType })
+  @Field({ translation: l => l.defaultBasketType })
   basketType: BasketType;
-  @Field({ caption: use.language.defaultQuantity, allowApiUpdate: Roles.admin })
+  @Field({ translation: l => l.defaultQuantity, allowApiUpdate: Roles.admin })
   quantity: number;
-  @Field({ includeInApi: true, caption: use.language.familySource })
+  @Field({ includeInApi: true, translation: l => l.familySource })
   familySource: FamilySources;
-  @Field({ caption: use.language.familyHelpContact })
+  @Field({ translation: l => l.familyHelpContact })
   socialWorker: string;
-  @Field({ caption: use.language.familyHelpPhone1 })
+  @Field({ translation: l => l.familyHelpPhone1 })
   socialWorkerPhone1: Phone;
-  @Field({ caption: use.language.familyHelpPhone2 })
+  @Field({ translation: l => l.familyHelpPhone2 })
   socialWorkerPhone2: Phone;
   @Field()
   groups: GroupsValue;
-  @Field({ caption: use.language.specialAsignment })
+  @Field({ translation: l => l.specialAsignment })
   special: YesNo;
-  @Field({ caption: use.language.defaultSelfPickup })
+  @Field({ translation: l => l.defaultSelfPickup })
   defaultSelfPickup: boolean;
-  @Field({ caption: use.language.familyUniqueId })
+  @Field({ translation: l => l.familyUniqueId })
   iDinExcel: string;
-  @Field({ caption: use.language.internalComment })
+  @Field({ translation: l => l.internalComment })
   internalComment: string;
   @Field()
   addressApiResult: string;
 
   @Field({
-    caption: use.language.address,
+    translation: l => l.address,
     // valueChange: () => {
     //   if (!this.address.value)
     //     return;
@@ -553,61 +553,61 @@ export class Families extends IdEntity {
   addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
 
 
-  @Field({ caption: use.language.floor })
+  @Field({ translation: l => l.floor })
   floor: string;
-  @Field({ caption: use.language.appartment })
+  @Field({ translation: l => l.appartment })
   appartment: string;
-  @Field({ caption: use.language.entrance })
+  @Field({ translation: l => l.entrance })
   entrance: string;
-  @Field({ caption: use.language.buildingCode })
+  @Field({ translation: l => l.buildingCode })
   buildingCode: string;
-  @Field({ caption: use.language.cityAutomaticallyUpdatedByGoogle })
+  @Field({ translation: l => l.cityAutomaticallyUpdatedByGoogle })
   city: string;
   @AreaColumn()
   area: string;
-  @Field({ caption: use.language.addressComment })
+  @Field({ translation: l => l.addressComment })
   addressComment: string;
-  @Field({ caption: use.language.postalCode })
+  @Field({ translation: l => l.postalCode })
   postalCode: number;
-  @Field({ caption: use.language.defaultDeliveryComment })
+  @Field({ translation: l => l.defaultDeliveryComment })
   deliveryComments: string;
   @Field({
-    caption: use.language.phone1, dbName: 'phone',
+    translation: l => l.phone1, dbName: 'phone',
     //valueChange: () => this.delayCheckDuplicateFamilies()
   })
   phone1: Phone;
-  @Field({ caption: use.language.phone1Description })
+  @Field({ translation: l => l.phone1Description })
   phone1Description: string;
   @Field({
-    caption: use.language.phone2,
+    translation: l => l.phone2,
     //valueChange: () => this.delayCheckDuplicateFamilies()
   })
   phone2: Phone;
-  @Field({ caption: use.language.phone2Description })
+  @Field({ translation: l => l.phone2Description })
   phone2Description: string;
   @Field({
-    caption: use.language.phone3,
+    translation: l => l.phone3,
     //valueChange: () => this.delayCheckDuplicateFamilies()
   })
   phone3: Phone;
-  @Field({ caption: use.language.phone3Description })
+  @Field({ translation: l => l.phone3Description })
   phone3Description: string;
   @Field({
-    caption: use.language.phone4,
+    translation: l => l.phone4,
     //valueChange: () => this.delayCheckDuplicateFamilies()
   })
   phone4: Phone;
-  @Field({ caption: use.language.phone4Description })
+  @Field({ translation: l => l.phone4Description })
   phone4Description: string;
   @Field()
   email: Email;
   @Field()
   status: FamilyStatus;
-  @ChangeDateColumn({ caption: use.language.statusChangeDate })
+  @ChangeDateColumn({ translation: l => l.statusChangeDate })
   statusDate: Date;
-  @Field({ caption: use.language.statusChangeUser, allowApiUpdate: false })
+  @Field({ translation: l => l.statusChangeUser, allowApiUpdate: false })
   statusUser: Helpers;
-  @Field({ caption: use.language.defaultVolunteer })
+  @Field({ translation: l => l.defaultVolunteer })
   @DataControl<Families, HelpersBase>({
     click: async (e, col) => {
       openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
@@ -701,14 +701,14 @@ export class Families extends IdEntity {
 
 
   @Field({
-    caption: use.language.previousDeliveryStatus,
+    translation: l => l.previousDeliveryStatus,
     sqlExpression: (self, context) => {
       return dbNameFromLastDelivery(self, context, fde => fde.deliverStatus, "prevStatus");
     }
   })
   previousDeliveryStatus: DeliveryStatus;
   @ChangeDateColumn({
-    caption: use.language.previousDeliveryDate,
+    translation: l => l.previousDeliveryDate,
 
     sqlExpression: (self, context) => {
       return dbNameFromLastDelivery(self, context, fde => fde.deliveryStatusDate, "prevDate");
@@ -716,14 +716,14 @@ export class Families extends IdEntity {
   })
   previousDeliveryDate: Date;
   @Field<Families>({
-    caption: use.language.previousDeliveryNotes,
+    translation: l => l.previousDeliveryNotes,
     sqlExpression: (self, context) => {
       return dbNameFromLastDelivery(self, context, fde => fde.courierComments, "prevComment");
     }
   })
   previousDeliveryComment: string;
   @Field({
-    caption: use.language.numOfActiveReadyDeliveries,
+    translation: l => l.numOfActiveReadyDeliveries,
     sqlExpression: (selfDefs, context) => {
       let self = SqlFor(selfDefs);
       let fd = SqlFor(context.for(FamilyDeliveries));
@@ -747,11 +747,11 @@ export class Families extends IdEntity {
   drivingLongitude: number;
   @DecimalField()
   drivingLatitude: number;
-  @Field({ caption: use.language.addressByGoogle, allowApiUpdate: false })
+  @Field({ translation: l => l.addressByGoogle, allowApiUpdate: false })
   addressByGoogle: string;
   @Field({ serverExpression: () => '' })
   autoCompleteResult: string;
-  @Field({ caption: use.language.addressOk })
+  @Field({ translation: l => l.addressOk })
   addressOk: boolean;
 
 
@@ -760,7 +760,7 @@ export class Families extends IdEntity {
 
   static getPreviousDeliveryColumn(self: FieldDefinitionsOf<Families>) {
     return {
-      caption: use.language.previousDeliverySummary,
+      translation: l => l.previousDeliverySummary,
       readonly: true,
       field: self.previousDeliveryStatus,
       dropDown: {
@@ -785,13 +785,13 @@ export class Families extends IdEntity {
 
 
 
-  @ChangeDateColumn({ caption: use.language.createDate })
+  @ChangeDateColumn({ translation: l => l.createDate })
   createDate: Date;
-  @Field({ allowApiUpdate: false, caption: use.language.createUser })
+  @Field({ allowApiUpdate: false, translation: l => l.createUser })
   createUser: HelpersBase;
-  @ChangeDateColumn({ caption: use.language.lastUpdateDate })
+  @ChangeDateColumn({ translation: l => l.lastUpdateDate })
   lastUpdateDate: Date;
-  @Field({ allowApiUpdate: false, caption: use.language.lastUpdateUser })
+  @Field({ allowApiUpdate: false, translation: l => l.lastUpdateUser })
   lastUpdateUser: HelpersBase;
 
 
@@ -1086,7 +1086,7 @@ export function AreaColumn() {
       }
     })(target, key);
     return Field({
-      caption: use.language.region
+      translation: l => l.region
     })(target, key);
   }
 }

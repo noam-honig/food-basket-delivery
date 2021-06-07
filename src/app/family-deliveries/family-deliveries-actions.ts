@@ -47,7 +47,7 @@ function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliver
     key: 'deleteDeliveries'
 })
 export class DeleteDeliveries extends ActionOnFamilyDeliveries {
-    @Field({ caption: use.language.updateFamilyStatus })
+    @Field({ translation: l => l.updateFamilyStatus })
     updateFamilyStatus: boolean;
     @Field()
     status: FamilyStatus;
@@ -77,15 +77,15 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     key: 'UpdateFamilyDefaults'
 })
 export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
-    @Field({ caption: use.language.defaultVolunteer })
+    @Field({ translation: l => l.defaultVolunteer })
     byCurrentCourier: boolean;
-    @Field({ caption: use.language.defaultBasketType })
+    @Field({ translation: l => l.defaultBasketType })
     basketType: boolean;
-    @Field({ caption: use.language.defaultQuantity })
+    @Field({ translation: l => l.defaultQuantity })
     quantity: boolean;
-    @Field({ caption: use.language.commentForVolunteer })
+    @Field({ translation: l => l.commentForVolunteer })
     comment: boolean;
-    @Field({ caption: use.language.selfPickup })
+    @Field({ translation: l => l.selfPickup })
     selfPickup: boolean;
 
     get $() { return getControllerDefs(this).columns };
@@ -133,11 +133,11 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     key: 'updateCourier'
 })
 export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
-    @Field({ caption: use.language.clearVolunteer })
+    @Field({ translation: l => l.clearVolunteer })
     clearVoulenteer: boolean;
     @Field()
     courier: HelpersBase;
-    @Field({ caption: use.language.setAsDefaultVolunteer })
+    @Field({ translation: l => l.setAsDefaultVolunteer })
     updateAlsoAsFixed: boolean;
     get $() { return getControllerDefs(this).columns };
     usedCouriers: string[] = [];
@@ -183,9 +183,9 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
     @Field()
     status: DeliveryStatus;
-    @Field({ caption: use.language.internalComment })
+    @Field({ translation: l => l.internalComment })
     comment: string;
-    @Field({ caption: use.language.deleteExistingComment })
+    @Field({ translation: l => l.deleteExistingComment })
     deleteExistingComment: boolean;
 
 
@@ -346,7 +346,7 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
 
 @FieldType({
     defaultValue: () => HelperStrategy.familyDefault,
-    caption: use.language.volunteer
+    translation: l => l.volunteer
 })
 @ValueListFieldType(HelperStrategy)
 class HelperStrategy {
@@ -370,7 +370,7 @@ class HelperStrategy {
     key: 'newDeliveryForDeliveries'
 })
 export class NewDelivery extends ActionOnFamilyDeliveries {
-    @Field({ caption: use.language.useBusketTypeFromCurrentDelivery })
+    @Field({ translation: l => l.useBusketTypeFromCurrentDelivery })
     useExistingBasket: boolean = true;
     @Field()
     basketType: BasketType;
@@ -380,9 +380,9 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     helperStrategy: HelperStrategy;
     @Field()
     helper: HelpersBase;
-    @Field({ caption: use.language.archiveCurrentDelivery })
+    @Field({ translation: l => l.archiveCurrentDelivery })
     autoArchive: boolean = true;
-    @Field({ caption: use.language.newDeliveryForAll })
+    @Field({ translation: l => l.newDeliveryForAll })
     newDeliveryForAll: boolean;
     @Field()
     selfPickup: SelfPickupStrategy;
@@ -392,7 +392,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     @Field()
     distributionCenter: DistributionCenters;
 
-    @Field({ caption: use.language.distributionListAsCurrentDelivery })
+    @Field({ translation: l => l.distributionListAsCurrentDelivery })
     useCurrentDistributionCenter: boolean;
     get $() {
         return getControllerDefs(this).columns;

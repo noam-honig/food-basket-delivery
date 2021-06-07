@@ -73,12 +73,12 @@ export class HelpersAndStats extends HelpersBase {
 
     @Field({
         dbReadOnly: true,
-        caption: use.language.delveriesInProgress
+        translation: l => l.delveriesInProgress
     })
     deliveriesInProgress: number;
     @Field({
         dbReadOnly: true,
-        caption: use.language.families
+        translation: l => l.families
     })
     allDeliveires: number;
 

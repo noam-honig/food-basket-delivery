@@ -14,7 +14,7 @@ import { DataControl, getValueList } from '@remult/angular';
 @FieldType<BasketType>({
   valueConverter: new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
   displayValue: (e, v) => v ? v.name : '',
-  caption: use.language.basketType
+  translation: l => l.basketType
 })
 @DataControl({
   valueList: context => getValueList(context.for(BasketType)),
@@ -35,7 +35,7 @@ export class BasketType extends IdEntity {
     return id === undefined ? null : await context.for(BasketType).getCachedByIdAsync(id);
   }
 
-  @Field({ caption: use.language.basketTypeName })
+  @Field({ translation: l => l.basketTypeName })
   name: string;
   @Field({ caption: BasketType.boxes1Name })
   boxes: number = 1;
@@ -53,7 +53,7 @@ export class BasketType extends IdEntity {
 
 
 export function QuantityColumn<T>(settings?: FieldSettings) {
-  return Field<T, number>({ caption: use.language.quantity, ...settings });
+  return Field<T, number>({ translation: l => l.quantity, ...settings });
 }
 
 export const defaultBasketType = new keyFor<BasketType>();

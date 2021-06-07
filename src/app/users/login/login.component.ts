@@ -27,33 +27,33 @@ import { use,Field } from '../../translate';
 export class LoginComponent implements OnInit, AfterViewInit {
   static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
   @DataControl({ allowClick: () => false })
-  @Field({ caption: use.language.phone, dataType: Phone })
+  @Field({ translation: l => l.phone, dataType: Phone })
   phone: Phone;
   @Field({
-    caption: use.language.password,
+    translation: l => l.password,
     inputType: InputTypes.password
   })
   password: string;
   @Field({
-    caption: use.language.password,
+    translation: l => l.password,
     inputType: InputTypes.password
   })
   newPassword: string;
   @Field({
-    caption: use.language.confirmPassword,
+    translation: l => l.confirmPassword,
     inputType: InputTypes.password
   })
   confirmPassword: string;
   @Field({
-    caption: use.language.IConfirmEula,
+    translation: l => l.IConfirmEula,
     inputType: InputTypes.password
   })
   confirmEula: boolean;
-  @Field({ caption: use.language.volunteerName })
+  @Field({ translation: l => l.volunteerName })
   name: string;
-  @Field({ caption: use.language.preferredDistributionArea })
+  @Field({ translation: l => l.preferredDistributionArea })
   preferredDistributionArea: string;
-  @Field({ caption: use.language.rememberMeOnThisDevice })
+  @Field({ translation: l => l.rememberMeOnThisDevice })
   remember: boolean;
   passwordArea = new DataAreaSettings({
     fields: () => [{ field: this.$.password }, this.$.remember]

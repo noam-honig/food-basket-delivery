@@ -48,22 +48,22 @@ import { Field, use } from "../translate";
 })
 export class HelperGifts extends IdEntity {
 
-    @Field({ caption: use.language.myGiftsURL, allowApiUpdate: Roles.admin })
+    @Field({ translation: l => l.myGiftsURL, allowApiUpdate: Roles.admin })
     giftURL: string;
-    @ChangeDateColumn({ caption: use.language.createDate })
+    @ChangeDateColumn({ translation: l => l.createDate })
     dateCreated: Date;
-    @Field({ caption: use.language.createUser, allowApiUpdate: false })
+    @Field({ translation: l => l.createUser, allowApiUpdate: false })
     userCreated: Helpers;
-    @Field({ caption: use.language.volunteer, allowApiUpdate: Roles.admin })
+    @Field({ translation: l => l.volunteer, allowApiUpdate: Roles.admin })
     @DataControl<HelperGifts, Helpers>({
         click: (x, col) => {
             HelpersBase.showSelectDialog(col, { includeFrozen: true });
         }
     })
     assignedToHelper: HelpersBase;
-    @ChangeDateColumn({ caption: use.language.dateGranted })
+    @ChangeDateColumn({ translation: l => l.dateGranted })
     dateGranted: Date;
-    @Field({ caption: use.language.assignUser, allowApiUpdate: false })
+    @Field({ translation: l => l.assignUser, allowApiUpdate: false })
     assignedByUser: Helpers;
     @Field({ caption: 'מתנה מומשה' })
     wasConsumed: boolean;

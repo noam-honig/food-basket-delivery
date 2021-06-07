@@ -1,7 +1,7 @@
 import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
 
-import { Context, IdEntity, Filter, AndFilter, Entity, DecimalValueConverter, filterOf, EntityField, DateOnlyField, DecimalField } from '@remult/core';
+import { Context, IdEntity, Filter, AndFilter,  DecimalValueConverter, filterOf, EntityField, DateOnlyField, DecimalField } from '@remult/core';
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -15,7 +15,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { use, FieldType, Field, ValueListFieldType } from "../translate";
+import { use, FieldType, Field, ValueListFieldType,Entity } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings, openDialog } from "../../../../radweb/projects/angular";
@@ -26,7 +26,7 @@ import { FamilySources } from "./FamilySources";
 
 
 @ValueListFieldType(MessageStatus, {
-    caption: use.language.messageStatus
+    translation: l => l.messageStatus
 })
 export class MessageStatus {
     static noVolunteer = new MessageStatus(0, use.language.noAssignedVolunteer);
@@ -40,7 +40,7 @@ export class MessageStatus {
 @Entity<FamilyDeliveries>({
     key: 'FamilyDeliveries',
     dbName: 'FamilyDeliveries',
-    caption: use.language.deliveries,
+    translation: l => l.deliveries,
     allowApiRead: context => context.isSignedIn(),
     allowApiInsert: false,
     allowApiUpdate: context => context.isSignedIn(),
@@ -157,13 +157,13 @@ export class FamilyDeliveries extends IdEntity {
     }
 
     @Field({
-        caption: use.language.familyIdInHagaiApp,
+        translation: l => l.familyIdInHagaiApp,
         allowApiUpdate: false
     })
     family: string;
     @Field({
         allowApiUpdate: false,
-        caption: use.language.familyName,
+        translation: l => l.familyName,
         sqlExpression: (entity, context) => {
             let r = context.isAllowed(Roles.admin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
             return r;
@@ -172,12 +172,12 @@ export class FamilyDeliveries extends IdEntity {
     name: string;
 
     @Field({
-        caption: use.language.basketType,
+        translation: l => l.basketType,
         allowApiUpdate: Roles.admin
     })
     basketType: BasketType;
     @Field({
-        caption: use.language.quantity,
+        translation: l => l.quantity,
         allowApiUpdate: Roles.admin
     })
     @DataControl({ width: '100' })
@@ -197,7 +197,7 @@ export class FamilyDeliveries extends IdEntity {
     @Field()
     deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
     @Field({
-        caption: use.language.volunteer,
+        translation: l => l.volunteer,
         allowApiUpdate: Roles.distCenterAdmin
     })
     @DataControl<FamilyDeliveries, HelperId>({
@@ -208,56 +208,56 @@ export class FamilyDeliveries extends IdEntity {
         })
     })
     courier: HelpersBase;
-    @Field({ caption: use.language.commentsWritteByVolunteer })
+    @Field({ translation: l => l.commentsWritteByVolunteer })
     courierComments: string;
     @ChangeDateColumn()
     courierCommentsDate: Date;
-    @Field({ caption: use.language.internalDeliveryComment, includeInApi: Roles.admin })
+    @Field({ translation: l => l.internalDeliveryComment, includeInApi: Roles.admin })
     internalDeliveryComment: string;
     @Field({
         allowApiUpdate: Roles.distCenterAdmin
     })
     routeOrder: number;
-    @Field({ includeInApi: Roles.admin, caption: use.language.specialAsignment })
+    @Field({ includeInApi: Roles.admin, translation: l => l.specialAsignment })
     special: YesNo;
-    @ChangeDateColumn({ caption: use.language.deliveryStatusDate })
+    @ChangeDateColumn({ translation: l => l.deliveryStatusDate })
     deliveryStatusDate: Date;
     relativeDeliveryStatusDate() {
         return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
-    @Field({ caption: use.language.courierAsignUser, allowApiUpdate: false })
+    @Field({ translation: l => l.courierAsignUser, allowApiUpdate: false })
     courierAssignUser: Helpers;
-    @ChangeDateColumn({ caption: use.language.courierAsignDate })
+    @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
-    @ChangeDateColumn({ caption: use.language.statusChangeUser })
+    @ChangeDateColumn({ translation: l => l.statusChangeUser })
     deliveryStatusUser: HelpersBase;
-    @ChangeDateColumn({ includeInApi: Roles.admin, caption: use.language.deliveryCreateDate })
+    @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.deliveryCreateDate })
     createDate: Date;
-    @Field({ includeInApi: Roles.admin, caption: use.language.deliveryCreateUser, allowApiUpdate: false })
+    @Field({ includeInApi: Roles.admin, translation: l => l.deliveryCreateUser, allowApiUpdate: false })
     createUser: HelpersBase;
     @Field({
-        caption: use.language.requireFollowUp
+        translation: l => l.requireFollowUp
     })
     needsWork: boolean;
 
-    @Field({ caption: use.language.requireFollowUpUpdateUser })
+    @Field({ translation: l => l.requireFollowUpUpdateUser })
     needsWorkUser: HelpersBase;
-    @ChangeDateColumn({ caption: use.language.requireFollowUpUpdateDate })
+    @ChangeDateColumn({ translation: l => l.requireFollowUpUpdateDate })
     needsWorkDate: Date;
     @Field({
-        caption: use.language.commentForVolunteer,
+        translation: l => l.commentForVolunteer,
         allowApiUpdate: Roles.admin
     })
     deliveryComments: string;
     @Field({
-        caption: use.language.commentForReception,
+        translation: l => l.commentForReception,
         allowApiUpdate: Roles.lab
     })
     receptionComments: string;
     @Field({
         includeInApi: Roles.admin,
         allowApiUpdate: false,
-        caption: use.language.familySource
+        translation: l => l.familySource
     })
     familySource: FamilySources;
     @Field({
@@ -268,39 +268,39 @@ export class FamilyDeliveries extends IdEntity {
 
 
     @Field({
-        caption: use.language.address,
+        translation: l => l.address,
         allowApiUpdate: false
     })
     address: string;
     @Field({
-        caption: use.language.floor,
+        translation: l => l.floor,
         allowApiUpdate: false
     })
     floor: string;
     @Field({
-        caption: use.language.appartment,
+        translation: l => l.appartment,
         allowApiUpdate: false
     })
     appartment: string;
     @Field({
-        caption: use.language.entrance,
+        translation: l => l.entrance,
         allowApiUpdate: false
     })
     entrance: string;
     @Field({
-        caption: use.language.buildingCode,
+        translation: l => l.buildingCode,
         allowApiUpdate: false
     })
     buildingCode: string;
     @Field({
-        caption: use.language.cityAutomaticallyUpdatedByGoogle
+        translation: l => l.cityAutomaticallyUpdatedByGoogle
         , allowApiUpdate: false
     })
     city: string;
-    @Field({ caption: use.language.region, allowApiUpdate: false })
+    @Field({ translation: l => l.region, allowApiUpdate: false })
     area: string;
     @Field({
-        caption: use.language.addressComment,
+        translation: l => l.addressComment,
         allowApiUpdate: false
     })
     addressComment: string;
@@ -322,61 +322,61 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false
     })
     drivingLatitude: number;
-    @Field({ caption: use.language.addressByGoogle, allowApiUpdate: false })
+    @Field({ translation: l => l.addressByGoogle, allowApiUpdate: false })
     addressByGoogle: string;
     @Field({
-        caption: use.language.addressOk,
+        translation: l => l.addressOk,
         allowApiUpdate: false
     })
     addressOk: boolean;
-    @Field({ caption: use.language.defaultVolunteer, allowApiUpdate: false })
+    @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false })
     fixedCourier: HelperId;
-    @Field({ caption: use.language.familyMembers, allowApiUpdate: false })
+    @Field({ translation: l => l.familyMembers, allowApiUpdate: false })
     familyMembers: number;
     @Field({
-        caption: use.language.phone1, dbName: 'phone',
+        translation: l => l.phone1, dbName: 'phone',
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone1: Phone;
     @Field({
-        caption: use.language.phone1Description,
+        translation: l => l.phone1Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone1Description: string;
     @Field({
-        caption: use.language.phone2,
+        translation: l => l.phone2,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone2: Phone;
     @Field({
-        caption: use.language.phone2Description,
+        translation: l => l.phone2Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone2Description: string;
     @Field({
-        caption: use.language.phone3,
+        translation: l => l.phone3,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone3: Phone;
     @Field({
-        caption: use.language.phone3Description,
+        translation: l => l.phone3Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone3Description: string;
     @Field({
-        caption: use.language.phone4,
+        translation: l => l.phone4,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone4: Phone;
     @Field({
-        caption: use.language.phone4Description,
+        translation: l => l.phone4Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
@@ -400,9 +400,9 @@ export class FamilyDeliveries extends IdEntity {
     courierBeenHereBefore: boolean;
     @Field({ allowApiUpdate: c => c.isAllowed([Roles.admin, Roles.lab]) || c.isSignedIn() && getSettings(c).isSytemForMlt() })
     archive: boolean;
-    @ChangeDateColumn({ includeInApi: Roles.admin, caption: use.language.archiveDate })
+    @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
-    @Field({ includeInApi: Roles.admin, caption: use.language.archiveUser })
+    @Field({ includeInApi: Roles.admin, translation: l => l.archiveUser })
     archiveUser: HelpersBase;
     @Field({
         sqlExpression: (selfDefs, context) => {

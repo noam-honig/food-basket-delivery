@@ -148,7 +148,7 @@ export class InRouteHelpers extends IdEntity {
         this._.reload();
 
     }
-    @Field({ caption: use.language.volunteerName })
+    @Field({ translation: l => l.volunteerName })
     name: string;
     relativeDate(val: Date) {
         return relativeDateName(this.context, { d: val });
@@ -172,7 +172,7 @@ export class InRouteHelpers extends IdEntity {
         caption: 'כניסה אחרונה למערכת'
     })
     lastSignInDate: Date;
-    @Field({ caption: use.language.delveriesInProgress })
+    @Field({ translation: l => l.delveriesInProgress })
     @DataControl({ width: '100' })
     deliveriesInProgress: number;
     @Field<InRouteHelpers, Date>({
@@ -218,11 +218,11 @@ export class InRouteHelpers extends IdEntity {
     }
 })
 export class HelperCommunicationHistory extends IdEntity {
-    @ChangeDateColumn({ caption: use.language.createDate })
+    @ChangeDateColumn({ translation: l => l.createDate })
     createDate: Date;
-    @Field({ caption: use.language.createUser })
+    @Field({ translation: l => l.createUser })
     createUser: HelpersBase;
-    @Field({ caption: use.language.volunteer })
+    @Field({ translation: l => l.volunteer })
     volunteer: HelpersBase;
     @Field({
         caption: "הערה",

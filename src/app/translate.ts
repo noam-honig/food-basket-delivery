@@ -1,5 +1,5 @@
 
-import { Context, FieldSettings, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, ClassType } from '@remult/core';
+import { Context, Entity as origEntity, FieldSettings, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, ClassType, EntitySettings } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -35,6 +35,12 @@ export function FieldType<valueType = any>(settings?: FieldSettings<valueType, a
 }
 export function ValueListFieldType<T = any, colType extends ValueListItem = any>(type: ClassType<colType>, settings?: FieldSettings<colType, T> & TranslatedCaption) {
   return origValueListFieldType<colType>(type, adjustSettings(settings));
+}
+export function Entity<T>(settings: EntitySettings<T> & TranslatedCaption) {
+  if (settings.translation) {
+    settings.caption = (context) => settings.translation(getLang(context));
+  }
+  return origEntity<T>(settings);
 }
 
 

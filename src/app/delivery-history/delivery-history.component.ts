@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, Field, EntityBase } from '@remult/core';
+import { Context, SqlDatabase, EntityBase } from '@remult/core';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
 import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
@@ -22,7 +22,7 @@ import { getLang } from '../sites/sites';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
-import { use } from '../translate';
+import { use, Field } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
 
@@ -383,21 +383,21 @@ export class helperHistoryInfo extends EntityBase {
 
   @Field()
   courier: string;
-  @Field({ caption: use.language.volunteerName })
+  @Field({ translation: l => l.volunteerName })
   name: string;
-  @Field({ caption: use.language.phone })
+  @Field({ translation: l => l.phone })
   phone: Phone;
   @CompanyColumn()
   company: string;
-  @Field({ caption: use.language.deliveries })
+  @Field({ translation: l => l.deliveries })
   deliveries: number;
-  @Field({ caption: use.language.delveriesSuccesfull })
+  @Field({ translation: l => l.delveriesSuccesfull })
   succesful: number;
-  @Field({ caption: use.language.selfAssigned })
+  @Field({ translation: l => l.selfAssigned })
   selfassigned: number;
-  @Field({ caption: use.language.families })
+  @Field({ translation: l => l.families })
   families: number;
-  @Field({ caption: use.language.dates })
+  @Field({ translation: l => l.dates })
   dates: number;
   @Field({ caption: 'מתנות שמומשו' })
   giftsConsumed: number;

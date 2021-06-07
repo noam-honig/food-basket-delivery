@@ -23,7 +23,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 
 
 @ValueListFieldType(eventStatus, {
-    caption: use.language.eventStatus,
+    translation: l => l.eventStatus,
     defaultValue: () => eventStatus.active
 })
 
@@ -157,25 +157,25 @@ export class Event extends IdEntity {
             })
         });
     }
-    @Field({ caption: use.language.eventName })
+    @Field({ translation: l => l.eventName })
     name: string;
     @Field()
     eventStatus: eventStatus;
-    @Field({ caption: use.language.eventDescription })
+    @Field({ translation: l => l.eventDescription })
     description: string;
-    @DateOnlyField({ caption: use.language.eventDate })
+    @DateOnlyField({ translation: l => l.eventDate })
     eventDate: Date;
-    @Field({ inputType: InputTypes.time, caption: use.language.eventTime })
+    @Field({ inputType: InputTypes.time, translation: l => l.eventTime })
     @DataControl({ width: '110' })
     startTime: string;
-    @Field({ inputType: InputTypes.time, caption: use.language.eventEndTime })
+    @Field({ inputType: InputTypes.time, translation: l => l.eventEndTime })
     @DataControl({ width: '110' })
     endTime: string;
-    @Field({ caption: use.language.requiredVolunteers })
+    @Field({ translation: l => l.requiredVolunteers })
     requiredVolunteers: number;
     @Field()
     addressApiResult: string;
-    @Field({ caption: use.language.address })
+    @Field({ translation: l => l.address })
     address: string;
     addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
     @Field<Event>({
@@ -183,12 +183,12 @@ export class Event extends IdEntity {
     })
     distributionCenter: DistributionCenters;
 
-    @Field({ caption: use.language.phone1 })
+    @Field({ translation: l => l.phone1 })
     phone1: Phone;
-    @Field({ caption: use.language.phone1Description })
+    @Field({ translation: l => l.phone1Description })
     phone1Description: string;
     @Field({
-        caption: use.language.attendingVolunteers,
+        translation: l => l.attendingVolunteers,
         sqlExpression: (selfDefs, context) => {
             var vie = SqlFor(context.for(volunteersInEvent));
             let self = SqlFor(selfDefs);
@@ -230,7 +230,7 @@ export class volunteersInEvent extends IdEntity {
     helper: HelpersBase;
 
     @Field<volunteersInEvent>({
-        caption: use.language.volunteerName, sqlExpression: (selfDefs, context) => {
+        translation: l => l.volunteerName, sqlExpression: (selfDefs, context) => {
             let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(context.for(Helpers));
@@ -243,7 +243,7 @@ export class volunteersInEvent extends IdEntity {
     })
     helperName: string;
     @Field({
-        caption: use.language.volunteerPhoneNumber, sqlExpression: (selfDefs, context) => {
+        translation: l => l.volunteerPhoneNumber, sqlExpression: (selfDefs, context) => {
             let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(context.for(Helpers));
@@ -256,7 +256,7 @@ export class volunteersInEvent extends IdEntity {
     })
     helperPhone: Phone;
     @Field({
-        caption: use.language.deliveriesAssigned,
+        translation: l => l.deliveriesAssigned,
         sqlExpression: (selfDefs, context) => {
             let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
@@ -266,7 +266,7 @@ export class volunteersInEvent extends IdEntity {
     })
     assignedDeliveries: number;
     @Field({
-        caption: use.language.delveriesSuccesfull,
+        translation: l => l.delveriesSuccesfull,
         sqlExpression: (selfDefs, context) => {
             let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
@@ -276,7 +276,7 @@ export class volunteersInEvent extends IdEntity {
     })
     succesfulDeliveries: number;
     @Field({
-        caption: use.language.email, sqlExpression: (selfDefs, context) => {
+        translation: l => l.email, sqlExpression: (selfDefs, context) => {
             let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(context.for(Helpers));
@@ -311,11 +311,11 @@ export class volunteersInEvent extends IdEntity {
         }
     })
     lastAssignTime: Date;
-    @Field({ caption: use.language.duplicateForNextEvent })
+    @Field({ translation: l => l.duplicateForNextEvent })
     duplicateToNextEvent: boolean;
-    @ChangeDateColumn({ caption: use.language.createDate })
+    @ChangeDateColumn({ translation: l => l.createDate })
     createDate: Date;
-    @Field({ caption: use.language.createUser, allowApiUpdate: false })
+    @Field({ translation: l => l.createUser, allowApiUpdate: false })
     createUser: Helpers;
 
 

@@ -1,6 +1,6 @@
 
 import { Entity, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, InputTypes, EntityField, FieldSettings, FieldDefinitions, EntityDefinitions, rowHelper, Repository, FieldDefinitionsOf, filterOf, StoreAsStringValueConverter, filterOptions, comparableFilterItem, supportsContains, ClassType } from '@remult/core';
-import { TranslationOptions, use, Field, FieldType } from '../translate';
+import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
 import { EmailSvc, isDesktop } from '../shared/utils';
@@ -15,7 +15,7 @@ import { DataControl } from '@remult/angular';
 
 @FieldType({
   valueConverter: new StoreAsStringValueConverter<Email>(x => x.address, x => new Email(x)),
-  caption: use.language.email
+  translation: l => l.email
 })
 @DataControl<any, Email>({
   click: (x, col) => window.open('mailto:' + col.displayValue),
@@ -34,13 +34,13 @@ export class Email {
   }
 }
 
-export function DateTimeColumn<T = any>(settings?: FieldSettings<Date, T>) {
+export function DateTimeColumn<T = any>(settings?: FieldSettings<Date, T> & TranslatedCaption) {
   return Field<T, Date>({
     ...{ displayValue: (e, x) => x ? x.toLocaleString("he-il") : '' },
     ...settings
   })
 }
-export function ChangeDateColumn<T = any>(settings?: FieldSettings<Date, T>) {
+export function ChangeDateColumn<T = any>(settings?: FieldSettings<Date, T> & TranslatedCaption) {
   return DateTimeColumn<T>({
     ...{ allowApiUpdate: false },
     ...settings
