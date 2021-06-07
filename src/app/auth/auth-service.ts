@@ -422,11 +422,11 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
     return result;
 }
 async function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
-    let t = (await import('jsonwebtoken'));
+    let jwt = (await import('jsonwebtoken'));
     if (settings.timeToDisconnect) {
-        return t.sign(result, process.env.TOKEN_SIGN_KEY, { expiresIn: settings.timeToDisconnect * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
+        return jwt.sign(result, process.env.TOKEN_SIGN_KEY, { expiresIn: settings.timeToDisconnect * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
     }
     else
-        return t.sign(result, process.env.TOKEN_SIGN_KEY);
+        return jwt.sign(result, process.env.TOKEN_SIGN_KEY);
 
 }

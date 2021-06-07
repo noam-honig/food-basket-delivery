@@ -11,7 +11,7 @@ import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
-import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { DialogService, ShowDialogOnErrorErrorHandler } from './select-popup/dialog';
 import { YesNoQuestionComponent } from './select-popup/yes-no-question/yes-no-question.component';
@@ -53,7 +53,7 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
 
-import { ScrollDispatchModule } from '@angular/cdk/scrolling';
+
 
 import { SelectCompanyComponent } from './select-company/select-company.component';
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
@@ -207,7 +207,6 @@ export class MyHammerConfig extends HammerGestureConfig {
     RemultModule,
     AppRoutingModule,
     ChartsModule,
-    ScrollDispatchModule,
     PlatformModule,
     JwtModule.forRoot({
       config: { tokenGetter: getToken }
@@ -283,7 +282,7 @@ export function initApp(session: TokenService, settings: SettingsService, contex
       session.loadUserInfo();
       await context.userChange.observe(async () => {
         await AuthService.initContext(context);
-        
+
       });
 
       await settings.init();
