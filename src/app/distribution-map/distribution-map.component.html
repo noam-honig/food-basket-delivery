@@ -2,8 +2,8 @@
   <div>
    
     <div style="display: block;width:350px;" *ngIf="showChart">
-      <!-- <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
-        [colors]="colors" (chartClick)="chartClicked($event)"></canvas> -->
+      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="options"
+        [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
     </div>
     <h4 style="display:inline">{{selectedStatus? selectedStatus.name:settings.lang.deliveries}} </h4> <a [style.visibility]="selectedStatus?'visible':'hidden'"
     (click)="selectedStatus = undefined;refreshDeliveries()" style="display:inline">{{settings.lang.showAll}}</a>

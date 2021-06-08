@@ -8,7 +8,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
 
-// import * as chart from 'chart.js';
+import * as chart from 'chart.js';
 import { colors } from '../families/stats-action';
 import { BasketType } from '../families/BasketType';
 
@@ -243,7 +243,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
   currentTabStats: statsOnTab = { name: '', stats: [], moreStats: [], rule: undefined, fourthColumn: () => this.deliverySummary };
   previousTabStats: statsOnTab = this.currentTabStats;
-  options: any = {
+  options: chart.ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     legend: {

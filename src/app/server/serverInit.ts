@@ -5,7 +5,7 @@ import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClie
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, Context, Entity, SqlDatabase, ClassType } from '@remult/core';
-import '../app.module';
+import '../app-routing.module';
 
 
 

@@ -5,7 +5,7 @@ import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, SqlDatabase, FieldDefinitions } from '@remult/core';
-import '../app.module';
+//import '../app.module';
 
 
 

@@ -9,7 +9,7 @@ import { ServerEvents } from './server-events';
 
 import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
-import '../app.module';
+//import '../app.module';
 import { ServerContext, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { Sites, setLangForSite } from '../sites/sites';

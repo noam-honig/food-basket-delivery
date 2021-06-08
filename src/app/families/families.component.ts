@@ -15,7 +15,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 
 import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
-// import * as chart from 'chart.js';
+import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
@@ -144,7 +144,7 @@ export class FamiliesComponent implements OnInit {
     public pieChartType: string = 'pie';
     currentStatFilter: FaimilyStatistics = undefined;
 
-    options: any = {
+    options: chart.ChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         legend: {

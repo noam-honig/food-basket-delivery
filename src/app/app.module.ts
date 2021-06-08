@@ -7,7 +7,7 @@ import { AppRoutingModule, routes } from './app-routing.module';
 import { AppComponent, routeMap } from './app.component';
 import { RemultModule } from '@remult/angular';
 import { MaterialModule } from './shared/material.module';
-//import { ChartsModule } from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HelpersComponent } from './helpers/helpers.component';
@@ -206,7 +206,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     BrowserAnimationsModule,
     RemultModule,
     AppRoutingModule,
-    //ChartsModule,
+    ChartsModule,
     PlatformModule,
     JwtModule.forRoot({
       config: { tokenGetter: getToken }
