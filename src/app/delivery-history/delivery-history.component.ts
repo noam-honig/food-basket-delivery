@@ -225,7 +225,7 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           caption: this.settings.lang.deliverySummary,
           field: d.deliverStatus,
-          readOnly: true,
+          readonly: true,
           getValue: f => f.getShortDeliveryDescription(),
           width: '300'
         },

@@ -1,7 +1,7 @@
 import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
 
-import { Context, IdEntity, Filter, AndFilter,  DecimalValueConverter, filterOf, EntityField, DateOnlyField, DecimalField } from '@remult/core';
+import { Context, IdEntity, Filter, AndFilter,   filterOf, EntityField,  DecimalField } from '@remult/core';
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -18,10 +18,10 @@ import { DialogService } from "../select-popup/dialog";
 import { use, FieldType, Field, ValueListFieldType,Entity } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
-import { DataControl, IDataAreaSettings, openDialog } from "../../../../radweb/projects/angular";
+import { DataControl, IDataAreaSettings, openDialog } from "@remult/angular";
 
 import { Groups } from "../manage/groups";
-import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
+
 import { FamilySources } from "./FamilySources";
 
 
@@ -172,12 +172,11 @@ export class FamilyDeliveries extends IdEntity {
     name: string;
 
     @Field({
-        translation: l => l.basketType,
+        //translation: l => l.basketType,
         allowApiUpdate: Roles.admin
     })
     basketType: BasketType;
     @Field({
-        translation: l => l.quantity,
         allowApiUpdate: Roles.admin
     })
     @DataControl({ width: '100' })
@@ -200,7 +199,7 @@ export class FamilyDeliveries extends IdEntity {
         translation: l => l.volunteer,
         allowApiUpdate: Roles.distCenterAdmin
     })
-    @DataControl<FamilyDeliveries, HelperId>({
+    @DataControl<FamilyDeliveries, HelpersBase>({
         click: async (self) => openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
             onSelect: helper => self.courier = helper,
             location: self.getDrivingLocation(),
@@ -212,7 +211,7 @@ export class FamilyDeliveries extends IdEntity {
     courierComments: string;
     @ChangeDateColumn()
     courierCommentsDate: Date;
-    @Field({ translation: l => l.internalDeliveryComment, includeInApi: Roles.admin })
+    @Field({ includeInApi: Roles.admin })
     internalDeliveryComment: string;
     @Field({
         allowApiUpdate: Roles.distCenterAdmin
@@ -220,12 +219,12 @@ export class FamilyDeliveries extends IdEntity {
     routeOrder: number;
     @Field({ includeInApi: Roles.admin, translation: l => l.specialAsignment })
     special: YesNo;
-    @ChangeDateColumn({ translation: l => l.deliveryStatusDate })
+    @ChangeDateColumn()
     deliveryStatusDate: Date;
     relativeDeliveryStatusDate() {
         return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
-    @Field({ translation: l => l.courierAsignUser, allowApiUpdate: false })
+    @Field({  allowApiUpdate: false })
     courierAssignUser: Helpers;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
@@ -268,27 +267,22 @@ export class FamilyDeliveries extends IdEntity {
 
 
     @Field({
-        translation: l => l.address,
         allowApiUpdate: false
     })
     address: string;
     @Field({
-        translation: l => l.floor,
         allowApiUpdate: false
     })
     floor: string;
     @Field({
-        translation: l => l.appartment,
         allowApiUpdate: false
     })
     appartment: string;
     @Field({
-        translation: l => l.entrance,
         allowApiUpdate: false
     })
     entrance: string;
     @Field({
-        translation: l => l.buildingCode,
         allowApiUpdate: false
     })
     buildingCode: string;
@@ -300,7 +294,6 @@ export class FamilyDeliveries extends IdEntity {
     @Field({ translation: l => l.region, allowApiUpdate: false })
     area: string;
     @Field({
-        translation: l => l.addressComment,
         allowApiUpdate: false
     })
     addressComment: string;
@@ -322,61 +315,53 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false
     })
     drivingLatitude: number;
-    @Field({ translation: l => l.addressByGoogle, allowApiUpdate: false })
+    @Field({ allowApiUpdate: false })
     addressByGoogle: string;
     @Field({
-        translation: l => l.addressOk,
         allowApiUpdate: false
     })
     addressOk: boolean;
     @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false })
-    fixedCourier: HelperId;
-    @Field({ translation: l => l.familyMembers, allowApiUpdate: false })
+    fixedCourier: HelpersBase;
+    @Field({ allowApiUpdate: false })
     familyMembers: number;
     @Field({
-        translation: l => l.phone1, dbName: 'phone',
+        dbName: 'phone',
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone1: Phone;
     @Field({
-        translation: l => l.phone1Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone1Description: string;
     @Field({
-        translation: l => l.phone2,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone2: Phone;
     @Field({
-        translation: l => l.phone2Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone2Description: string;
     @Field({
-        translation: l => l.phone3,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone3: Phone;
     @Field({
-        translation: l => l.phone3Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone3Description: string;
     @Field({
-        translation: l => l.phone4,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })
     phone4: Phone;
     @Field({
-        translation: l => l.phone4Description,
         includeInApi: context => includePhoneInApi(context),
         allowApiUpdate: false
     })

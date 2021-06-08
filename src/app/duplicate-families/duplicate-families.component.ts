@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase,  FieldDefinitions } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase,  FieldDefinitions, EntityWhere } from '@remult/core';
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
@@ -100,7 +100,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere: f => this.context.for(Families).translateWhereToFilter(x.args.settings.getFilterWithSelectedRows().where),
+              userWhere: x.args.settings.getFilterWithSelectedRows().where as EntityWhere<Families>,
               settings: this.settings
             }))
           , {

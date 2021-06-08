@@ -1,6 +1,6 @@
 
 
-import { FieldSettings, Entity, IdEntity, keyFor, StoreAsStringValueConverter } from '@remult/core';
+import { FieldSettings, Entity, IdEntity, keyFor } from '@remult/core';
 
 
 import { Context, } from '@remult/core';
@@ -12,7 +12,10 @@ import { DataControl, getValueList } from '@remult/angular';
 
 
 @FieldType<BasketType>({
-  valueConverter: new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
+  valueConverter: {
+    toJson: x => x != undefined ? x : '',
+    fromJson: x => x || x == '' ? x : null
+  },
   displayValue: (e, v) => v ? v.name : '',
   translation: l => l.basketType
 })

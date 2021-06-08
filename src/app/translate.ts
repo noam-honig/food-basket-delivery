@@ -1,5 +1,5 @@
 
-import { Context, Entity as origEntity, FieldSettings, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, ClassType, EntitySettings } from '@remult/core';
+import { Context, Entity as origEntity, FieldSettings, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, ClassType, EntitySettings, CaptionHelper } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -16,6 +16,101 @@ export class myBounds {
 }
 export interface TranslatedCaption {
   translation?: (l: Language) => string;
+}
+const reported = new Set<string>([
+  "id",
+  "organisationName",
+  "addressApiResult",
+  "phoneStrategy",
+  "commonQuestions",
+  "dataStructureVersion",
+  "forWho",
+  "_old_for_soliders",
+  "removedFromListStrategy",
+  "usePhoneProxy",
+  "routeStrategy",
+  "currentUserIsValidForAppLoadTest",
+  "createBasketsForAllFamiliesInCreateEvent",
+  "includeGroupsInCreateEvent",
+  "excludeGroupsInCreateEvent",
+  "ApplicationSettings",
+  "ApplicationImages",
+  "totalKm",
+  "totalTime",
+  "shortUrlKey",
+  "archive",
+  "isFrozen",
+  "allowedIds",
+  "lastSignInDate",
+  "realStoredPassword",
+  "addressApiResult2",
+  "passwordChangeDate",
+  "EULASignDate",
+  "referredBy",
+  "Helpers",
+  "Sites",
+  "userId",
+  "url",
+  "submitTime",
+  "doneTime",
+  "result",
+  "progress",
+  "jobsInQueue",
+  "googleApiResult",
+  "GeocodeCache",
+  "BasketType",
+  "DistributionCenters",
+  "HelpersBase",
+  "FamilySources",
+  "nextBirthday",
+  "custom1",
+  "custom2",
+  "custom3",
+  "custom4",
+  "addressLongitude",
+  "addressLatitude",
+  "drivingLongitude",
+  "drivingLatitude", 
+  "autoCompleteResult",
+  "courierCommentsDate",
+  "routeOrder",
+  "courierBeenHereBefore",
+  "visibleToCourier",
+  "a1",
+  "a2",
+  "a3",
+  "a4",
+  "groups",
+  "name",
+  "familiesCount",
+  "GroupsStatsPerDistributionCenter",
+  "GroupsStatsForAllDeliveryCenters",
+  "helpersAndStats",
+  "citiesStatsPerDistCenter",
+  "wasClicked",
+  "HelperGifts",
+  "events",
+  "eventId",
+  "lastSmsTime",
+  "lastAssignTime",
+  "volunteersInEvent",
+  "in-route-helpers",
+  "HelperCommunicationHistory",
+  "RegisterURL",
+  "citiesStats",
+  "courier",
+  "helperHistoryInfo"]);
+CaptionHelper.determineCaption = (context, key, caption) => {
+  if (caption)
+    return caption;
+  let r = getLang(context)[key];
+  if (!r) {
+    if (!reported.has(key)) {
+      reported.add(key);
+      console.log('"' + key + "\",");
+    }
+  }
+  return r;
 }
 function adjustSettings(settings: FieldSettings & TranslatedCaption) {
   if (settings && settings.translation) {

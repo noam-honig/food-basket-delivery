@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Context } from "@remult/core";
-import { GridSettings, openDialog } from "../../../../radweb/projects/angular";
+import { GridSettings, openDialog } from "@remult/angular";
 import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
 import { HelperGifts } from "./HelperGifts";
 @Component({

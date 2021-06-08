@@ -1,5 +1,5 @@
 
-import { DataControlSettings, getFieldDefinition, GridSettings } from '../../../../radweb/projects/angular';
+import { DataControlSettings, getFieldDefinition, GridSettings } from '@remult/angular';
 import { sortColumns } from '../shared/utils';
 
 const storageEntryName = 'grid-state';

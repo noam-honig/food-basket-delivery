@@ -5,7 +5,7 @@ import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DataAreaSettings, openDialog } from '../../../../radweb/projects/angular';
+import { DataAreaSettings, openDialog } from '@remult/angular';
 
 
 declare var gtag;

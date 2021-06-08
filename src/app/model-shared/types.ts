@@ -1,5 +1,5 @@
 
-import { Entity, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, InputTypes, EntityField, FieldSettings, FieldDefinitions, EntityDefinitions, rowHelper, Repository, FieldDefinitionsOf, filterOf, StoreAsStringValueConverter, filterOptions, comparableFilterItem, supportsContains, ClassType } from '@remult/core';
+import { Entity, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, InputTypes, EntityField, FieldSettings, FieldDefinitions, EntityDefinitions, rowHelper, Repository, FieldDefinitionsOf, filterOf, filterOptions, comparableFilterItem, supportsContains, ClassType } from '@remult/core';
 import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
@@ -13,8 +13,11 @@ import { DataControl } from '@remult/angular';
 
 
 
-@FieldType({
-  valueConverter: new StoreAsStringValueConverter<Email>(x => x.address, x => new Email(x)),
+@FieldType<Email>({
+  valueConverter: {
+    toJson: x => x ? x.address : '',
+    fromJson: x => x ? new Email(x) : null
+  },
   translation: l => l.email
 })
 @DataControl<any, Email>({
@@ -347,7 +350,7 @@ export class SqlBuilder {
     }
     {
       if (query.from.defs.evilOriginalSettings.fixedFilter) {
-        where.push(query.from.defs.evilOriginalSettings.fixedFilter(query.from.defs.fields.createFilterOf()));
+        where.push(query.from.defs.translateWhereToFilter(query.from.defs.evilOriginalSettings.fixedFilter));
       }
     }
     if (where.length > 0)
@@ -474,7 +477,7 @@ export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T
     [Symbol.iterator]: () => defs.fields[Symbol.iterator](),
     find: defs.fields.find
   };
-  let f = defs.fields.createFilterOf();
+  let f = defs.createFilterOf();
 
   for (const col of defs.fields) {
     r[col.key] = new myBridge(f[col.key] as unknown as filterOptions<any> & comparableFilterItem<any> & supportsContains<any>, col)

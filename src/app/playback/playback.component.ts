@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 // import * as chart from 'chart.js';
-import { ServerFunction, Context, SqlDatabase, DateValueConverter, DateOnlyValueConverter } from '@remult/core';
+import { ServerFunction, Context, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -9,6 +9,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
+import { DateValueConverter } from '@remult/core/valueConverters';
 
 @Component({
   selector: 'app-playback',
@@ -242,12 +243,11 @@ export class PlaybackComponent implements OnInit {
   timeline: timelineStep[] = [];
 
   @ServerFunction({ allowed: Roles.admin })
-  static async GetTimeline(fromDate: string, toDate: string, context?: Context, db?: SqlDatabase) {
+  static async GetTimeline(fromDateDate: Date, toDateDate: Date, context?: Context, db?: SqlDatabase) {
     let f = SqlFor(context.for(FamilyDeliveries));
 
 
-    var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
-    var toDateDate = DateOnlyValueConverter.fromJson(toDate);
+    
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
 
     let sql = new SqlBuilder();

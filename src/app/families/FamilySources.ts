@@ -1,7 +1,7 @@
 import { Phone } from "../model-shared/Phone";
 
 
-import { Context, IdEntity, Entity, StoreAsStringValueConverter } from '@remult/core';
+import { Context, IdEntity, Entity } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 import { DataControl, getValueList } from "@remult/angular";
@@ -11,7 +11,10 @@ import { use, Field, FieldType } from "../translate";
   valueList: context => getValueList(context.for(FamilySources))
 })
 @FieldType<FamilySources>({
-  valueConverter: new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null),
+  valueConverter: {
+    toJson: x => x != undefined ? x : '',
+    fromJson: x => x || x == '' ? x : null
+  },
   displayValue: (e, val) => val ? val.name : ''
 })
 @Entity<FamilySources>({
@@ -25,7 +28,7 @@ export class FamilySources extends IdEntity {
   name: string;
   @Field({ translation: l => l.contactPersonName })
   contactPerson: string;
-  @Field({ translation: l => l.phone })
+  @Field()
   phone: Phone;
 
 }

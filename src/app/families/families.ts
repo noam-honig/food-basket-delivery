@@ -5,10 +5,10 @@ import { FamilySources } from "./FamilySources";
 import { BasketType, QuantityColumn } from "./BasketType";
 import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/Phone";
-import { Context, ServerFunction, StoreAsStringValueConverter, IdEntity, SqlDatabase, Filter, Validators, DateOnlyValueConverter, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
+import { Context, ServerFunction, IdEntity, SqlDatabase, Filter, Validators, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
-import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
+import { currentUser,  Helpers, HelpersBase } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
@@ -27,7 +27,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { DistributionCenters, findClosestDistCenter } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
-import { DecimalField } from "../../../../radweb/projects/core/src/remult3";
+import { DecimalField } from "@remult/core/src/remult3";
 
 
 
@@ -48,7 +48,10 @@ declare type factoryFor<T> = {
 }
 
 @FieldType<GroupsValue>({
-  valueConverter: new StoreAsStringValueConverter(x => x.value, x => new GroupsValue(x)),
+  valueConverter: {
+    toJson: x => x ? x.value : '',
+    fromJson: x => new GroupsValue(x)
+  },
   translation: l => l.familyGroup,
 })
 @DataControl<any, GroupsValue>({
@@ -105,7 +108,7 @@ export class GroupsValue {
 @Entity<Families>(
   {
     key: "Families",
-    translation: l => l.deliveries,
+    translation: l => l.families,
     allowApiRead: Roles.admin,
     allowApiUpdate: Roles.admin,
     allowApiDelete: false,
@@ -482,28 +485,38 @@ export class Families extends IdEntity {
 
   @Field({
     translation: l => l.familyName,
-    //valueChange: () => this.delayCheckDuplicateFamilies(),
     validate: Validators.required.withMessage(use.language.nameIsTooShort)
+  })
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
   })
   name: string;
 
 
   @Field({
     translation: l => l.socialSecurityNumber,
-    //    valueChange: () => this.delayCheckDuplicateFamilies()
+
   })
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
+  })
+
   tz: string;
   @Field({
     translation: l => l.spouceSocialSecurityNumber,
-    //valueChange: () => this.delayCheckDuplicateFamilies()
+
   })
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
+  })
+
   tz2: string;
-  @Field({ translation: l => l.familyMembers })
+  @Field()
   familyMembers: number;
-  @DateOnlyField({ translation: l => l.birthDate })
+  @DateOnlyField()
   birthDate: Date;
   @DateOnlyField<Families>({
-    translation: l => l.nextBirthDay,
+    
     sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
     displayValue: self => {
@@ -530,74 +543,80 @@ export class Families extends IdEntity {
   groups: GroupsValue;
   @Field({ translation: l => l.specialAsignment })
   special: YesNo;
-  @Field({ translation: l => l.defaultSelfPickup })
+  @Field()
   defaultSelfPickup: boolean;
   @Field({ translation: l => l.familyUniqueId })
   iDinExcel: string;
-  @Field({ translation: l => l.internalComment })
+  @Field()
   internalComment: string;
   @Field()
   addressApiResult: string;
 
-  @Field({
-    translation: l => l.address,
-    // valueChange: () => {
-    //   if (!this.address.value)
-    //     return;
-    //   let y = parseUrlInAddress(this.address.value);
-    //   if (y != this.address.value)
-    //     this.address.value = y;
-    // }
+  @Field()
+  @DataControl<Families>({
+    valueChange: self => {
+      self.delayCheckDuplicateFamilies()
+        if (!self.address)
+          return;
+        let y = parseUrlInAddress(self.address);
+        if (y != self.address)
+          self.address = y;
+    }
   })
+
   address: string;
   addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
 
 
-  @Field({ translation: l => l.floor })
+  @Field()
   floor: string;
-  @Field({ translation: l => l.appartment })
+  @Field()
   appartment: string;
-  @Field({ translation: l => l.entrance })
+  @Field()
   entrance: string;
-  @Field({ translation: l => l.buildingCode })
+  @Field()
   buildingCode: string;
   @Field({ translation: l => l.cityAutomaticallyUpdatedByGoogle })
   city: string;
   @AreaColumn()
   area: string;
-  @Field({ translation: l => l.addressComment })
+  @Field()
   addressComment: string;
-  @Field({ translation: l => l.postalCode })
+  @Field()
   postalCode: number;
   @Field({ translation: l => l.defaultDeliveryComment })
   deliveryComments: string;
   @Field({
-    translation: l => l.phone1, dbName: 'phone',
-    //valueChange: () => this.delayCheckDuplicateFamilies()
+    dbName: 'phone',
   })
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
+  })
+
   phone1: Phone;
-  @Field({ translation: l => l.phone1Description })
+  @Field()
   phone1Description: string;
-  @Field({
-    translation: l => l.phone2,
-    //valueChange: () => this.delayCheckDuplicateFamilies()
+  @Field()
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
   })
+
   phone2: Phone;
-  @Field({ translation: l => l.phone2Description })
+  @Field()
   phone2Description: string;
-  @Field({
-    translation: l => l.phone3,
-    //valueChange: () => this.delayCheckDuplicateFamilies()
+  @Field()
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
   })
   phone3: Phone;
-  @Field({ translation: l => l.phone3Description })
+  @Field()
   phone3Description: string;
-  @Field({
-    translation: l => l.phone4,
-    //valueChange: () => this.delayCheckDuplicateFamilies()
+  @Field()
+  @DataControl<Families>({
+    valueChange: self => self.delayCheckDuplicateFamilies(),
   })
   phone4: Phone;
-  @Field({ translation: l => l.phone4Description })
+  @Field()
   phone4Description: string;
   @Field()
   email: Email;
@@ -701,15 +720,12 @@ export class Families extends IdEntity {
 
 
   @Field({
-    translation: l => l.previousDeliveryStatus,
     sqlExpression: (self, context) => {
       return dbNameFromLastDelivery(self, context, fde => fde.deliverStatus, "prevStatus");
     }
   })
   previousDeliveryStatus: DeliveryStatus;
   @ChangeDateColumn({
-    translation: l => l.previousDeliveryDate,
-
     sqlExpression: (self, context) => {
       return dbNameFromLastDelivery(self, context, fde => fde.deliveryStatusDate, "prevDate");
     }
@@ -723,7 +739,6 @@ export class Families extends IdEntity {
   })
   previousDeliveryComment: string;
   @Field({
-    translation: l => l.numOfActiveReadyDeliveries,
     sqlExpression: (selfDefs, context) => {
       let self = SqlFor(selfDefs);
       let fd = SqlFor(context.for(FamilyDeliveries));
@@ -747,11 +762,11 @@ export class Families extends IdEntity {
   drivingLongitude: number;
   @DecimalField()
   drivingLatitude: number;
-  @Field({ translation: l => l.addressByGoogle, allowApiUpdate: false })
+  @Field()
   addressByGoogle: string;
   @Field({ serverExpression: () => '' })
   autoCompleteResult: string;
-  @Field({ translation: l => l.addressOk })
+  @Field()
   addressOk: boolean;
 
 
@@ -785,13 +800,13 @@ export class Families extends IdEntity {
 
 
 
-  @ChangeDateColumn({ translation: l => l.createDate })
+  @ChangeDateColumn()
   createDate: Date;
-  @Field({ allowApiUpdate: false, translation: l => l.createUser })
+  @Field({ allowApiUpdate: false})
   createUser: HelpersBase;
-  @ChangeDateColumn({ translation: l => l.lastUpdateDate })
+  @ChangeDateColumn()
   lastUpdateDate: Date;
-  @Field({ allowApiUpdate: false, translation: l => l.lastUpdateUser })
+  @Field({ allowApiUpdate: false })
   lastUpdateUser: HelpersBase;
 
 

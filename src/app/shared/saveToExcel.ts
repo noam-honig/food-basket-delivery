@@ -1,4 +1,4 @@
-import { Entity, Context, EntityBase, Repository, EntityField, DateOnlyValueConverter } from '@remult/core';
+import { Entity, Context, EntityBase, Repository, EntityField } from '@remult/core';
 import { BusyService, GridSettings } from '@remult/angular';
 
 import { DateTimeColumn } from "../model-shared/types";
@@ -6,6 +6,7 @@ import { DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DateOnlyValueConverter } from '@remult/core/valueConverters';
 
 export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
   context: Repository<E>,

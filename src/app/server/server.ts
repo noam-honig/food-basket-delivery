@@ -17,7 +17,7 @@ import { Sites, setLangForSite } from '../sites/sites';
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { OverviewComponent } from "../overview/overview.component";
-import { preparePostgresQueueStorage } from "../../../../radweb/projects/core/postgres";
+import { preparePostgresQueueStorage } from "@remult/core/postgres";
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';

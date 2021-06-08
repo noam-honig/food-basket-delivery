@@ -1,4 +1,4 @@
-import { Context, AndFilter, EntityWhere, EntityWhereItem, getControllerDefs } from "@remult/core";
+import { Context, AndFilter, EntityWhere } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
@@ -13,9 +13,9 @@ import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
 import { ServerController } from "@remult/core";
-import { DataControl, InputField } from "../../../../radweb/projects/angular";
-import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
-import { ValueListFieldType } from "../../../../radweb/projects/core/src/remult3";
+import { DataControl, InputField } from "@remult/angular";
+
+import { ValueListFieldType } from "@remult/core/src/remult3";
 
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
@@ -23,6 +23,7 @@ export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamily
     constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
         super(context, ActiveFamilyDeliveries, buildArgsForFamilyDeliveries(args, context));
     }
+
 }
 function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, context: Context) {
     if (args.orderBy)
@@ -51,7 +52,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     updateFamilyStatus: boolean;
     @Field()
     status: FamilyStatus;
-    get $() { return getControllerDefs(this).columns };
+
     constructor(context: Context) {
         super(context, {
             dialogColumns: async c => [
@@ -88,7 +89,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     @Field({ translation: l => l.selfPickup })
     selfPickup: boolean;
 
-    get $() { return getControllerDefs(this).columns };
+
 
     constructor(context: Context) {
         super(context, ActiveFamilyDeliveries, {
@@ -139,7 +140,6 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     courier: HelpersBase;
     @Field({ translation: l => l.setAsDefaultVolunteer })
     updateAlsoAsFixed: boolean;
-    get $() { return getControllerDefs(this).columns };
     usedCouriers: string[] = [];
     constructor(context: Context) {
         super(context, ActiveFamilyDeliveries, {
@@ -242,7 +242,7 @@ export class ArchiveHelper {
         let result = [];
         let repo = this.context.for(ActiveFamilyDeliveries);
 
-        let onTheWay = await repo.count(d => FamilyDeliveries.onTheWayFilter(d, this.context).and(repo.translateWhereToFilter(where)));
+        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(d, this.context), where]);
         this.showDelivered = this.markOnTheWayAsDelivered.value = onTheWay > 0;
 
         if (onTheWay > 0) {
@@ -252,7 +252,7 @@ export class ArchiveHelper {
         }
 
         if (usingSelfPickupModule) {
-            let selfPickup = await repo.count(d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup).and(repo.translateWhereToFilter(where)));
+            let selfPickup = await repo.count([d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), where]);
             this.showSelfPickup = this.markSelfPickupAsDelivered.value = selfPickup > 0;
             if (selfPickup > 0) {
                 this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
@@ -394,9 +394,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
 
     @Field({ translation: l => l.distributionListAsCurrentDelivery })
     useCurrentDistributionCenter: boolean;
-    get $() {
-        return getControllerDefs(this).columns;
-    }
+
 
     constructor(context: Context) {
         super(context, {

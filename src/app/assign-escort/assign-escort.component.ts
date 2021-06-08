@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from "../model-shared/Phone";
-import { DataAreaSettings, openDialog } from '../../../../radweb/projects/angular';
+import { DataAreaSettings, openDialog } from '@remult/angular';
 
 @Component({
   selector: 'app-assign-escort',

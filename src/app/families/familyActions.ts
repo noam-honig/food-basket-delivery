@@ -13,10 +13,11 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
 import { use, Field, ValueListFieldType } from "../translate";
 import { getLang } from '../sites/sites';
 import { ServerController } from "@remult/core";
-import { ValueListValueConverter } from "../../../../radweb/projects/core/src/column";
-import { DataControl, getValueList } from "../../../../radweb/projects/angular";
+
+import { DataControl, getValueList } from "@remult/angular";
 import { Groups } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
+import { ValueListValueConverter } from "@remult/core/valueConverters";
 
 @ValueListFieldType(SelfPickupStrategy, {
     translation: l => l.selfPickupStrategy
@@ -71,7 +72,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @Field({
         translation: l => l.excludeGroups
     })
-    get $() { return getControllerDefs(this).columns };
+    
     excludeGroups: GroupsValue;
     constructor(context: Context) {
         super(context, Families, {
@@ -180,7 +181,6 @@ export class updateGroup extends ActionOnRows<Families> {
     group: string;
     @Field()
     action: UpdateGroupStrategy;
-    get $() { return getControllerDefs(this).columns }
     constructor(context: Context) {
         super(context, Families, {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
@@ -213,7 +213,6 @@ export class UpdateStatus extends ActionOnRows<Families> {
     @Field({ translation: l => l.deleteExistingComment })
     deleteExistingComment: boolean;
 
-    get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {
         super(context, Families, {
             help: () => getLang(this.context).updateStatusHelp,
@@ -368,7 +367,6 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     clearVoulenteer: boolean;
     @Field()
     courier: HelpersBase;
-    get $() { return getControllerDefs(this).columns };
     constructor(context: Context) {
         super(context, Families, {
             dialogColumns: async () => [

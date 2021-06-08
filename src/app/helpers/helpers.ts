@@ -1,5 +1,5 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, ServerMethod, FieldSettings, DateOnlyValueConverter, StoreAsStringValueConverter, filterOf, Validators, InputTypes, EntityField, FieldDefinitions, FieldDefinitionsOf, keyFor } from '@remult/core';
+import { Context, IdEntity, UserInfo, Filter, Entity, ServerMethod, FieldSettings, filterOf, Validators, InputTypes, EntityField, FieldDefinitions, FieldDefinitionsOf, keyFor } from '@remult/core';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
 import { isPhoneValidForIsrael, Phone } from "../model-shared/Phone";
@@ -28,7 +28,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { EmailSvc } from '../shared/utils';
 import { use, Field, FieldType } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { DateOnlyField } from '../../../../radweb/projects/core/src/remult3';
+import { DateOnlyField } from '@remult/core/src/remult3';
 
 
 
@@ -72,7 +72,10 @@ export const currentUser = new keyFor<Helpers>();
 
     displayValue: (e, x) => x ? x.name : '',
     translation: l => l.volunteer,
-    valueConverter: new StoreAsStringValueConverter<any>(x => x ? x : '', x => x ? x : null)
+    valueConverter: {
+        toJson: x => x != undefined ? x : '',
+        fromJson: x => x || x == '' ? x : null
+      },
 })
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
@@ -158,7 +161,6 @@ export abstract class HelpersBase extends IdEntity {
     eventComment: string;
 
     @Field({
-        translation: l => l.needEscort,
         allowApiUpdate: Roles.admin
     })
     needEscort: boolean;
@@ -198,7 +200,6 @@ export abstract class HelpersBase extends IdEntity {
     @Field({
         allowApiUpdate: context => context.isSignedIn(),
         includeInApi: context => context.isSignedIn(),
-        translation: l => l.frozenTill,
     })
     @DateOnlyField()
     frozenTill: Date;
@@ -667,7 +668,6 @@ export class Helpers extends HelpersBase {
     addressApiResult2: string;
     @Field({
 
-        translation: l => l.preferredFinishAddress,
         dbName: 'preferredDistributionAreaAddress2'
     })
     preferredFinishAddress: string;
@@ -679,11 +679,11 @@ export class Helpers extends HelpersBase {
 
 
     @Field<Helpers>({
-        translation: l => l.password, inputType: InputTypes.password,
+        inputType: InputTypes.password,
         serverExpression: (self) => self.realStoredPassword ? Helpers.emptyPassword : ''
     })
     password: string;
-    @ChangeDateColumn({ translation: l => l.createDate })
+    @ChangeDateColumn()
     createDate: Date;
     @ChangeDateColumn()
     passwordChangeDate: Date;
@@ -698,7 +698,6 @@ export class Helpers extends HelpersBase {
     @Field({ includeInApi: Roles.admin })
     referredBy: string;
     @Field({
-        translation: l => l.admin,
         allowApiUpdate: Roles.admin,
         includeInApi: Roles.admin,
         dbName: 'isAdmin'

@@ -7,7 +7,7 @@ import { Context } from '@remult/core';
 
 import { DialogService } from '../select-popup/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { DataAreaSettings } from '../../../../radweb/projects/angular';
+import { DataAreaSettings } from '@remult/angular';
 
 @Component({
   selector: 'app-update-comment',

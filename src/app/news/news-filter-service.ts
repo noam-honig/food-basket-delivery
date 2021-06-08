@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { NewsFilter } from './news.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { filterOf } from '../../../../radweb/projects/core';
+import { filterOf } from '@remult/core';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilySources } from '../families/FamilySources';

@@ -8,7 +8,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Roles } from "../auth/roles";
 import { PromiseThrottle } from "../shared/utils";
 import { Families } from "../families/families";
-import { openDialog } from "../../../../radweb/projects/angular";
+import { openDialog } from "@remult/angular";
 
 export class moveDeliveriesHelper {
     constructor(private context: Context, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }

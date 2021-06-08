@@ -19,7 +19,7 @@ import { Roles } from '../auth/roles';
 import { Phone } from "../model-shared/Phone";
 import { Families } from '../families/families';
 import { UserFamiliesList } from '../my-families/user-families';
-import { openDialog } from '../../../../radweb/projects/angular';
+import { openDialog } from '@remult/angular';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { relativeDateName } from '../model-shared/types';
 

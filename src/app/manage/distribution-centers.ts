@@ -1,4 +1,4 @@
-import { IdEntity, Context, StoreAsStringValueConverter, AndFilter,  Entity, filterOf, filterOptions, Filter } from "@remult/core";
+import { IdEntity, Context,  AndFilter,  Entity, filterOf, filterOptions, Filter } from "@remult/core";
 import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/Phone";
 
@@ -6,13 +6,16 @@ import { Roles } from "../auth/roles";
 import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
 import { getLang } from '../sites/sites';
-import { DataControl, getValueList } from "../../../../radweb/projects/angular";
+import { DataControl, getValueList } from "@remult/angular";
 import { use, FieldType, Field } from "../translate";
 
 
 
 @FieldType<DistributionCenters>({
-  valueConverter: new StoreAsStringValueConverter<any>(x => x != undefined ? x : '', x => x || x == '' ? x : null),
+  valueConverter: {
+    toJson: x => x != undefined ? x : '',
+    fromJson: x => x || x == '' ? x : null
+  },
   displayValue: (e, v) => v ? v.name : '',
   translation: l => l.distributionList
 

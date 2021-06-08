@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { DataAreaSettings, InputField } from '../../../../radweb/projects/angular';
-import { DateOnlyValueConverter } from '../../../../radweb/projects/core';
+import { DataAreaSettings, InputField } from '@remult/angular';
+import { DateOnlyValueConverter } from '@remult/core/valueConverters';
+
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 var fullDayValue = 24 * 60 * 60 * 1000;
 @Component({

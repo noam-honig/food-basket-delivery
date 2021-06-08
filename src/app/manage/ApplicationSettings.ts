@@ -1,5 +1,5 @@
 import { ServerFunction, Allowed, EntityBase, EntityField, FieldDefinitions } from '@remult/core';
-import { DataControl } from '../../../../radweb/projects/angular';
+import { DataControl } from '@remult/angular';
 export function CustomColumn(info: () => customColumnInfo) {
   return (target, key) => {
     DataControl({
@@ -29,8 +29,8 @@ import { BasketType } from '../families/BasketType';
 import { HttpClient } from '@angular/common/http';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
-import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
-import { ValueListFieldType } from '../../../../radweb/projects/core/src/remult3';
+
+import { ValueListFieldType } from '@remult/core/src/remult3';
 
 
 @ValueListFieldType(RemovedFromListExcelImportStrategy)
@@ -116,7 +116,7 @@ export class ApplicationSettings extends EntityBase {
 
   @Field()
   id: number;
-  @Field({ translation: l => l.organizationName })
+  @Field()
   organisationName: string;
 
 
@@ -143,7 +143,7 @@ export class ApplicationSettings extends EntityBase {
   gmailUserName: string;
   @Field({ caption: "gMail password", includeInApi: Roles.admin })
   gmailPassword: string;
-  @Field({ translation: l => l.logoUrl })
+  @Field()
   logoUrl: string;
   @Field()
   addressApiResult: string;
@@ -160,7 +160,7 @@ export class ApplicationSettings extends EntityBase {
   messageForDoneDelivery: string;
   @Field({ translation: l => l.helpName })
   helpText: string;
-  @Field({ translation: l => l.helpPhone })
+  @Field()
   helpPhone: Phone;
   @Field()
   phoneStrategy: string;
@@ -222,7 +222,7 @@ export class ApplicationSettings extends EntityBase {
   showCompanies: boolean;
   @Field({ translation: l => l.activateEscort })
   manageEscorts: boolean;
-  @Field({ translation: l => l.showHelperComment })
+  @Field()
   showHelperComment: boolean;
   @Field({ translation: l => l.filterFamilyGroups })
   showGroupsOnAssing: boolean;
@@ -236,55 +236,55 @@ export class ApplicationSettings extends EntityBase {
   showNumOfBoxesOnAssing: boolean;
   @Field({ translation: l => l.showLeftByHouseButton })
   showLeftThereButton: boolean;
-  @Field({ translation: l => l.redTitleBar })
+  @Field()
   redTitleBar: boolean;
   @Field({ translation: l => l.defaultPhonePrefixForExcelImport })
   defaultPrefixForExcelImport: string;
-  @Field({ translation: l => l.checkIfFamilyExistsInDb })
+  @Field()
   checkIfFamilyExistsInDb: boolean;
   @Field()
   removedFromListStrategy: RemovedFromListExcelImportStrategy;
-  @Field({ translation: l => l.checkIfFamilyExistsInFile })
+  @Field()
   checkIfFamilyExistsInFile: boolean;
-  @Field({ translation: l => l.excelImportAutoAddValues })
+  @Field()
   excelImportAutoAddValues: boolean;
-  @Field({ translation: l => l.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery })
+  @Field()
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery: boolean;
-  @Field({ translation: l => l.checkDuplicatePhones })
+  @Field()
   checkDuplicatePhones: boolean;
-  @Field({ translation: l => l.volunteerCanUpdateComment })
+  @Field()
   volunteerCanUpdateComment: boolean;
-  @Field({ translation: l => l.volunteerCanUpdateDeliveryComment })
+  @Field()
   volunteerCanUpdateDeliveryComment: boolean;
-  @Field({ translation: l => l.hideFamilyPhoneFromVolunteer })
+  @Field()
   hideFamilyPhoneFromVolunteer: boolean;
 
   static serverHasPhoneProxy = false;
   @Field({ allowApiUpdate: false })
   usePhoneProxy: boolean;
-  @Field({ translation: l => l.showOnlyLastNamePartToVolunteer })
+  @Field()
   showOnlyLastNamePartToVolunteer: boolean;
-  @Field({ translation: l => l.showTzToVolunteer })
+  @Field()
   showTzToVolunteer: boolean;
-  @Field({ translation: l => l.allowSendSuccessMessageOption, allowApiUpdate: false })
+  @Field({ allowApiUpdate: false })
   allowSendSuccessMessageOption: boolean;
-  @Field({ translation: l => l.sendSuccessMessageToFamily })
+  @Field()
   sendSuccessMessageToFamily: boolean;
-  @Field({ translation: l => l.successMessageText })
+  @Field()
   successMessageText: string;
-  @Field({ translation: l => l.requireEULA })
+  @Field()
   requireEULA: boolean;
-  @Field({ translation: l => l.requireConfidentialityApprove })
+  @Field()
   requireConfidentialityApprove: boolean;
-  @Field({ translation: l => l.requireComplexPassword })
+  @Field()
   requireComplexPassword: boolean;
-  @Field({ translation: l => l.timeToDisconnect })
+  @Field()
   timeToDisconnect: number;
-  @Field({ translation: l => l.daysToForcePasswordChange })
+  @Field()
   daysToForcePasswordChange: number;
-  @Field({ translation: l => l.showDeliverySummaryToVolunteerOnFirstSignIn })
+  @Field()
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
-  @Field({ translation: l => l.showDistCenterAsEndAddressForVolunteer })
+  @Field()
   showDistCenterAsEndAddressForVolunteer: boolean;
   @Field()
   routeStrategy: routeStrategy;
@@ -292,9 +292,9 @@ export class ApplicationSettings extends EntityBase {
   BusyHelperAllowedFreq_nom: number;
   @Field({ translation: l => l.daysCountForBusy })
   BusyHelperAllowedFreq_denom: number;
-  @Field({ translation: l => l.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee })
+  @Field()
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
-  @Field({ translation: l => l.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself })
+  @Field()
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
 
 

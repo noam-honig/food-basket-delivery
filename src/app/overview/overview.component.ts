@@ -12,7 +12,7 @@ import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
 import { SitesEntity } from '../sites/sites.entity';
-import { InputField, openDialog } from '../../../../radweb/projects/angular';
+import { InputField, openDialog } from '@remult/angular';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({

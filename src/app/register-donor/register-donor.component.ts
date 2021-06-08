@@ -12,12 +12,12 @@ import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
 import { ServerMethod } from '@remult/core';
-import { DataAreaSettings, DataControl, openDialog } from '../../../../radweb/projects/angular';
-import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
+import { DataAreaSettings, DataControl, openDialog } from '@remult/angular';
+
 import { Field, FieldType } from '../translate';
 import { FamilySources } from '../families/FamilySources';
 import { BasketType } from '../families/BasketType';
-import { ValueListFieldType } from '../../../../radweb/projects/core/src/remult3';
+import { ValueListFieldType } from '@remult/core/src/remult3';
 
 
 declare var gtag;
@@ -154,7 +154,7 @@ class donorForm {
   constructor(private context: Context) {
 
   }
-  get $() { return getControllerDefs(this).columns }
+  get $() { return getControllerDefs(this, this.context).fields }
   @Field({
     caption: "שם מלא",
     validate: Validators.required.withMessage("אנא הזן ערך")

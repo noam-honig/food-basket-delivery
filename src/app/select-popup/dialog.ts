@@ -104,14 +104,14 @@ export class DialogService {
     }
     private allCenters: DistributionCenters[];
 
-    @Field({
+    @Field()
+    @DataControl<DialogService>({
+        valueList: context => DistributionCenters.getValueList(context, true),
+        valueChange: self => {
+            if (self.context.isSignedIn())
+                self.refreshDistCenter.next();
+        }
 
-        /*   valueChange: () => {
-               if (this.context.isSignedIn())
-                   this.refreshDistCenter.next();*/
-    })
-    @DataControl({
-        valueList: context => DistributionCenters.getValueList(context, true)
     })
     distCenter: DistributionCenters;
     distCenterArea: DataAreaSettings;
@@ -135,7 +135,7 @@ export class DialogService {
             this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
-            this.distCenterArea = new DataAreaSettings({ fields: () => [getControllerDefs(this, this.context).columns.distCenter] });
+            this.distCenterArea = new DataAreaSettings({ fields: () => [getControllerDefs(this, this.context).fields.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = null;
         }
@@ -257,7 +257,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
 
     async handleError(error) {
         super.handleError(error);
-        if (error.message.startsWith("ExpressionChangedAfterItHasBeenCheckedError"))
+        if (error.message.startsWith("ExpressionChangedAfterItHasBeenCheckedError")||error.message.startsWith("NG0100"))
             return;
         if (this.lastErrorString == error.toString() && new Date().valueOf() - this.lastErrorTime < 100)
             return;

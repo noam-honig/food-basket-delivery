@@ -1,12 +1,15 @@
 import { DataControl } from "@remult/angular";
-import { Context, EntityField, InputTypes, StoreAsStringValueConverter } from "@remult/core";
+import { Context, EntityField, InputTypes } from "@remult/core";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FieldType } from "../translate";
 
 @FieldType<Phone>({
   displayValue: (e, x) => x && x.displayValue,
-  valueConverter:  new StoreAsStringValueConverter<Phone>(x => Phone.toJson(x), x => x ? new Phone(x) : null),
+  valueConverter: {
+    toJson: x => x ? x.thePhone : '',
+    fromJson: x => x ? new Phone(x) : null
+  },
   inputType: InputTypes.tel
 })
 @DataControl<any, Phone>({

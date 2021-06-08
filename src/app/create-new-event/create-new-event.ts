@@ -64,7 +64,7 @@ export class CreateNewEvent {
     isAllowed() {
         return controllerAllowed(this, this.context);
     }
-    get $() { return getControllerDefs(this).columns };
+    get $() { return getControllerDefs(this, this.context).fields };
     @ServerMethod({ queue: true, allowed: Roles.admin })
     async createNewEvent(progress?: ServerProgress) {
         let settings = await ApplicationSettings.getAsync(this.context);

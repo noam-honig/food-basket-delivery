@@ -33,10 +33,10 @@ export class InRouteFollowUpComponent implements OnInit {
   helpers = new GridSettings(this.context.for(InRouteHelpers), {
 
 
-    where: h => {
+    where: [h => {
       let r = h.name.contains(this.searchString);
-      return r.and(this.context.for(InRouteHelpers).translateWhereToFilter(this.currentOption.where));
-    },
+      return r.and(h.translateWhereToFilter(this.currentOption.where));
+    }],
 
     rowsInPage: 25,
     knowTotalRows: true,

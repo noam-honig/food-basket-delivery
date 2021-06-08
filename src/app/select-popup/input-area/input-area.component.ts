@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 import { DialogService } from '../dialog';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
-import { DataAreaSettings, IDataAreaSettings } from '../../../../../radweb/projects/angular';
+import { DataAreaSettings, IDataAreaSettings } from '@remult/angular';
 
 
 @Component({

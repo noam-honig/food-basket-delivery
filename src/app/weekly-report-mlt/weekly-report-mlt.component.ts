@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
-import { Context, DateOnlyValueConverter, ServerFunction, SqlDatabase } from '@remult/core';
+import { Context,  ServerFunction, SqlDatabase } from '@remult/core';
 import { toInt } from 'ngx-bootstrap/chronos/utils/type-checks';
+import { DateOnlyValueConverter } from '@remult/core/valueConverters';
 
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { DateRangeComponent } from '../date-range/date-range.component';

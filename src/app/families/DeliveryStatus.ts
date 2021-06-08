@@ -3,8 +3,9 @@ import { Filter, filterOptions } from '@remult/core';
 import { use, ValueListFieldType } from '../translate';
 
 import { getSettings } from '../manage/ApplicationSettings';
-import { ValueListValueConverter } from '../../../../radweb/projects/core/src/column';
-import { DataControl } from '../../../../radweb/projects/angular';
+
+import { DataControl } from '@remult/angular';
+import { ValueListValueConverter } from '@remult/core/valueConverters';
 
 
 @DataControl({

@@ -10,7 +10,7 @@ import { BasketSummaryComponent } from "../basket-summary/basket-summary.compone
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats, routeStrategy } from "../asign-family/route-strategy";
-import { openDialog } from "../../../../radweb/projects/angular";
+import { openDialog } from "@remult/angular";
 
 
 export class UserFamiliesList {

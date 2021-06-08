@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Context, SqlDatabase } from '@remult/core';
-import { GridSettings, openDialog } from '../../../../radweb/projects/angular';
+import { GridSettings, openDialog } from '@remult/angular';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RegisterURL } from './regsiter-url';

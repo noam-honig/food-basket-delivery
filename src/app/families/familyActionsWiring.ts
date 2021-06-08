@@ -1,4 +1,4 @@
-import { Context, Allowed, ServerFunction, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, ServerMethod, ServerProgress, filterOf, EntityWhereItem, EntityBase, getControllerDefs, Repository, IterateOptions } from "@remult/core";
+import { Context, Allowed, ServerFunction, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, ServerMethod, ServerProgress, filterOf, EntityBase, getControllerDefs, Repository, IterateOptions } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -8,7 +8,7 @@ import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
 import { controllerAllowed } from "@remult/core";
 import { Families } from "./families";
-import { DataAreaFieldsSetting, GridButton, openDialog } from "../../../../radweb/projects/angular";
+import { DataAreaFieldsSetting, GridButton, openDialog } from "@remult/angular";
 
 
 
@@ -42,7 +42,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => [...getControllerDefs(this).columns];
+            args.dialogColumns = async x => [...getControllerDefs(this, this.context).fields];
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -51,7 +51,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
     }
-
+    get $() { return getControllerDefs<this>(this, this.context).fields };
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
@@ -123,11 +123,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
     }
 
     composeWhere(where: EntityWhere<T>) {
-        if (this.args.additionalWhere) {
-            return x => new AndFilter(this.context.for(this.entity).translateWhereToFilter(where), this.args.additionalWhere(x));
-        }
-        return where;
-
+        return [where,this.args.additionalWhere]
     }
 
     @ServerMethod({ allowed: undefined, queue: true })
@@ -164,7 +160,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     settings: ApplicationSettings,
     afterAction: () => {},
-    userWhere: EntityWhereItem<T>
+    userWhere: EntityWhere<T>
 
 }
 
