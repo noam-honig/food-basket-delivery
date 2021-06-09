@@ -113,7 +113,7 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
             }
           } catch (err) {
 
-            console.error(err, c.defs.key, f._.toApiPojo());
+            console.error(err, c.defs.key, f._.toApiJson());
           }
         }
 

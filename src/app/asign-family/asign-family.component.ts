@@ -619,7 +619,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             throw "Invalid Strategy";
         let r = await optimizeRoute(await helper.getHelper(), existingFamilies, context, !args.doNotUseGoogle, strategy, args.volunteerLocation);
         r.families = r.families.filter(f => f.checkAllowedForUser());
-        r.families = await Promise.all(r.families.map(x => x._.toApiPojo()));
+        r.families = await Promise.all(r.families.map(x => x._.toApiJson()));
         return r;
     }
     findCompany() {
@@ -910,7 +910,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         existingFamilies = existingFamilies.filter(f => f.checkAllowedForUser());
         existingFamilies.sort((a, b) => a.routeOrder - b.routeOrder);
-        result.families = existingFamilies.map(f => f._.toApiPojo());
+        result.families = existingFamilies.map(f => f._.toApiJson());
 
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id == x) && result.familiesInSameAddress.indexOf(x) == i);

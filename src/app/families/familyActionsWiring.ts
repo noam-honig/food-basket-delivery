@@ -116,19 +116,19 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: this.context.for(this.entity).packWhere(info.where),
+            packedWhere: Filter.packWhere(this.context.for(this.entity).defs, info.where),
         }, p);
 
         return r;
     }
 
     composeWhere(where: EntityWhere<T>) {
-        return [where,this.args.additionalWhere]
+        return [where, this.args.additionalWhere]
     }
 
     @ServerMethod({ allowed: undefined, queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ServerProgress) {
-        let where = this.composeWhere(x => this.context.for(this.entity).unpackWhere(info.packedWhere));
+        let where = this.composeWhere(x => Filter.unpackWhere(this.context.for(this.entity).defs, info.packedWhere));
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {

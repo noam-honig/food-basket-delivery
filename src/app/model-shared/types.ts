@@ -350,7 +350,7 @@ export class SqlBuilder {
     }
     {
       if (query.from.defs.evilOriginalSettings.fixedFilter) {
-        where.push(query.from.defs.translateWhereToFilter(query.from.defs.evilOriginalSettings.fixedFilter));
+        where.push(Filter.translateWhereToFilter(query.from, query.from.defs.evilOriginalSettings.fixedFilter));
       }
     }
     if (where.length > 0)
@@ -477,7 +477,7 @@ export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T
     [Symbol.iterator]: () => defs.fields[Symbol.iterator](),
     find: defs.fields.find
   };
-  let f = defs.createFilterOf();
+  let f = Filter.createFilterOf(defs);
 
   for (const col of defs.fields) {
     r[col.key] = new myBridge(f[col.key] as unknown as filterOptions<any> & comparableFilterItem<any> & supportsContains<any>, col)

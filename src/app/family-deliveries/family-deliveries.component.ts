@@ -748,7 +748,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await (await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiPojo());
+    return await (await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiJson());
   }
 
 
