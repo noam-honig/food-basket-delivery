@@ -1,23 +1,40 @@
 ## talk to yoni
-[] filters in entity - active for distribution center.
-[] complex lookup columns - distribution center, helper id
+[V] filters in entity - active for distribution center.
+[V] complex lookup columns - distribution center, helper id
 [] multi column complex values- address + api result
-## must
-[] Fix custom column
-[] fix excel export for async items
 
-## Todo
+
+## next version
 [] make questions object column
 [] make geocode response object column
 [] phone strategy object column
-[] fix late binding of caption
-[] reconsider entity defs, columns etc... for the sql stuff - see groupsstatsforalldeliverycenters
-[] column used to have valueChange - that triggered stuff - used for duplicate check of name, phone and tz.
-[] review the whole archive helper strategy
-[] go over the delivery status options visibility and what happened to it (was in DeliveryStatusColumn)
-[] fix work with secondary database as used in overview
-[] select helper in distribution map controller
-[] fix helper work to select columns on grid and on dialog
-[] verify that in the register helper, the caption for the address works ok
+
+## Todo
+[V] fix late binding of caption
+[V] reconsider entity defs, columns etc... for the sql stuff - see groupsstatsforalldeliverycenters
+[V] column used to have valueChange - that triggered stuff - used for duplicate check of name, phone and tz.
+[V] review the whole archive helper strategy
+[V] go over the delivery status options visibility and what happened to it (was in DeliveryStatusColumn)
+[V] fix work with secondary database as used in overview
+[V] fix helper work to select columns on grid and on dialog
+[V] test merge
 [] test import phone
-[] test merge
+[] select helper in distribution map controller
+[] verify that in the register helper, the caption for the address works ok
+[] Fix custom column
+[] fix excel export for async items
+
+## test
+[V] test duplicate phone check
+[V] update of settings in manage component
+[V] update user preferences
+[V] test delivery options settings visibility based on usage
+[] test and review archive helper class
+[] test overview functionality
+[] test that there are no db changes.
+[] test import from excel
+[] test all assignments 
+[] test questions for volunteer - only displays relevant questions
+[] test custom columns for family is ok
+[] fix filter on date?
+[] test duplicate families - all the checkboxes there etc...

@@ -15,7 +15,7 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
   busy: BusyService,
   hideColumn?: (e: E, c: EntityField<any>) => boolean,
   excludeColumn?: (e: E, c: EntityField<any>) => boolean,
-  moreColumns?: (e: E, addColumn: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
+  moreColumns?: (e: E, addfield: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx');
     if (!hideColumn)

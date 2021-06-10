@@ -25,10 +25,10 @@ export class RegisterHelperComponent implements OnInit {
   
   area = new DataAreaSettings({
     fields: () => [
-      { column: this.helper.$.socialSecurityNumber, caption: "תעודת זהות (עבור ביטוח מתנדבים)" },
-      { column: this.helper.$.phone, allowClick: () => false },
-      { column: this.helper.$.email, allowClick: () => false },
-      { column: this.helper.$.company, allowClick: () => false }
+      { field: this.helper.$.socialSecurityNumber, caption: "תעודת זהות (עבור ביטוח מתנדבים)" },
+      { field: this.helper.$.phone, allowClick: () => false },
+      { field: this.helper.$.email, allowClick: () => false },
+      { field: this.helper.$.company, allowClick: () => false }
     ]
   });
   ngOnInit() {

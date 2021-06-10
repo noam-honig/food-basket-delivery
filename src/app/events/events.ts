@@ -82,7 +82,7 @@ export class Event extends IdEntity {
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
                 columnSettings: (ev: FieldDefinitionsOf<volunteersInEvent>) => [
-                    { width: '100', column: ev.helperName },
+                    { width: '100', field: ev.helperName },
                     {
                         caption: getLang(this.context).volunteerStatus,
                         getValue: v => {
@@ -97,11 +97,11 @@ export class Event extends IdEntity {
                         },
                         width: '100'
                     },
-                    { width: '100', column: ev.assignedDeliveries },
-                    { width: '100', column: ev.succesfulDeliveries },
-                    { width: '150', column: ev.helperPhone },
+                    { width: '100', field: ev.assignedDeliveries },
+                    { width: '100', field: ev.succesfulDeliveries },
+                    { width: '150', field: ev.helperPhone },
                     ev.helperEmail,
-                    { width: '100', column: ev.duplicateToNextEvent },
+                    { width: '100', field: ev.duplicateToNextEvent },
                     ev.createDate,
                     ev.createUser
                 ],

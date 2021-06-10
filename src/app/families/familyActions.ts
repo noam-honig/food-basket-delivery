@@ -84,22 +84,22 @@ export class NewDelivery extends ActionOnRows<Families> {
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType = context.get(defaultBasketType);
+                this.basketType = await BasketType.getDefaultBasketType(this.context);
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 if (this.distributionCenter)
                     this.distributionCenter = await DistributionCenters.getDefault(context);
                 return [
                     this.$.useFamilyBasket,
-                    { column: this.$.basketType, visible: () => !this.useFamilyBasket },
+                    { field: this.$.basketType, visible: () => !this.useFamilyBasket },
                     this.$.useFamilyQuantity,
-                    { column: this.$.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity },
-                    { column: this.$.quantity, visible: () => !this.useFamilyQuantity && !this.useFamilyMembersAsQuantity },
-                    { column: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters },
+                    { field: this.$.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity },
+                    { field: this.$.quantity, visible: () => !this.useFamilyQuantity && !this.useFamilyMembersAsQuantity },
+                    { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters },
                     this.$.useDefaultVolunteer,
-                    { column: this.$.courier, visible: () => !this.useDefaultVolunteer },
+                    { field: this.$.courier, visible: () => !this.useDefaultVolunteer },
                     {
-                        column: this.$.selfPickup,
+                        field: this.$.selfPickup,
                         visible: () => component.settings.usingSelfPickupModule
                     },
                     this.$.excludeGroups
@@ -224,8 +224,8 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     this.$.status,
                     this.$.comment,
                     this.$.deleteExistingComment,
-                    { column: this.$.archiveFinshedDeliveries, visible: () => this.status != FamilyStatus.Active },
-                    { column: this.$.deletePendingDeliveries, visible: () => this.status != FamilyStatus.Active },
+                    { field: this.$.archiveFinshedDeliveries, visible: () => this.status != FamilyStatus.Active },
+                    { field: this.$.deletePendingDeliveries, visible: () => this.status != FamilyStatus.Active },
 
                 ]
             },
@@ -371,7 +371,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
         super(context, Families, {
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
-                { column: this.$.courier, visible: () => !this.clearVoulenteer }
+                { field: this.$.courier, visible: () => !this.clearVoulenteer }
             ],
 
             title: getLang(context).updateDefaultVolunteer,

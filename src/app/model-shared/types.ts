@@ -473,7 +473,7 @@ export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T
     defs = repo as EntityDefinitions;
   let r = {
     defs,
-    idColumn: defs.fields.idColumn,
+    idfield: defs.fields.idColumn,
     [Symbol.iterator]: () => defs.fields[Symbol.iterator](),
     find: defs.fields.find
   };
@@ -615,7 +615,7 @@ export function logChanges(e: rowHelper<any>, context: Context, args?: {
     }
     catch {
     }
-    p += "/" + e.repository.defs.key + "/" + e.fields.idField.value;
+    p += "/" + e.repository.defs.key + "/" + e.getId();
     if (e.isNew()) {
       p += "(new)";
     }

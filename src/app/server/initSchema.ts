@@ -424,14 +424,18 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     });
     await version(31, async () => {
-        await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
+    //    await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
 
     });
     await version(32, async () => {
-        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
+      //  await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
     });
     await version(33, async () => {
-        await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [sql.build(fd.courier, " is null")] }));
+     //   await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [sql.build(fd.courier, " is null")] }));
+    });
+    await version(34, async () => {
+        //await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " set not null"));
+
     });
 
 

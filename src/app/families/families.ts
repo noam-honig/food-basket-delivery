@@ -8,7 +8,7 @@ import { Phone } from "../model-shared/Phone";
 import { Context, ServerFunction, IdEntity, SqlDatabase, Filter, Validators, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
-import { currentUser,  Helpers, HelpersBase } from "../helpers/helpers";
+import { currentUser, Helpers, HelpersBase } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
@@ -516,7 +516,7 @@ export class Families extends IdEntity {
   @DateOnlyField()
   birthDate: Date;
   @DateOnlyField<Families>({
-    
+
     sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
     displayValue: self => {
@@ -556,11 +556,11 @@ export class Families extends IdEntity {
   @DataControl<Families>({
     valueChange: self => {
       self.delayCheckDuplicateFamilies()
-        if (!self.address)
-          return;
-        let y = parseUrlInAddress(self.address);
-        if (y != self.address)
-          self.address = y;
+      if (!self.address)
+        return;
+      let y = parseUrlInAddress(self.address);
+      if (y != self.address)
+        self.address = y;
     }
   })
 
@@ -778,9 +778,7 @@ export class Families extends IdEntity {
       translation: l => l.previousDeliverySummary,
       readonly: true,
       field: self.previousDeliveryStatus,
-      dropDown: {
-        items: DeliveryStatus.converter.getOptions()
-      },
+      valueList:  c => DeliveryStatus.getOptions(c),
       getValue: f => {
         if (!f.previousDeliveryStatus)
           return '';
@@ -802,7 +800,7 @@ export class Families extends IdEntity {
 
   @ChangeDateColumn()
   createDate: Date;
-  @Field({ allowApiUpdate: false})
+  @Field({ allowApiUpdate: false })
   createUser: HelpersBase;
   @ChangeDateColumn()
   lastUpdateDate: Date;

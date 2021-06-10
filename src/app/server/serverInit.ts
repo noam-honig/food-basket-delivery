@@ -20,6 +20,7 @@ import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
 import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
+import { DistributionCenters } from '../manage/distribution-centers';
 
 declare const lang = '';
 export const initSettings = {
@@ -120,7 +121,10 @@ export async function serverInit() {
                 for (const entity of <ClassType<any>[]>[
                     ApplicationSettings,
                     ApplicationImages,
-                    Helpers, SitesEntity]) {
+                    Helpers, 
+                    SitesEntity,
+                    DistributionCenters
+                ]) {
                     await builder.createIfNotExist(context.for(entity).defs);
                     await builder.verifyAllColumns(context.for(entity).defs);
                 }

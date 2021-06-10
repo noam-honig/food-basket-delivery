@@ -103,7 +103,7 @@ async function init() {
                 name: 'admin',
                 roles: [Roles.admin, Roles.distCenterAdmin]
             });
-            AuthService.initContext(context);
+            await Helpers.initContext(context);
             done();
         });
         async function callAddBox() {
@@ -399,7 +399,7 @@ async function init() {
                 theHelperIAmEscortingId: undefined,
                 roles: [Roles.distCenterAdmin]
             } as HelperUserInfo);
-            await AuthService.initContext(c2);
+            await Helpers.initContext(c2);
             
             expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(3);
             var u = new DeleteDeliveries(c2);

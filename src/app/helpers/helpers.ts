@@ -74,8 +74,8 @@ export const currentUser = new keyFor<Helpers>();
     translation: l => l.volunteer,
     valueConverter: {
         toJson: x => x != undefined ? x : '',
-        fromJson: x => x || x == '' ? x : null
-      },
+        fromJson: x => x ? x : null
+    },
 })
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
@@ -364,7 +364,26 @@ export abstract class HelpersBase extends IdEntity {
             return self.allowedIds.contains(context.user.id);
     }
 })
+
 export class Helpers extends HelpersBase {
+    private static helpersCache = new Map<string, Helpers>();
+    static async initContext(context: Context) {//
+        let h: Helpers;
+
+        if (context.isSignedIn()) {
+            h = this.helpersCache.get(context.user.id);
+            if (!h) {
+                h = await context.for(Helpers).getCachedByIdAsync(context.user.id);
+                this.helpersCache.set(context.user.id, h);
+            }
+            await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers
+            await h.$.distributionCenter.load(); /// for all the current user distribution center filtering
+
+        }
+        context.set(currentUser, h);
+        
+
+    }
 
     async getHelper(): Promise<Helpers> {
         return this;

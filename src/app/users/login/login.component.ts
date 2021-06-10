@@ -67,9 +67,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
   setPasswordArea = new DataAreaSettings({
     fields: () => [
-      { column: this.$.newPassword, visible: () => this.loginResult.requiredToSetPassword },
-      { column: this.$.confirmPassword, visible: () => this.loginResult.requiredToSetPassword },
-      { column: this.$.confirmEula, visible: () => this.loginResult.requiredToSignEULA }
+      { field: this.$.newPassword, visible: () => this.loginResult.requiredToSetPassword },
+      { field: this.$.confirmPassword, visible: () => this.loginResult.requiredToSetPassword },
+      { field: this.$.confirmEula, visible: () => this.loginResult.requiredToSignEULA }
     ]
   });
   constructor(

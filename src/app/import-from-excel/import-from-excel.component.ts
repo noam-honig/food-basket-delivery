@@ -528,7 +528,7 @@ export class ImportFromExcelComponent implements OnInit {
     settingsArea: DataAreaSettings = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery.value = true;
-        this.defaultBasketType.value = this.context.get(defaultBasketType);
+        this.defaultBasketType.value = await BasketType.getDefaultBasketType(this.context);
         this.distributionCenter.value = this.dialog.distCenter;
         if (this.distributionCenter.value == null)
             this.distributionCenter.value = await DistributionCenters.getDefault(this.context);

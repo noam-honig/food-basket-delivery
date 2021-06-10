@@ -39,11 +39,11 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
       h.name,
       h.phone,
       h.email,
-      { column: h.preferredDistributionAreaAddress },
-      { column: h.preferredFinishAddress },
-      { column: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment },
+      { field: h.preferredDistributionAreaAddress },
+      { field: h.preferredFinishAddress },
+      { field: h.eventComment, visible: () => this.settings.volunteerCanUpdateComment },
       h.password,
-      { column: this.confirmPassword },
+      { field: this.confirmPassword },
 
       //h.address
     ],

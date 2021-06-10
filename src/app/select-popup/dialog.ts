@@ -13,7 +13,6 @@ import { Roles } from "../auth/roles";
 import { currentUser, HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
-import { isString } from "util";
 import { use, Field } from "../translate";
 import { Location, GetDistanceBetween } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
@@ -52,7 +51,7 @@ export class DialogService {
         this.snackBar.open(info, use.language.close, { duration: 4000 });
     }
 
-    Error(err: string): any {
+    async Error(err: string) {
 
         return this.messageDialog(extractError(err));
     }
@@ -207,7 +206,7 @@ export class DialogService {
     }
 }
 export function extractError(err: any) {
-    if (isString(err))
+    if (typeof err === "string")
         return err;
     if (err.modelState) {
         if (err.message)
@@ -247,6 +246,7 @@ export class DestroyHelper {
     }
 
 }
+let showing = false;
 @Injectable()
 export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
     constructor(private dialog: DialogService, private zone: NgZone, private context: Context) {
@@ -257,7 +257,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
 
     async handleError(error) {
         super.handleError(error);
-        if (error.message.startsWith("ExpressionChangedAfterItHasBeenCheckedError")||error.message.startsWith("NG0100"))
+        if (error.message.startsWith("ExpressionChangedAfterItHasBeenCheckedError") || error.message.startsWith("NG0100"))
             return;
         if (this.lastErrorString == error.toString() && new Date().valueOf() - this.lastErrorTime < 100)
             return;
@@ -276,12 +276,16 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         catch (err) {
 
         }
-        if (this.context.isSignedIn())
+        if (this.context.isSignedIn()) {
+            if (showing)
+                return;
+            showing = true;
             this.zone.run(async () => {
                 let err = extractError(error);
                 this.dialog.log(error).catch(x => { });
-                this.dialog.Error(err);
+                this.dialog.Error(err).then(() => showing = false);
             });
+        }
 
     }
 }

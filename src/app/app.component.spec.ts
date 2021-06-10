@@ -61,7 +61,7 @@ describe('AppComponent', () => {
 
       where: () => [sql.eq(afd.family, '123'),
       ],
-      orderBy: [{ column: afd.deliveryStatusDate, isDescending: true }]
+      orderBy: [{ field: afd.deliveryStatusDate, isDescending: true }]
     })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 and archive = false order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
   it('fixed filter 3', () => {
@@ -71,7 +71,7 @@ describe('AppComponent', () => {
 
       where: () => [sql.eq(fd.family, '123'),
       ],
-      orderBy: [{ column: fd.deliveryStatusDate, isDescending: true }]
+      orderBy: [{ field: fd.deliveryStatusDate, isDescending: true }]
     })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
   it('Where', () => {
@@ -109,7 +109,7 @@ describe('AppComponent', () => {
     q({
       select: () => [bt.id],
       from: bt,
-      orderBy: [bt.id, { column: bt.name, isDescending: true }]
+      orderBy: [bt.id, { field: bt.name, isDescending: true }]
     }, 'select p.id from BasketType p order by p.id, p.name desc');
   });
   it("column dbname can reference root entity", () => {

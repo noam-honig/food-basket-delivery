@@ -135,12 +135,12 @@ export class EventsComponent implements OnInit {
   private eventDisplayColumns(e: FieldDefinitionsOf<Event>) {
     return [
       e.name,
-      { width: '100', column: e.registeredVolunteers },
-      { width: '100', column: e.requiredVolunteers },
-      { width: '150', column: e.eventDate },
+      { width: '100', field: e.registeredVolunteers },
+      { width: '100', field: e.requiredVolunteers },
+      { width: '150', field: e.eventDate },
       e.startTime,
       e.endTime,
-      { width: '150', column: e.eventStatus },
+      { width: '150', field: e.eventStatus },
       e.description,
       e.distributionCenter,
       e.address,

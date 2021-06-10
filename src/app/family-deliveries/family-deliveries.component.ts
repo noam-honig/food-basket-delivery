@@ -526,7 +526,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           caption: getLang(this.context).deliverySummary,
           field: deliveries.deliverStatus,
           readonly: true,
-          valueList: DeliveryStatus.converter.getOptions()
+          valueList:async (c) => DeliveryStatus.getOptions(c)
           ,
           getValue: f => f.getDeliveryDescription(),
           width: '300'

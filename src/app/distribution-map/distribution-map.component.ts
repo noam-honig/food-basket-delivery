@@ -1,5 +1,5 @@
 /// <reference types="@types/googlemaps" />
- import * as chart from 'chart.js';
+import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
 
@@ -332,8 +332,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
-    if (!distCenter)
-      distCenter = await DistributionCenters.getDefault(context);
+
 
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let h = SqlFor(context.for(Helpers));

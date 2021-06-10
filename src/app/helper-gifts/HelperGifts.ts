@@ -153,8 +153,8 @@ export async function showHelperGifts(hid: Helpers, context: Context, settings: 
             knowTotalRows: true,
             numOfColumnsInGrid: 10,
             columnSettings: hg => [
-                { width: '300', column: hg.giftURL },
-                { width: '50', column: hg.wasConsumed },
+                { width: '300', field: hg.giftURL },
+                { width: '50', field: hg.wasConsumed },
                 hg.dateGranted,
                 hg.assignedByUser
             ],

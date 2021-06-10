@@ -85,11 +85,11 @@ export class ManageComponent implements OnInit {
     columnSettings: x => [
       x.name,
       {
-        column: x.boxes,
+        field: x.boxes,
         width: '100px'
       },
       {
-        column: x.boxes2,
+        field: x.boxes2,
         width: '100px'
       }
     ],
@@ -166,7 +166,7 @@ export class ManageComponent implements OnInit {
       x.name,
 
       {
-        column: x.address,
+        field: x.address,
       },
       {
         caption: this.settings.lang.addressByGoogle,
@@ -179,7 +179,7 @@ export class ManageComponent implements OnInit {
       x.phone2,
       x.phone2Description,
       {
-        column: x.semel,
+        field: x.semel,
         width: '100px'
       }
     ],

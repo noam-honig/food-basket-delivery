@@ -136,7 +136,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 this.clearHelperInfo();
             return;
         }
-        this.helper = helper;
+        this.helper = await helper.getHelper();
         this.initArea();
         this.phone = this.helper.phone.thePhone;
         if (helper.isNew()) {
@@ -298,7 +298,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     filterGroup = '';
     groups: GroupsStats[] = [];
     phone: string;
-    helper: HelpersBase;
+    helper: Helpers;
 
     area: DataAreaSettings = new DataAreaSettings({});
     changeShowCompany() {
@@ -321,7 +321,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (this.settings.showCompanies)
                         r.push([this.helper.$.name,
                         {
-                            column: this.helper.$.company,
+                            field: this.helper.$.company,
                             click: () => this.findCompany(),
                             clickIcon: 'search'
                         }

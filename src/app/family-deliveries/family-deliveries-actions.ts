@@ -57,7 +57,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
         super(context, {
             dialogColumns: async c => [
                 this.$.updateFamilyStatus,
-                { column: this.$.status, visible: () => this.updateFamilyStatus }
+                { field: this.$.status, visible: () => this.updateFamilyStatus }
             ],
             title: getLang(context).deleteDeliveries,
             help: () => getLang(this.context).deleteDeliveriesHelp,
@@ -96,7 +96,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
                 this.$.basketType, this.$.quantity, this.$.byCurrentCourier, this.$.comment, {
-                    column: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule
+                    field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule
                 }
             ],
 
@@ -146,8 +146,8 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
             help: () => getLang(this.context).updateVolunteerHelp,
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
-                { column: this.$.courier, visible: () => !this.clearVoulenteer },
-                { column: this.$.updateAlsoAsFixed, visible: () => !this.clearVoulenteer && this.context.isAllowed(Roles.admin) }
+                { field: this.$.courier, visible: () => !this.clearVoulenteer },
+                { field: this.$.updateAlsoAsFixed, visible: () => !this.clearVoulenteer && this.context.isAllowed(Roles.admin) }
 
             ],
             additionalWhere: fd => DeliveryStatus.isNotAResultStatus(fd.deliverStatus),
@@ -399,22 +399,22 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     constructor(context: Context) {
         super(context, {
             dialogColumns: async (component) => {
-                this.basketType = context.get(defaultBasketType);
+                this.basketType = await BasketType.getDefaultBasketType(this.context);
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 this.useCurrentDistributionCenter = component.dialog.distCenter == null;
                 return [
                     this.useExistingBasket,
-                    [{ column: this.basketType, visible: () => !this.useExistingBasket }, { column: this.quantity, visible: () => !this.useExistingBasket }],
-                    { column: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
-                    { column: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
+                    [{ field: this.basketType, visible: () => !this.useExistingBasket }, { field: this.quantity, visible: () => !this.useExistingBasket }],
+                    { field: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
+                    { field: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
                     this.helperStrategy,
-                    { column: this.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
+                    { field: this.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
                     ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
                     this.autoArchive,
                     this.newDeliveryForAll,
                     {
-                        column: this.selfPickup, visible: () => component.settings.usingSelfPickupModule
+                        field: this.selfPickup, visible: () => component.settings.usingSelfPickupModule
                     }
                 ]
             },

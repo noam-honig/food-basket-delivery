@@ -731,7 +731,7 @@ export class FamilyDeliveries extends IdEntity {
                     [this.$.deliverStatus, this.$.deliveryStatusDate],
                     this.$.deliveryComments,
                     this.$.courier,
-                    { column: this.$.distributionCenter, visible: () => dialog.hasManyCenters },
+                    { field: this.$.distributionCenter, visible: () => dialog.hasManyCenters },
                     this.$.needsWork,
                     this.$.courierComments,
                     this.$.a1, this.$.a2, this.$.a3, this.$.a4,

@@ -1,4 +1,4 @@
-import { Filter, filterOptions } from '@remult/core';
+import { Context, Filter, filterOptions } from '@remult/core';
 
 import { use, ValueListFieldType } from '../translate';
 
@@ -9,27 +9,7 @@ import { ValueListValueConverter } from '@remult/core/valueConverters';
 
 
 @DataControl({
-  valueList: async context => {
-    let op = DeliveryStatus.converter.getOptions();
-    // if (chooseFrom)
-    //   op = chooseFrom.map(x => {
-    //     return {
-    //       id: x.id,
-    //       caption: x.caption
-    //     } as ValueListItem
-    //   });
-    if (!DeliveryStatus.usingSelfPickupModule) {
-      op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
-    }
-    if (!getSettings(context).isSytemForMlt()) {
-      op = op.filter(x =>
-        x.id != DeliveryStatus.FailedNotReady.id &&
-        x.id != DeliveryStatus.FailedTooFar.id
-      );
-    }
-    return op;
-
-  }
+  valueList: async context => DeliveryStatus.getOptions(context)
   , width: '150'
 
 })
@@ -118,6 +98,20 @@ export class DeliveryStatus {
   static isNotProblem(self: filterOptions<DeliveryStatus>) {
     return self.isNotIn(this.problemStatuses()).and(self.isDifferentFrom(DeliveryStatus.Frozen));
   }
-  static converter = new ValueListValueConverter(DeliveryStatus);
+  static getOptions(context: Context) {
+    let op = new ValueListValueConverter(DeliveryStatus).getOptions();
+    if (!getSettings(context).usingSelfPickupModule) {
+      op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
+    }
+    if (!getSettings(context).isSytemForMlt()) {
+      op = op.filter(x =>
+        x.id != DeliveryStatus.FailedNotReady.id &&
+        x.id != DeliveryStatus.FailedTooFar.id
+      );
+    }
+    console.log(op);
+    return op;
+
+  }
 
 }

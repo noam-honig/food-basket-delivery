@@ -204,7 +204,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = this.context.get(defaultBasketType);
+                f.basketType = await BasketType.getDefaultBasketType(this.context);
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {

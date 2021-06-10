@@ -107,9 +107,9 @@ export class HelperFamiliesComponent implements OnInit {
       title: use.language.replanRoute,
       settings: {
         fields: () => [
-          { column: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
-          { column: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
-          { column: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
+          { field: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
+          { field: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
+          { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
         ]
       },
       ok: async () => {
