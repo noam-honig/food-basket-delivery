@@ -119,7 +119,7 @@ export class DialogService {
         var dist = '';
         if (this.context.user)
             dist = (<HelperUserInfo>this.context.user).distributionCenter;
-        if (!this.context.isAllowed(Roles.admin) && !this.distCenter.matchesCurrentUser()) {
+        if (!this.context.isAllowed(Roles.admin) && (!this.distCenter || !this.distCenter.matchesCurrentUser())) {
             this.distCenter = this.context.get(currentUser).distributionCenter;
         }
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;

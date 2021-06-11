@@ -13,9 +13,9 @@ import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
 import { ServerController } from "@remult/core";
-import { DataControl, InputField } from "@remult/angular";
+import { DataAreaFieldsSetting, DataControl, InputField } from "@remult/angular";
 
-import { ValueListFieldType } from "@remult/core/src/remult3";
+import { getControllerDefs, ValueListFieldType } from "@remult/core/src/remult3";
 
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
@@ -228,41 +228,51 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
     }
 }
 
-export class ArchiveHelper {
-    showDelivered = false;
-    markOnTheWayAsDelivered = new InputField<boolean>({ dataType: Boolean, key: 'markOnTheWayAsDelivered', visible: () => this.showDelivered });
-    showSelfPickup = false;
-    markSelfPickupAsDelivered = new InputField<boolean>({ dataType: Boolean, key: 'markSelfPickupAsDelivered', visible: () => this.showSelfPickup });
-
-    constructor(private context: Context) { }
-    getColumns() {
-        return [this.markOnTheWayAsDelivered, this.markSelfPickupAsDelivered];
+@FieldType({
+    valueConverter: {
+        fromJson: x => {
+            return Object.assign(new ArchiveHelper(), x)
+        }
     }
-    async initArchiveHelperBasedOnCurrentDeliveryInfo(where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
-        let result = [];
-        let repo = this.context.for(ActiveFamilyDeliveries);
+})
+export class ArchiveHelper {
+    @Field()
+    markOnTheWayAsDelivered: boolean;
+    @Field()
+    markSelfPickupAsDelivered: boolean;
 
-        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(d, this.context), where]);
-        this.showDelivered = this.markOnTheWayAsDelivered.value = onTheWay > 0;
+
+    get $() { return getControllerDefs(this).fields }
+    async initArchiveHelperBasedOnCurrentDeliveryInfo(context: Context, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
+        let result: DataAreaFieldsSetting<any>[] = [];
+        let repo = context.for(ActiveFamilyDeliveries);
+
+        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(d, context), where]);
 
         if (onTheWay > 0) {
-
-            this.markOnTheWayAsDelivered.defs.caption = use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries;
-            result.push(this.markOnTheWayAsDelivered);
+            this.markOnTheWayAsDelivered = true;
+            result.push({
+                field: this.$.markOnTheWayAsDelivered,
+                caption: use.language.markAsDeliveredFor + " " + onTheWay + " " + use.language.onTheWayDeliveries
+            });
         }
 
         if (usingSelfPickupModule) {
             let selfPickup = await repo.count([d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), where]);
-            this.showSelfPickup = this.markSelfPickupAsDelivered.value = selfPickup > 0;
+
             if (selfPickup > 0) {
-                this.markSelfPickupAsDelivered.defs.caption = use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries;
-                result.push(this.markSelfPickupAsDelivered);
+                this.markSelfPickupAsDelivered = true;
+                result.push({
+                    field: this.$.markSelfPickupAsDelivered,
+                    caption: use.language.markAsSelfPickupFor + " " + selfPickup + " " + use.language.selfPickupDeliveries
+                });
             }
         }
 
         return result;
     }
     async forEach(f: ActiveFamilyDeliveries) {
+        await f.$.courier.load()
         if (f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier && this.markOnTheWayAsDelivered)
             f.deliverStatus = DeliveryStatus.Success;
         if (f.deliverStatus == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)
@@ -276,11 +286,12 @@ export class ArchiveHelper {
     key: 'archiveDeliveries'
 })
 export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
-    archiveHelper = new ArchiveHelper(this.context);
+    @Field()
+    archiveHelper:ArchiveHelper = new ArchiveHelper();
     constructor(context: Context) {
         super(context, {
             dialogColumns: async c => {
-                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
+                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
             },
 
             title: getLang(context).archiveDeliveries,
@@ -292,7 +303,6 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
             },
 
         });
-        //   getColumnsFromObject(this).push(...getColumnsFromObject(this.archiveHelper));
     }
 }
 
@@ -386,8 +396,8 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     newDeliveryForAll: boolean;
     @Field()
     selfPickup: SelfPickupStrategy;
-
-    archiveHelper = new ArchiveHelper(this.context);
+    @Field()
+    archiveHelper:ArchiveHelper = new ArchiveHelper();
 
     @Field()
     distributionCenter: DistributionCenters;
@@ -404,18 +414,19 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 this.distributionCenter = component.dialog.distCenter;
                 this.useCurrentDistributionCenter = component.dialog.distCenter == null;
                 return [
-                    this.useExistingBasket,
-                    [{ field: this.basketType, visible: () => !this.useExistingBasket }, { field: this.quantity, visible: () => !this.useExistingBasket }],
-                    { field: this.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
-                    { field: this.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
+                    this.$.useExistingBasket,
+                    [
+                        { field: this.$.basketType, visible: () => !this.useExistingBasket },
+                        { field: this.$.quantity, visible: () => !this.useExistingBasket }
+                    ],
+                    { field: this.$.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
+                    { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
                     this.helperStrategy,
-                    { field: this.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
-                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
-                    this.autoArchive,
-                    this.newDeliveryForAll,
-                    {
-                        field: this.selfPickup, visible: () => component.settings.usingSelfPickupModule
-                    }
+                    { field: this.$.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
+                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(context, this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
+                    this.$.autoArchive,
+                    this.$.newDeliveryForAll,
+                    { field: this.$.selfPickup, visible: () => component.settings.usingSelfPickupModule }
                 ]
             },
             validate: async () => {

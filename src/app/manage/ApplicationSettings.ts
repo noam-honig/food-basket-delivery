@@ -363,7 +363,7 @@ export class ApplicationSettings extends EntityBase {
     if (context.onServer) {
 
     }
-    return context.for(ApplicationSettings).lookup(app => app.id.isEqualTo(1));
+    return getSettings(context);
 
   }
   static async getAsync(context: Context): Promise<ApplicationSettings> {

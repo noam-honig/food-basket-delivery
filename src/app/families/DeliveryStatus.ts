@@ -109,7 +109,6 @@ export class DeliveryStatus {
         x.id != DeliveryStatus.FailedTooFar.id
       );
     }
-    console.log(op);
     return op;
 
   }

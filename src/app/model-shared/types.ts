@@ -473,7 +473,6 @@ export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T
     defs = repo as EntityDefinitions;
   let r = {
     defs,
-    idfield: defs.fields.idColumn,
     [Symbol.iterator]: () => defs.fields[Symbol.iterator](),
     find: defs.fields.find
   };
@@ -523,7 +522,7 @@ class myBridge implements filterOptions<any>, comparableFilterItem<any>, support
   inputType = this.defs.inputType;
   allowNull = this.defs.allowNull;
   isServerExpression = this.defs.isServerExpression;
-  dbReadOnly = this.defs.dbReadOnly;
+  get dbReadOnly() { return this.defs.dbReadOnly; }
   get dbName() { return this.defs.dbName; }
   valueConverter = this.defs.valueConverter;
   evilOriginalSettings = this.defs.evilOriginalSettings;

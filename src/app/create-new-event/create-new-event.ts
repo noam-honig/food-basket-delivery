@@ -32,7 +32,8 @@ function visible(when: () => boolean, caption?: string) {
     allowed: Roles.admin
 })
 export class CreateNewEvent {
-    archiveHelper = new ArchiveHelper(this.context);
+    @Field()
+    archiveHelper:ArchiveHelper = new ArchiveHelper();
     @Field({ translation: l => l.createNewDeliveryForAllFamilies })
     createNewDelivery: boolean;
     @Field()
@@ -173,7 +174,7 @@ export class CreateNewEvent {
         }
         this.useFamilyBasket = true;
 
-        await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(x => filterDistCenter(x.distributionCenter, this.distributionCenter, this.context), settings.usingSelfPickupModule);
+        await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, x => filterDistCenter(x.distributionCenter, this.distributionCenter, this.context), settings.usingSelfPickupModule);
 
 
         openDialog(InputAreaComponent, x => x.args = {

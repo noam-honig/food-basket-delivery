@@ -25,13 +25,13 @@
 [] fix excel export for async items
 
 ## test
+[V] test that there are no db changes.
+[V] test and review archive helper class
 [V] test duplicate phone check
 [V] update of settings in manage component
 [V] update user preferences
 [V] test delivery options settings visibility based on usage
-[] test and review archive helper class
-[] test overview functionality
-[] test that there are no db changes.
+[V] test overview functionality
 [] test import from excel
 [] test all assignments 
 [] test questions for volunteer - only displays relevant questions

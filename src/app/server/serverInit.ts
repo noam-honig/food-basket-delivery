@@ -128,6 +128,7 @@ export async function serverInit() {
                     await builder.createIfNotExist(context.for(entity).defs);
                     await builder.verifyAllColumns(context.for(entity).defs);
                 }
+                
             }
             await SitesEntity.completeInit(context);
             let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));

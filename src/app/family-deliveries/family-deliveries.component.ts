@@ -526,7 +526,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           caption: getLang(this.context).deliverySummary,
           field: deliveries.deliverStatus,
           readonly: true,
-          valueList:async (c) => DeliveryStatus.getOptions(c)
+          valueList: async (c) => DeliveryStatus.getOptions(c)
           ,
           getValue: f => f.getDeliveryDescription(),
           width: '300'
@@ -640,7 +640,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ].map(a => a.gridButton({
         afterAction: async () => await this.refresh(),
         dialog: this.dialog,
-        userWhere: f => this.deliveries.getFilterWithSelectedRows().where(f),
+        userWhere: (x) => this.deliveries.getFilterWithSelectedRows().where,
         settings: this.settings
       })),
       {
