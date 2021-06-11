@@ -489,7 +489,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     , orderBy: f => f.name
     ,
     columnSettings: deliveries => {
-      let r = [
+      let r:DataControlInfo<ActiveFamilyDeliveries>[] = [
 
         {
           field: deliveries.name,
@@ -499,7 +499,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           field: deliveries.address,
           width: '250',
           cssClass: f => {
-            if (!f.addressOk.value)
+            if (!f.addressOk)
               return 'addressProblem';
             return '';
           }
