@@ -1,15 +1,14 @@
 import { ServerFunction, Allowed, EntityBase, EntityField, FieldDefinitions } from '@remult/core';
 import { DataControl } from '@remult/angular';
-export function CustomColumn(info: () => customColumnInfo) {
+export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowed) {
   return (target, key) => {
     DataControl({
-      //valueList: info().values,
-      //     visible: () => info().visible
+      valueList: () => info().values?.map(x => ({ id: x, caption: x })),
+      visible: () => info().visible
     })(target, key);
     return Field({
-      //caption: info().caption,
-      //    allowApiUpdate: info().role,
-
+      caption: () => info().caption,
+      includeInApi: includeInApi
     })(target, key);
   };
 }
@@ -311,39 +310,39 @@ export class ApplicationSettings extends EntityBase {
   boxes1Name: string;
   @Field({ translation: l => l.boxes2NameCaption })
   boxes2Name: string;
-  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 1 " + l.caption, includeInApi: Roles.admin })
   familyCustom1Caption: string;
-  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 1 " + l.optionalValues, includeInApi: Roles.admin })
   familyCustom1Values: string;
-  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 2 " + l.caption, includeInApi: Roles.admin })
   familyCustom2Caption: string;
-  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 2 " + l.optionalValues, includeInApi: Roles.admin })
   familyCustom2Values: string;
-  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 3 " + l.caption, includeInApi: Roles.admin })
   familyCustom3Caption: string;
-  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 3 " + l.optionalValues, includeInApi: Roles.admin })
   familyCustom3Values: string;
-  @Field({ translation: l => l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 4 " + l.caption, includeInApi: Roles.admin })
   familyCustom4Caption: string;
-  @Field({ translation: l => l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 4 " + l.optionalValues, includeInApi: Roles.admin })
   familyCustom4Values: string;
   @Field<ApplicationSettings>({ serverExpression: (self) => self.context.isSignedIn() })
   currentUserIsValidForAppLoadTest: boolean;
-  @Field({ translation: l => l.caption })
+  @Field({ translation: l => l.questionForVolunteer + " 1 " + l.caption })
   questionForVolunteer1Caption: string;
-  @Field({ translation: l => l.optionalValues })
+  @Field({ translation: l => l.questionForVolunteer + " 1 " + l.optionalValues })
   questionForVolunteer1Values: string;
-  @Field({ translation: l => l.caption })
+  @Field({ translation: l => l.questionForVolunteer + " 2 " + l.caption })
   questionForVolunteer2Caption: string;
-  @Field({ translation: l => l.optionalValues })
+  @Field({ translation: l => l.questionForVolunteer + " 2 " + l.optionalValues })
   questionForVolunteer2Values: string;
-  @Field({ translation: l => l.caption })
+  @Field({ translation: l => l.questionForVolunteer + " 3 " + l.caption })
   questionForVolunteer3Caption: string;
-  @Field({ translation: l => l.optionalValues })
+  @Field({ translation: l => l.questionForVolunteer + " 3 " + l.optionalValues })
   questionForVolunteer3Values: string;
-  @Field({ translation: l => l.caption })
+  @Field({ translation: l => l.questionForVolunteer + " 4 " + l.caption })
   questionForVolunteer4Caption: string;
-  @Field({ translation: l => l.optionalValues })
+  @Field({ translation: l => l.questionForVolunteer + " 4 " + l.optionalValues })
   questionForVolunteer4Values: string;
   @Field({ includeInApi: Roles.admin })
   createBasketsForAllFamiliesInCreateEvent: boolean;
@@ -469,14 +468,14 @@ export class SettingsService {
 
     BasketType.boxes1Name = this.instance.boxes1Name;
     BasketType.boxes2Name = this.instance.boxes2Name;
-    setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values, Roles.admin);
-    setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values, Roles.admin);
-    setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values, Roles.admin);
-    setCustomColumnInfo(customColumnInfo[4], this.instance.familyCustom4Caption, this.instance.familyCustom4Values, Roles.admin);
-    setCustomColumnInfo(questionForVolunteers[1], this.instance.questionForVolunteer1Caption, this.instance.questionForVolunteer1Values, true);
-    setCustomColumnInfo(questionForVolunteers[2], this.instance.questionForVolunteer2Caption, this.instance.questionForVolunteer2Values, true);
-    setCustomColumnInfo(questionForVolunteers[3], this.instance.questionForVolunteer3Caption, this.instance.questionForVolunteer3Values, true);
-    setCustomColumnInfo(questionForVolunteers[4], this.instance.questionForVolunteer4Caption, this.instance.questionForVolunteer4Values, true);
+    setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
+    setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
+    setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values);
+    setCustomColumnInfo(customColumnInfo[4], this.instance.familyCustom4Caption, this.instance.familyCustom4Values);
+    setCustomColumnInfo(questionForVolunteers[1], this.instance.questionForVolunteer1Caption, this.instance.questionForVolunteer1Values);
+    setCustomColumnInfo(questionForVolunteers[2], this.instance.questionForVolunteer2Caption, this.instance.questionForVolunteer2Values);
+    setCustomColumnInfo(questionForVolunteers[3], this.instance.questionForVolunteer3Caption, this.instance.questionForVolunteer3Values);
+    setCustomColumnInfo(questionForVolunteers[4], this.instance.questionForVolunteer4Caption, this.instance.questionForVolunteer4Values);
 
 
   }
@@ -488,15 +487,14 @@ export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
 export const questionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
 
 export function getCustomColumnVisible(defs: FieldDefinitions) {
-  return true;
+  return defs.caption != undefined;
 }
 
-export function setCustomColumnInfo(v: customColumnInfo, caption: string, values: string, role: Allowed) {
+export function setCustomColumnInfo(v: customColumnInfo, caption: string, values: string) {
 
   v.visible = !!caption;
   v.caption = caption;
   v.values = undefined;
-  v.role = role;
   if (values) {
     v.values = values.split(',').map(x => x.trim());
   }
@@ -519,8 +517,8 @@ export function getSettings(context: Context) {
 interface customColumnInfo {
   caption?: string,
   visible?: boolean,
-  values?: string[],
-  role?: Allowed
+  values?: string[]
+
 }
 export function includePhoneInApi(context: Context) {
   var s = getSettings(context);

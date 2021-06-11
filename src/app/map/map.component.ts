@@ -172,7 +172,9 @@ export class MapComponent implements OnInit, OnDestroy {
             let start: Location;
             if (families.length > 0)
                 start = (await families[0].distributionCenter.getRouteStartGeo()).location();
-            else start = (await this.dialog.distCenter.getRouteStartGeo()).location();
+            else if (this.dialog.distCenter)
+                start = (await this.dialog.distCenter.getRouteStartGeo()).location();
+            else start = this.settings.addressHelper.location();
             this.helperMarkers = [];
 
             this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: start, icon: 'https://labs.google.com/ridefinder/images/mm_20_purple.png' }));

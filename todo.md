@@ -5,6 +5,7 @@
 
 
 ## next version
+[] restore the original parameter structure of addBox etc...
 [] make questions object column
 [] make geocode response object column
 [] phone strategy object column
@@ -32,9 +33,11 @@
 [V] update user preferences
 [V] test delivery options settings visibility based on usage
 [V] test overview functionality
+[V] fix חשב מסלול מחדש
 [] test import from excel
-[] test all assignments 
-[] test questions for volunteer - only displays relevant questions
-[] test custom columns for family is ok
+[V] test all assignments 
+[V] test questions for volunteer - only displays relevant questions
+[V] test custom columns for family is ok
 [] fix filter on date?
 [] test duplicate families - all the checkboxes there etc...
+[V] fix select family

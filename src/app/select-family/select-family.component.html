@@ -29,19 +29,19 @@
         <div>
           <h4>
             <mat-checkbox [(ngModel)]="getSelected(f).selectState.selected" (click)="false">
-              {{f.name.value}}
+              {{f.name}}
             </mat-checkbox>
           </h4>
         </div>
         <div *ngIf="showStatus(f)" class="red">
           <h5>{{showStatus(f)}}</h5>
         </div>
-        <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType.displayValue}}
+        <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType.name}}
 
-        <div *ngIf="f.deliveryComments.value">
-          <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments.value}}
+        <div *ngIf="f.deliveryComments">
+          <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments}}
         </div>
-        <h5>{{f.address.value}}</h5>
+        <h5>{{f.address}}</h5>
 
         <hr />
       </div>

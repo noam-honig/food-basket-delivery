@@ -312,6 +312,7 @@ export class HelperFamiliesComponent implements OnInit {
       forEachRow: async fd => {
         fd.courier = null;
         fd._disableMessageToUsers = true;
+        await fd.$.distributionCenter.load();
         dist = fd.distributionCenter;
         await fd.save();
       }

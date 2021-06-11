@@ -637,13 +637,13 @@ export class Families extends IdEntity {
     }
   })
   fixedCourier: HelpersBase;
-  @CustomColumn(() => customColumnInfo[1])
+  @CustomColumn(() => customColumnInfo[1], Roles.admin)
   custom1: string;
-  @CustomColumn(() => customColumnInfo[2])
+  @CustomColumn(() => customColumnInfo[2], Roles.admin)
   custom2: string;
-  @CustomColumn(() => customColumnInfo[3])
+  @CustomColumn(() => customColumnInfo[3], Roles.admin)
   custom3: string;
-  @CustomColumn(() => customColumnInfo[4])
+  @CustomColumn(() => customColumnInfo[4], Roles.admin)
   custom4: string;
 
 
@@ -778,7 +778,7 @@ export class Families extends IdEntity {
       translation: l => l.previousDeliverySummary,
       readonly: true,
       field: self.previousDeliveryStatus,
-      valueList:  c => DeliveryStatus.getOptions(c),
+      valueList: c => DeliveryStatus.getOptions(c),
       getValue: f => {
         if (!f.previousDeliveryStatus)
           return '';

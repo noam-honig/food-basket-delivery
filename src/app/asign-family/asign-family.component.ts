@@ -420,12 +420,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     assigning = false;
     async assignItem(allRepeat?: boolean) {
         this.assigning = true;
-        let basket = this.basketType;
-        if (this.allBaskets == basket)
-            basket = undefined;
+
         await this.verifyHelperExistance();
         try {
-            let x = await AsignFamilyComponent.AddBox(this.helper, basket.basket, this.dialog.distCenter, {
+            let x = await AsignFamilyComponent.AddBox(this.helper, this.basketType.basket, this.dialog.distCenter, {
                 group: this.filterGroup,
                 city: this.filterCity,
                 area: this.filterArea,
@@ -436,7 +434,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             if (x.addedBoxes) {
                 this.familyLists.initForFamilies(this.helper, x.families);
 
-                let refreshBaskets = basket == undefined;
+                let refreshBaskets = this.basketType.basket == undefined;
                 if (x.familiesInSameAddress.length > 0) {
                     if (await this.dialog.YesNoPromise(this.settings.lang.thereAreAdditional + " " + x.familiesInSameAddress.length + " " + this.settings.lang.deliveriesAtSameAddress)) {
                         await this.busy.doWhileShowingBusy(async () => {
@@ -451,7 +449,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     }
                 }
                 if (!refreshBaskets) {
-                    basket.unassignedFamilies -= x.addedBoxes;
+                    this.basketType.unassignedFamilies -= x.addedBoxes;
 
                 }
                 else {
@@ -664,7 +662,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!helper)
             throw "helper does not exist";
-
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helper).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
@@ -907,7 +904,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         }
 
-
+        await Promise.all(existingFamilies.map(f => f.$.distributionCenter.load()));
         existingFamilies = existingFamilies.filter(f => f.checkAllowedForUser());
         existingFamilies.sort((a, b) => a.routeOrder - b.routeOrder);
         result.families = existingFamilies.map(f => f._.toApiJson());

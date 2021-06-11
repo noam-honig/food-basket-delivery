@@ -60,7 +60,7 @@ export class UserFamiliesList {
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
     async initForHelper(helper: HelpersBase) {
         if (helper != this.helper) {
-            this.initHelper(helper);
+            await this.initHelper(helper);
             if (helper) {
                 this.routeStats = helper.getRouteStats();
                 this.prevRouteStats = undefined;

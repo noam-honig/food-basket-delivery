@@ -24,11 +24,12 @@ export async function GetGeoInformation(address: string, context: Context) {
         return new GeocodeInformation();
     }
     address = address.trim();
-    let cacheEntry = await context.for(GeocodeCache).getCachedByIdAsync(address);
+    let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => context.for(GeocodeCache).defs.getIdFilter(address));
     if (!cacheEntry.isNew()) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);
     }
+
     let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync(context);
     let b = settings.forWho.args.bounds;
     let x = pendingRequests.get(address);

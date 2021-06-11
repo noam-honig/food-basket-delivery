@@ -118,7 +118,9 @@ export abstract class HelpersBase extends IdEntity {
                 }
             })
     }
-    abstract getHelper(): Promise<Helpers>;
+    getHelper(): Promise<Helpers> {
+        return this.context.for(Helpers).getCachedByIdAsync(this.id);
+    }
     isCurrentUser(): boolean {
         return this.id == this.context.user.id;
     }
@@ -381,7 +383,7 @@ export class Helpers extends HelpersBase {
 
         }
         context.set(currentUser, h);
-        
+
 
     }
 

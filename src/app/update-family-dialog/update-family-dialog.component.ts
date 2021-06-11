@@ -312,7 +312,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         families.numOfActiveReadyDeliveries,
 
 
-        [families.birthDate, {
+        [families.birthDate
+          , {
           caption: 'גיל',
           getValue: (f) => {
             if (!f.birthDate) {
@@ -320,7 +321,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
             }
             return Math.round((new Date().valueOf() - f.birthDate.valueOf()) / (365 * 86400000))
           }
-        }],
+        }
+      ],
         families.iDinExcel
       ]
     });
