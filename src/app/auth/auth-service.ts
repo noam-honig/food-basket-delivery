@@ -44,7 +44,7 @@ export class TokenService {
     async setToken(token: string, remember: boolean) {
         let user: UserInfo = undefined;
         if (token) {
-            user = <UserInfo>new JwtHelperService().decodeToken(token);
+            user =await  AuthService.decodeJwt(token);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -62,7 +62,7 @@ export class TokenService {
 
 @Injectable()
 export class AuthService {
-    
+
 
 
     async loginFromSms(key: string) {
@@ -137,7 +137,7 @@ export class AuthService {
         }
 
 
-        if (!settings.currentUserIsValidForAppLoadTest&&this.context.isSignedIn()) {
+        if (!settings.currentUserIsValidForAppLoadTest && this.context.isSignedIn()) {
             this.signout();
         }
         if (dialog)
@@ -223,7 +223,7 @@ export class AuthService {
             return r;
         }
         if (userHasPassword && args.password) {
-            if (!(await import('password-hash')).verify(args.password, h.realStoredPassword)) {
+            if (!await Helpers.verifyHash(args.password, h.realStoredPassword)) {
                 r.invalidPassword = true;
                 return r;
             }
@@ -357,6 +357,17 @@ export class AuthService {
         clearTimeout(this.userActivity);
         this.inactiveTimeout();
     }
+    static async decodeJwt(token: string):Promise<UserInfo> {
+        return <UserInfo>new JwtHelperService().decodeToken(token);
+    }
+    static async signJwt(result: any, timeToDisconnect: number) {
+        let jwt = (await import('jsonwebtoken'));
+        if (timeToDisconnect)
+            return jwt.sign(result, process.env.TOKEN_SIGN_KEY, { expiresIn: timeToDisconnect * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
+        else
+            return jwt.sign(result, process.env.TOKEN_SIGN_KEY);
+
+    }
 
 
 
@@ -407,12 +418,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
 
     return result;
 }
-async function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
-    let jwt = (await import('jsonwebtoken'));
-    if (settings.timeToDisconnect) {
-        return jwt.sign(result, process.env.TOKEN_SIGN_KEY, { expiresIn: settings.timeToDisconnect * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
-    }
-    else
-        return jwt.sign(result, process.env.TOKEN_SIGN_KEY);
 
+async function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
+    return AuthService.signJwt(result, settings.timeToDisconnect);
 }

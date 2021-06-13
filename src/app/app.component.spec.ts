@@ -20,15 +20,21 @@ describe('AppComponent', () => {
   var bt = SqlFor(context.for(BasketType));
 
   var f = SqlFor(context.for(Families));
-  var sql = new SqlBuilder();
   let afd = SqlFor(context.for(ActiveFamilyDeliveries));
   let fd = SqlFor(context.for(FamilyDeliveries));
-  sql.addEntity(bt, 'p');
-  sql.addEntity(afd, 'fd');
-  sql.addEntity(fd, 'h');
+  var sql = new SqlBuilder();
+  beforeEach(() => {
+    sql = new SqlBuilder();
+    sql.addEntity(bt, 'p');
+    sql.addEntity(afd, 'fd');
+    sql.addEntity(fd, 'h');
+  });
+
+
   var q = (query: QueryBuilder, expectresult: String) => {
     expect(sql.query(query)).toBe(expectresult);
   };
+
   it('test q', () => {
     expect(
       sql.query({
@@ -137,6 +143,7 @@ describe('AppComponent', () => {
     })).toBe("update BasketType p set id = '123', name = 'noam' where p.boxes = 5 and p.boxes = 6");
   });
   it('update 2 ', () => {
+    sql.getEntityAlias(f);
     let pd = SqlFor(context.for(Families));
     expect(sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],

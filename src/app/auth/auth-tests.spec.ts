@@ -1,5 +1,5 @@
 import { TestBed, async, inject } from '@angular/core/testing';
-import { ServerContext, InMemoryDataProvider,  } from '@remult/core';
+import { ServerContext, InMemoryDataProvider, } from '@remult/core';
 
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Roles } from './roles';
@@ -13,7 +13,14 @@ import { actionInfo } from '@remult/core/src/server-action';
 
 const PHONE = '0507330590';
 process.env.TOKEN_SIGN_KEY = '1234';
-
+Helpers.generateHash = async password => {
+    return password;
+};
+Helpers.verifyHash = async (a, b) => {
+    return a == b
+};
+AuthService.signJwt = async (x) => JSON.stringify(x);
+AuthService.decodeJwt = async x => JSON.parse(x);
 describe('users and security', () => {
 
     actionInfo.runningOnServer = true;

@@ -6,6 +6,7 @@ import { Sites, getLang } from '../sites/sites';
 import { EmailSvc, isDesktop } from '../shared/utils';
 import { isDate } from 'util';
 import { DataControl } from '@remult/angular';
+import { filterHelper } from '../../../../radweb/projects/core/src/filter/filter-interfaces';
 
 
 
@@ -465,28 +466,30 @@ class a {
 
 export type SqlDefs<T = unknown> = FieldDefinitionsOf<T> & filterOf<T> & { defs: EntityDefinitions };
 export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T> {
-  let defs: EntityDefinitions;
+  let origDefs: EntityDefinitions;
   let re = repo as Repository<T>;
   if (re && re.defs)
-    defs = re.defs;
+    origDefs = re.defs;
   else
-    defs = repo as EntityDefinitions;
-  let r = {
-    defs,
-    [Symbol.iterator]: () => defs.fields[Symbol.iterator](),
-    find: defs.fields.find
-  };
-  let f = Filter.createFilterOf(defs);
+    origDefs = repo as EntityDefinitions;
 
-  for (const col of defs.fields) {
-    r[col.key] = new myBridge(f[col.key] as unknown as filterOptions<any> & comparableFilterItem<any> & supportsContains<any>, col)
+  let r = {
+    defs: Object.assign(origDefs),
+    [Symbol.iterator]: () => origDefs.fields[Symbol.iterator](),
+    find: origDefs.fields.find
+  };
+  let f = Filter.createFilterOf(origDefs);
+
+  for (const col of origDefs.fields) {
+    r[col.key] = new myBridge(col)
   }
   return r as unknown as SqlDefs<T>;
 }
 class myBridge implements filterOptions<any>, comparableFilterItem<any>, supportsContains<any>, FieldDefinitions {
-  constructor(private filter: filterOptions<any> & comparableFilterItem<any> & supportsContains<any>, private defs: FieldDefinitions) {
+  constructor(private defs: FieldDefinitions) {
 
   }
+  private filter = new filterHelper(this);;
   isEqualTo(val: any): Filter {
     return this.filter.isEqualTo(val);
   }

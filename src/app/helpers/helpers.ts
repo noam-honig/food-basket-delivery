@@ -309,7 +309,7 @@ export abstract class HelpersBase extends IdEntity {
                 if (self.$.password.error)
                     return;
                 //throw self.password.defs.caption + " - " + self.password.validationError;
-                self.realStoredPassword = (await import('password-hash')).generate(self.password);
+                self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
             if ((await self.context.for(Helpers).count()) == 0) {
@@ -369,6 +369,12 @@ export abstract class HelpersBase extends IdEntity {
 
 export class Helpers extends HelpersBase {
     private static helpersCache = new Map<string, Helpers>();
+    static async generateHash(password: string) {
+        return await (await import('password-hash')).generate(password)
+    }
+    static async verifyHash(password: string, hash: string) {
+        return (await import('password-hash')).verify(password, hash);
+    }
     static async initContext(context: Context) {//
         let h: Helpers;
 
