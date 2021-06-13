@@ -265,7 +265,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorTime = new Date().valueOf();
         try {
             var s = await this.context.for((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
-            if (s && this.context.user && !s.currentUserIsValidForAppLoadTest) {
+            if (s && this.context.isSignedIn() && !s.currentUserIsValidForAppLoadTest) {
                 let AuthService = (await import("../auth/auth-service")).AuthService;
                 AuthService.doSignOut();
                 this.dialog.Error(s.lang.sessionExpiredPleaseRelogin);

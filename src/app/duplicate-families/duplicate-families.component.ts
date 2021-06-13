@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase,  FieldDefinitions, EntityWhere } from '@remult/core';
-import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
+import { ServerFunction, Context, SqlDatabase, FieldDefinitions, EntityWhere, getControllerDefs } from '@remult/core';
+import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
 import { Families } from '../families/families';
@@ -13,6 +13,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { Field } from '../translate';
 
 @Component({
   selector: 'app-duplicate-families',
@@ -21,12 +22,23 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class DuplicateFamiliesComponent implements OnInit {
 
-  address = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.address });
-  name = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.familyName });
-  phone = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.phone });
-  onlyActive = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.activeDeliveries, defaultValue: () => true })
-  tz = new InputField<boolean>({ valueChange: () => this.ngOnInit(), caption: this.settings.lang.socialSecurityNumber });
-  area = new DataAreaSettings({ fields: () => [[this.address, this.name, this.phone, this.tz, this.onlyActive]] });
+  @Field({ translation: l => l.address })
+  @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
+  address: boolean;
+  @Field({ translation: l => l.familyName })
+  @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
+  name: boolean = false;
+  @Field({ translation: l => l.phone })
+  @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
+  phone: boolean = false;
+  @Field({ translation: l => l.activeDeliveries })
+  @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
+  onlyActive: boolean = true;
+  @Field({ translation: l => l.socialSecurityNumber })
+  @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
+  tz: boolean = false;
+  get $() { return getControllerDefs(this, this.context).fields }
+  area = new DataAreaSettings({ fields: () => [[this.$.address, this.$.name, this.$.phone, this.$.tz, this.$.onlyActive]] });
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
   }
@@ -34,17 +46,17 @@ export class DuplicateFamiliesComponent implements OnInit {
   viewdFamilies = new Map<string, boolean>();
   async ngOnInit() {
     this.duplicateFamilies = [];
-    if (!this.address.value && !this.name.value && !this.phone.value && !this.tz.value) {
+    if (!this.address && !this.name && !this.phone && !this.tz) {
       //      this.dialog.Error("אנא בחרו לפי מה לחפש משפחות כפולות");
       return;
     }
     try {
       this.duplicateFamilies = await DuplicateFamiliesComponent.familiesInSameAddress({
-        address: this.address.value,
-        name: this.name.value,
-        phone: this.phone.value,
-        tz: this.tz.value,
-        onlyActive: this.onlyActive.value
+        address: this.address,
+        name: this.name,
+        phone: this.phone,
+        tz: this.tz,
+        onlyActive: this.onlyActive
       });
       this.post();
     }
@@ -100,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere: x.args.settings.getFilterWithSelectedRows().where as EntityWhere<Families>,
+              userWhere:()=> x.args.settings.getFilterWithSelectedRows().where ,
               settings: this.settings
             }))
           , {

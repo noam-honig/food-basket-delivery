@@ -1,4 +1,4 @@
-<form>
+<form *ngIf="args">
   <h3 matDialogHeader>{{args.title}}</h3>
   <div mat-dialog-content>
     <data-grid [settings]="args.settings" height="300"> </data-grid>

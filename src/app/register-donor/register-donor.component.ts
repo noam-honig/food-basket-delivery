@@ -71,7 +71,8 @@ export class RegisterDonorComponent implements OnInit {
         [this.donor.$.computer, this.donor.$.computerAge],
         [this.donor.$.laptop, this.donor.$.laptopAge],
         this.donor.$.screen,
-        this.donor.$.donationType, this.donor.$.phone, this.donor.$.email
+        this.donor.$.donationType, { field: this.donor.$.phone, click: null },
+        { field: this.donor.$.email, click: null }
       ]
   });
   ngOnInit() {
@@ -89,7 +90,7 @@ export class RegisterDonorComponent implements OnInit {
   }
 
   hasMandatoryFields() {
-    return (this.donor.name != null) && (isPhoneValidForIsrael(this.donor.phone.thePhone)
+    return (this.donor.name != null) && this.donor.phone && (isPhoneValidForIsrael(this.donor.phone.thePhone)
       && ((this.donor.selfDeliver) || (this.donor.address != null))
     );
   }

@@ -89,7 +89,7 @@
                 <mat-card-title>
                     הודעה למשפחה על מסירה מוצלחת
                 </mat-card-title>
-                <data-control [field]="settings.sendSuccessMessageToFamily"></data-control>
+                <data-control [field]="settings.$.sendSuccessMessageToFamily"></data-control>
                 <ng-container *ngIf="settings.sendSuccessMessageToFamily">
                     הודעה זו תשלח למשפחה כאשר התנדב לוחץ על כפתור נמסר בהצלחה
                     <textarea [(ngModel)]="settings.successMessageText" class="form-control" lines=3></textarea>

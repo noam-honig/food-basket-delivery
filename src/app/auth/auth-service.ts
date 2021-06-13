@@ -137,7 +137,7 @@ export class AuthService {
         }
 
 
-        if (!settings.currentUserIsValidForAppLoadTest) {
+        if (!settings.currentUserIsValidForAppLoadTest&&this.context.isSignedIn()) {
             this.signout();
         }
         if (dialog)

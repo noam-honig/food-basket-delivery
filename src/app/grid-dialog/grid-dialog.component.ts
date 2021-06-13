@@ -36,7 +36,7 @@ export class GridDialogComponent implements OnInit {
 
 
   ngOnInit() {
-    if (this.args.stateName)
+    if (this.args?.stateName)
       new columnOrderAndWidthSaver(this.args.settings).load(this.args.stateName)
   }
   cancel() {

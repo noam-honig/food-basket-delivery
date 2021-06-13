@@ -11,10 +11,10 @@
                 <H3>כל מה שצריך לעשות זה למלא את הטופס הקצר הזה ואנחנו ניצור איתך קשר</H3>
                 <h5>*נא למלא את הטופס בעברית.</h5>
             </div>
-            <data-control [field]="helper.name"></data-control>
-            <app-address-input [field]="helper.preferredDistributionAreaAddress"
+            <data-control [field]="helper.$.name"></data-control>
+            <app-address-input [field]="helper.$.preferredDistributionAreaAddress"
                 caption="כתובת שנדע לחבר לך תורמים קרובים" [autoInit]="true"></app-address-input>
-            <app-address-input [field]="helper.preferredFinishAddress" caption="איזור נוסף ממנו נח לך לאסוף תרומות?"
+            <app-address-input [field]="helper.$.preferredFinishAddress" caption="איזור נוסף ממנו נח לך לאסוף תרומות?"
                 [autoInit]=" true"></app-address-input>
             <data-area [settings]="area"></data-area>
             <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>

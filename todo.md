@@ -20,10 +20,11 @@
 [V] fix helper work to select columns on grid and on dialog
 [V] test merge
 [] test import phone
-[] select helper in distribution map controller
-[] verify that in the register helper, the caption for the address works ok
-[] Fix custom column
+[V] select helper in distribution map controller
+[V] verify that in the register helper, the caption for the address works ok
+[V] Fix custom column
 [] fix excel export for async items
+[] create delivery, problem with top textbox
 
 ## test
 [V] test that there are no db changes.
@@ -38,6 +39,8 @@
 [V] test all assignments 
 [V] test questions for volunteer - only displays relevant questions
 [V] test custom columns for family is ok
-[] fix filter on date?
-[] test duplicate families - all the checkboxes there etc...
+[] fix filter on date in history?
+[V] test duplicate families - all the checkboxes there etc...
 [V] fix select family
+[V] test data-control size with icon on data-area - it seems to make the height grow, which it did not before
+[V] disable mail and phone icons in the ui for register donor

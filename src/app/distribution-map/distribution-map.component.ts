@@ -20,7 +20,7 @@ import { BusyService, DataAreaSettings, GridButton, InputField } from '@remult/a
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 
-import { Helpers, HelperId } from '../helpers/helpers';
+import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang, Sites } from '../sites/sites';
@@ -198,11 +198,11 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   statuses = new Statuses(this.settings);
   selectedStatus: statusClass;
-  filterCourier = new InputField<string>({//sholud be HelperId
-
+  filterCourier = new InputField<HelpersBase>({
+    dataType:HelpersBase,
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
-    click: () => { throw "Not Implemented" }
+    
   })
 
   filterArea = new InputField<string>({
@@ -284,7 +284,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         familyOnMap.prevStatus = status;
         familyOnMap.prevCourier = f.courier;
       }
-      familyOnMap.marker.setVisible((!this.selectedStatus || this.selectedStatus == status) && (!this.filterCourier.value || this.filterCourier.value == familyOnMap.prevCourier));
+      familyOnMap.marker.setVisible((!this.selectedStatus || this.selectedStatus == status) && (!this.filterCourier.value || this.filterCourier.value.id == familyOnMap.prevCourier));
 
 
       familyOnMap.marker.setLabel(this.showHelper && f.courierName ? f.courierName + '...' : '');

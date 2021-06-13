@@ -1,11 +1,12 @@
 import { TestBed, async, inject } from '@angular/core/testing';
-import { ServerContext, InMemoryDataProvider, myServerAction, actionInfo } from '@remult/core';
+import { ServerContext, InMemoryDataProvider,  } from '@remult/core';
 
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Roles } from './roles';
 import { AuthService, TokenService } from './auth-service';
 import { Phone } from "../model-shared/Phone";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { actionInfo } from '@remult/core/src/server-action';
 
 
 
@@ -221,7 +222,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     }
     let mem = new InMemoryDataProvider();
     var context = new ServerContext(mem);
-    await context.userChange.observe(async () => AuthService.initContext(context));
+    await context.userChange.observe(async () => Helpers.initContext(context));
     let c = context.for(Helpers);
     let h = c.create();
     h.name = 'test';

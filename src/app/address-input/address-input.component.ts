@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import {  EntityField } from '@remult/core';
+import { EntityField } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 
@@ -14,9 +14,11 @@ export class AddressInputComponent implements AfterViewInit {
 
   @Input() field: EntityField<string>;
   @Input() autoInit: boolean = false;
+  @Input() caption: string;
   constructor(private settings: ApplicationSettings, private zone: NgZone) { }
   initAddressAutoComplete = false;
   destroyMe: google.maps.MapsEventListener;
+
   @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
   initAddress(consumer: (x: {
     addressByGoogle: string,
@@ -36,7 +38,7 @@ export class AddressInputComponent implements AfterViewInit {
         return;
       const place = autocomplete.getPlaces()[0];
 
-      
+
       this.zone.run(() => {
         this.field.value = this.addressInput.nativeElement.value;
         this.field.value = getAddress({
@@ -74,7 +76,7 @@ export class AddressInputComponent implements AfterViewInit {
     });
 
   }
-  getError(){
+  getError() {
     return this.field.error;
   }
 
