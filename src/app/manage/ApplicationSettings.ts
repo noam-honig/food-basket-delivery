@@ -241,7 +241,7 @@ export class ApplicationSettings extends EntityBase {
   defaultPrefixForExcelImport: string;
   @Field()
   checkIfFamilyExistsInDb: boolean;
-  @Field()
+  @Field({translation:l=>l.existsInRemovedFromListStrategy})
   removedFromListStrategy: RemovedFromListExcelImportStrategy;
   @Field()
   checkIfFamilyExistsInFile: boolean;

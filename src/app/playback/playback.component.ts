@@ -47,12 +47,12 @@ export class PlaybackComponent implements OnInit {
   @ViewChild('gmap', { static: true }) gmapElement: any;
 
   statuses = new Statuses(this.settings);
-  @ViewChild(DateRangeComponent, { static: false }) dateRange;
+  @ViewChild(DateRangeComponent, { static: false }) dateRange:DateRangeComponent;
   ready = false;
   async select() {
     this.ready = true;
-    let from = this.dateRange.fromDate.rawValue;
-    let to = this.dateRange.toDate.rawValue;
+    let from = this.dateRange.fromDate;
+    let to = this.dateRange.toDate;
 
 
     var mapProp: google.maps.MapOptions = {

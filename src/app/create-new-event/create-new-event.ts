@@ -33,7 +33,7 @@ function visible(when: () => boolean, caption?: string) {
 })
 export class CreateNewEvent {
     @Field()
-    archiveHelper:ArchiveHelper = new ArchiveHelper();
+    archiveHelper: ArchiveHelper = new ArchiveHelper();
     @Field({ translation: l => l.createNewDeliveryForAllFamilies })
     createNewDelivery: boolean;
     @Field()
@@ -60,7 +60,7 @@ export class CreateNewEvent {
 
     constructor(private context: Context) {
 
-        //getControllerDefs(this).columns.push(...getColumnsFromObject(this.archiveHelper));
+
     }
     isAllowed() {
         return controllerAllowed(this, this.context);
@@ -174,14 +174,14 @@ export class CreateNewEvent {
         }
         this.useFamilyBasket = true;
 
-        await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, x => filterDistCenter(x.distributionCenter, this.distributionCenter, this.context), settings.usingSelfPickupModule);
+        let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, x => filterDistCenter(x.distributionCenter, this.distributionCenter, this.context), settings.usingSelfPickupModule);
 
 
         openDialog(InputAreaComponent, x => x.args = {
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {
-                fields: () => [...this.$]
+                fields: () => [...archiveHelperFields,...[...this.$].filter(x => x != this.$.archiveHelper)]
             },
             ok: async () => {
                 let deliveriesCreated = await this.createNewEvent();

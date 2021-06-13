@@ -14,7 +14,7 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { Context } from '@remult/core';
 
 import { use, TranslationOptions } from '../translate';
-import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
+import { Helpers, HelperId, HelpersBase, currentUser } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -260,7 +260,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (this.settings.helpText && this.settings.helpPhone)
       return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
-      var h = this.context.for(Helpers).lookup(h => h.id.isEqualTo(this.context.user.id));
+      var h = this.context.get(currentUser);
       return r + h.name + ", " + h.phone.displayValue;
     }
   }

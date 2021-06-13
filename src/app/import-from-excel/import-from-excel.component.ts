@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity, ServerFunction, SqlDatabase, EntityWhere, AndFilter, FieldDefinitionsOf, EntityDefinitions, FieldDefinitions, EntityField, EntityBase, filterOptions, filterOf, Filter } from '@remult/core';
+import { Entity, ServerFunction, SqlDatabase, EntityWhere, AndFilter, FieldDefinitionsOf, EntityDefinitions, FieldDefinitions, EntityField, EntityBase, filterOptions, filterOf, Filter, getControllerDefs } from '@remult/core';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Context } from '@remult/core';
@@ -20,7 +20,7 @@ import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material/stepper';
 
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, getSettings, getCustomColumnVisible } from '../manage/ApplicationSettings';
-import { use } from '../translate';
+import { Field, use } from '../translate';
 import { getLang } from '../sites/sites';
 
 import { Groups } from '../manage/groups';
@@ -119,7 +119,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (count - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                             }
-                            await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery.value);
+                            await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery);
                             for (const r of rowsToInsert) {
                                 r.created = true;
                             }
@@ -134,7 +134,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                     if (rowsToInsert.length > 0) {
-                        await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery.value);
+                        await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery);
                         for (const r of rowsToInsert) {
                             r.created = true;
                         }
@@ -162,7 +162,7 @@ export class ImportFromExcelComponent implements OnInit {
             let f = context.for(Families).create();
             let fd = context.for(ActiveFamilyDeliveries).create();
             for (const val in r.values) {
-                columnFromKey(f, fd, val).value = r.values[val].newValue;
+                columnFromKey(f, fd, val).inputValue = r.values[val].newValue;
             }
             if (!f.name)
                 f.name = 'ללא שם';
@@ -203,7 +203,7 @@ export class ImportFromExcelComponent implements OnInit {
                         allRows.push(i);
 
                     if (rowsToUpdate.length == 35) {
-                        allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value));
+                        allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType));
                         if (new Date().valueOf() - lastDate > 1000) {
                             this.dialog.Info(i.rowInExcel + ' ' + (i.name));
                         }
@@ -214,7 +214,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                 }
                 if (rowsToUpdate.length > 0) {
-                    allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value));
+                    allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType));
                 }
                 this.sortRows();
                 this.updateRows = allRows;
@@ -231,7 +231,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async updateCol(i: excelRowInfo, col: columnInCompare) {
-        let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery.value, this.compareBasketType.value);
+        let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType);
         i.values = r[0].values;
     }
     static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, context: Context, settings: ApplicationSettings) {
@@ -256,7 +256,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (val === null)
             val = '';
         let col = columnFromKey(f, fd, entityAndColumnName);
-        col.value = val;
+        col.inputValue = val;
 
         await f.save();
         f.updateDelivery(fd);
@@ -274,7 +274,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
 
         c.existingDisplayValue = await getColumnDisplayValue(columnFromKey(f, fd, entityAndColumnName));
-        c.existingValue = columnFromKey(f, fd, entityAndColumnName).value;
+        c.existingValue = columnFromKey(f, fd, entityAndColumnName).inputValue;
     }
     async clearColumnUpdate(i: excelRowInfo, col: columnInCompare) {
         let c = this.getColInfo(i, col);
@@ -424,8 +424,8 @@ export class ImportFromExcelComponent implements OnInit {
 
         let f = this.context.for(Families).create();
         let fd = this.context.for(ActiveFamilyDeliveries).create();
-        fd.basketType = this.defaultBasketType.value;
-        fd.distributionCenter = this.distributionCenter.value;
+        fd.basketType = this.defaultBasketType;
+        fd.distributionCenter = this.distributionCenter;
         f.status = FamilyStatus.Active;
 
         fd.quantity = 1;
@@ -450,7 +450,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
 
 
-        if (this.useFamilyMembersAsNumOfBaskets.value && !updatedFields.get(this.fd.quantity)) {
+        if (this.useFamilyMembersAsNumOfBaskets && !updatedFields.get(this.fd.quantity)) {
             fd.quantity = f.familyMembers;
         }
         if (this.settings.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery) {
@@ -468,7 +468,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
         }
 
-        if (f.phone1.displayValue == f.phone2.displayValue)
+        if (f.phone1?.displayValue == f.phone2?.displayValue)
             f.phone2 = new Phone('');
 
         let info: excelRowInfo = {
@@ -476,10 +476,10 @@ export class ImportFromExcelComponent implements OnInit {
             tz: f.tz,
             tz2: f.tz2,
             address: f.address,
-            phone1ForDuplicateCheck: f.phone1.thePhone,
-            phone2ForDuplicateCheck: f.phone2.thePhone,
-            phone3ForDuplicateCheck: f.phone3.thePhone,
-            phone4ForDuplicateCheck: f.phone4.thePhone,
+            phone1ForDuplicateCheck: f.phone1?.thePhone,
+            phone2ForDuplicateCheck: f.phone2?.thePhone,
+            phone3ForDuplicateCheck: f.phone3?.thePhone,
+            phone4ForDuplicateCheck: f.phone4?.thePhone,
             distCenter: DistributionCenters.toId(fd.distributionCenter),
             basketType: fd.basketType.id,
             idInHagai: updatedFields.get(this.f.id) ? f.id : '',
@@ -506,7 +506,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (c.value !== undefined) {
                     info.values[keyFromColumnInCompare({ e: e._.repository.defs, c: c.defs })] = {
                         newDisplayValue: await getColumnDisplayValue(c),
-                        newValue: c.value
+                        newValue: c.inputValue
                     };
                 }
             }
@@ -527,11 +527,11 @@ export class ImportFromExcelComponent implements OnInit {
 
     settingsArea: DataAreaSettings = new DataAreaSettings();
     async ngOnInit() {
-        this.addDelivery.value = true;
-        this.defaultBasketType.value = await BasketType.getDefaultBasketType(this.context);
-        this.distributionCenter.value = this.dialog.distCenter;
-        if (this.distributionCenter.value == null)
-            this.distributionCenter.value = await DistributionCenters.getDefault(this.context);
+        this.addDelivery = true;
+        this.defaultBasketType = await BasketType.getDefaultBasketType(this.context);
+        this.distributionCenter = this.dialog.distCenter;
+        if (this.distributionCenter == null)
+            this.distributionCenter = await DistributionCenters.getDefault(this.context);
 
 
 
@@ -665,25 +665,7 @@ export class ImportFromExcelComponent implements OnInit {
 
             }, columns: [this.fd.quantity]
         });
-        // this.columns.push({
-        //     key: 'defaultBoxes',
-        //     name: use.language.defaultQuantity,
-        //     updateFamily: async (v, f, h) => {
-        //         let val = +leaveOnlyNumericChars(v);
-        //         if (val < 1)
-        //             val = 1;
-        //         f.quantity.value = val;
 
-        //     }, columns: [this.f.quantity]
-        // });
-        // this.columns.push({
-        //     key: 'defaultDeliveryComments',
-        //     name: use.language.commentForAllDeliveries,
-        //     updateFamily: async (v, f, h) => {
-        //         updateCol(f.deliveryComments, v);
-        //     },
-        //     columns: [this.f.deliveryComments]
-        // });
         this.columns.push({
             key: 'deliveryComments',
             name: this.fd.deliveryComments.caption,
@@ -692,13 +674,7 @@ export class ImportFromExcelComponent implements OnInit {
             },
             columns: [this.fd.deliveryComments]
         });
-        // this.columns.push({
-        //     key: 'defaultBasketType',
-        //     name: this.f.basketType.defs.caption,
-        //     updateFamily: async (v, f, h) => {
-        //         await h.lookupAndInsert(BasketType, b => b.name, v, b => b.id, f.basketType);
-        //     }, columns: [this.f.basketType]
-        // });
+
         this.columns.push({
             key: 'basketType',
             name: this.fd.basketType.caption,
@@ -841,11 +817,17 @@ export class ImportFromExcelComponent implements OnInit {
     newRows: excelRowInfo[] = [];
     identicalRows: excelRowInfo[] = [];
     updateRows: excelRowInfo[] = [];
-    addDelivery = new InputField<boolean>({ caption: use.language.defineDeliveriesForFamiliesInExcel });
-    compareBasketType = new InputField<boolean>({ caption: use.language.ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery });
-    defaultBasketType = new InputField<BasketType>({ target: BasketType });
-    distributionCenter = new InputField<DistributionCenters>({ target: DistributionCenters });
-    useFamilyMembersAsNumOfBaskets = new InputField<boolean>({ caption: use.language.useFamilyMembersAsQuantity });
+    @Field({ translation: l => l.defineDeliveriesForFamiliesInExcel })
+    addDelivery: boolean;
+    @Field({ translation: l => l.ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery })
+    compareBasketType: boolean;
+    @Field({ translation: l => l.basketType })
+    defaultBasketType: BasketType;
+    @Field({ translation: l => l.distributionList })
+    distributionCenter: DistributionCenters;
+    @Field({ translation: l => l.useFamilyMembersAsQuantity })
+    useFamilyMembersAsNumOfBaskets: boolean;
+    get $() { return getControllerDefs(this, this.context).fields };
 
     moveToAdvancedSettings() {
 
@@ -853,23 +835,26 @@ export class ImportFromExcelComponent implements OnInit {
         let updateColumns = this.buildUpdatedColumns();
 
 
+
         this.settingsArea = new DataAreaSettings({
             fields: () => {
                 let s = this.settings;
-                return [
-                    this.addDelivery,
-                    { field: this.defaultBasketType, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.basketType) && !updateColumns.get(this.f.basketType) },
-                    { field: s.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery, visible: () => this.addDelivery.value },
-                    { field: this.compareBasketType, visible: () => this.addDelivery.value },
-                    { field: this.distributionCenter, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.distributionCenter) && this.dialog.hasManyCenters },
-                    { field: this.useFamilyMembersAsNumOfBaskets, visible: () => this.addDelivery.value && !updateColumns.get(this.fd.quantity) && updateColumns.get(this.f.familyMembers) },
-                    s.defaultPrefixForExcelImport,
-                    s.checkIfFamilyExistsInFile,
-                    s.checkDuplicatePhones,
-                    s.excelImportAutoAddValues,
-                    s.checkIfFamilyExistsInDb,
-                    s.removedFromListStrategy
-                ] as DataAreaFieldsSetting<any>[]
+                let result: DataAreaFieldsSetting<any>[] = [];
+                result = [
+                    this.$.addDelivery,
+                    { field: this.$.defaultBasketType, visible: () => this.addDelivery && !updateColumns.get(this.fd.basketType) && !updateColumns.get(this.f.basketType) },
+                    { field: s.$.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery, visible: () => this.addDelivery },
+                    { field: this.$.compareBasketType, visible: () => this.addDelivery },
+                    { field: this.$.distributionCenter, visible: () => this.addDelivery && !updateColumns.get(this.fd.distributionCenter) && this.dialog.hasManyCenters },
+                    { field: this.$.useFamilyMembersAsNumOfBaskets, visible: () => this.addDelivery && !updateColumns.get(this.fd.quantity) && updateColumns.get(this.f.familyMembers) },
+                    s.$.defaultPrefixForExcelImport,
+                    s.$.checkIfFamilyExistsInFile,
+                    s.$.checkDuplicatePhones,
+                    s.$.excelImportAutoAddValues,
+                    s.$.checkIfFamilyExistsInDb,
+                    s.$.removedFromListStrategy
+                ]
+                return result;
             }
         });
     }
@@ -887,7 +872,7 @@ export class ImportFromExcelComponent implements OnInit {
         let updatedColumns = this.buildUpdatedColumns();
         await this.busy.doWhileShowingBusy(async () => {
             let originalUpdateFields = this.buildUpdatedColumns();
-            if (this.addDelivery.value) {
+            if (this.addDelivery) {
                 updatedColumns.set(this.fd.basketType, true);
                 updatedColumns.set(this.fd.distributionCenter, true);
                 updatedColumns.set(this.fd.quantity, true);
@@ -1055,7 +1040,7 @@ export class ImportFromExcelComponent implements OnInit {
     private async processExcelRowsAndCheckOnServer(rows: excelRowInfo[]) {
         if (this.settings.checkIfFamilyExistsInDb) {
 
-            let r = await this.checkExcelInput(rows, this.columnsInCompareMemberName, this.compareBasketType.value);
+            let r = await this.checkExcelInput(rows, this.columnsInCompareMemberName, this.compareBasketType);
             this.errorRows.push(...r.errorRows);
             this.newRows.push(...r.newRows);
             this.updateRows.push(...r.updateRows);
@@ -1329,7 +1314,7 @@ export class ImportFromExcelComponent implements OnInit {
         return await this.dialog.YesNoPromise(what);
     }
     private async actualMoveFromErrorToUpdate(i: excelRowInfo, f: duplicateFamilyInfo) {
-        let r = await compareValuesWithRow(this.context, i, f.id, this.compareBasketType.value, this.columnsInCompareMemberName);
+        let r = await compareValuesWithRow(this.context, i, f.id, this.compareBasketType, this.columnsInCompareMemberName);
         i.duplicateFamilyInfo = [f];
         if (r.hasDifference) {
             this.updateRows.push(i);
@@ -1547,7 +1532,7 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
             info.values[columnMemberName] = upd;
         }
         let col = columnFromKey(ef, fd, columnMemberName);
-        upd.existingValue = col.value;
+        upd.existingValue = col.inputValue;
         upd.existingDisplayValue = await getColumnDisplayValue(col);
         if (upd.existingValue == upd.newValue && upd.existingValue == "")
             upd.newDisplayValue = upd.existingDisplayValue;

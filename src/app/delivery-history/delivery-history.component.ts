@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, EntityBase } from '@remult/core';
+import { Context, SqlDatabase, EntityBase, getControllerDefs } from '@remult/core';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/Phone";
 import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
@@ -41,13 +41,14 @@ export class DeliveryHistoryComponent implements OnInit {
 
   @ViewChild(DateRangeComponent, { static: true }) dateRange;
 
-  onlyDone = new InputField<boolean>({ caption: this.settings.lang.showOnlyCompletedDeliveries, defaultValue: () => true })
-  onlyArchived = new InputField<boolean>({ caption: this.settings.lang.showOnlyArchivedDeliveries, defaultValue: () => false })//this.settings.isSytemForMlt() })
+  @Field({ translation: l => l.showOnlyCompletedDeliveries })
+  onlyDone: boolean = true;
+  @Field({ translation: l => l.showOnlyArchivedDeliveries })
+  onlyArchived: boolean = false;
+  get $() { return getControllerDefs(this, this.context).fields }
   rangeArea = new DataAreaSettings({
     fields: () => {
-
-      return [this.onlyDone, this.onlyArchived]
-
+      return [this.$.onlyDone, this.$.onlyArchived]
     },
   });
 
@@ -185,7 +186,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone.value, this.onlyArchived.value);
+    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
     let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).defs.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
@@ -263,12 +264,12 @@ export class DeliveryHistoryComponent implements OnInit {
 
     rowsInPage: 50,
     where: d => {
-      var toDate = this.dateRange.toDate.value;
+      var toDate = this.dateRange.toDate;
       toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate.value).and(d.deliveryStatusDate.isLessThan(toDate)).and(filterDistCenter(d.distributionCenter, this.dialog.distCenter, this.context))
-      if (this.onlyDone.value)
+      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate).and(d.deliveryStatusDate.isLessThan(toDate)).and(filterDistCenter(d.distributionCenter, this.dialog.distCenter, this.context))
+      if (this.onlyDone)
         r = r.and(DeliveryStatus.isAResultStatus(d.deliverStatus));
-      if (this.onlyArchived.value)
+      if (this.onlyArchived)
         r = r.and(d.archive.isEqualTo(true));
       return r;
     }
@@ -300,8 +301,6 @@ export class DeliveryHistoryComponent implements OnInit {
     ]
   });
   async ngOnInit() {
-    if (!this.settings.isSytemForMlt())
-      this.onlyArchived.value = false;
 
     if (this.mltColumns.length > 0)
       sortColumns(this.deliveries, this.mltColumns);
@@ -350,12 +349,12 @@ export class DeliveryHistoryComponent implements OnInit {
         sql.columnInnerSelect(hg, {
           select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, true), ' then 1 else 0 end) consumed')],
           from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier)]
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.dbName)]
         }),
         sql.columnInnerSelect(hg, {
           select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, false), ' then 1 else 0 end) pending')],
           from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier)]
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.dbName)]
         })
         , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
         sql.build("select ", [

@@ -20,7 +20,7 @@
 
                 <ul>
                     <li *ngFor="let ac of additionalColumns; let i = index">
-                        <select [(ngModel)]="ac.column">
+                        <select [(ngModel)]="ac.field">
                             <option value="">{{settings.lang.excelColumnIgnore}}</option>
                             <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                         </select>
@@ -43,7 +43,7 @@
                             <th *ngFor="let ec of excelColumns">
                                 {{ec.title}}
                                 <br>
-                                <select [(ngModel)]="ec.column">
+                                <select [(ngModel)]="ec.field">
                                     <option value="">{{settings.lang.excelColumnIgnore}}</option>
                                     <option *ngFor="let c of columns" [ngValue]="c">{{c.name}}</option>
                                 </select>
@@ -56,7 +56,7 @@
                                 </td>
 
                                 <td *ngFor="let c of excelColumns">
-                                    {{getTheData(c.excelColumn+r)}}
+                                    {{getTheData(c.excelField+r)}}
                                 </td>
                             </tr>
                         </ng-container>
@@ -83,7 +83,7 @@
 
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.c.defs.caption}}
+                                    {{c.c.caption}}
                                 </th>
                             </tr>
                             <ng-container
@@ -156,7 +156,7 @@
                                 <th></th>
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.c.defs.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
+                                    {{c.c.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
                                         (click)="updateAllCol(c)">done_all
                                     </mat-icon>
 
@@ -185,10 +185,10 @@
                                     <td>{{i.rowInExcel}}<br></td>
                                     <td *ngFor="let c of columnsInCompare">
                                         <span
-                                            [class.newValue]="!i.newRow&&i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
+                                            [class.newValue]="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
                                             {{getColInfo(i,c).newDisplayValue}}</span>
                                         <ng-container
-                                            *ngIf="!i.newRow&&i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
+                                            *ngIf="i.duplicateFamilyInfo&&i.duplicateFamilyInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
                                             <br><span
                                                 style="color:red;text-decoration-line: line-through">{{getColInfo(i,c).existingDisplayValue}}</span>
                                             <mat-icon style="color:red" (click)="clearColumnUpdate(i,c)">close
@@ -213,7 +213,7 @@
                                 <th></th>
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.c.defs.caption}}
+                                    {{c.c.caption}}
                                 </th>
                             </tr>
                             <ng-container
@@ -247,7 +247,7 @@
 
                                 <th></th>
                                 <th *ngFor="let c of columnsInCompare">
-                                    {{c.c.defs.caption}}
+                                    {{c.c.caption}}
                                 </th>
                             </tr>
                             <ng-container

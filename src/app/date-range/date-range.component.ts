@@ -1,8 +1,11 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { DataAreaSettings, InputField } from '@remult/angular';
+import { DataAreaSettings, DataControl, InputField } from '@remult/angular';
 import { DateOnlyValueConverter } from '@remult/core/valueConverters';
+import { Context, DateOnlyField, getControllerDefs } from '../../../../radweb/projects/core';
+
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { Field } from '../translate';
 var fullDayValue = 24 * 60 * 60 * 1000;
 @Component({
   selector: 'app-date-range',
@@ -13,32 +16,29 @@ export class DateRangeComponent implements OnInit {
 
   @Input() rangeWeekly: boolean = false;
   @Output() dateChanged = new EventEmitter<void>();
-  fromDate = new InputField<Date>({
-    caption: this.settings.lang.fromDate,
-    valueConverter: DateOnlyValueConverter,
-    valueChange: () => {
 
-      if (this.toDate.value < this.fromDate.value) {
-        this.toDate.value = this.getEndOfMonth();
+  @DateOnlyField()
+  @DataControl({
+    valueChange: (self) => {
+      if (self.toDate.value < self.fromDate.value) {
+        self.toDate.value = self.getEndOfMonth();
       }
-
     }
-  });
-  toDate = new InputField<Date>({
-    caption: this.settings.lang.toDate,
-    valueConverter: DateOnlyValueConverter
-  });
-
+  })
+  fromDate: Date;
+  @DateOnlyField()
+  toDate: Date;
+  get $() { return getControllerDefs(this, this.context).fields };
   rangeArea = new DataAreaSettings({
-    fields: () => [[this.fromDate, this.toDate]],
+    fields: () => [[this.$.fromDate, this.$.toDate]],
   });
   private getEndOfMonth(): Date {
-    return new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + 1, 0);
+    return new Date(this.fromDate.getFullYear(), this.fromDate.getMonth() + 1, 0);
   }
 
   today() {
-    this.fromDate.value = new Date();
-    this.toDate.value = new Date();
+    this.fromDate = new Date();
+    this.toDate = new Date();
     this.dateChanged.emit();
 
   }
@@ -50,34 +50,36 @@ export class DateRangeComponent implements OnInit {
     this.setRange(-1);
   }
   private setRange(delta: number) {
-    if (this.fromDate.value.getDate() == 1 && this.toDate.value.toDateString() == this.getEndOfMonth().toDateString()) {
-      this.fromDate.value = new Date(this.fromDate.value.getFullYear(), this.fromDate.value.getMonth() + delta, 1);
-      this.toDate.value = this.getEndOfMonth();
+    if (this.fromDate.getDate() == 1 && this.toDate.toDateString() == this.getEndOfMonth().toDateString()) {
+      this.fromDate = new Date(this.fromDate.getFullYear(), this.fromDate.getMonth() + delta, 1);
+      this.toDate = this.getEndOfMonth();
     } else {
-      let difference = Math.abs(this.toDate.value.getTime() - this.fromDate.value.getTime());
+      let difference = Math.abs(this.toDate.getTime() - this.fromDate.getTime());
       if (difference < fullDayValue)
         difference = fullDayValue;
       difference *= delta;
-      let to = this.toDate.value;
-      this.fromDate.value = new Date(this.fromDate.value.getTime() + difference);
-      this.toDate.value = new Date(to.getTime() + difference);
+      let to = this.toDate;
+      this.fromDate = new Date(this.fromDate.getTime() + difference);
+      this.toDate = new Date(to.getTime() + difference);
 
     }
     this.dateChanged.emit();
   }
-  constructor(public settings: ApplicationSettings) {
+  constructor(public settings: ApplicationSettings, private context: Context) {
   }
 
   ngOnInit() {
     let today = new Date();
     if (this.rangeWeekly) {
       let lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
-      this.fromDate.value = lastWeek;
-      this.toDate.value = today;
+      this.fromDate = lastWeek;
+      this.toDate = today;
+
     }
     else {
-      this.fromDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
-      this.toDate.value = this.getEndOfMonth();
+      this.fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      this.toDate = this.getEndOfMonth();
+      console.log({ from: this.fromDate, to: this.toDate })
     }
   }
 
