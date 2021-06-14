@@ -1,6 +1,6 @@
 import { IdEntity, Context,  AndFilter,  Entity, filterOf, filterOptions, Filter } from "@remult/core";
 import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 
 import { Roles } from "../auth/roles";
 import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";

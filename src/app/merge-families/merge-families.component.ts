@@ -9,7 +9,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Phone } from '../model-shared/Phone';
+import { Phone } from '../model-shared/phone';
 
 function phoneDigits(val: Phone | string) {
   let s = '';

@@ -16,7 +16,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import { fixPhone } from '../import-from-excel/import-from-excel.component';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 @Component({
   selector: 'app-import-helpers-from-excel',
   templateUrl: './import-helpers-from-excel.component.html',

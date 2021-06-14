@@ -16,7 +16,7 @@ import { createElementCssSelector } from '@angular/compiler';
 import { HelperUserInfo, Helpers, currentUser } from '../helpers/helpers';
 import { getLang, Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { Families } from '../families/families';
 import { UserFamiliesList } from '../my-families/user-families';
 import { openDialog } from '@remult/angular';

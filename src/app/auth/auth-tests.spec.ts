@@ -4,7 +4,7 @@ import { ServerContext, InMemoryDataProvider, } from '@remult/core';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Roles } from './roles';
 import { AuthService, TokenService } from './auth-service';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { actionInfo } from '@remult/core/src/server-action';
 

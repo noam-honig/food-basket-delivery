@@ -5,7 +5,7 @@ import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
 import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 import { SqlBuilder, DateTimeColumn, ChangeDateColumn, SqlFor } from "../model-shared/types";
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";

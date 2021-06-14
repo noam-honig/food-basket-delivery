@@ -8,7 +8,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { environment } from '../../environments/environment';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { DataAreaSettings, openDialog } from '@remult/angular';
 
 @Component({

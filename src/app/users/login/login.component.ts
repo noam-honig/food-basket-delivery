@@ -14,7 +14,7 @@ import { Sites } from '../../sites/sites';
 
 import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
-import { Phone } from "../../model-shared/Phone";
+import { Phone } from "../../model-shared/phone";
 import { use,Field } from '../../translate';
 
 

@@ -26,7 +26,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { SqlBuilder, getValueFromResult, SqlFor, relativeDateName } from '../model-shared/types';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';

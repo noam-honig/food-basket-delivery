@@ -17,7 +17,7 @@ import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings"
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { Subject } from "rxjs";
 import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
 import { DistributionCenters } from "../manage/distribution-centers";

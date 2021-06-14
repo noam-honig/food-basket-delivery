@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServerFunction, Context, SqlDatabase, FieldDefinitions, EntityWhere, getControllerDefs } from '@remult/core';
 import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';

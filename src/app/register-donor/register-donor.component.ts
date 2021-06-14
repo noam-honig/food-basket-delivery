@@ -1,6 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
-import { Phone, isPhoneValidForIsrael } from "../model-shared/Phone";
+import { Phone, isPhoneValidForIsrael } from "../model-shared/phone";
 import { ServerFunction, Context, ServerController, getControllerDefs, Validators } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';

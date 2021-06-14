@@ -27,7 +27,7 @@ import { HelperId, Helpers } from '../helpers/helpers';
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { Groups } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';

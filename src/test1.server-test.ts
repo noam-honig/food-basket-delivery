@@ -19,7 +19,7 @@ import { GeocodeInformation } from "./app/shared/googleApiHelpers";
 import { fitAsync, itAsync } from "./app/shared/test-helper";
 import { Sites } from "./app/sites/sites";
 import { DistributionCenters } from './app/manage/distribution-centers';
-import { Phone } from './app/model-shared/Phone';
+import { Phone } from './app/model-shared/phone';
 import { AuthService } from './app/auth/auth-service';
 import { actionInfo } from '@remult/core/src/server-action';
 //initSettings.disableSchemaInit = true;

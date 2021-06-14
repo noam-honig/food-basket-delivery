@@ -5,7 +5,7 @@ import '../app/manage/ApplicationSettings';
 
 import { ServerContext, IdEntity, Context } from '@remult/core';
 import { SqlBuilder, QueryBuilder, SqlFor } from './model-shared/types';
-import { Phone, isPhoneValidForIsrael } from "./model-shared/Phone";
+import { Phone, isPhoneValidForIsrael } from "./model-shared/phone";
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { fixPhone, processPhone, phoneResult, parseAndUpdatePhone } from './import-from-excel/import-from-excel.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from './families/FamilyDeliveries';

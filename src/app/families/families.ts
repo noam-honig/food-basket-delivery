@@ -4,7 +4,7 @@ import { YesNo } from "./YesNo";
 import { FamilySources } from "./FamilySources";
 import { BasketType, QuantityColumn } from "./BasketType";
 import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { Context, ServerFunction, IdEntity, SqlDatabase, Filter, Validators, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 

@@ -1,5 +1,5 @@
 import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 
 import { Context, IdEntity, Filter, AndFilter,   filterOf, EntityField,  DecimalField } from '@remult/core';
 import { BasketType, QuantityColumn } from "./BasketType";

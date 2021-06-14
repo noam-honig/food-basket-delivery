@@ -2,7 +2,7 @@
 import { Context, IdEntity, UserInfo, Filter, Entity, ServerMethod, FieldSettings, filterOf, Validators, InputTypes, EntityField, FieldDefinitions, FieldDefinitionsOf, keyFor } from '@remult/core';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
-import { isPhoneValidForIsrael, Phone } from "../model-shared/Phone";
+import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
 
 
 

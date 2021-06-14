@@ -1,4 +1,4 @@
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 
 
 import { Context, IdEntity, Entity } from '@remult/core';

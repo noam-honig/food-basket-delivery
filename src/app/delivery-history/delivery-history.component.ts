@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Context, SqlDatabase, EntityBase, getControllerDefs } from '@remult/core';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InMemoryDataProvider, Entity } from '@remult/core';

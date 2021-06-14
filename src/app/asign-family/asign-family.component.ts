@@ -22,7 +22,7 @@ import { BasketType } from '../families/BasketType';
 
 
 import { SqlBuilder, SqlDefs, SqlFor } from '../model-shared/types';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { BusyService, DataAreaSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';

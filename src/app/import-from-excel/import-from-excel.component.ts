@@ -4,7 +4,7 @@ import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, 
 
 import { Context } from '@remult/core';
 import { HelperId, Helpers, HelperUserInfo } from '../helpers/helpers';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 
 
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';

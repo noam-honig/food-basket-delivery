@@ -14,7 +14,7 @@ import { AuthService } from '../auth/auth-service';
 import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 
 
 

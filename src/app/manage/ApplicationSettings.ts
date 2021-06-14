@@ -16,7 +16,7 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
 import { GeocodeInformation, GetGeoInformation, AddressHelper } from "../shared/googleApiHelpers";
 import { Entity, Context } from '@remult/core';
 import { logChanges } from "../model-shared/types";
-import { Phone } from "../model-shared/Phone";
+import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { translationConfig, Language, use, TranslationOptions, Field, FieldType } from "../translate";
