@@ -30,7 +30,7 @@
               "src/assets"
             ],
             "styles": [
-              "../radweb/projects/angular/input-styles.scss",
+              "./node_modules/@remult/angular/input-styles.scss",
               "src/styles.scss"
             ],
             "scripts": []

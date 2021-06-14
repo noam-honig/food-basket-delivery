@@ -5,11 +5,11 @@
   <div mat-dialog-content>
     <div class="dialog-content-fixer">
         <mat-nav-list role="list">
-            <mat-list-item *ngFor="let g of availableGroups" (click)="select(g.name.value)">
+            <mat-list-item *ngFor="let g of availableGroups" (click)="select(g.name)">
   
               <div style="min-width:100px;display:flex">
-                  <mat-icon *ngIf="selected(g.name.value)">check</mat-icon>
-                 {{g.name.value}}
+                  <mat-icon *ngIf="selected(g.name)">check</mat-icon>
+                 {{g.name}}
                   
                   
               </div>

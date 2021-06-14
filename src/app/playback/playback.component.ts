@@ -26,7 +26,7 @@ export class PlaybackComponent implements OnInit {
       backgroundColor: []
 
     }];
-  public pieChartType: string = 'pie';
+  public pieChartType: chart.ChartType = 'pie';
   options: chart.ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,

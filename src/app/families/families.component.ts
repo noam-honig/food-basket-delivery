@@ -41,6 +41,7 @@ import { sortColumns } from '../shared/utils';
 import { columnOrderAndWidthSaver } from './columnOrderAndWidthSaver';
 import { BasketType, defaultBasketType } from './BasketType';
 import { use } from '../translate';
+import { ChartType } from 'chart.js';
 
 
 
@@ -141,7 +142,7 @@ export class FamiliesComponent implements OnInit {
 
         }];
 
-    public pieChartType: string = 'pie';
+    public pieChartType: ChartType = 'pie';
     currentStatFilter: FaimilyStatistics = undefined;
 
     options: chart.ChartOptions = {

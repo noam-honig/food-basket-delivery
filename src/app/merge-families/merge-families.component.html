@@ -8,10 +8,11 @@
                 </div>
             </td>
             <td *ngFor="let f of families">
-                <div *ngIf="f.$.find(c.column).displayValue==family.$.find( c.column).displayValue; else elseBlock" class="green">
-                    {{f.$.find(c.column).displayValue}}</div>
-                <ng-template #elseBlock><span class="red"> {{f.$.find(c.column).displayValue}}</span>
-                    <mat-icon style="color:green" (click)="c.column.value = f.$.find(c.column).value">done
+                <div *ngIf="f.$.find(getField(c)).displayValue==family.$.find( getField(c)).displayValue; else elseBlock"
+                    class="green">
+                    {{f.$.find(getField(c)).displayValue}}</div>
+                <ng-template #elseBlock><span class="red"> {{f.$.find(getField(c)).displayValue}}</span>
+                    <mat-icon style="color:green" (click)="family.$.find(getField(c)).value = f.$.find(getField(c)).value">done
                     </mat-icon>
                 </ng-template>
             </td>
@@ -23,7 +24,7 @@
             <td *ngFor="let f of families">
                 <a (click)="updateFamily(f)">{{settings.lang.familyDetails}}</a><br>
                 <a
-                    (click)="f.showDeliveryHistoryDialog({dialog:dialog,context:context})">{{settings.lang.deliveries}}</a>
+                    (click)="f.showDeliveryHistoryDialog({dialog:dialog,busy:busy,settings:settings})">{{settings.lang.deliveries}}</a>
             </td>
         </tr>
     </table>

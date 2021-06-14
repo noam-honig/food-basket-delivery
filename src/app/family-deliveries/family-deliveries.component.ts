@@ -274,7 +274,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
     }];
 
-  public pieChartType: string = 'pie';
+  public pieChartType: chart.ChartType = 'pie';
   async updateChart() {
     this.currentTabStats = this.statTabs[this.myTab.selectedIndex];
     if (this.currentTabStats.refreshStats)

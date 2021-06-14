@@ -319,7 +319,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
     await dist.SendMessageToBrowser(getLang(context).cancelAssignmentForHelperFamilies, context);
   }
-  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number) {
+  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number):number {
     if (i == 0) { return undefined; }
     if (!f.addressOk)
       return undefined;
@@ -327,7 +327,6 @@ export class HelperFamiliesComponent implements OnInit {
     if (!of.addressOk)
       return undefined;
     return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
-    return of.addressLatitude == f.addressLatitude && of.addressLongitude == f.addressLongitude;
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(helper: HelpersBase, context?: Context) {

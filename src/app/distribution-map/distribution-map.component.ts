@@ -451,7 +451,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     }];
 
-  public pieChartType: string = 'pie';
+  public pieChartType: chart.ChartType = 'pie';
 
 
 }

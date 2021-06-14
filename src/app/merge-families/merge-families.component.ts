@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
-import { BusyService, GridSettings, openDialog } from '@remult/angular';
+import { BusyService, DataControlSettings, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
 import { Context, ServerFunction, EntityFields, EntityField, FieldDefinitions } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
@@ -27,7 +27,7 @@ function phoneDigits(val: Phone | string) {
 
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) { }
+  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
@@ -124,10 +124,14 @@ export class MergeFamiliesComponent implements OnInit {
       // }
     }
     this.gs = new GridSettings(this.context.for(Families), { allowUpdate: true, columnSettings: () => this.columnsToCompare });
+
     for (const c of this.gs.columns.items) {
       this.width.set(c.field as any, this.gs.columns.__dataControlStyle(c));
     }
 
+  }
+  getField(map: DataControlSettings<any>): FieldDefinitions {
+    return getFieldDefinition(map.field);
   }
   gs: GridSettings<Families>;
   getColWidth(c: FieldDefinitions) {

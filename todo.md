@@ -48,3 +48,6 @@
 [] fix filter on date in history?
 [] fix excel export for async items
 [] excel import of helpers
+[] merge families
+[] test group dialog
+[] update info

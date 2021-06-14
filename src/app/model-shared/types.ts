@@ -6,7 +6,7 @@ import { Sites, getLang } from '../sites/sites';
 import { EmailSvc, isDesktop } from '../shared/utils';
 import { isDate } from 'util';
 import { DataControl } from '@remult/angular';
-import { filterHelper } from '../../../../radweb/projects/core/src/filter/filter-interfaces';
+import { filterHelper } from '@remult/core/src/filter/filter-interfaces';
 
 
 

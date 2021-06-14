@@ -124,13 +124,12 @@ export class FamilyInfoComponent implements OnInit {
 
 
   }
-  callPhone(col: EntityField<Phone>) {
-    this.dialog.analytics("Call " + col.defs.key);
-    window.location.href = "tel:" + col;
+  callPhone(col: Phone) {
+    
+    window.location.href = "tel:" + col.thePhone;
   }
-  async sendWhatsapp(phone: string) {
-    Phone.sendWhatsappToPhone(phone,
-      this.settings.lang.hello + ' ' + this.f.name + ',', this.context);
+  async sendWhatsapp(phone: Phone) {
+    phone.sendWhatsapp(this.context, this.settings.lang.hello + ' ' + this.f.name + ',');
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @ServerFunction({ allowed: c => c.isSignedIn() })

@@ -29,7 +29,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   totalPerBasket = [];
-  allBaskets = new Set();
+  allBaskets = new Set<string>();
   donorsData = [];
   volData = [];
 

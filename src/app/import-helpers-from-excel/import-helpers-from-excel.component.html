@@ -76,7 +76,7 @@
                               <th></th>
                               <th></th>
                               <th *ngFor="let c of columnsInCompare">
-                                  {{c.defs.caption}}
+                                  {{c.caption}}
                               </th>
                           </tr>
                           <ng-container
@@ -108,7 +108,7 @@
                               <th></th>
                               <th></th>
                               <th *ngFor="let c of columnsInCompare">
-                                  {{c.defs.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
+                                  {{c.caption}} <mat-icon style="color:green" *ngIf="getColUpdateCount(c)>0"
                                       (click)="updateAllCol(c)">done_all
                                   </mat-icon>
 
@@ -125,10 +125,10 @@
                                   <td>{{i.rowInExcel}}<br></td>
                                   <td *ngFor="let c of columnsInCompare">
                                       <span
-                                          [class.newValue]="!i.newRow&&i.duplicateHelperInfo&&i.duplicateHelperInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
+                                          [class.newValue]="i.duplicateHelperInfo&&i.duplicateHelperInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
                                           {{getColInfo(i,c).newDisplayValue}}</span>
                                       <ng-container
-                                          *ngIf="!i.newRow&&i.duplicateHelperInfo&&i.duplicateHelperInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
+                                          *ngIf="i.duplicateHelperInfo&&i.duplicateHelperInfo.length==1&& getColInfo(i,c).newDisplayValue!=getColInfo(i,c).existingDisplayValue">
                                           <br><span
                                               style="color:red;text-decoration-line: line-through">{{getColInfo(i,c).existingDisplayValue}}</span>
                                           <mat-icon style="color:red" (click)="clearColumnUpdate(i,c)">close
@@ -150,7 +150,7 @@
 
                               <th></th>
                               <th *ngFor="let c of columnsInCompare">
-                                  {{c.defs.caption}}
+                                  {{c.caption}}
                               </th>
                           </tr>
                           <ng-container *ngFor="let i of identicalRows| paginate: { itemsPerPage: 100,currentPage:existingFamiliesPage,id:'existingFamiliesPage'}">
@@ -176,7 +176,7 @@
 
                               <th></th>
                               <th *ngFor="let c of columnsInCompare">
-                                  {{c.defs.caption}}
+                                  {{c.caption}}
                               </th>
                           </tr>
                           <ng-container

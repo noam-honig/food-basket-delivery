@@ -67,7 +67,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
     }];
 
-  public pieChartType: string = 'pie';
+  public pieChartType: chart.ChartType = 'pie';
   currentStatFilter: DeliveryStatistic = undefined;
 
   options: chart.ChartOptions = {

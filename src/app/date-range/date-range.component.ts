@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DataAreaSettings, DataControl, InputField } from '@remult/angular';
 import { DateOnlyValueConverter } from '@remult/core/valueConverters';
-import { Context, DateOnlyField, getControllerDefs } from '../../../../radweb/projects/core';
+import { Context, DateOnlyField, getControllerDefs } from '@remult/core';
 
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
