@@ -577,7 +577,6 @@ export class ImportHelpersFromExcelComponent implements OnInit {
           }
 
           let col = ef.$[columnMemberName];
-          console.log({ columnMemberName, col });
           upd.existingValue = col.inputValue;
           upd.existingDisplayValue = await getColumnDisplayValue(col);
           if (upd.existingDisplayValue != upd.newDisplayValue) {
