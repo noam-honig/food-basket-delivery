@@ -574,7 +574,7 @@ export class FamilyDeliveries extends IdEntity {
                 let duration = '';
                 if (this.courierAssingTime && this.deliveryStatusDate)
                     duration = ' ' + getLang(this.context).within + ' ' + Math.round((this.deliveryStatusDate.valueOf() - this.courierAssingTime.valueOf()) / 60000) + " " + getLang(this.context).minutes;
-                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang(this.context).by + ' ' + this.courier : '') + ' ' + relativeDateName(this.context, { d: this.deliveryStatusDate }) + duration;
+                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang(this.context).by + ' ' + this.courier.name : '') + ' ' + relativeDateName(this.context, { d: this.deliveryStatusDate }) + duration;
 
         }
         return this.deliverStatus.caption;
