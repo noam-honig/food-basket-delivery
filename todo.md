@@ -53,8 +53,6 @@
 [V] excel import of helpers
 
 [V] merge families
-
-
-[] fix excel export for async items
-[] test group dialog
+[V] fix excel export for async items
+[V] test group dialog
 [] do some work on uberContext via function

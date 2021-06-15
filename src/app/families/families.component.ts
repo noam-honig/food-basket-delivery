@@ -103,12 +103,14 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        this.families.addNewRow();
-        this.families.currentRow.name = this.searchString;
-        this.families.currentRow.showFamilyDialog({
+        let family = this.context.for(Families).create();
+        family.name = this.searchString;
+        family.showFamilyDialog({
             focusOnAddress: true,
             onSave: async () => {
-                await this.families.currentRow.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
+                this.families.items.push(family);
+                await family.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
+
                 this.refreshStats();
             }
         });
