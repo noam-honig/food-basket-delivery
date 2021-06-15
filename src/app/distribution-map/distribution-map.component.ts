@@ -199,10 +199,13 @@ export class DistributionMap implements OnInit, OnDestroy {
   statuses = new Statuses(this.settings);
   selectedStatus: statusClass;
   filterCourier = new InputField<HelpersBase>({
-    dataType:HelpersBase,
+    dataType: HelpersBase,
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
-    
+    click: async () => HelpersBase.showSelectDialog(this.filterCourier, {
+      filter: h => h.allDeliveires.isGreaterThan(0)
+    })
+
   })
 
   filterArea = new InputField<string>({
