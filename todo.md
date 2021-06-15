@@ -50,9 +50,9 @@
 [V] first entrance to "guest" gave an error - and second :) - sign out and refresh to get this
 [V] https://hugmomst.herokuapp.com/alex/my-families gave error about name
 [V] sign in should move to deliveries - nowhere else
+[V] excel import of helpers
 
 [] fix excel export for async items
-[] excel import of helpers
 [] merge families
 [] test group dialog
 [] do some work on uberContext via function
