@@ -67,6 +67,8 @@ export class HelperId {
 
 }
 export const currentUser = new keyFor<Helpers>();
+export const currentUserWife = new keyFor<Helpers>();
+
 
 @FieldType<HelpersBase>({
 
@@ -375,14 +377,17 @@ export class Helpers extends HelpersBase {
     static async verifyHash(password: string, hash: string) {
         return (await import('password-hash')).verify(password, hash);
     }
-    static async initContext(context: Context) {//
+    static async initContext(context: Context, user?: UserInfo) {//
         let h: Helpers;
+        let gotUser = !!user;
+        if (user === undefined)
+            user = context.user;
 
-        if (context.isSignedIn()) {
-            h = this.helpersCache.get(context.user.id);
+        if (context.isSignedIn() || gotUser) {
+            h = this.helpersCache.get(user.id);
             if (!h) {
-                h = await context.for(Helpers).getCachedByIdAsync(context.user.id);
-                this.helpersCache.set(context.user.id, h);
+                h = await context.for(Helpers).getCachedByIdAsync(user.id);
+                this.helpersCache.set(user.id, h);
             }
             await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers
             await h.$.distributionCenter.load(); /// for all the current user distribution center filtering

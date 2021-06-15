@@ -33,18 +33,20 @@ export class TokenService {
 
     }
     keyInStorage: string;
-    loadUserInfo() {
+    async loadUserInfo() {
         let org = Sites.getOrganizationFromContext(this.context);
         this.keyInStorage = "authorization/" + org;
         let token = sessionStorage.getItem(this.keyInStorage);
         if (!token)
             token = localStorage.getItem(this.keyInStorage);
-        this.setToken(token, false);
+        await this.setToken(token, false);
     }
     async setToken(token: string, remember: boolean) {
+        staticToken = token;
         let user: UserInfo = undefined;
         if (token) {
             user =await  AuthService.decodeJwt(token);
+            await Helpers.initContext(this.context,user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -54,7 +56,8 @@ export class TokenService {
             sessionStorage.removeItem(this.keyInStorage);
             localStorage.removeItem(this.keyInStorage);
         }
-        staticToken = token;
+        
+        
         await this.context.setUser(user);
 
     }
@@ -68,7 +71,7 @@ export class AuthService {
     async loginFromSms(key: string) {
         var response = await AuthService.loginFromSms(key);
         if (response.valid && await this.userAgreedToConfidentiality()) {
-            this.tokenService.setToken(response.authToken, false);
+            await this.tokenService.setToken(response.authToken, false);
             this.dialog.analytics('login from sms');
             this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             return true;
@@ -84,7 +87,7 @@ export class AuthService {
     failedSmsSignInPhone: string = undefined;
 
     async signOut() {
-        this.tokenService.setToken(undefined, true);
+        await this.tokenService.setToken(undefined, true);
         this.routeHelper.navigateToComponent((await (import('../users/login/login.component'))).LoginComponent);
     }
 
@@ -169,7 +172,7 @@ export class AuthService {
                 loginResponse = {};
         }
         if (loginResponse.authToken) {
-            this.tokenService.setToken(loginResponse.authToken, remember);
+            await this.tokenService.setToken(loginResponse.authToken, remember);
             this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.failedSmsSignInPhone) {
                 this.failedSmsSignInPhone = null;
@@ -304,7 +307,8 @@ export class AuthService {
 
 
     async signout() {
-        this.tokenService.setToken(undefined, true);
+        await this.tokenService.setToken(undefined, true);
+        this.context.clearAllCache();
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
@@ -327,7 +331,7 @@ export class AuthService {
                     if (!r)
                         this.signout();
                     else
-                        this.tokenService.setToken(r, this.remember);
+                        await this.tokenService.setToken(r, this.remember);
 
                 }
                 catch {

@@ -45,9 +45,12 @@
 [V] disable mail and phone icons in the ui for register donor
 [V] fix load helper history
 [V] fix playback
-[] fix filter on date in history?
+[V] fix filter on date in history?
 [] fix excel export for async items
 [] excel import of helpers
 [] merge families
 [] test group dialog
 [] update info
+[V] first entrance to "guest" gave an error - and second :) - sign out and refresh to get this
+[] https://hugmomst.herokuapp.com/alex/my-families gave error about name
+[] sign in should move to deliveries - nowhere else

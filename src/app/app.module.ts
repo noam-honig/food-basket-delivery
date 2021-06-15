@@ -279,7 +279,7 @@ export function initApp(session: TokenService, settings: SettingsService, contex
   return async () => {
 
     try {
-      session.loadUserInfo();
+      await session.loadUserInfo();
       await context.userChange.observe(async () => {
         await Helpers.initContext(context);
 
