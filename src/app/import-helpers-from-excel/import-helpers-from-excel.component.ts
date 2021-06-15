@@ -159,10 +159,10 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let val = c.newValue;
     if (val === null)
       val = '';
-    f.$.find(colMemberName).value = val;
+    f.$[colMemberName].inputValue = val;
     await f.save();
-    c.existingDisplayValue = await getColumnDisplayValue(f.$.find(colMemberName));
-    c.existingValue = f.$.find(colMemberName).value;
+    c.existingDisplayValue = await getColumnDisplayValue(f.$[colMemberName]);
+    c.existingValue = f.$[colMemberName].inputValue;
   }
   async clearColumnUpdate(i: excelRowInfo, col: FieldDefinitions) {
     let c = this.getColInfo(i, col);
@@ -269,7 +269,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let f = this.context.for(Helpers).create();
 
 
-    let helper = new columnUpdateHelper(this.context, this.dialog);
+    let helper = new columnUpdateHelper();
     for (const c of this.excelColumns) {
       if (c.column) {
         let val = this.getTheData(c.excelColumn + row);
@@ -397,7 +397,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         key: c.key,
         name: c.caption,
         columns: [c],
-        updateFamily: async (v, f) => updateCol(f.$.find(c), fixPhone(v, this.settings.defaultPrefixForExcelImport).replace(/\D/g, ''))
+        updateFamily: async (v, f) => { f.$.find(c).value = new Phone(fixPhone(v, this.settings.defaultPrefixForExcelImport).replace(/\D/g, '')) }
       });
     }
 
@@ -576,8 +576,9 @@ export class ImportHelpersFromExcelComponent implements OnInit {
             info.values[columnMemberName] = upd;
           }
 
-          let col = ef.$.find(columnMemberName);
-          upd.existingValue = col.value;
+          let col = ef.$[columnMemberName];
+          console.log({ columnMemberName, col });
+          upd.existingValue = col.inputValue;
           upd.existingDisplayValue = await getColumnDisplayValue(col);
           if (upd.existingDisplayValue != upd.newDisplayValue) {
 
@@ -697,9 +698,7 @@ interface columnUpdater {
   columns: FieldDefinitions[];
 }
 class columnUpdateHelper {
-  constructor(private context: Context, private dialog: DialogService) {
 
-  }
   laterSteps: laterSteps[] = [];
 
 
@@ -729,7 +728,7 @@ interface serverCheckResults {
 }
 async function getColumnDisplayValue(c: EntityField<any>) {
   let v = c.displayValue;
-  return v.trim();
+  return v?.trim();
 }
 interface laterSteps {
   step: number,
