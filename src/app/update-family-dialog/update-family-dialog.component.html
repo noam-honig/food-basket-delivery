@@ -18,14 +18,14 @@
 
                 </div>
             </button>
-            <a mat-menu-item href="tel:{{args.familyDelivery.courier.phone.thePhone}}" style="padding-right:15px;"
+            <a mat-menu-item href="tel:{{args.familyDelivery?.courier?.phone?.thePhone}}" style="padding-right:15px;"
                 *ngIf="args.familyDelivery&&args.familyDelivery.courier">
                 <button mat-menu-item *ngIf="args.familyDelivery&&args.familyDelivery.courier">
                     <mat-icon>phone</mat-icon>
                     <div style="    display: inline-flex;line-height: 17px;"> {{settings.lang.dialTo}}
                         {{settings.lang.volunteer}}
                         {{args.familyDelivery.courier.name}} <br>
-                        {{args.familyDelivery.courier.phone.thePhone}}
+                        {{args.familyDelivery?.courier?.phone?.thePhone}}
                     </div>
                 </button>
             </a>
@@ -115,7 +115,7 @@
                         </div>
                         <div>
                             <mat-panel-description>
-                                {{families.currentRow.phone1.thePhone}}
+                                {{families.currentRow.phone1?.thePhone}}
                             </mat-panel-description>
                         </div>
 

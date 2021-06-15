@@ -451,7 +451,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
 
-  deliveries = new GridSettings(this.context.for(ActiveFamilyDeliveries), {
+  deliveries:GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.context.for(ActiveFamilyDeliveries), {
     showFilter: true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),

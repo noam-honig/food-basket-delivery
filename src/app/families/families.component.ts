@@ -98,13 +98,13 @@ export class FamiliesComponent implements OnInit {
             if (i > 0)
                 focus = this.families.items[i - 1];
         }
-        this.families.currentRow.undoChanges();
+        this.families.currentRow._.undoChanges();
         if (focus)
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
         this.families.addNewRow();
-        this.families.currentRow.name.value = this.searchString;
+        this.families.currentRow.name = this.searchString;
         this.families.currentRow.showFamilyDialog({
             focusOnAddress: true,
             onSave: async () => {
@@ -196,7 +196,7 @@ export class FamiliesComponent implements OnInit {
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
 
-    families = new GridSettings(this.context.for(Families), {
+    families: GridSettings<Families> = new GridSettings(this.context.for(Families), {
         showFilter: true,
         allowUpdate: true,
         allowInsert: this.isAdmin,
@@ -381,7 +381,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    userWhere: f => this.families.getFilterWithSelectedRows().where(f),
+                    userWhere: f => this.families.getFilterWithSelectedRows().where,
                     settings: this.settings
                 }))
             , {

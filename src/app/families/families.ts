@@ -621,7 +621,7 @@ export class Families extends IdEntity {
   @Field()
   email: Email;
   @Field()
-  status: FamilyStatus;
+  status: FamilyStatus = FamilyStatus.Active;
   @ChangeDateColumn({ translation: l => l.statusChangeDate })
   statusDate: Date;
   @Field({ translation: l => l.statusChangeUser, allowApiUpdate: false })
