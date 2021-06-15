@@ -1,7 +1,7 @@
 import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter,   filterOf, EntityField,  DecimalField } from '@remult/core';
+import { Context, IdEntity, Filter, AndFilter, filterOf, EntityField, DecimalField } from '@remult/core';
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -15,7 +15,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { use, FieldType, Field, ValueListFieldType,Entity } from "../translate";
+import { use, FieldType, Field, ValueListFieldType, Entity } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings, openDialog } from "@remult/angular";
@@ -66,38 +66,39 @@ export class MessageStatus {
         if (self.$.courier.wasChanged())
             self.routeOrder = 0;
 
-
-        if (!self.disableChangeLogging) {
-            if (!self.isNew() || self.courier)
-                logChanged(self.context, self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
-                    if (!self._disableMessageToUsers) {
-                        self.distributionCenter.SendMessageToBrowser(
-                            Families.GetUpdateMessage(self, 2, await self.courier.name, self.context), self.context);
+        if (self.context.onServer) {
+            if (!self.disableChangeLogging) {
+                
+                if (!self.isNew() || await self.$.courier.load())
+                    logChanged(self.context, self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
+                        if (!self._disableMessageToUsers) {
+                            self.distributionCenter.SendMessageToBrowser(
+                                Families.GetUpdateMessage(self, 2, self.courier?.name, self.context), self.context);
+                        }
                     }
-                }
-                );
-            if (!self.isNew() && self.$.courierComments.wasChanged() && self.courierComments.length > 0)
-                self.courierCommentsDate = new Date();
+                    );
+                if (!self.isNew() && self.$.courierComments.wasChanged() && self.courierComments.length > 0)
+                    self.courierCommentsDate = new Date();
 
-            logChanged(self.context, self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
-                if (!self._disableMessageToUsers) {
-                    self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.name : '', self.context), self.context);
-                }
-            });
-            logChanged(self.context, self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
-            logChanged(self.context, self.$.archive, self.$.archiveDate, self.$.archiveUser, async () => { });
-        }
-        if (self.context.onServer &&
-            !self.deliverStatus.IsAResultStatus()
-            && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
-            let f = await self.context.for(Families).findId(self.family);
-            if (f)
-                f.updateDelivery(self);
+                logChanged(self.context, self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
+                    if (!self._disableMessageToUsers) {
+                        self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.name : '', self.context), self.context);
+                    }
+                });
+                logChanged(self.context, self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
+                logChanged(self.context, self.$.archive, self.$.archiveDate, self.$.archiveUser, async () => { });
+            }
+            if (!self.deliverStatus.IsAResultStatus()
+                && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
+                let f = await self.context.for(Families).findId(self.family);
+                if (f)
+                    f.updateDelivery(self);
 
-        }
-        if (self.context.onServer && self.isNew() && !self._disableMessageToUsers) {
-            self.distributionCenter.SendMessageToBrowser(getLang(self.context).newDelivery, self.context)
+            }
+            if (self.isNew() && !self._disableMessageToUsers) {
+                self.distributionCenter.SendMessageToBrowser(getLang(self.context).newDelivery, self.context)
 
+            }
         }
     }
 })
@@ -224,7 +225,7 @@ export class FamilyDeliveries extends IdEntity {
     relativeDeliveryStatusDate() {
         return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
-    @Field({  allowApiUpdate: false })
+    @Field({ allowApiUpdate: false })
     courierAssignUser: Helpers;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;

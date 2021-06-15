@@ -1,10 +1,12 @@
 <h1 mat-dialog-title *ngIf="family">{{settings.lang.mergeForFamily}} {{family.name}}</h1>
 <div mat-dialog-content>
-    <table class="table table-bordered my-table" *ngIf="gs">
-        <tr *ngFor="let c of gs.columns.items">
+    <table class="table table-bordered my-table" *ngIf="cc">
+        <tr *ngFor="let c of cc.items">
             <td>
                 <div style="min-width:250px">
-                    <data-control [map]="c" [settings]="gs.columns"></data-control>
+                    <data-control [map]="c" [settings]="cc">
+
+                    </data-control>
                 </div>
             </td>
             <td *ngFor="let f of families">
@@ -12,7 +14,8 @@
                     class="green">
                     {{f.$.find(getField(c)).displayValue}}</div>
                 <ng-template #elseBlock><span class="red"> {{f.$.find(getField(c)).displayValue}}</span>
-                    <mat-icon style="color:green" (click)="family.$.find(getField(c)).value = f.$.find(getField(c)).value">done
+                    <mat-icon style="color:green"
+                        (click)="family.$.find(getField(c)).value = f.$.find(getField(c)).value">done
                     </mat-icon>
                 </ng-template>
             </td>

@@ -50,7 +50,8 @@ declare type factoryFor<T> = {
 @FieldType<GroupsValue>({
   valueConverter: {
     toJson: x => x ? x.value : '',
-    fromJson: x => new GroupsValue(x)
+    fromJson: x => new GroupsValue(x),
+    displayValue:x=>x.value
   },
   translation: l => l.familyGroup,
 })

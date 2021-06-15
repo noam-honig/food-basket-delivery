@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
-import { BusyService, DataControlSettings, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
+import { BusyService, DataControlSettings, FieldCollection, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
 import { Context, ServerFunction, EntityFields, EntityField, FieldDefinitions } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
@@ -10,6 +10,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
+import { checkEntityAllowed } from '@remult/core/src/remult3';
 
 function phoneDigits(val: Phone | string) {
   let s = '';
@@ -95,45 +96,47 @@ export class MergeFamiliesComponent implements OnInit {
     }
 
     for (const c of this.family.$) {
-      //if (c.defs.allowApiUpdate === undefined || this.context.isAllowed(c.defs.allowApiUpdate)) {
-      switch (c) {
-        case this.family.$.addressApiResult:
-        case this.family.$.addressLatitude:
-        case this.family.$.addressLongitude:
-        case this.family.$.addressByGoogle:
-        case this.family.$.addressOk:
-        case this.family.$.drivingLongitude:
-        case this.family.$.drivingLatitude:
-        case this.family.$.previousDeliveryComment:
-        case this.family.$.previousDeliveryDate:
-        case this.family.$.previousDeliveryStatus:
-        case this.family.$.nextBirthday:
-        case this.family.$.city:
-        case this.family.$.numOfActiveReadyDeliveries:
-          continue;
+      if (c.defs.evilOriginalSettings.allowApiUpdate === undefined || checkEntityAllowed(this.context, c.defs.evilOriginalSettings.allowApiUpdate, this.family)) {
+        switch (c) {
+          case this.family.$.addressApiResult:
+          case this.family.$.addressLatitude:
+          case this.family.$.addressLongitude:
+          case this.family.$.addressByGoogle:
+          case this.family.$.addressOk:
+          case this.family.$.drivingLongitude:
+          case this.family.$.drivingLatitude:
+          case this.family.$.previousDeliveryComment:
+          case this.family.$.previousDeliveryDate:
+          case this.family.$.previousDeliveryStatus:
+          case this.family.$.nextBirthday:
+          case this.family.$.city:
+          case this.family.$.numOfActiveReadyDeliveries:
+            continue;
 
-      }
-      for (const f of this.families) {
-        if (f.$.find(c.defs).value != c.value) {
-          if (!c.value && updateValue)
-            c.value = f.$.find(c.defs).value;
-          this.columnsToCompare.push(c.defs);
-          break;
+        }
+        for (const f of this.families) {
+          if (f.$.find(c.defs).value != c.value) {
+            if (!c.value && updateValue)
+              c.value = f.$.find(c.defs).value;
+            this.columnsToCompare.push(c.defs);
+            break;
+          }
         }
       }
-      // }
     }
-    this.gs = new GridSettings(this.context.for(Families), { allowUpdate: true, columnSettings: () => this.columnsToCompare });
+    this.cc = new FieldCollection(() => undefined, () => true, undefined, () => false, undefined);
+    this.cc.add(...this.columnsToCompare.map(x => this.family.$.find(x)));
 
-    for (const c of this.gs.columns.items) {
-      this.width.set(c.field as any, this.gs.columns.__dataControlStyle(c));
+
+    for (const c of this.cc.items) {
+      this.width.set(c.field as any, this.cc.__dataControlStyle(c));
     }
 
   }
   getField(map: DataControlSettings<any>): FieldDefinitions {
     return getFieldDefinition(map.field);
   }
-  gs: GridSettings<Families>;
+  cc: FieldCollection;
   getColWidth(c: FieldDefinitions) {
     let x = this.width.get(c);
     if (!x)
