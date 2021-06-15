@@ -68,7 +68,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     courier: HelpersBase;
     @Field()
     @DataControl({ valueList: new ValueListValueConverter(SelfPickupStrategy).getOptions().filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
-    selfPickup: SelfPickupStrategy;
+    selfPickup: SelfPickupStrategy = SelfPickupStrategy.familyDefault;
     @Field({
         translation: l => l.excludeGroups
     })
