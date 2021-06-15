@@ -1,6 +1,6 @@
 import { ServerFunction } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Helpers, HelpersBase } from '../helpers/helpers';
+import { currentUser, Helpers, HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
@@ -90,10 +90,9 @@ export class SendSmsAction {
         }
     }
     public static async getSenderPhone(context: Context) {
-        let sender = (await ApplicationSettings.getAsync(context)).helpPhone.thePhone;
+        let sender = (await ApplicationSettings.getAsync(context)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            let currentUser = await (context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id)));
-            sender = currentUser.phone.thePhone;
+            sender = context.get(currentUser).phone.thePhone;
         }
         return sender;
     }
