@@ -5,7 +5,7 @@ import { Context, IdEntity, Filter, AndFilter, filterOf, EntityField, DecimalFie
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
+import { currentUser, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
 
 import { Roles } from "../auth/roles";
 import { DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
@@ -68,7 +68,7 @@ export class MessageStatus {
 
         if (self.context.onServer) {
             if (!self.disableChangeLogging) {
-                
+
                 if (!self.isNew() || await self.$.courier.load())
                     logChanged(self.context, self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
                         if (!self._disableMessageToUsers) {
@@ -225,11 +225,11 @@ export class FamilyDeliveries extends IdEntity {
     relativeDeliveryStatusDate() {
         return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
-    @Field({ allowApiUpdate: false })
-    courierAssignUser: Helpers;
+    @Field({ allowApiUpdate: false, translation: l => l.courierAsignDate })
+    courierAssignUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
-    @ChangeDateColumn({ translation: l => l.statusChangeUser })
+    @Field({ translation: l => l.statusChangeUser })
     deliveryStatusUser: HelpersBase;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.deliveryCreateDate })
     createDate: Date;
@@ -476,7 +476,7 @@ export class FamilyDeliveries extends IdEntity {
                 }
                 catch { }
             }
-            addColumn(use.language.email, f.email, 's');
+            addColumn(use.language.email, f.$.email.displayValue, 's');
             for (const x of [[settings.familyCustom1Caption, f.custom1],
             [settings.familyCustom2Caption, f.custom2],
             [settings.familyCustom3Caption, f.custom3],

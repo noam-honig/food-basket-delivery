@@ -7,6 +7,7 @@ import { foreachSync } from "./utils";
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DateOnlyValueConverter } from '@remult/core/valueConverters';
+import { HelpersBase } from '../helpers/helpers';
 
 export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
   context: Repository<E>,
@@ -99,16 +100,26 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
               if (v == undefined)
                 v = '';
 
-              await c.value.load();
+              await c.load();
 
 
               if (c.defs.dataType == Date) {
-                addColumn('תאריך ' + c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
-                addColumn('שעת ' + c.defs.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
-                addColumn('מלא ' + c.defs.caption, c.displayValue, "s", true);
+                if (c.defs.valueConverter !== <any>DateOnlyValueConverter) {
+                  addColumn('תאריך ' + c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
+                  addColumn('שעת ' + c.defs.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
+                  addColumn('מלא ' + c.defs.caption, c.displayValue, "s", true);
+                }
+                else
+                  addColumn(c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
               }
               else
                 addColumn(c.defs.caption, v.toString(), "s", hideColumn(<E>f, c))
+              if (c.defs.caption == use.language.volunteer || c.defs.caption == use.language.defaultVolunteer) {
+                let val = '';
+                if (c.value instanceof HelpersBase)
+                  val = c.value.$.phone.displayValue;
+                addColumn(c.defs.caption + " " + use.language.phone, val, "s", false);
+              }
 
             }
           } catch (err) {

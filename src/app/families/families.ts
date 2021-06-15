@@ -523,7 +523,7 @@ export class Families extends IdEntity {
     displayValue: self => {
       if (!self.nextBirthday)
         return '';
-      return self.$.nextBirthday.displayValue + " - " + use.language.age + " " + (self.nextBirthday.getFullYear() - self.birthDate.getFullYear())
+      return self.nextBirthday.toLocaleDateString("he-il") + " - " + use.language.age + " " + (self.nextBirthday.getFullYear() - self.birthDate.getFullYear())
     }
   })
 
