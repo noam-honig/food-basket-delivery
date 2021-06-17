@@ -73,13 +73,13 @@
                         </span>
                         <div>
                             <a (click)="getAddress(e).openWaze()">
-                                <span style="display:block"> {{getAddress(e)}} </span>
+                                <span style="display:block"> {{e.address}} </span>
                             </a>
                         </div>
                     </div>
 
 
-                    <div class="phone-container" *ngIf="getPhone(e).thePhone">
+                    <div class="phone-container" *ngIf="getPhone(e)">
                         <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
                             (click)="sendWhatsapp(getPhone(e).thePhone)">
                             <img src="assets/whatsapp.png">
