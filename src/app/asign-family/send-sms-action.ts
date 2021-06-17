@@ -1,12 +1,13 @@
 import { ServerFunction } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { currentUser, Helpers, HelpersBase } from '../helpers/helpers';
+import {  HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context, ServerContext } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
 import { TranslationOptions } from '../translate';
+import { u } from '../model-shared/UberContext';
 
 
 
@@ -92,7 +93,7 @@ export class SendSmsAction {
     public static async getSenderPhone(context: Context) {
         let sender = (await ApplicationSettings.getAsync(context)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            sender = context.get(currentUser).phone.thePhone;
+            sender = u(context).currentUser.phone.thePhone;
         }
         return sender;
     }

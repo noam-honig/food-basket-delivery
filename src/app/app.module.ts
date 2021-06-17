@@ -98,7 +98,7 @@ import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
 import { Context } from '@remult/core';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
-import { currentUser, HelperId, Helpers } from './helpers/helpers'
+import {  Helpers } from './helpers/helpers'
 
 
 

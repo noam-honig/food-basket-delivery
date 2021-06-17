@@ -9,9 +9,10 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
 import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
-import { currentUser, HelperId, Helpers } from '../helpers/helpers';
+import {  HelperId, Helpers } from '../helpers/helpers';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { u } from '../model-shared/UberContext';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { DialogService } from '../select-popup/dialog';
@@ -63,13 +64,14 @@ export class MltFamiliesComponent implements OnInit {
 
 
   constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Context, private busy: BusyService) { }
+  cContext = u(this.context);
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.get(currentUser));
-    this.thisHelper = this.context.get(currentUser);
+    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.cContext.currentUser);
+    this.thisHelper = this.cContext.currentUser;
     this.myPhoneNumber = this.thisHelper.phone;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
     this.distCentersButtons = [];
@@ -105,7 +107,7 @@ export class MltFamiliesComponent implements OnInit {
   async countFamilies() {
     let consumed: string[] = []
     let list: FamilyDeliveries[] = await this.context.for(FamilyDeliveries).find(
-      { where: fd => fd.courier.isEqualTo(this.context.get(currentUser)).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
+      { where: fd => fd.courier.isEqualTo(this.cContext.currentUser).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -180,7 +182,7 @@ export class MltFamiliesComponent implements OnInit {
 
       let fd = await context.for(ActiveFamilyDeliveries).findId(id);
       if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-        fd.courier = context.get(currentUser);
+        fd.courier = u(context).currentUser;
         await fd.save();
       }
     }
@@ -278,7 +280,7 @@ export class MltFamiliesComponent implements OnInit {
     let s = getSettings(context);
     if (!s.isSytemForMlt())
       throw "not allowed";
-    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.get(currentUser)) })) {
+    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(u(context).currentUser) })) {
       fd.distributionCenter = newDestinationId;
       await fd.save();
     }

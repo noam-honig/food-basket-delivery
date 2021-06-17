@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { AndFilter, ServerFunction, SqlDatabase } from '@remult/core';
 import { UserFamiliesList } from '../my-families/user-families';
- import * as chart from 'chart.js';
+import * as chart from 'chart.js';
 
 import { BusyService, openDialog } from '@remult/angular';
 import { Filter } from '@remult/core';
@@ -14,7 +14,7 @@ import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
-import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SqlBuilder, relativeDateName, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -22,6 +22,7 @@ import { colors } from '../families/stats-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getLang } from '../sites/sites';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
+import { u } from '../model-shared/UberContext';
 
 
 @Component({
@@ -103,7 +104,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
         for (const h of this.helpers) {
           if (!h.smsWasSent) {
-            await SendSmsAction.SendSms(await HelperId.fromJson(h.id, this.context), false);
+            await SendSmsAction.SendSms(await u(this.context).helperFromJson(h.id), false);
           }
         }
       });
@@ -187,7 +188,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.sumWithAlias(1, 'problem', DeliveryStatus.isProblem(fd.deliverStatus))
 
       ],
-      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(filterDistCenter(fd.distributionCenter, distCenter, context))],
+      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(u(context).filterDistCenter(fd.distributionCenter, distCenter))],
 
     }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {

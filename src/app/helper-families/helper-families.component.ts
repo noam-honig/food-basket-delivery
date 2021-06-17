@@ -14,7 +14,7 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { Context } from '@remult/core';
 
 import { use, TranslationOptions } from '../translate';
-import { Helpers, HelperId, HelpersBase, currentUser } from '../helpers/helpers';
+import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -43,6 +43,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { FamilySources } from '../families/FamilySources';
 import { routeStrategy } from '../asign-family/route-strategy';
+import { u } from '../model-shared/UberContext';
 
 
 @Component({
@@ -260,7 +261,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (this.settings.helpText && this.settings.helpPhone)
       return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
-      var h = this.context.get(currentUser);
+      var h = u(this.context).currentUser;
       return r + h.name + ", " + h.phone.displayValue;
     }
   }
@@ -308,7 +309,7 @@ export class HelperFamiliesComponent implements OnInit {
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Context) {
     let dist: DistributionCenters = null;
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd).and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         fd.courier = null;
         fd._disableMessageToUsers = true;
@@ -319,7 +320,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
     await dist.SendMessageToBrowser(getLang(context).cancelAssignmentForHelperFamilies, context);
   }
-  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number):number {
+  distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number): number {
     if (i == 0) { return undefined; }
     if (!f.addressOk)
       return undefined;
@@ -333,7 +334,7 @@ export class HelperFamiliesComponent implements OnInit {
     let dist: DistributionCenters = null;
 
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd, context).and(fd.courier.isEqualTo(helper)),
+      where: fd => FamilyDeliveries.onTheWayFilter(fd).and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
         fd.deliverStatus = DeliveryStatus.Success;

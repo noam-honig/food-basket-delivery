@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, AndFilter,  FieldDefinitionsOf } from '@remult/core';
+import { Context, AndFilter, FieldDefinitionsOf } from '@remult/core';
 import { BusyService, GridSettings, InputField, openDialog } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -14,7 +14,7 @@ import * as copy from 'copy-to-clipboard';
 import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
-import { filterDistCenter } from '../manage/distribution-centers';
+
 import { DateOnlyValueConverter } from '@remult/core/valueConverters';
 
 @Component({
@@ -37,7 +37,7 @@ export class EventsComponent implements OnInit {
 
 
     rowsInPage: 25,
-    where: e => new AndFilter(filterDistCenter(e.distributionCenter, this.dialog.distCenter, this.context), this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)),
+    where: e => new AndFilter(this.dialog.filterDistCenter(e.distributionCenter), this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)),
     orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
     newRow: async e =>
       e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),
@@ -51,7 +51,7 @@ export class EventsComponent implements OnInit {
         click: async () => {
           let archiveCurrentEvent = new InputField<boolean>({ caption: this.settings.lang.archiveCurrentEvent });
           archiveCurrentEvent.value = true;
-          let date = new InputField<Date>({ caption: this.settings.lang.eventDate, valueConverter:  DateOnlyValueConverter });
+          let date = new InputField<Date>({ caption: this.settings.lang.eventDate, valueConverter: DateOnlyValueConverter });
           date.value = new Date();
           await openDialog(InputAreaComponent, x => x.args = {
             title: this.settings.lang.duplicateEvents,

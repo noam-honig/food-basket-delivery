@@ -9,7 +9,8 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
+import { u } from '../model-shared/UberContext';
 
 
 @Component({
@@ -68,7 +69,7 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: f => {
-        let result = filterDistCenter(f.distributionCenter,this.args.distCenter,this.context);
+        let result = u(this.context). filterDistCenter(f.distributionCenter,this.args.distCenter);
         {
           let r = f.name.contains(this.searchString);
           if (this.args.selectStreet)

@@ -11,6 +11,7 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
 import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings';
+import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-shipment-assign-screen',
@@ -59,9 +60,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => FamilyDeliveries.readyFilter(fd, this.context).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => this.cContext.readyFilter(fd).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = await HelperId.fromJson(h.id, this.context);
+        fd.courier = await this.cContext.helperFromJson(h.id);
         await fd.save();
       }
     });
@@ -71,7 +72,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await HelperId.fromJson(f.assignedHelper.id, this.context);
+    let helper = await this.cContext.helperFromJson(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
         where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
@@ -109,6 +110,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   togglerShowHelper(forFamily: familyInfo) {
     this.openFamilies.set(forFamily, !this.openFamilies.get(forFamily));
   }
+  cContext = u(this.context);
   constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings) { }
   data: data;
   families: familyInfo[] = [];

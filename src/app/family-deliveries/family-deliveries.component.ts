@@ -32,8 +32,9 @@ import { Groups } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.component';
-import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
+import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -95,7 +96,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   assignedButNotOutBaskets: statsOnTabBasket = {
     name: getLang(this.context).assignedButNotOutBaskets,
-    rule: f => FamilyDeliveries.onTheWayFilter(f, this.context).and(f.messageStatus.isEqualTo(MessageStatus.notSent)),
+    rule: f => FamilyDeliveries.onTheWayFilter(f).and(f.messageStatus.isEqualTo(MessageStatus.notSent)),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -138,7 +139,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   cityStats: statsOnTab = {
     name: getLang(this.context).remainingByCities,
     showTotal: true,
-    rule: f => FamilyDeliveries.readyFilter(f, this.context),
+    rule: f => this.cContext.readyFilter(f),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -173,7 +174,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.basketsDelivered,
     {
       name: getLang(this.context).remainingByGroups,
-      rule: f => FamilyDeliveries.readyFilter(f, this.context),
+      rule: f => this.cContext.readyFilter(f),
       stats: [
         this.stats.ready,
         this.stats.special
@@ -184,8 +185,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter, true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
-          (f, g) => f.groups.contains(g).and(FamilyDeliveries.readyFilter(f, this.context)),
-          (f, g) => f.groups.isDifferentFrom(new GroupsValue(g)).and(f.groups.isDifferentFrom(new GroupsValue(''))).and(FamilyDeliveries.readyFilter(f, this.context)));
+          (f, g) => f.groups.contains(g).and(this.cContext.readyFilter(f)),
+          (f, g) => f.groups.isDifferentFrom(new GroupsValue(g)).and(f.groups.isDifferentFrom(new GroupsValue(''))).and(this.cContext.readyFilter(f)));
       }
     },
     {
@@ -341,7 +342,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
       this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedDeliveries, (f, id) =>
-        FamilyDeliveries.readyFilter(f, this.context).and(f.basketType.isEqualTo(id)));
+        this.cContext.readyFilter(f).and(f.basketType.isEqualTo(id)));
       this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, (f, id) =>
         f.basketType.isEqualTo(id));
       this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.smsNotSent, (f, id) =>
@@ -351,8 +352,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successDeliveries, (f, id) =>
         DeliveryStatus.isSuccess(f.deliverStatus).and(f.basketType.isEqualTo(id)));
       this.prepComplexStats(st.cities, this.cityStats,
-        (f, c) => FamilyDeliveries.readyFilter(f, this.context).and(f.city.isEqualTo(c)),
-        (f, c) => FamilyDeliveries.readyFilter(f, this.context).and(f.city.isDifferentFrom(c)));
+        (f, c) => this.cContext.readyFilter(f).and(f.city.isEqualTo(c)),
+        (f, c) => this.cContext.readyFilter(f).and(f.city.isDifferentFrom(c)));
 
       this.updateChart();
     }));
@@ -433,6 +434,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     }
     return undefined;
   }
+  cContext = u(this.context);
   constructor(
     private context: Context,
     public dialog: DialogService,
@@ -451,7 +453,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
 
-  deliveries:GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.context.for(ActiveFamilyDeliveries), {
+  deliveries: GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.context.for(ActiveFamilyDeliveries), {
     showFilter: true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
@@ -483,13 +485,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         addFilter(f.name.contains(this.searchString));
       }
 
-      addFilter(filterDistCenter(f.distributionCenter, this.dialog.distCenter, this.context));
+      addFilter(this.dialog.filterDistCenter(f.distributionCenter));
       return result;
     }
     , orderBy: f => f.name
     ,
     columnSettings: deliveries => {
-      let r:DataControlInfo<ActiveFamilyDeliveries>[] = [
+      let r: DataControlInfo<ActiveFamilyDeliveries>[] = [
 
         {
           field: deliveries.name,
@@ -696,6 +698,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async getGroups(dist: DistributionCenters, readyOnly = false, context?: Context) {
+    let cContext = u(context);
     let pendingStats = [];
     let result: groupStats[] = [];
     await context.for(Groups).find({
@@ -710,9 +713,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         result.push(x);
         pendingStats.push(context.for(ActiveFamilyDeliveries).count(f => {
           let r = f.groups.contains(x.name).and(
-            filterDistCenter(f.distributionCenter, dist, context));
+            cContext.filterDistCenter(f.distributionCenter, dist));
           if (readyOnly)
-            return r.and(FamilyDeliveries.readyFilter(f, context));
+            return r.and(cContext.readyFilter(f));
           return r;
         }).then(r => x.totalReady = r));
 
@@ -785,6 +788,7 @@ export interface deliveryButtonsHelper {
   showAllBeforeNew?: boolean
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
+  let cContext= u(args.context);
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.context.for(Families).findId(d.family);
 
@@ -855,8 +859,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
             var fd = await args.context.for(ActiveFamilyDeliveries).find({
               where: fd => {
                 let f = fd.id.isDifferentFrom(d.id).and(
-                  FamilyDeliveries.readyFilter(fd, this.context)).and(
-                    filterDistCenter(fd.distributionCenter, args.dialog.distCenter, this.context));
+                  cContext.readyFilter(fd)).and(
+                    args.dialog.filterDistCenter(fd.distributionCenter));
                 if (d.addressOk)
                   return f.and(fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
                 else

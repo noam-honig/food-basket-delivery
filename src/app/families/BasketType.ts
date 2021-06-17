@@ -37,16 +37,7 @@ export class BasketType extends IdEntity {
   static async fromId(id: string, context: Context) {
     return id === undefined ? null : await context.for(BasketType).getCachedByIdAsync(id);
   }
-  static async getDefaultBasketType(context: Context) {
-    let bs = context.get(defaultBasketType);
-    if (bs)
-      return bs;
-    await context.for(BasketType).find({ orderBy: x => x.id }).then(y => {
-      if (y.length > 0)
-        context.set(defaultBasketType, bs = y[0]);
-    });
-    return bs;
-  }
+
 
   @Field({ translation: l => l.basketTypeName })
   name: string;
@@ -69,4 +60,3 @@ export function QuantityColumn<T>(settings?: FieldSettings) {
   return Field<T, number>({ translation: l => l.quantity, ...settings });
 }
 
-export const defaultBasketType = new keyFor<BasketType>();

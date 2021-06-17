@@ -7,25 +7,27 @@ import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from "../fami
 import { Families } from "../families/families";
 import { SqlBuilder, SqlFor } from "../model-shared/types";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from "../manage/distribution-centers";
+import { DistributionCenters } from "../manage/distribution-centers";
 import { Groups } from "../manage/groups";
 import { colors } from "../families/stats-action";
 import { getLang } from '../sites/sites';
 import { Field } from '../translate';
+import { u } from "../model-shared/UberContext";
 
 export class FamilyDeliveryStats {
     constructor(private context: Context) { }
+    cContext = u(this.context);
     ready = new FamilyDeliveresStatistics(getLang(this.context).unAsigned,
-        f => FamilyDeliveries.readyFilter(f, this.context).and(
+        f => this.cContext.readyFilter(f).and(
             f.special.isDifferentFrom(YesNo.Yes))
         , colors.yellow);
     selfPickup = new FamilyDeliveresStatistics(getLang(this.context).selfPickup, f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), colors.orange);
     special = new FamilyDeliveresStatistics(getLang(this.context).specialUnasigned,
-        f => FamilyDeliveries.readyFilter(f, this.context).and(
+        f => this.cContext.readyFilter(f).and(
             f.special.isEqualTo(YesNo.Yes))
         , colors.orange);
 
-    onTheWay = new FamilyDeliveresStatistics(getLang(this.context).onTheWay, f => FamilyDeliveries.onTheWayFilter(f, this.context), colors.blue);
+    onTheWay = new FamilyDeliveresStatistics(getLang(this.context).onTheWay, f => FamilyDeliveries.onTheWayFilter(f), colors.blue);
     delivered = new FamilyDeliveresStatistics(getLang(this.context).delveriesSuccesfull, f => DeliveryStatus.isSuccess(f.deliverStatus), colors.green);
     problem = new FamilyDeliveresStatistics(getLang(this.context).problems, f => DeliveryStatus.isProblem(f.deliverStatus), colors.red);
     frozen = new FamilyDeliveresStatistics(getLang(this.context).frozens, f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
@@ -47,6 +49,7 @@ export class FamilyDeliveryStats {
     }
     @ServerFunction({ allowed: Roles.distCenterAdmin })
     static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
+        let cContext = u(context);
         let result = {
             data: {}, baskets: [] as {
                 id: string,
@@ -81,11 +84,11 @@ export class FamilyDeliveryStats {
             sql.build('sum (', f.quantity, ') b'),
             sql.build('sum (', sql.case([{ when: [DeliveryStatus.isSuccess(f.deliverStatus)], then: f.quantity }], 0), ') c'),
             sql.build('sum (', sql.case([{ when: [f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup)], then: f.quantity }], 0), ') d'),
-            sql.build('sum (', sql.case([{ when: [FamilyDeliveries.onTheWayFilter(f, context).and(f.messageStatus.isEqualTo(MessageStatus.notSent))], then: f.quantity }], 0), ') e')
+            sql.build('sum (', sql.case([{ when: [FamilyDeliveries.onTheWayFilter(f).and(f.messageStatus.isEqualTo(MessageStatus.notSent))], then: f.quantity }], 0), ') e')
 
             ],
             from: f,
-            where: () => [filterDistCenter(f.distributionCenter, distCenter, context)]
+            where: () => [cContext.filterDistCenter(f.distributionCenter, distCenter)]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -124,7 +127,7 @@ export class FamilyDeliveryStats {
             pendingStats.push(
                 context.for(CitiesStatsPerDistCenter).find({
                     orderBy: f => f.families.descending(),
-                    where: f => filterDistCenter(f.distributionCenter, distCenter, context)
+                    where: f => cContext.filterDistCenter(f.distributionCenter, distCenter)
 
                 }).then(cities => {
                     result.cities = cities.map(x => {
@@ -153,7 +156,7 @@ export class FamilyDeliveresStatistics {
     async saveTo(distCenter: DistributionCenters, data: any, context: Context) {
         try {
 
-            data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), filterDistCenter(f.distributionCenter, distCenter, context))).then(c => this.value = c);
+            data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), u(context).filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);
         }
         catch (err) {
             console.error(this.name, err);
@@ -179,7 +182,7 @@ export interface groupStats {
             select: () => [f.city, sql.columnWithAlias("count(*)", self.deliveries)],
             from: f,
             where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
-            filterCenterAllowedForUser(f.distributionCenter, context),
+            u(context).filterCenterAllowedForUser(f.distributionCenter),
             sql.eq(f.courier, '\'\'')]
         }).replace('as result', 'as '), ' group by ', f.city, ') as result')
     }
@@ -201,7 +204,7 @@ export class CitiesStats {
             select: () => [f.city, f.distributionCenter, sql.columnWithAlias("count(*)", self.families)],
             from: f,
             where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
-            filterCenterAllowedForUser(f.distributionCenter, context),
+            u(context).filterCenterAllowedForUser(f.distributionCenter),
             sql.eq(f.courier, '\'\'')]
         }).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
     }

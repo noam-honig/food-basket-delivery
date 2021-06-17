@@ -34,7 +34,7 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectFamilyComponent } from '../select-family/select-family.component';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
-import { DistributionCenters, filterDistCenter, filterCenterAllowedForUser } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { CitiesStats, CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Families } from '../families/families';
@@ -47,6 +47,7 @@ import { use } from '../translate';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { getLang } from '../sites/sites';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { u } from '../model-shared/UberContext';
 
 
 
@@ -230,7 +231,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 groups = this.context.for(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
             }
             else
-                groups = this.context.for(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(filterDistCenter(f.distCenter, this.dialog.distCenter, this.context)), limit: 1000 });
+                groups = this.context.for(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(this.dialog.filterDistCenter(f.distCenter)), limit: 1000 });
             groups.then(g => {
                 this.groups = g;
                 if (this.filterGroup != '' && !this.groups.find(x => x.name == this.filterGroup)) {
@@ -361,6 +362,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroyHelper.destroy();
     }
+    cContext = u(this.context);
     constructor(public dialog: DialogService, private context: Context, public busy: BusyService, public settings: ApplicationSettings) {
         this.dialog.onDistCenterChange(() => this.refreshBaskets(), this.destroyHelper);
 
@@ -440,7 +442,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
-                                let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(FamilyDeliveries.readyFilter(f, this.context)));
+                                let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(this.cContext.readyFilter(f)));
                                 f.courier = this.helper;
                                 await f.save();
                             }
@@ -492,11 +494,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             repeatFamilies: []
         };
 
-
+        let cContext = u(context);
 
         let countFamilies = (additionalWhere?: (f: filterOf<ActiveFamilyDeliveries>) => Filter) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
-                let where = FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, basket).and(filterDistCenter(f.distributionCenter, distCenter, context));
+                let where = cContext.readyFilter(f, info.filterCity, info.filterGroup, info.filterArea, basket).and(cContext.filterDistCenter(f.distributionCenter, distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
                 }
@@ -512,7 +514,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let f = SqlFor(context.for(ActiveFamilyDeliveries));
         let fd = SqlFor(context.for(FamilyDeliveries));
         if (helper) {
-            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(filterDistCenter(f.distributionCenter, distCenter, context)).and(FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
+            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(cContext.filterDistCenter(f.distributionCenter, distCenter)).and(cContext.readyFilter(f, info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
                 filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
@@ -539,7 +541,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         } else {
             for await (let c of context.for(CitiesStatsPerDistCenter).iterate({
                 orderBy: ff => ff.city,
-                where: ff => filterDistCenter(ff.distributionCenter, distCenter, context)
+                where: ff => cContext.filterDistCenter(ff.distributionCenter, distCenter)
             })) {
                 var ci = {
                     name: c.city,
@@ -561,7 +563,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sql.columnWithAlias(sql.func('count ', '*'), 'c')
             ],
             from: f,
-            where: () => [filterDistCenter(f.distributionCenter, distCenter, context), FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, undefined, basket)]
+            where: () => [cContext.filterDistCenter(f.distributionCenter, distCenter), cContext.readyFilter(f, info.filterCity, info.filterGroup, undefined, basket)]
         }), ' group by ', f.area, ' order by ', f.area)));
         result.areas = groupBy.rows.map(x => {
             let r: CityInfo = {
@@ -578,7 +580,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             sql.build('count (', f.quantity, ') b'),
             ],
             from: f,
-            where: () => [filterDistCenter(f.distributionCenter, distCenter, context), FamilyDeliveries.readyFilter(f, context, info.filterCity, info.filterGroup, info.filterArea)]
+            where: () => [cContext.filterDistCenter(f.distributionCenter, distCenter), cContext.readyFilter(f, info.filterCity, info.filterGroup, info.filterArea)]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -662,6 +664,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!helper)
             throw "helper does not exist";
+        let cContext = u(context);
         let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helper).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
@@ -721,8 +724,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
         }
         function buildWhere(f: filterOf<ActiveFamilyDeliveries>) {
-            let where = FamilyDeliveries.readyFilter(f, context, info.city, info.group, info.area).and(
-                f.special.isDifferentFrom(YesNo.Yes).and(filterDistCenter(f.distributionCenter, distCenter, context))
+            let where = cContext.readyFilter(f, info.city, info.group, info.area).and(
+                f.special.isDifferentFrom(YesNo.Yes).and(cContext.filterDistCenter(f.distributionCenter, distCenter))
             );
             if (basketType)
                 where = where.and(
@@ -782,7 +785,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 boundsExtend(fqr);
                 for (const family of await context.for(ActiveFamilyDeliveries).find({
                     where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(fqr.lng).and(f.addressLatitude.isEqualTo(fqr.lat)))
-                        .and(filterDistCenter(f.distributionCenter, distCenter, context))
+                        .and(cContext.filterDistCenter(f.distributionCenter, distCenter))
                 })) {
                     if (i < info.numOfBaskets) {
                         family.courier = helper;
@@ -987,7 +990,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }, context?: Context) {
         let familyDeliveries = await context.for(ActiveFamilyDeliveries).find({
             where: fd =>
-                fd.id.isIn(args.ids).and(filterCenterAllowedForUser(fd.distributionCenter, context)).and(FamilyDeliveries.readyFilter(fd, context))
+                fd.id.isIn(args.ids).and(u(context).readyFilter(fd))
         });
         if (args.quantity > 0) {
             familyDeliveries.sort((a, b) => {
@@ -1032,10 +1035,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => f.id.isIn(this.repeatFamilies), 'repeat-families')
     }
     addSpecific() {
-        this.addFamily(f => FamilyDeliveries.readyFilter(f, this.context, this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'specific', false, true);
+        this.addFamily(f => this.cContext.readyFilter(f, this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'specific', false, true);
     }
     addStreet() {
-        this.addFamily(f => FamilyDeliveries.readyFilter(f, this.context, this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'street', true);
+        this.addFamily(f => this.cContext.readyFilter(f, this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'street', true);
     }
     async addBuilding() {
         let rows = await AsignFamilyComponent.selectBuildings(this.basketType.basket, this.dialog.distCenter, {
@@ -1089,8 +1092,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let result = await db.execute(sql.query({
             from: fd,
             select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
-            where: () => [filterDistCenter(fd.distributionCenter, distCenter, context),
-            FamilyDeliveries.readyFilter(fd, context, args.filterCity, args.filterGroup, args.filterArea, basket)],
+            where: () => [u(context).filterDistCenter(fd.distributionCenter, distCenter),
+            u(context).readyFilter(fd, args.filterCity, args.filterGroup, args.filterArea, basket)],
             groupBy: () => [fd.addressLatitude, fd.addressLongitude],
             having: () => [sql.build("sum(quantity)", '> 4')]
         }));

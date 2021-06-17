@@ -140,7 +140,7 @@ export class OverviewComponent implements OnInit {
 
 
         } else if (dateRange.caption == onTheWay) {
-          cols.push(builder.countInnerSelect({ from: f, where: () => [FamilyDeliveries.onTheWayFilter(f, context)] }, key));
+          cols.push(builder.countInnerSelect({ from: f, where: () => [FamilyDeliveries.onTheWayFilter(f)] }, key));
         }
         else
           cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(DeliveryStatus.isAResultStatus(fd.deliverStatus)))), ') ', key));

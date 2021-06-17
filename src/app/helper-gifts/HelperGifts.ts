@@ -3,12 +3,13 @@ import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angu
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
+import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
 import { Field, use } from "../translate";
+import { u } from "../model-shared/UberContext";
 
 @Entity<HelperGifts>({
     key: "HelperGifts",
@@ -18,12 +19,12 @@ import { Field, use } from "../translate";
     apiDataFilter: (self, context) => {
         if (context.isAllowed(Roles.admin))
             return undefined;
-        return self.assignedToHelper.isEqualTo(context.get(currentUser));
+        return self.assignedToHelper.isEqualTo(u(context).currentUser);
     },
     saving: (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = self.context.get(currentUser);
+            self.userCreated = u(self.context).currentUser;
         }
         else {
             if (self.$.giftURL.wasChanged()) {
@@ -36,7 +37,7 @@ import { Field, use } from "../translate";
             }
             if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
-                self.assignedByUser = self.context.get(currentUser);
+                self.assignedByUser = u(self.context).currentUser;
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
@@ -76,9 +77,9 @@ export class HelperGifts extends IdEntity {
     }
     @ServerFunction({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
-        let helper = await HelperId.fromJson(helperId, context);
-        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.get(currentUser))) > 0) {
-            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.get(currentUser)));
+        let helper = await u(context).helperFromJson(helperId);
+        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(u(context).currentUser)) > 0) {
+            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(u(context).currentUser));
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;

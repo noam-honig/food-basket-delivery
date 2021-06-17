@@ -21,7 +21,7 @@ import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { filterDistCenter } from '../manage/distribution-centers';
+
 @Component({
     selector: 'app-news',
     templateUrl: './news.component.html',
@@ -86,7 +86,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.busy.donotWait(async () => {
             this.news = await this.context.for(FamilyDeliveries).find({
                 where: n => {
-                    return new AndFilter(this.filters.where(n), filterDistCenter(n.distributionCenter, this.dialog.distCenter, this.context));
+                    return new AndFilter(this.filters.where(n),this.dialog.filterDistCenter(n.distributionCenter));
 
 
                 }, orderBy: n => n.deliveryStatusDate.descending(), limit: this.newsRows

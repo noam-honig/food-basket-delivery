@@ -15,7 +15,7 @@ import { Route } from '@angular/router';
 import { Families } from '../families/families';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DistributionCenters, filterCenterAllowedForUser } from './distribution-centers';
+import { DistributionCenters } from './distribution-centers';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -28,6 +28,7 @@ import { Groups } from './groups';
 import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Field } from '../translate';
+import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-manage',
@@ -586,7 +587,7 @@ export class ManageComponent implements OnInit {
   key: 'GroupsStatsPerDistributionCenter',
   dbName: (self, context) => {
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
-
+    let cContext = u(context);
     let g = SqlFor(context.for(Groups));
     let d = SqlFor(context.for(DistributionCenters));
     let sql = new SqlBuilder();
@@ -599,7 +600,7 @@ export class ManageComponent implements OnInit {
 
           where: () => [
             sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-            ActiveFamilyDeliveries.readyFilter(f, context).and(filterCenterAllowedForUser(f.distributionCenter, context)),
+            cContext.readyFilter(f),
             sql.eq(f.distributionCenter, d.id)]
 
         }, self.familiesCount)],
@@ -629,6 +630,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   dbName: (self, context) => {
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let g = SqlFor(context.for(Groups));
+    let cContext = u(context);
 
     let sql = new SqlBuilder();
     sql.addEntity(f, 'Families');
@@ -640,7 +642,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
 
           where: () => [
             sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-            ActiveFamilyDeliveries.readyFilter(f, context).and(filterCenterAllowedForUser(f.distributionCenter, context))]
+            cContext.readyFilter(f)]
 
 
         }, self.familiesCount)],

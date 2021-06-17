@@ -9,7 +9,8 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { distCenterOrLabGuard } from '../auth/roles';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { filterDistCenter } from '../manage/distribution-centers';
+import { u } from '../model-shared/UberContext';
+
 
 @Component({
   selector: 'app-self-pickup',
@@ -48,7 +49,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
 
     await this.families.get({
       where: f => {
-        let r = f.name.contains(this.searchString).and(filterDistCenter(f.distributionCenter, this.dialog.distCenter, this.context));
+        let r = f.name.contains(this.searchString).and(u(this.context). filterDistCenter(f.distributionCenter, this.dialog.distCenter));
         if (!this.showAllFamilies) {
           return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
         }

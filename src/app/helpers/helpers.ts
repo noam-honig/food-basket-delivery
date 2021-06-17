@@ -29,6 +29,7 @@ import { EmailSvc } from '../shared/utils';
 import { use, Field, FieldType } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from '@remult/core/src/remult3';
+import { u } from '../model-shared/UberContext';
 
 
 
@@ -50,24 +51,11 @@ export function CompanyColumn<T = any>(settings?: FieldSettings<string, T>) {
 
 
 export class HelperId {
-
-
     static toJson(x: HelpersBase) {
         return x ? x.id : '';
     }
-    static fromJson(x: string, context: Context): Promise<Helpers> {
-        if (!x)
-            return null;
-        return context.for(Helpers).getCachedByIdAsync(x)
-    }
-
-
-
-
-
+    
 }
-export const currentUser = new keyFor<Helpers>();
-export const currentUserWife = new keyFor<Helpers>();
 
 
 @FieldType<HelpersBase>({
@@ -93,8 +81,10 @@ export const currentUserWife = new keyFor<Helpers>();
     apiDataFilter: (self, context) => {
         if (!context.isSignedIn())
             return self.id.isEqualTo("No User");
-        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
-            return self.id.isIn([context.get(currentUser).id, context.get(currentUser).theHelperIAmEscorting.id, context.get(currentUser).escort.id])
+        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])){
+            let uContext = u(context);
+            return self.id.isIn([uContext.currentUser.id, uContext.currentUser.theHelperIAmEscorting.id, uContext.currentUser.escort.id])
+        }
 
     }
 })
@@ -254,6 +244,7 @@ export abstract class HelpersBase extends IdEntity {
     allowApiInsert: true,
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
+        let cContext = u(self.context);
         await self.$.escort.load();
         if (self.escort) {
             if (self.escort.id == self.id)
@@ -287,7 +278,7 @@ export abstract class HelpersBase extends IdEntity {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = self.context.get(currentUser).distributionCenter;
+                                self.distributionCenter = cContext.currentUser.distributionCenter;
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -329,7 +320,7 @@ export abstract class HelpersBase extends IdEntity {
             if (self.$.escort.wasChanged()) {
                 let h = await self.$.escort.load();
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = self.context.get(currentUser);
+                    self.$.escort.originalValue.theHelperIAmEscorting =cContext.currentUser;
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -393,9 +384,7 @@ export class Helpers extends HelpersBase {
             await h.$.distributionCenter.load(); /// for all the current user distribution center filtering
 
         }
-        context.set(currentUser, h);
-
-
+        u(context).currentUser = h;
     }
 
     async getHelper(): Promise<Helpers> {

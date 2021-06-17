@@ -8,7 +8,7 @@ import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring"
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Families } from "../families/families";
-import { BasketType, defaultBasketType, QuantityColumn } from "../families/BasketType";
+import { BasketType, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
@@ -16,6 +16,7 @@ import { ServerController } from "@remult/core";
 import { DataAreaFieldsSetting, DataControl, InputField } from "@remult/angular";
 
 import { getControllerDefs, ValueListFieldType } from "@remult/core/src/remult3";
+import { u } from "../model-shared/UberContext";
 
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
@@ -28,6 +29,7 @@ export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamily
 function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, context: Context) {
     if (args.orderBy)
         throw "didn't expect order by";
+    let cContext = u(context);
     args.orderBy = x => [x.createDate.descending(), x.id]//to handle the case where paging is used, and items are added with different ids
     let originalForEach = args.forEach;
     args.forEach = async fd => {
@@ -36,9 +38,9 @@ function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliver
     };
     let originalWhere = args.additionalWhere;
     if (originalWhere) {
-        args.additionalWhere = x => new AndFilter(originalWhere(x), FamilyDeliveries.isAllowedForUser(x, context));
+        args.additionalWhere = x => new AndFilter(originalWhere(x), cContext.isAllowedForUser(x));
     }
-    else args.additionalWhere = x => FamilyDeliveries.isAllowedForUser(x, context);
+    else args.additionalWhere = x => cContext.isAllowedForUser(x);
     return args;
 }
 
@@ -247,7 +249,7 @@ export class ArchiveHelper {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = context.for(ActiveFamilyDeliveries);
 
-        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(d, context), where]);
+        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(d), where]);
 
         if (onTheWay > 0) {
             this.markOnTheWayAsDelivered = true;
@@ -287,7 +289,7 @@ export class ArchiveHelper {
 })
 export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     @Field()
-    archiveHelper:ArchiveHelper = new ArchiveHelper();
+    archiveHelper: ArchiveHelper = new ArchiveHelper();
     constructor(context: Context) {
         super(context, {
             dialogColumns: async c => {
@@ -397,7 +399,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     @Field()
     selfPickup: SelfPickupStrategy;
     @Field()
-    archiveHelper:ArchiveHelper = new ArchiveHelper();
+    archiveHelper: ArchiveHelper = new ArchiveHelper();
 
     @Field()
     distributionCenter: DistributionCenters;
@@ -409,7 +411,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     constructor(context: Context) {
         super(context, {
             dialogColumns: async (component) => {
-                this.basketType = await BasketType.getDefaultBasketType(this.context);
+                this.basketType = await u(this.context).defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 this.useCurrentDistributionCenter = component.dialog.distCenter == null;

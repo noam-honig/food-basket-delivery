@@ -5,10 +5,10 @@ import { Context, IdEntity, Filter, AndFilter, filterOf, EntityField, DecimalFie
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { currentUser, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
+import { Helpers, HelpersBase } from "../helpers/helpers";
 
 import { Roles } from "../auth/roles";
-import { DistributionCenters, filterCenterAllowedForUser } from "../manage/distribution-centers";
+import { DistributionCenters } from "../manage/distribution-centers";
 import { YesNo } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
@@ -23,6 +23,7 @@ import { DataControl, IDataAreaSettings, openDialog } from "@remult/angular";
 import { Groups } from "../manage/groups";
 
 import { FamilySources } from "./FamilySources";
+import { u, UberContext } from "../model-shared/UberContext";
 
 
 @ValueListFieldType(MessageStatus, {
@@ -47,7 +48,7 @@ export class MessageStatus {
     allowApiDelete: Roles.admin,
     apiDataFilter: (self, context) => {
 
-        return FamilyDeliveries.isAllowedForUser(self, context);
+        return u(context).isAllowedForUser(self);
 
     },
 
@@ -55,9 +56,9 @@ export class MessageStatus {
 
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = self.context.get(currentUser);
+            self.createUser = u(self.context).currentUser;
             self.deliveryStatusDate = new Date();
-            self.deliveryStatusUser = self.context.get(currentUser);
+            self.deliveryStatusUser = u(self.context).currentUser;
         }
         if (self.quantity < 1)
             self.quantity = 1;
@@ -496,27 +497,7 @@ export class FamilyDeliveries extends IdEntity {
 
         }
     }
-    static isAllowedForUser(self: filterOf<FamilyDeliveries>, context: Context) {
-        if (!context.isSignedIn())
-            return self.id.isEqualTo('no rows');
-        let user = context.get(currentUser);
-        user.theHelperIAmEscorting;
-        let result: Filter;
-        let add = (f: Filter) => result = new AndFilter(f, result);
 
-        if (!context.isAllowed([Roles.admin, Roles.lab])) {
-            add(FamilyDeliveries.active(self));
-            if (context.isAllowed(Roles.distCenterAdmin))
-                add(filterCenterAllowedForUser(self.distributionCenter, context));
-            else {
-                if (user.theHelperIAmEscorting)
-                    add(self.courier.isEqualTo(user.theHelperIAmEscorting).and(self.visibleToCourier.isEqualTo(true)));
-                else
-                    add(self.courier.isEqualTo(user).and(self.visibleToCourier.isEqualTo(true)));
-            }
-        }
-        return result;
-    }
 
     getShortDeliveryDescription() {
         return this.staticGetShortDescription(this.deliverStatus, this.deliveryStatusDate, this.courier, this.courierComments);
@@ -585,22 +566,8 @@ export class FamilyDeliveries extends IdEntity {
     }
 
 
-    static readyFilter(self: filterOf<FamilyDeliveries>, context: Context, city?: string, group?: string, area?: string, basket?: BasketType) {
-        let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-            self.courier.isEqualTo(null)).and(filterCenterAllowedForUser(self.distributionCenter, context));
-        if (group)
-            where = where.and(self.groups.contains(group));
-        if (city) {
-            where = where.and(self.city.isEqualTo(city));
-        }
-        if (area !== undefined && area != getLang(context).allRegions)
-            where = where.and(self.area.isEqualTo(area));
-        if (basket != null)
-            where = where.and(self.basketType.isEqualTo(basket))
 
-        return where;
-    }
-    static onTheWayFilter(self: filterOf<FamilyDeliveries>, context: Context) {
+    static onTheWayFilter(self: filterOf<FamilyDeliveries>) {
         return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null));
     }
 
@@ -759,9 +726,10 @@ iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 function logChanged(context: Context, col: EntityField<any>, dateCol: EntityField<Date>, user: EntityField<HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
-        user.value = context.get(currentUser);
+        user.value = u(context).currentUser;
         wasChanged();
     }
 }
 
 
+UberContext.filterActiveDeliveries = FamilyDeliveries.active;

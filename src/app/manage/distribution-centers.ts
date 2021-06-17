@@ -1,13 +1,14 @@
-import { IdEntity, Context,  AndFilter,  Entity, filterOf, filterOptions, Filter } from "@remult/core";
+import { IdEntity, Context, AndFilter, Entity, filterOf, filterOptions, Filter } from "@remult/core";
 import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
 import { Roles } from "../auth/roles";
-import { currentUser, HelperId, Helpers, HelpersBase, HelperUserInfo } from "../helpers/helpers";
+import { HelpersBase, HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from "@remult/angular";
 import { use, FieldType, Field } from "../translate";
+import { u } from "../model-shared/UberContext";
 
 
 
@@ -135,18 +136,6 @@ export class DistributionCenters extends IdEntity {
 
 }
 
-export function filterCenterAllowedForUser(center: filterOptions<DistributionCenters>, context: Context) {
-  if (context.isAllowed(Roles.admin)) {
-    return undefined;
-  } else if (context.isSignedIn())
-    return center.isEqualTo(context.get(currentUser).distributionCenter);
-}
-export function filterDistCenter(distCenterColumn: filterOptions<DistributionCenters>, distCenter: DistributionCenters, context: Context): Filter {
-  let allowed = filterCenterAllowedForUser(distCenterColumn, context);
-  if (distCenter != null)
-    return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
-  return allowed;
-}
 
 
 
@@ -155,17 +144,3 @@ export function filterDistCenter(distCenterColumn: filterOptions<DistributionCen
 
 
 
-export async function findClosestDistCenter(loc: Location, context: Context, centers?: DistributionCenters[]) {
-  let result: DistributionCenters;
-  let dist: number;
-  if (!centers)
-    centers = await context.for(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
-  for (const c of centers) {
-    let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
-    if (result === undefined || myDist < dist) {
-      result = c;
-      dist = myDist;
-    }
-  }
-  return result;
-}

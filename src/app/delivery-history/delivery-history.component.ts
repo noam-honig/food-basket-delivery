@@ -24,7 +24,8 @@ import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { use, Field } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { DistributionCenters, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
+import { u } from '../model-shared/UberContext';
 
 
 
@@ -266,7 +267,7 @@ export class DeliveryHistoryComponent implements OnInit {
     where: d => {
       var toDate = this.dateRange.toDate;
       toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate).and(d.deliveryStatusDate.isLessThan(toDate)).and(filterDistCenter(d.distributionCenter, this.dialog.distCenter, this.context))
+      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate).and(d.deliveryStatusDate.isLessThan(toDate)).and(this.dialog.filterDistCenter(d.distributionCenter))
       if (this.onlyDone)
         r = r.and(DeliveryStatus.isAResultStatus(d.deliverStatus));
       if (this.onlyArchived)
@@ -321,7 +322,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(
-      fd.deliveryStatusDate.isLessThan(toDate)).and(filterDistCenter(fd.distributionCenter, distCenter, context));
+      fd.deliveryStatusDate.isLessThan(toDate)).and(u(context). filterDistCenter(fd.distributionCenter, distCenter));
     if (onlyDone)
       r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
     if (onlyArchived)

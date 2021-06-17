@@ -3,7 +3,7 @@ import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angu
 import { use, ValueListFieldType, Field, DateOnlyField } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
-import { currentUser, HelperId, Helpers, HelpersBase } from "../helpers/helpers";
+import {  Helpers, HelpersBase } from "../helpers/helpers";
 import { SqlBuilder, DateTimeColumn, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -19,6 +19,7 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { AddressHelper } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
+import { u } from "../model-shared/UberContext";
 
 
 
@@ -213,13 +214,13 @@ export class Event extends IdEntity {
     apiDataFilter: (self, context) => {
         if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return undefined;
-        return self.helper.isEqualTo(context.get(currentUser));
+        return self.helper.isEqualTo(u(context).currentUser);
     }
     ,
     saving: (self) => {
         if (self.isNew() && self.context.onServer) {
             self.createDate = new Date();
-            self.createUser = self.context.get(currentUser);
+            self.createUser = u(self.context).currentUser;
         }
     }
 })

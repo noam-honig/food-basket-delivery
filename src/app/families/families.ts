@@ -8,7 +8,7 @@ import { Phone } from "../model-shared/phone";
 import { Context, ServerFunction, IdEntity, SqlDatabase, Filter, Validators, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
-import { currentUser, Helpers, HelpersBase } from "../helpers/helpers";
+import { Helpers, HelpersBase } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
@@ -25,9 +25,10 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 
 
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
-import { DistributionCenters, findClosestDistCenter } from "../manage/distribution-centers";
+import { DistributionCenters } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 import { DecimalField } from "@remult/core/src/remult3";
+import { u } from "../model-shared/UberContext";
 
 
 
@@ -51,7 +52,7 @@ declare type factoryFor<T> = {
   valueConverter: {
     toJson: x => x ? x.value : '',
     fromJson: x => new GroupsValue(x),
-    displayValue:x=>x.value
+    displayValue: x => x.value
   },
   translation: l => l.familyGroup,
 })
@@ -135,18 +136,19 @@ export class GroupsValue {
         if (self.$.address.wasChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
           await self.reloadGeoCoding();
         }
+        let currentUser = u(self.context).currentUser;
         if (self.isNew()) {
           self.createDate = new Date();
-          self.createUser = self.context.get(currentUser);
+          self.createUser = currentUser;
         }
         if (self.$.status.wasChanged()) {
           self.statusDate = new Date();
-          self.statusUser = self.context.get(currentUser);
+          self.statusUser = currentUser;
         }
 
         if (!self._suppressLastUpdateDuringSchemaInit) {
           self.lastUpdateDate = new Date();
-          self.lastUpdateUser = self.context.get(currentUser);
+          self.lastUpdateUser = currentUser;
         }
 
 
@@ -396,7 +398,7 @@ export class Families extends IdEntity {
     if (f) {
 
       if (!distCenter)
-        distCenter = await findClosestDistCenter(f.addressHelper.location(), context);
+        distCenter = await u(context).findClosestDistCenter(f.addressHelper.location());
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;

@@ -1,7 +1,7 @@
 import { Context, AndFilter, getControllerDefs } from "@remult/core";
 import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
-import { BasketType, defaultBasketType, QuantityColumn } from "./BasketType";
+import { BasketType, QuantityColumn } from "./BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
 
@@ -18,6 +18,7 @@ import { DataControl, getValueList } from "@remult/angular";
 import { Groups } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 import { ValueListValueConverter } from "@remult/core/valueConverters";
+import { u } from "../model-shared/UberContext";
 
 @ValueListFieldType(SelfPickupStrategy, {
     translation: l => l.selfPickupStrategy
@@ -72,7 +73,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @Field({
         translation: l => l.excludeGroups
     })
-    
+
     excludeGroups: GroupsValue;
     constructor(context: Context) {
         super(context, Families, {
@@ -84,7 +85,7 @@ export class NewDelivery extends ActionOnRows<Families> {
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType = await BasketType.getDefaultBasketType(this.context);
+                this.basketType = await u(this.context).defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 if (this.distributionCenter)

@@ -24,7 +24,7 @@ import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang, Sites } from '../sites/sites';
-import { DistributionCenters, filterCenterAllowedForUser, filterDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
@@ -36,6 +36,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 import { use } from '../translate';
 import { BasketType } from '../families/BasketType';
+import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-distribution-map',
@@ -335,7 +336,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @ServerFunction({ allowed: Roles.distCenterAdmin })
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
-
+    let cContext = u(context);
 
     let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let h = SqlFor(context.for(Helpers));
@@ -352,15 +353,15 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
 
       where: () => {
-        let where: any[] = [filterCenterAllowedForUser(f.distributionCenter, context)];
+        let where: any[] = [cContext.filterCenterAllowedForUser(f.distributionCenter)];
         if (distCenter !== undefined)
-          where.push(filterDistCenter(f.distributionCenter, distCenter, context));
+          where.push(cContext.filterDistCenter(f.distributionCenter, distCenter));
         if (area !== undefined && area !== null && area != getLang(context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
         if (onlyPotentialAsignment) {
-          where.push(FamilyDeliveries.readyFilter(f, context, city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
+          where.push(cContext.readyFilter(f, city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },

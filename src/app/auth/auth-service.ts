@@ -2,7 +2,7 @@ import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
-import { currentUser, HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
+import {  HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { ServerFunction, Context, UserInfo } from '@remult/core';

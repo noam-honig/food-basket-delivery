@@ -4,6 +4,7 @@ import { HelperId } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { relativeDateName } from '../model-shared/types';
+import { u } from '../model-shared/UberContext';
 import { HelperGifts } from './HelperGifts';
 
 @Component({
@@ -28,7 +29,7 @@ export class MyGiftsDialogComponent implements OnInit {
   async ngOnInit() {
     this.giftsUsed = 0;
     this.giftsAvailable = 0;
-    let helper = await HelperId.fromJson(this.args.helperId, this.context);
+    let helper = await u(this.context).helperFromJson(this.args.helperId);
     this.theGifts =
       await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(helper) }).then(
         gifts => {
@@ -40,7 +41,7 @@ export class MyGiftsDialogComponent implements OnInit {
             return {
               giftID: x.id,
               giftUrl: x.giftURL,
-              dateGranted: relativeDateName(this.context,{d:x.dateGranted}) ,
+              dateGranted: relativeDateName(this.context, { d: x.dateGranted }),
               wasConsumed: x.wasConsumed,
               wasClicked: x.wasClicked
             }

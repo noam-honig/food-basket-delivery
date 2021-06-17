@@ -9,7 +9,7 @@ import { Phone } from "../model-shared/phone";
 
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
-import { BasketType, defaultBasketType } from '../families/BasketType';
+import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService, extractError } from '../select-popup/dialog';
@@ -24,7 +24,7 @@ import { Field, use } from '../translate';
 import { getLang } from '../sites/sites';
 
 import { Groups } from '../manage/groups';
-import { DistributionCenters, findClosestDistCenter } from '../manage/distribution-centers';
+import { DistributionCenters } from '../manage/distribution-centers';
 import { jsonToXlsx } from '../shared/saveToExcel';
 import { Sites } from '../sites/sites';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -33,6 +33,7 @@ import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { PromiseThrottle } from '../shared/utils';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { u } from '../model-shared/UberContext';
 
 
 
@@ -173,7 +174,7 @@ export class ImportFromExcelComponent implements OnInit {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
                     if (getSettings(context).isSytemForMlt()) {
-                        fd.distributionCenter = await findClosestDistCenter(f.addressHelper.location(), context);
+                        fd.distributionCenter = await u(context).findClosestDistCenter(f.addressHelper.location());
                     }
                     await fd.save();
                 }
@@ -265,7 +266,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (c == col) {
                     fd._disableMessageToUsers = true;
                     if (settings.isSytemForMlt()) {
-                        fd.distributionCenter = await findClosestDistCenter(f.addressHelper.location(), context);
+                        fd.distributionCenter = await u(context).findClosestDistCenter(f.addressHelper.location());
                     }
                     await fd.save();
                     break;
@@ -528,7 +529,7 @@ export class ImportFromExcelComponent implements OnInit {
     settingsArea: DataAreaSettings = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery = true;
-        this.defaultBasketType = await BasketType.getDefaultBasketType(this.context);
+        this.defaultBasketType = await u(this.context).defaultBasketType();
         this.distributionCenter = this.dialog.distCenter;
         if (this.distributionCenter == null)
             this.distributionCenter = await DistributionCenters.getDefault(this.context);

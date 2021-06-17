@@ -3,7 +3,7 @@ import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, relativeDateName, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { getLang } from "../sites/sites";
-import { Helpers, HelperId, currentUser, HelpersBase } from "../helpers/helpers";
+import { Helpers, HelperId, HelpersBase } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
@@ -11,9 +11,10 @@ import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-dialog.component";
 import { use, Field } from "../translate";
-import { filterCenterAllowedForUser } from "../manage/distribution-centers";
+
 import { DataControl, GridSettings, openDialog } from "@remult/angular";
 import { DateOnlyField } from "@remult/core/src/remult3";
+import { u } from "../model-shared/UberContext";
 
 @Entity<InRouteHelpers>({
     key: 'in-route-helpers',
@@ -30,7 +31,7 @@ import { DateOnlyField } from "@remult/core/src/remult3";
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [filterCenterAllowedForUser(f.distributionCenter, context), sql.eq(f.courier, h.id), ...where()]
+                where: () => [u(context).filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
             }
         }
         let comInnerSelect = (col: FieldDefinitions, toCol: FieldDefinitions) => {
@@ -213,7 +214,7 @@ export class InRouteHelpers extends IdEntity {
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = self.context.get(currentUser);
+            self.createUser = u(self.context).currentUser;
         }
     }
 })

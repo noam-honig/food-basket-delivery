@@ -1,13 +1,14 @@
 /// <reference types="@types/googlemaps" />
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
-import { currentUser, Helpers } from '../../helpers/helpers';
+import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { SignedInGuard, RouteHelperService, InputField, GridSettings, DataAreaSettings } from '@remult/angular';
 import { Route } from '@angular/router';
 import { Context } from '@remult/core';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
+import { u } from '../../model-shared/UberContext';
 
 
 
@@ -32,7 +33,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
   confirmPassword = new InputField<string>({ caption: this.settings.lang.confirmPassword, inputType: 'password', defaultValue: () => Helpers.emptyPassword });
   h: Helpers;
- 
+
   area: DataAreaSettings;
 
   ngAfterViewInit(): void {
@@ -44,7 +45,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
 
   async ngOnInit() {
-    this.h = await this.context.get(currentUser).getHelper();
+    this.h = await u(this.context).currentUser.getHelper();
     await this.h._.reload();
     if (!this.h.password)
       this.confirmPassword.value = '';

@@ -39,9 +39,10 @@ import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, Upda
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { sortColumns } from '../shared/utils';
 import { columnOrderAndWidthSaver } from './columnOrderAndWidthSaver';
-import { BasketType, defaultBasketType } from './BasketType';
+import { BasketType } from './BasketType';
 import { use } from '../translate';
 import { ChartType } from 'chart.js';
+import { u } from '../model-shared/UberContext';
 
 
 
@@ -207,7 +208,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = await BasketType.getDefaultBasketType(this.context);
+                f.basketType = await u(this.context).defaultBasketType();
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {

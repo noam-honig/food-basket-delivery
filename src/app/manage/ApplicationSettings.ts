@@ -30,6 +30,7 @@ import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
 
 import { ValueListFieldType } from '@remult/core/src/remult3';
+import { u } from '../model-shared/UberContext';
 
 
 @ValueListFieldType(RemovedFromListExcelImportStrategy)
@@ -87,7 +88,7 @@ export class ApplicationSettings extends EntityBase {
   @ServerFunction({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser(fd, context)));
+    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(u(context).isAllowedForUser(fd)));
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
@@ -241,7 +242,7 @@ export class ApplicationSettings extends EntityBase {
   defaultPrefixForExcelImport: string;
   @Field()
   checkIfFamilyExistsInDb: boolean;
-  @Field({translation:l=>l.existsInRemovedFromListStrategy})
+  @Field({ translation: l => l.existsInRemovedFromListStrategy })
   removedFromListStrategy: RemovedFromListExcelImportStrategy;
   @Field()
   checkIfFamilyExistsInFile: boolean;

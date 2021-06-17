@@ -9,7 +9,8 @@ import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang } from '../sites/sites';
 import { use, Field } from "../translate";
-import { filterCenterAllowedForUser } from "../manage/distribution-centers";
+import { u } from "../model-shared/UberContext";
+
 
 
 
@@ -33,7 +34,7 @@ function log(s: string) {
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [filterCenterAllowedForUser(f.distributionCenter, context), sql.eq(f.courier, h.id), ...where()]
+                where: () => [u(context).filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
             }
         }
         return sql.entityDbName({
@@ -67,7 +68,7 @@ function log(s: string) {
     }
 })
 export class HelpersAndStats extends HelpersBase {
- 
+
 
     @Field({
         dbReadOnly: true,
