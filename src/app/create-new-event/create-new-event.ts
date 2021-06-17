@@ -91,7 +91,7 @@ export class CreateNewEvent {
             r = await this.iterateFamilies(async f => {
                 let fd = await f.createDelivery(this.distributionCenter);
                 fd._disableMessageToUsers = true;
-                if (this.moreOptions) {
+                if (this.moreOptions) { 
                     if (!this.useFamilyBasket)
                         fd.basketType = this.basketType;
                 }
@@ -111,7 +111,7 @@ export class CreateNewEvent {
         for await (let f of this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active), progress })) {
             let match = true;
             if (this.moreOptions) {
-                if (this.includeGroups) {
+                if (this.includeGroups?.hasAny()) {
                     match = false;
                     for (let g of this.includeGroups.listGroups()) {
                         if (f.groups.selected(g.trim())) {
@@ -120,7 +120,7 @@ export class CreateNewEvent {
 
                     }
                 }
-                if (this.excludeGroups) {
+                if (this.excludeGroups?.hasAny()) {
                     for (let g of this.excludeGroups.listGroups()) {
                         if (f.groups.selected(g.trim())) {
                             match = false;
@@ -154,7 +154,7 @@ export class CreateNewEvent {
         this.distributionCenter = dialog.distCenter;
 
         if (!this.distributionCenter) {
-            this.distributionCenter = await DistributionCenters.getDefault(this.context);
+          //  this.distributionCenter = await DistributionCenters.getDefault(this.context);
             if (!this.distributionCenter) {
                 await dialog.Error(getLang(this.context).pleaseSelectDistributionList);
                 return;
@@ -194,7 +194,7 @@ export class CreateNewEvent {
                 }
             },
             cancel: () => { },
-            validate: async () => {
+            validate: async () => { 
 
 
                 let count = await this.context.for(ActiveFamilyDeliveries).count(x => this.cContext.filterDistCenter(x.distributionCenter, this.distributionCenter));

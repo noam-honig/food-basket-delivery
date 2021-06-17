@@ -30,7 +30,7 @@ serverInit().then(async (dataSource) => {
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
-    app.use(compression());
+    
     if (!process.env.DEV_MODE)
         app.use(forceHttps);
 
@@ -153,6 +153,7 @@ s.parentNode.insertBefore(b, s);})();
             }
         };
     }
+    app.use(compression());
 //
 
     let eb = initExpress(

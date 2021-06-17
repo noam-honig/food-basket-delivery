@@ -111,9 +111,12 @@ export class DialogService {
     @Field()
     @DataControl<DialogService>({
         valueList: context => DistributionCenters.getValueList(context, true),
-        valueChange: self => {
-            if (self.context.isSignedIn())
+        valueChange:async self => {
+            
+            if (self.context.isSignedIn()){
+                await self.$.distCenter.load();
                 self.refreshDistCenter.next();
+            }
         }
 
     })
@@ -130,6 +133,7 @@ export class DialogService {
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }
     dc: DistributionCenters;
+    get $(){return getControllerDefs(this, this.context).fields}
     async refreshCanSeeCenter() {
         this.hasManyCenters = false;
         this.distCenterArea = undefined;
@@ -139,7 +143,7 @@ export class DialogService {
             this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
-            this.distCenterArea = new DataAreaSettings({ fields: () => [getControllerDefs(this, this.context).fields.distCenter] });
+            this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = null;
         }

@@ -6,6 +6,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { ServerContext, Context, Entity, SqlDatabase, ClassType } from '@remult/core';
 import '../app-routing.module';
+import '../create-new-event/create-new-event'
 
 
 

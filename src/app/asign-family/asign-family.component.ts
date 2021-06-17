@@ -778,6 +778,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 break;
 
 
+            let distCenter: DistributionCenters;
 
             let addFamilyToResult = async (fqr: Location) => {
                 waitingFamilies.splice(waitingFamilies.indexOf(fqr), 1);
@@ -791,6 +792,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         family.courier = helper;
                         family._disableMessageToUsers = true;
                         family.routeOrder = existingFamilies.length + 1;
+                        distCenter = family.distributionCenter;
                         await family.save();
                         result.addedBoxes++;
                         existingFamilies.push(family);
@@ -914,6 +916,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id == x) && result.familiesInSameAddress.indexOf(x) == i);
+        if (distCenter)
+            distCenter.SendMessageToBrowser(settings.lang.deliveriesAssigned, context);
         Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned, context, '');
         return result;
     }

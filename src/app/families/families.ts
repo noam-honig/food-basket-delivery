@@ -70,6 +70,9 @@ declare type factoryFor<T> = {
 
 })
 export class GroupsValue {
+  hasAny() {
+    return this.value != '';
+  }
   replace(val: string) {
     this.value = val;
   }
@@ -326,7 +329,7 @@ export class Families extends IdEntity {
 
     }
     let selfPickup = new InputField<boolean>({
-      dataType:Boolean,
+      dataType: Boolean,
       caption: getLang(this.context).familySelfPickup,
       defaultValue: () => this.defaultSelfPickup
     });
