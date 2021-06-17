@@ -326,6 +326,7 @@ export class Families extends IdEntity {
 
     }
     let selfPickup = new InputField<boolean>({
+      dataType:Boolean,
       caption: getLang(this.context).familySelfPickup,
       defaultValue: () => this.defaultSelfPickup
     });
