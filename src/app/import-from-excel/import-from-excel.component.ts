@@ -1567,7 +1567,7 @@ async function getColumnDisplayValue(c: EntityField<any>) {
     await c.load();
     let v = c.displayValue;
 
-    return v.trim();
+    return v?.trim();
 }
 interface laterSteps {
     step: number,
