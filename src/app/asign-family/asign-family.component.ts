@@ -369,11 +369,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
 
-    FilterFactory: FieldRef<boolean>[] = [];
+    filterOptions: FieldRef<boolean>[] = [];
     async ngOnInit() {
 
 
-        this.FilterFactory.push(this.settings.$.showGroupsOnAssing, this.settings.$.showCityOnAssing, this.settings.$.showAreaOnAssing, this.settings.$.showBasketOnAssing, this.settings.$.showNumOfBoxesOnAssing);
+        this.filterOptions.push(this.settings.$.showGroupsOnAssing, this.settings.$.showCityOnAssing, this.settings.$.showAreaOnAssing, this.settings.$.showBasketOnAssing, this.settings.$.showNumOfBoxesOnAssing);
         this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
             async families => {
