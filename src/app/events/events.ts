@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity,  InputTypes, FieldDefinitionsOf } from "@remult/core";
+import { IdEntity, Context, Entity,   FieldsMetadata } from "@remult/core";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField } from "../translate";
 import { getLang } from '../sites/sites';
@@ -20,6 +20,7 @@ import { AddressHelper } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { u } from "../model-shared/UberContext";
+import { InputTypes } from "@remult/core/inputTypes";
 
 
 
@@ -43,7 +44,7 @@ export class eventStatus {
     allowApiCrud: Roles.admin,
     allowApiRead: c => c.isSignedIn(),
     saving: async (self) => {
-        if (self.context.onServer) {
+        if (self.context.backend) {
             await self.addressHelper.updateApiResultIfChanged();
             if (self.distributionCenter == null)
                 self.distributionCenter = await DistributionCenters.getDefault(self.context);
@@ -82,7 +83,7 @@ export class Event extends IdEntity {
                 ,
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
-                columnSettings: (ev: FieldDefinitionsOf<volunteersInEvent>) => [
+                columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
                     { width: '100', field: ev.helperName },
                     {
                         caption: getLang(this.context).volunteerStatus,
@@ -218,7 +219,7 @@ export class Event extends IdEntity {
     }
     ,
     saving: (self) => {
-        if (self.isNew() && self.context.onServer) {
+        if (self.isNew() && self.context.backend) {
             self.createDate = new Date();
             self.createUser = u(self.context).currentUser;
         }

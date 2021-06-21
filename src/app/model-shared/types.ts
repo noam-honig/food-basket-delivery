@@ -1,5 +1,5 @@
 
-import { Entity, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, InputTypes, EntityField, FieldSettings, FieldDefinitions, EntityDefinitions, rowHelper, Repository, FieldDefinitionsOf, filterOf, filterOptions, comparableFilterItem, supportsContains, ClassType } from '@remult/core';
+import { Entity, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory } from '@remult/core';
 import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
@@ -7,6 +7,7 @@ import { EmailSvc, isDesktop } from '../shared/utils';
 import { isDate } from 'util';
 import { DataControl } from '@remult/angular';
 import { filterHelper } from '@remult/core/src/filter/filter-interfaces';
+import { InputTypes } from '@remult/core/inputTypes';
 
 
 
@@ -38,13 +39,13 @@ export class Email {
   }
 }
 
-export function DateTimeColumn<T = any>(settings?: FieldSettings<Date, T> & TranslatedCaption) {
+export function DateTimeColumn<T = any>(settings?: FieldOptions<Date, T> & TranslatedCaption) {
   return Field<T, Date>({
     ...{ displayValue: (e, x) => x ? x.toLocaleString("he-il") : '' },
     ...settings
   })
 }
-export function ChangeDateColumn<T = any>(settings?: FieldSettings<Date, T> & TranslatedCaption) {
+export function ChangeDateColumn<T = any>(settings?: FieldOptions<Date, T> & TranslatedCaption) {
   return DateTimeColumn<T>({
     ...{ allowApiUpdate: false },
     ...settings
@@ -85,7 +86,7 @@ export class SqlBuilder {
 
   addEntity(e: SqlDefs, alias?: string) {
     if (alias) {
-      for (const c of e.defs.fields) {
+      for (const c of e.metadata.fields) {
         this.dict.set(c, alias);
         this.dict.set(e[c.key], alias);
       }
@@ -114,8 +115,8 @@ export class SqlBuilder {
     let v = e;
     if (e.dbName)
       v = e.dbName;
-    if (e.defs) {
-      v = e.defs.dbName;
+    if (e.metadata) {
+      v = e.metadata.dbName;
     }
 
 
@@ -131,24 +132,24 @@ export class SqlBuilder {
     }
     return v;
   }
-  eq<T>(a: FieldDefinitions<T>, b: T | FieldDefinitions<T>) {
+  eq<T>(a: FieldMetadata<T>, b: T | FieldMetadata<T>) {
     return this.build(a, ' = ', b);
   }
   eqAny(a: string, b: any) {
     return this.build(a, ' = ', b);
   }
-  ne<T>(a: FieldDefinitions<T>, b: T | FieldDefinitions<T>) {
+  ne<T>(a: FieldMetadata<T>, b: T | FieldMetadata<T>) {
     return this.build(a, ' <> ', b);
   }
-  notNull(col: FieldDefinitions) {
+  notNull(col: FieldMetadata) {
     return this.build(col, ' is not null');
   }
 
 
-  gt<T>(a: FieldDefinitions<T>, b: T | FieldDefinitions<T>) {
+  gt<T>(a: FieldMetadata<T>, b: T | FieldMetadata<T>) {
     return this.build(a, ' > ', b);
   }
-  gtAny(a: FieldDefinitions, b: any | any) {
+  gtAny(a: FieldMetadata, b: any | any) {
     return this.build(a, ' > ', b);
   }
   and(...args: any[]): string {
@@ -169,7 +170,7 @@ export class SqlBuilder {
 
 
   }
-  columnSumInnerSelect(rootEntity: SqlDefs, col: FieldDefinitions<Number>, query: FromAndWhere) {
+  columnSumInnerSelect(rootEntity: SqlDefs, col: FieldMetadata<Number>, query: FromAndWhere) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("sum(", col, ")")],
       from: query.from,
@@ -199,7 +200,7 @@ export class SqlBuilder {
       where: query.where
     });
   }
-  columnMaxWithAs(rootEntity: SqlDefs, column: FieldDefinitions, query: FromAndWhere, colName: string) {
+  columnMaxWithAs(rootEntity: SqlDefs, column: FieldMetadata, query: FromAndWhere, colName: string) {
     return this.columnDbName(rootEntity, {
       select: () => [this.build("max(", column, ") ", colName)],
       from: query.from,
@@ -210,7 +211,7 @@ export class SqlBuilder {
     });
   }
   columnInnerSelect(rootEntity: SqlDefs, query: QueryBuilder) {
-    this.addEntity(rootEntity, rootEntity.defs.dbName);
+    this.addEntity(rootEntity, rootEntity.metadata.dbName);
     return '(' + this.query(query) + ' limit 1)';
   }
   countInnerSelect(query: FromAndWhere, mappedColumn: any) {
@@ -223,7 +224,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  countDistinctInnerSelect(col: FieldDefinitions, query: FromAndWhere, mappedColumn: any) {
+  countDistinctInnerSelect(col: FieldMetadata, query: FromAndWhere, mappedColumn: any) {
     return this.build("(", this.query({
       select: () => [this.build("count(distinct ", col, ")")],
       from: query.from,
@@ -235,13 +236,13 @@ export class SqlBuilder {
   }
 
 
-  countDistinct(col: FieldDefinitions, mappedColumn: FieldDefinitions<number>) {
+  countDistinct(col: FieldMetadata, mappedColumn: FieldMetadata<number>) {
     return this.build("count (distinct ", col, ") ", mappedColumn)
   }
   count() {
     return this.func('count', '*');
   }
-  minInnerSelect(col: FieldDefinitions, query: FromAndWhere, mappedColumn: FieldDefinitions) {
+  minInnerSelect(col: FieldMetadata, query: FromAndWhere, mappedColumn: FieldMetadata) {
     return this.build('(', this.query({
       select: () => [this.build("min(", col, ")")],
       from: query.from,
@@ -251,7 +252,7 @@ export class SqlBuilder {
       where: query.where
     }), ") ", mappedColumn);
   }
-  maxInnerSelect(col: FieldDefinitions, query: FromAndWhere, mappedColumn: FieldDefinitions) {
+  maxInnerSelect(col: FieldMetadata, query: FromAndWhere, mappedColumn: FieldMetadata) {
     return this.build('(', this.query({
       select: () => [this.build("max(", col, ")")],
       from: query.from,
@@ -262,7 +263,7 @@ export class SqlBuilder {
     }), ") ", mappedColumn);
   }
   columnDbName(rootEntity: SqlDefs, query: QueryBuilder) {
-    this.addEntity(rootEntity, rootEntity.defs.dbName);
+    this.addEntity(rootEntity, rootEntity.metadata.dbName);
     return '(' + this.query(query) + ')';
   }
   entityDbName(query: QueryBuilder) {
@@ -278,7 +279,7 @@ export class SqlBuilder {
     return '(' + this.query(query1) + ' union  all ' + this.query(query2) + ')';
   }
 
-  in(col: FieldDefinitions, ...values: any[]) {
+  in(col: FieldMetadata, ...values: any[]) {
     return this.build(col, ' in (', values, ')');
   }
   not(arg0: string): any {
@@ -350,8 +351,8 @@ export class SqlBuilder {
       where.push(...query.where());
     }
     {
-      if (query.from.defs.evilOriginalSettings.fixedFilter) {
-        where.push(Filter.translateWhereToFilter(query.from, query.from.defs.evilOriginalSettings.fixedFilter));
+      if (query.from.metadata.options.fixedFilter) {
+        where.push(Filter.translateWhereToFilter(query.from, query.from.metadata.options.fixedFilter));
       }
     }
     if (where.length > 0)
@@ -396,7 +397,7 @@ export class SqlBuilder {
 
   }
 
-  innerSelect(builder: QueryBuilder, col: FieldDefinitions) {
+  innerSelect(builder: QueryBuilder, col: FieldMetadata) {
     return this.build('(', this.query(builder), ' limit 1) ', col);
   }
 }
@@ -464,29 +465,29 @@ class a {
   b: string;
 }
 
-export type SqlDefs<T = unknown> = FieldDefinitionsOf<T> & filterOf<T> & { defs: EntityDefinitions };
-export function SqlFor<T>(repo: Repository<T> | EntityDefinitions<T>): SqlDefs<T> {
-  let origDefs: EntityDefinitions;
+export type SqlDefs<T = unknown> = FieldsMetadata<T> & FilterFactories<T> & { metadata: EntityMetadata };
+export function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): SqlDefs<T> {
+  let origDefs: EntityMetadata;
   let re = repo as Repository<T>;
-  if (re && re.defs)
-    origDefs = re.defs;
+  if (re && re.metadata)
+    origDefs = re.metadata;
   else
-    origDefs = repo as EntityDefinitions;
+    origDefs = repo as EntityMetadata;
 
   let r = {
-    defs: Object.assign(origDefs),
+    metadata: Object.assign(origDefs),
     [Symbol.iterator]: () => origDefs.fields[Symbol.iterator](),
     find: origDefs.fields.find
   };
-  let f = Filter.createFilterOf(origDefs);
+  let f = Filter.createFilterFactories(origDefs);
 
   for (const col of origDefs.fields) {
     r[col.key] = new myBridge(col)
   }
   return r as unknown as SqlDefs<T>;
 }
-class myBridge implements filterOptions<any>, comparableFilterItem<any>, supportsContains<any>, FieldDefinitions {
-  constructor(private defs: FieldDefinitions) {
+class myBridge implements FilterFactory<any>, ComparisonFilterFactory<any>, ContainsFilterFactory<any>, FieldMetadata {
+  constructor(private metadata: FieldMetadata) {
 
   }
   private filter = new filterHelper(this);;
@@ -518,17 +519,17 @@ class myBridge implements filterOptions<any>, comparableFilterItem<any>, support
     return this.filter.contains(val);
   }
 
-  key = this.defs.key;
-  target = this.defs.target;
-  dataType = this.defs.dataType;
-  caption = this.defs.caption;
-  inputType = this.defs.inputType;
-  allowNull = this.defs.allowNull;
-  isServerExpression = this.defs.isServerExpression;
-  get dbReadOnly() { return this.defs.dbReadOnly; }
-  get dbName() { return this.defs.dbName; }
-  valueConverter = this.defs.valueConverter;
-  evilOriginalSettings = this.defs.evilOriginalSettings;
+  key = this.metadata.key;
+  target = this.metadata.target;
+  dataType = this.metadata.dataType;
+  caption = this.metadata.caption;
+  inputType = this.metadata.inputType;
+  allowNull = this.metadata.allowNull;
+  isServerExpression = this.metadata.isServerExpression;
+  get dbReadOnly() { return this.metadata.dbReadOnly; }
+  get dbName() { return this.metadata.dbName; }
+  valueConverter = this.metadata.valueConverter;
+  options = this.metadata.options;
 
 }
 
@@ -540,7 +541,7 @@ export interface QueryBuilder {
   innerJoin?: () => JoinInfo[];
   outerJoin?: () => JoinInfo[];
   where?: () => any[];
-  orderBy?: (FieldDefinitions | SortSegment)[];
+  orderBy?: (FieldMetadata | SortSegment)[];
   groupBy?: () => any[];
   having?: () => any[];
 }
@@ -552,13 +553,13 @@ export interface FromAndWhere {
   where?: () => any[];
 }
 export interface UpdateInfo {
-  set: () => [FieldDefinitions, any][],
+  set: () => [FieldMetadata, any][],
   where?: () => any[];
   from?: SqlDefs;
 }
 export interface InsertInfo {
   into: SqlDefs;
-  set: () => [FieldDefinitions, any][];
+  set: () => [FieldMetadata, any][];
   from: SqlDefs;
   where?: () => any[];
 }
@@ -579,9 +580,9 @@ export function relativeDateName(context: Context, args: { d?: Date, dontShowTim
 
 }
 
-export function logChanges(e: rowHelper<any>, context: Context, args?: {
-  excludeColumns?: EntityField<any, any>[],
-  excludeValues?: EntityField<any, any>[]
+export function logChanges(e: EntityRef<any>, context: Context, args?: {
+  excludeColumns?: FieldRef<any, any>[],
+  excludeValues?: FieldRef<any, any>[]
 }) {
   if (!args) {
     args = {};
@@ -596,12 +597,12 @@ export function logChanges(e: rowHelper<any>, context: Context, args?: {
   for (const c of e.fields) {
     if (c.wasChanged()) {
       if (!args.excludeColumns.includes(c)) {
-        cols += c.defs.key + "|";
+        cols += c.metadata.key + "|";
         if (!args.excludeValues.includes(c)) {
-          vals += c.defs.key + "=" + c.displayValue;
+          vals += c.metadata.key + "=" + c.displayValue;
           if (!e.isNew()) {
 
-            vals += " was (" + c.defs.valueConverter.toJson(c.originalValue) + ")";
+            vals += " was (" + c.metadata.valueConverter.toJson(c.originalValue) + ")";
           }
           vals += "|";
         }
@@ -617,7 +618,7 @@ export function logChanges(e: rowHelper<any>, context: Context, args?: {
     }
     catch {
     }
-    p += "/" + e.repository.defs.key + "/" + e.getId();
+    p += "/" + e.repository.metadata.key + "/" + e.getId();
     if (e.isNew()) {
       p += "(new)";
     }
@@ -629,7 +630,7 @@ export function logChanges(e: rowHelper<any>, context: Context, args?: {
 
 }
 
-export function getValueFromResult(r: any, col: FieldDefinitions) {
+export function getValueFromResult(r: any, col: FieldMetadata) {
   let result = r[col.dbName.toLowerCase()];
   if (result === undefined)
     console.error("couldn't find " + col.key, r);

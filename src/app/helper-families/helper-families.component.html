@@ -213,31 +213,31 @@
           {{f.address}}
           <ng-container *ngIf="f.area">
             <br />
-            {{f.$.area.defs.caption}}: {{f.area}}
+            {{f.$.area.metadata.caption}}: {{f.area}}
           </ng-container>
           <ng-container *ngIf="f.floor||f.appartment">
             <br />
           </ng-container>
           <ng-container *ngIf="f.floor">
-            {{f.$.floor.defs.caption}} {{f.floor}}
+            {{f.$.floor.metadata.caption}} {{f.floor}}
           </ng-container>
           <ng-container *ngIf="f.appartment">
-            {{f.$.appartment.defs.caption}} {{f.appartment}}
+            {{f.$.appartment.metadata.caption}} {{f.appartment}}
           </ng-container>
           <ng-container *ngIf="f.entrance">
-            {{f.$.entrance.defs.caption}} {{f.entrance}}
+            {{f.$.entrance.metadata.caption}} {{f.entrance}}
           </ng-container>
           <ng-container *ngIf="f.addressComment">
             <br /> {{f.addressComment}}
           </ng-container>
         </td>
         <td>
-          {{f.phone1.displayValue}}<ng-container *ngIf="f.phone1Description">, {{f.phone1Description}}
+          {{f.phone1?.displayValue}}<ng-container *ngIf="f.phone1Description">, {{f.phone1Description}}
           </ng-container>
           <div style="margin-top:5px" *ngIf="f.phone2">
 
             <div style="display:inline-block">
-              {{f.phone2.displayValue}}, {{f.phone2Description?f.phone2Description:f.name}}
+              {{f.phone2?.displayValue}}, {{f.phone2Description?f.phone2Description:f.name}}
 
             </div>
           </div>

@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Context, EntityField, EntityBase } from '@remult/core';
+import { UrlBuilder, Entity, Context,  FieldRef, EntityBase } from '@remult/core';
 import { Field } from '../translate';
 
 
@@ -24,7 +24,7 @@ export async function GetGeoInformation(address: string, context: Context) {
         return new GeocodeInformation();
     }
     address = address.trim();
-    let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => context.for(GeocodeCache).defs.getIdFilter(address));
+    let cacheEntry = await context.for(GeocodeCache).lookupAsync(x => context.for(GeocodeCache).metadata.idMetadata.getIdFilter(address));
     if (!cacheEntry.isNew()) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);
@@ -369,7 +369,7 @@ export function GetDistanceBetween(a: Location, b: Location) {
 
 export class AddressHelper {
 
-    constructor(private context: Context, private addressColumn: () => EntityField<string, any>, private apiResultColumn: () => EntityField<string, any>) {
+    constructor(private context: Context, private addressColumn: () => FieldRef<string, any>, private apiResultColumn: () => FieldRef<string, any>) {
 
 
     }

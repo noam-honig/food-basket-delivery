@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, AndFilter, FieldDefinitionsOf } from '@remult/core';
+import { Context, AndFilter, FieldsMetadata } from '@remult/core';
 import { BusyService, GridSettings, InputField, openDialog } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -111,7 +111,7 @@ export class EventsComponent implements OnInit {
           openDialog(InputAreaComponent, x => x.args = {
             title: this.settings.lang.eventInfo,
             settings: {
-              fields: () => this.eventDisplayColumns(e._.repository.defs.fields)
+              fields: () => this.eventDisplayColumns(e._.repository.metadata.fields)
             },
             ok: () => e.save(),
             cancel: () => e._.undoChanges(),
@@ -132,7 +132,7 @@ export class EventsComponent implements OnInit {
       }
     ]
   });
-  private eventDisplayColumns(e: FieldDefinitionsOf<Event>) {
+  private eventDisplayColumns(e: FieldsMetadata<Event>) {
     return [
       e.name,
       { width: '100', field: e.registeredVolunteers },

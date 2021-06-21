@@ -1,4 +1,4 @@
-import { Context, Allowed, ServerFunction, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, ServerMethod, ServerProgress, filterOf, EntityBase, getControllerDefs, Repository, IterateOptions } from "@remult/core";
+import { Context, Allowed, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, BackendMethod, ProgressListener, FilterFactories, EntityBase, getFields, Repository, IterateOptions } from "@remult/core";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -6,9 +6,10 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
-import { controllerAllowed } from "@remult/core";
+
 import { Families } from "./families";
 import { DataAreaFieldsSetting, GridButton, openDialog } from "@remult/angular";
+import { Roles } from "../auth/roles";
 
 
 
@@ -37,12 +38,14 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
+        if (args.allowed === undefined)
+            args.allowed = Roles.admin;
 
         if (!args.onEnd) {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => [...getControllerDefs(this, this.context).fields];
+            args.dialogColumns = async x => [...getFields(this, this.context)];
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -51,13 +54,13 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
     }
-    get $() { return getControllerDefs<this>(this, this.context).fields };
+    get $() { return getFields<this>(this, this.context) };
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
             name: this.args.title,
             visible: () => {
-                let r = controllerAllowed(this, this.context);
+                let r = this.context.isAllowed(this.args.allowed);
                 if (!r)
                     return false;
                 if (this.args.visible) {
@@ -85,7 +88,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                         },
                         ok: async () => {
-                            let groupName = this.context.for(this.entity).defs.caption;
+                            let groupName = this.context.for(this.entity).metadata.caption;
                             let count = await this.context.for(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                                 let r = await this.internalForTestingCallTheServer({
@@ -111,12 +114,12 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         where: EntityWhere<T>,
         count: number
     }) {
-        let p = new ServerProgress(undefined);
+        let p = new ProgressListener(undefined);
         p.progress = () => { };
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: Filter.packWhere(this.context.for(this.entity).defs, info.where),
+            packedWhere: Filter.packWhere(this.context.for(this.entity).metadata, info.where),
         }, p);
 
         return r;
@@ -126,13 +129,13 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         return [where, this.args.additionalWhere]
     }
 
-    @ServerMethod({ allowed: undefined, queue: true })
-    async execute(info: packetServerUpdateInfo, progress?: ServerProgress) {
-        let where = this.composeWhere(x => Filter.unpackWhere(this.context.for(this.entity).defs, info.packedWhere));
+    @BackendMethod<ActionOnRows<any>>({ allowed: (context, self) => context.isAllowed(self.args.allowed), queue: true })
+    async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
+        let where = this.composeWhere(x => Filter.unpackWhere(this.context.for(this.entity).metadata, info.packedWhere));
 
         let count = await this.context.for(this.entity).count(where);
         if (count != info.count) {
-            console.log({ count, packCount: info.count, name: this.context.for(this.entity).defs.caption });
+            console.log({ count, packCount: info.count, name: this.context.for(this.entity).metadata.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;
@@ -148,7 +151,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + this.context.for(this.entity).defs.caption + " " + getLang(this.context).updated;
+        let message = this.args.title + ": " + r + " " + this.context.for(this.entity).metadata.caption + " " + getLang(this.context).updated;
 
         await Families.SendMessageToBrowsers(message, this.context, '');
         return r;
@@ -166,6 +169,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
 
 
 export interface ActionOnRowsArgs<T extends IdEntity> {
+    allowed?: Allowed,
     dialogColumns?: (component: actionDialogNeeds<T>) => Promise<DataAreaFieldsSetting<any>[]>,
     visible?: (component: actionDialogNeeds<T>) => boolean,
     forEach: (f: T) => Promise<void>,
@@ -176,7 +180,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     icon?: string,
     help?: () => string,
     confirmQuestion?: () => string,
-    additionalWhere?: (f: filterOf<T>) => Filter,
+    additionalWhere?: (f: FilterFactories<T>) => Filter,
     orderBy?: EntityOrderBy<T>
 }
 

@@ -3,7 +3,7 @@ import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
 import { BusyService, DataAreaFieldsSetting, DataAreaSettings, DialogConfig, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Context, ServerFunction, ServerContext } from '@remult/core';
+import { Context,  BackendMethod } from '@remult/core';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveryStats } from '../family-deliveries/family-deliveries-stats';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -125,8 +125,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       comment: 'שלום ' + h.name + '\nבקשר למשפחת "' + this.args.familyDelivery.name + '" מ "' + this.args.familyDelivery.address + '"\n'
     });
   }
-  @ServerFunction({ allowed: Roles.admin })
-  static async SendCustomMessageToCourier(h: HelpersBase, message: string, context?: ServerContext) {   
+  @BackendMethod({ allowed: Roles.admin })
+  static async SendCustomMessageToCourier(h: HelpersBase, message: string, context?: Context) {   
     await new SendSmsUtils().sendSms(h.phone.thePhone, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
 
   }

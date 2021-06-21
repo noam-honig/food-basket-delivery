@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, Filter, AndFilter, ServerFunction, SqlDatabase, filterOf } from '@remult/core';
+import { Context, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from '@remult/core';
 import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -358,7 +358,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.updateChart();
     }));
   }
-  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, basket: BasketType }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: filterOf<ActiveFamilyDeliveries>, id: BasketType) => Filter) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, basket: BasketType }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: FilterFactories<ActiveFamilyDeliveries>, id: BasketType) => Filter) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
@@ -379,8 +379,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   private prepComplexStats<type extends { name: string, count: number }>(
     cities: type[],
     stats: statsOnTab,
-    equalToFilter: (f: filterOf<ActiveFamilyDeliveries>, item: string) => Filter,
-    differentFromFilter: (f: filterOf<ActiveFamilyDeliveries>, item: string) => AndFilter
+    equalToFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => Filter,
+    differentFromFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => AndFilter
   ) {
     stats.stats.splice(0);
     stats.moreStats.splice(0);
@@ -696,7 +696,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     ]
   });
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getGroups(dist: DistributionCenters, readyOnly = false, context?: Context) {
     let cContext = u(context);
     let pendingStats = [];
@@ -724,7 +724,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     await Promise.all(pendingStats);
     return result;
   }
-  @ServerFunction({ allowed: Roles.lab })
+  @BackendMethod({ allowed: Roles.lab })
   static async getDeliveriesByPhone(phoneNumIn: string, context?: Context, db?: SqlDatabase) {
     let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder();
@@ -773,7 +773,7 @@ interface statsOnTab {
   stats: FamilyDeliveresStatistics[],
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
-  rule: (f: filterOf<ActiveFamilyDeliveries>) => Filter,
+  rule: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter,
   fourthColumn: () => DataControlSettings,
   refreshStats?: (stats: statsOnTab) => Promise<void>
 }

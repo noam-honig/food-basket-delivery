@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "../model-shared/phone";
-import { ServerFunction, Context, ServerController, getControllerDefs, Validators } from '@remult/core';
+import { Context, Controller, getFields, Validators } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -11,7 +11,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
-import { ServerMethod } from '@remult/core';
+import { BackendMethod } from '@remult/core';
 import { DataAreaSettings, DataControl, openDialog } from '@remult/angular';
 
 import { Field, FieldType } from '../translate';
@@ -147,15 +147,12 @@ export class EquipmentAge {
   }
 
 }
-@ServerController({
-  allowed: true,
-  key: 'register-donor'
-})
+@Controller('register-donor')
 class donorForm {
   constructor(private context: Context) {
 
   }
-  get $() { return getControllerDefs(this, this.context).fields }
+  get $() { return getFields(this, this.context) }
   @Field({
     caption: "שם מלא",
     validate: Validators.required.withMessage("אנא הזן ערך")
@@ -209,7 +206,7 @@ class donorForm {
   docref: string;
 
 
-  @ServerMethod()
+  @BackendMethod({ allowed: true })
   async createDonor() {
     let settings = await ApplicationSettings.getAsync(this.context);
     if (!settings.isSytemForMlt())

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, Filter, filterOf, ServerFunction, SqlDatabase } from '@remult/core';
+import { AndFilter, Filter, FilterFactories, BackendMethod, SqlDatabase } from '@remult/core';
 
 import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp, GroupsValue } from './families';
 
@@ -53,7 +53,7 @@ import { u } from '../model-shared/UberContext';
     styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder();
         let f = SqlFor(context.for(Families));
@@ -626,8 +626,8 @@ export class FamiliesComponent implements OnInit {
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
-        equalToFilter: (f: filterOf<Families>, item: type) => Filter,
-        differentFromFilter: (f: filterOf<Families>, item: type) => AndFilter
+        equalToFilter: (f: FilterFactories<Families>, item: type) => Filter,
+        differentFromFilter: (f: FilterFactories<Families>, item: type) => AndFilter
     ) {
         stats.stats.splice(0);
         stats.moreStats.splice(0);
@@ -715,7 +715,7 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: filterOf<Families>) => Filter,
+    rule: (f: FilterFactories<Families>) => Filter,
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }

@@ -1,5 +1,5 @@
 import { TestBed, async, inject } from '@angular/core/testing';
-import { ServerContext, InMemoryDataProvider, } from '@remult/core';
+import { Context, InMemoryDataProvider, } from '@remult/core';
 
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Roles } from './roles';
@@ -216,7 +216,7 @@ describe('users and security', () => {
         expect(r.valid).toBe(true);
     }));
 });
-function getAuthService(context: ServerContext) {
+function getAuthService(context: Context) {
     var s = new ApplicationSettings(context);
     s.currentUserIsValidForAppLoadTest = true;
     let jwt = new TokenService(context);
@@ -228,7 +228,8 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
         args = {};
     }
     let mem = new InMemoryDataProvider();
-    var context = new ServerContext(mem);
+    var context = new Context();
+    context.setDataProvider(mem);
     await context.userChange.observe(async () => Helpers.initContext(context));
     let c = context.for(Helpers);
     let h = c.create();
@@ -242,7 +243,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
         disableAdmin = false;
     await h.save();
     if (disableAdmin)
-        mem.rows[h._.repository.defs.key][0].admin = false;// because by default the first user is admin, and we don't want that for tests
+        mem.rows[h._.repository.metadata.key][0].admin = false;// because by default the first user is admin, and we don't want that for tests
     return { c, context };
 }
 

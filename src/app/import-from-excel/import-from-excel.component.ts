@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity, ServerFunction, SqlDatabase, EntityWhere, AndFilter, FieldDefinitionsOf, EntityDefinitions, FieldDefinitions, EntityField, EntityBase, filterOptions, filterOf, Filter, getControllerDefs } from '@remult/core';
+import { Entity,  BackendMethod, SqlDatabase, EntityWhere, AndFilter,   FieldsMetadata,  EntityMetadata,  FieldMetadata,  FieldRef, EntityBase,  FilterFactory,  FilterFactories, Filter,  getFields } from '@remult/core';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Context } from '@remult/core';
@@ -156,7 +156,7 @@ export class ImportFromExcelComponent implements OnInit {
             });
         }
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, context?: Context) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
@@ -223,7 +223,7 @@ export class ImportFromExcelComponent implements OnInit {
         });
     }
 
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, context?: Context) {
         for (const r of rowsToUpdate) {
             await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, context, getSettings(context));
@@ -421,7 +421,7 @@ export class ImportFromExcelComponent implements OnInit {
         fileReader.readAsArrayBuffer(file);
     }
 
-    async readLine(row: number, updatedFields: Map<FieldDefinitions<any>, boolean>): Promise<excelRowInfo> {
+    async readLine(row: number, updatedFields: Map<FieldMetadata<any>, boolean>): Promise<excelRowInfo> {
 
         let f = this.context.for(Families).create();
         let fd = this.context.for(ActiveFamilyDeliveries).create();
@@ -500,12 +500,12 @@ export class ImportFromExcelComponent implements OnInit {
                     if (c.error) {
                         c.error += ", ";
                     }
-                    c.error += c.defs.caption + ": " + c.error;
+                    c.error += c.metadata.caption + ": " + c.error;
                     info.valid = false;
                 }
 
                 if (c.value !== undefined) {
-                    info.values[keyFromColumnInCompare({ e: e._.repository.defs, c: c.defs })] = {
+                    info.values[keyFromColumnInCompare({ e: e._.repository.metadata, c: c.metadata })] = {
                         newDisplayValue: await getColumnDisplayValue(c),
                         newValue: c.inputValue
                     };
@@ -519,10 +519,10 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
 
-    f: FieldDefinitionsOf<Families>;
-    fDefs: EntityDefinitions<Families>;
-    fd: FieldDefinitionsOf<ActiveFamilyDeliveries>;
-    fdDefs: EntityDefinitions<ActiveFamilyDeliveries>;
+    f: FieldsMetadata<Families>;
+    fDefs: EntityMetadata<Families>;
+    fd: FieldsMetadata<ActiveFamilyDeliveries>;
+    fdDefs: EntityMetadata<ActiveFamilyDeliveries>;
     @ViewChild("stepper", { static: true }) stepper: MatStepper;
     @ViewChild("file", { static: true }) fileInput: ElementRef
 
@@ -539,16 +539,16 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-        let updateCol = (col: EntityField<any>, val: string, seperator: string = ' ') => {
+        let updateCol = (col: FieldRef<any>, val: string, seperator: string = ' ') => {
 
             if (col.value) {
                 col.value = (col.value + seperator + val).trim();
             } else
                 col.value = val;
         }
-        this.fDefs = this.context.for(Families).defs;
+        this.fDefs = this.context.for(Families).metadata;
         this.f = this.fDefs.fields;
-        this.fdDefs = this.context.for(ActiveFamilyDeliveries).defs;
+        this.fdDefs = this.context.for(ActiveFamilyDeliveries).metadata;
         this.fd = this.fdDefs.fields;
         if (false) {
             try {
@@ -570,7 +570,7 @@ export class ImportFromExcelComponent implements OnInit {
             }
         }
 
-        let addColumn = (col: FieldDefinitions, searchNames?: string[]) => {
+        let addColumn = (col: FieldMetadata, searchNames?: string[]) => {
             this.columns.push({
                 key: col.key,
                 name: col.caption,
@@ -581,7 +581,7 @@ export class ImportFromExcelComponent implements OnInit {
                 columns: [col]
             });
         }
-        let addColumns = (cols: FieldDefinitions[]) => {
+        let addColumns = (cols: FieldMetadata[]) => {
             for (const col of cols) {
                 addColumn(col);
             }
@@ -828,7 +828,7 @@ export class ImportFromExcelComponent implements OnInit {
     distributionCenter: DistributionCenters;
     @Field({ translation: l => l.useFamilyMembersAsQuantity })
     useFamilyMembersAsNumOfBaskets: boolean;
-    get $() { return getControllerDefs(this, this.context).fields };
+    get $() { return getFields(this, this.context) };
 
     moveToAdvancedSettings() {
 
@@ -1053,7 +1053,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     private buildUpdatedColumns() {
-        let updatedColumns = new Map<FieldDefinitions, boolean>();
+        let updatedColumns = new Map<FieldMetadata, boolean>();
         this.additionalColumns = this.additionalColumns.filter(x => x.field);
         //updatedColumns.set(this.f.status, true);
         for (const cu of [...this.excelColumns.map(f => f.field), ...this.additionalColumns.map(f => f.field)]) {
@@ -1087,7 +1087,7 @@ export class ImportFromExcelComponent implements OnInit {
         return r + displayDupInfo(info, this.context);
     }
 
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, context?: Context, db?: SqlDatabase) {
         let result: serverCheckResults = {
             errorRows: [],
@@ -1099,7 +1099,7 @@ export class ImportFromExcelComponent implements OnInit {
         let settings = await ApplicationSettings.getAsync(context);
         for (const info of excelRowInfo) {
             info.duplicateFamilyInfo = [];
-            let findDuplicate = async (w: (f: filterOf<Families>) => Filter) => {
+            let findDuplicate = async (w: (f: FilterFactories<Families>) => Filter) => {
                 if (info.duplicateFamilyInfo.length == 0)
                     info.duplicateFamilyInfo = (await context.for(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
                         .map(f => (<duplicateFamilyInfo>{
@@ -1436,7 +1436,7 @@ interface columnUpdater {
     name: string;
     searchNames?: string[];
     updateFamily: (val: string, f: Families, h: columnUpdateHelper) => Promise<void>;
-    columns: FieldDefinitions[];
+    columns: FieldMetadata[];
 }
 class columnUpdateHelper {
     constructor(private context: Context, private dialog: DialogService, private autoAdd: boolean, public fd: ActiveFamilyDeliveries) {
@@ -1447,14 +1447,14 @@ class columnUpdateHelper {
 
     async lookupAndInsert<T extends EntityBase, dataType, Y>(
         c: { new(...args: any[]): T; },
-        getSearchField: ((entity: filterOf<T>) => filterOptions<dataType>),
+        getSearchField: ((entity: FilterFactories<T>) => FilterFactory<dataType>),
         val: dataType,
         getResult: (entity: T) => Y,
-        updateResultTo: EntityField<Y>,
+        updateResultTo: FieldRef<Y>,
         additionalUpdates?: ((entity: T) => void)) {
         let x = await this.context.for(c).lookupAsync(e => (getSearchField(e).isEqualTo(val)));
         if (x.isNew()) {
-            let s = updateResultTo.defs.caption + " \"" + val + "\" " + use.language.doesNotExist;
+            let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
 
                 if (additionalUpdates)
@@ -1563,7 +1563,7 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
     return { ef, hasDifference };
 }
 
-async function getColumnDisplayValue(c: EntityField<any>) {
+async function getColumnDisplayValue(c: FieldRef<any>) {
     await c.load();
     let v = c.displayValue;
 
@@ -1783,16 +1783,16 @@ export interface phoneResult {
 
 interface columnInCompare {
 
-    e: EntityDefinitions,
-    c: FieldDefinitions
+    e: EntityMetadata,
+    c: FieldMetadata
 
 }
 function keyFromColumnInCompare(c: columnInCompare) {
     return c.e.key + '.' + c.c.key;
 }
-function columnFromKey(f: Families, fd: ActiveFamilyDeliveries, key: string): EntityField<any> {
+function columnFromKey(f: Families, fd: ActiveFamilyDeliveries, key: string): FieldRef<any> {
     let split = key.split('.');
-    if (split[0] == f._.repository.defs.key)
+    if (split[0] == f._.repository.metadata.key)
         return f.$[split[1]];
     else
         return fd.$[split[1]];

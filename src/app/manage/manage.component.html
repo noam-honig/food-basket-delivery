@@ -31,7 +31,7 @@
             </mat-card>
             <mat-card>
                 <mat-card-title>
-                    {{settings.$.smsText.defs.caption}}
+                    {{settings.$.smsText.metadata.caption}}
                 </mat-card-title>
                 {{settings.lang.smsTextHelpTitle}}
                 <ul>
@@ -48,7 +48,7 @@
             </mat-card>
             <mat-card>
                 <mat-card-title>
-                    {{settings.$.reminderSmsText.defs.caption}}
+                    {{settings.$.reminderSmsText.metadata.caption}}
                 </mat-card-title>
                 {{settings.lang.reminderSmsTextHelp}}
                 <textarea [(ngModel)]="settings.reminderSmsText" class="form-control" lines=3></textarea>
@@ -58,7 +58,7 @@
             </mat-card>
             <mat-card *ngIf="settings.isSytemForMlt()">
                 <mat-card-title>
-                    {{settings.$.registerFamilyReplyEmailText.defs.caption}}
+                    {{settings.$.registerFamilyReplyEmailText.metadata.caption}}
                 </mat-card-title>
                 {{settings.lang.registerFamilyReplyEmailText}}
                 <textarea [(ngModel)]="settings.registerFamilyReplyEmailText" class="form-control"
@@ -69,7 +69,7 @@
             </mat-card>
             <mat-card *ngIf="settings.isSytemForMlt()">
                 <mat-card-title>
-                    {{settings.$.registerHelperReplyEmailText.defs.caption}}
+                    {{settings.$.registerHelperReplyEmailText.metadata.caption}}
                 </mat-card-title>
                 {{settings.lang.registerHelperReplyEmailText}}
                 <textarea [(ngModel)]="settings.registerHelperReplyEmailText" class="form-control"

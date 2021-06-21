@@ -1,11 +1,12 @@
 
-import { Context, Entity as origEntity, FieldSettings, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, ClassType, EntitySettings, CaptionHelper } from '@remult/core';
+import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer } from '@remult/core';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
 import { getLang, Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
+import { ClassType } from '@remult/core/classType';
 
 
 
@@ -70,7 +71,7 @@ const reported = new Set<string>([
   "addressLongitude",
   "addressLatitude",
   "drivingLongitude",
-  "drivingLatitude", 
+  "drivingLatitude",
   "autoCompleteResult",
   "courierCommentsDate",
   "routeOrder",
@@ -100,7 +101,8 @@ const reported = new Set<string>([
   "citiesStats",
   "courier",
   "helperHistoryInfo"]);
-CaptionHelper.determineCaption = (context, key, caption) => {
+CaptionTransformer.transformCaption = (context, key, caption) => {
+
   if (caption)
     return caption;
   let r = getLang(context)[key];
@@ -112,26 +114,26 @@ CaptionHelper.determineCaption = (context, key, caption) => {
   }
   return r;
 }
-function adjustSettings(settings: FieldSettings & TranslatedCaption) {
+function adjustSettings(settings: FieldOptions & TranslatedCaption) {
   if (settings && settings.translation) {
     settings.caption = (context) => settings.translation(getLang(context));
   }
   return settings;
 }
-export function Field<T = any, colType = any>(settings?: FieldSettings<colType, T> & TranslatedCaption) {
+export function Field<T = any, colType = any>(settings?: FieldOptions<colType, T> & TranslatedCaption) {
   return origField<T, colType>(adjustSettings(settings));
 }
-export function DateOnlyField<T = any>(settings?: FieldSettings<Date, T> & TranslatedCaption) {
+export function DateOnlyField<T = any>(settings?: FieldOptions<Date, T> & TranslatedCaption) {
   return origDateOnlyField<T>(adjustSettings(settings));
 }
 
-export function FieldType<valueType = any>(settings?: FieldSettings<valueType, any> & TranslatedCaption) {
+export function FieldType<valueType = any>(settings?: FieldOptions<valueType, any> & TranslatedCaption) {
   return origFieldType<valueType>(adjustSettings(settings));
 }
-export function ValueListFieldType<T = any, colType extends ValueListItem = any>(type: ClassType<colType>, settings?: FieldSettings<colType, T> & TranslatedCaption) {
+export function ValueListFieldType<T = any, colType extends ValueListItem = any>(type: ClassType<colType>, settings?: FieldOptions<colType, T> & TranslatedCaption) {
   return origValueListFieldType<colType>(type, adjustSettings(settings));
 }
-export function Entity<T>(settings: EntitySettings<T> & TranslatedCaption) {
+export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption) {
   if (settings.translation) {
     settings.caption = (context) => settings.translation(getLang(context));
   }

@@ -1,4 +1,4 @@
-import { Context, AndFilter, getControllerDefs } from "@remult/core";
+import { Context, AndFilter, getFields } from "@remult/core";
 import { Families, GroupsValue } from "./families";
 import { Roles } from "../auth/roles";
 import { BasketType, QuantityColumn } from "./BasketType";
@@ -12,7 +12,7 @@ import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
 import { use, Field, ValueListFieldType } from "../translate";
 import { getLang } from '../sites/sites';
-import { ServerController } from "@remult/core";
+import { Controller } from "@remult/core";
 
 import { DataControl, getValueList } from "@remult/angular";
 import { Groups } from "../manage/groups";
@@ -46,10 +46,7 @@ export class SelfPickupStrategy {
 }
 
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'NewDelivery'
-})
+@Controller('NewDelivery')
 export class NewDelivery extends ActionOnRows<Families> {
     @Field({ translation: l => l.useFamilyDefaultBasketType })
     useFamilyBasket: boolean = true;
@@ -166,10 +163,7 @@ export class UpdateGroupStrategy {
     }
 }
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'updateGroup'
-})
+@Controller('updateGroup')
 export class updateGroup extends ActionOnRows<Families> {
 
     @Field({
@@ -198,10 +192,7 @@ export class updateGroup extends ActionOnRows<Families> {
 
 
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateFamilyStatus'
-})
+@Controller('UpdateFamilyStatus')
 export class UpdateStatus extends ActionOnRows<Families> {
     @Field()
     status: FamilyStatus = FamilyStatus.Active;
@@ -260,10 +251,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
         });
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateFamilyBasketType'
-})
+@Controller('UpdateFamilyBasketType')
 export class UpdateBasketType extends ActionOnRows<Families> {
     @Field()
     basket: BasketType;
@@ -276,10 +264,7 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     }
 }
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateSelfPickup'
-})
+@Controller('UpdateSelfPickup')
 export class UpdateSelfPickup extends ActionOnRows<Families> {
     @Field({ translation: l => l.selfPickup })
     selfPickup: boolean;
@@ -314,10 +299,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
         this.updateExistingDeliveries = true;
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateArea'
-})
+@Controller('UpdateArea')
 export class UpdateArea extends ActionOnRows<Families> {
     @Field({ translation: l => l.region })
     area: string;
@@ -329,10 +311,7 @@ export class UpdateArea extends ActionOnRows<Families> {
         });
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateDefaultQuantity'
-})
+@Controller('UpdateDefaultQuantity')
 export class UpdateQuantity extends ActionOnRows<Families> {
     @QuantityColumn()
     quantity: number;
@@ -344,10 +323,7 @@ export class UpdateQuantity extends ActionOnRows<Families> {
         });
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateFamilySource'
-})
+@Controller('UpdateFamilySource')
 export class UpdateFamilySource extends ActionOnRows<Families> {
     @Field()
     familySource: FamilySources;
@@ -359,10 +335,7 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
         });
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateDefaultVolunteer'
-})
+@Controller('UpdateDefaultVolunteer')
 export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     @Field({ translation: l => l.clearVolunteer })
     clearVoulenteer: boolean;
@@ -395,7 +368,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
 
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
     processedFamilies = new Map<string, boolean>();
-    __columns = getControllerDefs(this.orig);
+    __columns = getFields(this.orig);
 
     constructor(context: Context, public orig: ActionOnRows<Families>) {
         super(context, ActiveFamilyDeliveries, {
@@ -430,28 +403,19 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
         });
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'updateGroupForDeliveries'
-})
+@Controller('updateGroupForDeliveries')
 export class updateGroupForDeliveries extends bridgeFamilyDeliveriesToFamilies {
     constructor(context: Context) {
         super(context, new updateGroup(context))
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateAreaForDeliveries'
-})
+@Controller('UpdateAreaForDeliveries')
 export class UpdateAreaForDeliveries extends bridgeFamilyDeliveriesToFamilies {
     constructor(context: Context) {
         super(context, new UpdateArea(context))
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateStatusForDeliveries'
-})
+@Controller('UpdateStatusForDeliveries')
 export class UpdateStatusForDeliveries extends bridgeFamilyDeliveriesToFamilies {
     constructor(context: Context) {
         super(context, new UpdateStatus(context))

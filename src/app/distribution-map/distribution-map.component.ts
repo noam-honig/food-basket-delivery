@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
 import { Context, SqlDatabase } from '@remult/core';
-import { ServerFunction } from '@remult/core';
+import { BackendMethod } from '@remult/core';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -334,7 +334,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.updateChart();
     this.calcSelectedDeliveries();
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
     let cContext = u(context);
 
@@ -380,7 +380,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
     }) as deliveryOnMap[];
   }
-  @ServerFunction({ allowed: Roles.overview })
+  @BackendMethod({ allowed: Roles.overview })
   static async GetLocationsForOverview(context?: Context) {
 
     let result: deliveryOnMap[] = []

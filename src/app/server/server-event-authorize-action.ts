@@ -1,9 +1,9 @@
-import {  ServerFunction, Context } from '@remult/core';
+import { BackendMethod, Context } from '@remult/core';
 import { Roles } from "../auth/roles";
 
 export class ServerEventAuthorizeAction {
 
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static DoAthorize(key: string,context?:Context) {
         ServerEventAuthorizeAction.authorize(key,context);
     }

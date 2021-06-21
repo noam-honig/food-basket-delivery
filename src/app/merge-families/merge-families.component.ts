@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { BusyService, DataControlSettings, FieldCollection, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
-import { Context, ServerFunction, EntityFields, EntityField, FieldDefinitions } from '@remult/core';
+import { Context, BackendMethod, Fields, FieldRef, FieldMetadata } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';
@@ -10,7 +10,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
-import { checkEntityAllowed } from '@remult/core/src/remult3';
+
 
 function phoneDigits(val: Phone | string) {
   let s = '';
@@ -38,7 +38,7 @@ export class MergeFamiliesComponent implements OnInit {
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
-  updateSimilarColumns(getCols: (f: EntityFields<Families>) => EntityField<any>[][]) {
+  updateSimilarColumns(getCols: (f: Fields<Families>) => FieldRef<any>[][]) {
     let eCols = getCols(this.family.$);
 
     for (const f of this.families) {
@@ -96,7 +96,7 @@ export class MergeFamiliesComponent implements OnInit {
     }
 
     for (const c of this.family.$) {
-      if (c.defs.evilOriginalSettings.allowApiUpdate === undefined || checkEntityAllowed(this.context, c.defs.evilOriginalSettings.allowApiUpdate, this.family)) {
+      if (c.metadata.options.allowApiUpdate === undefined || this.context.isAllowedForInstance(this.family, c.metadata.options.allowApiUpdate)) {
         switch (c) {
           case this.family.$.addressApiResult:
           case this.family.$.addressLatitude:
@@ -115,10 +115,10 @@ export class MergeFamiliesComponent implements OnInit {
 
         }
         for (const f of this.families) {
-          if (f.$.find(c.defs).value != c.value) {
+          if (f.$.find(c.metadata).value != c.value) {
             if (!c.value && updateValue)
-              c.value = f.$.find(c.defs).value;
-            this.columnsToCompare.push(c.defs);
+              c.value = f.$.find(c.metadata).value;
+            this.columnsToCompare.push(c.metadata);
             break;
           }
         }
@@ -133,11 +133,11 @@ export class MergeFamiliesComponent implements OnInit {
     }
 
   }
-  getField(map: DataControlSettings<any>): FieldDefinitions {
+  getField(map: DataControlSettings<any>): FieldMetadata {
     return getFieldDefinition(map.field);
   }
   cc: FieldCollection;
-  getColWidth(c: FieldDefinitions) {
+  getColWidth(c: FieldMetadata) {
     let x = this.width.get(c);
     if (!x)
       x = '200px';
@@ -180,7 +180,7 @@ export class MergeFamiliesComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async mergeFamilies(ids: string[], context?: Context) {
     let id = ids.splice(0, 1)[0];
     let newFamily = await context.for(Families).findId(id);
@@ -196,7 +196,7 @@ export class MergeFamiliesComponent implements OnInit {
   }
 
 
-  columnsToCompare: FieldDefinitions[] = [];
-  width = new Map<FieldDefinitions, string>();
+  columnsToCompare: FieldMetadata[] = [];
+  width = new Map<FieldMetadata, string>();
 
 }

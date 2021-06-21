@@ -1,4 +1,4 @@
-import { FieldDefinitions, Context, Entity, EntityDefinitions, IdEntity, ServerFunction, SqlDatabase, SqlResult } from "@remult/core";
+import { FieldMetadata, Context, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/types";
 import { Helpers } from "../helpers/helpers";
@@ -25,7 +25,7 @@ export class RegisterURL extends IdEntity {
         return this.context.for(RegisterURL).findFirst(g => g.URL.contains(s));
     }
 
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
 
         let h = SqlFor(context.for(Helpers));
@@ -34,7 +34,7 @@ export class RegisterURL extends IdEntity {
         let sql = new SqlBuilder();
         let urls = [];
 
-        async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldDefinitions) {
+        async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldMetadata) {
             let q = sql.query({
                 select: () => [sql.build('distinct ', urlDbOperator(field.dbName), ' as url')],
                 from: table,

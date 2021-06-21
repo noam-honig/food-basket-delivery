@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DataAreaSettings, DataControl, InputField } from '@remult/angular';
 import { DateOnlyValueConverter } from '@remult/core/valueConverters';
-import { Context, DateOnlyField, getControllerDefs } from '@remult/core';
+import { Context, DateOnlyField, getFields } from '@remult/core';
 
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -28,7 +28,7 @@ export class DateRangeComponent implements OnInit {
   fromDate: Date;
   @DateOnlyField()
   toDate: Date;
-  get $() { return getControllerDefs(this, this.context).fields };
+  get $() { return getFields(this, this.context) };
   rangeArea = new DataAreaSettings({
     fields: () => [[this.$.fromDate, this.$.toDate]],
   });

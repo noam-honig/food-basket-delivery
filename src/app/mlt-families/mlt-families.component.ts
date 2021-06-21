@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Context, ServerFunction } from '@remult/core';
+import { Context, BackendMethod } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -176,7 +176,7 @@ export class MltFamiliesComponent implements OnInit {
 
   }
 
-  @ServerFunction({ allowed: Roles.indie })
+  @BackendMethod({ allowed: Roles.indie })
   static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
     for (const id of deliveryIds) {
 
@@ -275,7 +275,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
 
-  @ServerFunction({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: c => c.isSignedIn() })
   static async changeDestination(newDestinationId: DistributionCenters, context?: Context) {
     let s = getSettings(context);
     if (!s.isSytemForMlt())

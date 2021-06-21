@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, EntityBase, getControllerDefs } from '@remult/core';
+import { Context, SqlDatabase, EntityBase, getFields } from '@remult/core';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/phone";
 import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
@@ -14,7 +14,7 @@ import { Route } from '@angular/router';
 import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService, DataAreaSettings, DataControlInfo, GridSettings, InputField, openDialog } from '@remult/angular';
 
-import { ServerFunction } from '@remult/core';
+import { BackendMethod } from '@remult/core';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -46,7 +46,7 @@ export class DeliveryHistoryComponent implements OnInit {
   onlyDone: boolean = true;
   @Field({ translation: l => l.showOnlyArchivedDeliveries })
   onlyArchived: boolean = false;
-  get $() { return getControllerDefs(this, this.context).fields }
+  get $() { return getFields(this, this.context) }
   rangeArea = new DataAreaSettings({
     fields: () => {
       return [this.$.onlyDone, this.$.onlyArchived]
@@ -188,7 +188,7 @@ export class DeliveryHistoryComponent implements OnInit {
   private async refreshHelpers() {
 
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
-    let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).defs.dbName];
+    let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).metadata.dbName];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -309,7 +309,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.refreshHelpers();
 
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
 
 

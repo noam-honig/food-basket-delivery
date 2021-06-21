@@ -1,5 +1,5 @@
 
-import { Filter, AndFilter, Context, ServerFunction, Entity, SqlDatabase, EntityBase, filterOf } from "@remult/core";
+import { Filter, AndFilter, Context, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -47,7 +47,7 @@ export class FamilyDeliveryStats {
         }))
         return r;
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
         let cContext = u(context);
         let result = {
@@ -148,7 +148,7 @@ export class FamilyDeliveryStats {
 }
 
 export class FamilyDeliveresStatistics {
-    constructor(public name: string, public rule: (f: filterOf<ActiveFamilyDeliveries>) => Filter, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter, public color?: string, value?: number) {
         this.value = value;
     }
 

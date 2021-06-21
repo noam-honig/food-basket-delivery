@@ -6,7 +6,7 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context, getControllerDefs, InputTypes } from '@remult/core';
+import { Context, getFields } from '@remult/core';
 import { RouteHelperService, NotSignedInGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
@@ -15,7 +15,8 @@ import { Sites } from '../../sites/sites';
 import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/phone";
-import { use,Field } from '../../translate';
+import { use, Field } from '../../translate';
+import { InputTypes } from '@remult/core/inputTypes';
 
 
 
@@ -61,7 +62,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   phoneArea = new DataAreaSettings({
     fields: () => [this.$.phone, this.$.remember]
   });
-  get $() { return getControllerDefs(this,this.context).fields }
+  get $() { return getFields(this, this.context) }
   nameArea = new DataAreaSettings({
     fields: () => [this.$.name]
   });

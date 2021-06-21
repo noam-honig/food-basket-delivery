@@ -8,7 +8,7 @@ import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } 
 
 
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Context, IdEntity, Entity, ServerFunction, ServerProgress, EntityField, EntityBase, FieldDefinitionsOf } from '@remult/core';
+import { Context, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata } from '@remult/core';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -66,7 +66,7 @@ export class ManageComponent implements OnInit {
       let x = "שגיאה בשמירה: ";
       for (const c of this.settings.$) {
         if (c.error) {
-          x += c.defs.caption + " - " + c.error + " ";
+          x += c.metadata.caption + " - " + c.error + " ";
         }
       }
       this.dialog.Error(x);
@@ -163,7 +163,7 @@ export class ManageComponent implements OnInit {
       }
     }
     ],
-    columnSettings: (x: FieldDefinitionsOf<DistributionCenters>) => [
+    columnSettings: (x: FieldsMetadata<DistributionCenters>) => [
       x.name,
 
       {
@@ -338,7 +338,7 @@ export class ManageComponent implements OnInit {
       }
     });
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async TestSendEmail(to: string, text: string, context?: Context) {
     return await EmailSvc.sendMail("test email", text, to, context);
   }
@@ -490,7 +490,7 @@ export class ManageComponent implements OnInit {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage);
   }
-  onFileChange(id: string, column: EntityField<string>) {
+  onFileChange(id: string, column: FieldRef<string>) {
     const inputNode: any = document.querySelector('#' + id);
 
     if (typeof (FileReader) !== 'undefined') {
@@ -561,8 +561,8 @@ export class ManageComponent implements OnInit {
       this.distributionCenters.reloadData();
     }
   }
-  @ServerFunction({ allowed: Roles.admin, queue: true })
-  static async deleteFamiliesOnServer(context?: Context, progress?: ServerProgress) {
+  @BackendMethod({ allowed: Roles.admin, queue: true })
+  static async deleteFamiliesOnServer(context?: Context, progress?: ProgressListener) {
 
 
     let i = 0;

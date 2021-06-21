@@ -1,5 +1,5 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, ServerMethod, FieldSettings, filterOf, Validators, InputTypes, EntityField, FieldDefinitions, FieldDefinitionsOf, keyFor } from '@remult/core';
+import { Context, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata } from '@remult/core';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
@@ -30,10 +30,11 @@ import { use, Field, FieldType } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from '@remult/core/src/remult3';
 import { u } from '../model-shared/UberContext';
+import { InputTypes } from '@remult/core/inputTypes';
 
 
 
-export function CompanyColumn<T = any>(settings?: FieldSettings<string, T>) {
+export function CompanyColumn<T = any>(settings?: FieldOptions<string, T>) {
     return (target, key) => {
         DataControl<any, string>({
             width: '300',
@@ -54,7 +55,7 @@ export class HelperId {
     static toJson(x: HelpersBase) {
         return x ? x.id : '';
     }
-    
+
 }
 
 
@@ -81,7 +82,7 @@ export class HelperId {
     apiDataFilter: (self, context) => {
         if (!context.isSignedIn())
             return self.id.isEqualTo("No User");
-        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])){
+        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
             let uContext = u(context);
             return self.id.isIn([uContext.currentUser.id, uContext.currentUser.theHelperIAmEscorting.id, uContext.currentUser.escort.id])
         }
@@ -90,8 +91,8 @@ export class HelperId {
 })
 export abstract class HelpersBase extends IdEntity {
 
-    static async showSelectDialog(col: EntityField<HelpersBase>, args: {
-        filter?: (helper: filterOf<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
+    static async showSelectDialog(col: FieldRef<HelpersBase>, args: {
+        filter?: (helper: FilterFactories<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
         location?: () => Location,
         familyId?: () => string,
         includeFrozen?: boolean,
@@ -214,7 +215,7 @@ export abstract class HelpersBase extends IdEntity {
 
 
 
-    static active(e: filterOf<HelpersBase>) {
+    static active(e: FilterFactories<HelpersBase>) {
         return e.archive.isEqualTo(false).and(e.isFrozen.isEqualTo(false));
     }
     async deactivate() {
@@ -251,7 +252,7 @@ export abstract class HelpersBase extends IdEntity {
                 self.escort = null;
         }
 
-        if (self.context.onServer) {
+        if (self.context.backend) {
 
             let canUpdate = false;
             if (self.isNew())
@@ -301,7 +302,7 @@ export abstract class HelpersBase extends IdEntity {
                 validatePasswordColumn(context, password);
                 if (self.$.password.error)
                     return;
-                //throw self.password.defs.caption + " - " + self.password.validationError;
+                //throw self.password.metadata.caption + " - " + self.password.validationError;
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
@@ -320,7 +321,7 @@ export abstract class HelpersBase extends IdEntity {
             if (self.$.escort.wasChanged()) {
                 let h = await self.$.escort.load();
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting =cContext.currentUser;
+                    self.$.escort.originalValue.theHelperIAmEscorting = cContext.currentUser;
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -401,7 +402,7 @@ export class Helpers extends HelpersBase {
                 this._.undoChanges();
             },
             settings: {
-                fields: () => Helpers.selectColumns(this._.repository.defs.fields, this.context).map(map => {
+                fields: () => Helpers.selectColumns(this._.repository.metadata.fields, this.context).map(map => {
 
                     return ({
                         ...map,
@@ -416,7 +417,7 @@ export class Helpers extends HelpersBase {
 
         });
     }
-    static selectColumns(self: FieldDefinitionsOf<Helpers>, context: Context) {
+    static selectColumns(self: FieldsMetadata<Helpers>, context: Context) {
         let settings = getSettings(context);
         let r: DataControlSettings<Helpers>[] = [
             {
@@ -545,7 +546,7 @@ export class Helpers extends HelpersBase {
                 }],
                 rowCssClass: fd => fd.deliverStatus.getCss(),
                 columnSettings: fd => {
-                    let r: FieldDefinitions[] = [
+                    let r: FieldMetadata[] = [
                         fd.deliverStatus,
                         fd.deliveryStatusDate,
                         fd.basketType,
@@ -643,7 +644,7 @@ export class Helpers extends HelpersBase {
 
         dialog.Info(i + " " + use.language.familiesUpdated);
     }
-    @ServerMethod({ allowed: true })
+    @BackendMethod({ allowed: true })
     async mltRegister() {
         if (!this.isNew())
             throw "מתנדב קיים";
@@ -803,7 +804,7 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
-export function validatePasswordColumn(context: Context, password: EntityField<string>) {
+export function validatePasswordColumn(context: Context, password: FieldRef<string>) {
     if (getSettings(context).requireComplexPassword) {
         var l = getLang(context);
         if (password.value.length < 8)

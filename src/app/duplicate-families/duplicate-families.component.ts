@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerFunction, Context, SqlDatabase, FieldDefinitions, EntityWhere, getControllerDefs } from '@remult/core';
+import { BackendMethod, Context, SqlDatabase, FieldMetadata, EntityWhere, getFields } from '@remult/core';
 import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Phone } from "../model-shared/phone";
@@ -37,7 +37,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   @Field({ translation: l => l.socialSecurityNumber })
   @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
   tz: boolean = false;
-  get $() { return getControllerDefs(this, this.context).fields }
+  get $() { return getFields(this, this.context) }
   area = new DataAreaSettings({ fields: () => [[this.$.address, this.$.name, this.$.phone, this.$.tz, this.$.onlyActive]] });
   constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
@@ -98,7 +98,7 @@ export class DuplicateFamiliesComponent implements OnInit {
 
 
 
-          ] as FieldDefinitions[];
+          ] as FieldMetadata[];
           for (const c of f) {
             if (!r.includes(c) && c != f.id)
               r.push(c);
@@ -172,7 +172,7 @@ export class DuplicateFamiliesComponent implements OnInit {
     });
   }
 
-  @ServerFunction({ allowed: true })
+  @BackendMethod({ allowed: true })
   static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, context?: Context, db?: SqlDatabase) {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";

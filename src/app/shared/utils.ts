@@ -1,4 +1,4 @@
-import { FieldDefinitions, Context } from "@remult/core";
+import {  FieldMetadata, Context } from "@remult/core";
 import { DataControlInfo, DataControlSettings, GridSettings } from "@remult/angular";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
@@ -16,7 +16,7 @@ export function sortColumns(list: GridSettings<any>, columns: DataControlInfo<an
   for (let index = 0; index < columns.length; index++) {
     const origItem = columns[index];
     let item: DataControlSettings<any>;
-    let defs = origItem as FieldDefinitions<any>;
+    let defs = origItem as FieldMetadata<any>;
     if (defs && defs.dataType) {
       item = list.columns.items.find(x => x.field == defs);
     }

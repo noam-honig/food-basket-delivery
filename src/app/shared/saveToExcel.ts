@@ -1,4 +1,4 @@
-import { Entity, Context, EntityBase, Repository, EntityField } from '@remult/core';
+import { Entity, Context, EntityBase, Repository,  FieldRef } from '@remult/core';
 import { BusyService, GridSettings } from '@remult/angular';
 
 import { DateTimeColumn } from "../model-shared/types";
@@ -14,8 +14,8 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
   grid: T,
   fileName: string,
   busy: BusyService,
-  hideColumn?: (e: E, c: EntityField<any>) => boolean,
-  excludeColumn?: (e: E, c: EntityField<any>) => boolean,
+  hideColumn?: (e: E, c: FieldRef<any>) => boolean,
+  excludeColumn?: (e: E, c: FieldRef<any>) => boolean,
   moreColumns?: (e: E, addfield: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx');
@@ -103,28 +103,28 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
               await c.load();
 
 
-              if (c.defs.dataType == Date) {
-                if (c.defs.valueConverter !== <any>DateOnlyValueConverter) {
-                  addColumn('תאריך ' + c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
-                  addColumn('שעת ' + c.defs.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
-                  addColumn('מלא ' + c.defs.caption, c.displayValue, "s", true);
+              if (c.metadata.dataType == Date) {
+                if (c.metadata.valueConverter !== <any>DateOnlyValueConverter) {
+                  addColumn('תאריך ' + c.metadata.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
+                  addColumn('שעת ' + c.metadata.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
+                  addColumn('מלא ' + c.metadata.caption, c.displayValue, "s", true);
                 }
                 else
-                  addColumn(c.defs.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
+                  addColumn(c.metadata.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
               }
               else
-                addColumn(c.defs.caption, v.toString(), "s", hideColumn(<E>f, c))
-              if (c.defs.caption == use.language.volunteer || c.defs.caption == use.language.defaultVolunteer) {
+                addColumn(c.metadata.caption, v.toString(), "s", hideColumn(<E>f, c))
+              if (c.metadata.caption == use.language.volunteer || c.metadata.caption == use.language.defaultVolunteer) {
                 let val = '';
                 if (c.value instanceof HelpersBase)
                   val = c.value.$.phone.displayValue;
-                addColumn(c.defs.caption + " " + use.language.phone, val, "s", false);
+                addColumn(c.metadata.caption + " " + use.language.phone, val, "s", false);
               }
 
             }
           } catch (err) {
 
-            console.error(err, c.defs.key, f._.toApiJson());
+            console.error(err, c.metadata.key, f._.toApiJson());
           }
         }
 

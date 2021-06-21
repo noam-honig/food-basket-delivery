@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { ServerFunction, Context, SqlDatabase } from '@remult/core';
+import { BackendMethod, Context, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -242,7 +242,7 @@ export class PlaybackComponent implements OnInit {
   }
   timeline: timelineStep[] = [];
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async GetTimeline(fromDateDate: Date, toDateDate: Date, context?: Context, db?: SqlDatabase) {
     let f = SqlFor(context.for(FamilyDeliveries));
 

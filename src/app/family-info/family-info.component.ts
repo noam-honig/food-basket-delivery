@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular
 import * as copy from 'copy-to-clipboard';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Context, EntityField, ServerFunction } from '@remult/core';
+import { Context, FieldRef, BackendMethod } from '@remult/core';
 
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -48,7 +48,7 @@ export class FamilyInfoComponent implements OnInit {
   courierCommentsDateRelativeDate() {
     return relativeDateName(this.context, { d: this.f.courierCommentsDate })
   }
-  @ServerFunction({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: c => c.isSignedIn() })
   static async ShowFamilyTz(deliveryId: string, context?: Context) {
     let s = await ApplicationSettings.getAsync(context);
     if (!s.showTzToVolunteer)
@@ -133,7 +133,7 @@ export class FamilyInfoComponent implements OnInit {
     phone.sendWhatsapp(this.context, this.settings.lang.hello + ' ' + this.f.name + ',');
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
-  @ServerFunction({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: c => c.isSignedIn() })
   static async privateCall(deliveryId: string, context?: Context): Promise<{
     phone?: string,
     error?: string

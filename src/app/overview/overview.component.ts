@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, ServerFunction, Entity, SqlDatabase, ServerContext, ServerProgress } from '@remult/core';
+import { Context, BackendMethod, Entity, SqlDatabase, ProgressListener } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -40,8 +40,8 @@ export class OverviewComponent implements OnInit {
     this.sortBy = s.caption;
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption]);
   }
-  @ServerFunction({ allowed: Roles.overview, queue: true })
-  static async getOverview(context?: Context, progress?: ServerProgress) {
+  @BackendMethod({ allowed: Roles.overview, queue: true })
+  static async getOverview(context?: Context, progress?: ProgressListener) {
     let today = new Date();
     let onTheWay = "בדרך";
     let inEvent = "באירוע";
@@ -215,7 +215,7 @@ export class OverviewComponent implements OnInit {
       }
     });
   }
-  @ServerFunction({ allowed: Roles.overview })
+  @BackendMethod({ allowed: Roles.overview })
   static async createSchema(id: string, name: string, context?: Context): Promise<{
     ok: boolean,
     errorText: string
@@ -232,7 +232,8 @@ export class OverviewComponent implements OnInit {
         name = id;
       let oh = await context.for(Helpers).findId(context.user.id);
       let db = await OverviewComponent.createDbSchema(id);
-      let otherContext = new ServerContext(db);
+      let otherContext = new Context();
+      otherContext.setDataProvider(db);
       otherContext.setUser(context.user);
       let h = await otherContext.for(Helpers).create();
       h.name = oh.name;
@@ -263,7 +264,7 @@ export class OverviewComponent implements OnInit {
   static createDbSchema = async (id: string): Promise<SqlDatabase> => { return undefined };
   static createSchemaApi = async (id: string) => { };
 
-  @ServerFunction({ allowed: Roles.overview })
+  @BackendMethod({ allowed: Roles.overview })
   static async validateNewSchema(id: string, context?: Context) {
     let x = await context.for(SitesEntity).lookupAsync(x => x.id.isEqualTo(id));
     if (!x.isNew()) {

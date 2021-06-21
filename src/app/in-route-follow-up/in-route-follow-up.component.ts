@@ -137,7 +137,7 @@ export class InRouteFollowUpComponent implements OnInit {
   ngOnInit() {
   }
 
-  radioOption: filterOptions[] = [
+  radioOption: FilterFactory[] = [
     {
       text: 'כולם',
       where: () => undefined
@@ -193,7 +193,7 @@ export class InRouteFollowUpComponent implements OnInit {
   }
 }
 
-interface filterOptions {
+interface FilterFactory {
   text: string,
   where: EntityWhere<InRouteHelpers>
 }

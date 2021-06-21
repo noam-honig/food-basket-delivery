@@ -1,4 +1,4 @@
-import { Context, Entity, IdEntity, ServerFunction } from "@remult/core";
+import { Context, Entity, IdEntity, BackendMethod } from "@remult/core";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
@@ -75,7 +75,7 @@ export class HelperGifts extends IdEntity {
     constructor(private context: Context) {
         super();
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
         let helper = await u(context).helperFromJson(helperId);
         if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(u(context).currentUser)) > 0) {
@@ -91,7 +91,7 @@ export class HelperGifts extends IdEntity {
 
         throw new Error('אין מתנות לחלוקה');
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async importUrls(urls: string[], context?: Context) {
         for (const url of urls) {
             let g = await context.for(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
@@ -102,13 +102,13 @@ export class HelperGifts extends IdEntity {
             }
         }
     }
-    @ServerFunction({ allowed: true })
+    @BackendMethod({ allowed: true })
     static async getMyPendingGiftsCount(h: Helpers, context?: Context) {
         let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
-    @ServerFunction({ allowed: true })
+    @BackendMethod({ allowed: true })
     static async getMyFirstGiftURL(h: HelpersBase, context?: Context) {
         let gifts = await context.for(HelperGifts).find({
             where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)),

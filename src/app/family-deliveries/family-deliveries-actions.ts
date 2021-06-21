@@ -12,10 +12,10 @@ import { BasketType, QuantityColumn } from "../families/BasketType";
 import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
-import { ServerController } from "@remult/core";
+import { Controller } from "@remult/core";
 import { DataAreaFieldsSetting, DataControl, InputField } from "@remult/angular";
 
-import { getControllerDefs, ValueListFieldType } from "@remult/core/src/remult3";
+import { getFields, ValueListFieldType } from "@remult/core/src/remult3";
 import { u } from "../model-shared/UberContext";
 
 
@@ -45,10 +45,7 @@ function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliver
 }
 
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'deleteDeliveries'
-})
+@Controller('deleteDeliveries')
 export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     @Field({ translation: l => l.updateFamilyStatus })
     updateFamilyStatus: boolean;
@@ -75,10 +72,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
         });
     }
 }
-@ServerController({
-    allowed: Roles.admin,
-    key: 'UpdateFamilyDefaults'
-})
+@Controller('UpdateFamilyDefaults')
 export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     @Field({ translation: l => l.defaultVolunteer })
     byCurrentCourier: boolean;
@@ -131,10 +125,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
         });
     }
 }
-@ServerController({
-    allowed: Roles.distCenterAdmin,
-    key: 'updateCourier'
-})
+@Controller('updateCourier')
 export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     @Field({ translation: l => l.clearVolunteer })
     clearVoulenteer: boolean;
@@ -177,10 +168,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
         this.courier = null;
     }
 }
-@ServerController({
-    allowed: Roles.distCenterAdmin,
-    key: 'updateDeliveriesStatus'
-})
+@Controller('updateDeliveriesStatus')
 export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
     @Field()
@@ -244,7 +232,7 @@ export class ArchiveHelper {
     markSelfPickupAsDelivered: boolean;
 
 
-    get $() { return getControllerDefs(this).fields }
+    get $() { return getFields(this) }
     async initArchiveHelperBasedOnCurrentDeliveryInfo(context: Context, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = context.for(ActiveFamilyDeliveries);
@@ -283,10 +271,7 @@ export class ArchiveHelper {
 
 }
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'archiveDeliveries'
-})
+@Controller('archiveDeliveries')
 export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     @Field()
     archiveHelper: ArchiveHelper = new ArchiveHelper();
@@ -308,42 +293,35 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     }
 }
 
-@ServerController({
-    allowed: Roles.distCenterAdmin,
-    key: 'updateBasketType'
-})
+@Controller('updateBasketType')
 export class UpdateBasketType extends ActionOnFamilyDeliveries {
     @Field()
     basketType: BasketType;
 
     constructor(context: Context) {
         super(context, {
+            allowed: Roles.distCenterAdmin,
             title: getLang(context).updateBasketType,
             forEach: async f => { f.basketType = this.basketType },
 
         });
     }
 }
-@ServerController({
-    allowed: Roles.distCenterAdmin,
-    key: 'updateQuantity'
-})
+@Controller('updateQuantity')
 export class UpdateQuantity extends ActionOnFamilyDeliveries {
     @QuantityColumn()
     quantity: number;
 
     constructor(context: Context) {
         super(context, {
+            allowed: Roles.distCenterAdmin,
             title: getLang(context).updateBasketQuantity,
             forEach: async f => { f.quantity = this.quantity },
         });
     }
 }
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'updateDistributionCenter'
-})
+@Controller('updateDistributionCenter')
 export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     @Field()
     distributionCenter: DistributionCenters;
@@ -377,10 +355,7 @@ class HelperStrategy {
     }
 }
 
-@ServerController({
-    allowed: Roles.admin,
-    key: 'newDeliveryForDeliveries'
-})
+@Controller('newDeliveryForDeliveries')
 export class NewDelivery extends ActionOnFamilyDeliveries {
     @Field({ translation: l => l.useBusketTypeFromCurrentDelivery })
     useExistingBasket: boolean = true;
@@ -445,7 +420,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
             },
             title: getLang(context).newDelivery,
             icon: 'add_shopping_cart',
-            help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.$.newDeliveryForAll.defs.caption,
+            help: () => getLang(this.context).newDeliveryForDeliveriesHelp + ' ' + this.$.newDeliveryForAll.metadata.caption,
             forEach: async existingDelivery => {
                 this.archiveHelper.forEach(existingDelivery);
                 if (this.autoArchive) {

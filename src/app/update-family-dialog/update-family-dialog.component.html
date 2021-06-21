@@ -136,7 +136,7 @@
                     <ng-template matExpansionPanelContent>
                         <data-area [settings]="extraFamilyInfo"></data-area>
                         <mat-form-field appearance="outline" style="width:100%">
-                            <mat-label>{{families.currentRow.$.internalComment.defs.caption}}</mat-label>
+                            <mat-label>{{families.currentRow.$.internalComment.metadata.caption}}</mat-label>
                             <textarea matInput [(ngModel)]="families.currentRow.internalComment"></textarea>
                         </mat-form-field>
                         <data-area [settings]="extraFamilyInfo2"></data-area>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, filterOf, FindOptions, ServerFunction, SqlDatabase } from '@remult/core';
+import { Context, FilterFactories, FindOptions,  BackendMethod, SqlDatabase } from '@remult/core';
 import { Filter, AndFilter } from '@remult/core';
 
 import { BusyService, DialogConfig } from '@remult/angular';
@@ -41,7 +41,7 @@ export class SelectHelperComponent implements OnInit {
     includeFrozen?: boolean,
     searchClosestDefaultFamily?: boolean,
     onSelect: (selectedValue: HelpersBase) => void,
-    filter?: (helper: filterOf<HelpersAndStats>) => Filter
+    filter?: (helper: FilterFactories<HelpersAndStats>) => Filter
 
   };
   filteredHelpers: helperInList[] = [];
@@ -58,7 +58,7 @@ export class SelectHelperComponent implements OnInit {
   clearHelper() {
     this.select(undefined);
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, context?: Context, db?: SqlDatabase) {
     let helpers = new Map<string, helperInList>();
 

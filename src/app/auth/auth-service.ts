@@ -5,7 +5,7 @@ import { DialogService, extractError } from "../select-popup/dialog";
 import {  HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
-import { ServerFunction, Context, UserInfo } from '@remult/core';
+import { BackendMethod, Context, UserInfo } from '@remult/core';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 
@@ -91,7 +91,7 @@ export class AuthService {
         this.routeHelper.navigateToComponent((await (import('../users/login/login.component'))).LoginComponent);
     }
 
-    @ServerFunction({ allowed: true })
+    @BackendMethod({ allowed: true })
     static async loginFromSms(key: string, context?: Context) {
 
         let r: LoginResponse = { valid: false };
@@ -208,7 +208,7 @@ export class AuthService {
 
     }
 
-    @ServerFunction({ allowed: true })
+    @BackendMethod({ allowed: true })
     static async login(args: loginArgs, context?: Context): Promise<loginResult> {
 
         let r: loginResult = {};
@@ -343,7 +343,7 @@ export class AuthService {
             }, this.settings.timeToDisconnect * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
         }
     }
-    @ServerFunction({ allowed: c => c.isSignedIn() })
+    @BackendMethod({ allowed: c => c.isSignedIn() })
     static async renewToken(context?: Context) {
         if (!context.isSignedIn())
             return undefined;

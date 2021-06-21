@@ -1,7 +1,7 @@
 import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter, filterOf, EntityField, DecimalField } from '@remult/core';
+import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, DecimalField } from '@remult/core';
 import { BasketType, QuantityColumn } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode, GroupsValue } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -67,7 +67,7 @@ export class MessageStatus {
         if (self.$.courier.wasChanged())
             self.routeOrder = 0;
 
-        if (self.context.onServer) {
+        if (self.context.backend) {
             if (!self.disableChangeLogging) {
 
                 if (!self.isNew() || await self.$.courier.load())
@@ -419,7 +419,7 @@ export class FamilyDeliveries extends IdEntity {
                         then: MessageStatus.notOpened.id
                     }
                     ], MessageStatus.notSent.id)
-                    , " from ", helper.defs.dbName, " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
+                    , " from ", helper.metadata.dbName, " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
             }], MessageStatus.noVolunteer.id);
         }
     })
@@ -434,10 +434,10 @@ export class FamilyDeliveries extends IdEntity {
     a4: string;
 
 
-    static active(self: filterOf<FamilyDeliveries>) {
+    static active(self: FilterFactories<FamilyDeliveries>) {
         return self.archive.isEqualTo(false);
     }
-    static notActive(self: filterOf<FamilyDeliveries>) {
+    static notActive(self: FilterFactories<FamilyDeliveries>) {
         return self.archive.isEqualTo(true);
     }
     disableChangeLogging = false;
@@ -492,8 +492,8 @@ export class FamilyDeliveries extends IdEntity {
             addColumn("X" + use.language.firstName, firstName, 's');
             addColumn("X" + use.language.streetName, street, 's');
             addColumn("X" + use.language.houseNumber, house, 's');
-            addColumn("X" + f.$.tz.defs.caption, f.tz, 's');
-            addColumn("X" + f.$.tz2.defs.caption, f.tz2, 's');
+            addColumn("X" + f.$.tz.metadata.caption, f.tz, 's');
+            addColumn("X" + f.$.tz2.metadata.caption, f.tz2, 's');
 
         }
     }
@@ -517,7 +517,7 @@ export class FamilyDeliveries extends IdEntity {
         }
         return r;
     }
-    static readyAndSelfPickup(self: filterOf<FamilyDeliveries>) {
+    static readyAndSelfPickup(self: FilterFactories<FamilyDeliveries>) {
         let where = self.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]).and(
             self.courier.isEqualTo(null));
         return where;
@@ -567,7 +567,7 @@ export class FamilyDeliveries extends IdEntity {
 
 
 
-    static onTheWayFilter(self: filterOf<FamilyDeliveries>) {
+    static onTheWayFilter(self: FilterFactories<FamilyDeliveries>) {
         return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null));
     }
 
@@ -723,7 +723,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
-function logChanged(context: Context, col: EntityField<any>, dateCol: EntityField<Date>, user: EntityField<HelpersBase>, wasChanged: (() => void)) {
+function logChanged(context: Context, col: FieldRef<any>, dateCol: FieldRef<Date>, user: FieldRef<HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.value = u(context).currentUser;

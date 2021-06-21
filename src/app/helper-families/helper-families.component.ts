@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ServerFunction, ServerContext, SqlDatabase, EntityField } from '@remult/core';
+import { BackendMethod,  SqlDatabase, FieldRef } from '@remult/core';
 import { BusyService, DataAreaSettings, GridButton, InputField, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -130,7 +130,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
 
-  @ServerFunction({ allowed: Roles.indie })
+  @BackendMethod({ allowed: Roles.indie })
   static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, context?: Context, db?: SqlDatabase) {
     if (!getSettings(context).isSytemForMlt())
       throw "not allowed";
@@ -305,7 +305,7 @@ export class HelperFamiliesComponent implements OnInit {
   setDefaultCourier() {
     this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.busy, this.familyLists.toDeliver, this.dialog);
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Context) {
     let dist: DistributionCenters = null;
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
@@ -329,7 +329,7 @@ export class HelperFamiliesComponent implements OnInit {
       return undefined;
     return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async okAllForHelperOnServer(helper: HelpersBase, context?: Context) {
     let dist: DistributionCenters = null;
 
@@ -398,8 +398,8 @@ export class HelperFamiliesComponent implements OnInit {
   async leftThere(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
-  @ServerFunction({ allowed: c => c.isSignedIn() })
-  static async sendSuccessMessageToFamily(deliveryId: string, context?: ServerContext) {
+  @BackendMethod({ allowed: c => c.isSignedIn() })
+  static async sendSuccessMessageToFamily(deliveryId: string, context?: Context) {
     var settings = getSettings(context);
     if (!settings.allowSendSuccessMessageOption)
       return;

@@ -1,6 +1,6 @@
 
 
-import { FieldSettings, Entity, IdEntity, keyFor } from '@remult/core';
+import { FieldOptions, Entity, IdEntity } from '@remult/core';
 
 
 import { Context, } from '@remult/core';
@@ -56,7 +56,7 @@ export class BasketType extends IdEntity {
 }
 
 
-export function QuantityColumn<T>(settings?: FieldSettings) {
+export function QuantityColumn<T>(settings?: FieldOptions) {
   return Field<T, number>({ translation: l => l.quantity, ...settings });
 }
 

@@ -26,9 +26,9 @@ function log(s: string) {
 
     dbName: (self, context) => {
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries).defs);
+        let f = SqlFor(context.for(ActiveFamilyDeliveries).metadata);
 
-        let h = SqlFor(context.for(Helpers).defs);
+        let h = SqlFor(context.for(Helpers).metadata);
         var sql = new SqlBuilder();
 
         let helperFamilies = (where: () => any[]) => {

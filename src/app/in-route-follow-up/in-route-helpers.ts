@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FieldDefinitions } from "@remult/core";
+import { IdEntity, Context, Entity, FieldMetadata } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
 import { SqlBuilder, DateTimeColumn, relativeDateName, ChangeDateColumn, SqlFor } from "../model-shared/types";
@@ -34,7 +34,7 @@ import { u } from "../model-shared/UberContext";
                 where: () => [u(context).filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
             }
         }
-        let comInnerSelect = (col: FieldDefinitions, toCol: FieldDefinitions) => {
+        let comInnerSelect = (col: FieldMetadata, toCol: FieldMetadata) => {
             return sql.innerSelect({
                 select: () => [col],
                 from: com,
@@ -42,7 +42,7 @@ import { u } from "../model-shared/UberContext";
                 orderBy: [{ field: com.createDate, isDescending: true }]
             }, toCol)
         }
-        let comHelperInnerSelect = (toCol: FieldDefinitions) => {
+        let comHelperInnerSelect = (toCol: FieldMetadata) => {
             return sql.innerSelect({
                 select: () => [h2.name],
                 from: com,

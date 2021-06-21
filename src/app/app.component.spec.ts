@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import '../app/manage/ApplicationSettings';
 
 
-import { ServerContext, IdEntity, Context } from '@remult/core';
+import { IdEntity, Context } from '@remult/core';
 import { SqlBuilder, QueryBuilder, SqlFor } from './model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "./model-shared/phone";
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
@@ -16,7 +16,7 @@ import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
 
 describe('AppComponent', () => {
-  var context = new ServerContext();
+  var context = new Context();
   var bt = SqlFor(context.for(BasketType));
 
   var f = SqlFor(context.for(Families));
@@ -86,6 +86,20 @@ describe('AppComponent', () => {
       from: bt,
       where: () => [sql.eq(bt.boxes, 5)]
     }, 'select p.id from BasketType p where p.boxes = 5');
+  });
+  it('Where', () => {
+    let b = context.for(BasketType).create({ id: '11', name: 'basket' });
+
+    q({
+      select: () => [fd.id],
+      from: fd,
+      where: () => [fd.basketType.isEqualTo(b)]
+    }, "select h.id from FamilyDeliveries h where basketType = '11'");
+  });
+  it('another where', () => {
+    let b = context.for(BasketType).create({ id: '11', name: 'basket' });
+    expect(sql.build(fd.basketType.isEqualTo(b))).toBe("basketType = '11'")
+    
   });
   it('group By', () => {
     q({

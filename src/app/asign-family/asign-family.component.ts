@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, ServerFunction, SqlDatabase, AndFilter, EntityField, filterOf } from '@remult/core';
+import { UrlBuilder, Filter, BackendMethod, SqlDatabase, AndFilter, FieldRef, FilterFactories } from '@remult/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -239,6 +239,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     this.groups.push({ name: this.filterGroup, familiesCount: 0 });
                 }
             });
+
             let r = (await AsignFamilyComponent.getBasketStatus(this.helper, this.basketType.basket, this.dialog.distCenter, {
                 filterGroup: this.filterGroup,
                 filterCity: this.filterCity,
@@ -368,11 +369,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
 
-    filterOptions: EntityField<boolean>[] = [];
+    FilterFactory: FieldRef<boolean>[] = [];
     async ngOnInit() {
 
 
-        this.filterOptions.push(this.settings.$.showGroupsOnAssing, this.settings.$.showCityOnAssing, this.settings.$.showAreaOnAssing, this.settings.$.showBasketOnAssing, this.settings.$.showNumOfBoxesOnAssing);
+        this.FilterFactory.push(this.settings.$.showGroupsOnAssing, this.settings.$.showCityOnAssing, this.settings.$.showAreaOnAssing, this.settings.$.showBasketOnAssing, this.settings.$.showNumOfBoxesOnAssing);
         this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
             async families => {
@@ -483,7 +484,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
 
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo, context?: Context, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
 
         let result: GetBasketStatusActionResponse = {
@@ -496,7 +497,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         let cContext = u(context);
 
-        let countFamilies = (additionalWhere?: (f: filterOf<ActiveFamilyDeliveries>) => Filter) => {
+        let countFamilies = (additionalWhere?: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter) => {
             return context.for(ActiveFamilyDeliveries).count(f => {
                 let where = cContext.readyFilter(f, info.filterCity, info.filterGroup, info.filterArea, basket).and(cContext.filterDistCenter(f.distributionCenter, distCenter));
                 if (additionalWhere) {
@@ -598,7 +599,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         return result;
     }
-    @ServerFunction({ allowed: c => c.isSignedIn(), blockUser: false })
+    @BackendMethod({ allowed: c => c.isSignedIn(), blockUser: false })
     static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy, context?: Context) {
 
         if (!context.isAllowed(Roles.distCenterAdmin)) {
@@ -653,7 +654,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
@@ -723,7 +724,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
             }
         }
-        function buildWhere(f: filterOf<ActiveFamilyDeliveries>) {
+        function buildWhere(f: FilterFactories<ActiveFamilyDeliveries>) {
             let where = cContext.readyFilter(f, info.city, info.group, info.area).and(
                 f.special.isDifferentFrom(YesNo.Yes).and(cContext.filterDistCenter(f.distributionCenter, distCenter))
             );
@@ -927,7 +928,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             f.courier.isEqualTo(null).and(f.special.isEqualTo(YesNo.Yes))), 'special');
     }
-    addFamily(filter: (f: filterOf<ActiveFamilyDeliveries>) => Filter, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
+    addFamily(filter: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
         openDialog(SelectFamilyComponent, x => x.args = {
             where: f => {
                 let where = filter(f);
@@ -987,7 +988,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         });
         this.refreshList();
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async assignMultipleFamilies(helper: HelpersBase, args: {
         ids: string[],
         quantity: number,
@@ -1081,7 +1082,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }))
         }
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async selectBuildings(basket: BasketType, distCenter: DistributionCenters, args: {
         filterCity: string,
         filterGroup: string,

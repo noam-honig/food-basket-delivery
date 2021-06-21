@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { BusyService, GridSettings } from '@remult/angular';
-import { AndFilter, EntityDefinitions, filterOf } from '@remult/core';
+import { AndFilter, FilterFactories } from '@remult/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Filter } from '@remult/core';
 import { Context } from '@remult/core';
@@ -21,7 +21,7 @@ import { u } from '../model-shared/UberContext';
 export class SelectFamilyComponent implements OnInit {
 
   public args: {
-    where: (f: filterOf<ActiveFamilyDeliveries>) => Filter,
+    where: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
     distCenter: DistributionCenters,

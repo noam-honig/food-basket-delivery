@@ -1,15 +1,9 @@
-import { AndFilter, Context, Filter, filterOf, filterOptions, keyFor } from "@remult/core";
+import { AndFilter, Context, Filter, FilterFactories, FilterFactory } from "@remult/core";
 import { Roles } from "../auth/roles";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-
-
-
 import { GetDistanceBetween, Location } from "../shared/googleApiHelpers";
 import { getLang } from "../sites/sites";
-
-
-
 
 export class UberContext {
     async helperFromJson(id: string): Promise<import("../helpers/helpers").Helpers> {
@@ -32,14 +26,14 @@ export class UberContext {
             });
         return this._defaultBasket;
     }
-    filterCenterAllowedForUser(center: filterOptions<import("../manage/distribution-centers").DistributionCenters>) {
+    filterCenterAllowedForUser(center: FilterFactory<import("../manage/distribution-centers").DistributionCenters>) {
         if (this.context.isAllowed(Roles.admin)) {
             return undefined;
         } else if (this.context.isSignedIn())
             return center.isEqualTo(this.currentUser.distributionCenter);
     }
-    static filterActiveDeliveries: (self: filterOf<import("../families/FamilyDeliveries").FamilyDeliveries>) => Filter;
-    isAllowedForUser(self: filterOf<import("../families/FamilyDeliveries").FamilyDeliveries>) {
+    static filterActiveDeliveries: (self: FilterFactories<import("../families/FamilyDeliveries").FamilyDeliveries>) => Filter;
+    isAllowedForUser(self: FilterFactories<import("../families/FamilyDeliveries").FamilyDeliveries>) {
         if (!this.context.isSignedIn())
             return self.id.isEqualTo('no rows');
         let user = u(this.context).currentUser;
@@ -60,7 +54,7 @@ export class UberContext {
         }
         return result;
     }
-    filterDistCenter(distCenterColumn: filterOptions<import("../manage/distribution-centers").DistributionCenters>, distCenter: import("../manage/distribution-centers").DistributionCenters): Filter {
+    filterDistCenter(distCenterColumn: FilterFactory<import("../manage/distribution-centers").DistributionCenters>, distCenter: import("../manage/distribution-centers").DistributionCenters): Filter {
         let allowed = this.filterCenterAllowedForUser(distCenterColumn);
         if (distCenter != null)
             return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
@@ -82,7 +76,7 @@ export class UberContext {
         return result;
     }
     lang = getLang(this.context);
-    readyFilter(self: filterOf<import("../families/FamilyDeliveries").FamilyDeliveries>, city?: string, group?: string, area?: string, basket?: BasketType) {
+    readyFilter(self: FilterFactories<import("../families/FamilyDeliveries").FamilyDeliveries>, city?: string, group?: string, area?: string, basket?: BasketType) {
         let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
             self.courier.isEqualTo(null)).and(this.filterCenterAllowedForUser(self.distributionCenter));
         if (group)
@@ -99,10 +93,11 @@ export class UberContext {
     }
 }
 export function u(context: Context): UberContext {
-    let r = context.get(key);
+    let r: UberContext = context[key];
     if (!r) {
-        context.set(key, r = new UberContext(context));
+        r = context[key] = new UberContext(context);
     }
     return r;
 }
-const key = new keyFor<UberContext>();
+
+const key = Symbol("UberContext");

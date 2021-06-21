@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
 import { BusyService, InputField, openDialog } from '@remult/angular';
-import { ServerFunction, Context, SqlDatabase } from '@remult/core';
+import { BackendMethod, Context, SqlDatabase } from '@remult/core';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -170,7 +170,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     this.sortList();
   }
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async getShipmentAssignInfo(context?: Context, db?: SqlDatabase) {
     let result: data = {
       helpers: {},

@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Context, getControllerDefs, ServerFunction, supportsContains } from '@remult/core';
+import { Context, getFields, BackendMethod, ContainsFilterFactory } from '@remult/core';
 
 
 import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
@@ -24,7 +24,7 @@ declare var gtag;
 
 @Injectable()
 export class DialogService {
-    filterDistCenter(distributionCenter: supportsContains<DistributionCenters>): import("@remult/core").Filter {
+    filterDistCenter(distributionCenter: ContainsFilterFactory<DistributionCenters>): import("@remult/core").Filter {
         return this.cContext.filterDistCenter(distributionCenter, this.distCenter)
     }
     async exception(title: string, err: any): Promise<void> {
@@ -111,9 +111,9 @@ export class DialogService {
     @Field()
     @DataControl<DialogService>({
         valueList: context => DistributionCenters.getValueList(context, true),
-        valueChange:async self => {
-            
-            if (self.context.isSignedIn()){
+        valueChange: async self => {
+
+            if (self.context.isSignedIn()) {
                 await self.$.distCenter.load();
                 self.refreshDistCenter.next();
             }
@@ -133,7 +133,7 @@ export class DialogService {
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }
     dc: DistributionCenters;
-    get $(){return getControllerDefs(this, this.context).fields}
+    get $() { return getFields(this, this.context) }
     async refreshCanSeeCenter() {
         this.hasManyCenters = false;
         this.distCenterArea = undefined;
@@ -209,7 +209,7 @@ export class DialogService {
         }
         await DialogService.doLog(message);
     }
-    @ServerFunction({ allowed: true })
+    @BackendMethod({ allowed: true })
     static async doLog(s: string, context?: Context) {
         console.log(s);
     }

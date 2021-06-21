@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
-import { Context,  ServerFunction, SqlDatabase } from '@remult/core';
+import { Context, BackendMethod, SqlDatabase } from '@remult/core';
 import { toInt } from 'ngx-bootstrap/chronos/utils/type-checks';
 import { DateOnlyValueConverter } from '@remult/core/valueConverters';
 
@@ -94,7 +94,7 @@ export class WeeklyReportMltComponent implements OnInit {
     return +object[key];
   }
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
     let totalPerBasket: { URL: string, basketType: string, total: number, added: number, collected: number, received: number }[] = [];
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
@@ -131,7 +131,7 @@ export class WeeklyReportMltComponent implements OnInit {
   }
 
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getVolunteersData(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
@@ -159,7 +159,7 @@ export class WeeklyReportMltComponent implements OnInit {
   }
 
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getDonorsData(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
@@ -186,7 +186,7 @@ export class WeeklyReportMltComponent implements OnInit {
   }
 
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getVolunteerAverage(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);

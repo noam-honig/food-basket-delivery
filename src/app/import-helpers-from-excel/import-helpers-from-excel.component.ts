@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FieldDefinitions, FieldDefinitionsOf, Entity, EntityField, ServerFunction } from '@remult/core';
+import { FieldMetadata, FieldsMetadata, Entity, FieldRef, BackendMethod } from '@remult/core';
 import { Context } from '@remult/core';
 
 
@@ -50,13 +50,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       return '';
     return val.w.trim();
   }
-  columnsInCompare: FieldDefinitions[] = [];
+  columnsInCompare: FieldMetadata[] = [];
 
   totalRows: number;
   filename: string;
 
 
-  getColInfo(i: excelRowInfo, col: FieldDefinitions) {
+  getColInfo(i: excelRowInfo, col: FieldMetadata) {
     return ExcelHelper.actualGetColInfo(i, col.key);
   }
 
@@ -93,7 +93,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
     });
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async insertHelperRows(rowsToInsert: excelRowInfo[], context?: Context) {
     for (const r of rowsToInsert) {
       let f = context.for(Helpers).create();
@@ -104,7 +104,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     }
 
   }
-  async updateAllCol(col: FieldDefinitions) {
+  async updateAllCol(col: FieldMetadata) {
     let count = this.getColUpdateCount(col);
     let message = "האם לעדכן את השדה " + col.caption + " ל" + count + " מתנדבים?";
 
@@ -141,14 +141,14 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     });
   }
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Context) {
     for (const r of rowsToUpdate) {
       await ImportHelpersFromExcelComponent.actualUpdateCol(r, columnMemberName, context);
     }
     return rowsToUpdate;
   }
-  async updateCol(i: excelRowInfo, col: FieldDefinitions) {
+  async updateCol(i: excelRowInfo, col: FieldMetadata) {
     await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.key, this.context);
   }
   static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Context) {
@@ -164,13 +164,13 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     c.existingDisplayValue = await getColumnDisplayValue(f.$[colMemberName]);
     c.existingValue = f.$[colMemberName].inputValue;
   }
-  async clearColumnUpdate(i: excelRowInfo, col: FieldDefinitions) {
+  async clearColumnUpdate(i: excelRowInfo, col: FieldMetadata) {
     let c = this.getColInfo(i, col);
     c.newDisplayValue = c.existingDisplayValue;
     c.newValue = c.existingValue;
   }
 
-  getColUpdateCount(col: FieldDefinitions) {
+  getColUpdateCount(col: FieldMetadata) {
     let i = 0;
     let key = col.key;
     for (const r of this.updateRows) {
@@ -308,7 +308,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         info.valid = false;
       }
       if (c) {
-        info.values[c.defs.key] = {
+        info.values[c.metadata.key] = {
           newDisplayValue: await getColumnDisplayValue(c),
           newValue: c.value
         };
@@ -324,7 +324,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   updateRowsPage: number;
   existingFamiliesPage: number;
   errorRowsPage: number;
-  helper: FieldDefinitionsOf<Helpers>;
+  helper: FieldsMetadata<Helpers>;
   @ViewChild("stepper", { static: true }) stepper: MatStepper;
 
   async ngOnInit() {
@@ -334,14 +334,14 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-    let updateCol = (col: EntityField<any>, val: string, seperator: string = ' ') => {
+    let updateCol = (col: FieldRef<any>, val: string, seperator: string = ' ') => {
 
       if (col.value) {
         col.value = (col.value + seperator + val).trim();
       } else
         col.value = val;
     }
-    this.helper = this.context.for(Helpers).defs.fields;
+    this.helper = this.context.for(Helpers).metadata.fields;
     if (false) {
       try {
         this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));
@@ -362,7 +362,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       }
     }
 
-    let addColumn = (col: FieldDefinitions, searchNames?: string[]) => {
+    let addColumn = (col: FieldMetadata, searchNames?: string[]) => {
       this.columns.push({
         key: col.key,
         name: col.caption,
@@ -427,7 +427,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let usedPhone = new Map<number, number>();
     this.stepper.next();
     await this.busy.doWhileShowingBusy(async () => {
-      let updatedColumns = new Map<FieldDefinitions, boolean>();
+      let updatedColumns = new Map<FieldMetadata, boolean>();
 
       for (const cu of [...this.excelColumns.map(f => f.column), ...this.additionalColumns.map(f => f.column)]) {
         if (cu)
@@ -543,7 +543,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   displayDupInfo(info: duplicateHelperInfo) {
     return 'טלפון זהה';
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context) {
     let result: serverCheckResults = {
       errorRows: [],
@@ -694,7 +694,7 @@ interface columnUpdater {
   name: string;
   searchNames?: string[];
   updateFamily: (val: string, f: Helpers, h: columnUpdateHelper) => Promise<void>;
-  columns: FieldDefinitions[];
+  columns: FieldMetadata[];
 }
 class columnUpdateHelper {
 
@@ -725,7 +725,7 @@ interface serverCheckResults {
   updateRows: excelRowInfo[],
   errorRows: excelRowInfo[]
 }
-async function getColumnDisplayValue(c: EntityField<any>) {
+async function getColumnDisplayValue(c: FieldRef<any>) {
   let v = c.displayValue;
   return v?.trim();
 }

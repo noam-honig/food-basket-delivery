@@ -5,7 +5,7 @@ import { FamilySources } from "./FamilySources";
 import { BasketType, QuantityColumn } from "./BasketType";
 import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
-import { Context, ServerFunction, IdEntity, SqlDatabase, Filter, Validators, FieldDefinitions, FieldDefinitionsOf, EntityDefinitions } from '@remult/core';
+import { Context, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata } from '@remult/core';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -128,7 +128,7 @@ export class GroupsValue {
     saving: async (self) => {
       if (self.disableOnSavingRow)
         return;
-      if (self.context.onServer) {
+      if (self.context.backend) {
         if (!self.quantity || self.quantity < 1)
           self.quantity = 1;
         if (self.$.area.wasChanged() && self.area)
@@ -184,7 +184,7 @@ export class GroupsValue {
         }
 
       }
-      else if (!self.context.onServer) {
+      else if (!self.context.backend) {
         let statusChangedOutOfActive = self.$.status.wasChanged() && self.status != FamilyStatus.Active;
         if (statusChangedOutOfActive) {
           let activeDeliveries = self.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
@@ -203,7 +203,7 @@ export class GroupsValue {
     }
   })
 export class Families extends IdEntity {
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
     let f = SqlFor(context.for(Families));
@@ -279,7 +279,7 @@ export class Families extends IdEntity {
         })
       ],
       columnSettings: fd => {
-        let r: FieldDefinitions[] = [
+        let r: FieldMetadata[] = [
           fd.deliverStatus,
           fd.deliveryStatusDate,
           fd.basketType,
@@ -390,7 +390,7 @@ export class Families extends IdEntity {
       }
     });
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async addDelivery(familyId: string, basketType: BasketType, distCenter: DistributionCenters, courier: HelpersBase, settings: {
     quantity: number,
     comment: string,
@@ -477,7 +477,7 @@ export class Families extends IdEntity {
   updateDelivery(fd: import("./FamilyDeliveries").FamilyDeliveries) {
     fd.family = this.id;
     for (const col of this.sharedColumns()) {
-      fd.$[col.defs.key].value = col.value;
+      fd.$[col.metadata.key].value = col.value;
     }
   }
 
@@ -780,7 +780,7 @@ export class Families extends IdEntity {
 
 
 
-  static getPreviousDeliveryColumn(self: FieldDefinitionsOf<Families>) {
+  static getPreviousDeliveryColumn(self: FieldsMetadata<Families>) {
     return {
       translation: l => l.previousDeliverySummary,
       readonly: true,
@@ -870,7 +870,7 @@ export class Families extends IdEntity {
   private delayCheckDuplicateFamilies() {
     if (this._disableAutoDuplicateCheck)
       return;
-    if (this.context.onServer)
+    if (this.context.backend)
       return;
     if (!this.tzDelay)
       this.tzDelay = new delayWhileTyping(1000);
@@ -880,7 +880,7 @@ export class Families extends IdEntity {
     });
 
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
     var sql = new SqlBuilder();
     let f = SqlFor(context.for(Families));
@@ -938,14 +938,14 @@ export class Families extends IdEntity {
 
 
   }
-  @ServerFunction({ allowed: Roles.admin, blockUser: false })
+  @BackendMethod({ allowed: Roles.admin, blockUser: false })
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder();
     var f = SqlFor(context.for(Families));
 
-    let compareAsNumber = (col: FieldDefinitions<any>, value: string) => {
+    let compareAsNumber = (col: FieldMetadata<any>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
     };
     let tzCol = sql.or(compareAsNumber(f.tz, tz), compareAsNumber(f.tz2, tz));
@@ -1214,7 +1214,7 @@ export interface familyLikeEntity {
   phone4: Phone;
 }
 
-function dbNameFromLastDelivery(selfDefs: EntityDefinitions<Families>, context: Context, col: (fd: FieldDefinitionsOf<import("./FamilyDeliveries").FamilyDeliveries>) => FieldDefinitions, alias: string) {
+function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Context, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
   let self = SqlFor(selfDefs);
   let fd = SqlFor(context.for(FamilyDeliveries));
   let sql = new SqlBuilder();

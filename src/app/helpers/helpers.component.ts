@@ -6,7 +6,7 @@ import { HelperId, Helpers } from './helpers';
 
 import { Route } from '@angular/router';
 
-import { ServerFunction, ServerContext, AndFilter, } from '@remult/core';
+import { BackendMethod} from '@remult/core';
 import { Context } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
@@ -262,7 +262,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
@@ -270,7 +270,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       await h.save();
     });
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async invalidatePassword(helperId: string, context?: Context) {
 
     await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
@@ -279,8 +279,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
     });
   }
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
-  static async sendInvite(helperId: string, context?: ServerContext) {
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  static async sendInvite(helperId: string, context?: Context) {
     let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
       return getLang(context).unfitForInvite;
@@ -319,7 +319,7 @@ ${url}
 
 
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async clearCommentsOnServer(context?: Context) {
     for await (const h of context.for(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
       h.eventComment = '';
@@ -327,7 +327,7 @@ ${url}
     }
   }
 
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
     for await (const h of context.for(Helpers).iterate()) {
       h.escort = null;

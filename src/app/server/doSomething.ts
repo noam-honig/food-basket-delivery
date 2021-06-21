@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 
-import { SqlDatabase,   EntityField } from '@remult/core';
+import { SqlDatabase,    FieldRef } from '@remult/core';
 import * as AWS from 'aws-sdk';
 
 
@@ -12,7 +12,7 @@ import * as AWS from 'aws-sdk';
 import { serverInit } from "./serverInit";
 
 
-import { ServerContext } from '@remult/core';
+import { Context } from '@remult/core';
 import { GeocodeCache, GeocodeInformation, getAddress } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
@@ -132,7 +132,7 @@ class htmlReport {
     addRow(...what: any[]) {
         this.result += "\r\n<tr>";
         for (let v of what) {
-            let z = v as EntityField<any>;
+            let z = v as FieldRef<any>;
             if (z.displayValue)
                 v = v.displayValue;
             if (v === undefined)
@@ -147,7 +147,7 @@ class htmlReport {
 }
 
 async function buildDocs() {
-    var c = new ServerContext();
+    var c = new Context();
     c.setReq({
         getBaseUrl: () => '',
         clientIp: '',
@@ -166,7 +166,7 @@ async function buildDocs() {
 
     for (const type of list) {
 
-        var e = c.for(type).defs;
+        var e = c.for(type).metadata;
         s += "\n\n## " + e.key + `
 | name | caption | type | extra info |
 | --- | --- | --- | --- |

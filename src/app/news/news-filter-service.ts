@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { NewsFilter } from './news.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { filterOf } from '@remult/core';
+import { FilterFactories } from '@remult/core';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilySources } from '../families/FamilySources';
@@ -36,7 +36,7 @@ export class NewsFilterService {
     }];
     currentFilter: NewsFilter = this.filters[0];
     currentFamilySource: FamilySources = undefined;
-    where(n: filterOf<ActiveFamilyDeliveries>) {
+    where(n: FilterFactories<ActiveFamilyDeliveries>) {
         if (this.currentFamilySource) {
             if (this.currentFilter.where)
                 return n.familySource.isEqualTo(this.currentFamilySource).and(this.currentFilter.where(n));

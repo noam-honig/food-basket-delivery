@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { EntityField } from '@remult/core';
+import { FieldRef } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 
@@ -12,7 +12,7 @@ import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from
 })
 export class AddressInputComponent implements AfterViewInit {
 
-  @Input() field: EntityField<string>;
+  @Input() field: FieldRef<string>;
   @Input() autoInit: boolean = false;
   @Input() caption: string;
   constructor(private settings: ApplicationSettings, private zone: NgZone) { }

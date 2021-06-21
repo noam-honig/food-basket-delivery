@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context, AndFilter, filterOf } from '@remult/core';
+import { Context, AndFilter, FilterFactories } from '@remult/core';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';
@@ -122,7 +122,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 }
 export interface NewsFilter {
     name: string;
-    where?: (rowType: filterOf<ActiveFamilyDeliveries>) => Filter;
+    where?: (rowType: FilterFactories<ActiveFamilyDeliveries>) => Filter;
 }
 interface familySource {
     name: string;

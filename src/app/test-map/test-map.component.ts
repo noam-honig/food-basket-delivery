@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { openDialog } from '@remult/angular';
-import { Context, IdEntity, ServerFunction } from '@remult/core';
+import { Context, IdEntity } from '@remult/core';
 import { CreateNewEvent } from '../create-new-event/create-new-event';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { Families } from '../families/families';

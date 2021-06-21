@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/core/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, Context, Entity, SqlDatabase, ClassType } from '@remult/core';
+import {  Context, Entity, SqlDatabase } from '@remult/core';
 import '../app-routing.module';
 import '../create-new-event/create-new-event'
 
@@ -22,6 +22,7 @@ import { FamilyInfoComponent } from '../family-info/family-info.component';
 import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
+import { ClassType } from '@remult/core/classType';
 
 declare const lang = '';
 export const initSettings = {
@@ -112,7 +113,7 @@ export async function serverInit() {
                 await verifySchemaExistance(pool, Sites.guestSchema);
             }
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
-            let context = new ServerContext();
+            let context = new Context();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
 
             context.setDataProvider(dp)
@@ -126,8 +127,8 @@ export async function serverInit() {
                     SitesEntity,
                     DistributionCenters
                 ]) {
-                    await builder.createIfNotExist(context.for(entity).defs);
-                    await builder.verifyAllColumns(context.for(entity).defs);
+                    await builder.createIfNotExist(context.for(entity).metadata);
+                    await builder.verifyAllColumns(context.for(entity).metadata);
                 }
                 
             }
@@ -181,7 +182,7 @@ export async function serverInit() {
             for (const s of Sites.schemas) {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
-                    let context = new ServerContext();
+                    let context = new Context();
                     let h = SqlFor(context.for(Helpers));
                     var sql = new SqlBuilder();
                     let r = (await db.execute(sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));

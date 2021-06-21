@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { AndFilter, ServerFunction, SqlDatabase } from '@remult/core';
+import { AndFilter, BackendMethod, SqlDatabase } from '@remult/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 
@@ -165,7 +165,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   }
 
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async helpersStatus(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
     let fd = SqlFor(context.for(FamilyDeliveries));
 

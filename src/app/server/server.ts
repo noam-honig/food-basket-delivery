@@ -10,7 +10,7 @@ import { ServerEvents } from './server-events';
 import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 //import '../app.module';
-import { ServerContext, SqlDatabase } from '@remult/core';
+import { Context, SqlDatabase } from '@remult/core';
 import { Helpers } from '../helpers/helpers';
 import { Sites, setLangForSite } from '../sites/sites';
 
@@ -164,7 +164,7 @@ s.parentNode.insertBefore(b, s);})();
             },
             dataProvider: dataSource,
             disableAutoApi: Sites.multipleSites,
-            queueStorage: await preparePostgresQueueStorage(dataSource(new ServerContext()))
+            queueStorage: await preparePostgresQueueStorage(dataSource(new Context()))
         });
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
@@ -175,7 +175,7 @@ s.parentNode.insertBefore(b, s);})();
         let createSchemaApi = async schema => {
             let area = eb.addArea('/' + schema + '/api', req => {
                 if (req.user) {
-                    let context = new ServerContext();
+                    let context = new Context();
                     context.setReq(req);
                     if (context.isAllowed(Sites.getOrgRole(context)))
                         return true;
@@ -202,7 +202,7 @@ s.parentNode.insertBefore(b, s);})();
         {
             let area = eb.addArea('/' + Sites.guestSchema + '/api', req => {
                 if (req.user) {
-                    let context = new ServerContext();
+                    let context = new Context();
                     context.setReq(req);
                     if (context.isAllowed(Sites.getOrgRole(context)))
                         return true;
@@ -250,7 +250,7 @@ export interface monitorResult {
     helpers: number;
 }
 
-function registerImageUrls(app, getContext: (req: express.Request) => Promise<ServerContext>, sitePrefix: string) {
+function registerImageUrls(app, getContext: (req: express.Request) => Promise<Context>, sitePrefix: string) {
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
             let context = await getContext(req);

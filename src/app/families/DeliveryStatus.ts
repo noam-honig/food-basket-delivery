@@ -1,4 +1,4 @@
-import { Context, Filter, filterOptions } from '@remult/core';
+import { Context, Filter, FilterFactory } from '@remult/core';
 
 import { use, ValueListFieldType } from '../translate';
 
@@ -77,25 +77,25 @@ export class DeliveryStatus {
     return new ValueListValueConverter(DeliveryStatus).getOptions().filter(x => x.isProblem);
   }
 
-  static isNotAResultStatus(self: filterOptions<DeliveryStatus>): Filter {
+  static isNotAResultStatus(self: FilterFactory<DeliveryStatus>): Filter {
     return self.isNotIn(this.resultStatuses());
   }
 
 
-  static isAResultStatus(self: filterOptions<DeliveryStatus>) {
+  static isAResultStatus(self: FilterFactory<DeliveryStatus>) {
     return self.isIn(this.resultStatuses());
   }
 
 
 
-  static isSuccess(self: filterOptions<DeliveryStatus>) {
+  static isSuccess(self: FilterFactory<DeliveryStatus>) {
     return self.isIn([this.Success, this.SuccessLeftThere, this.SuccessPickedUp]);
   }
-  static isProblem(self: filterOptions<DeliveryStatus>) {
+  static isProblem(self: FilterFactory<DeliveryStatus>) {
     return self.isIn(this.problemStatuses());
 
   }
-  static isNotProblem(self: filterOptions<DeliveryStatus>) {
+  static isNotProblem(self: FilterFactory<DeliveryStatus>) {
     return self.isNotIn(this.problemStatuses()).and(self.isDifferentFrom(DeliveryStatus.Frozen));
   }
   static getOptions(context: Context) {

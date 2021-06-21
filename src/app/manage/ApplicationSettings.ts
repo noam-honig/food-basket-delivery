@@ -1,4 +1,4 @@
-import { ServerFunction, Allowed, EntityBase, EntityField, FieldDefinitions } from '@remult/core';
+import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata } from '@remult/core';
 import { DataControl } from '@remult/angular';
 export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowed) {
   return (target, key) => {
@@ -50,7 +50,7 @@ export class RemovedFromListExcelImportStrategy {
   allowApiUpdate: Roles.admin,
   saving: async (self) => {
 
-    if (self.context.onServer) {
+    if (self.context.backend) {
 
       await self.addressHelper.updateApiResultIfChanged();
 
@@ -85,7 +85,7 @@ export class ApplicationSettings extends EntityBase {
   }
 
   lang = getLang(this.context);
-  @ServerFunction({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: c => c.isSignedIn() })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
     let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(u(context).isAllowedForUser(fd)));
@@ -360,7 +360,7 @@ export class ApplicationSettings extends EntityBase {
   }
 
   static get(context: Context) {
-    if (context.onServer) {
+    if (context.backend) {
 
     }
     return getSettings(context);
@@ -487,7 +487,7 @@ export class SettingsService {
 export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
 export const questionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
 
-export function getCustomColumnVisible(defs: FieldDefinitions) {
+export function getCustomColumnVisible(defs: FieldMetadata) {
   return defs.caption != undefined;
 }
 
@@ -508,7 +508,7 @@ export function getSettings(context: Context) {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
-  if (context.onServer) {
+  if (context.backend) {
     return new ApplicationSettings(context);
     throw "can't find application settings on server for this request";
   }
@@ -530,7 +530,7 @@ export function includePhoneInApi(context: Context) {
   return false;
 
 }
-export function validateSmsContent(entity: any, c: EntityField<string, any>) {
+export function validateSmsContent(entity: any, c: FieldRef<string, any>) {
   return;
   if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
     c.error = this.lang.mustIncludeUrlKeyError;

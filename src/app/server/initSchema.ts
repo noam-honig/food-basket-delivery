@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, SqlDatabase, FieldDefinitions } from '@remult/core';
+import {  SqlDatabase, FieldMetadata, Context } from '@remult/core';
 //import '../app.module';
 
 //
@@ -21,13 +21,13 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
-    let context = new ServerContext();
+    let context = new Context();
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder();
-    let createFamilyIndex = async (name: string, ...columns: FieldDefinitions[]) => {
+    let createFamilyIndex = async (name: string, ...columns: FieldMetadata[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
-    let createDeliveryIndex = async (name: string, ...columns: FieldDefinitions[]) => {
+    let createDeliveryIndex = async (name: string, ...columns: FieldMetadata[]) => {
         await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
     }
 
@@ -242,8 +242,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
 
     await version(15, async () => {
-        let fromArchive = (col: FieldDefinitions) =>
-            [col, 'archive_' + col.dbName] as [FieldDefinitions, any];
+        let fromArchive = (col: FieldMetadata) =>
+            [col, 'archive_' + col.dbName] as [FieldMetadata, any];
         if ((await context.for(Families).count()) > 0)
             await dataSource.execute(sql.update(fd, {
                 set: () => [
@@ -281,7 +281,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 into: fd,
                 from: f,
                 set: () => {
-                    let r: [FieldDefinitions, any][] = [
+                    let r: [FieldMetadata, any][] = [
                         [fd.id, f.id],
                         [fd.family, f.id],
                         [fd.createDate, sql.case([{ when: ['deliverStatus in (0,2)'], then: 'deliveryStatusDate' }], 'courierAssingTime')],

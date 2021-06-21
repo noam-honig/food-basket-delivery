@@ -1,7 +1,7 @@
 import { HelpersBase, Helpers, HelperId } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { Context, ServerFunction } from "@remult/core";
+import { Context, BackendMethod } from "@remult/core";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
@@ -30,7 +30,7 @@ export class moveDeliveriesHelper {
 
             });
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async moveDeliveriesBetweenVolunteers(helperFrom: HelpersBase, to: HelpersBase, context?: Context) {
         let t = new PromiseThrottle(10);
         let settings = getSettings(context);

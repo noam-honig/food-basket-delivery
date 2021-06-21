@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
-import { Context, ServerFunction } from '@remult/core';
+import { Context, BackendMethod } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { HelperId } from '../helpers/helpers';
@@ -23,7 +23,7 @@ export class PrintVolunteersComponent implements OnInit {
     });
 
   }
-  @ServerFunction({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin })
   static async volunteersForPrint(context?: Context) {
     let total = 0;
     let volunteers: volunteer[] = [];

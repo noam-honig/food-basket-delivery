@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ServerFunction, Context, ServerController, controllerAllowed, ServerMethod, ServerProgress, getControllerDefs } from '@remult/core';
+import {  Context,  Controller,  BackendMethod, getFields, ProgressListener } from '@remult/core';
 import { RouteHelperService, BusyService, DataControl, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
@@ -28,10 +28,7 @@ function visible(when: () => boolean, caption?: string) {
     };
 }
 
-@ServerController({
-    key: 'createNewEvent',
-    allowed: Roles.admin
-})
+@Controller('createNewEvent')
 export class CreateNewEvent {
     @Field()
     archiveHelper: ArchiveHelper = new ArchiveHelper();
@@ -65,11 +62,11 @@ export class CreateNewEvent {
     }
     cContext = u(this.context);
     isAllowed() {
-        return controllerAllowed(this, this.context);
+        return  this.context.isAllowed(Roles.admin);
     }
-    get $() { return getControllerDefs(this, this.context).fields };
-    @ServerMethod({ queue: true, allowed: Roles.admin })
-    async createNewEvent(progress?: ServerProgress) {
+    get $() { return getFields(this, this.context) };
+    @BackendMethod({ queue: true, allowed: Roles.admin })
+    async createNewEvent(progress?: ProgressListener) {
         let settings = await ApplicationSettings.getAsync(this.context);
         for (const x of [
             [this.$.createNewDelivery, settings.$.createBasketsForAllFamiliesInCreateEvent],
@@ -103,7 +100,7 @@ export class CreateNewEvent {
 
     }
 
-    async iterateFamilies(what: (f: Families) => Promise<any>, progress: ServerProgress) {
+    async iterateFamilies(what: (f: Families) => Promise<any>, progress: ProgressListener) {
         let pt = new PromiseThrottle(10);
         let i = 0;
 
@@ -214,8 +211,8 @@ export class CreateNewEvent {
 
 
 
-    @ServerMethod({ queue: true, allowed: Roles.admin })
-    async countNewDeliveries(progress?: ServerProgress) {
+    @BackendMethod({ queue: true, allowed: Roles.admin })
+    async countNewDeliveries(progress?: ProgressListener) {
         return this.iterateFamilies(async () => { }, progress);
     }
 }

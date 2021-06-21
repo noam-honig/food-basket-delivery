@@ -1,4 +1,4 @@
-import { ServerFunction, filterOf } from '@remult/core';
+import { BackendMethod, FilterFactories } from '@remult/core';
 import { Filter } from '@remult/core';
 import { Families } from "./families";
 import { Context } from '@remult/core';
@@ -45,7 +45,7 @@ export class Stats {
         }
         return r;
     }
-    @ServerFunction({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.admin })
     static async getFamilyStats(distCenter: string, context?: Context) {
         let result = { data: {}, groups: [] as groupStats[] };
         let stats = new Stats(context);
@@ -82,7 +82,7 @@ export class Stats {
 
 
 export class FaimilyStatistics {
-    constructor(public name: string, public rule: (f: filterOf<Families>) => Filter, public color?: string, value?: number) {
+    constructor(public name: string, public rule: (f: FilterFactories<Families>) => Filter, public color?: string, value?: number) {
         this.value = value;
     }
 

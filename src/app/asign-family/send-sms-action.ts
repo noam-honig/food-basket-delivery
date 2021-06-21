@@ -1,8 +1,8 @@
-import { ServerFunction } from '@remult/core';
+import { BackendMethod } from '@remult/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import {  HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Context, ServerContext } from '@remult/core';
+import { Context } from '@remult/core';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
@@ -19,8 +19,8 @@ export class SendSmsAction {
             .replace('!ארגון!', orgName).replace("!ORG!", orgName)
             .replace('!משפחה!', family);
     }
-    @ServerFunction({ allowed: Roles.distCenterAdmin })
-    static async SendSms(h: HelpersBase, reminder: Boolean, context?: ServerContext) {
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
+    static async SendSms(h: HelpersBase, reminder: Boolean, context?: Context) {
 
         try {
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {

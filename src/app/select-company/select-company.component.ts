@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context, ServerFunction, SqlDatabase } from '@remult/core';
+import { Context, BackendMethod, SqlDatabase } from '@remult/core';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from '../model-shared/types';
 import { Helpers } from '../helpers/helpers';
@@ -51,7 +51,7 @@ export class SelectCompanyComponent implements OnInit {
     }
 
   }
-  @ServerFunction({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getCompanies(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder();
     let h = SqlFor(context.for(Helpers));

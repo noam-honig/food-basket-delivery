@@ -53,7 +53,7 @@
           <mat-menu #filterOptionsMenu="matMenu" >
             <div style="display:flex;flex-direction: column;">
             <mat-checkbox class="mat-menu-item" [(ngModel)]="o.inputValue" (change)="changeShowCompany()"
-              *ngFor="let o of filterOptions">{{o.defs.caption}}</mat-checkbox>
+              *ngFor="let o of filterOptions">{{o.metadata.caption}}</mat-checkbox>
             </div>
           </mat-menu>
           <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">

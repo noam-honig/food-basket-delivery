@@ -1,4 +1,4 @@
-import { IdEntity, Context, AndFilter, Entity, filterOf, filterOptions, Filter } from "@remult/core";
+import { IdEntity, Context, AndFilter, Entity, FilterFactories,  Filter } from "@remult/core";
 import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -38,7 +38,7 @@ import { u } from "../model-shared/UberContext";
 
 
   saving: async (self) => {
-    if (self.context.onServer) {
+    if (self.context.backend) {
       await self.addressHelper.updateApiResultIfChanged();
     }
   }
@@ -87,7 +87,7 @@ export class DistributionCenters extends IdEntity {
   archive: boolean;
   createUser: HelpersBase;
 
-  static isActive(e: filterOf<DistributionCenters>) {
+  static isActive(e: FilterFactories<DistributionCenters>) {
     return e.isFrozen.isEqualTo(false).and(e.archive.isEqualTo(false));
   }
 
