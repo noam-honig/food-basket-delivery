@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {  Context,  Controller,  BackendMethod, getFields, ProgressListener } from '@remult/core';
+import { Context, Controller, BackendMethod, getFields, ProgressListener } from '@remult/core';
 import { RouteHelperService, BusyService, DataControl, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
@@ -11,7 +11,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { Families, GroupsValue } from '../families/families';
+import { Families } from '../families/families';
 import { BasketType } from '../families/BasketType';
 import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
 import { PromiseThrottle } from '../shared/utils';
@@ -19,6 +19,7 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { use, Field } from '../translate';
 import { u } from '../model-shared/UberContext';
+import { GroupsValue } from '../manage/groups';
 
 
 function visible(when: () => boolean, caption?: string) {
@@ -41,15 +42,15 @@ export class CreateNewEvent {
     @DataControl<CreateNewEvent>({ visible: (self) => self.createNewDelivery })
     moreOptions: boolean;
     @Field({ translation: l => l.includeGroups })
-    @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
+    @DataControl<CreateNewEvent>({ visible: self => self.createNewDelivery && self.moreOptions })
 
     includeGroups: GroupsValue;
     @Field({ translation: l => l.excludeGroups })
-    @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
+    @DataControl<CreateNewEvent>({ visible: self => self.createNewDelivery && self.moreOptions })
 
     excludeGroups: GroupsValue;
     @Field({ translation: l => l.useFamilyDefaultBasketType })
-    @DataControl<CreateNewEvent>({ visible: self => self.moreOptions })
+    @DataControl<CreateNewEvent>({ visible: self => self.createNewDelivery && self.moreOptions })
     useFamilyBasket: boolean;
     @DataControl<CreateNewEvent>({ visible: self => !self.useFamilyBasket })
     @Field()
@@ -62,7 +63,7 @@ export class CreateNewEvent {
     }
     cContext = u(this.context);
     isAllowed() {
-        return  this.context.isAllowed(Roles.admin);
+        return this.context.isAllowed(Roles.admin);
     }
     get $() { return getFields(this, this.context) };
     @BackendMethod({ queue: true, allowed: Roles.admin })
@@ -88,7 +89,7 @@ export class CreateNewEvent {
             r = await this.iterateFamilies(async f => {
                 let fd = await f.createDelivery(this.distributionCenter);
                 fd._disableMessageToUsers = true;
-                if (this.moreOptions) { 
+                if (this.moreOptions) {
                     if (!this.useFamilyBasket)
                         fd.basketType = this.basketType;
                 }
@@ -151,7 +152,7 @@ export class CreateNewEvent {
         this.distributionCenter = dialog.distCenter;
 
         if (!this.distributionCenter) {
-          //  this.distributionCenter = await DistributionCenters.getDefault(this.context);
+            //  this.distributionCenter = await DistributionCenters.getDefault(this.context);
             if (!this.distributionCenter) {
                 await dialog.Error(getLang(this.context).pleaseSelectDistributionList);
                 return;
@@ -191,7 +192,7 @@ export class CreateNewEvent {
                 }
             },
             cancel: () => { },
-            validate: async () => { 
+            validate: async () => {
 
 
                 let count = await this.context.for(ActiveFamilyDeliveries).count(x => this.cContext.filterDistCenter(x.distributionCenter, this.distributionCenter));

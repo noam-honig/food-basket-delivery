@@ -1,12 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Context } from '@remult/core';
-import { Groups } from '../manage/groups';
+import { Groups, GroupsValue } from '../manage/groups';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { InputField } from '@remult/angular';
-import { GroupsValue } from '../families/families';
+
 
 @Component({
   selector: 'app-update-group-dialog',

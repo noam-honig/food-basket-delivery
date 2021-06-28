@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { AndFilter, Filter, FilterFactories, BackendMethod, SqlDatabase } from '@remult/core';
 
-import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp, GroupsValue } from './families';
+import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
 import { YesNo } from "./YesNo";
 
@@ -43,6 +43,7 @@ import { BasketType } from './BasketType';
 import { use } from '../translate';
 import { ChartType } from 'chart.js';
 import { u } from '../model-shared/UberContext';
+import { GroupsValue } from '../manage/groups';
 
 
 

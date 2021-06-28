@@ -31,6 +31,8 @@ import { routeStrategy } from '../asign-family/route-strategy';
 
 import { ValueListFieldType } from '@remult/core/src/remult3';
 import { u } from '../model-shared/UberContext';
+import { GroupsValue } from './groups';
+
 
 
 @ValueListFieldType(RemovedFromListExcelImportStrategy)
@@ -348,9 +350,9 @@ export class ApplicationSettings extends EntityBase {
   @Field({ includeInApi: Roles.admin })
   createBasketsForAllFamiliesInCreateEvent: boolean;
   @Field({ includeInApi: Roles.admin })
-  includeGroupsInCreateEvent: string;
+  includeGroupsInCreateEvent: GroupsValue;
   @Field({ includeInApi: Roles.admin })
-  excludeGroupsInCreateEvent: string;
+  excludeGroupsInCreateEvent: GroupsValue;
 
 
 

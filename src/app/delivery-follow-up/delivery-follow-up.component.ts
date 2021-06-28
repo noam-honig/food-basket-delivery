@@ -44,8 +44,8 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
-    let h = await this.context.for(Helpers).lookupAsync(h => h.id.isEqualTo(c.id));;
-    if (h.isNew()) {//if there is a row with an invalid helper id - I want it to at least work
+    let h = await this.context.for(Helpers).getCachedByIdAsync(c.id);
+    if (!h) {//if there is a row with an invalid helper id - I want it to at least work
       h.id = c.id;
     }
 
