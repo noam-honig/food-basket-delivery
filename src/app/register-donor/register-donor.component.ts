@@ -46,6 +46,8 @@ $w.onReady(function () {
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
+  static MinQuantity = 10;
+
   constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
 
   showCCMessage(): boolean {
@@ -88,6 +90,11 @@ export class RegisterDonorComponent implements OnInit {
   hasQuantity() {
     return +this.donor.laptop.value > 0 || +this.donor.computer.value > 0 || +this.donor.screen.value > 0;
   }
+  
+  hasEnough() {
+    return this.donor.selfDeliver.value || ((+this.donor.laptop.value) + (+this.donor.computer.value) + (+this.donor.screen.value)) >= RegisterDonorComponent.MinQuantity;
+  }
+  
   async submit() {
 
     if (!this.hasQuantity()) {
@@ -96,6 +103,10 @@ export class RegisterDonorComponent implements OnInit {
     }
     if (!this.hasMandatoryFields()) {
       this.dialog.Error("יש למלא שדות חובה");
+      return;
+    }
+    if (!this.hasEnough()) {
+      this.dialog.Error("לצערינו לא נוכל לאסוף תרומות עם פחות מ-" + RegisterDonorComponent.MinQuantity + " פריטים. נשמח אם תביאו את הציוד אל אחת מנקודות האיסוף שלנו");
       return;
     }
     try {
