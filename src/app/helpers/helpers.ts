@@ -84,7 +84,8 @@ export class HelperId {
             return self.id.isEqualTo("No User");
         else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
             let uContext = u(context);
-            return self.id.isIn([uContext.currentUser.id, uContext.currentUser.theHelperIAmEscorting.id, uContext.currentUser.escort.id])
+            return self.id.isIn([uContext.currentUser, uContext.currentUser.theHelperIAmEscorting, uContext.currentUser.escort].
+                filter(x => !!x).map(x => x.id));
         }
 
     }
@@ -407,7 +408,7 @@ export class Helpers extends HelpersBase {
 
                         return ({
                             ...map,
-                            field: this.$.find(map.field?map.field as any:map)
+                            field: this.$.find(map.field ? map.field as any : map)
                         })
                     });
                     console.log(r);
