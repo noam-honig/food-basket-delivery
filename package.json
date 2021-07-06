@@ -19,8 +19,6 @@
     "publish-to-heroku-test": "git push heroku master -f",
     "publish-to-mlt-test": "git push mlt-test master -f",
     "publish-to-salmaz": "git push salmaz master -f",
-    "publish-to-mshz": "git push mshz master -f",
-    "publish-to-heroku-test-old": "git push hug-moms-old latest-release:master -f",
     "copy-db": "heroku pg:copy hugmoms::DATABASE_URL hugmoms2::DATABASE_URL -a hugmoms2",
     "test": "ng test",
     "lint": "ng lint",
