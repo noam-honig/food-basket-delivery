@@ -479,7 +479,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
           if (rows.length == 200) {
             this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
-            let r = await this.checkExcelInputHelpers(rows, columnsInCompareMemberName);
+            let r = await ImportHelpersFromExcelComponent.checkExcelInputHelpers(rows, columnsInCompareMemberName);
             this.errorRows.push(...r.errorRows);
             this.newRows.push(...r.newRows);
             this.updateRows.push(...r.updateRows);
@@ -489,7 +489,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         }
         if (rows.length > 0) {
 
-          let r = await this.checkExcelInputHelpers(rows, columnsInCompareMemberName);
+          let r = await ImportHelpersFromExcelComponent.checkExcelInputHelpers(rows, columnsInCompareMemberName);
           this.errorRows.push(...r.errorRows);
           this.newRows.push(...r.newRows);
           this.updateRows.push(...r.updateRows);
@@ -544,7 +544,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     return 'טלפון זהה';
   }
   @BackendMethod({ allowed: Roles.admin })
-  async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context) {
+  static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context) {
     let result: serverCheckResults = {
       errorRows: [],
       identicalRows: [],

@@ -402,13 +402,17 @@ export class Helpers extends HelpersBase {
                 this._.undoChanges();
             },
             settings: {
-                fields: () => Helpers.selectColumns(this._.repository.metadata.fields, this.context).map(map => {
+                fields: () => {
+                    let r = Helpers.selectColumns(this._.repository.metadata.fields, this.context).map(map => {
 
-                    return ({
-                        ...map,
-                        field: this.$.find(map.field as any)
-                    })
-                })
+                        return ({
+                            ...map,
+                            field: this.$.find(map.field?map.field as any:map)
+                        })
+                    });
+                    console.log(r);
+                    return r;
+                }
             },
             buttons: [{
                 text: settings.lang.deliveries,

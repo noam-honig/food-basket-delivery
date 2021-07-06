@@ -1041,7 +1041,7 @@ export class ImportFromExcelComponent implements OnInit {
     private async processExcelRowsAndCheckOnServer(rows: excelRowInfo[]) {
         if (this.settings.checkIfFamilyExistsInDb) {
 
-            let r = await this.checkExcelInput(rows, this.columnsInCompareMemberName, this.compareBasketType);
+            let r = await ImportFromExcelComponent.checkExcelInput(rows, this.columnsInCompareMemberName, this.compareBasketType);
             this.errorRows.push(...r.errorRows);
             this.newRows.push(...r.newRows);
             this.updateRows.push(...r.updateRows);
@@ -1088,7 +1088,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, context?: Context, db?: SqlDatabase) {
+    static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, context?: Context, db?: SqlDatabase) {
         let result: serverCheckResults = {
             errorRows: [],
             identicalRows: [],
