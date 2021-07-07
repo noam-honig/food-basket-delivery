@@ -15,31 +15,6 @@ import { ServerMethod } from '@remult/core';
 declare var gtag;
 declare var fbq;
 
-/*
-edit the Wix forms: 
-
-// API Reference: https://www.wix.com/velo/reference/api-overview/introduction
-// “Hello, World!” Example: https://learn-code.wix.com/en/article/1-hello-world
-import wixWindow from 'wix-window';
-
-
-// ...
-
-$w.onReady(function () {
-  // Write your JavaScript here
-  let referrer = wixWindow.referrer;  // "http://somesite.com"
-  //$w('#button4').label = referrer;
-
-  $w('#button4').onClick ( () => {
-    wixWindow.openModal("https://mlt-test.herokuapp.com/mlt/register-donor?refer=" + referrer, {
-              "width": 650, "height": 800} );
-  } );
-  // To select an element by ID use: $w("#elementID")
-
-  // Click "Preview" to run your code
-});
-*/
-
 @Component({
   selector: 'app-register-donor',
   templateUrl: './register-donor.component.html',
@@ -92,7 +67,10 @@ export class RegisterDonorComponent implements OnInit {
   }
   
   hasEnough() {
-    return this.donor.selfDeliver.value || ((+this.donor.laptop.value) + (+this.donor.computer.value) + (+this.donor.screen.value)) >= RegisterDonorComponent.MinQuantity;
+    let total = (this.donor.laptop.value != undefined ? (this.donor.laptop.value) : 0) +
+                (this.donor.computer.value != undefined ? (this.donor.computer.value) : 0) +
+                (this.donor.screen.value != undefined ? (this.donor.screen.value) : 0);
+    return this.donor.selfDeliver.value || total >= RegisterDonorComponent.MinQuantity;
   }
   
   async submit() {
