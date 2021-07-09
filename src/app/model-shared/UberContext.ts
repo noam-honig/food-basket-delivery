@@ -9,7 +9,7 @@ export class UberContext {
     async helperFromJson(id: string): Promise<import("../helpers/helpers").Helpers> {
         if (!id)
             return null;
-        return this.context.for((await import("../helpers/helpers")).Helpers).getCachedByIdAsync(id);
+        return this.context.for((await import("../helpers/helpers")).Helpers).findId(id);
 
     }
     currentUser: import("../helpers/helpers").Helpers

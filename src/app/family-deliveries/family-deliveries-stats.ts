@@ -92,7 +92,7 @@ export class FamilyDeliveryStats {
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-            let b = await context.for(BasketType).lookupAsync(b => b.id.isEqualTo(basketId));
+            let b = await context.for(BasketType).findId(basketId, { createIfNotFound: true });
             result.baskets.push({
                 id: basketId,
                 name: b.name,

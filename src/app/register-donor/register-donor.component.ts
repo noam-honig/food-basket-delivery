@@ -233,7 +233,7 @@ class donorForm {
       if (q > 0) {
         quantity += q;
 
-        await Families.addDelivery(f.id, await self.context.for(BasketType).getCachedByIdAsync(type), null, null, {
+        await Families.addDelivery(f.id, await self.context.for(BasketType).findId(type), null, null, {
           comment: '',
           quantity: q,
           selfPickup: isSelfDeliver,
@@ -253,7 +253,7 @@ class donorForm {
     await addDelivery('מסך', this.screen, this.selfDeliver);
 
     if (quantity == 0) {
-      await Families.addDelivery(f.id, await self.context.for(BasketType).getCachedByIdAsync('לא פורט'), null, null, {
+      await Families.addDelivery(f.id, await self.context.for(BasketType).findId('לא פורט'), null, null, {
         comment: '',
         quantity: 1,
         selfPickup: false

@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/core/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import {  Context, Entity, SqlDatabase } from '@remult/core';
+import { Context, Entity, SqlDatabase } from '@remult/core';
 import '../app-routing.module';
 import '../create-new-event/create-new-event'
 
@@ -123,17 +123,17 @@ export async function serverInit() {
                 for (const entity of <ClassType<any>[]>[
                     ApplicationSettings,
                     ApplicationImages,
-                    Helpers, 
+                    Helpers,
                     SitesEntity,
                     DistributionCenters
                 ]) {
                     await builder.createIfNotExist(context.for(entity).metadata);
                     await builder.verifyAllColumns(context.for(entity).metadata);
                 }
-                
+
             }
             await SitesEntity.completeInit(context);
-            let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
+            let settings = await context.for(ApplicationSettings).findId(1, { createIfNotFound: true });
             if (settings.isNew()) {
                 settings.organisationName = "מערכת חלוקה";
                 settings.id = 1;

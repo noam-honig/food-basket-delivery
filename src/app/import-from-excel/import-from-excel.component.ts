@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity,  BackendMethod, SqlDatabase, EntityWhere, AndFilter,   FieldsMetadata,  EntityMetadata,  FieldMetadata,  FieldRef, EntityBase,  FilterFactory,  FilterFactories, Filter,  getFields } from '@remult/core';
+import { Entity, BackendMethod, SqlDatabase, EntityWhere, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from '@remult/core';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Context } from '@remult/core';
@@ -790,7 +790,7 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.groups.caption,
             updateFamily: async (v, f, h) => {
                 if (v && v.trim().length > 0) {
-                    let g = await this.context.for(Groups).lookupAsync(g => g.name.isEqualTo(v.trim()));
+                    let g = await this.context.for(Groups).findFirst({ createIfNotFound: true, where: g => g.name.isEqualTo(v.trim()) });
                     if (g.isNew())
                         await g.save();
                 }
@@ -1452,7 +1452,7 @@ class columnUpdateHelper {
         getResult: (entity: T) => Y,
         updateResultTo: FieldRef<Y>,
         additionalUpdates?: ((entity: T) => void)) {
-        let x = await this.context.for(c).lookupAsync(e => (getSearchField(e).isEqualTo(val)));
+        let x = await this.context.for(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
         if (x.isNew()) {
             let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
@@ -1520,11 +1520,14 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
     let basketType = await BasketType.fromId(info.basketType, context);
     let distCenter = await DistributionCenters.fromId(info.distCenter, context);
     let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(withFamily));
-    let fd = await context.for(ActiveFamilyDeliveries).lookupAsync(fd => {
-        let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
-        if (compareBasketType)
-            return r.and(fd.basketType.isEqualTo(basketType));
-        return r;
+    let fd = await context.for(ActiveFamilyDeliveries).findFirst({
+        createIfNotFound: true,
+        where: fd => {
+            let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
+            if (compareBasketType)
+                return r.and(fd.basketType.isEqualTo(basketType));
+            return r;
+        }
     });
     for (const columnMemberName of columnsInCompareMemeberName) {
         let upd = info.values[columnMemberName];

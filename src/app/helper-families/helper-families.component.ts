@@ -140,7 +140,7 @@ export class HelperFamiliesComponent implements OnInit {
 
     let sql = new SqlBuilder();
     let settings = await ApplicationSettings.getAsync(context);
-    let privateDonation = selfAssign ? (await context.for(FamilySources).lookupAsync(x => x.name.isEqualTo('תרומה פרטית'))) : null;
+    let privateDonation = selfAssign ? (await context.for(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
 
     for (const r of (await db.execute(sql.query({
       select: () => [
@@ -162,7 +162,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
     }))).rows) {
       let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
-      let basketName = (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name;
+      let basketName = (await context.for(BasketType).findFirst(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name;
       if (existing) {
         existing.name += ", " + getValueFromResult(r, fd.quantity) + " X " + basketName;
         existing.item.totalItems += getValueFromResult(r, fd.quantity);

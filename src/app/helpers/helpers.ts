@@ -113,7 +113,7 @@ export abstract class HelpersBase extends IdEntity {
             })
     }
     getHelper(): Promise<Helpers> {
-        return this.context.for(Helpers).getCachedByIdAsync(this.id);
+        return this.context.for(Helpers).findId(this.id);
     }
     isCurrentUser(): boolean {
         return this.id == this.context.user.id;
@@ -379,7 +379,7 @@ export class Helpers extends HelpersBase {
         if (context.isSignedIn() || gotUser) {
             h = this.helpersCache.get(user.id);
             if (!h) {
-                h = await context.for(Helpers).getCachedByIdAsync(user.id);
+                h = await context.for(Helpers).findId(user.id);
                 this.helpersCache.set(user.id, h);
             }
             await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers

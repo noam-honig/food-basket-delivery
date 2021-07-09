@@ -280,7 +280,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
           deliveries: [{
             basketTypeId: getValueFromResult(r, fd.basketType),
             quantity: getValueFromResult(r, fd.quantity),
-            basketTypeName: (await context.for(BasketType).lookupAsync(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name,
+            basketTypeName: (await context.for(BasketType).findId(getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
             id: getValueFromResult(r, fd.id)
 
           }],

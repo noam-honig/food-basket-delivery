@@ -49,7 +49,7 @@ export class DistributionCenters extends IdEntity {
   }
   static async fromId(distCenter: string, context: Context) {
     if (distCenter != null)
-      return await context.for(DistributionCenters).getCachedByIdAsync(distCenter);
+      return await context.for(DistributionCenters).findId(distCenter);
   }
   static toId(distCenter: DistributionCenters) {
     return distCenter ? distCenter.id : null;

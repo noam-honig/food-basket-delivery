@@ -35,7 +35,7 @@ import { DataControl, getValueList } from '@remult/angular';
 })
 export class BasketType extends IdEntity {
   static async fromId(id: string, context: Context) {
-    return id === undefined ? null : await context.for(BasketType).getCachedByIdAsync(id);
+    return id === undefined ? null : await context.for(BasketType).findId(id);
   }
 
 

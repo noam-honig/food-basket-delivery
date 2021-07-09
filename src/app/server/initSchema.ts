@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import {  SqlDatabase, FieldMetadata, Context } from '@remult/core';
+import { SqlDatabase, FieldMetadata, Context } from '@remult/core';
 //import '../app.module';
 
 //
@@ -37,7 +37,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     var fd = SqlFor(context.for(FamilyDeliveries));
 
-//
+    //
 
     if ((await context.for(BasketType).count() == 0)) {
         let h = context.for(BasketType).create();
@@ -58,7 +58,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await ff.save();
     });*/
 
-    let settings = await context.for(ApplicationSettings).lookupAsync(s => s.id.isEqualTo(1));
+    let settings = await context.for(ApplicationSettings).findId(1, { createIfNotFound: true });
     let l = getLang(context);
     if (settings.isNew()) {
         settings.id = 1;
@@ -424,14 +424,14 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     });
     await version(31, async () => {
-    //    await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
+        //    await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
 
     });
     await version(32, async () => {
-      //  await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
+        //  await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
     });
     await version(33, async () => {
-     //   await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [sql.build(fd.courier, " is null")] }));
+        //   await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [sql.build(fd.courier, " is null")] }));
     });
     await version(34, async () => {
         //await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " set not null"));

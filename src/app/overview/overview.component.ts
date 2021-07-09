@@ -266,8 +266,8 @@ export class OverviewComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.overview })
   static async validateNewSchema(id: string, context?: Context) {
-    let x = await context.for(SitesEntity).lookupAsync(x => x.id.isEqualTo(id));
-    if (!x.isNew()) {
+    let x = await context.for(SitesEntity).findId(id);
+    if (!x) {
       return "מזהה כבר קיים";
     }
     let invalidSchemaName = ['admin', 'guest', 'public', 'select'];

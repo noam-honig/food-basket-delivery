@@ -79,7 +79,7 @@ import { u } from "../model-shared/UberContext";
 })
 export class InRouteHelpers extends IdEntity {
     async helper() {
-        return this.context.for(Helpers).getCachedByIdAsync(this.id);
+        return this.context.for(Helpers).findId(this.id);
     }
     async showHistory() {
         let h = await this.helper();

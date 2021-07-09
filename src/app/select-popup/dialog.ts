@@ -140,7 +140,7 @@ export class DialogService {
         this.dc = undefined;
 
         if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
-            this.context.for(DistributionCenters).lookupAsync(x => x.id.isEqualTo((<HelperUserInfo>this.context.user).distributionCenter)).then(x => this.dc = x);
+            this.context.for(DistributionCenters).findId((<HelperUserInfo>this.context.user).distributionCenter).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
             this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });
