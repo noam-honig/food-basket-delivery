@@ -84,7 +84,7 @@ export class FamilyDeliveries extends IdEntity {
     name = new StringColumn({
         allowApiUpdate: false,
         caption: getLang(this.context).familyName,
-        sqlExpression: this.context.isAllowed(Roles.admin) || !getSettings(this.context).showOnlyLastNamePartToVolunteer.value ? undefined : "regexp_replace(name, '^.* ', '')"
+        sqlExpression: this.context.isAllowed(Roles.distCenterAdmin) || !getSettings(this.context).showOnlyLastNamePartToVolunteer.value ? undefined : "regexp_replace(name, '^.* ', '')"
     });
     basketType = new BasketId(this.context, {
         caption: getLang(this.context).basketType,
