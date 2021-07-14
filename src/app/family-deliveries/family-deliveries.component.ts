@@ -886,9 +886,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       icon: 'list_alt',
       showInLine: true,
       click: async d => {
-        let h = await args.context.for(Helpers).findId(d.courier);
+        
         await openDialog(
-          (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = h);
+          (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = d.courier);
         args.refresh();
 
 
