@@ -46,8 +46,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   })
   confirmPassword: string;
   @Field({
-    translation: l => l.IConfirmEula,
-    inputType: InputTypes.password
+    translation: l => l.IConfirmEula
   })
   confirmEula: boolean;
   @Field({ translation: l => l.volunteerName })
