@@ -110,7 +110,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   @ViewChild('addressInput', { static: false }) addressInput: AddressInputComponent;
 
   async sendSmsToCourier() {
-    let h = await this.context.for(Helpers).findId(this.args.familyDelivery.courier);
+    let h = this.args.familyDelivery.courier;
 
     await openDialog(GetVolunteerFeedback, x => x.args = {
       helpText: () => '',

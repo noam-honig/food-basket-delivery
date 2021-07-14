@@ -130,7 +130,7 @@ export class Event extends IdEntity {
                         name: getLang(this.context).assignDeliveryMenu,
                         icon: 'list_alt',
                         click: async (ev) => {
-                            let h = await this.context.for(Helpers).findId(ev.helper);
+                            let h = await ev.helper.getHelper();
                             await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
                             ev.save();
                         }
@@ -139,7 +139,7 @@ export class Event extends IdEntity {
                         name: getLang(this.context).volunteerInfo,
                         icon: 'edit',
                         click: async (ev) => {
-                            let h = await this.context.for(Helpers).findId(ev.helper);
+                            let h = await ev.helper.getHelper();
                             await h.displayEditDialog(dialog, busy)
                         }
                     },

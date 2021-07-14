@@ -394,8 +394,7 @@ export class PhoneOption {
   });
   static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
     if (args.family.fixedCourier && args.d.courier != args.family.fixedCourier) {
-      let h = await args.context.for((await import('../helpers/helpers')).Helpers).findId(args.family.fixedCourier);
-      args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name, h.phone.displayValue);
+      args.addPhone(getLang(args.context).defaultVolunteer + ": " + args.family.fixedCourier.name, args.family.fixedCourier.phone.displayValue);
     }
   });
 

@@ -788,7 +788,7 @@ export interface deliveryButtonsHelper {
   showAllBeforeNew?: boolean
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
-  let cContext= u(args.context);
+  let cContext = u(args.context);
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.context.for(Families).findId(d.family);
 
@@ -886,7 +886,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       icon: 'list_alt',
       showInLine: true,
       click: async d => {
-        
+
         await openDialog(
           (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = d.courier);
         args.refresh();
@@ -901,7 +901,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
 
       click: async d => {
-        let h = await args.context.for(Helpers).findId(d.courier);
+        let h = await d.courier.getHelper();
         h.displayEditDialog(args.dialog, args.busy);
 
 
