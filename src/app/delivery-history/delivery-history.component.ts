@@ -369,7 +369,7 @@ export class DeliveryHistoryComponent implements OnInit {
           ' from ', fd,
           ' where ', sql.and(r))
 
-        + sql.build(' group by ', fd.courier), ") x");
+        +await  sql.build(' group by ', fd.courier), ") x");
 
     return (await db.execute(queryText)).rows;
 
