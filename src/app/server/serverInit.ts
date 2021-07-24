@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/server-postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { ServerContext, Context, Entity, SqlDatabase } from '@remult/core';
+import { ServerContext, Context, Entity, SqlDatabase,iterateConfig } from '@remult/core';
 import '../app.module';
 
 
@@ -22,6 +22,7 @@ import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 
 declare const lang = '';
+iterateConfig.pageSize=100;
 
 export async function serverInit() {
     try {
