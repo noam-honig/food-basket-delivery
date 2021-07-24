@@ -490,7 +490,7 @@ export class ManageComponent implements OnInit {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage);
   }
-  onFileChange(id: string, column: FieldRef<string>) {
+  onFileChange(id: string, column: FieldRef<any,string>) {
     const inputNode: any = document.querySelector('#' + id);
 
     if (typeof (FileReader) !== 'undefined') {

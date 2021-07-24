@@ -12,7 +12,7 @@ import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from
 })
 export class AddressInputComponent implements AfterViewInit {
 
-  @Input() field: FieldRef<string>;
+  @Input() field: FieldRef<any, string>;
   @Input() autoInit: boolean = false;
   @Input() caption: string;
   constructor(private settings: ApplicationSettings, private zone: NgZone) { }
