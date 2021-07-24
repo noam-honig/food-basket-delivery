@@ -4,7 +4,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { DialogConfig } from '@remult/angular';
 
 @Component({

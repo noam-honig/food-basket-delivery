@@ -5,7 +5,7 @@ import { DialogService, extractError } from "../select-popup/dialog";
 import {  HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
-import { BackendMethod, Context, UserInfo } from '@remult/core';
+import { Allow, BackendMethod, Context, UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 
@@ -140,7 +140,7 @@ export class AuthService {
         }
 
 
-        if (!settings.currentUserIsValidForAppLoadTest && this.context.isSignedIn()) {
+        if (!settings.currentUserIsValidForAppLoadTest && this.context.authenticated()) {
             this.signout();
         }
         if (dialog)
@@ -154,7 +154,7 @@ export class AuthService {
         this.inactiveTimeout();
         this.serverTokenRenewal();
         this.userInactive.subscribe(() => {
-            if (this.context.isSignedIn()) {
+            if (this.context.authenticated()) {
                 this.dialog.Error(this.settings.lang.sessionExpiredPleaseRelogin);
                 this.signout();
 
@@ -325,7 +325,7 @@ export class AuthService {
     }
     async serverTokenRenewal() {
         if (this.settings.timeToDisconnect > 0) {
-            if (this.context.isSignedIn())
+            if (this.context.authenticated())
                 try {
                     let r = await AuthService.renewToken();
                     if (!r)
@@ -343,9 +343,9 @@ export class AuthService {
             }, this.settings.timeToDisconnect * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
         }
     }
-    @BackendMethod({ allowed: c => c.isSignedIn() })
+    @BackendMethod({ allowed: Allow.authenticated })
     static async renewToken(context?: Context) {
-        if (!context.isSignedIn())
+        if (!context.authenticated())
             return undefined;
         let h = await context.for(Helpers).findId(context.user.id);
         if (!h)

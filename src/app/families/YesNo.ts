@@ -1,6 +1,6 @@
 
 import { DataControl } from '@remult/angular';
-import { ValueListFieldType } from '@remult/core/src/remult3';
+import { ValueListFieldType } from 'remult/src/remult3';
 
 @DataControl({ width: '100' })
 @ValueListFieldType(YesNo)

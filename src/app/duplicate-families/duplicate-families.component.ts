@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendMethod, Context, SqlDatabase, FieldMetadata, EntityWhere, getFields } from '@remult/core';
+import { BackendMethod, Context, SqlDatabase, FieldMetadata, EntityWhere, getFields } from 'remult';
 import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -112,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere:()=> x.args.settings.getFilterWithSelectedRows().where ,
+              userWhere: () => x.args.settings.getFilterWithSelectedRows().where,
               settings: this.settings
             }))
           , {
@@ -176,9 +176,9 @@ export class DuplicateFamiliesComponent implements OnInit {
   static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, context?: Context, db?: SqlDatabase) {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";
-    let sql = new SqlBuilder();
-    let f = SqlFor(context.for(Families));
-    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+    let sql = new SqlBuilder(context);
+    let f = await SqlFor(context.for(Families));
+    let fd = await SqlFor(context.for(ActiveFamilyDeliveries));
     let q = '';
     for (const tz of [f.tz, f.tz2]) {
       for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {
@@ -186,7 +186,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           q += '\r\n union all \r\n';
 
         }
-        q += sql.query({
+        q += await sql.query({
           select: () => [
             sql.columnWithAlias(f.addressLatitude, 'lat'),
             sql.columnWithAlias(f.addressLongitude, 'lng'),
@@ -225,15 +225,15 @@ export class DuplicateFamiliesComponent implements OnInit {
     if (compare.name) {
       groupBy.push('name');
     }
-    q = sql.build('select ', [
+    q =await  sql.build('select ', [
       sql.columnWithAlias(sql.max('address'), 'address'),
       sql.columnWithAlias(sql.max('name'), '"name"'),
       sql.columnWithAlias(sql.max('tz'), 'tz'),
       sql.columnWithAlias(sql.max('phone'), 'phone'), 'count (distinct id) c', "string_agg(id::text, ',') ids"], ' from ('
       , q, ') as result');
     if (where.length > 0)
-      q += ' where ' + sql.and(...where);
-    q += ' group by ' + sql.build([groupBy]);
+      q += ' where ' + await sql.and(...where);
+    q += ' group by ' +await sql.build([groupBy]);
     q += ' having count(distinct id)>1';
 
 

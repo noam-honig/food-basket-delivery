@@ -3,7 +3,7 @@ import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
 import { RouteHelperService } from '@remult/angular';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 
 import { HelperId, Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

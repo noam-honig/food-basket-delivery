@@ -1,22 +1,23 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { AndFilter, BackendMethod, SqlDatabase } from '@remult/core';
+import { AndFilter, BackendMethod, SqlDatabase } from 'remult';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 
 import { BusyService, openDialog } from '@remult/angular';
-import { Filter } from '@remult/core';
+import { Filter } from 'remult';
 import { HelperId, Helpers } from '../helpers/helpers';
 
 
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
-import { SqlBuilder, relativeDateName, SqlFor } from '../model-shared/types';
+import { relativeDateName } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -167,12 +168,12 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async helpersStatus(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
-    let fd = SqlFor(context.for(FamilyDeliveries));
+    let fd = await SqlFor(context.for(FamilyDeliveries));
 
-    let h = SqlFor(context.for(Helpers));
-    var sql = new SqlBuilder();
+    let h = await SqlFor(context.for(Helpers));
+    var sql = new SqlBuilder(context);
     sql.addEntity(fd, 'fd');
-    let r = await db.execute(log(sql.build(sql.query({
+    let r = await db.execute(log(await sql.build((await sql.query({
       from: fd,
       outerJoin: () => [{ to: h, on: () => [sql.eq(fd.courier, h.id)] }],
       select: () => [
@@ -190,7 +191,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       ],
       where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(u(context).filterDistCenter(fd.distributionCenter, distCenter))],
 
-    }).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
+    })).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {
       let smsDate = r['smsdate'];
       let maxAsign = r['maxasign'];

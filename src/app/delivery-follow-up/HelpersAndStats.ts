@@ -1,10 +1,11 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Entity } from '@remult/core';
+import { Entity } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 
 
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang } from '../sites/sites';
@@ -24,12 +25,12 @@ function log(s: string) {
     key: "helpersAndStats",
     allowApiRead: Roles.distCenterAdmin,
 
-    dbName: (self, context) => {
+    dbName: async (self, context) => {
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries).metadata);
+        let f = await SqlFor(context.for(ActiveFamilyDeliveries).metadata);
 
-        let h = SqlFor(context.for(Helpers).metadata);
-        var sql = new SqlBuilder();
+        let h = await SqlFor(context.for(Helpers).metadata);
+        var sql = new SqlBuilder(context);
 
         let helperFamilies = (where: () => any[]) => {
             return {

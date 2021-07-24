@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, EntityBase, getFields } from '@remult/core';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { Context, SqlDatabase, EntityBase, getFields } from 'remult';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { InMemoryDataProvider, Entity } from '@remult/core';
+import { InMemoryDataProvider, Entity } from 'remult';
 import { sortColumns } from '../shared/utils';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 
@@ -14,7 +14,7 @@ import { Route } from '@angular/router';
 import { saveToExcel } from '../shared/saveToExcel';
 import { BusyService, DataAreaSettings, DataControlInfo, GridSettings, InputField, openDialog } from '@remult/angular';
 
-import { BackendMethod } from '@remult/core';
+import { BackendMethod } from 'remult';
 import { Roles, AdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -188,7 +188,8 @@ export class DeliveryHistoryComponent implements OnInit {
   private async refreshHelpers() {
 
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
-    let rows: any[] = this.helperStorage.rows[this.context.for(helperHistoryInfo).metadata.dbName];
+
+    let rows: any[] = this.helperStorage.rows[(await this.context.for(helperHistoryInfo).metadata.getDbName())];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -314,15 +315,15 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
     toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-    var sql = new SqlBuilder();
-    var fd = SqlFor(context.for(FamilyDeliveries));
+    var sql = new SqlBuilder(context);
+    var fd =await  SqlFor(context.for(FamilyDeliveries));
 
-    var h = SqlFor(context.for(Helpers));
-    var hg = SqlFor(context.for(HelperGifts));
+    var h =await  SqlFor(context.for(Helpers));
+    var hg =await  SqlFor(context.for(HelperGifts));
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(
-      fd.deliveryStatusDate.isLessThan(toDate)).and(u(context). filterDistCenter(fd.distributionCenter, distCenter));
+      fd.deliveryStatusDate.isLessThan(toDate)).and(u(context).filterDistCenter(fd.distributionCenter, distCenter));
     if (onlyDone)
       r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
     if (onlyArchived)
@@ -330,35 +331,35 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
     let queryText =
-      sql.build("select ", [
-        fd.courier.dbName,
+      await sql.build("select ", [
+        fd.courier.getDbName(),
         sql.columnInnerSelect(fd, {
           select: () => [h.name],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.dbName)]
+          where: () => [sql.build(h.id, "=", fd.courier.getDbName())]
         }),
         sql.columnInnerSelect(fd, {
           select: () => [h.company],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.dbName)]
+          where: () => [sql.build(h.id, "=", fd.courier.getDbName())]
         }),
         sql.columnInnerSelect(fd, {
           select: () => [h.phone],
           from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.dbName)]
+          where: () => [sql.build(h.id, "=", fd.courier.getDbName())]
         }),
         sql.columnInnerSelect(hg, {
           select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, true), ' then 1 else 0 end) consumed')],
           from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.dbName)]
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.getDbName())]
         }),
         sql.columnInnerSelect(hg, {
           select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, false), ' then 1 else 0 end) pending')],
           from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.dbName)]
+          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.getDbName())]
         })
         , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
-        sql.build("select ", [
+        await sql.build("select ", [
           fd.courier,
           "count(*) deliveries",
           sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),

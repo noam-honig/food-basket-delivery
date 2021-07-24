@@ -1,10 +1,10 @@
 
 import { Pool, QueryResult } from 'pg';
 import { config } from 'dotenv';
-import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from '@remult/core/postgres';
+import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from 'remult/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { Context, Entity, SqlDatabase } from '@remult/core';
+import { Context, Entity, SqlDatabase } from 'remult';
 import '../app-routing.module';
 import '../create-new-event/create-new-event'
 
@@ -15,14 +15,15 @@ import { Helpers } from '../helpers/helpers';
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
 import { OverviewComponent } from '../overview/overview.component';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
 import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { ClassType } from '@remult/core/classType';
+import { ClassType } from 'remult/classType';
 
 declare const lang = '';
 export const initSettings = {
@@ -127,6 +128,7 @@ export async function serverInit() {
                     SitesEntity,
                     DistributionCenters
                 ]) {
+
                     await builder.createIfNotExist(context.for(entity).metadata);
                     await builder.verifyAllColumns(context.for(entity).metadata);
                 }
@@ -183,9 +185,9 @@ export async function serverInit() {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let context = new Context();
-                    let h = SqlFor(context.for(Helpers));
-                    var sql = new SqlBuilder();
-                    let r = (await db.execute(sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
+                    let h =await  SqlFor(context.for(Helpers));
+                    var sql = new SqlBuilder(context);
+                    let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];
                     if (!d)
                         d = new Date(1900, 1, 1);

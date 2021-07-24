@@ -1,11 +1,11 @@
-import { Context, Filter, FilterFactory } from '@remult/core';
+import { Context, Filter, FilterFactory } from 'remult';
 
 import { use, ValueListFieldType } from '../translate';
 
 import { getSettings } from '../manage/ApplicationSettings';
 
 import { DataControl } from '@remult/angular';
-import { ValueListValueConverter } from '@remult/core/valueConverters';
+import { ValueListValueConverter } from 'remult/valueConverters';
 
 
 @DataControl({

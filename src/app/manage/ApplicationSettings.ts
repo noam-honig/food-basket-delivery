@@ -1,4 +1,4 @@
-import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata } from '@remult/core';
+import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata, Allow } from 'remult';
 import { DataControl } from '@remult/angular';
 export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowed) {
   return (target, key) => {
@@ -14,7 +14,7 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
 }
 
 import { GeocodeInformation, GetGeoInformation, AddressHelper } from "../shared/googleApiHelpers";
-import { Entity, Context } from '@remult/core';
+import { Entity, Context } from 'remult';
 import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
@@ -29,7 +29,7 @@ import { HttpClient } from '@angular/common/http';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
 
-import { ValueListFieldType } from '@remult/core/src/remult3';
+import { ValueListFieldType } from 'remult/src/remult3';
 import { u } from '../model-shared/UberContext';
 import { GroupsValue } from './groups';
 
@@ -87,7 +87,7 @@ export class ApplicationSettings extends EntityBase {
   }
 
   lang = getLang(this.context);
-  @BackendMethod({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: Allow.authenticated })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
     let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(u(context).isAllowedForUser(fd)));
@@ -329,7 +329,7 @@ export class ApplicationSettings extends EntityBase {
   familyCustom4Caption: string;
   @Field({ translation: l => l.customColumn + " 4 " + l.optionalValues, includeInApi: Roles.admin })
   familyCustom4Values: string;
-  @Field<ApplicationSettings>({ serverExpression: (self) => self.context.isSignedIn() })
+  @Field<ApplicationSettings>({ serverExpression: (self) => self.context.authenticated() })
   currentUserIsValidForAppLoadTest: boolean;
   @Field({ translation: l => l.questionForVolunteer + " 1 " + l.caption })
   questionForVolunteer1Caption: string;
@@ -394,7 +394,8 @@ export class PhoneOption {
   });
   static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
     if (args.family.fixedCourier && args.d.courier != args.family.fixedCourier) {
-      args.addPhone(getLang(args.context).defaultVolunteer + ": " + args.family.fixedCourier.name, args.family.fixedCourier.phone.displayValue);
+      let h = await args.family.fixedCourier;
+      args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name, h.phone.displayValue);
     }
   });
 
@@ -509,10 +510,10 @@ export function getSettings(context: Context) {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
-  if (context.backend) {
+  //if (context.backend) {
     return new ApplicationSettings(context);
     throw "can't find application settings on server for this request";
-  }
+  
   return ApplicationSettings.get(context);;
 }
 

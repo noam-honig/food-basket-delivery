@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, BackendMethod, SqlDatabase, AndFilter, FieldRef, FilterFactories } from '@remult/core';
+import { UrlBuilder, Filter, BackendMethod, SqlDatabase, AndFilter, FieldRef, FilterFactories, Allow } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -16,12 +16,13 @@ import { foreachSync, PromiseThrottle } from '../shared/utils';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 
 
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 
 import { BasketType } from '../families/BasketType';
 
 
-import { SqlBuilder, SqlDefs, SqlFor } from '../model-shared/types';
+
+import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { BusyService, DataAreaSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
@@ -369,7 +370,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
 
-    filterOptions: FieldRef<boolean>[] = [];
+    filterOptions: FieldRef<any, boolean>[] = [];
     async ngOnInit() {
 
 
@@ -511,11 +512,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes));
 
 
-        let sql = new SqlBuilder();
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
-        let fd = SqlFor(context.for(FamilyDeliveries));
+        let sql = new SqlBuilder(context);
+        let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+        let fd = await SqlFor(context.for(FamilyDeliveries));
         if (helper) {
-            let r = await db.execute(sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(cContext.filterDistCenter(f.distributionCenter, distCenter)).and(cContext.readyFilter(f, info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
+            let r = await db.execute(await sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(cContext.filterDistCenter(f.distributionCenter, distCenter)).and(cContext.readyFilter(f, info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
                 filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
@@ -558,7 +559,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
             }
         }
-        let groupBy = (await db.execute(sql.build(sql.query({
+        let groupBy = (await db.execute(await sql.build(await sql.query({
             select: () => [
                 sql.columnWithAlias(f.area, 'area'),
                 sql.columnWithAlias(sql.func('count ', '*'), 'c')
@@ -576,7 +577,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
 
-        let baskets = await db.execute(sql.build(sql.query({
+        let baskets = await db.execute(await sql.build(sql.query({
             select: () => [f.basketType,
             sql.build('count (', f.quantity, ') b'),
             ],
@@ -599,7 +600,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         return result;
     }
-    @BackendMethod({ allowed: c => c.isSignedIn(), blockUser: false })
+    @BackendMethod({ allowed: Allow.authenticated, blockUser: false })
     static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy, context?: Context) {
 
         if (!context.isAllowed(Roles.distCenterAdmin)) {
@@ -738,18 +739,18 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             if (locationReferenceFamilies.length > 0 && info.preferRepeatFamilies && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
             }
-            let f = SqlFor(context.for(ActiveFamilyDeliveries));
-            let sql = new SqlBuilder();
+            let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+            let sql = new SqlBuilder(context);
             sql.addEntity(f, 'Families');
-            let r = (await db.execute(sql.query({
+            let r = (await db.execute(await sql.query({
                 select: () => [sql.build('distinct ', [f.addressLatitude, f.addressLongitude])],
                 from: f,
-                where: () => {
+                where: async () => {
                     let where = buildWhere(f);
                     let res = [];
                     res.push(where);
                     if (info.preferRepeatFamilies)
-                        res.push(filterRepeatFamilies(sql, f, SqlFor(context.for(FamilyDeliveries)), helper));
+                        res.push(filterRepeatFamilies(sql, f, await SqlFor(context.for(FamilyDeliveries)), helper));
                     return res;
                 }
             })));
@@ -1062,7 +1063,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         item: r
                     }))
                     , onSelect: async r => {
-                        let q = new InputField<number>({ dataType: Number, caption: this.settings.lang.quantity });
+                        let q = new InputField<number>({ valueType: Number, caption: this.settings.lang.quantity });
                         q.value = r.item.quantity;
                         await openDialog(InputAreaComponent, x => x.args = {
                             settings: {
@@ -1091,10 +1092,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         context?: Context,
         db?: SqlDatabase
     ) {
-        var sql = new SqlBuilder();
-        var fd = SqlFor(context.for(ActiveFamilyDeliveries));
+        var sql = new SqlBuilder(context);
+        var fd = await SqlFor(context.for(ActiveFamilyDeliveries));
 
-        let result = await db.execute(sql.query({
+        let result = await db.execute(await sql.query({
             from: fd,
             select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
             where: () => [u(context).filterDistCenter(fd.distributionCenter, distCenter),

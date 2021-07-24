@@ -1,6 +1,6 @@
 //import('nodemailer');
 import { EmailSvc } from '../shared/utils';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 
 EmailSvc.sendMail = async (subject: string, message: string, email: string, context: Context) => {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, AndFilter, FieldsMetadata } from '@remult/core';
+import { Context, AndFilter, FieldsMetadata } from 'remult';
 import { BusyService, GridSettings, InputField, openDialog } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -15,7 +15,7 @@ import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
-import { DateOnlyValueConverter } from '@remult/core/valueConverters';
+import { DateOnlyValueConverter } from 'remult/valueConverters';
 
 @Component({
   selector: 'app-events',

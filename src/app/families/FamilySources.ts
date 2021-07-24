@@ -1,7 +1,7 @@
 import { Phone } from "../model-shared/phone";
 
 
-import { Context, IdEntity, Entity } from '@remult/core';
+import { Context, IdEntity, Entity, Allow } from 'remult';
 import { Roles } from "../auth/roles";
 
 import { DataControl, getValueList } from "@remult/angular";
@@ -19,7 +19,7 @@ import { use, Field, FieldType } from "../translate";
 })
 @Entity<FamilySources>({
   key: "FamilySources",
-  allowApiRead: context => context.isSignedIn(),
+  allowApiRead: Allow.authenticated,
   allowApiCrud: Roles.admin,
   defaultOrderBy: self => self.name
 })

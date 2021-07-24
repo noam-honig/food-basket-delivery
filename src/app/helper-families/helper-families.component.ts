@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BackendMethod,  SqlDatabase, FieldRef } from '@remult/core';
+import { BackendMethod,  SqlDatabase, FieldRef, Allow } from 'remult';
 import { BusyService, DataAreaSettings, GridButton, InputField, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -11,7 +11,7 @@ import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 
 import { use, TranslationOptions } from '../translate';
 import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
@@ -25,7 +25,8 @@ import { Families } from '../families/families';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { SqlBuilder, getValueFromResult, SqlFor, relativeDateName } from '../model-shared/types';
+import {  relativeDateName } from '../model-shared/types';
+import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
@@ -101,7 +102,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   async refreshRoute() {
     var useCurrentLocation = new InputField<boolean>({ caption: use.language.useCurrentLocationForStart });
-    var strategy = new InputField<routeStrategy>({ dataType: routeStrategy });
+    var strategy = new InputField<routeStrategy>({ valueType: routeStrategy });
     strategy.value = this.settings.routeStrategy;
 
     await openDialog(InputAreaComponent, x => x.args = {
@@ -136,13 +137,13 @@ export class HelperFamiliesComponent implements OnInit {
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd =await SqlFor(context.for(ActiveFamilyDeliveries));
 
-    let sql = new SqlBuilder();
+    let sql = new SqlBuilder(context);
     let settings = await ApplicationSettings.getAsync(context);
     let privateDonation = selfAssign ? (await context.for(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
 
-    for (const r of (await db.execute(sql.query({
+    for (const r of (await db.execute(await sql.query({
       select: () => [
         fd.addressLatitude,
         fd.addressLongitude,
@@ -161,37 +162,37 @@ export class HelperFamiliesComponent implements OnInit {
         }
       }
     }))).rows) {
-      let existing = result.find(x => x.item.familyId == getValueFromResult(r, fd.family));
-      let basketName = (await context.for(BasketType).findFirst(x => x.id.isEqualTo(getValueFromResult(r, fd.basketType)))).name;
+      let existing = result.find(async x => x.item.familyId == await getValueFromResult(r, fd.family));
+      let basketName = (await context.for(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
       if (existing) {
-        existing.name += ", " + getValueFromResult(r, fd.quantity) + " X " + basketName;
-        existing.item.totalItems += getValueFromResult(r, fd.quantity);
-        existing.item.ids.push(getValueFromResult(r, fd.id));
+        existing.name += ", " + await getValueFromResult(r, fd.quantity) + " X " + basketName;
+        existing.item.totalItems += await getValueFromResult(r, fd.quantity);
+        existing.item.ids.push(await getValueFromResult(r, fd.id));
 
       }
       else {
         let loc: Location = {
-          lat: +getValueFromResult(r, fd.addressLatitude),
-          lng: +getValueFromResult(r, fd.addressLongitude)
+          lat: +await getValueFromResult(r, fd.addressLatitude),
+          lng: +await getValueFromResult(r, fd.addressLongitude)
         };
         let dist = GetDistanceBetween(pivotLocation, loc);
         let myItem: DeliveryInList = {
 
-          city: getValueFromResult(r, fd.city),
-          floor: getValueFromResult(r, fd.floor),
+          city: await getValueFromResult(r, fd.city),
+          floor: await getValueFromResult(r, fd.floor),
 
-          ids: [getValueFromResult(r, fd.id)],
-          familyId: getValueFromResult(r, fd.family),
+          ids: [await getValueFromResult(r, fd.id)],
+          familyId: await getValueFromResult(r, fd.family),
           location: loc,
           distance: dist,
-          totalItems: getValueFromResult(r, fd.quantity)
+          totalItems: await getValueFromResult(r, fd.quantity)
         };
         let itemString: string =
           myItem.distance.toFixed(1) + use.language.km +
           (myItem.city ? ' (' + myItem.city + ')' : '') +
           (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
           ' : ' +
-          getValueFromResult(r, fd.quantity) + ' x ' + basketName;
+          await getValueFromResult(r, fd.quantity) + ' x ' + basketName;
 
         result.push({
           selected: false,
@@ -398,7 +399,7 @@ export class HelperFamiliesComponent implements OnInit {
   async leftThere(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
-  @BackendMethod({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: Allow.authenticated })
   static async sendSuccessMessageToFamily(deliveryId: string, context?: Context) {
     var settings = getSettings(context);
     if (!settings.allowSendSuccessMessageOption)

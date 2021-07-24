@@ -1,7 +1,7 @@
-import { BackendMethod, FilterFactories } from '@remult/core';
-import { Filter } from '@remult/core';
+import { BackendMethod, FilterFactories } from 'remult';
+import { Filter } from 'remult';
 import { Families } from "./families";
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { BasketInfo } from "../asign-family/asign-family.component";
 
 import { Roles } from "../auth/roles";

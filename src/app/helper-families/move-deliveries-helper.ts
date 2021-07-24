@@ -1,7 +1,7 @@
 import { HelpersBase, Helpers, HelperId } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { Context, BackendMethod } from "@remult/core";
+import { Context, BackendMethod } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FieldMetadata, FieldsMetadata, Entity, FieldRef, BackendMethod } from '@remult/core';
-import { Context } from '@remult/core';
+import { FieldMetadata, FieldsMetadata, Entity, FieldRef, BackendMethod } from 'remult';
+import { Context } from 'remult';
 
 
 

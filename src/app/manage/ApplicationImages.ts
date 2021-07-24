@@ -1,5 +1,5 @@
 
-import { Entity, Context, EntityBase, Field } from '@remult/core';
+import { Entity, Context, EntityBase, Field } from 'remult';
 import { Roles } from '../auth/roles';
 @Entity({
   key: 'ApplicationImages',

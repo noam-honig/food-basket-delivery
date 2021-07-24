@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity, BackendMethod, SqlDatabase, EntityWhere, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from '@remult/core';
+import { Entity, BackendMethod, SqlDatabase, EntityWhere, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from 'remult';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { HelperId, Helpers, HelperUserInfo } from '../helpers/helpers';
 import { Phone } from "../model-shared/phone";
 
@@ -1450,7 +1450,7 @@ class columnUpdateHelper {
         getSearchField: ((entity: FilterFactories<T>) => FilterFactory<dataType>),
         val: dataType,
         getResult: (entity: T) => Y,
-        updateResultTo: FieldRef<Y>,
+        updateResultTo: FieldRef<any,Y>,
         additionalUpdates?: ((entity: T) => void)) {
         let x = await this.context.for(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
         if (x.isNew()) {

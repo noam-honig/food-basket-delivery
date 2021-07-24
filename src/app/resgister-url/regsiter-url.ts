@@ -1,6 +1,6 @@
-import { FieldMetadata, Context, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "@remult/core";
+import { FieldMetadata, Context, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "remult";
 import { Roles } from "../auth/roles";
-import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/types";
+import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "../helpers/helpers";
 import { Families } from "../families/families";
 import { Field } from '../translate';
@@ -28,15 +28,15 @@ export class RegisterURL extends IdEntity {
     @BackendMethod({ allowed: Roles.admin })
     static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
 
-        let h = SqlFor(context.for(Helpers));
-        let f = SqlFor(context.for(Families));
-        let u = SqlFor(context.for(RegisterURL));
-        let sql = new SqlBuilder();
+        let h = await SqlFor(context.for(Helpers));
+        let f = await SqlFor(context.for(Families));
+        let u = await SqlFor(context.for(RegisterURL));
+        let sql = new SqlBuilder(context);
         let urls = [];
 
         async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldMetadata) {
-            let q = sql.query({
-                select: () => [sql.build('distinct ', urlDbOperator(field.dbName), ' as url')],
+            let q =await sql.query({
+                select:async () => [sql.build('distinct ', urlDbOperator(await field.getDbName()), ' as url')],
                 from: table,
                 outerJoin: () => [{ to: u, on: () => [sql.build(field, ' like textcat(textcat(\'%\',', u.URL, '),\'%\')')] }],
                 where: () => [sql.build(u.URL, ' is null')]

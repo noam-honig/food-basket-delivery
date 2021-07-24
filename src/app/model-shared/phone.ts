@@ -1,6 +1,6 @@
 import { DataControl } from "@remult/angular";
-import { Context,  FieldRef } from "@remult/core";
-import { InputTypes } from "@remult/core/inputTypes";
+import { Context,  FieldRef } from "remult";
+import { InputTypes } from "remult/inputTypes";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FieldType } from "../translate";
@@ -81,7 +81,7 @@ export class Phone {
 
     return x;
   }
-  static validatePhone(col: FieldRef<Phone>, context: Context) {
+  static validatePhone(col: FieldRef<any,Phone>, context: Context) {
     if (!col.value || col.value.thePhone == '')
       return;
     if (getLang(context).languageCode != 'iw')

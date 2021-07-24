@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FilterFactories, FindOptions,  BackendMethod, SqlDatabase } from '@remult/core';
-import { Filter, AndFilter } from '@remult/core';
+import { Context, FilterFactories, FindOptions, BackendMethod, SqlDatabase } from 'remult';
+import { Filter, AndFilter } from 'remult';
 
 import { BusyService, DialogConfig } from '@remult/angular';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -14,7 +14,8 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { SqlBuilder, relativeDateName, SqlFor } from '../model-shared/types';
+import { relativeDateName } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { getLang } from '../sites/sites';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -90,16 +91,16 @@ export class SelectHelperComponent implements OnInit {
       }
     }
 
-    let sql = new SqlBuilder();
+    let sql = new SqlBuilder(context);
     if (!selectDefaultVolunteer) {
 
       /* ----    calculate active deliveries and distances    ----*/
-      let afd =SqlFor(context.for(ActiveFamilyDeliveries));
-      
-      
+      let afd = await SqlFor(context.for(ActiveFamilyDeliveries));
 
 
-      for (const d of (await db.execute(sql.query({
+
+
+      for (const d of (await db.execute(await sql.query({
         from: afd,
         where: () => [afd.courier.isDifferentFrom(null).and(DeliveryStatus.isAResultStatus(afd.deliverStatus))],
         select: () => [
@@ -121,14 +122,14 @@ export class SelectHelperComponent implements OnInit {
       }
 
       /*  ---------- calculate completed deliveries and "busy" status -------------*/
-      let sql1 = new SqlBuilder();
-      
-      let fd =SqlFor(context.for(FamilyDeliveries)) ;
-      
+      let sql1 = new SqlBuilder(context);
+
+      let fd = await SqlFor(context.for(FamilyDeliveries));
+
       let limitDate = new Date();
       limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
 
-      for (const d of (await db.execute(sql1.query({
+      for (const d of (await db.execute(await sql1.query({
         from: fd,
         where: () => [
           fd.courier.isDifferentFrom(null)
@@ -150,11 +151,11 @@ export class SelectHelperComponent implements OnInit {
         }
       }
     } else {
-      
-      let afd = SqlFor(context.for(Families));
-      for (const d of (await db.execute(sql.query({
+
+      let afd = await SqlFor(context.for(Families));
+      for (const d of (await db.execute(await sql.query({
         from: afd,
-        where: () => [afd.fixedCourier.isDifferentFrom( null).and(afd.status.isEqualTo(FamilyStatus.Active))],
+        where: () => [afd.fixedCourier.isDifferentFrom(null).and(afd.status.isEqualTo(FamilyStatus.Active))],
         select: () => [
           sql.columnWithAlias(afd.fixedCourier, "courier"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),

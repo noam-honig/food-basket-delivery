@@ -1,4 +1,4 @@
-import { Context, Entity, IdEntity, BackendMethod } from "@remult/core";
+import { Context, Entity, IdEntity, BackendMethod, Allow } from "remult";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
@@ -13,8 +13,8 @@ import { u } from "../model-shared/UberContext";
 
 @Entity<HelperGifts>({
     key: "HelperGifts",
-    allowApiRead: context => context.isSignedIn(),
-    allowApiUpdate: context => context.isSignedIn(),
+    allowApiRead: Allow.authenticated,
+    allowApiUpdate: Allow.authenticated,
     allowApiInsert: Roles.admin,
     apiDataFilter: (self, context) => {
         if (context.isAllowed(Roles.admin))

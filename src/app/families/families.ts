@@ -2,10 +2,11 @@ import { DeliveryStatus } from "./DeliveryStatus";
 import { YesNo } from "./YesNo";
 
 import { FamilySources } from "./FamilySources";
-import { BasketType, QuantityColumn } from "./BasketType";
-import { SqlBuilder, delayWhileTyping, Email, ChangeDateColumn, SqlFor } from "../model-shared/types";
+import { BasketType } from "./BasketType";
+import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Context, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata } from '@remult/core';
+import { Context, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata } from 'remult';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -16,7 +17,7 @@ import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/A
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { DateOnlyField, Field, FieldType, use, Entity } from "../translate";
+import { DateOnlyField, Field, FieldType, use, Entity, QuantityColumn } from "../translate";
 import { FamilyStatus } from "./FamilyStatus";
 
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
@@ -27,7 +28,7 @@ import { InputAreaComponent } from "../select-popup/input-area/input-area.compon
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
-import { DecimalField } from "@remult/core/src/remult3";
+
 import { u } from "../model-shared/UberContext";
 import { GroupsValue } from "../manage/groups";
 
@@ -145,9 +146,9 @@ declare type factoryFor<T> = {
 export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
-    var sql = new SqlBuilder();
-    let f = SqlFor(context.for(Families));
-    let r = await db.execute(sql.query({
+    var sql = new SqlBuilder(context);
+    let f = await SqlFor(context.for(Families));
+    let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
       where: () => [f.status.isEqualTo(FamilyStatus.Active)],
@@ -269,7 +270,7 @@ export class Families extends IdEntity {
 
     }
     let selfPickup = new InputField<boolean>({
-      dataType: Boolean,
+      valueType: Boolean,
       caption: getLang(this.context).familySelfPickup,
       defaultValue: () => this.defaultSelfPickup
     });
@@ -476,7 +477,7 @@ export class Families extends IdEntity {
   nextBirthday: Date
   @Field({ translation: l => l.defaultBasketType })
   basketType: BasketType;
-  @Field({ translation: l => l.defaultQuantity, allowApiUpdate: Roles.admin })
+  @QuantityColumn({ translation: l => l.defaultQuantity, allowApiUpdate: Roles.admin })
   quantity: number;
   @Field({ includeInApi: true, translation: l => l.familySource })
   familySource: FamilySources;
@@ -686,10 +687,10 @@ export class Families extends IdEntity {
   })
   previousDeliveryComment: string;
   @Field({
-    sqlExpression: (selfDefs, context) => {
-      let self = SqlFor(selfDefs);
-      let fd = SqlFor(context.for(FamilyDeliveries));
-      let sql = new SqlBuilder();
+    sqlExpression: async (selfDefs, context) => {
+      let self = await SqlFor(selfDefs);
+      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let sql = new SqlBuilder(context);
       return sql.columnCount(self, {
         from: fd,
         where: () => [sql.eq(fd.family, self.id),
@@ -699,15 +700,15 @@ export class Families extends IdEntity {
     }
   })
   numOfActiveReadyDeliveries: number;
-  @DecimalField()
+  @Field()
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLongitude: number;
-  @DecimalField()
+  @Field()
   addressLatitude: number;
-  @DecimalField()
+  @Field()
   //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
   drivingLongitude: number;
-  @DecimalField()
+  @Field()
   drivingLatitude: number;
   @Field()
   addressByGoogle: string;
@@ -822,9 +823,9 @@ export class Families extends IdEntity {
   }
   @BackendMethod({ allowed: Roles.admin })
   static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
-    var sql = new SqlBuilder();
-    let f = SqlFor(context.for(Families));
-    let r = await db.execute(sql.query({
+    var sql = new SqlBuilder(context);
+    let f = await SqlFor(context.for(Families));
+    let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.area, 'count (*) as count'],
       where: () => [f.status.isEqualTo(FamilyStatus.Active)],
@@ -882,8 +883,8 @@ export class Families extends IdEntity {
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, context?: Context, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
-    var sql = new SqlBuilder();
-    var f = SqlFor(context.for(Families));
+    var sql = new SqlBuilder(context);
+    var f = await SqlFor(context.for(Families));
 
     let compareAsNumber = (col: FieldMetadata<any>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
@@ -897,12 +898,12 @@ export class Families extends IdEntity {
     let nameCol = 'false';
     if (name && name.trim().length > 0)
       if (exactName)
-        nameCol = sql.build('trim(', f.name, ') =  ', sql.str(name.trim()));
+        nameCol = await sql.build('trim(', f.name, ') =  ', sql.str(name.trim()));
       else
-        nameCol = sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
+        nameCol = await sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
-    let sqlResult = await db.execute(sql.query({
+    let sqlResult = await db.execute(await sql.query({
       select: () => [f.id,
       f.name,
       f.address,
@@ -1154,14 +1155,13 @@ export interface familyLikeEntity {
   phone4: Phone;
 }
 
-function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Context, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
-  let self = SqlFor(selfDefs);
-  let fd = SqlFor(context.for(FamilyDeliveries));
-  let sql = new SqlBuilder();
+async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Context, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
+  let self = await SqlFor(selfDefs);
+  let fd = await SqlFor(context.for(FamilyDeliveries));
+  let sql = new SqlBuilder(context);
   return sql.columnInnerSelect(self, {
     select: () => [sql.columnWithAlias(col(fd), alias)],
     from: fd,
-
     where: () => [sql.eq(fd.family, self.id),
     ],
     orderBy: [{ field: fd.deliveryStatusDate, isDescending: true }]

@@ -6,7 +6,7 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context, getFields } from '@remult/core';
+import { Context, getFields } from 'remult';
 import { RouteHelperService, NotSignedInGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
@@ -16,7 +16,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/phone";
 import { use, Field } from '../../translate';
-import { InputTypes } from '@remult/core/inputTypes';
+import { InputTypes } from 'remult/inputTypes';
 
 
 
@@ -28,7 +28,7 @@ import { InputTypes } from '@remult/core/inputTypes';
 export class LoginComponent implements OnInit, AfterViewInit {
   static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
   @DataControl({ allowClick: () => false })
-  @Field({ translation: l => l.phone, dataType: Phone })
+  @Field({ translation: l => l.phone, valueType: Phone })
   phone: Phone;
   @Field({
     translation: l => l.password,

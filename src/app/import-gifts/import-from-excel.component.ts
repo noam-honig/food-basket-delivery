@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 @Component({

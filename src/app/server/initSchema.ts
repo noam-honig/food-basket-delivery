@@ -1,15 +1,15 @@
 
-import { PostgresDataProvider, PostgresPool } from '@remult/core/postgres';
+import { PostgresDataProvider, PostgresPool } from 'remult/postgres';
 import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { SqlDatabase, FieldMetadata, Context } from '@remult/core';
+import { SqlDatabase, FieldMetadata, Context } from 'remult';
 //import '../app.module';
 
 //
 
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
@@ -23,19 +23,19 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new Context();
     context.setDataProvider(dataSource);
-    let sql = new SqlBuilder();
+    let sql = new SqlBuilder(context);
     let createFamilyIndex = async (name: string, ...columns: FieldMetadata[]) => {
-        await dataSource.execute(sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
+        await dataSource.execute(await sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
     let createDeliveryIndex = async (name: string, ...columns: FieldMetadata[]) => {
-        await dataSource.execute(sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
+        await dataSource.execute(await sql.build("create index if not exists ", name, " on ", fd, "  (", columns, ")"));
     }
 
 
-    let f = SqlFor(context.for(Families));
+    let f = await SqlFor(context.for(Families));
     //create index for family deliveries if required
 
-    var fd = SqlFor(context.for(FamilyDeliveries));
+    var fd = await SqlFor(context.for(FamilyDeliveries));
 
     //
 
@@ -114,8 +114,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 2) {
 
-        let f = SqlFor(context.for(Families));
-        dataSource.execute(sql.update(f, {
+        let f =await SqlFor(context.for(Families));
+        dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
         settings.dataStructureVersion = 3;
@@ -128,8 +128,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 4) {
         console.log("updating update date");
-        let f = SqlFor(context.for(Families));
-        dataSource.execute(sql.update(f, {
+        let f =await SqlFor(context.for(Families));
+        dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
         settings.dataStructureVersion = 5;
@@ -159,7 +159,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 9) {
         if ((await context.for(Families).count()) > 0)
-            await dataSource.execute(sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', sql.build(f, '.', f.id), ' = ', fd.family));
+            await dataSource.execute(await sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', await sql.build(f, '.', f.id), ' = ', fd.family));
         settings.dataStructureVersion = 10;
         await settings.save();
     }
@@ -172,16 +172,16 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion == 11) {
-        await dataSource.execute(sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
+        await dataSource.execute(await sql.build('create index if not exists fd_1 on ', fd, ' (', [fd.family, fd.deliveryStatusDate, fd.deliverStatus, fd.courier], ')'));
         //create index if required
-        await dataSource.execute(sql.build('drop index if exists f_1  '));
-        await dataSource.execute(sql.build('drop index if exists for_courier  '));
-        await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries  '));
-        await dataSource.execute(sql.build('drop index if exists for_name  '));
-        await dataSource.execute(sql.build('drop index if exists for_courier1  '));
-        await dataSource.execute(sql.build('drop index if exists for_distribution_status_queries1  '));
-        await dataSource.execute(sql.build('drop index if exists for_basket  '));
-        await dataSource.execute(sql.build('drop index if exists for_basket_dist  '));
+        await dataSource.execute(await sql.build('drop index if exists f_1  '));
+        await dataSource.execute(await sql.build('drop index if exists for_courier  '));
+        await dataSource.execute(await sql.build('drop index if exists for_distribution_status_queries  '));
+        await dataSource.execute(await sql.build('drop index if exists for_name  '));
+        await dataSource.execute(await sql.build('drop index if exists for_courier1  '));
+        await dataSource.execute(await sql.build('drop index if exists for_distribution_status_queries1  '));
+        await dataSource.execute(await sql.build('drop index if exists for_basket  '));
+        await dataSource.execute(await sql.build('drop index if exists for_basket_dist  '));
         await createDeliveryIndex('for_courier2', fd.courier, fd.deliveryStatusDate, fd.courierAssingTime, fd.city, fd.basketType);
         await createDeliveryIndex("for_distribution_status_queries2", fd.distributionCenter, fd.courier, fd.deliverStatus, fd.city, fd.basketType);
         await createFamilyIndex("for_name1", f.name, f.status, f.basketType);
@@ -192,7 +192,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await createDeliveryIndex("for_basket_dist1", fd.distributionCenter, fd.basketType, fd.deliverStatus, fd.courier);
 
         await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
-        await dataSource.execute(sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
+        await dataSource.execute(await sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
         settings.dataStructureVersion = 12;
         await settings.save();
     }
@@ -213,7 +213,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     await version(13, async () => {
         if ((await context.for(Families).count()) > 0)
-            await dataSource.execute(sql.update(f, {
+            await dataSource.execute(await sql.update(f, {
                 set: () => [
                     [f.status, sql.case([{ when: ['deliverstatus=99'], then: 99 }], 0)],
                     [f.statusUser, 'deliverystatususer'],
@@ -243,9 +243,9 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     await version(15, async () => {
         let fromArchive = (col: FieldMetadata) =>
-            [col, 'archive_' + col.dbName] as [FieldMetadata, any];
+            [col, sql.build('archive_', col.getDbName())] as [FieldMetadata, any];
         if ((await context.for(Families).count()) > 0)
-            await dataSource.execute(sql.update(fd, {
+            await dataSource.execute(await sql.update(fd, {
                 set: () => [
                     [fd.archive, true],
                     [fd.name, 'familyname'],
@@ -277,7 +277,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     });
     await version(16, async () => {
         if ((await context.for(Families).count()) > 0)
-            await dataSource.execute(sql.insert({
+            await dataSource.execute(await sql.insert({
                 into: fd,
                 from: f,
                 set: () => {
@@ -328,7 +328,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                         fd.phone4Description
 
                     ]) {
-                        r.push([c, c.dbName])
+                        r.push([c, c.getDbName()])
                     }
                     return r;
                 },
@@ -337,13 +337,13 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     });
     await version(17, async () => {
-        await dataSource.execute(sql.build('drop index if exists for_distCenter_name  '));
+        await dataSource.execute(await sql.build('drop index if exists for_distCenter_name  '));
     });
     await version(18, async () => {
-        await dataSource.execute(sql.update(f, { set: () => [[f.quantity, 1]] }));
+        await dataSource.execute(await sql.update(f, { set: () => [[f.quantity, 1]] }));
     });
     await version(19, async () => {
-        await dataSource.execute(sql.update(fd, { set: () => [[fd.quantity, 1]] }));
+        await dataSource.execute(await sql.update(fd, { set: () => [[fd.quantity, 1]] }));
     });
     await version(20, async () => {
         let dc = await context.for(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
@@ -354,7 +354,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     });
     await version(21, async () => {
         if ((await context.for(Families).count()) > 0)
-            await dataSource.execute(sql.update(fd, {
+            await dataSource.execute(await sql.update(fd, {
                 set: () => [[fd.fixedCourier, f.fixedCourier], [fd.familyMembers, f.familyMembers]],
                 from: f,
                 where: () => [sql.eq(f.id, fd.family)]
@@ -372,7 +372,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         });
     });
     await version(23, async () => {
-        let r = await dataSource.execute(sql.query({
+        let r = await dataSource.execute(await sql.query({
             from: fd,
             select: () => [fd.id],
             innerJoin: () => [{ to: f, on: () => [sql.eq(f.id, fd.family)] }],
@@ -405,36 +405,36 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     });
     await version(28, async () => {
-        await dataSource.execute(sql.update(fd, {
+        await dataSource.execute(await sql.update(fd, {
             set: () => [[fd.needsWork, false]],
             where: () => [fd.archive.isEqualTo(true).and(fd.needsWork.isEqualTo(true))]
         }))
 
     });
     await version(29, async () => {
-        await dataSource.execute(sql.update(fd, {
+        await dataSource.execute(await sql.update(fd, {
             set: () => [[fd.area, sql.func('trim', fd.area)]]
         }))
 
     });
     await version(30, async () => {
-        await dataSource.execute(sql.update(f, {
+        await dataSource.execute(await sql.update(f, {
             set: () => [[f.area, sql.func('trim', f.area)]]
         }))
 
     });
     await version(31, async () => {
-        //    await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
+        //    await dataSource.execute(await sql.build("alter table ", fd, " alter column ", fd.courier, " drop not null"));
 
     });
     await version(32, async () => {
-        //  await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
+        //  await dataSource.execute(await sql.update(fd, { set: () => [[fd.courier, "null"]], where: () => [sql.eq(fd.courier, sql.str(""))] }));
     });
     await version(33, async () => {
-        //   await dataSource.execute(sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [sql.build(fd.courier, " is null")] }));
+        //   await dataSource.execute(await sql.update(fd, { set: () => [[fd.courier, sql.str("")]], where: () => [await sql.build(fd.courier, " is null")] }));
     });
     await version(34, async () => {
-        //await dataSource.execute(sql.build("alter table ", fd, " alter column ", fd.courier, " set not null"));
+        //await dataSource.execute(await sql.build("alter table ", fd, " alter column ", fd.courier, " set not null"));
 
     });
 

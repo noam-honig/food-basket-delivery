@@ -1,10 +1,11 @@
-import { IdEntity, Context, Entity,   FieldsMetadata } from "@remult/core";
+import { IdEntity, Context, Entity, FieldsMetadata, Allow } from "remult";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
-import {  Helpers, HelpersBase } from "../helpers/helpers";
-import { SqlBuilder, DateTimeColumn, ChangeDateColumn, SqlFor } from "../model-shared/types";
+import { Helpers, HelpersBase } from "../helpers/helpers";
+import { DateTimeColumn, ChangeDateColumn } from "../model-shared/types";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
@@ -20,7 +21,7 @@ import { AddressHelper } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { u } from "../model-shared/UberContext";
-import { InputTypes } from "@remult/core/inputTypes";
+import { InputTypes } from "remult/inputTypes";
 
 
 
@@ -42,7 +43,7 @@ export class eventStatus {
 @Entity<Event>({
     key: 'events',
     allowApiCrud: Roles.admin,
-    allowApiRead: c => c.isSignedIn(),
+    allowApiRead: Allow.authenticated,
     saving: async (self) => {
         if (self.context.backend) {
             await self.addressHelper.updateApiResultIfChanged();
@@ -191,10 +192,10 @@ export class Event extends IdEntity {
     phone1Description: string;
     @Field({
         translation: l => l.attendingVolunteers,
-        sqlExpression: (selfDefs, context) => {
-            var vie = SqlFor(context.for(volunteersInEvent));
-            let self = SqlFor(selfDefs);
-            var sql = new SqlBuilder();
+        sqlExpression: async (selfDefs, context) => {
+            var vie = await SqlFor(context.for(volunteersInEvent));
+            let self = await SqlFor(selfDefs);
+            var sql = new SqlBuilder(context);
             return sql.columnCount(self, {
                 from: vie,
                 where: () => [sql.eq(vie.eventId, self.id)]
@@ -211,7 +212,7 @@ export class Event extends IdEntity {
 }
 @Entity<volunteersInEvent>({
     key: 'volunteersInEvent',
-    allowApiCrud: c => c.isSignedIn(),
+    allowApiCrud: Allow.authenticated,
     apiDataFilter: (self, context) => {
         if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return undefined;
@@ -232,10 +233,11 @@ export class volunteersInEvent extends IdEntity {
     helper: HelpersBase;
 
     @Field<volunteersInEvent>({
-        translation: l => l.volunteerName, sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
+        translation: l => l.volunteerName,
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let h = await SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.name],
@@ -245,10 +247,11 @@ export class volunteersInEvent extends IdEntity {
     })
     helperName: string;
     @Field({
-        translation: l => l.volunteerPhoneNumber, sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
+        translation: l => l.volunteerPhoneNumber,
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let h = await SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.phone],
@@ -259,29 +262,30 @@ export class volunteersInEvent extends IdEntity {
     helperPhone: Phone;
     @Field({
         translation: l => l.deliveriesAssigned,
-        sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let d = SqlFor(context.for(ActiveFamilyDeliveries));
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let d = await SqlFor(context.for(ActiveFamilyDeliveries));
             return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
         }
     })
     assignedDeliveries: number;
     @Field({
         translation: l => l.delveriesSuccesfull,
-        sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let d = SqlFor(context.for(FamilyDeliveries));
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let d = await SqlFor(context.for(FamilyDeliveries));
             return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
         }
     })
     succesfulDeliveries: number;
     @Field({
-        translation: l => l.email, sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
+        translation: l => l.email,
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let h = await SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.email],
@@ -291,10 +295,10 @@ export class volunteersInEvent extends IdEntity {
     })
     helperEmail: string;
     @Field({
-        sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let h = await SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.smsDate],
@@ -305,10 +309,10 @@ export class volunteersInEvent extends IdEntity {
     lastSmsTime: Date;
     @Field({
 
-        sqlExpression: (selfDefs, context) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            let d = SqlFor(context.for(FamilyDeliveries));
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
+            let d = await SqlFor(context.for(FamilyDeliveries));
             return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
         }
     })

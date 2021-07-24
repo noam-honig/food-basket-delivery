@@ -1,4 +1,4 @@
-import { Entity, Context, EntityBase } from "@remult/core";
+import { Entity, Context, EntityBase } from "remult";
 import { Field } from '../translate';
 import { Roles } from "../auth/roles";
 import { Sites } from "./sites";

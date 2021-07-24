@@ -1,7 +1,8 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata } from '@remult/core';
+import { Context, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
-import { DateTimeColumn, SqlBuilder, logChanges, ChangeDateColumn, Email, SqlFor } from '../model-shared/types';
+import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
 
 
@@ -28,20 +29,20 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { EmailSvc } from '../shared/utils';
 import { use, Field, FieldType } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { DateOnlyField } from '@remult/core/src/remult3';
+import { DateOnlyField } from 'remult/src/remult3';
 import { u } from '../model-shared/UberContext';
-import { InputTypes } from '@remult/core/inputTypes';
+import { InputTypes } from 'remult/inputTypes';
 
 
 
-export function CompanyColumn<T = any>(settings?: FieldOptions<string, T>) {
+export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityType, string>) {
     return (target, key) => {
         DataControl<any, string>({
             width: '300',
             click: async (e, col) => openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => col.value = x)
         })(target, key);
 
-        return Field<T, string>({
+        return Field<entityType, string>({
 
             translation: l => l.company,
             ...settings
@@ -78,9 +79,9 @@ export class HelperId {
     key: "HelpersBase",
     dbName: "Helpers",
     allowApiCrud: false,
-    allowApiRead: c => c.isSignedIn(),
+    allowApiRead: Allow.authenticated,
     apiDataFilter: (self, context) => {
-        if (!context.isSignedIn())
+        if (!context.authenticated())
             return self.id.isEqualTo("No User");
         else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
             let uContext = u(context);
@@ -92,7 +93,7 @@ export class HelperId {
 })
 export abstract class HelpersBase extends IdEntity {
 
-    static async showSelectDialog(col: FieldRef<HelpersBase>, args: {
+    static async showSelectDialog(col: FieldRef<any, HelpersBase>, args: {
         filter?: (helper: FilterFactories<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
         location?: () => Location,
         familyId?: () => string,
@@ -194,8 +195,8 @@ export abstract class HelpersBase extends IdEntity {
     archive: boolean;
 
     @Field({
-        allowApiUpdate: context => context.isSignedIn(),
-        includeInApi: context => context.isSignedIn(),
+        allowApiUpdate: Allow.authenticated,
+        includeInApi: Allow.authenticated,
     })
     @DateOnlyField()
     frozenTill: Date;
@@ -206,9 +207,9 @@ export abstract class HelpersBase extends IdEntity {
     })
     internalComment: string;
     @Field<Helpers>({
-        sqlExpression: (selfDefs) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
+        sqlExpression: async (selfDefs, context) => {
+            let sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
         }
     })
@@ -240,9 +241,9 @@ export abstract class HelpersBase extends IdEntity {
 
 @Entity<Helpers>({
     key: "Helpers",
-    allowApiRead: context => context.isSignedIn(),
-    allowApiDelete: context => context.isSignedIn(),
-    allowApiUpdate: context => context.isSignedIn(),
+    allowApiRead: Allow.authenticated,
+    allowApiDelete: Allow.authenticated,
+    allowApiUpdate: Allow.authenticated,
     allowApiInsert: true,
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
@@ -355,7 +356,7 @@ export abstract class HelpersBase extends IdEntity {
 
     },
     apiDataFilter: (self, context) => {
-        if (!context.isSignedIn())
+        if (!context.authenticated())
             return self.id.isEqualTo("No User");
         else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
             return self.allowedIds.contains(context.user.id);
@@ -376,7 +377,7 @@ export class Helpers extends HelpersBase {
         if (user === undefined)
             user = context.user;
 
-        if (context.isSignedIn() || gotUser) {
+        if (context.authenticated() || gotUser) {
             h = this.helpersCache.get(user.id);
             if (!h) {
                 h = await context.for(Helpers).findId(user.id);
@@ -581,9 +582,9 @@ export class Helpers extends HelpersBase {
         super(context);
     }
     @Field<Helpers>({
-        sqlExpression: (selfDefs) => {
-            let self = SqlFor(selfDefs);
-            let sql = new SqlBuilder();
+        sqlExpression: async (selfDefs, context) => {
+            let self = await SqlFor(selfDefs);
+            let sql = new SqlBuilder(context);
             return sql.build(self.id, ' || ', self.escort, ' || ', self.theHelperIAmEscorting);
         }
     })
@@ -809,7 +810,7 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
-export function validatePasswordColumn(context: Context, password: FieldRef<string>) {
+export function validatePasswordColumn(context: Context, password: FieldRef<any, string>) {
     if (getSettings(context).requireComplexPassword) {
         var l = getLang(context);
         if (password.value.length < 8)
