@@ -8,12 +8,12 @@ import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } 
 
 
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Context, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata } from '@remult/core';
+import { Context, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Families } from '../families/families';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters } from './distribution-centers';
 
@@ -585,12 +585,12 @@ export class ManageComponent implements OnInit {
   allowApiRead: Roles.distCenterAdmin,
   defaultOrderBy: (self) => self.name,
   key: 'GroupsStatsPerDistributionCenter',
-  dbName: (self, context) => {
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+  dbName: async (self, context) => {
+    let f = await SqlFor(context.for(ActiveFamilyDeliveries));
     let cContext = u(context);
-    let g = SqlFor(context.for(Groups));
-    let d = SqlFor(context.for(DistributionCenters));
-    let sql = new SqlBuilder();
+    let g = await SqlFor(context.for(Groups));
+    let d = await SqlFor(context.for(DistributionCenters));
+    let sql = new SqlBuilder(context);
     sql.addEntity(f, 'Families');
     sql.addEntity(g, 'groups');
     return sql.entityDbName(
@@ -627,17 +627,17 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   allowApiRead: Roles.distCenterAdmin,
   key: 'GroupsStatsForAllDeliveryCenters',
   defaultOrderBy: self => self.name,
-  dbName: (self, context) => {
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let g = SqlFor(context.for(Groups));
+  dbName: async (self, context) => {
+    let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+    let g = await SqlFor(context.for(Groups));
     let cContext = u(context);
 
-    let sql = new SqlBuilder();
+    let sql = new SqlBuilder(context);
     sql.addEntity(f, 'Families');
     sql.addEntity(g, 'groups');
     return sql.entityDbName(
       {
-        select: () => [g.name, sql.countInnerSelect({
+        select: async () => [g.name, await sql.countInnerSelect({
           from: f,
 
           where: () => [

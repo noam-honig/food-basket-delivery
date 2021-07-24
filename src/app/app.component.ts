@@ -6,7 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { RouteHelperService, BusyService } from '@remult/angular';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
@@ -101,7 +101,7 @@ export class AppComponent {
   }
   toolbarColor = 'primary';
   showSideBar() {
-    if (!this.context.isSignedIn())
+    if (!this.context.authenticated())
       return false;
     if (this.activeRoute&&this.activeRoute.firstChild&&this.activeRoute.firstChild.snapshot&&this.activeRoute.firstChild.snapshot.routeConfig&&this.activeRoute.firstChild.snapshot.routeConfig.path=="playback") {
       return false;

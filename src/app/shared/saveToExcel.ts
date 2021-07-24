@@ -1,4 +1,4 @@
-import { Entity, Context, EntityBase, Repository,  FieldRef } from '@remult/core';
+import { Entity, Context, EntityBase, Repository,  FieldRef } from 'remult';
 import { BusyService, GridSettings } from '@remult/angular';
 
 import { DateTimeColumn } from "../model-shared/types";
@@ -6,7 +6,7 @@ import { DateTimeColumn } from "../model-shared/types";
 import { foreachSync } from "./utils";
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DateOnlyValueConverter } from '@remult/core/valueConverters';
+import { DateOnlyValueConverter } from 'remult/valueConverters';
 import { HelpersBase } from '../helpers/helpers';
 
 export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
@@ -103,7 +103,7 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
               await c.load();
 
 
-              if (c.metadata.dataType == Date) {
+              if (c.metadata.valueType == Date) {
                 if (c.metadata.valueConverter !== <any>DateOnlyValueConverter) {
                   addColumn('תאריך ' + c.metadata.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
                   addColumn('שעת ' + c.metadata.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);

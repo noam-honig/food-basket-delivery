@@ -26,8 +26,8 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
 import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles,SignedInAndNotOverviewGuard } from './auth/roles';
-import { SignedInGuard } from '@remult/angular';
-import { Context } from '@remult/core';
+import { AuthenticatedInGuard } from '@remult/angular';
+import { Context } from 'remult';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
@@ -160,5 +160,5 @@ export const routes: Routes = [
 
 export class AppRoutingModule { }
 
-SignedInGuard.componentToNavigateIfNotAllowed = LoginComponent;
+AuthenticatedInGuard.componentToNavigateIfNotAllowed = LoginComponent;
 

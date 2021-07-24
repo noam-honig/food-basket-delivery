@@ -1,8 +1,9 @@
-import { ChangeDateColumn, relativeDateName, SqlBuilder, SqlFor } from "../model-shared/types";
+import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, DecimalField } from '@remult/core';
-import { BasketType, QuantityColumn } from "./BasketType";
+import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow } from 'remult';
+import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -15,7 +16,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { use, FieldType, Field, ValueListFieldType, Entity } from "../translate";
+import { use, FieldType, Field, ValueListFieldType, Entity, QuantityColumn } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings, openDialog } from "@remult/angular";
@@ -42,9 +43,9 @@ export class MessageStatus {
     key: 'FamilyDeliveries',
     dbName: 'FamilyDeliveries',
     translation: l => l.deliveries,
-    allowApiRead: context => context.isSignedIn(),
+    allowApiRead: Allow.authenticated,
     allowApiInsert: false,
-    allowApiUpdate: context => context.isSignedIn(),
+    allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
     apiDataFilter: (self, context) => {
 
@@ -178,7 +179,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.admin
     })
     basketType: BasketType;
-    @Field({
+    @QuantityColumn({
         allowApiUpdate: Roles.admin
     })
     @DataControl({ width: '100' })
@@ -299,21 +300,21 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false
     })
     addressComment: string;
-    @DecimalField({
+    @Field({
         allowApiUpdate: false
     })
     //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
     addressLongitude: number;
-    @DecimalField({
+    @Field({
         allowApiUpdate: false
     })
     addressLatitude: number;
-    @DecimalField({
+    @Field({
         allowApiUpdate: false
     })
     //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
     drivingLongitude: number;
-    @DecimalField({
+    @Field({
         allowApiUpdate: false
     })
     drivingLatitude: number;
@@ -370,11 +371,11 @@ export class FamilyDeliveries extends IdEntity {
     phone4Description: string;
 
     @Field({
-        sqlExpression: (self, context) => {
-            var sql = new SqlBuilder();
+        sqlExpression: async (self, context) => {
+            var sql = new SqlBuilder(context);
 
-            var fd = SqlFor(context.for(FamilyDeliveries));
-            let f = SqlFor(self);
+            var fd = await SqlFor(context.for(FamilyDeliveries));
+            let f = await SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(fd, 'fd');
             return sql.columnWithAlias(sql.case([{
@@ -385,27 +386,27 @@ export class FamilyDeliveries extends IdEntity {
         }
     })
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.isAllowed([Roles.admin, Roles.lab]) || c.isSignedIn() && getSettings(c).isSytemForMlt() })
+    @Field({ allowApiUpdate: c => c.authenticated() && getSettings(c).isSytemForMlt() })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
     @Field({ includeInApi: Roles.admin, translation: l => l.archiveUser })
     archiveUser: HelpersBase;
     @Field({
-        sqlExpression: (selfDefs, context) => {
-            var sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
+        sqlExpression: async (selfDefs, context) => {
+            var sql = new SqlBuilder(context);
+            let self = await SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.gtAny(self.deliveryStatusDate, 'current_date -1'), self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
         }
     })
     visibleToCourier: boolean;
     @Field({
-        sqlExpression: (self, context) => {
-            var sql = new SqlBuilder();
+        sqlExpression: async (self, context) => {
+            var sql = new SqlBuilder(context);
 
-            var helper = SqlFor(context.for(Helpers));
-            let f = SqlFor(self);
+            var helper = await SqlFor(context.for(Helpers));
+            let f = await SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(helper, 'h');
             return sql.case([{
@@ -419,7 +420,7 @@ export class FamilyDeliveries extends IdEntity {
                         then: MessageStatus.notOpened.id
                     }
                     ], MessageStatus.notSent.id)
-                    , " from ", helper.metadata.dbName, " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
+                    , " from ", await helper.metadata.getDbName(), " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
             }], MessageStatus.noVolunteer.id);
         }
     })
@@ -723,7 +724,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
-function logChanged(context: Context, col: FieldRef<any>, dateCol: FieldRef<Date>, user: FieldRef<HelpersBase>, wasChanged: (() => void)) {
+function logChanged(context: Context, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: FieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.value = u(context).currentUser;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
-import { Context, BackendMethod } from '@remult/core';
+import { Context, BackendMethod } from 'remult';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { HelperId } from '../helpers/helpers';

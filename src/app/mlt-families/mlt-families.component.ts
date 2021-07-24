@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Context, BackendMethod } from '@remult/core';
+import { Context, BackendMethod, Allow } from 'remult';
 import { Roles } from '../auth/roles';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -275,7 +275,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
 
-  @BackendMethod({ allowed: c => c.isSignedIn() })
+  @BackendMethod({ allowed: Allow.authenticated })
   static async changeDestination(newDestinationId: DistributionCenters, context?: Context) {
     let s = getSettings(context);
     if (!s.isSytemForMlt())

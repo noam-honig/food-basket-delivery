@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { BusyService, GridSettings } from '@remult/angular';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';

@@ -1,4 +1,4 @@
-import { IdEntity, Context, AndFilter, Entity, FilterFactories,  Filter } from "@remult/core";
+import { IdEntity, Context, AndFilter, Entity, FilterFactories,  Filter, Allow } from "remult";
 import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -31,7 +31,7 @@ import { u } from "../model-shared/UberContext";
 
 @Entity<DistributionCenters>({
   key: "DistributionCenters",
-  allowApiRead: context => context.isSignedIn(),
+  allowApiRead: Allow.authenticated,
   allowApiInsert: Roles.admin,
   allowApiUpdate: Roles.admin,
   defaultOrderBy: self => self.name,

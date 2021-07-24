@@ -1,9 +1,9 @@
 
 
-import { FieldOptions, Entity, IdEntity } from '@remult/core';
+import { FieldOptions, Entity, IdEntity, Allow, IntegerField } from 'remult';
 
 
-import { Context, } from '@remult/core';
+import { Context, } from 'remult';
 
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
@@ -25,7 +25,7 @@ import { DataControl, getValueList } from '@remult/angular';
 })
 @Entity<BasketType>({
   key: "BasketType",
-  allowApiRead: context => context.isSignedIn(),
+  allowApiRead: Allow.authenticated,
   allowApiCrud: Roles.admin,
   saving: async (self) => {
     if ((!self.boxes || self.boxes < 1) && (!self.boxes2 || self.boxes2 < 1))
@@ -56,7 +56,5 @@ export class BasketType extends IdEntity {
 }
 
 
-export function QuantityColumn<T>(settings?: FieldOptions) {
-  return Field<T, number>({ translation: l => l.quantity, ...settings });
-}
+
 

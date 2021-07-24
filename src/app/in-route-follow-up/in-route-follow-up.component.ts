@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
-import { Context, EntityWhere } from '@remult/core';
+import { Context, EntityWhere } from 'remult';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';

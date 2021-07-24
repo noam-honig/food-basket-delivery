@@ -1,17 +1,17 @@
-import { Context, DataProvider } from "@remult/core";
+import { Context, DataProvider } from "remult";
 
 
 import { Roles } from "../auth/roles";
-import { Language, TranslationOptions, langByCode,use } from "../translate";
+import { Language, TranslationOptions, langByCode, use } from "../translate";
 
 declare var multiSite: boolean;
 
 
-export class Sites  {
+export class Sites {
     static addSchema(id: string) {
         this.schemas.push(id);
     }
-  
+
     static isOverviewSchema(context: Context) {
         return Sites.getOrganizationFromContext(context) == Sites.guestSchema;
     }
@@ -64,7 +64,7 @@ export class Sites  {
                 return Sites.guestSchema;
             return org;
         }
-        catch{
+        catch {
             return Sites.guestSchema;
         }
     }
@@ -73,6 +73,8 @@ export class Sites  {
         if (!Sites.multipleSites)
             return '';
         let url = y.getPathInUrl();
+        if (!url)
+            return '';
         let org = url.split('/')[1];
         if (org && org.toLowerCase() == 'api')
             org = url.split('/')[2];
@@ -81,7 +83,7 @@ export class Sites  {
     static getOrgRole(y: Context) {
         return 'org:' + Sites.getOrganizationFromContext(y);
     }
-  
+
 }
 
 
@@ -103,13 +105,13 @@ export function validSchemaName(x: string) {
 
 const langForSite = new Map<string, Language>();
 export function setLangForSite(site: string, lang: TranslationOptions) {
-  langForSite.set(site, langByCode(lang.args.languageFile));
+    langForSite.set(site, langByCode(lang.args.languageFile));
 }
 export function getLang(context: Context) {
-  let r = langForSite.get(Sites.getValidSchemaFromContext(context));
-  if (r)
-    return r;
-  return use.language;
+    let r = langForSite.get(Sites.getValidSchemaFromContext(context));
+    if (r)
+        return r;
+    return use.language;
 }
 
 //SELECT string_agg(id::text, ',') FROM guest.sites

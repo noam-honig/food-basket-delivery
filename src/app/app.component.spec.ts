@@ -3,8 +3,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import '../app/manage/ApplicationSettings';
 
 
-import { IdEntity, Context } from '@remult/core';
-import { SqlBuilder, QueryBuilder, SqlFor } from './model-shared/types';
+import { IdEntity, Context } from 'remult';
+
+import { SqlBuilder, QueryBuilder, SqlFor, SqlDefs } from "./model-shared/SqlBuilder";
 import { Phone, isPhoneValidForIsrael } from "./model-shared/phone";
 import { WebDriverProxy } from 'blocking-proxy/built/lib/webdriver_proxy';
 import { fixPhone, processPhone, phoneResult, parseAndUpdatePhone } from './import-from-excel/import-from-excel.component';
@@ -14,37 +15,87 @@ import { MergeFamiliesComponent } from './merge-families/merge-families.componen
 import { FamilyStatus } from './families/FamilyStatus';
 import { parseAddress, Families, parseUrlInAddress } from './families/families';
 import { BasketType } from './families/BasketType';
+import { fitAsync, itAsync } from './shared/test-helper';
+import { Helpers } from './helpers/helpers';
+import { RegisterURL, urlDbOperator } from './resgister-url/regsiter-url';
 
 describe('AppComponent', () => {
   var context = new Context();
-  var bt = SqlFor(context.for(BasketType));
-
-  var f = SqlFor(context.for(Families));
-  let afd = SqlFor(context.for(ActiveFamilyDeliveries));
-  let fd = SqlFor(context.for(FamilyDeliveries));
-  var sql = new SqlBuilder();
-  beforeEach(() => {
-    sql = new SqlBuilder();
+  var bt: SqlDefs<BasketType>;
+  var f: SqlDefs<Families>;
+  let afd: SqlDefs<ActiveFamilyDeliveries>;
+  let fd: SqlDefs<FamilyDeliveries>;
+  var sql = new SqlBuilder(context);
+  beforeEach(async () => {
+    sql = new SqlBuilder(context);
+    f = await SqlFor(context.for(Families));
+    afd = await SqlFor(context.for(ActiveFamilyDeliveries));
+    fd = await SqlFor(context.for(FamilyDeliveries));
+    bt = await SqlFor(context.for(BasketType));
     sql.addEntity(bt, 'p');
     sql.addEntity(afd, 'fd');
     sql.addEntity(fd, 'h');
+
   });
 
 
-  var q = (query: QueryBuilder, expectresult: String) => {
-    expect(sql.query(query)).toBe(expectresult);
+  var q = async (query: QueryBuilder, expectresult: String) => {
+    expect(await sql.query(query)).toBe(expectresult);
   };
 
-  it('test q', () => {
+  it('test q', async () => {
     expect(
-      sql.query({
-        select: () => [f.id], from: f, where: () => [f.status.isDifferentFrom(FamilyStatus.ToDelete),
-        sql.build(f.id, ' in (', sql.query({ select: () => [afd.family], from: afd }), ')')]
+      await sql.query({
+        select: () => [f.id], from: f, where: async () => [f.status.isDifferentFrom(FamilyStatus.ToDelete),
+        sql.build(f.id, ' in (', await sql.query({ select: () => [afd.family], from: afd }), ')')]
       })).toBe("select e1.id from Families e1 where status <> 98 and e1.id in (select fd.family from FamilyDeliveries fd where archive = false)");
 
   });
-  it('basics work', () => {
-    expect(sql.build(bt.id)).toBe('p.id');
+  it("test build", async () => {
+    expect(await sql.build("a", f.id)).toBe("aid");
+  });
+  it("test build", async () => {
+    expect(await sql.max(f.id)).toBe("max(id)");
+  });
+  it("test build", async () => {
+    expect(await sql.func('max', f.id)).toBe("max(id)");
+  });
+  it("test bla bla", async () => {
+    let h = await SqlFor(context.for(Helpers));
+    let u = await SqlFor(context.for(RegisterURL));
+    let sql = new SqlBuilder(context);
+    let urls = [];
+
+
+    let q = await sql.query({
+      select: async () => [sql.build('distinct ', urlDbOperator(await h.referredBy.getDbName()), ' as url')],
+      from: h,
+      outerJoin: () => [{ to: u, on: () => [sql.build(h, ' like textcat(textcat(\'%\',', u.URL, '),\'%\')')] }],
+      where: () => [sql.build(u.URL, ' is null')]
+    })
+    expect (q).toBe("select distinct split_part(referredBy, '/', 3) as url from Helpers e1 left outer join RegisterURL e2 on Helpers like textcat(textcat('%',e2.URL),'%') where e2.URL is null");
+
+
+  })
+
+  it("select with promise", async () => {
+    expect(await sql.query({
+      from: f,
+      select: () => [new Promise(res => setTimeout(() => {
+        res(f.id)
+      }, 5))]
+    })).toBe("select e1.id from Families e1");
+
+  });
+  it("select with promise", async () => {
+    expect(await sql.query({
+      from: f,
+      select: () => [sql.max(f.id)]
+    })).toBe("select max(e1.id) from Families e1");
+
+  });
+  it('basics work', async () => {
+    expect(await sql.build(bt.id)).toBe('p.id');
   });
   it('select start', () => {
     q({
@@ -60,9 +111,9 @@ describe('AppComponent', () => {
       from: afd
     }, 'select fd.id from FamilyDeliveries fd where archive = false');
   });
-  it('fixed filter 2', () => {
-    expect(sql.columnInnerSelect(afd, {
-      select: () => [sql.columnWithAlias(afd.deliverStatus, 's')],
+  it('fixed filter 2', async () => {
+    expect(await sql.columnInnerSelect(afd, {
+      select: async () => [await sql.columnWithAlias(afd.deliverStatus, 's')],
       from: afd,
 
       where: () => [sql.eq(afd.family, '123'),
@@ -70,9 +121,9 @@ describe('AppComponent', () => {
       orderBy: [{ field: afd.deliveryStatusDate, isDescending: true }]
     })).toBe('(select FamilyDeliveries.deliverStatus s from FamilyDeliveries FamilyDeliveries where FamilyDeliveries.family = 123 and archive = false order by FamilyDeliveries.deliveryStatusDate desc limit 1)');
   });
-  it('fixed filter 3', () => {
-    expect(sql.columnInnerSelect(fd, {
-      select: () => [sql.columnWithAlias(fd.deliverStatus, 's')],
+  it('fixed filter 3', async () => {
+    expect(await sql.columnInnerSelect(fd, {
+      select: async () => [await sql.columnWithAlias(fd.deliverStatus, 's')],
       from: fd,
 
       where: () => [sql.eq(fd.family, '123'),
@@ -96,10 +147,10 @@ describe('AppComponent', () => {
       where: () => [fd.basketType.isEqualTo(b)]
     }, "select h.id from FamilyDeliveries h where basketType = '11'");
   });
-  it('another where', () => {
+  it('another where', async () => {
     let b = context.for(BasketType).create({ id: '11', name: 'basket' });
-    expect(sql.build(fd.basketType.isEqualTo(b))).toBe("basketType = '11'")
-    
+    expect(await sql.build(fd.basketType.isEqualTo(b))).toBe("basketType = '11'")
+
   });
   it('group By', () => {
     q({
@@ -125,6 +176,14 @@ describe('AppComponent', () => {
     }, 'select p.id from BasketType p left join Families e1 on e1.basketType = p.id');
 
   });
+  it('Join1', () => {
+    q({
+      select: () => [bt.id],
+      from: bt,
+      innerJoin:async () => [{ to: f, on:async () => [sql.build(await f.basketType.getDbName(),' = ', bt.id)] }]
+    }, 'select p.id from BasketType p left join Families e1 on basketType = p.id');
+
+  });
   it('select multiple Order By', () => {
     q({
       select: () => [bt.id],
@@ -132,51 +191,51 @@ describe('AppComponent', () => {
       orderBy: [bt.id, { field: bt.name, isDescending: true }]
     }, 'select p.id from BasketType p order by p.id, p.name desc');
   });
-  it("column dbname can reference root entity", () => {
-    let sql = new SqlBuilder();
-    expect(sql.columnSumInnerSelect(bt, f.familyMembers, {
+  it("column dbname can reference root entity", async () => {
+    let sql = new SqlBuilder(context);
+    expect(await sql.columnSumInnerSelect(bt, f.familyMembers, {
       from: f,
       where: () => [sql.eq(f.basketType, bt.id)]
 
     })).toBe('(select sum(e1.familyMembers) from Families e1 where e1.basketType = BasketType.id)');
   });
-  it("case ", () => {
-    expect(sql.case([
+  it("case ", async () => {
+    expect(await sql.case([
       { when: ['1=1', '2=2'], then: '3' },
       { when: ['3=3'], then: '4' }
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
-  it('delete 2', () => {
-    let p = SqlFor(context.for(BasketType));
-    expect(sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
+  it('delete 2', async () => {
+    let p = await SqlFor(context.for(BasketType));
+    expect(await sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
-  it('update ', () => {
-    expect(sql.update(bt, {
+  it('update ', async () => {
+    expect(await sql.update(bt, {
       set: () => [[bt.id, "'123'"], [bt.name, "'noam'"]],
       where: () => [sql.eq(bt.boxes, 5), sql.eq(bt.boxes, 6)]
     })).toBe("update BasketType p set id = '123', name = 'noam' where p.boxes = 5 and p.boxes = 6");
   });
-  it('update 2 ', () => {
+  it('update 2 ', async () => {
     sql.getEntityAlias(f);
-    let pd = SqlFor(context.for(Families));
-    expect(sql.update(bt, {
+    let pd = await SqlFor(context.for(Families));
+    expect(await sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
       where: () => [sql.eq(bt.boxes, 5), sql.eq(bt.boxes, pd.familyMembers)]
     })).toBe("update BasketType p set id = e2.basketType, name = 'noam' from Families e2 where p.boxes = 5 and p.boxes = e2.familyMembers");
   });
-  it('insert ', () => {
-    sql = new SqlBuilder();
+  it('insert ', async () => {
+    sql = new SqlBuilder(context);
 
-    expect(sql.insert({
+    expect(await sql.insert({
       into: bt,
       set: () => [[bt.id, f.id], [bt.name, "'noam'"]],
       from: f,
       where: () => [sql.eq(f.familyMembers, 5)]
     })).toBe("insert into BasketType (id, name) select e1.id, 'noam' from Families e1 where e1.familyMembers = 5");
   });
-  it('filter ', () => {
-    expect(sql.build(bt.boxes.isEqualTo(3).and(bt.boxes.isEqualTo(5)))).toBe('boxes = 3 and boxes = 5');
+  it('filter ', async () => {
+    expect(await sql.build(bt.boxes.isEqualTo(3).and(bt.boxes.isEqualTo(5)))).toBe('boxes = 3 and boxes = 5');
   });
   it('parse address', () => {
     let r = parseAddress("שנהב 4 דירה 76 קומה 19 כניסה א'");

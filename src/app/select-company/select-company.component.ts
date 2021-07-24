@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context, BackendMethod, SqlDatabase } from '@remult/core';
+import { Context, BackendMethod, SqlDatabase } from 'remult';
 import { Roles } from '../auth/roles';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
@@ -53,9 +53,9 @@ export class SelectCompanyComponent implements OnInit {
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getCompanies(context?: Context, db?: SqlDatabase) {
-    var sql = new SqlBuilder();
-    let h = SqlFor(context.for(Helpers));
-    let r = await db.execute(sql.query({
+    var sql = new SqlBuilder(context);
+    let h = await SqlFor(context.for(Helpers));
+    let r = await db.execute(await sql.query({
       from: h,
       select: () => [sql.build("distinct ", h.company)],
       where: () => [h.company.isGreaterThan('')],

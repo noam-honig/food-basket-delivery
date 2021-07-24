@@ -1,7 +1,8 @@
-import { IdEntity, Context, Entity, FieldMetadata } from "@remult/core";
+import { IdEntity, Context, Entity, FieldMetadata } from "remult";
 import { Roles } from "../auth/roles";
 import { getSettings } from "../manage/ApplicationSettings";
-import { SqlBuilder, DateTimeColumn, relativeDateName, ChangeDateColumn, SqlFor } from "../model-shared/types";
+import { DateTimeColumn, relativeDateName, ChangeDateColumn } from "../model-shared/types";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { getLang } from "../sites/sites";
 import { Helpers, HelperId, HelpersBase } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -13,21 +14,21 @@ import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-
 import { use, Field } from "../translate";
 
 import { DataControl, GridSettings, openDialog } from "@remult/angular";
-import { DateOnlyField } from "@remult/core/src/remult3";
+import { DateOnlyField } from "remult/src/remult3";
 import { u } from "../model-shared/UberContext";
 
 @Entity<InRouteHelpers>({
     key: 'in-route-helpers',
     allowApiRead: Roles.admin,
     defaultOrderBy: (self) => self.minAssignDate,
-    dbName: (self, context) => {
-        let sql = new SqlBuilder();
+    dbName: async (self, context) => {
+        let sql = new SqlBuilder(context);
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
-        let history = SqlFor(context.for(FamilyDeliveries));
-        let com = SqlFor(context.for(HelperCommunicationHistory));
-        let h = SqlFor(context.for(Helpers));
-        let h2 = SqlFor(context.for(Helpers));
+        let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+        let history = await SqlFor(context.for(FamilyDeliveries));
+        let com = await SqlFor(context.for(HelperCommunicationHistory));
+        let h = await SqlFor(context.for(Helpers));
+        let h2 = await SqlFor(context.for(Helpers));
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,

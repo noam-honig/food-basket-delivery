@@ -1,11 +1,11 @@
 
-import { Filter, AndFilter, Context, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories } from "@remult/core";
+import { Filter, AndFilter, Context, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from "../families/FamilyDeliveries";
 import { Families } from "../families/families";
-import { SqlBuilder, SqlFor } from "../model-shared/types";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { Groups } from "../manage/groups";
@@ -74,11 +74,11 @@ export class FamilyDeliveryStats {
             }
         }
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+        let f = await SqlFor(context.for(ActiveFamilyDeliveries));
 
-        let sql = new SqlBuilder();
+        let sql = new SqlBuilder(context);
         sql.addEntity(f, "FamilyDeliveries")
-        let baskets = await db.execute(sql.build(sql.query({
+        let baskets = await db.execute(await sql.build(sql.query({
             select: () => [f.basketType,
             sql.build('sum (', sql.case([{ when: [FamilyDeliveries.readyAndSelfPickup(f)], then: f.quantity }], 0), ') a'),
             sql.build('sum (', f.quantity, ') b'),
@@ -174,17 +174,17 @@ export interface groupStats {
 @Entity<CitiesStats>({
     includeInApi: false,
     key: 'citiesStats',
-    dbName: (self, context) => {
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
-        let sql = new SqlBuilder();
+    dbName: async (self, context) => {
+        let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+        let sql = new SqlBuilder(context);
 
-        return sql.build('(', sql.query({
+        return sql.build('(', (await sql.query({
             select: () => [f.city, sql.columnWithAlias("count(*)", self.deliveries)],
             from: f,
             where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
             u(context).filterCenterAllowedForUser(f.distributionCenter),
             sql.eq(f.courier, '\'\'')]
-        }).replace('as result', 'as '), ' group by ', f.city, ') as result')
+        })).replace('as result', 'as '), ' group by ', f.city, ') as result')
     }
 })
 export class CitiesStats {
@@ -196,17 +196,17 @@ export class CitiesStats {
 @Entity<CitiesStatsPerDistCenter>({
     allowApiRead: false,
     key: 'citiesStatsPerDistCenter',
-    dbName: (self, context) => {
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
-        let sql = new SqlBuilder();
+    dbName: async (self, context) => {
+        let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+        let sql = new SqlBuilder(context);
 
-        return sql.build('(', sql.query({
+        return sql.build('(', (await sql.query({
             select: () => [f.city, f.distributionCenter, sql.columnWithAlias("count(*)", self.families)],
             from: f,
             where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
             u(context).filterCenterAllowedForUser(f.distributionCenter),
             sql.eq(f.courier, '\'\'')]
-        }).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
+        })).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
     }
 })
 

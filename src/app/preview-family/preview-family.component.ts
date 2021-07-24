@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { DialogConfig } from '@remult/angular';
 
 import { MatDialogRef } from '@angular/material/dialog';

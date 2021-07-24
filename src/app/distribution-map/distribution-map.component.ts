@@ -9,9 +9,9 @@ import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBound
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase } from '@remult/core';
-import { BackendMethod } from '@remult/core';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { Context, SqlDatabase } from 'remult';
+import { BackendMethod } from 'remult';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
@@ -200,7 +200,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   statuses = new Statuses(this.settings);
   selectedStatus: statusClass;
   filterCourier = new InputField<HelpersBase>({
-    dataType: HelpersBase,
+    valueType: HelpersBase,
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
     click: async () => HelpersBase.showSelectDialog(this.filterCourier, {
@@ -338,11 +338,11 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
     let cContext = u(context);
 
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let h = SqlFor(context.for(Helpers));
-    let sql = new SqlBuilder();
+    let f = await SqlFor(context.for(ActiveFamilyDeliveries));
+    let h = await SqlFor(context.for(Helpers));
+    let sql = new SqlBuilder(context);
     sql.addEntity(f, "FamilyDeliveries");
-    let r = (await db.execute(sql.query({
+    let r = (await db.execute(await sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
       sql.columnInnerSelect(f, {
         from: h,
@@ -384,15 +384,15 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetLocationsForOverview(context?: Context) {
 
     let result: deliveryOnMap[] = []
-    let f = SqlFor(context.for(FamilyDeliveries));
+    let f = await SqlFor(context.for(FamilyDeliveries));
 
-    let sql = new SqlBuilder();
+    let sql = new SqlBuilder(context);
     sql.addEntity(f, "fd");
 
 
     for (const org of Sites.schemas) {
       let dp = Sites.getDataProviderForOrg(org) as SqlDatabase;
-      result.push(...mapSqlResult((await dp.execute(sql.query({
+      result.push(...mapSqlResult((await dp.execute(await sql.query({
         select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus],
         from: f,
         where: () => {

@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "../model-shared/phone";
-import { Context, Controller, getFields, Validators } from '@remult/core';
+import { Context, Controller, getFields, Validators } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -11,13 +11,13 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
-import { BackendMethod } from '@remult/core';
+import { BackendMethod } from 'remult';
 import { DataAreaSettings, DataControl, openDialog } from '@remult/angular';
 
 import { Field, FieldType } from '../translate';
 import { FamilySources } from '../families/FamilySources';
 import { BasketType } from '../families/BasketType';
-import { ValueListFieldType } from '@remult/core/src/remult3';
+import { ValueListFieldType } from 'remult/src/remult3';
 
 
 declare var gtag;

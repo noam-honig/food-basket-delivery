@@ -6,8 +6,8 @@ import { HelperId, Helpers } from './helpers';
 
 import { Route } from '@angular/router';
 
-import { BackendMethod} from '@remult/core';
-import { Context } from '@remult/core';
+import { BackendMethod} from 'remult';
+import { Context } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
 

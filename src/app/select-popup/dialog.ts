@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Context, getFields, BackendMethod, ContainsFilterFactory } from '@remult/core';
+import { Context, getFields, BackendMethod, ContainsFilterFactory } from 'remult';
 
 
 import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
@@ -24,7 +24,7 @@ declare var gtag;
 
 @Injectable()
 export class DialogService {
-    filterDistCenter(distributionCenter: ContainsFilterFactory<DistributionCenters>): import("@remult/core").Filter {
+    filterDistCenter(distributionCenter: ContainsFilterFactory<DistributionCenters>): import("remult").Filter {
         return this.cContext.filterDistCenter(distributionCenter, this.distCenter)
     }
     async exception(title: string, err: any): Promise<void> {
@@ -113,7 +113,7 @@ export class DialogService {
         valueList: context => DistributionCenters.getValueList(context, true),
         valueChange: async self => {
 
-            if (self.context.isSignedIn()) {
+            if (self.context.authenticated()) {
                 await self.$.distCenter.load();
                 self.refreshDistCenter.next();
             }
@@ -274,7 +274,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorTime = new Date().valueOf();
         try {
             var s = await this.context.for((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
-            if (s && this.context.isSignedIn() && !s.currentUserIsValidForAppLoadTest) {
+            if (s && this.context.authenticated() && !s.currentUserIsValidForAppLoadTest) {
                 let AuthService = (await import("../auth/auth-service")).AuthService;
                 AuthService.doSignOut();
                 this.dialog.Error(s.lang.sessionExpiredPleaseRelogin);
@@ -285,7 +285,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         catch (err) {
 
         }
-        if (this.context.isSignedIn()) {
+        if (this.context.authenticated()) {
             if (showing)
                 return;
             showing = true;

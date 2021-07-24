@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, BackendMethod, Entity, SqlDatabase, ProgressListener } from '@remult/core';
+import { Context, BackendMethod, Entity, SqlDatabase, ProgressListener } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
@@ -118,9 +118,9 @@ export class OverviewComponent implements OnInit {
       sites: []
     };
 
-    var builder = new SqlBuilder();
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let fd = SqlFor(context.for(FamilyDeliveries));
+    var builder = new SqlBuilder(context);
+    let f =await SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd = await SqlFor(context.for(FamilyDeliveries));
 
 
 
@@ -129,7 +129,7 @@ export class OverviewComponent implements OnInit {
       progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
-      var as = SqlFor(context.for(ApplicationSettings));
+      var as =await  SqlFor(context.for(ApplicationSettings));
 
       let cols: any[] = [as.organisationName, as.logoUrl];
 
@@ -147,7 +147,7 @@ export class OverviewComponent implements OnInit {
 
       }
 
-      let z = builder.query({
+      let z = await builder.query({
         select: () => cols,
         from: as,
       });

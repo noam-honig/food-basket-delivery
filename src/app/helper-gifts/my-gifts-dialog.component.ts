@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { HelperId } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';

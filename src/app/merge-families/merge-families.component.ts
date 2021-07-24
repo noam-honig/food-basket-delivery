@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { BusyService, DataControlSettings, FieldCollection, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
-import { Context, BackendMethod, Fields, FieldRef, FieldMetadata } from '@remult/core';
+import { Context, BackendMethod, Fields, FieldRef, FieldMetadata } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';

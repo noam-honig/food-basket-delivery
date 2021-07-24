@@ -1,4 +1,4 @@
-import { AndFilter, Context, Filter, FilterFactories, FilterFactory } from "@remult/core";
+import { AndFilter, Context, Filter, FilterFactories, FilterFactory } from "remult";
 import { Roles } from "../auth/roles";
 import { BasketType } from "../families/BasketType";
 import { DeliveryStatus } from "../families/DeliveryStatus";
@@ -29,12 +29,12 @@ export class UberContext {
     filterCenterAllowedForUser(center: FilterFactory<import("../manage/distribution-centers").DistributionCenters>) {
         if (this.context.isAllowed(Roles.admin)) {
             return undefined;
-        } else if (this.context.isSignedIn())
+        } else if (this.context.authenticated())
             return center.isEqualTo(this.currentUser.distributionCenter);
     }
     static filterActiveDeliveries: (self: FilterFactories<import("../families/FamilyDeliveries").FamilyDeliveries>) => Filter;
     isAllowedForUser(self: FilterFactories<import("../families/FamilyDeliveries").FamilyDeliveries>) {
-        if (!this.context.isSignedIn())
+        if (!this.context.authenticated())
             return self.id.isEqualTo('no rows');
         let user = u(this.context).currentUser;
         user.theHelperIAmEscorting;

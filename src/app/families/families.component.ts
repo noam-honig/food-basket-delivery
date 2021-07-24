@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, Filter, FilterFactories, BackendMethod, SqlDatabase } from '@remult/core';
+import { AndFilter, Filter, FilterFactories, BackendMethod, SqlDatabase } from 'remult';
 
 import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
@@ -19,11 +19,11 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Route } from '@angular/router';
 
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 
 
 
@@ -56,9 +56,9 @@ import { GroupsValue } from '../manage/groups';
 export class FamiliesComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
     static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
-        var sql = new SqlBuilder();
-        let f = SqlFor(context.for(Families));
-        let r = await db.execute(sql.query({
+        var sql = new SqlBuilder(context);
+        let f = await SqlFor(context.for(Families));
+        let r = await db.execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
             where: () => [f.status.isEqualTo(FamilyStatus.Active)],
@@ -628,7 +628,7 @@ export class FamiliesComponent implements OnInit {
         cities: type[],
         stats: statsOnTab,
         equalToFilter: (f: FilterFactories<Families>, item: type) => Filter,
-        differentFromFilter: (f: FilterFactories<Families>, item: type) => AndFilter
+        differentFromFilter: (f: FilterFactories<Families>, item: type) => Filter
     ) {
         stats.stats.splice(0);
         stats.moreStats.splice(0);

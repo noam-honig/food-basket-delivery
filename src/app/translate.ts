@@ -1,12 +1,13 @@
 
-import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer } from '@remult/core';
+import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer, IntegerField } from 'remult';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
 import { getLang, Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
-import { ClassType } from '@remult/core/classType';
+import { ClassType } from 'remult/classType';
+import { DateArray } from 'ngx-bootstrap/chronos/types';
 
 
 
@@ -120,18 +121,22 @@ function adjustSettings(settings: FieldOptions & TranslatedCaption) {
   }
   return settings;
 }
-export function Field<T = any, colType = any>(settings?: FieldOptions<colType, T> & TranslatedCaption) {
-  return origField<T, colType>(adjustSettings(settings));
+export function Field<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
+  return origField<entityType, valueType>(adjustSettings(settings));
 }
-export function DateOnlyField<T = any>(settings?: FieldOptions<Date, T> & TranslatedCaption) {
+export function QuantityColumn<T>(settings?: FieldOptions & TranslatedCaption) {
+  return IntegerField<T>(adjustSettings({ translation: l => l.quantity, ...settings }));
+}
+export function DateOnlyField<T = any>(settings?: FieldOptions<T, DateArray> & TranslatedCaption) {
   return origDateOnlyField<T>(adjustSettings(settings));
 }
 
-export function FieldType<valueType = any>(settings?: FieldOptions<valueType, any> & TranslatedCaption) {
+
+export function FieldType<valueType = any>(settings?: FieldOptions<any, valueType> & TranslatedCaption) {
   return origFieldType<valueType>(adjustSettings(settings));
 }
-export function ValueListFieldType<T = any, colType extends ValueListItem = any>(type: ClassType<colType>, settings?: FieldOptions<colType, T> & TranslatedCaption) {
-  return origValueListFieldType<colType>(type, adjustSettings(settings));
+export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(type: ClassType<valueType>, settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
+  return origValueListFieldType<valueType>(type, adjustSettings(settings));
 }
 export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption) {
   if (settings.translation) {

@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DataAreaSettings, DataControl, InputField } from '@remult/angular';
-import { DateOnlyValueConverter } from '@remult/core/valueConverters';
-import { Context, DateOnlyField, getFields } from '@remult/core';
+import { DateOnlyValueConverter } from 'remult/valueConverters';
+import { Context, DateOnlyField, getFields } from 'remult';
 
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';

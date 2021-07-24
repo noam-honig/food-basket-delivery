@@ -1,15 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { infoOnMap, statusClass, Statuses } from '../distribution-map/distribution-map.component';
 import * as chart from 'chart.js';
-import { BackendMethod, Context, SqlDatabase } from '@remult/core';
+import { BackendMethod, Context, SqlDatabase } from 'remult';
 import { Roles } from '../auth/roles';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
-import { DeliveryStatus } from '../families/DeliveryStatus';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder"; import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
-import { DateValueConverter } from '@remult/core/valueConverters';
+import { DateValueConverter } from 'remult/valueConverters';
 
 @Component({
   selector: 'app-playback',
@@ -47,7 +46,7 @@ export class PlaybackComponent implements OnInit {
   @ViewChild('gmap', { static: true }) gmapElement: any;
 
   statuses = new Statuses(this.settings);
-  @ViewChild(DateRangeComponent, { static: false }) dateRange:DateRangeComponent;
+  @ViewChild(DateRangeComponent, { static: false }) dateRange: DateRangeComponent;
   ready = false;
   async select() {
     this.ready = true;
@@ -244,15 +243,15 @@ export class PlaybackComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.admin })
   static async GetTimeline(fromDateDate: Date, toDateDate: Date, context?: Context, db?: SqlDatabase) {
-    let f = SqlFor(context.for(FamilyDeliveries));
+    let f = await SqlFor(context.for(FamilyDeliveries));
 
 
-    
+
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
 
-    let sql = new SqlBuilder();
+    let sql = new SqlBuilder(context);
     sql.addEntity(f, "Families");
-    let r = (await db.execute(sql.query({
+    let r = (await db.execute(await sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {

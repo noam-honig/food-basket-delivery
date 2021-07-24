@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from '@remult/core';
+import { Context, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from 'remult';
 import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -26,7 +26,7 @@ import { HelperId, Helpers } from '../helpers/helpers';
 
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Groups, GroupsValue } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
@@ -380,7 +380,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     cities: type[],
     stats: statsOnTab,
     equalToFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => Filter,
-    differentFromFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => AndFilter
+    differentFromFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => Filter
   ) {
     stats.stats.splice(0);
     stats.moreStats.splice(0);
@@ -727,13 +727,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.lab })
   static async getDeliveriesByPhone(phoneNumIn: string, context?: Context, db?: SqlDatabase) {
     let phoneNum = new Phone(phoneNumIn);
-    let sql1 = new SqlBuilder();
+    let sql1 = new SqlBuilder(context);
 
-    let fd = SqlFor(context.for(FamilyDeliveries));
+    let fd =await  SqlFor(context.for(FamilyDeliveries));
     let result: string[] = [];
     let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
 
-    for (const d of (await db.execute(sql1.query({
+    for (const d of (await db.execute(await sql1.query({
       from: fd,
       where: () => [
         (courier != undefined ? fd.courier.isEqualTo(courier).and(FamilyDeliveries.active(fd)) :
@@ -788,7 +788,7 @@ export interface deliveryButtonsHelper {
   showAllBeforeNew?: boolean
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
-  let cContext= u(args.context);
+  let cContext = u(args.context);
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.context.for(Families).findId(d.family);
 
@@ -886,7 +886,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       icon: 'list_alt',
       showInLine: true,
       click: async d => {
-        
+
         await openDialog(
           (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = d.courier);
         args.refresh();
@@ -901,7 +901,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
 
       click: async d => {
-        let h = await args.context.for(Helpers).findId(d.courier);
+        let h = await d.courier.getHelper();
         h.displayEditDialog(args.dialog, args.busy);
 
 

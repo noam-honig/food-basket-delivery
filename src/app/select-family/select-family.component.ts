@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { BusyService, GridSettings } from '@remult/angular';
-import { AndFilter, FilterFactories } from '@remult/core';
+import { AndFilter, FilterFactories } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Filter } from '@remult/core';
-import { Context } from '@remult/core';
+import { Filter } from 'remult';
+import { Context } from 'remult';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Context, FieldRef, EntityBase } from '@remult/core';
+import { UrlBuilder, Entity, Context, FieldRef, EntityBase } from 'remult';
 import { Field } from '../translate';
 
 
@@ -369,7 +369,7 @@ export function GetDistanceBetween(a: Location, b: Location) {
 
 export class AddressHelper {
 
-    constructor(private context: Context, private addressColumn: () => FieldRef<string, any>, private apiResultColumn: () => FieldRef<string, any>) {
+    constructor(private context: Context, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
 
 
     }

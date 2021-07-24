@@ -1,4 +1,4 @@
-import { BackendMethod, Context } from '@remult/core';
+import { BackendMethod, Context } from 'remult';
 import { Roles } from "../auth/roles";
 
 export class ServerEventAuthorizeAction {

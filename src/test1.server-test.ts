@@ -1,6 +1,6 @@
 //import { CustomModuleLoader } from '../../radweb/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/out-tsc/server-test/radweb/projects');
-import { Context, SqlDatabase } from "@remult/core";
+import { Context, SqlDatabase } from "remult";
 import './app/manage/ApplicationSettings';
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
@@ -21,8 +21,9 @@ import { Sites } from "./app/sites/sites";
 import { DistributionCenters } from './app/manage/distribution-centers';
 import { Phone } from './app/model-shared/phone';
 import { AuthService } from './app/auth/auth-service';
-import { actionInfo } from '@remult/core/src/server-action';
-//initSettings.disableSchemaInit = true;
+import { actionInfo } from 'remult/src/server-action';
+initSettings.disableSchemaInit = true;
+ 
 
 async function init() {
 
@@ -249,6 +250,7 @@ async function init() {
             done();
         });
         itAsync("update status, updatesStatus and deletes delivery", async () => {
+            
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();

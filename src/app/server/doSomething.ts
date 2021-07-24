@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 
-import { SqlDatabase,    FieldRef } from '@remult/core';
+import { SqlDatabase,    FieldRef } from 'remult';
 import * as AWS from 'aws-sdk';
 
 
@@ -12,7 +12,7 @@ import * as AWS from 'aws-sdk';
 import { serverInit } from "./serverInit";
 
 
-import { Context } from '@remult/core';
+import { Context } from 'remult';
 import { GeocodeCache, GeocodeInformation, getAddress } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
@@ -24,7 +24,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { volunteersInEvent, Event } from '../events/events';
-import { allEntities } from '@remult/core/src/context';
+import { allEntities } from 'remult/src/context';
 
 
 

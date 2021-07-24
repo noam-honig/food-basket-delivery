@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
-import { Context, BackendMethod, SqlDatabase } from '@remult/core';
+import { Context, BackendMethod, SqlDatabase } from 'remult';
 import { toInt } from 'ngx-bootstrap/chronos/utils/type-checks';
-import { DateOnlyValueConverter } from '@remult/core/valueConverters';
+import { DateOnlyValueConverter } from 'remult/valueConverters';
 
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { DateRangeComponent } from '../date-range/date-range.component';
@@ -12,7 +12,7 @@ import { Families } from '../families/families';
 import { ActiveFamilyDeliveries, FamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { Helpers } from '../helpers/helpers';
-import { SqlBuilder, SqlFor } from '../model-shared/types';
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { RegisterURL, urlDbOperator } from '../resgister-url/regsiter-url';
 
 @Component({
@@ -98,17 +98,17 @@ export class WeeklyReportMltComponent implements OnInit {
   static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
     let totalPerBasket: { URL: string, basketType: string, total: number, added: number, collected: number, received: number }[] = [];
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
-    var toDateDate =  DateOnlyValueConverter.fromJson(toDate);
+    var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
 
-    
-    let fd = SqlFor(context.for(FamilyDeliveries));
-    let u = SqlFor(context.for(RegisterURL));
 
-    let sql = new SqlBuilder();
+    let fd = await SqlFor(context.for(FamilyDeliveries));
+    let u = await SqlFor(context.for(RegisterURL));
+
+    let sql = new SqlBuilder(context);
     sql.addEntity(fd, "fd")
 
-    let q = sql.build(sql.query({
+    let q = await sql.build(sql.query({
       select: () => [
         sql.build('grouping(', fd.basketType, ') basketGroup'),
         fd.basketType,
@@ -136,13 +136,13 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let h = SqlFor( context.for(Helpers));
-    
-    let u =SqlFor( context.for(RegisterURL));
+    let h = await SqlFor(context.for(Helpers));
 
-    let sql = new SqlBuilder();
+    let u = await SqlFor(context.for(RegisterURL));
 
-    let q = sql.build(sql.query({
+    let sql = new SqlBuilder(context);
+
+    let q = await sql.build(sql.query({
       select: () => [
         sql.build('grouping(', u.prettyName, ') URLGroup'),
         u.prettyName,
@@ -150,7 +150,7 @@ export class WeeklyReportMltComponent implements OnInit {
         sql.build('sum (', sql.case([{ when: [h.createDate.isLessOrEqualTo(toDateDate).and(h.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
       ],
       from: h,
-      innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(h.referredBy.dbName), ' like ', u.URL)] }],
+      innerJoin: () => [{ to: u, on:async () => [sql.build(urlDbOperator(await h.referredBy.getDbName()), ' like ', u.URL)] }],
       where: () => [h.archive.isEqualTo(false)]
     }), ' group by cube(', u.prettyName, ')'
     );
@@ -164,12 +164,12 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let u = SqlFor( context.for(RegisterURL));
-    let f =SqlFor( context.for(Families));
-    
-    let sql = new SqlBuilder();
+    let u = await SqlFor(context.for(RegisterURL));
+    let f = await SqlFor(context.for(Families));
 
-    let q = sql.build(sql.query({
+    let sql = new SqlBuilder(context);
+
+    let q =await  sql.build(sql.query({
       select: () => [
         sql.build('grouping(', u.prettyName, ') URLGroup'),
         u.prettyName,
@@ -177,7 +177,7 @@ export class WeeklyReportMltComponent implements OnInit {
         sql.build('sum (', sql.case([{ when: [f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
       ],
       from: f,
-      innerJoin: () => [{ to: u, on: () => [sql.build(urlDbOperator(f.custom1.dbName), ' like ', u.URL)] }],
+      innerJoin:async  () => [{ to: u, on:async () => [sql.build(urlDbOperator(await f.custom1.getDbName()), ' like ', u.URL)] }],
       where: () => [f.status.isEqualTo(FamilyStatus.Active)]
     }), ' group by cube(', u.prettyName, ')'
     );
@@ -192,11 +192,11 @@ export class WeeklyReportMltComponent implements OnInit {
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
 
-    let f =SqlFor(context.for(FamilyDeliveries));
-    
-    let sql = new SqlBuilder();
+    let f =await  SqlFor(context.for(FamilyDeliveries));
+
+    let sql = new SqlBuilder(context);
     sql.addEntity(f, "FamilyDeliveries")
-    let deliveries = await db.execute(sql.build(sql.query({
+    let deliveries = await db.execute(await sql.build(sql.query({
       select: () => [f.courier,
       sql.build('count (distinct ', f.family, ') total'),
       ],

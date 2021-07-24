@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Context, Controller, BackendMethod, getFields, ProgressListener } from '@remult/core';
+import { Context, Controller, BackendMethod, getFields, ProgressListener } from 'remult';
 import { RouteHelperService, BusyService, DataControl, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';

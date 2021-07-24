@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context, AndFilter, FilterFactories } from '@remult/core';
+import { Context, AndFilter, FilterFactories } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';
 
 
-import { Filter } from '@remult/core';
+import { Filter } from 'remult';
 import { BusyService, openDialog } from '@remult/angular';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 
-import { FieldRef } from '@remult/core';
+import { FieldRef } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
 

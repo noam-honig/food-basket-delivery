@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
 import { BusyService, InputField, openDialog } from '@remult/angular';
-import { BackendMethod, Context, SqlDatabase } from '@remult/core';
+import { BackendMethod, Context, SqlDatabase } from 'remult';
 import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { SqlBuilder, relativeDateName, getValueFromResult, SqlFor } from '../model-shared/types';
+import { relativeDateName } from '../model-shared/types';
+import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
@@ -186,13 +187,13 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     //remove busy helpers
     {
-      let fd = SqlFor(context.for(FamilyDeliveries));
-      let sql = new SqlBuilder();
+      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let sql = new SqlBuilder(context);
       let busyLimitdate = new Date();
       busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
 
 
-      for (let busy of (await db.execute(sql.query({
+      for (let busy of (await db.execute(await sql.query({
         select: () => [fd.courier],
         from: fd,
         where: () => [DeliveryStatus.isAResultStatus(fd.deliverStatus).and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
@@ -204,18 +205,18 @@ export class ShipmentAssignScreenComponent implements OnInit {
     }
 
     {
-      let sql = new SqlBuilder();
+      let sql = new SqlBuilder(context);
 
-      let fd = SqlFor(context.for(FamilyDeliveries));
-      for (let r of (await db.execute(sql.query({
+      let fd = await SqlFor(context.for(FamilyDeliveries));
+      for (let r of (await db.execute(await sql.query({
         select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
         where: () => [DeliveryStatus.isProblem(fd.deliverStatus).and(fd.courier.isDifferentFrom(null))]
 
       }))).rows) {
-        let x = result.helpers[getValueFromResult(r, fd.courier)];
+        let x = result.helpers[await getValueFromResult(r, fd.courier)];
         if (x) {
-          x.problemFamilies[getValueFromResult(r, fd.family)] = true;
+          x.problemFamilies[await getValueFromResult(r, fd.family)] = true;
         }
       }
     }
@@ -223,10 +224,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     //highlight new Helpers
     {
-      let sql = new SqlBuilder();
-      let h = SqlFor(context.for(Helpers));
-      let fd = SqlFor(context.for(FamilyDeliveries));
-      for (let helper of (await db.execute(sql.query({
+      let sql = new SqlBuilder(context);
+      let h = await SqlFor(context.for(Helpers));
+      let fd = await SqlFor(context.for(FamilyDeliveries));
+      for (let helper of (await db.execute(await sql.query({
         select: () => [h.id],
         from: h,
         where: () => [sql.build(h.id, ' not in (', sql.query({
@@ -243,11 +244,11 @@ export class ShipmentAssignScreenComponent implements OnInit {
       }
     }
     {
-      let sql = new SqlBuilder();
-      let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+      let sql = new SqlBuilder(context);
+      let fd =await  SqlFor(context.for(ActiveFamilyDeliveries));
 
       let sqlResult = await db.execute(
-        sql.query({
+        await sql.query({
           select: () => [
             fd.family,
             fd.name,
@@ -269,27 +270,27 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
 
         let f: familyInfo = {
-          id: getValueFromResult(r, fd.family),
-          name: getValueFromResult(r, fd.name),
-          address: getValueFromResult(r, fd.address),
-          createDateString: relativeDateName(context, { d: getValueFromResult(r, fd.createDate) }),
+          id: await getValueFromResult(r, fd.family),
+          name: await getValueFromResult(r, fd.name),
+          address: await getValueFromResult(r, fd.address),
+          createDateString: relativeDateName(context, { d: await getValueFromResult(r, fd.createDate) }),
           location: {
-            lat: +getValueFromResult(r, fd.addressLatitude),
-            lng: +getValueFromResult(r, fd.addressLongitude)
+            lat: +await getValueFromResult(r, fd.addressLatitude),
+            lng: +await getValueFromResult(r, fd.addressLongitude)
           },
           deliveries: [{
-            basketTypeId: getValueFromResult(r, fd.basketType),
-            quantity: getValueFromResult(r, fd.quantity),
-            basketTypeName: (await context.for(BasketType).findId(getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
-            id: getValueFromResult(r, fd.id)
+            basketTypeId: await getValueFromResult(r, fd.basketType),
+            quantity: await getValueFromResult(r, fd.quantity),
+            basketTypeName: (await context.for(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
+            id: await getValueFromResult(r, fd.id)
 
           }],
-          totalItems: getValueFromResult(r, fd.quantity),
+          totalItems: await getValueFromResult(r, fd.quantity),
           relevantHelpers: []
         }
 
-        if (getValueFromResult(r, fd.courier)) {
-          let h = result.helpers[getValueFromResult(r, fd.courier)];
+        if (await getValueFromResult(r, fd.courier)) {
+          let h = result.helpers[await getValueFromResult(r, fd.courier)];
           if (h) {
             let fh = h.families.find(x => x.id == f.id);
             if (fh) {
