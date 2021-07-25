@@ -184,7 +184,7 @@ s.parentNode.insertBefore(b, s);})();
             });
             registerActionsOnServer(area);
             registerEntitiesOnServer(area);
-            registerImageUrls(app, eb.getValidContext, '/' + schema);
+            registerImageUrls(app,(req)=> eb.getValidContext(req), '/' + schema);
         };
         for (const schema of Sites.schemas) {
             createSchemaApi(schema);
