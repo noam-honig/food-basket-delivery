@@ -44,8 +44,15 @@
     </mat-card-title>
     <mat-card-subtitle>{{ n.relativeDeliveryStatusDate()}}, {{settings.lang.updatedBy}}
       {{n.deliveryStatusUser?.name}}
-      <br>
-      <a (click)="updateFamily(n)">
+      
+      <a (click)="deliveryImages(n)" style="display:block" *ngIf="n.numOfPhotos > 0 && isAdmin()">
+        <button mat-icon-button>
+          <mat-icon>photo_camera</mat-icon>
+        </button>
+        {{settings.lang.photos_taken_by_volunteer}}
+      </a>
+      
+      <a (click)="updateFamily(n)" style="display:block">
         <button mat-icon-button>
           <mat-icon>edit</mat-icon>
         </button>
@@ -53,7 +60,7 @@
       </a>
 
 
-      <a (click)="showHelper(n)" *ngIf="n.courier" style="display:inline-block"> <button mat-icon-button>
+      <a (click)="showHelper(n)" *ngIf="n.courier" style="display:inline-block"  style="display:block"> <button mat-icon-button>
           <mat-icon>list_alt</mat-icon>
         </button> {{settings.lang.deliveries}} {{settings.lang.for}} {{n.courier.name}} </a>
     </mat-card-subtitle>

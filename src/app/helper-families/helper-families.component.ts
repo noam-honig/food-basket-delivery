@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BackendMethod,  SqlDatabase, FieldRef, Allow } from 'remult';
+import { BackendMethod, SqlDatabase, FieldRef, Allow } from 'remult';
 import { BusyService, DataAreaSettings, GridButton, InputField, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
@@ -25,7 +25,7 @@ import { Families } from '../families/families';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import {  relativeDateName } from '../model-shared/types';
+import { relativeDateName } from '../model-shared/types';
 import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Sites, getLang } from '../sites/sites';
@@ -137,7 +137,7 @@ export class HelperFamiliesComponent implements OnInit {
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd =await SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd = await SqlFor(context.for(ActiveFamilyDeliveries));
 
     let sql = new SqlBuilder(context);
     let settings = await ApplicationSettings.getAsync(context);
@@ -604,11 +604,12 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
-    openDialog(EditCommentDialogComponent, x => x.args = {
+    openDialog(GetVolunteerFeedback, x => x.args = {
       comment: f.courierComments,
-
-
-      save: async comment => {
+      cancel:()=>undefined,
+      family:f,
+      helpText:()=>'',
+      ok: async comment => {
         if (f.isNew())
           return;
         f.courierComments = comment;

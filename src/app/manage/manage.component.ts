@@ -293,7 +293,10 @@ export class ManageComponent implements OnInit {
       [this.settings.$.questionForVolunteer1Caption, this.settings.$.questionForVolunteer1Values],
       [this.settings.$.questionForVolunteer2Caption, this.settings.$.questionForVolunteer2Values],
       [this.settings.$.questionForVolunteer3Caption, this.settings.$.questionForVolunteer3Values],
-      [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values]
+      [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values],
+      this.settings.$.askVolunteerForLocationOnDelivery,
+      this.settings.$.askVolunteerForAPhotoToHelp,
+      this.settings.$.questionForVolunteerWhenUploadingPhoto
 
 
 
@@ -548,6 +551,7 @@ export class ManageComponent implements OnInit {
     this.settings.deliveredButtonText = this.settings.lang.deliveredButtonText;
     this.settings.boxes1Name = this.settings.lang.boxes1Name;
     this.settings.boxes2Name = this.settings.lang.boxes2Name;
+    this.settings.questionForVolunteerWhenUploadingPhoto = this.settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
     var b = await this.context.for(BasketType).findFirst();
     if (b) {
       b.name = this.settings.lang.foodParcel;

@@ -1,8 +1,10 @@
 <h3 mat-dialog-header>{{settings.lang.deliveryDetailsAsDisplayedToVolunteer}}</h3>
-<app-helper-families [familyLists]="familyLists" [preview]="true"></app-helper-families>
+<mat-dialog-content>
+  <app-helper-families [familyLists]="familyLists" [preview]="true"></app-helper-families>
+</mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button color="warning" (click)="cancel()">
-      {{settings.lang.close}}
+    {{settings.lang.close}}
   </button>
-  
+
 </mat-dialog-actions>

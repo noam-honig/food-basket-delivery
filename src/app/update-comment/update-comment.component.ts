@@ -8,13 +8,15 @@ import { Context } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { DataAreaSettings } from '@remult/angular';
+import { ImageInfo } from '../images/images.component';
+import { DeliveryImage } from '../families/DeiveryImages';
 
 @Component({
   selector: 'app-update-comment',
   templateUrl: './update-comment.component.html',
   styleUrls: ['./update-comment.component.scss']
 })
-export class GetVolunteerFeedback implements OnInit { 
+export class GetVolunteerFeedback implements OnInit {
   public args: {
     family: ActiveFamilyDeliveries,
     showFailStatus?: boolean,
@@ -22,7 +24,7 @@ export class GetVolunteerFeedback implements OnInit {
     hideLocation?: boolean,
     title?: string,
     comment: string,
-    questionsArea?:DataAreaSettings,
+    questionsArea?: DataAreaSettings,
     ok: (comment: string, failStatusId: DeliveryStatus) => void,
     cancel: () => void
   };
@@ -64,12 +66,16 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   }
 
   async ngOnInit() {
+
     if (!this.args.title)
       this.args.title = this.settings.lang.thankYou;
     if (this.args.showFailStatus) {
 
       this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id);
 
+    }
+    if (this.args.family) {
+      this.images = await this.args.family.loadVolunteerImages();
     }
   }
   phoneOptions: phoneOption[] = [];
@@ -81,10 +87,20 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
 
   }
   ok = false;
-  confirm() {
+  async confirm() {
     this.ok = true;
-    this.dialogRef.close();
+    for (const image of this.images) {
+      if (image.deleted && image.entity)
+        await image.entity.delete();
+      if (!image.deleted && !image.entity) {
+        await this.context.for(DeliveryImage).create({
+          deliveryId: this.args.family.id, image: image.image
+        }).save();
+        this.args.family.needsWork = true;
+      }
+    }
     this.args.ok(this.args.comment, this.defaultFailStatus);
+    this.dialogRef.close();
     return false;
   }
 
@@ -92,6 +108,8 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
     let s = ApplicationSettings.get(this.context);
     return this.args.helpText(s);
   }
+  images: ImageInfo[] = [];
+
 }
 
 

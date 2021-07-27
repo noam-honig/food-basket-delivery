@@ -9,7 +9,7 @@ import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 
 
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { createElementCssSelector } from '@angular/compiler';
 
@@ -23,6 +23,7 @@ import { openDialog } from '@remult/angular';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { relativeDateName } from '../model-shared/types';
 import { u } from '../model-shared/UberContext';
+import { ImageInfo } from '../images/images.component';
 
 @Component({
   selector: 'app-family-info',
@@ -37,7 +38,11 @@ export class FamilyInfoComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   @Input() hideSal = false;
-  ngOnInit() {
+  images:ImageInfo[];
+  async ngOnInit() {
+    if (this.f){
+        this.images = await FamilyDeliveries.getFamilyImages(this.f.family,this.f.id);
+    }
   }
   actuallyShowHelp() {
     return this.showHelp && this.f.deliverStatus != DeliveryStatus.ReadyForDelivery;

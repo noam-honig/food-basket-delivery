@@ -102,7 +102,7 @@
     </div>
 
   </div>
-
+  <app-images [readonly]="true" [images]="images"></app-images>
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer">
     <h4 *ngIf="f.phone1 || f.phone2||f.phone3||f.phone4">{{settings.lang.phones}}:</h4>
     <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">

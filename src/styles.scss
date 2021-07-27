@@ -407,3 +407,16 @@ textarea {
     display: none !important;
   }
 }
+
+.image-container {
+  display: flex;
+  flex-wrap: wrap;
+
+}
+.image {
+  max-width: 400px;
+  border: solid;
+  margin-bottom: 11px;
+  border-radius: 5px;
+  border-width: thin;
+}

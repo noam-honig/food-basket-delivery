@@ -98,7 +98,9 @@ import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
 import { Context } from 'remult';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
-import {  Helpers } from './helpers/helpers'
+import {  Helpers } from './helpers/helpers';
+import { ImagesComponent } from './images/images.component';
+import { DeliveryImagesComponent } from './delivery-images/delivery-images.component'
 
 
 
@@ -194,7 +196,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     GeneralImportFromExcelComponent,
     MyGiftsDialogComponent,
     MltFamiliesComponent,
-    PrintVolunteersComponent
+    PrintVolunteersComponent,
+    ImagesComponent,
+    DeliveryImagesComponent
 
 
   ],

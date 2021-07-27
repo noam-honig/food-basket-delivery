@@ -1,0 +1,36 @@
+<mat-card-title>{{this.settings.lang.photos_taken_by_volunteer}}</mat-card-title>
+
+
+
+<mat-dialog-content>
+
+
+    <div class="image-container">
+        <ng-container *ngFor="let i of images">
+            <div class="image">
+                <img [src]="i.image" style="max-width: 100%;">
+                <mat-checkbox style="margin:10px" [checked]="!!i.imageInFamily" (change)="checkedChanged(i,$event)">
+                    {{this.settings.lang.save_photo_and_display_to_next_volunteer}}</mat-checkbox>
+            </div>
+        </ng-container>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <div class="button-container">
+        <div class="button-line">
+            <button mat-raised-button color="warning" [mat-dialog-close]>
+                {{settings.lang.close}}
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+</mat-dialog-actions>

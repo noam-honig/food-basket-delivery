@@ -21,6 +21,7 @@ import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { DeliveryImagesComponent } from '../delivery-images/delivery-images.component';
 
 @Component({
     selector: 'app-news',
@@ -28,7 +29,9 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
     styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-
+    isAdmin(){
+        return this.context.isAllowed(Roles.admin);
+    }
     static needsWorkRoute: Route = {
         path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard]
     };
@@ -36,6 +39,9 @@ export class NewsComponent implements OnInit, OnDestroy {
     filterChange() {
 
         this.refresh();
+    }
+    deliveryImages(n: ActiveFamilyDeliveries) {
+        openDialog(DeliveryImagesComponent, x => x.args = n);
     }
 
     constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
@@ -86,7 +92,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.busy.donotWait(async () => {
             this.news = await this.context.for(FamilyDeliveries).find({
                 where: n => {
-                    return new AndFilter(this.filters.where(n),this.dialog.filterDistCenter(n.distributionCenter));
+                    return new AndFilter(this.filters.where(n), this.dialog.filterDistCenter(n.distributionCenter));
 
 
                 }, orderBy: n => n.deliveryStatusDate.descending(), limit: this.newsRows

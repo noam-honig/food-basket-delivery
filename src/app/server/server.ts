@@ -302,3 +302,9 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Co
 
 
 }
+declare module 'remult' {
+    export interface Context {
+      noamIsCool:number;
+    }
+  }
+let x:Context;

@@ -35,6 +35,7 @@ import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.c
 import { DistributionCenters } from '../manage/distribution-centers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { u } from '../model-shared/UberContext';
+import { DeliveryImagesComponent } from '../delivery-images/delivery-images.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -684,6 +685,16 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
         , textInMenu: () => getLang(this.context).deliveryDetails
       },
+      {
+        name: '',
+        icon: 'photo_camera',
+
+        click: async fd => {
+          openDialog(DeliveryImagesComponent, x => x.args = fd);
+        }
+        , textInMenu: () => getLang(this.context).photos_taken_by_volunteer,
+        visible: fd => fd.numOfPhotos > 0
+      },
       ...getDeliveryGridButtons({
         context: this.context,
         deliveries: () => this.deliveries,
@@ -729,7 +740,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder(context);
 
-    let fd =await  SqlFor(context.for(FamilyDeliveries));
+    let fd = await SqlFor(context.for(FamilyDeliveries));
     let result: string[] = [];
     let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
 

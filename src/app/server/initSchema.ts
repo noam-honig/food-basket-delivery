@@ -437,6 +437,12 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         //await dataSource.execute(await sql.build("alter table ", fd, " alter column ", fd.courier, " set not null"));
 
     });
+    await version(35, async () => {
+    });
+    await version(36, async () => {
+        settings.questionForVolunteerWhenUploadingPhoto = settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
+        await settings.save();
+    });
 
 
 

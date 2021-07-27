@@ -26,6 +26,8 @@ import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { LatLng } from 'spherical-geometry-js';
 import { AddressInputComponent } from '../address-input/address-input.component';
+import { ImageInfo } from '../images/images.component';
+import { FamilyImage } from '../families/DeiveryImages';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -190,6 +192,15 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     await this.families.currentRow.save();
     if (this.delivery)
       this.delivery._.reload();
+    for (const image of this.images) {
+      if (image.deleted && image.entity)
+        await image.entity.delete();
+      if (!image.deleted && !image.entity) {
+        await this.context.for(FamilyImage).create({
+          familyId: this.args.family.id, image: image.image
+        }).save();
+      }
+    }
 
 
     this.dialogRef.close();
@@ -252,6 +263,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       }
     });
   }
+  images: ImageInfo[] = [];
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
@@ -274,7 +286,10 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     this.families.currentRow = this.args.family;
-
+    this.images = await (await this.context.for(FamilyImage).find({ where: i => i.familyId.isEqualTo(this.args.family.id) })).map(i => ({
+      image: i.image,
+      entity: i
+    } as ImageInfo));
 
     this.familiesInfo = this.families.addArea({
       fields: families => [

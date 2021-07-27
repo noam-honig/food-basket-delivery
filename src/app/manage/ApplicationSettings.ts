@@ -347,12 +347,19 @@ export class ApplicationSettings extends EntityBase {
   questionForVolunteer4Caption: string;
   @Field({ translation: l => l.questionForVolunteer + " 4 " + l.optionalValues })
   questionForVolunteer4Values: string;
+  @Field()
+  askVolunteerForLocationOnDelivery: boolean;
+  @Field()
+  askVolunteerForAPhotoToHelp: boolean;
+  @Field()
+  questionForVolunteerWhenUploadingPhoto: string;
   @Field({ includeInApi: Roles.admin })
   createBasketsForAllFamiliesInCreateEvent: boolean;
   @Field({ includeInApi: Roles.admin })
   includeGroupsInCreateEvent: GroupsValue;
   @Field({ includeInApi: Roles.admin })
   excludeGroupsInCreateEvent: GroupsValue;
+
 
 
 
@@ -511,9 +518,9 @@ export function getSettings(context: Context) {
   if (r)
     return r;
   //if (context.backend) {
-    return new ApplicationSettings(context);
-    throw "can't find application settings on server for this request";
-  
+  return new ApplicationSettings(context);
+  throw "can't find application settings on server for this request";
+
   return ApplicationSettings.get(context);;
 }
 

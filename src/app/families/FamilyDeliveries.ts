@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow } from 'remult';
+import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -25,6 +25,8 @@ import { Groups, GroupsValue } from "../manage/groups";
 
 import { FamilySources } from "./FamilySources";
 import { u, UberContext } from "../model-shared/UberContext";
+import { DeliveryImage, FamilyImage } from "./DeiveryImages";
+import { ImageInfo } from "../images/images.component";
 
 
 @ValueListFieldType(MessageStatus, {
@@ -105,6 +107,24 @@ export class MessageStatus {
     }
 })
 export class FamilyDeliveries extends IdEntity {
+    @BackendMethod<FamilyDeliveries>({
+        allowed: Allow.authenticated
+    })
+    static async getFamilyImages(family: string, delivery: string, context?: Context): Promise<ImageInfo[]> {
+        if (!Roles.admin){
+            let d =await  context.for(FamilyDeliveries).findId(delivery);
+            if (d.courier!=u(context).currentUser)
+            return [];
+        }
+        let r = (await context.for(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
+        return r;
+    }
+    async loadVolunteerImages(): Promise<import("../images/images.component").ImageInfo[]> {
+        return (await this.context.for(DeliveryImage).find({ where: i => i.deliveryId.isEqualTo(this.id) })).map(i => ({
+            image: i.image,
+            entity: i
+        } as ImageInfo));
+    }
     addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
         addColumn(getLang(this.context).statusSummary, this.statusSammary(), "s");
     }
@@ -434,6 +454,21 @@ export class FamilyDeliveries extends IdEntity {
     @CustomColumn(() => questionForVolunteers[4])
     a4: string;
 
+    @Field({
+        includeInApi: Roles.admin,
+        sqlExpression: async (selfDefs, context) => {
+            let self = await SqlFor(selfDefs);
+            let images = await SqlFor(context.for(DeliveryImage));
+            let sql = new SqlBuilder(context);
+            return sql.columnCount(self, {
+                from: images,
+                where: () => [sql.eq(images.deliveryId, self.id)]
+            });
+
+        }
+    })
+    numOfPhotos: number;
+
 
     static active(self: FilterFactories<FamilyDeliveries>) {
         return self.archive.isEqualTo(false);
@@ -719,6 +754,8 @@ export class FamilyDeliveries extends IdEntity {
 
 })
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
+
+
 
 }
 
