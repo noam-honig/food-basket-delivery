@@ -443,6 +443,11 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         settings.questionForVolunteerWhenUploadingPhoto = settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
         await settings.save();
     });
+    await version(37, async () => {
+        settings.askVolunteerForAPhotoToHelp = true;
+        await settings.save();
+    });
+
 
 
 

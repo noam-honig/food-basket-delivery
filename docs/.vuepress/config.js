@@ -1,8 +1,19 @@
 const { description } = require('../../package')
 //const apiSideBar = require('./api-sidebar.json');
 module.exports = {
- /* theme: 'default-rtl',*/
-  base:'/hagai-docs/',
+  /* theme: 'default-rtl',*/
+  base: '/hagai-docs/',
+  chainWebpack: config => {
+    config.module
+        .rule('images')
+        .use('url-loader')
+        .loader('url-loader')
+        .tap(options => {
+            options.limit = 1000000
+            return options
+        })
+  },
+
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
    */
@@ -31,7 +42,7 @@ module.exports = {
   themeConfig: {
     repo: '',
     editLinks: false,
-    logo:'https://salmaz.herokuapp.com/assets/apple-touch-icon.png',
+    logo: 'https://salmaz.herokuapp.com/assets/apple-touch-icon.png',
     docsDir: '',
     editLinkText: '',
     lastUpdated: false,
@@ -69,9 +80,10 @@ module.exports = {
             'import-from-excel',
             'add-to-home-screen',
             'events',
-            'no-addresses'
-            
-          
+            'no-addresses',
+            'photos'
+
+
           ]
         }
       ]
