@@ -470,7 +470,7 @@ export class Language {
   replcaedBySenderName = 'יוחלף בשם השולח';
   replacedByOrgName = 'יוחלף בשם הארגון';
   deliveriesFor = 'משלוחים עבור';
-  archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיב?';
+  archiveCurrentDelivery = 'העבר משלוח נוכחי לארכיון?';
   archiveHelper = 'מחק מתנדב';
   freezeHelper = 'עדכן נתוני הקפאת מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
@@ -808,9 +808,9 @@ export class Language {
   statusNotSelected = "לא נבחר סטטוס";
   updateCanceled = "העדכון הופסק";
 
-  archiveDeliveries = 'העברה לארכיב';
-  archiveDeliveriesHelp = 'העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים';
-  revertArchive = 'החזר מארכיב';
+  archiveDeliveries = 'העברה לארכיון';
+  archiveDeliveriesHelp = 'העברה לארכיון תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיון בכל עת במסך היסטורית משלוחים';
+  revertArchive = 'החזר מארכיון';
   updateBasketType = 'עדכן סוג סל';
   updateBasketQuantity = 'עדכן כמות סלים';
   updateDistributionList = 'עדכן רשימת חלוקה';
@@ -1060,13 +1060,13 @@ export class Language {
   eventInfo = "פרטי ארוע";
   volunteerStatus = "מצב מתנדב";
   newVolunteer = "מתנדב חדש";
-  showArchive = "הצג ארכיב";
+  showArchive = "הצג ארכיון";
   duplicateEvents = "שכפל ארוע";
-  archiveCurrentEvent = "העבר ארוע קיים לארכיב?";
+  archiveCurrentEvent = "העבר ארוע קיים לארכיון?";
   basedNoAssignmentOrder = "לפי סדר שיוך";
   volunteerComment = "הערת מתנדב";
-  archiveDate = "ארכיב: מועד עדכון";
-  archiveUser = "ארכיב: משתמש מעדכן";
+  archiveDate = "ארכיון: מועד עדכון";
+  archiveUser = "ארכיון: משתמש מעדכן";
   showTzToVolunteer = "הצג מספר זהות למתנדב";
   myGiftsURL = "ההטבות שלי";
   dateGranted = "תאריך הענקה";
