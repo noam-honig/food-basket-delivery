@@ -39,10 +39,8 @@ export class GroupsValue {
   hasAny() {
     return this.value != '';
   }
-  replace(val: string) {
-    this.value = val;
-  }
-  constructor(private value: string) {
+  
+  constructor(private readonly value: string) {
 
   }
   evilGet() {
@@ -54,19 +52,24 @@ export class GroupsValue {
     return this.value.split(',');
   }
   removeGroup(group: string) {
+    
     let groups = this.value.split(",").map(x => x.trim());
     let index = groups.indexOf(group);
+    let result = '';
     if (index >= 0) {
       groups.splice(index, 1);
-      this.value = groups.join(", ");
+      result = groups.join(", ");
     }
+    return new GroupsValue(result);
   }
   addGroup(group: string) {
-    if (this.value)
-      this.value += ', ';
+    let r = this.value;
+    if (r)
+      r += ', ';
     else
-      this.value = '';
-    this.value += group;
+      r = '';
+    r += group;
+    return new GroupsValue(r);
   }
   selected(group: string) {
     if (!this.value)

@@ -32,7 +32,11 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         private entity: {
             new(...args: any[]): T;
         },
-        public args: ActionOnRowsArgs<T>
+        public args: ActionOnRowsArgs<T>,
+        public serialHelper?: {
+            serializeOnClient: () => Promise<void>,
+            deserializeOnServer: () => Promise<void>
+        }
 
     ) {
 
@@ -114,6 +118,8 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         where: EntityWhere<T>,
         count: number
     }) {
+        if (this.serialHelper)
+            await this.serialHelper.serializeOnClient();
         let p = new ProgressListener(undefined);
         p.progress = () => { };
 
@@ -131,6 +137,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
     @BackendMethod<ActionOnRows<any>>({ allowed: (context, self) => context.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
+        await this.serialHelper?.deserializeOnServer();
         let where = this.composeWhere(x => Filter.unpackWhere(this.context.for(this.entity).metadata, info.packedWhere));
 
         let count = await this.context.for(this.entity).count(where);

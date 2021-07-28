@@ -1,4 +1,4 @@
-import { Context, AndFilter, getFields } from "remult";
+import { Context, AndFilter, getFields, SqlDatabase } from "remult";
 import { Families } from "./families";
 
 import { BasketType } from "./BasketType";
@@ -19,6 +19,7 @@ import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 import { ValueListValueConverter } from "remult/valueConverters";
 import { u } from "../model-shared/UberContext";
+import { getControllerRef } from "remult/src/remult3";
 
 @ValueListFieldType(SelfPickupStrategy, {
     translation: l => l.selfPickupStrategy
@@ -146,19 +147,19 @@ export class NewDelivery extends ActionOnRows<Families> {
     translation: l => l.action
 })
 export class UpdateGroupStrategy {
-    static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val) => {
+    static add = new UpdateGroupStrategy(0, use.language.addGroupAssignmentVerb, (col, val, set) => {
         if (!col.selected(val))
-            col.addGroup(val);
+            set(col.addGroup(val));
     });
-    static remove = new UpdateGroupStrategy(1, use.language.removeGroupAssignmentVerb, (col, val) => {
+    static remove = new UpdateGroupStrategy(1, use.language.removeGroupAssignmentVerb, (col, val, set) => {
         if (col.selected(val))
-            col.removeGroup(val);
+            set(col.removeGroup(val));
     });
-    static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val) => {
-        col.replace(val);
+    static replace = new UpdateGroupStrategy(2, use.language.replaceGroupAssignmentVerb, (col, val, set) => {
+        set(new GroupsValue(val));
     });
 
-    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsValue, val: string) => void) {
+    constructor(public id: number, public caption: string, public whatToDo: (col: GroupsValue, val: string, set: (newVal: GroupsValue) => void) => void) {
 
     }
 }
@@ -181,7 +182,7 @@ export class updateGroup extends ActionOnRows<Families> {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
             title: getLang(context).assignAFamilyGroup,
             forEach: async f => {
-                this.action.whatToDo(f.groups, this.group);
+                this.action.whatToDo(f.groups, this.group, x => f.groups = x);
             }
 
         });
@@ -368,8 +369,9 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
 
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries>{
     processedFamilies = new Map<string, boolean>();
-    __columns = getFields(this.orig);
 
+    @Field()
+    familyActionInfo: any;
     constructor(context: Context, public orig: ActionOnRows<Families>) {
         super(context, ActiveFamilyDeliveries, {
             forEach: async fd => {
@@ -400,6 +402,9 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
                 dialog: x.dialog,
                 settings: x.settings
             })
+        }, {
+            serializeOnClient: async () => this.familyActionInfo = getControllerRef(orig).toApiJson(),
+            deserializeOnServer: async () => await getControllerRef(orig)._updateEntityBasedOnApi(this.familyActionInfo)
         });
     }
 }

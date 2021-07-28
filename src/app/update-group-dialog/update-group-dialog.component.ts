@@ -43,11 +43,11 @@ export class UpdateGroupDialogComponent implements OnInit {
   }
   select(group: string) {
     if (!this.selected(group)) {
-      this.groups.value.addGroup(group);
+      this.groups.value =  this.groups.value.addGroup(group);
 
     }
     else {
-      this.groups.value.removeGroup(group);
+      this.groups.value = this.groups.value.removeGroup(group);
       if (this.selected(group))
         this.dialog.messageDialog("לא הצלחתי לבטל את הקבוצה " + group + " כנראה שהיא לא מופיעה בפני עצמה אלא כחלק משם קבוצה אחרת, אנא וודא שיש פסיקים בין הקבוצות");
 
