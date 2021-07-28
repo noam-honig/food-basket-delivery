@@ -213,8 +213,9 @@ export class MapComponent implements OnInit, OnDestroy {
                 case DeliveryStatus.ReadyForDelivery:
                     let currentIndex = ++i;
                     if (prevMarker == undefined || JSON.stringify(prevMarker.getPosition()) != JSON.stringify(marker.getPosition())) {
-                        marker.setLabel((currentIndex).toString());
+                        marker.setLabel({ text: (currentIndex).toString() ,color:'blue'});
                         marker.setIcon('/assets/map-markers/number.png');
+                        marker.set
                         prevMarker = marker;
                         prevIndex = currentIndex;
                         // console.log(i.toString() + ' ' + f.address.value);
