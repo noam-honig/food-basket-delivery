@@ -69,7 +69,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     async showHelper(n: ActiveFamilyDeliveries) {
         openDialog(
-            HelperAssignmentComponent, async s => s.argsHelper = await n.$.courier.load());
+            HelperAssignmentComponent, async s => s.argsHelper = n.courier);
     }
     destroyHelper = new DestroyHelper();
     ngOnDestroy(): void {

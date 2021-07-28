@@ -21,7 +21,7 @@ export class BasketSummaryComponent implements OnInit {
   async ngOnInit() {
     let hash = new Map<BasketType, basketStats>();
     for (const delivery of this.families.toDeliver) {
-      let b = await delivery.$.basketType.load();
+      let b = delivery.basketType;
       let b1 = b.boxes * delivery.quantity;
       let b2 = b.boxes2 * delivery.quantity;
       this.boxes1 += b1;

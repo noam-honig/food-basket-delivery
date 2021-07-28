@@ -397,7 +397,7 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         name: h.name,
         distributionCenter: h.distributionCenter?.id,
         theHelperIAmEscortingId: h.theHelperIAmEscorting?.id,
-        escortedHelperName: h.theHelperIAmEscorting ? (await (h.$.theHelperIAmEscorting.load())).name : ''
+        escortedHelperName: h.theHelperIAmEscorting ? (h.theHelperIAmEscorting).name : ''
     };
     if (h.admin) {
         if (Sites.isOverviewSchema(context))

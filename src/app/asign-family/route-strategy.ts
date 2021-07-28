@@ -163,7 +163,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
                 return b.floor.localeCompare(a.floor);
             });
     }
-    let distCenterLocation = (await (await families[0].$.distributionCenter.load()).getRouteStartGeo()).location();
+    let distCenterLocation = (await families[0].distributionCenter.getRouteStartGeo()).location();
     let routeStart = strategy.args.getRouteStart(distCenterLocation, addresses, volunteerLocation);
 
     //manual sorting of the list from closest to farthest

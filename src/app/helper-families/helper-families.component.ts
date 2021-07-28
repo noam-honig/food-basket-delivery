@@ -308,7 +308,6 @@ export class HelperFamiliesComponent implements OnInit {
       forEachRow: async fd => {
         fd.courier = null;
         fd._disableMessageToUsers = true;
-        await fd.$.distributionCenter.load();
         dist = fd.distributionCenter;
         await fd.save();
       }
@@ -379,7 +378,7 @@ export class HelperFamiliesComponent implements OnInit {
 
     this.busy.donotWaitNonAsync(async () => {
       if (this.familyLists.helper.leadHelper) {
-        this.otherDependentVolunteers.push(await (this.familyLists.helper.$.leadHelper.load()));
+        this.otherDependentVolunteers.push(this.familyLists.helper.leadHelper);
       }
       this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
     });
@@ -505,7 +504,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
     let to = this.familyLists.helper.name;
     await SendSmsAction.SendSms(this.familyLists.helper, reminder);
-    if (await this.familyLists.helper.$.escort.load()) {
+    if (this.familyLists.helper.escort) {
       to += ' ול' + this.familyLists.escort.name;
       await SendSmsAction.SendSms(this.familyLists.helper.escort, reminder);
     }

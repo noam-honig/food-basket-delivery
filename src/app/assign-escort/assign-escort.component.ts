@@ -115,7 +115,7 @@ export class AssignEscortComponent implements OnInit {
       }
     });
     if (this.helper.theHelperIAmEscorting) {
-      this.alreadyEscortingDriver = await this.helper.$.theHelperIAmEscorting.load();
+      this.alreadyEscortingDriver = this.helper.theHelperIAmEscorting;
     } else {
       this.optionalDrivers = await this.context.for(HelpersAndStats).find({
         where: h =>

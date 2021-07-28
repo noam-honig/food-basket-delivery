@@ -386,7 +386,7 @@ export class PhoneOption {
       args.addPhone(args.settings.helpText, args.settings.$.helpPhone.displayValue);
     }
     else {
-      let h = await args.d.$.courierAssignUser.load();
+      let h = args.d.courierAssignUser;
       args.addPhone(h.name, h.phone.displayValue);
     }
   });
@@ -408,7 +408,7 @@ export class PhoneOption {
 
   static familySource = new PhoneOption("familySource", "טלפון גורם מפנה", async args => {
     if (args.family.familySource) {
-      let s = await args.family.$.familySource.load();
+      let s = args.family.familySource;
       if (s && s.phone) {
         let name = s.contactPerson;
         if (!name || name.length == 0) {

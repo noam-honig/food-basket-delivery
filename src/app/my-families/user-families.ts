@@ -73,7 +73,7 @@ export class UserFamiliesList {
         this.helper = await h.getHelper();
         this.escort = undefined;
         if (this.helper && h.escort) {
-            this.escort = await h.$.escort.load()
+            this.escort = await h.escort;
         }
 
     }
@@ -175,7 +175,7 @@ export class UserFamiliesList {
         this.allFamilies = this.allFamilies.filter(f => f.archive == false);
 
         if (this.allFamilies.length > 0 && this.settings.showDistCenterAsEndAddressForVolunteer) {
-            this.allFamilies[0].$.distributionCenter.load().then(x => this.distCenter = x);
+            this.distCenter = this.allFamilies[0].distributionCenter;
         }
         else {
             this.distCenter = undefined;

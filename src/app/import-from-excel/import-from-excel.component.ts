@@ -705,7 +705,7 @@ export class ImportFromExcelComponent implements OnInit {
                     step: 3, what: async () => {
                         if (h.gotVolunteerPhone) {
                             if (h.fd.courier) {
-                                let help = await h.fd.$.courier.load();
+                                let help = h.fd.courier;
                                 if (!help.isNew()) {
                                     help.name = v;
                                     if (help.wasChanged())
@@ -1564,7 +1564,7 @@ async function compareValuesWithRow(context: Context, info: excelRowInfo, withFa
 }
 
 async function getColumnDisplayValue(c: FieldRef<any>) {
-    await c.load();
+    
     let v = c.displayValue;
 
     return v?.trim();

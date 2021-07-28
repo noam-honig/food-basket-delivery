@@ -73,7 +73,7 @@ export class MessageStatus {
         if (self.context.backend) {
             if (!self.disableChangeLogging) {
 
-                if (!self.isNew() || await self.$.courier.load())
+                if (!self.isNew() || self.courier)
                     logChanged(self.context, self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
                         if (!self._disableMessageToUsers) {
                             self.distributionCenter.SendMessageToBrowser(

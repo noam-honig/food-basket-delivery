@@ -238,7 +238,6 @@ export abstract class HelpersBase extends IdEntity {
     allowApiInsert: true,
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
-        await self.$.escort.load();
         if (self.escort) {
             if (self.escort.id == self.id)
                 self.escort = null;
@@ -311,7 +310,7 @@ export abstract class HelpersBase extends IdEntity {
             if (!self.needEscort)
                 self.escort = null;
             if (self.$.escort.wasChanged()) {
-                let h = await self.$.escort.load();
+                let h = self.escort;
                 if (self.$.escort.originalValue) {
                     self.$.escort.originalValue.theHelperIAmEscorting = self.context.currentUser;
                     await self.$.escort.originalValue.save();

@@ -57,7 +57,7 @@ export async function InitContext(context: Context, user?: UserInfo) {
             return center.isEqualTo(this.context.currentUser.distributionCenter);
     }
     context.filterDistCenter=(distCenterColumn, distCenter): Filter=> {
-        let allowed = this.filterCenterAllowedForUser(distCenterColumn);
+        let allowed = context.filterCenterAllowedForUser(distCenterColumn);
         if (distCenter != null)
             return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
         return allowed;

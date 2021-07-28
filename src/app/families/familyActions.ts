@@ -76,7 +76,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     constructor(context: Context) {
         super(context, Families, {
             validate: async () => {
-                let x = await this.$.distributionCenter.load();
+                
                 if (!this.distributionCenter) {
                     this.$.distributionCenter.error = getLang(this.context).mustSelectDistributionList;
                     throw this.$.distributionCenter.error;

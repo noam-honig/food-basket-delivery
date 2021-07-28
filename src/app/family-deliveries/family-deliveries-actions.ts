@@ -259,7 +259,6 @@ export class ArchiveHelper {
         return result;
     }
     async forEach(f: ActiveFamilyDeliveries) {
-        await f.$.courier.load()
         if (f.deliverStatus == DeliveryStatus.ReadyForDelivery && f.courier && this.markOnTheWayAsDelivered)
             f.deliverStatus = DeliveryStatus.Success;
         if (f.deliverStatus == DeliveryStatus.SelfPickup && this.markSelfPickupAsDelivered)

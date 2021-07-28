@@ -26,7 +26,6 @@ export class PrintVolunteersComponent implements OnInit {
     let total = 0;
     let volunteers: volunteer[] = [];
     for await (const d of context.for(ActiveFamilyDeliveries).iterate()) {
-      await d.$.courier.load();
       let v = volunteers.find(v => d.courier && v.id == d.courier.id);
       if (!v) {
         v = {

@@ -100,8 +100,6 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
               if (v == undefined)
                 v = '';
 
-              await c.load();
-
 
               if (c.metadata.valueType == Date) {
                 if (c.metadata.valueConverter !== <any>DateOnlyValueConverter) {

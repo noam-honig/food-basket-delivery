@@ -126,7 +126,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
     async initHelper(helper: HelpersBase) {
-        let other = await helper.$.theHelperIAmEscorting.load();
+        let other =  helper.theHelperIAmEscorting;
         if (other) {
 
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
@@ -148,9 +148,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             Helpers.addToRecent(helper);
             await this.refreshList();
             if (helper.leadHelper && this.familyLists.toDeliver.length == 0) {
-                let from = await helper.$.leadHelper.load();
-                new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(from, this.familyLists.helper, false
-                    , this.settings.lang.for + " \"" + this.familyLists.helper.name + "\" " + this.settings.lang.isDefinedAsLeadVolunteerOf + " \"" + from.name + "\".")
+                new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(helper.leadHelper, this.familyLists.helper, false
+                    , this.settings.lang.for + " \"" + this.familyLists.helper.name + "\" " + this.settings.lang.isDefinedAsLeadVolunteerOf + " \"" + helper.leadHelper.name + "\".")
             }
         }
     }
@@ -909,7 +908,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         }
 
-        await Promise.all(existingFamilies.map(f => f.$.distributionCenter.load()));
         existingFamilies = existingFamilies.filter(f => f.checkAllowedForUser());
         existingFamilies.sort((a, b) => a.routeOrder - b.routeOrder);
         result.families = existingFamilies.map(f => f._.toApiJson());
