@@ -746,7 +746,7 @@ export class ImportFromExcelComponent implements OnInit {
                 key: c.key,
                 name: c.caption,
                 columns: [c],
-                updateFamily: async (v, f) => updateCol(f.$.find(c), fixPhone(v, this.settings.defaultPrefixForExcelImport))
+                updateFamily: async (v, f) =>{ f.$.find(c).value = new Phone( fixPhone(v, this.settings.defaultPrefixForExcelImport))}
             });
         }
 

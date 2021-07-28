@@ -1,7 +1,12 @@
+## to fix now
+[] width of status in update family screen.
+
+
+
 ## talk to yoni
 [V] filters in entity - active for distribution center.
 [V] complex lookup columns - distribution center, helper id
-[] multi column complex values- address + api result
+[V] multi column complex values- address + api result
 
 
 ## next version
