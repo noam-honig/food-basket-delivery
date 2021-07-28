@@ -176,7 +176,7 @@ export class updateGroup extends ActionOnRows<Families> {
     })
     group: string;
     @Field()
-    action: UpdateGroupStrategy;
+    action: UpdateGroupStrategy = UpdateGroupStrategy.add;
     constructor(context: Context) {
         super(context, Families, {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
