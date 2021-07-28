@@ -1,5 +1,5 @@
 
-import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory } from 'remult';
+import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity } from 'remult';
 import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';

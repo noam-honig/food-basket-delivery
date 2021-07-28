@@ -72,6 +72,8 @@ export class Sites {
     static getOrganizationFromContext(y: Context) {
         if (!Sites.multipleSites)
             return '';
+        if (!y.getPathInUrl)
+            return '';
         let url = y.getPathInUrl();
         if (!url)
             return '';

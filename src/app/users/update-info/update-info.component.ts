@@ -8,7 +8,6 @@ import { AuthenticatedInGuard, RouteHelperService, InputField, GridSettings, Dat
 import { Route } from '@angular/router';
 import { Context } from 'remult';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
-import { u } from '../../model-shared/UberContext';
 
 
 
@@ -45,7 +44,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
 
   async ngOnInit() {
-    this.h = await u(this.context).currentUser.getHelper();
+    this.h = await this.context.currentUser.getHelper();
     await this.h._.reload();
     if (!this.h.password)
       this.confirmPassword.value = '';

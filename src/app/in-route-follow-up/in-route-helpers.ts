@@ -1,21 +1,18 @@
 import { IdEntity, Context, Entity, FieldMetadata } from "remult";
 import { Roles } from "../auth/roles";
-import { getSettings } from "../manage/ApplicationSettings";
 import { DateTimeColumn, relativeDateName, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { getLang } from "../sites/sites";
-import { Helpers, HelperId, HelpersBase } from "../helpers/helpers";
+import { Helpers, HelpersBase } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
-import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-dialog.component";
 import { use, Field } from "../translate";
 
 import { DataControl, GridSettings, openDialog } from "@remult/angular";
 import { DateOnlyField } from "remult/src/remult3";
-import { u } from "../model-shared/UberContext";
 
 @Entity<InRouteHelpers>({
     key: 'in-route-helpers',
@@ -24,15 +21,15 @@ import { u } from "../model-shared/UberContext";
     dbName: async (self, context) => {
         let sql = new SqlBuilder(context);
 
-        let f = await SqlFor(context.for(ActiveFamilyDeliveries));
-        let history = await SqlFor(context.for(FamilyDeliveries));
-        let com = await SqlFor(context.for(HelperCommunicationHistory));
-        let h = await SqlFor(context.for(Helpers));
-        let h2 = await SqlFor(context.for(Helpers));
+        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+        let history = SqlFor(context.for(FamilyDeliveries));
+        let com = SqlFor(context.for(HelperCommunicationHistory));
+        let h = SqlFor(context.for(Helpers));
+        let h2 = SqlFor(context.for(Helpers));
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [u(context).filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                where: () => [context.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
             }
         }
         let comInnerSelect = (col: FieldMetadata, toCol: FieldMetadata) => {
@@ -215,7 +212,7 @@ export class InRouteHelpers extends IdEntity {
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = u(self.context).currentUser;
+            self.createUser = self.context.currentUser;
         }
     }
 })

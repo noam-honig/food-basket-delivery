@@ -18,17 +18,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters } from './distribution-centers';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { DeliveryStatus } from '../families/DeliveryStatus';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { pagedRowsIterator } from '../families/familyActionsWiring';
-import { getLang } from '../sites/sites';
 import { saveToExcel } from '../shared/saveToExcel';
 import { Groups } from './groups';
 import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Field } from '../translate';
-import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-manage',
@@ -590,10 +586,9 @@ export class ManageComponent implements OnInit {
   defaultOrderBy: (self) => self.name,
   key: 'GroupsStatsPerDistributionCenter',
   dbName: async (self, context) => {
-    let f = await SqlFor(context.for(ActiveFamilyDeliveries));
-    let cContext = u(context);
-    let g = await SqlFor(context.for(Groups));
-    let d = await SqlFor(context.for(DistributionCenters));
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+    let g = SqlFor(context.for(Groups));
+    let d = SqlFor(context.for(DistributionCenters));
     let sql = new SqlBuilder(context);
     sql.addEntity(f, 'Families');
     sql.addEntity(g, 'groups');
@@ -604,7 +599,7 @@ export class ManageComponent implements OnInit {
 
           where: () => [
             sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-            cContext.readyFilter(f),
+            FamilyDeliveries.readyFilter(),
             sql.eq(f.distributionCenter, d.id)]
 
         }, self.familiesCount)],
@@ -632,9 +627,8 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   key: 'GroupsStatsForAllDeliveryCenters',
   defaultOrderBy: self => self.name,
   dbName: async (self, context) => {
-    let f = await SqlFor(context.for(ActiveFamilyDeliveries));
-    let g = await SqlFor(context.for(Groups));
-    let cContext = u(context);
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+    let g = SqlFor(context.for(Groups));
 
     let sql = new SqlBuilder(context);
     sql.addEntity(f, 'Families');
@@ -646,9 +640,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
 
           where: () => [
             sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-            cContext.readyFilter(f)]
-
-
+            FamilyDeliveries.readyFilter()]
         }, self.familiesCount)],
         from: g
 

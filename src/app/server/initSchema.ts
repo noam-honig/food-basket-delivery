@@ -15,6 +15,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { TranslationOptions } from '../translate';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
+import { InitContext } from '../helpers/init-context';
 
 
 export async function initSchema(pool1: PostgresPool, org: string) {
@@ -22,6 +23,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let context = new Context();
+    await InitContext(context);
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder(context);
     let createFamilyIndex = async (name: string, ...columns: FieldMetadata[]) => {
@@ -32,10 +34,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
 
 
-    let f = await SqlFor(context.for(Families));
+    let f = SqlFor(context.for(Families));
     //create index for family deliveries if required
 
-    var fd = await SqlFor(context.for(FamilyDeliveries));
+    var fd = SqlFor(context.for(FamilyDeliveries));
 
     //
 
@@ -114,7 +116,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 2) {
 
-        let f =await SqlFor(context.for(Families));
+        let f =SqlFor(context.for(Families));
         dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -128,7 +130,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 4) {
         console.log("updating update date");
-        let f =await SqlFor(context.for(Families));
+        let f =SqlFor(context.for(Families));
         dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));

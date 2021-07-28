@@ -20,7 +20,7 @@ import { BusyService, DataAreaSettings, GridButton, InputField } from '@remult/a
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 
-import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang, Sites } from '../sites/sites';
@@ -36,7 +36,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 import { use } from '../translate';
 import { BasketType } from '../families/BasketType';
-import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-distribution-map',
@@ -336,10 +335,8 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
-    let cContext = u(context);
-
-    let f = await SqlFor(context.for(ActiveFamilyDeliveries));
-    let h = await SqlFor(context.for(Helpers));
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
+    let h = SqlFor(context.for(Helpers));
     let sql = new SqlBuilder(context);
     sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(await sql.query({
@@ -353,15 +350,15 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
 
       where: () => {
-        let where: any[] = [cContext.filterCenterAllowedForUser(f.distributionCenter)];
+        let where: any[] = [context.filterCenterAllowedForUser(f.distributionCenter)];
         if (distCenter !== undefined)
-          where.push(cContext.filterDistCenter(f.distributionCenter, distCenter));
+          where.push(context.filterDistCenter(f.distributionCenter, distCenter));
         if (area !== undefined && area !== null && area != getLang(context).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
         if (onlyPotentialAsignment) {
-          where.push(cContext.readyFilter(f, city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
+          where.push(FamilyDeliveries.readyFilter( city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
         }
         return where;
       },
@@ -384,7 +381,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetLocationsForOverview(context?: Context) {
 
     let result: deliveryOnMap[] = []
-    let f = await SqlFor(context.for(FamilyDeliveries));
+    let f = SqlFor(context.for(FamilyDeliveries));
 
     let sql = new SqlBuilder(context);
     sql.addEntity(f, "fd");

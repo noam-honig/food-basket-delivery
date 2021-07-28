@@ -14,14 +14,13 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { Context } from 'remult';
 
 import { use, TranslationOptions } from '../translate';
-import { Helpers, HelperId, HelpersBase } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { isGpsAddress, Location, toLongLat, GetDistanceBetween, getCurrentLocation } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
-import { Families } from '../families/families';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
@@ -32,11 +31,7 @@ import { Sites, getLang } from '../sites/sites';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
-import { AsignFamilyComponent } from '../asign-family/asign-family.component';
-import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
-import { PromiseThrottle } from '../shared/utils';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
-import { UpdateArea } from '../families/familyActions';
 
 import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -44,7 +39,6 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { FamilySources } from '../families/FamilySources';
 import { routeStrategy } from '../asign-family/route-strategy';
-import { u } from '../model-shared/UberContext';
 
 
 @Component({
@@ -137,7 +131,7 @@ export class HelperFamiliesComponent implements OnInit {
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd = await SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
 
     let sql = new SqlBuilder(context);
     let settings = await ApplicationSettings.getAsync(context);
@@ -262,7 +256,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (this.settings.helpText && this.settings.helpPhone)
       return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
-      var h = u(this.context).currentUser;
+      var h = this.context.currentUser;
       return r + h.name + ", " + h.phone.displayValue;
     }
   }
@@ -310,7 +304,7 @@ export class HelperFamiliesComponent implements OnInit {
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Context) {
     let dist: DistributionCenters = null;
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd).and(fd.courier.isEqualTo(helper)),
+      where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         fd.courier = null;
         fd._disableMessageToUsers = true;
@@ -335,7 +329,7 @@ export class HelperFamiliesComponent implements OnInit {
     let dist: DistributionCenters = null;
 
     await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
-      where: fd => FamilyDeliveries.onTheWayFilter(fd).and(fd.courier.isEqualTo(helper)),
+      where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
         fd.deliverStatus = DeliveryStatus.Success;

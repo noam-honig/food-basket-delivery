@@ -101,6 +101,7 @@ import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.co
 import {  Helpers } from './helpers/helpers';
 import { ImagesComponent } from './images/images.component';
 import { DeliveryImagesComponent } from './delivery-images/delivery-images.component'
+import { InitContext } from './helpers/init-context';
 
 
 
@@ -285,7 +286,7 @@ export function initApp(session: TokenService, settings: SettingsService, contex
     try {
       await session.loadUserInfo();
       await context.userChange.observe(async () => {
-        await Helpers.initContext(context);
+        await InitContext(context);
 
       });
 

@@ -28,10 +28,10 @@ describe('AppComponent', () => {
   var sql = new SqlBuilder(context);
   beforeEach(async () => {
     sql = new SqlBuilder(context);
-    f = await SqlFor(context.for(Families));
-    afd = await SqlFor(context.for(ActiveFamilyDeliveries));
-    fd = await SqlFor(context.for(FamilyDeliveries));
-    bt = await SqlFor(context.for(BasketType));
+    f = SqlFor(context.for(Families));
+    afd = SqlFor(context.for(ActiveFamilyDeliveries));
+    fd = SqlFor(context.for(FamilyDeliveries));
+    bt = SqlFor(context.for(BasketType));
     sql.addEntity(bt, 'p');
     sql.addEntity(afd, 'fd');
     sql.addEntity(fd, 'h');
@@ -61,8 +61,8 @@ describe('AppComponent', () => {
     expect(await sql.func('max', f.id)).toBe("max(id)");
   });
   it("test bla bla", async () => {
-    let h = await SqlFor(context.for(Helpers));
-    let u = await SqlFor(context.for(RegisterURL));
+    let h = SqlFor(context.for(Helpers));
+    let u = SqlFor(context.for(RegisterURL));
     let sql = new SqlBuilder(context);
     let urls = [];
 
@@ -206,7 +206,7 @@ describe('AppComponent', () => {
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
   it('delete 2', async () => {
-    let p = await SqlFor(context.for(BasketType));
+    let p = SqlFor(context.for(BasketType));
     expect(await sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', async () => {
@@ -217,7 +217,7 @@ describe('AppComponent', () => {
   });
   it('update 2 ', async () => {
     sql.getEntityAlias(f);
-    let pd = await SqlFor(context.for(Families));
+    let pd = SqlFor(context.for(Families));
     expect(await sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,

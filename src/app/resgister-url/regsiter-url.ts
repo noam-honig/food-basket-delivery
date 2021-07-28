@@ -28,9 +28,9 @@ export class RegisterURL extends IdEntity {
     @BackendMethod({ allowed: Roles.admin })
     static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
 
-        let h = await SqlFor(context.for(Helpers));
-        let f = await SqlFor(context.for(Families));
-        let u = await SqlFor(context.for(RegisterURL));
+        let h = SqlFor(context.for(Helpers));
+        let f = SqlFor(context.for(Families));
+        let u = SqlFor(context.for(RegisterURL));
         let sql = new SqlBuilder(context);
         let urls = [];
 

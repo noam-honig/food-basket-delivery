@@ -2,14 +2,12 @@ import { Context, Entity, IdEntity, BackendMethod, Allow } from "remult";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
-import { getLang } from "../sites/sites";
-import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
+import { Helpers, HelpersBase } from "../helpers/helpers";
 import { DialogService } from "../select-popup/dialog";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
 import { Field, use } from "../translate";
-import { u } from "../model-shared/UberContext";
 
 @Entity<HelperGifts>({
     key: "HelperGifts",
@@ -19,12 +17,12 @@ import { u } from "../model-shared/UberContext";
     apiDataFilter: (self, context) => {
         if (context.isAllowed(Roles.admin))
             return undefined;
-        return self.assignedToHelper.isEqualTo(u(context).currentUser);
+        return self.assignedToHelper.isEqualTo(context.currentUser);
     },
     saving: (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = u(self.context).currentUser;
+            self.userCreated = self.context.currentUser;
         }
         else {
             if (self.$.giftURL.wasChanged()) {
@@ -37,7 +35,7 @@ import { u } from "../model-shared/UberContext";
             }
             if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
-                self.assignedByUser = u(self.context).currentUser;
+                self.assignedByUser = self.context.currentUser;
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
@@ -77,9 +75,9 @@ export class HelperGifts extends IdEntity {
     }
     @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
-        let helper = await u(context).helperFromJson(helperId);
-        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(u(context).currentUser)) > 0) {
-            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(u(context).currentUser));
+        let helper = await context.for(Helpers).findId(helperId);
+        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.currentUser)) > 0) {
+            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.currentUser));
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;

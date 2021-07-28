@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Context } from 'remult';
-import { HelperId } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { relativeDateName } from '../model-shared/types';
-import { u } from '../model-shared/UberContext';
 import { HelperGifts } from './HelperGifts';
 
 @Component({
@@ -29,7 +28,7 @@ export class MyGiftsDialogComponent implements OnInit {
   async ngOnInit() {
     this.giftsUsed = 0;
     this.giftsAvailable = 0;
-    let helper = await u(this.context).helperFromJson(this.args.helperId);
+    let helper = await this.context.for(Helpers).findId(this.args.helperId);
     this.theGifts =
       await this.context.for(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(helper) }).then(
         gifts => {

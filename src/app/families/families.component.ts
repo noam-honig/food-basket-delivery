@@ -42,7 +42,6 @@ import { columnOrderAndWidthSaver } from './columnOrderAndWidthSaver';
 import { BasketType } from './BasketType';
 import { use } from '../translate';
 import { ChartType } from 'chart.js';
-import { u } from '../model-shared/UberContext';
 import { GroupsValue } from '../manage/groups';
 
 
@@ -57,7 +56,7 @@ export class FamiliesComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
     static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder(context);
-        let f = await SqlFor(context.for(Families));
+        let f = SqlFor(context.for(Families));
         let r = await db.execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
@@ -209,7 +208,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = await u(this.context).defaultBasketType();
+                f.basketType = await this.context.defaultBasketType();
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {

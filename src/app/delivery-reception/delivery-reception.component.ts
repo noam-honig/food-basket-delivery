@@ -11,8 +11,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { getLang } from '../sites/sites';
 import { ActivatedRoute } from '@angular/router';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
-import { DistributionCenters } from '../manage/distribution-centers';
-import { u } from '../model-shared/UberContext';
+
 
 @Component({
   selector: 'app-delivery-reception',
@@ -88,7 +87,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
             {
               d.archive = true;
 
-              d.distributionCenter = this.cContext.currentUser.distributionCenter;
+              d.distributionCenter = this.context.currentUser.distributionCenter;
               d.deliverStatus = DeliveryStatus.Success;
               await d.save();
               await this.refreshFamilyGrid();
@@ -103,7 +102,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         showInLine: true,
         click: async d => {
           d.deliverStatus = DeliveryStatus.FailedOther;
-          d.distributionCenter = this.cContext.currentUser.distributionCenter;
+          d.distributionCenter = this.context.currentUser.distributionCenter;
           this.editComment(d);
         }
         , textInMenu: () => getLang(this.context).notDelivered
@@ -119,7 +118,6 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     private busy: BusyService,
     private route: ActivatedRoute
   ) { }
-  cContext = u(this.context);
   private receptionCommentEntry(deliveries: FamilyDeliveries) {
     let r: DataControlInfo<FamilyDeliveries>[] = [
       {

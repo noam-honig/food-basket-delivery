@@ -3,7 +3,7 @@ import { Entity, BackendMethod, SqlDatabase, EntityWhere, AndFilter, FieldsMetad
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Context } from 'remult';
-import { HelperId, Helpers, HelperUserInfo } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
 import { Phone } from "../model-shared/phone";
 
 
@@ -33,9 +33,6 @@ import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
 import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
 import { PromiseThrottle } from '../shared/utils';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import { u } from '../model-shared/UberContext';
-
-
 
 @Component({
     selector: 'app-excel-import',
@@ -174,7 +171,7 @@ export class ImportFromExcelComponent implements OnInit {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
                     if (getSettings(context).isSytemForMlt()) {
-                        fd.distributionCenter = await u(context).findClosestDistCenter(f.addressHelper.location());
+                        fd.distributionCenter = await context.findClosestDistCenter(f.addressHelper.location());
                     }
                     await fd.save();
                 }
@@ -239,8 +236,8 @@ export class ImportFromExcelComponent implements OnInit {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
-        let basket = await BasketType.fromId(i.basketType, context);
-        let distCenter = await DistributionCenters.fromId(i.distCenter, context);
+        let basket = await context.for(BasketType).findId(i.basketType);
+        let distCenter = await context.for(DistributionCenters).findId(i.distCenter);
         let f = await context.for(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
         let fd = await context.for(ActiveFamilyDeliveries).findFirst(fd => {
             let r = fd.family.isEqualTo(i.duplicateFamilyInfo[0].id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
@@ -266,7 +263,7 @@ export class ImportFromExcelComponent implements OnInit {
                 if (c == col) {
                     fd._disableMessageToUsers = true;
                     if (settings.isSytemForMlt()) {
-                        fd.distributionCenter = await u(context).findClosestDistCenter(f.addressHelper.location());
+                        fd.distributionCenter = await context.findClosestDistCenter(f.addressHelper.location());
                     }
                     await fd.save();
                     break;
@@ -481,7 +478,7 @@ export class ImportFromExcelComponent implements OnInit {
             phone2ForDuplicateCheck: f.phone2?.thePhone,
             phone3ForDuplicateCheck: f.phone3?.thePhone,
             phone4ForDuplicateCheck: f.phone4?.thePhone,
-            distCenter: DistributionCenters.toId(fd.distributionCenter),
+            distCenter: fd.distributionCenter?.id,
             basketType: fd.basketType.id,
             idInHagai: updatedFields.get(this.f.id) ? f.id : '',
             iDinExcel: f.iDinExcel,
@@ -529,10 +526,10 @@ export class ImportFromExcelComponent implements OnInit {
     settingsArea: DataAreaSettings = new DataAreaSettings();
     async ngOnInit() {
         this.addDelivery = true;
-        this.defaultBasketType = await u(this.context).defaultBasketType();
+        this.defaultBasketType = await this.context.defaultBasketType();
         this.distributionCenter = this.dialog.distCenter;
         if (this.distributionCenter == null)
-            this.distributionCenter = await DistributionCenters.getDefault(this.context);
+            this.distributionCenter = await this.context.defaultDistributionCenter();
 
 
 
@@ -746,7 +743,7 @@ export class ImportFromExcelComponent implements OnInit {
                 key: c.key,
                 name: c.caption,
                 columns: [c],
-                updateFamily: async (v, f) =>{ f.$.find(c).value = new Phone( fixPhone(v, this.settings.defaultPrefixForExcelImport))}
+                updateFamily: async (v, f) => { f.$.find(c).value = new Phone(fixPhone(v, this.settings.defaultPrefixForExcelImport)) }
             });
         }
 
@@ -1450,7 +1447,7 @@ class columnUpdateHelper {
         getSearchField: ((entity: FilterFactories<T>) => FilterFactory<dataType>),
         val: dataType,
         getResult: (entity: T) => Y,
-        updateResultTo: FieldRef<any,Y>,
+        updateResultTo: FieldRef<any, Y>,
         additionalUpdates?: ((entity: T) => void)) {
         let x = await this.context.for(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
         if (x.isNew()) {
@@ -1517,9 +1514,9 @@ function onlyNameMatch(f: duplicateFamilyInfo) {
 
 async function compareValuesWithRow(context: Context, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
-    let basketType = await BasketType.fromId(info.basketType, context);
-    let distCenter = await DistributionCenters.fromId(info.distCenter, context);
-    let ef = await context.for(Families).findFirst(f => f.id.isEqualTo(withFamily));
+    let basketType = await context.for(BasketType).findId(info.basketType);
+    let distCenter = await context.for(DistributionCenters).findId(info.distCenter);
+    let ef = await context.for(Families).findId(withFamily);
     let fd = await context.for(ActiveFamilyDeliveries).findFirst({
         createIfNotFound: true,
         where: fd => {

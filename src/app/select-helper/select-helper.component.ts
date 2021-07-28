@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
-import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Context, FilterFactories, FindOptions, BackendMethod, SqlDatabase } from 'remult';
 import { Filter, AndFilter } from 'remult';
 
@@ -95,7 +95,7 @@ export class SelectHelperComponent implements OnInit {
     if (!selectDefaultVolunteer) {
 
       /* ----    calculate active deliveries and distances    ----*/
-      let afd = await SqlFor(context.for(ActiveFamilyDeliveries));
+      let afd = SqlFor(context.for(ActiveFamilyDeliveries));
 
 
 
@@ -124,7 +124,7 @@ export class SelectHelperComponent implements OnInit {
       /*  ---------- calculate completed deliveries and "busy" status -------------*/
       let sql1 = new SqlBuilder(context);
 
-      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let fd = SqlFor(context.for(FamilyDeliveries));
 
       let limitDate = new Date();
       limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
@@ -152,7 +152,7 @@ export class SelectHelperComponent implements OnInit {
       }
     } else {
 
-      let afd = await SqlFor(context.for(Families));
+      let afd = SqlFor(context.for(Families));
       for (const d of (await db.execute(await sql.query({
         from: afd,
         where: () => [afd.fixedCourier.isDifferentFrom(null).and(afd.status.isEqualTo(FamilyStatus.Active))],
@@ -178,7 +178,7 @@ export class SelectHelperComponent implements OnInit {
         where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
       })) {
         if (fd.courier) {
-          let h = helpers.get(HelperId.toJson(fd.courier));
+          let h = helpers.get(fd.courier?.id);
           if (h) {
             h.hadProblem = true;
           }

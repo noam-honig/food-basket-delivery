@@ -1,11 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-
-
-import { HelperId, Helpers } from './helpers';
-
-
+import { Helpers } from './helpers';
 import { Route } from '@angular/router';
-
 import { BackendMethod} from 'remult';
 import { Context } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -20,13 +15,8 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { Sites } from '../sites/sites';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import { visitAll } from '@angular/compiler';
 import { use, TranslationOptions } from '../translate';
 import { getLang } from '../sites/sites';
-import { FamilyDeliveresStatistics } from '../family-deliveries/family-deliveries-stats';
-import { Families } from '../families/families';
 
 @Component({
   selector: 'app-helpers',

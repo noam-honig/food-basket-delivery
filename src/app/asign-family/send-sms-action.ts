@@ -7,12 +7,6 @@ import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
 import { TranslationOptions } from '../translate';
-import { u } from '../model-shared/UberContext';
-
-
-
-
-
 export class SendSmsAction {
     static getSuccessMessage(template: string, orgName: string, family: string) {
         return template
@@ -93,7 +87,7 @@ export class SendSmsAction {
     public static async getSenderPhone(context: Context) {
         let sender = (await ApplicationSettings.getAsync(context)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            sender = u(context).currentUser.phone.thePhone;
+            sender = context.currentUser.phone.thePhone;
         }
         return sender;
     }

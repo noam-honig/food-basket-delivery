@@ -1,14 +1,12 @@
-import { IdEntity, Context, AndFilter, Entity, FilterFactories,  Filter, Allow } from "remult";
-import { GetDistanceBetween, Location, AddressHelper } from "../shared/googleApiHelpers";
+import { IdEntity, Context, Entity, FilterFactories, Allow } from "remult";
+import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
 import { Roles } from "../auth/roles";
 import { HelpersBase, HelperUserInfo } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "./ApplicationSettings";
-import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from "@remult/angular";
 import { use, FieldType, Field } from "../translate";
-import { u } from "../model-shared/UberContext";
 
 
 
@@ -44,18 +42,6 @@ import { u } from "../model-shared/UberContext";
   }
 })
 export class DistributionCenters extends IdEntity {
-  static async getDefault(context: Context): Promise<DistributionCenters> {
-    return (await context.for(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)));
-  }
-  static async fromId(distCenter: string, context: Context) {
-    if (distCenter != null)
-      return await context.for(DistributionCenters).findId(distCenter);
-  }
-  static toId(distCenter: DistributionCenters) {
-    return distCenter ? distCenter.id : null;
-  }
-
-
   constructor(private context: Context) {
     super();
   }

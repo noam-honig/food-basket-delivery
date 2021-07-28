@@ -1,5 +1,7 @@
-import { Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Context } from 'remult';
+import { CustomFilterBuilder, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Context } from 'remult';
 import { filterHelper } from 'remult/src/filter/filter-interfaces';
+import { InitContext } from '../helpers/init-context';
+
 
 
 
@@ -8,6 +10,7 @@ import { filterHelper } from 'remult/src/filter/filter-interfaces';
 
 
 export class SqlBuilder {
+    static filterTranslators: { translate: (c: Context, f: Filter) => Promise<Filter> }[] = [];
     max(val: any): any {
         return this.func('max', val);
     }
@@ -74,7 +77,9 @@ export class SqlBuilder {
 
         let f = e as Filter;
         if (f && f.__applyToConsumer) {
-
+            for (const t of SqlBuilder.filterTranslators) {
+                f = await t.translate(this.context, f);
+            }
             let bridge = new FilterConsumerBridgeToSqlRequest(new myDummySQLCommand());
             bridge._addWhere = false;
             f.__applyToConsumer(bridge);
@@ -274,6 +279,8 @@ export class SqlBuilder {
         return this.build(...result);
     }
     constructor(private context: Context) {
+        if (context&&!context.filterCenterAllowedForUser)
+            InitContext(context);
 
     }
     async query(query: QueryBuilder) {
@@ -381,7 +388,7 @@ export class myDummySQLCommand implements SqlCommand {
 
 
 export type SqlDefs<T = unknown> = FieldsMetadata<T> & FilterFactories<T> & { metadata: EntityMetadata };
-export async function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): Promise<SqlDefs<T>> {
+export function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): SqlDefs<T> {
     let origDefs: EntityMetadata;
     let re = repo as Repository<T>;
     if (re && re.metadata)

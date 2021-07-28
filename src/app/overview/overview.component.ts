@@ -119,8 +119,8 @@ export class OverviewComponent implements OnInit {
     };
 
     var builder = new SqlBuilder(context);
-    let f =await SqlFor(context.for(ActiveFamilyDeliveries));
-    let fd = await SqlFor(context.for(FamilyDeliveries));
+    let f =SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd = SqlFor(context.for(FamilyDeliveries));
 
 
 
@@ -140,7 +140,7 @@ export class OverviewComponent implements OnInit {
 
 
         } else if (dateRange.caption == onTheWay) {
-          cols.push(builder.countInnerSelect({ from: f, where: () => [FamilyDeliveries.onTheWayFilter(f)] }, key));
+          cols.push(builder.countInnerSelect({ from: f, where: () => [FamilyDeliveries.onTheWayFilter()] }, key));
         }
         else
           cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(DeliveryStatus.isAResultStatus(fd.deliverStatus)))), ') ', key));

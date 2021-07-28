@@ -102,8 +102,8 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
 
-    let fd = await SqlFor(context.for(FamilyDeliveries));
-    let u = await SqlFor(context.for(RegisterURL));
+    let fd = SqlFor(context.for(FamilyDeliveries));
+    let u = SqlFor(context.for(RegisterURL));
 
     let sql = new SqlBuilder(context);
     sql.addEntity(fd, "fd")
@@ -136,9 +136,9 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let h = await SqlFor(context.for(Helpers));
+    let h = SqlFor(context.for(Helpers));
 
-    let u = await SqlFor(context.for(RegisterURL));
+    let u = SqlFor(context.for(RegisterURL));
 
     let sql = new SqlBuilder(context);
 
@@ -164,8 +164,8 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let u = await SqlFor(context.for(RegisterURL));
-    let f = await SqlFor(context.for(Families));
+    let u = SqlFor(context.for(RegisterURL));
+    let f = SqlFor(context.for(Families));
 
     let sql = new SqlBuilder(context);
 

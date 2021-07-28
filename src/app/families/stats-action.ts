@@ -36,7 +36,7 @@ export class Stats {
     problem = new FaimilyStatistics(getLang(this.context).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false).and(f.defaultSelfPickup.isEqualTo(false))), colors.orange);
 
     async getData(distCenter: DistributionCenters) {
-        let r = await Stats.getFamilyStats(DistributionCenters.toId(distCenter));
+        let r = await Stats.getFamilyStats(distCenter?.id);
         for (let s in this) {
             let x: any = this[s];
             if (x instanceof FaimilyStatistics) {

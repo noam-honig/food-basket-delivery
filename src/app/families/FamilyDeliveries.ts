@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod } from 'remult';
+import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, CustomFilterBuilder } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -24,7 +24,6 @@ import { DataControl, IDataAreaSettings, openDialog } from "@remult/angular";
 import { Groups, GroupsValue } from "../manage/groups";
 
 import { FamilySources } from "./FamilySources";
-import { u, UberContext } from "../model-shared/UberContext";
 import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 
@@ -49,9 +48,10 @@ export class MessageStatus {
     allowApiInsert: false,
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
+    customFilterBuilder: () => FamilyDeliveries.customFilter,
     apiDataFilter: (self, context) => {
 
-        return u(context).isAllowedForUser(self);
+        return FamilyDeliveries.isAllowedForUser();
 
     },
 
@@ -59,9 +59,9 @@ export class MessageStatus {
 
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = u(self.context).currentUser;
+            self.createUser = self.context.currentUser;
             self.deliveryStatusDate = new Date();
-            self.deliveryStatusUser = u(self.context).currentUser;
+            self.deliveryStatusUser = self.context.currentUser;
         }
         if (self.quantity < 1)
             self.quantity = 1;
@@ -113,7 +113,7 @@ export class FamilyDeliveries extends IdEntity {
     static async getFamilyImages(family: string, delivery: string, context?: Context): Promise<ImageInfo[]> {
         if (!Roles.admin) {
             let d = await context.for(FamilyDeliveries).findId(delivery);
-            if (d.courier != u(context).currentUser)
+            if (d.courier != context.currentUser)
                 return [];
         }
         let r = (await context.for(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
@@ -394,8 +394,8 @@ export class FamilyDeliveries extends IdEntity {
         sqlExpression: async (self, context) => {
             var sql = new SqlBuilder(context);
 
-            var fd = await SqlFor(context.for(FamilyDeliveries));
-            let f = await SqlFor(self);
+            var fd = SqlFor(context.for(FamilyDeliveries));
+            let f = SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(fd, 'fd');
             return sql.columnWithAlias(sql.case([{
@@ -415,7 +415,7 @@ export class FamilyDeliveries extends IdEntity {
     @Field({
         sqlExpression: async (selfDefs, context) => {
             var sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
+            let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.gtAny(self.deliveryStatusDate, 'current_date -1'), self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
         }
@@ -425,8 +425,8 @@ export class FamilyDeliveries extends IdEntity {
         sqlExpression: async (self, context) => {
             var sql = new SqlBuilder(context);
 
-            var helper = await SqlFor(context.for(Helpers));
-            let f = await SqlFor(self);
+            var helper = SqlFor(context.for(Helpers));
+            let f = SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(helper, 'h');
             return sql.case([{
@@ -457,8 +457,8 @@ export class FamilyDeliveries extends IdEntity {
     @Field({
         includeInApi: Roles.admin,
         sqlExpression: async (selfDefs, context) => {
-            let self = await SqlFor(selfDefs);
-            let images = await SqlFor(context.for(DeliveryImage));
+            let self = SqlFor(selfDefs);
+            let images = SqlFor(context.for(DeliveryImage));
             let sql = new SqlBuilder(context);
             return sql.columnCount(self, {
                 from: images,
@@ -468,6 +468,65 @@ export class FamilyDeliveries extends IdEntity {
         }
     })
     numOfPhotos: number;
+    static customFilter = new CustomFilterBuilder<FamilyDeliveries, {
+        allowedForUser?: boolean,
+        ready?: {
+            city: string,
+            group: string,
+            area: string,
+            basketId: string
+        },
+        onTheWayFilter?: boolean
+    }>(async (self, c, context) => {
+        let result: Filter[] = [];
+        if (c.allowedForUser) {
+            if (!context.authenticated())
+                return self.id.isEqualTo('no rows');
+            let user = context.currentUser;
+            user.theHelperIAmEscorting;
+            if (!context.isAllowed([Roles.admin, Roles.lab])) {
+                result.push(FamilyDeliveries.active(self));
+                if (context.isAllowed(Roles.distCenterAdmin))
+                    result.push(context.filterCenterAllowedForUser(self.distributionCenter));
+                else {
+                    if (user.theHelperIAmEscorting)
+                        result.push(self.courier.isEqualTo(user.theHelperIAmEscorting).and(self.visibleToCourier.isEqualTo(true)));
+                    else
+                        result.push(self.courier.isEqualTo(user).and(self.visibleToCourier.isEqualTo(true)));
+                }
+            }
+        }
+        if (c.ready) {
+            let { city, group, area } = c.ready;
+            let basket = await context.for(BasketType).findId(c.ready.basketId);
+            let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
+                self.courier.isEqualTo(null)).and(context.filterCenterAllowedForUser(self.distributionCenter));
+            if (group)
+                where = where.and(self.groups.contains(group));
+            if (city) {
+                where = where.and(self.city.isEqualTo(city));
+            }
+            if (area !== undefined && area != context.lang.allRegions)
+                where = where.and(self.area.isEqualTo(area));
+            if (basket != null)
+                where = where.and(self.basketType.isEqualTo(basket))
+
+            return where;
+        }
+        if (c.onTheWayFilter)
+            result.push(self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null)));
+        return new AndFilter(...result);
+    });
+    static isAllowedForUser() {
+        return this.customFilter.build({ allowedForUser: true });
+    }
+    static readyFilter(city?: string, group?: string, area?: string, basket?: BasketType) {
+        return this.customFilter.build({ ready: { city, group, area, basketId: basket?.id } })
+    }
+    static onTheWayFilter() {
+        return this.customFilter.build({ onTheWayFilter: true });
+    }
+
 
 
     static active(self: FilterFactories<FamilyDeliveries>) {
@@ -478,7 +537,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     disableChangeLogging = false;
     _disableMessageToUsers = false;
-    constructor(protected context: Context, private onlyActive = false, apiEndPoing = 'FamilyDeliveries') {
+    constructor(protected context: Context) {
         super();
     }
 
@@ -603,9 +662,7 @@ export class FamilyDeliveries extends IdEntity {
 
 
 
-    static onTheWayFilter(self: FilterFactories<FamilyDeliveries>) {
-        return self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null));
-    }
+
 
 
     getDrivingLocation(): Location {
@@ -731,8 +788,8 @@ export class FamilyDeliveries extends IdEntity {
         return {
             fields: () =>
                 [
-                    [{ width: '', field: this.$.basketType }, { width: '', field:this.$.quantity}],
-                    [{ width: '', field:this.$.deliverStatus}, this.$.deliveryStatusDate],
+                    [{ width: '', field: this.$.basketType }, { width: '', field: this.$.quantity }],
+                    [{ width: '', field: this.$.deliverStatus }, this.$.deliveryStatusDate],
                     this.$.deliveryComments,
                     this.$.courier,
                     { field: this.$.distributionCenter, visible: () => dialog.hasManyCenters },
@@ -747,6 +804,11 @@ export class FamilyDeliveries extends IdEntity {
 
 
 }
+SqlBuilder.filterTranslators.push({
+    translate: async (context, f) => {
+        return Filter.translateCustomWhere<FamilyDeliveries>(context.for(FamilyDeliveries).metadata, Filter.createFilterFactories(context.for(FamilyDeliveries).metadata), f,context);
+    }
+});
 
 @Entity<FamilyDeliveries>({
     key: 'ActiveFamilyDeliveries',
@@ -764,10 +826,11 @@ iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 function logChanged(context: Context, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: FieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
-        user.value = u(context).currentUser;
+        user.value = context.currentUser;
         wasChanged();
     }
 }
 
 
-UberContext.filterActiveDeliveries = FamilyDeliveries.active;
+
+

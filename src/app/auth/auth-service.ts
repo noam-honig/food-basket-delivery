@@ -2,15 +2,12 @@ import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
-import {  HelperId, Helpers, HelperUserInfo } from "../helpers/helpers";
+import {  Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { Allow, BackendMethod, Context, UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
-
-
-
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
@@ -19,8 +16,8 @@ import { Subject } from "rxjs";
 import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
 import { Phone } from "../model-shared/phone";
 import { JwtHelperService } from "@auth0/angular-jwt";
+import { InitContext } from "../helpers/init-context";
 
-import { DistributionCenters } from "../manage/distribution-centers";
 
 const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
 let staticToken = '';
@@ -46,7 +43,7 @@ export class TokenService {
         let user: UserInfo = undefined;
         if (token) {
             user =await  AuthService.decodeJwt(token);
-            await Helpers.initContext(this.context,user);
+            await InitContext(this.context,user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -398,8 +395,8 @@ async function buildHelperUserInfo(h: Helpers, context: Context) {
         id: h.id,
         roles: [Sites.getOrgRole(context)],
         name: h.name,
-        distributionCenter: DistributionCenters.toId(h.distributionCenter),
-        theHelperIAmEscortingId: HelperId.toJson(h.theHelperIAmEscorting),
+        distributionCenter: h.distributionCenter?.id,
+        theHelperIAmEscortingId: h.theHelperIAmEscorting?.id,
         escortedHelperName: h.theHelperIAmEscorting ? (await (h.$.theHelperIAmEscorting.load())).name : ''
     };
     if (h.admin) {

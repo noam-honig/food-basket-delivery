@@ -1,7 +1,7 @@
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
-import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Context } from 'remult';
 

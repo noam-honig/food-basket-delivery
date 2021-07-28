@@ -11,7 +11,6 @@ import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSe
 import "../helpers/helpers.component";
 //import '../app.module';
 import { Context, SqlDatabase } from 'remult';
-import { Helpers } from '../helpers/helpers';
 import { Sites, setLangForSite } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -22,15 +21,16 @@ import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
 import { AuthService } from '../auth/auth-service';
- 
+import { InitContext } from "../helpers/init-context";
 
- 
+
+
 serverInit().then(async (dataSource) => {
 
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
-    
+
     if (!process.env.DEV_MODE)
         app.use(forceHttps);
 
@@ -154,13 +154,13 @@ s.parentNode.insertBefore(b, s);})();
         };
     }
     app.use(compression());
-//
+    //
 
     let eb = initExpress(
         app,
         {
             initRequest: async c => {
-                await Helpers.initContext(c)
+                await InitContext(c)
             },
             dataProvider: dataSource,
             disableAutoApi: Sites.multipleSites,
@@ -184,7 +184,7 @@ s.parentNode.insertBefore(b, s);})();
             });
             registerActionsOnServer(area);
             registerEntitiesOnServer(area);
-            registerImageUrls(app,(req)=> eb.getValidContext(req), '/' + schema);
+            registerImageUrls(app, (req) => eb.getValidContext(req), '/' + schema);
         };
         for (const schema of Sites.schemas) {
             createSchemaApi(schema);
@@ -298,13 +298,4 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Co
             res.send(err);
         }
     });
-
-
-
 }
-declare module 'remult' {
-    export interface Context {
-      noamIsCool:number;
-    }
-  }
-let x:Context;

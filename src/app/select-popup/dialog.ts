@@ -7,16 +7,14 @@ import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } 
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
-import { TestComponentRenderer } from "@angular/core/testing";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
 import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 import { use, Field } from "../translate";
-import { Location, GetDistanceBetween } from "../shared/googleApiHelpers";
+import { Location } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
-import { u } from "../model-shared/UberContext";
 
 
 
@@ -25,7 +23,7 @@ declare var gtag;
 @Injectable()
 export class DialogService {
     filterDistCenter(distributionCenter: ContainsFilterFactory<DistributionCenters>): import("remult").Filter {
-        return this.cContext.filterDistCenter(distributionCenter, this.distCenter)
+        return this.context.filterDistCenter(distributionCenter, this.distCenter)
     }
     async exception(title: string, err: any): Promise<void> {
 
@@ -78,7 +76,6 @@ export class DialogService {
             this.distCenter = null;
 
     }
-    cContext = u(this.context);
     refreshFamiliesAndDistributionCenters() {
         (<CustomReuseStrategy>this.routeReuseStrategy).recycleAll();
         this.refreshCanSeeCenter();
@@ -103,7 +100,7 @@ export class DialogService {
             return this.distCenter;
         if (!this.allCenters)
             this.allCenters = await this.context.for(DistributionCenters).find();
-        return this.cContext.findClosestDistCenter(loc, this.allCenters);
+        return this.context.findClosestDistCenter(loc, this.allCenters);
 
     }
     private allCenters: DistributionCenters[];
@@ -128,7 +125,7 @@ export class DialogService {
         if (this.context.user)
             dist = (<HelperUserInfo>this.context.user).distributionCenter;
         if (!this.context.isAllowed(Roles.admin) && (!this.distCenter || !this.distCenter.matchesCurrentUser())) {
-            this.distCenter = this.cContext.currentUser.distributionCenter;
+            this.distCenter = this.context.currentUser.distributionCenter;
         }
         return this.context.isAllowed(Roles.admin) && this.hasManyCenters;
     }

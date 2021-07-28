@@ -29,7 +29,7 @@ import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-q
 import { DistributionCenters } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 
-import { u } from "../model-shared/UberContext";
+
 import { GroupsValue } from "../manage/groups";
 
 
@@ -80,7 +80,7 @@ declare type factoryFor<T> = {
         if (self.$.address.wasChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
           await self.reloadGeoCoding();
         }
-        let currentUser = u(self.context).currentUser;
+        let currentUser = self.context.currentUser;
         if (self.isNew()) {
           self.createDate = new Date();
           self.createUser = currentUser;
@@ -147,7 +147,7 @@ export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder(context);
-    let f = await SqlFor(context.for(Families));
+    let f = SqlFor(context.for(Families));
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
@@ -343,7 +343,7 @@ export class Families extends IdEntity {
     if (f) {
 
       if (!distCenter)
-        distCenter = await u(context).findClosestDistCenter(f.addressHelper.location());
+        distCenter = await context.findClosestDistCenter(f.addressHelper.location());
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;
@@ -688,8 +688,8 @@ export class Families extends IdEntity {
   previousDeliveryComment: string;
   @Field({
     sqlExpression: async (selfDefs, context) => {
-      let self = await SqlFor(selfDefs);
-      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let self = SqlFor(selfDefs);
+      let fd = SqlFor(context.for(FamilyDeliveries));
       let sql = new SqlBuilder(context);
       return sql.columnCount(self, {
         from: fd,
@@ -824,7 +824,7 @@ export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
     var sql = new SqlBuilder(context);
-    let f = await SqlFor(context.for(Families));
+    let f = SqlFor(context.for(Families));
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.area, 'count (*) as count'],
@@ -884,7 +884,7 @@ export class Families extends IdEntity {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder(context);
-    var f = await SqlFor(context.for(Families));
+    var f = SqlFor(context.for(Families));
 
     let compareAsNumber = (col: FieldMetadata<any>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
@@ -1156,8 +1156,8 @@ export interface familyLikeEntity {
 }
 
 async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Context, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
-  let self = await SqlFor(selfDefs);
-  let fd = await SqlFor(context.for(FamilyDeliveries));
+  let self = SqlFor(selfDefs);
+  let fd = SqlFor(context.for(FamilyDeliveries));
   let sql = new SqlBuilder(context);
   return sql.columnInnerSelect(self, {
     select: () => [sql.columnWithAlias(col(fd), alias)],

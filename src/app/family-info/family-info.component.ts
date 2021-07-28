@@ -11,7 +11,6 @@ import { GetVolunteerFeedback } from '../update-comment/update-comment.component
 
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { createElementCssSelector } from '@angular/compiler';
 
 import { Helpers } from '../helpers/helpers';
 import { getLang, Sites } from '../sites/sites';
@@ -20,9 +19,7 @@ import { Phone } from "../model-shared/phone";
 import { Families } from '../families/families';
 import { UserFamiliesList } from '../my-families/user-families';
 import { openDialog } from '@remult/angular';
-import { DistributionCenters } from '../manage/distribution-centers';
 import { relativeDateName } from '../model-shared/types';
-import { u } from '../model-shared/UberContext';
 import { ImageInfo } from '../images/images.component';
 
 @Component({
@@ -111,7 +108,7 @@ export class FamilyInfoComponent implements OnInit {
     if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter = u(this.context).currentUser.distributionCenter;
+        d.distributionCenter = this.context.currentUser.distributionCenter;
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }

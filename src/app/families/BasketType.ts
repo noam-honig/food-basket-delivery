@@ -34,11 +34,6 @@ import { DataControl, getValueList } from '@remult/angular';
   defaultOrderBy: x => x.name
 })
 export class BasketType extends IdEntity {
-  static async fromId(id: string, context: Context) {
-    return id === undefined ? null : await context.for(BasketType).findId(id);
-  }
-
-
   @Field({ translation: l => l.basketTypeName })
   name: string;
   @Field({ caption: BasketType.boxes1Name })

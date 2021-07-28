@@ -1,16 +1,12 @@
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Entity } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
-
-
 import { Context } from 'remult';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { getLang } from '../sites/sites';
 import { use, Field } from "../translate";
-import { u } from "../model-shared/UberContext";
+
 
 
 
@@ -27,15 +23,15 @@ function log(s: string) {
 
     dbName: async (self, context) => {
 
-        let f = await SqlFor(context.for(ActiveFamilyDeliveries).metadata);
+        let f = SqlFor(context.for(ActiveFamilyDeliveries).metadata);
 
-        let h = await SqlFor(context.for(Helpers).metadata);
+        let h = SqlFor(context.for(Helpers).metadata);
         var sql = new SqlBuilder(context);
 
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [u(context).filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                where: () => [ context.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
             }
         }
         return sql.entityDbName({

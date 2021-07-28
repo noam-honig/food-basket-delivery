@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Context, SqlDatabase, EntityBase, getFields } from 'remult';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { HelperId, Helpers, CompanyColumn } from '../helpers/helpers';
+import {  Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InMemoryDataProvider, Entity } from 'remult';
 import { sortColumns } from '../shared/utils';
@@ -25,7 +25,7 @@ import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { use, Field } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { u } from '../model-shared/UberContext';
+
 
 
 
@@ -323,7 +323,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(
-      fd.deliveryStatusDate.isLessThan(toDate)).and(u(context).filterDistCenter(fd.distributionCenter, distCenter));
+      fd.deliveryStatusDate.isLessThan(toDate)).and(context.filterDistCenter(fd.distributionCenter, distCenter));
     if (onlyDone)
       r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
     if (onlyArchived)

@@ -1,21 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Roles } from '../auth/roles';
 import { BusyService, openDialog } from '@remult/angular';
-import { Context, SqlDatabase } from 'remult';
-import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
+import { Context } from 'remult';
+import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
-import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { SqlBuilder } from "../model-shared/SqlBuilder";
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
-import { SelectHelperComponent } from '../select-helper/select-helper.component';
-import { BasketType } from '../families/BasketType';
-import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings';
-import { relevantHelper, helperInfo, familyInfo, ShipmentAssignScreenComponent, data } from '../shipment-assign-screen/shipment-assign-screen.component';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { helperInfo, familyInfo, ShipmentAssignScreenComponent, data } from '../shipment-assign-screen/shipment-assign-screen.component';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryFollowUpComponent } from '../delivery-follow-up/delivery-follow-up.component';
-import { u } from '../model-shared/UberContext';
-
 @Component({
   selector: 'app-volunteer-cross-assign',
   templateUrl: './volunteer-cross-assign.component.html',
@@ -55,9 +48,9 @@ export class VolunteerCrossAssignComponent implements OnInit {
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => this.cContext.readyFilter(fd).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => FamilyDeliveries.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = await this.cContext.helperFromJson(h.id);
+        fd.courier = await this.context.for(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -68,7 +61,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this.cContext.helperFromJson(f.assignedHelper.id);
+    let helper = await this.context.for(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
         where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
@@ -97,16 +90,11 @@ export class VolunteerCrossAssignComponent implements OnInit {
     x.sendSmsToAll();
 
   }
-  cContext = u(this.context);
   constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) { }
   data: data;
   helpers: helperInfo[] = [];
   async ngOnInit() {
     await this.getFamiliesAndSortThem();
-
-
-
-
   }
   private async getFamiliesAndSortThem() {
     this.helpers = [];

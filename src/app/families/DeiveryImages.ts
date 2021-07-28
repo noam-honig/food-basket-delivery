@@ -1,7 +1,7 @@
 import { Allow, Context, Entity, Field, IdEntity } from "remult";
 import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
-import { u } from "../model-shared/UberContext";
+
 
 @Entity<DeliveryImage>({
     key: 'delivery_images',
@@ -9,11 +9,11 @@ import { u } from "../model-shared/UberContext";
     allowApiUpdate: false,
     apiDataFilter: (self, context) => {
         if (!context.isAllowed([Roles.admin]))
-            return self.uploadingVolunteer.isEqualTo(u(context).currentUser)
+            return self.uploadingVolunteer.isEqualTo(context.currentUser)
     },
     saving: self => {
         if (self.isNew())
-            self.uploadingVolunteer = u(self.context).currentUser
+            self.uploadingVolunteer = self.context.currentUser
     }
 
 })

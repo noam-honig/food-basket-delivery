@@ -30,7 +30,6 @@ import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
 
 import { ValueListFieldType } from 'remult/src/remult3';
-import { u } from '../model-shared/UberContext';
 import { GroupsValue } from './groups';
 
 
@@ -90,7 +89,7 @@ export class ApplicationSettings extends EntityBase {
   @BackendMethod({ allowed: Allow.authenticated })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(u(context).isAllowedForUser(fd)));
+    let d = await context.for(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;

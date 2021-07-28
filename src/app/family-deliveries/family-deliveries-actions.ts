@@ -1,7 +1,7 @@
 import { Context, AndFilter, EntityWhere } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
-import { HelperId, Helpers, HelpersBase } from "../helpers/helpers";
+import {  HelpersBase } from "../helpers/helpers";
 import { use, Field, FieldType, QuantityColumn } from "../translate";
 import { getLang } from '../sites/sites';
 import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring";
@@ -16,8 +16,6 @@ import { Controller } from "remult";
 import { DataAreaFieldsSetting, DataControl, InputField } from "@remult/angular";
 
 import { getFields, ValueListFieldType } from "remult/src/remult3";
-import { u } from "../model-shared/UberContext";
-
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
@@ -29,7 +27,6 @@ export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamily
 function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, context: Context) {
     if (args.orderBy)
         throw "didn't expect order by";
-    let cContext = u(context);
     args.orderBy = x => [x.createDate.descending(), x.id]//to handle the case where paging is used, and items are added with different ids
     let originalForEach = args.forEach;
     args.forEach = async fd => {
@@ -38,9 +35,9 @@ function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliver
     };
     let originalWhere = args.additionalWhere;
     if (originalWhere) {
-        args.additionalWhere = x => new AndFilter(originalWhere(x), cContext.isAllowedForUser(x));
+        args.additionalWhere = x => new AndFilter(originalWhere(x), FamilyDeliveries.isAllowedForUser());
     }
-    else args.additionalWhere = x => cContext.isAllowedForUser(x);
+    else args.additionalWhere = x => FamilyDeliveries.isAllowedForUser();
     return args;
 }
 
@@ -237,7 +234,7 @@ export class ArchiveHelper {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = context.for(ActiveFamilyDeliveries);
 
-        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(d), where]);
+        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(), where]);
 
         if (onTheWay > 0) {
             this.markOnTheWayAsDelivered = true;
@@ -386,7 +383,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     constructor(context: Context) {
         super(context, {
             dialogColumns: async (component) => {
-                this.basketType = await u(this.context).defaultBasketType();
+                this.basketType = await this.context.defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 this.useCurrentDistributionCenter = component.dialog.distCenter == null;

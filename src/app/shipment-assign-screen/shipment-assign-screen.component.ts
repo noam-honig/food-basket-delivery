@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
 import { BusyService, InputField, openDialog } from '@remult/angular';
 import { BackendMethod, Context, SqlDatabase } from 'remult';
-import { HelperId, Helpers, HelpersBase } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -12,7 +12,6 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
 import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings';
-import { u } from '../model-shared/UberContext';
 
 @Component({
   selector: 'app-shipment-assign-screen',
@@ -61,9 +60,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
-        where: fd => this.cContext.readyFilter(fd).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+        where: fd => FamilyDeliveries.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = await this.cContext.helperFromJson(h.id);
+        fd.courier = await this.context.for(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -73,7 +72,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this.cContext.helperFromJson(f.assignedHelper.id);
+    let helper = await this.context.for(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
       for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
         where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
@@ -111,7 +110,6 @@ export class ShipmentAssignScreenComponent implements OnInit {
   togglerShowHelper(forFamily: familyInfo) {
     this.openFamilies.set(forFamily, !this.openFamilies.get(forFamily));
   }
-  cContext = u(this.context);
   constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings) { }
   data: data;
   families: familyInfo[] = [];
@@ -187,7 +185,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     //remove busy helpers
     {
-      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let fd = SqlFor(context.for(FamilyDeliveries));
       let sql = new SqlBuilder(context);
       let busyLimitdate = new Date();
       busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
@@ -207,7 +205,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     {
       let sql = new SqlBuilder(context);
 
-      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let fd = SqlFor(context.for(FamilyDeliveries));
       for (let r of (await db.execute(await sql.query({
         select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
@@ -225,8 +223,8 @@ export class ShipmentAssignScreenComponent implements OnInit {
     //highlight new Helpers
     {
       let sql = new SqlBuilder(context);
-      let h = await SqlFor(context.for(Helpers));
-      let fd = await SqlFor(context.for(FamilyDeliveries));
+      let h = SqlFor(context.for(Helpers));
+      let fd = SqlFor(context.for(FamilyDeliveries));
       for (let helper of (await db.execute(await sql.query({
         select: () => [h.id],
         from: h,

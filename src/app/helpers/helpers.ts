@@ -9,6 +9,7 @@ import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
 
 
 
+
 import { Roles, distCenterAdminGuard } from "../auth/roles";
 
 
@@ -30,7 +31,6 @@ import { EmailSvc } from '../shared/utils';
 import { use, Field, FieldType } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
-import { u } from '../model-shared/UberContext';
 import { InputTypes } from 'remult/inputTypes';
 
 
@@ -48,15 +48,6 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
             ...settings
         })(target, key);
     }
-}
-
-
-
-export class HelperId {
-    static toJson(x: HelpersBase) {
-        return x ? x.id : '';
-    }
-
 }
 
 
@@ -84,8 +75,8 @@ export class HelperId {
         if (!context.authenticated())
             return self.id.isEqualTo("No User");
         else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
-            let uContext = u(context);
-            return self.id.isIn([uContext.currentUser, uContext.currentUser.theHelperIAmEscorting, uContext.currentUser.escort].
+            
+            return self.id.isIn([context.currentUser, context.currentUser.theHelperIAmEscorting, context.currentUser.escort].
                 filter(x => !!x).map(x => x.id));
         }
 
@@ -209,7 +200,7 @@ export abstract class HelpersBase extends IdEntity {
     @Field<Helpers>({
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
+            let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
         }
     })
@@ -247,7 +238,6 @@ export abstract class HelpersBase extends IdEntity {
     allowApiInsert: true,
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
-        let cContext = u(self.context);
         await self.$.escort.load();
         if (self.escort) {
             if (self.escort.id == self.id)
@@ -281,7 +271,7 @@ export abstract class HelpersBase extends IdEntity {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = cContext.currentUser.distributionCenter;
+                                self.distributionCenter = self.context.currentUser.distributionCenter;
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -323,7 +313,7 @@ export abstract class HelpersBase extends IdEntity {
             if (self.$.escort.wasChanged()) {
                 let h = await self.$.escort.load();
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = cContext.currentUser;
+                    self.$.escort.originalValue.theHelperIAmEscorting = self.context.currentUser;
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -364,31 +354,14 @@ export abstract class HelpersBase extends IdEntity {
 })
 
 export class Helpers extends HelpersBase {
-    private static helpersCache = new Map<string, Helpers>();
+    
     static async generateHash(password: string) {
         return await (await import('password-hash')).generate(password)
     }
     static async verifyHash(password: string, hash: string) {
         return (await import('password-hash')).verify(password, hash);
     }
-    static async initContext(context: Context, user?: UserInfo) {//
-        let h: Helpers;
-        let gotUser = !!user;
-        if (user === undefined)
-            user = context.user;
 
-        if (context.authenticated() || gotUser) {
-            h = this.helpersCache.get(user.id);
-            if (!h) {
-                h = await context.for(Helpers).findId(user.id);
-                this.helpersCache.set(user.id, h);
-            }
-            await h.$.theHelperIAmEscorting.load(); /// for isAllowedForUser in helpers
-            await h.$.distributionCenter.load(); /// for all the current user distribution center filtering
-
-        }
-        u(context).currentUser = h;
-    }
 
     async getHelper(): Promise<Helpers> {
         return this;
@@ -583,7 +556,7 @@ export class Helpers extends HelpersBase {
     }
     @Field<Helpers>({
         sqlExpression: async (selfDefs, context) => {
-            let self = await SqlFor(selfDefs);
+            let self = SqlFor(selfDefs);
             let sql = new SqlBuilder(context);
             return sql.build(self.id, ' || ', self.escort, ' || ', self.theHelperIAmEscorting);
         }
@@ -819,6 +792,7 @@ export function validatePasswordColumn(context: Context, password: FieldRef<any,
             password.error = l.passwordCharsRequirement;
     }
 }
+
 
 
 

@@ -8,11 +8,11 @@ import { Roles } from "./app/auth/roles";
 import { HelpersAndStats } from "./app/delivery-follow-up/HelpersAndStats";
 import { DeliveryStatus } from "./app/families/DeliveryStatus";
 import { Families } from "./app/families/families";
-import { bridgeFamilyDeliveriesToFamilies, UpdateArea, UpdateAreaForDeliveries, UpdateStatus, UpdateStatusForDeliveries } from "./app/families/familyActions";
+import { UpdateArea, UpdateAreaForDeliveries, UpdateStatus, UpdateStatusForDeliveries } from "./app/families/familyActions";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./app/families/FamilyDeliveries";
 import { FamilyStatus } from "./app/families/FamilyStatus";
-import { ArchiveDeliveries, DeleteDeliveries, UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
-import { HelperId, Helpers, HelperUserInfo } from "./app/helpers/helpers";
+import { DeleteDeliveries, UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
+import { Helpers, HelperUserInfo } from "./app/helpers/helpers";
 import { ApplicationSettings } from "./app/manage/ApplicationSettings";
 import { initSettings, serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
@@ -22,18 +22,20 @@ import { DistributionCenters } from './app/manage/distribution-centers';
 import { Phone } from './app/model-shared/phone';
 import { AuthService } from './app/auth/auth-service';
 import { actionInfo } from 'remult/src/server-action';
+import { InitContext } from "./app/helpers/init-context";
 initSettings.disableSchemaInit = true;
- 
+
 
 async function init() {
 
     let context = new Context();
+    await InitContext(context);
     let helperWhoIsAdmin: Helpers;
-    
-    actionInfo.runningOnServer = true; 
+
+    actionInfo.runningOnServer = true;
 
     let sql: SqlDatabase;
-    
+
 
 
     beforeAll(
@@ -41,12 +43,12 @@ async function init() {
             serverInit().then(async x => {
                 if (initSettings.disableSchemaInit) {
                     SqlDatabase.LogToConsole = true;
-                    SqlDatabase.durationThreshold = 0;
+                    
                 }
                 let dp = Sites.getDataProviderForOrg("test");
                 sql = <any>dp;
                 context.setDataProvider(dp);
-               
+
                 done();
             });
         });
@@ -59,7 +61,7 @@ async function init() {
             ;
     });
     describe("the test", () => {
-        
+
         beforeEach(async done => {
             for (const d of await context.for(FamilyDeliveries).find()) {
                 await d.delete();
@@ -105,11 +107,11 @@ async function init() {
                 name: 'admin',
                 roles: [Roles.admin, Roles.distCenterAdmin]
             });
-            await Helpers.initContext(context);
+            await InitContext(context);
             done();
         });
         async function callAddBox() {
-            return await AsignFamilyComponent.AddBox(helperWhoIsAdmin,null,null,{
+            return await AsignFamilyComponent.AddBox(helperWhoIsAdmin, null, null, {
                 allRepeat: false,
                 area: '',
                 city: '',
@@ -172,9 +174,9 @@ async function init() {
                 }]
             }).saveToString();
             context.clearAllCache();
-            helperWhoIsAdmin._disableOnSavingRow=true;
+            helperWhoIsAdmin._disableOnSavingRow = true;
             await helperWhoIsAdmin.save();
-            
+
 
             let r = await callAddBox();
             expect(r.families.length).toBe(1);
@@ -246,11 +248,11 @@ async function init() {
             for (const f of await context.for(DistributionCenters).find()) {
                 await f.delete();
             }
-            await context.for(DistributionCenters).create({id:'',name:'stam'}).save();
+            await context.for(DistributionCenters).create({ id: '', name: 'stam' }).save();
             done();
         });
         itAsync("update status, updatesStatus and deletes delivery", async () => {
-            
+
             let f = await context.for(Families).create();
             f.name = "test";
             await f.save();
@@ -394,10 +396,10 @@ async function init() {
                 id: 'distCenterAdmin',
                 name: 'distCenterAdmin',
                 distributionCenter: b,
-                phone : new Phone('1234') 
+                phone: new Phone('1234')
             }).save();
-            
-            
+
+
             c2.setUser({
                 id: distAdmin.id,
                 name: 'distCenterAdmin',
@@ -406,8 +408,8 @@ async function init() {
                 theHelperIAmEscortingId: undefined,
                 roles: [Roles.distCenterAdmin]
             } as HelperUserInfo);
-            await Helpers.initContext(c2);
-            
+            await InitContext(c2);
+
             expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(3);
             var u = new DeleteDeliveries(c2);
             await u.internalForTestingCallTheServer({
@@ -416,7 +418,7 @@ async function init() {
             });
             expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(2);
         });
-       
+
     });
 }
 init();

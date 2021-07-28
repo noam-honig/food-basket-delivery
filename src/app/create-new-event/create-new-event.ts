@@ -18,7 +18,6 @@ import { PromiseThrottle } from '../shared/utils';
 import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { use, Field } from '../translate';
-import { u } from '../model-shared/UberContext';
 import { GroupsValue } from '../manage/groups';
 
 
@@ -61,7 +60,7 @@ export class CreateNewEvent {
 
 
     }
-    cContext = u(this.context);
+    
     isAllowed() {
         return this.context.isAllowed(Roles.admin);
     }
@@ -78,7 +77,7 @@ export class CreateNewEvent {
         await settings.save();
 
         let pt = new PromiseThrottle(10);
-        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => this.cContext.filterDistCenter(fd.distributionCenter, this.distributionCenter) })) {
+        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => this.context.filterDistCenter(fd.distributionCenter, this.distributionCenter) })) {
             this.archiveHelper.forEach(fd);
             fd.archive = true;
             await pt.push(fd.save());
@@ -159,7 +158,7 @@ export class CreateNewEvent {
             }
         }
 
-        let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => this.cContext.readyFilter(x).and(this.cContext.filterDistCenter(x.distributionCenter, this.distributionCenter)));
+        let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => FamilyDeliveries.readyFilter().and(this.context.filterDistCenter(x.distributionCenter, this.distributionCenter)));
         if (notDoneDeliveries > 0) {
             await dialog.messageDialog(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem);
             routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
@@ -167,14 +166,14 @@ export class CreateNewEvent {
         }
         let threeHoursAgo = new Date();
         threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
-        let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => FamilyDeliveries.onTheWayFilter(x).and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)).and(this.cContext.filterDistCenter(x.distributionCenter, this.distributionCenter)));
+        let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => FamilyDeliveries.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)).and(this.context.filterDistCenter(x.distributionCenter, this.distributionCenter)));
         if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + recentOnTheWay + " " + getLang(this.context).deliveresOnTheWayAssignedInTheLast3Hours)) {
             routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
             return;
         }
         this.useFamilyBasket = true;
 
-        let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, x => this.cContext.filterDistCenter(x.distributionCenter, this.distributionCenter), settings.usingSelfPickupModule);
+        let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, x => this.context.filterDistCenter(x.distributionCenter, this.distributionCenter), settings.usingSelfPickupModule);
 
 
         openDialog(InputAreaComponent, x => x.args = {
@@ -195,7 +194,7 @@ export class CreateNewEvent {
             validate: async () => {
 
 
-                let count = await this.context.for(ActiveFamilyDeliveries).count(x => this.cContext.filterDistCenter(x.distributionCenter, this.distributionCenter));
+                let count = await this.context.for(ActiveFamilyDeliveries).count(x => this.context.filterDistCenter(x.distributionCenter, this.distributionCenter));
                 if (count > 0) {
                     if (!await dialog.YesNoPromise(getLang(this.context).confirmArchive + " " + count + " " + getLang(this.context).deliveries))
                         throw getLang(this.context).actionCanceled;

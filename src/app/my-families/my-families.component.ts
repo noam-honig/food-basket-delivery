@@ -5,7 +5,7 @@ import { Route } from '@angular/router';
 import { RouteHelperService } from '@remult/angular';
 import { Context } from 'remult';
 
-import { HelperId, Helpers, HelperUserInfo } from '../helpers/helpers';
+import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
 

@@ -54,7 +54,7 @@ export class SelectCompanyComponent implements OnInit {
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getCompanies(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder(context);
-    let h = await SqlFor(context.for(Helpers));
+    let h = SqlFor(context.for(Helpers));
     let r = await db.execute(await sql.query({
       from: h,
       select: () => [sql.build("distinct ", h.company)],

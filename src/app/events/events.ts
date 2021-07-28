@@ -20,7 +20,6 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { AddressHelper } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { u } from "../model-shared/UberContext";
 import { InputTypes } from "remult/inputTypes";
 
 
@@ -48,7 +47,7 @@ export class eventStatus {
         if (self.context.backend) {
             await self.addressHelper.updateApiResultIfChanged();
             if (self.distributionCenter == null)
-                self.distributionCenter = await DistributionCenters.getDefault(self.context);
+                self.distributionCenter = await self.context.defaultDistributionCenter();
         }
     },
 
@@ -193,8 +192,8 @@ export class Event extends IdEntity {
     @Field({
         translation: l => l.attendingVolunteers,
         sqlExpression: async (selfDefs, context) => {
-            var vie = await SqlFor(context.for(volunteersInEvent));
-            let self = await SqlFor(selfDefs);
+            var vie = SqlFor(context.for(volunteersInEvent));
+            let self = SqlFor(selfDefs);
             var sql = new SqlBuilder(context);
             return sql.columnCount(self, {
                 from: vie,
@@ -216,13 +215,13 @@ export class Event extends IdEntity {
     apiDataFilter: (self, context) => {
         if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return undefined;
-        return self.helper.isEqualTo(u(context).currentUser);
+        return self.helper.isEqualTo(context.currentUser);
     }
     ,
     saving: (self) => {
         if (self.isNew() && self.context.backend) {
             self.createDate = new Date();
-            self.createUser = u(self.context).currentUser;
+            self.createUser = self.context.currentUser;
         }
     }
 })
@@ -236,8 +235,8 @@ export class volunteersInEvent extends IdEntity {
         translation: l => l.volunteerName,
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let h = await SqlFor(context.for(Helpers));
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.name],
@@ -250,8 +249,8 @@ export class volunteersInEvent extends IdEntity {
         translation: l => l.volunteerPhoneNumber,
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let h = await SqlFor(context.for(Helpers));
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.phone],
@@ -264,8 +263,8 @@ export class volunteersInEvent extends IdEntity {
         translation: l => l.deliveriesAssigned,
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let d = await SqlFor(context.for(ActiveFamilyDeliveries));
+            let self = SqlFor(selfDefs);
+            let d = SqlFor(context.for(ActiveFamilyDeliveries));
             return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
         }
     })
@@ -274,8 +273,8 @@ export class volunteersInEvent extends IdEntity {
         translation: l => l.delveriesSuccesfull,
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let d = await SqlFor(context.for(FamilyDeliveries));
+            let self = SqlFor(selfDefs);
+            let d = SqlFor(context.for(FamilyDeliveries));
             return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
         }
     })
@@ -284,8 +283,8 @@ export class volunteersInEvent extends IdEntity {
         translation: l => l.email,
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let h = await SqlFor(context.for(Helpers));
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.email],
@@ -297,8 +296,8 @@ export class volunteersInEvent extends IdEntity {
     @Field({
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let h = await SqlFor(context.for(Helpers));
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(context.for(Helpers));
             return sql.columnInnerSelect(self, {
                 from: h,
                 select: () => [h.smsDate],
@@ -311,8 +310,8 @@ export class volunteersInEvent extends IdEntity {
 
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
-            let self = await SqlFor(selfDefs);
-            let d = await SqlFor(context.for(FamilyDeliveries));
+            let self = SqlFor(selfDefs);
+            let d = SqlFor(context.for(FamilyDeliveries));
             return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
         }
     })
