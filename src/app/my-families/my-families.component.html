@@ -96,8 +96,8 @@
                     </div>
 
                 </div>
-                <div>{{settings.lang.volunteers}}: {{e.registeredVolunteers}}<span
-                        *ngIf="e.requiredVolunteers"> /{{e.requiredVolunteers}} </span></div>
+                <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}: {{e.registeredVolunteers}}
+                         /{{e.requiredVolunteers}} </div>
                 <button mat-raised-button color="primary"
                     *ngIf="volunteerInEvent(e).isNew() && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
                     (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
