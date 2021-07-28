@@ -111,10 +111,10 @@ export class FamilyDeliveries extends IdEntity {
         allowed: Allow.authenticated
     })
     static async getFamilyImages(family: string, delivery: string, context?: Context): Promise<ImageInfo[]> {
-        if (!Roles.admin){
-            let d =await  context.for(FamilyDeliveries).findId(delivery);
-            if (d.courier!=u(context).currentUser)
-            return [];
+        if (!Roles.admin) {
+            let d = await context.for(FamilyDeliveries).findId(delivery);
+            if (d.courier != u(context).currentUser)
+                return [];
         }
         let r = (await context.for(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
         return r;
@@ -731,8 +731,8 @@ export class FamilyDeliveries extends IdEntity {
         return {
             fields: () =>
                 [
-                    [this.$.basketType, this.$.quantity],
-                    [this.$.deliverStatus, this.$.deliveryStatusDate],
+                    [{ width: '', field: this.$.basketType }, { width: '', field:this.$.quantity}],
+                    [{ width: '', field:this.$.deliverStatus}, this.$.deliveryStatusDate],
                     this.$.deliveryComments,
                     this.$.courier,
                     { field: this.$.distributionCenter, visible: () => dialog.hasManyCenters },

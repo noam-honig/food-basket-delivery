@@ -1,5 +1,5 @@
 ## to fix now
-[] width of status in update family screen.
+[V] width of status in update family screen.
 
 
 
