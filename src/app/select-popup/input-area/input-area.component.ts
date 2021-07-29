@@ -25,7 +25,7 @@ export class InputAreaComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<any>,
     private dialog: DialogService,
-    public settings:ApplicationSettings
+    public settings: ApplicationSettings
 
   ) {
 
@@ -52,7 +52,13 @@ export class InputAreaComponent implements OnInit {
         return;
       }
     }
-    await this.args.ok();
+    try {
+      await this.args.ok();
+    }
+    catch (err) {
+      this.dialog.Error((err));
+      return;
+    }
     this.ok = true;
     this.dialogRef.close();
     return false;

@@ -3,7 +3,7 @@ import { DataControl, InputField, openDialog } from '@remult/angular';
 import { BackendMethod, Context, Controller, getFields, Validators } from 'remult';
 
 import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
-import { HelpersBase } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
@@ -49,15 +49,11 @@ export class EventInfoComponent implements OnInit {
   rememberMeOnThisDevice: boolean;
   get $() { return getFields(this) }
   async registerToEvent(e: EventInList) {
-    let continueToRegister = false;
+
     await openDialog(InputAreaComponent, x => x.args = {
       title: this.settings.lang.register,
       settings: {
         fields: () => [this.$.phone, this.$.name, this.$.rememberMeOnThisDevice]
-      },
-      validate: async () => {
-
-
       },
       cancel: () => { },
       ok: async () => {
@@ -69,24 +65,26 @@ export class EventInfoComponent implements OnInit {
 
 
 
-    /*
-    let ev = this.volunteerInEvent(e);
-    if (ev.isNew()) {
-      ev.eventId = e.id;
-      //  ev.helper = this.familyLists.helper;
-      await ev.save();
-      e.registeredVolunteers++;
-    }*/
+
   }
   @BackendMethod({ allowed: true })
   async registerVolunteerToEvent(id: string, context?: Context) {
+    this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone, context));
     let helper: HelpersBase;
     if (context.authenticated()) {
       helper = context.currentUser;
     }
     else {
-
+      helper = await context.for(Helpers).findFirst({ where: h => h.phone.isEqualTo(this.phone) })
     }
+    /*
+  let ev = this.volunteerInEvent(e);
+  if (ev.isNew()) {
+    ev.eventId = e.id;
+    //  ev.helper = this.familyLists.helper;
+    await ev.save();
+    e.registeredVolunteers++;
+  }*/
   }
   async cancelEvent(e: EventInList) {
     let ev = this.volunteerInEvent(e);
