@@ -9,7 +9,7 @@
     </button>
 
 
-    <input #fileInput type="file" (input)="onFileInput($event)" accept="image/*" id="uploadImage"
+    <input *ngIf="!readonly" #fileInput type="file" (input)="onFileInput($event)" accept="image/*" id="uploadImage"
         style="display:none" />
 </div>
 <div class="image-container">

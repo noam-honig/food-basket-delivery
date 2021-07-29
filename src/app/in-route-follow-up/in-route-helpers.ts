@@ -206,9 +206,9 @@ export class InRouteHelpers extends IdEntity {
 
 @Entity<HelperCommunicationHistory>({
     key: 'HelperCommunicationHistory',
-    allowApiInsert: Roles.admin,
-    allowApiRead: Roles.admin,
-    allowApiUpdate: Roles.admin,
+    allowApiInsert: Roles.distCenterAdmin,
+    allowApiRead: Roles.distCenterAdmin,
+    allowApiUpdate: Roles.distCenterAdmin,
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
