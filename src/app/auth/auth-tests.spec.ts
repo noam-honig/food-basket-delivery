@@ -7,6 +7,7 @@ import { AuthService, TokenService } from './auth-service';
 import { Phone } from "../model-shared/phone";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { actionInfo } from 'remult/src/server-action';
+import { InitContext } from '../helpers/init-context';
 
 
 
@@ -230,7 +231,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     let mem = new InMemoryDataProvider();
     var context = new Context();
     context.setDataProvider(mem);
-    await context.userChange.observe(async () => Helpers.initContext(context));
+    await context.userChange.observe(async () => InitContext(context));
     let c = context.for(Helpers);
     let h = c.create();
     h.name = 'test';

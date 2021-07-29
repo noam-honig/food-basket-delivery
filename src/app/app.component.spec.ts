@@ -51,6 +51,9 @@ describe('AppComponent', () => {
       })).toBe("select e1.id from Families e1 where status <> 98 and e1.id in (select fd.family from FamilyDeliveries fd where archive = false)");
 
   });
+  it("test custom filter",async()=>{
+    expect(await sql.build(FamilyDeliveries.onTheWayFilter())).toBe("deliverStatus = 0 and courier <> ''");
+  });
   it("test build", async () => {
     expect(await sql.build("a", f.id)).toBe("aid");
   });

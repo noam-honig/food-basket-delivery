@@ -511,7 +511,7 @@ export class FamilyDeliveries extends IdEntity {
             if (basket != null)
                 where = where.and(self.basketType.isEqualTo(basket))
 
-            return where;
+            result.push( where);
         }
         if (c.onTheWayFilter)
             result.push(self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null)));
