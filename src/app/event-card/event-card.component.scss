@@ -1,0 +1,18 @@
+.event-card {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    margin: 12px;
+}
+.event-image {
+    width: 120px;
+    height: 120px;
+}
+.events-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.registered {
+    background-color:lightgreen !important
+  }

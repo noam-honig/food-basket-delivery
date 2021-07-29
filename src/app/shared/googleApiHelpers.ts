@@ -368,6 +368,9 @@ export function GetDistanceBetween(a: Location, b: Location) {
 }
 
 export class AddressHelper {
+    getAddress() {
+        return this.addressColumn().value;
+    }
 
     constructor(private context: Context, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
 

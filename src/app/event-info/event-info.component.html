@@ -1,0 +1,71 @@
+<mat-dialog-content class="dialog-container">
+    <h3>{{e.name}}</h3>
+    <div style="text-align: center;">
+        <img class="event-image" src="https://salmaz.herokuapp.com/shabatm/assets/apple-touch-icon.png">
+    </div>
+    <span>{{e.city}}</span>
+    <span>{{displayDate()}}<span *ngIf="e.startTime">,
+            {{e.startTime}}</span><span *ngIf="e.endTime"> -
+            {{e.endTime}}</span>
+    </span>
+    <div class="space-above">
+        {{e.description}}
+    </div>
+    <div *ngIf="e.theAddress" class="space-above">
+        <strong>{{settings.lang.address}}</strong>
+        <div class="phone-container">
+            <span (click)="openWaze()">
+                <img src="assets/waze.png">
+
+            </span>
+            <div>
+                <a (click)="openWaze()">
+                    <span style="display:block"> {{e.theAddress}} </span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="e.thePhone" class="space-above">
+        <strong>{{settings.lang.phones}}</strong>
+        <div class="phone-container">
+
+            <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
+                (click)="sendWhatsapp(e.thePhone)">
+                <img src="assets/whatsapp.png">
+            </span>
+            <a href="tel:{{e.thePhone}}">
+                <button mat-mini-fab style="vertical-align: middle" color="primary">
+                    <mat-icon>call</mat-icon>
+                </button>
+            </a>
+            <div>
+                <a href="tel:{{e.thePhone}}">{{e.thePhoneDisplay}}</a>,
+                {{e.thePhoneDescription}}
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}: {{e.registeredVolunteers}}
+        /{{e.requiredVolunteers}} </div>
+
+
+
+</mat-dialog-content>
+<mat-dialog-actions style="display: flex;
+justify-content: space-between;">
+    <div>
+        <button mat-raised-button color="primary"
+            *ngIf="!e.registeredToEvent && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
+            (click)="reg.registerToEvent(e)">{{settings.lang.illBeThere}}
+        </button>
+        <span mat-raised-button color="primary"
+            *ngIf="!e.registeredToEvent && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
+        </span>
+        <span *ngIf="e.registeredToEvent">
+            {{settings.lang.registeredToEvent}} <a (click)="reg.removeFromEvent(e)">{{settings.lang.iCantMakeIt}}</a>
+        </span>
+    </div>
+    <div style="margin-left:5px;margin-right: 5px;">
+        <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
+    </div>
+</mat-dialog-actions>

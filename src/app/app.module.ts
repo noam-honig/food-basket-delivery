@@ -102,6 +102,9 @@ import {  Helpers } from './helpers/helpers';
 import { ImagesComponent } from './images/images.component';
 import { DeliveryImagesComponent } from './delivery-images/delivery-images.component'
 import { InitContext } from './helpers/init-context';
+import { EventInfoComponent } from './event-info/event-info.component';
+import { EventCardComponent } from './event-card/event-card.component';
+import { OrgEventsComponent } from './org-events/org-events.component';
 
 
 
@@ -199,7 +202,10 @@ export class MyHammerConfig extends HammerGestureConfig {
     MltFamiliesComponent,
     PrintVolunteersComponent,
     ImagesComponent,
-    DeliveryImagesComponent
+    DeliveryImagesComponent,
+    EventInfoComponent,
+    EventCardComponent,
+    OrgEventsComponent
 
 
   ],
@@ -321,6 +327,7 @@ export function initApp(session: TokenService, settings: SettingsService, contex
 
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
       routeMap.set(RegisterURLComponent, l.RegisterURLComponent);
+      routeMap.set(OrgEventsComponent, l.volunteerOpportunities);
 
 
 
