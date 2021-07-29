@@ -59,6 +59,50 @@ export class eventStatus {
     }
 })
 export class Event extends IdEntity {
+    async toEventInList(helper: HelpersBase): Promise<EventInList> {
+        let {
+            id,
+            name,
+            description,
+            eventDate,
+            startTime,
+            endTime,
+            city,
+            theAddress,
+            longLat,
+            thePhone,
+            thePhoneDisplay,
+            thePhoneDescription,
+            requiredVolunteers,
+            registeredVolunteers
+        } = this;
+        return {
+            id,
+            name,
+            description,
+            eventDate,
+            startTime,
+            endTime,
+            city,
+            theAddress,
+            longLat,
+            thePhone,
+            thePhoneDisplay,
+            thePhoneDescription,
+            requiredVolunteers,
+            registeredVolunteers,
+            registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper)
+        }
+    }
+    async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
+        if (!helper)
+            return false;
+        return !!(await this.context.for(volunteersInEvent).findFirst(v => v.helper.isEqualTo(helper).and(v.eventId.isEqualTo(this.id))))
+    }
+    @Field<Event>({
+        serverExpression: self => self.volunteeredIsRegisteredToEvent(self.context.currentUser)
+    })
+    registeredToEvent: boolean;
     showVolunteers(dialog: DialogService, busy: BusyService): void {
         openDialog(GridDialogComponent, x => x.args = {
             title: this.name,
@@ -448,7 +492,8 @@ export interface EventInList {
     thePhoneDisplay: string,
     thePhoneDescription: string,
     requiredVolunteers: number,
-    registeredVolunteers: number
+    registeredVolunteers: number,
+    registeredToEvent: boolean
 
 
 }

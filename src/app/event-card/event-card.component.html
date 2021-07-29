@@ -1,11 +1,12 @@
 <div class="events-container">
 
-    <mat-card class="event-card" *ngFor="let e of events">
-        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" *ngIf="isAdmin()">
+    <mat-card class="event-card" *ngFor="let e of events" [class.registered]="e.registeredToEvent">
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
+            *ngIf="isAdmin()">
             <mat-icon>more_vert</mat-icon>
         </button>
-        <mat-menu #menu="matMenu" >
-            <button mat-menu-item *ngFor="let b of menuOptions" (click)="clickButton(b) ">
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngFor="let b of menuOptions" (click)="clickButton(b,e) ">
                 <mat-icon>{{b.icon}}</mat-icon>
                 <span>{{b.name}}</span>
             </button>

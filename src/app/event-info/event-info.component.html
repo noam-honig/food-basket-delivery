@@ -48,23 +48,24 @@
     <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}: {{e.registeredVolunteers}}
         /{{e.requiredVolunteers}} </div>
 
-    <span *ngIf="!volunteerInEvent(e).isNew()">
-        {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
-    </span>
+
 
 </mat-dialog-content>
 <mat-dialog-actions style="display: flex;
 justify-content: space-between;">
     <div>
         <button mat-raised-button color="primary"
-            *ngIf="volunteerInEvent(e).isNew() && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
-            (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
+            *ngIf="!e.registeredToEvent && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
+            (click)="reg.registerToEvent(e)">{{settings.lang.illBeThere}}
         </button>
         <span mat-raised-button color="primary"
-            *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
+            *ngIf="!e.registeredToEvent && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
+        </span>
+        <span *ngIf="e.registeredToEvent">
+            {{settings.lang.registeredToEvent}} <a (click)="reg.removeFromEvent(e)">{{settings.lang.iCantMakeIt}}</a>
         </span>
     </div>
-    <div>
+    <div style="margin-left:5px;margin-right: 5px;">
         <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
     </div>
 </mat-dialog-actions>
