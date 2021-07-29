@@ -130,13 +130,14 @@ export const routes: Routes = [
   
   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
-  { path: 'register', component: OrgEventsComponent, canActivate: [EventListGuard] },
+  
   { path: 'events', component: EventsComponent, canActivate: [distCenterAdminGuard] },
   
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
+  { path: 'register', component: OrgEventsComponent, canActivate: [EventListGuard] },
   UpdateInfoComponent.route,
   LoginComponent.route,
   {path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard]},

@@ -113,7 +113,7 @@ export class EventsComponent implements OnInit {
     new columnOrderAndWidthSaver(this.events).load('events-component');
   }
   copyLink() {
-    copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/my-families');
+    copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/register');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
 

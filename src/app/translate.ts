@@ -1111,10 +1111,11 @@ export class Language {
   askVolunteerForAPhotoToHelp = "בקש מהתמנדב תמונה שתעזור למתנדב הבא";
   questionForVolunteerWhenUploadingPhoto = "מה לכתוב למתנדב כשרוצים תמונה";
   defaultQuestionForVolunteerWhenUploadingPhoto = "צרף תמונה שתעזור למתנדב הבא";
-  deletePhoto="מחק תמונה";
-  numOfPhotos="מספר תמונות שצלם המתנדב";
+  deletePhoto = "מחק תמונה";
+  numOfPhotos = "מספר תמונות שצלם המתנדב";
   photos_taken_by_volunteer = 'תמונות שצילם המתנדב';
-  save_photo_and_display_to_next_volunteer = 'שמור והצג למתנדב הבא'
+  save_photo_and_display_to_next_volunteer = 'שמור והצג למתנדב הבא';
+  volunteerOpportunities = "הזדמנויות התנדבות";
 }
 
 const defaultLang = new Language();

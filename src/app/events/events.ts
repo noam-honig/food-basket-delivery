@@ -493,7 +493,8 @@ export interface EventInList {
     thePhoneDescription: string,
     requiredVolunteers: number,
     registeredVolunteers: number,
-    registeredToEvent: boolean
+    registeredToEvent: boolean,
+    site?:string
 
 
 }

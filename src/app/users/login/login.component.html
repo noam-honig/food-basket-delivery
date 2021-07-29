@@ -1,14 +1,10 @@
-<div *ngIf="isguest">
-  <h1>
-    חגי - אפליקציה לחלוקת סלי מזון
-    <br>
-    <a href="https://noam-honig.github.io/salmaz">לפרטים נוספים, לחצו כאן</a>
-  </h1>
+<div *ngIf="isguest" class="full-page">
+
+  <app-org-events class="grow-item"></app-org-events>
 
 
 
-
-  <button mat-button style="position:absolute;bottom:0px;left:0;" (click)="isguest = false">overview</button>
+  <button mat-button style="position:absolute;bottom:0px;left:0;" (click)="isguest = false">o</button>
 </div>
 <div class="myDiv" *ngIf="!isguest">
   <mat-card style="max-width: 300px;
@@ -41,7 +37,8 @@
           <div *ngIf="loginState==updatePasswordAndEulaState">
             {{this.loginResult.requiredToSetPasswordReason}}
             <data-area [settings]="setPasswordArea"></data-area>
-            <a href="https://www.we-tribu.com/hagai/terms-of-use" *ngIf="this.loginResult.requiredToSignEULA" target="_blank">{{settings.lang.readEula}} </a>
+            <a href="https://www.we-tribu.com/hagai/terms-of-use" *ngIf="this.loginResult.requiredToSignEULA"
+              target="_blank">{{settings.lang.readEula}} </a>
           </div>
           <div style="width:100%;text-align: end;margin-top:10px">
             <button mat-raised-button color="accent" (click)="loginState.nextStep()">{{settings.lang.signIn}}</button>

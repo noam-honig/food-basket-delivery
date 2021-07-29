@@ -327,6 +327,7 @@ export function initApp(session: TokenService, settings: SettingsService, contex
 
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
       routeMap.set(RegisterURLComponent, l.RegisterURLComponent);
+      routeMap.set(OrgEventsComponent, l.volunteerOpportunities);
 
 
 

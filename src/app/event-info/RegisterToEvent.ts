@@ -3,9 +3,11 @@ import { BackendMethod, Context, Controller, getFields, Validators, EventSource 
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event } from '../events/events';
 import { Helpers, HelpersBase } from '../helpers/helpers';
+import { InitContext } from '../helpers/init-context';
 import { getSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { Sites } from '../sites/sites';
 import { Field } from '../translate';
 
 
@@ -57,7 +59,7 @@ export class RegisterToEvent {
                 cancel: () => { },
                 ok: async () => {
 
-                    this.updateEvent(e, await this.registerVolunteerToEvent(e.id, true));
+                    this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
                     if (this.rememberMeOnThisDevice)
                         localStorage.setItem(infoKeyInStorage, JSON.stringify({ phone: this.phone.thePhone, name: this.name }));
                     if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
@@ -66,19 +68,25 @@ export class RegisterToEvent {
                 }
             });
         else
-            this.updateEvent(e, await this.registerVolunteerToEvent(e.id, true));
+            this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
     }
     async updateEvent(e: EventInList, update: EventInList) {
         if (e instanceof Event)
             await e._.reload();
-        else this.updateEvent(e, update);
+        else Object.assign(e, update);
     }
     async removeFromEvent(e: EventInList) {
-        this.updateEvent(e, await this.registerVolunteerToEvent(e.id, false));
+        this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false));
     }
     @BackendMethod({ allowed: true })
-    async registerVolunteerToEvent(id: string, register = true) {
+    async registerVolunteerToEvent(id: string, site: string, register) {
         this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone, this.context));
+        if (site) {
+            let dp = Sites.getDataProviderForOrg(site);
+            this.context = new Context();
+            this.context.setDataProvider(dp);
+            await InitContext(this.context);
+        }
         let helper: HelpersBase;
         if (this.context.authenticated()) {
             helper = this.context.currentUser;
