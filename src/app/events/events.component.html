@@ -1,6 +1,15 @@
 <div class="full-page">
     <div>
         <button mat-raised-button color="primary" (click)="copyLink()">{{settings.lang.copyLinkForVolunteer}}</button>
+
     </div>
-    <data-grid [settings]="events" class="grow-item"></data-grid>
+    <mat-tab-group class="grow-item">
+        <mat-tab [label]="settings.lang.eventsComponent">
+            <app-event-card [events]="events.items"></app-event-card>
+        </mat-tab>
+        <mat-tab [label]="settings.lang.list">
+            <data-grid [settings]="events" class="grow-item"></data-grid>
+        </mat-tab>
+
+    </mat-tab-group>
 </div>

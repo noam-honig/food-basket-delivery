@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Context, AndFilter, FieldsMetadata } from 'remult';
-import { BusyService, GridSettings, InputField, openDialog } from '@remult/angular';
+import { BusyService, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
@@ -16,6 +16,7 @@ import { Roles } from '../auth/roles';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 import { DateOnlyValueConverter } from 'remult/valueConverters';
+import { EventInfoComponent } from '../event-info/event-info.component';
 
 @Component({
   selector: 'app-events',
@@ -103,51 +104,10 @@ export class EventsComponent implements OnInit {
       },
     ],
     numOfColumnsInGrid: 100,
-    columnSettings: e => this.eventDisplayColumns(e),
-    rowButtons: [
-      {
-        name: this.settings.lang.eventInfo,
-        click: async e => {
-          openDialog(InputAreaComponent, x => x.args = {
-            title: this.settings.lang.eventInfo,
-            settings: {
-              fields: () => this.eventDisplayColumns(e._.repository.metadata.fields)
-            },
-            ok: () => e.save(),
-            cancel: () => e._.undoChanges(),
-            buttons: [
-              {
-                text: this.settings.lang.volunteers,
-                click: () => e.showVolunteers(this.dialog, this.busy)
-              }
-            ]
-          });
-        }
-      },
-      {
-        name: this.settings.lang.volunteers,
-        click: async e => {
-          e.showVolunteers(this.dialog, this.busy)
-        }
-      }
-    ]
+    columnSettings: e => Event.displayColumns(e),
+    rowButtons: Event.rowButtons(this.settings, this.dialog, this.busy)
   });
-  private eventDisplayColumns(e: FieldsMetadata<Event>) {
-    return [
-      e.name,
-      { width: '100', field: e.registeredVolunteers },
-      { width: '100', field: e.requiredVolunteers },
-      { width: '150', field: e.eventDate },
-      e.startTime,
-      e.endTime,
-      { width: '150', field: e.eventStatus },
-      e.description,
-      e.distributionCenter,
-      e.address,
-      e.phone1,
-      e.phone1Description
-    ];
-  }
+
 
   ngOnInit() {
     new columnOrderAndWidthSaver(this.events).load('events-component');
@@ -156,5 +116,6 @@ export class EventsComponent implements OnInit {
     copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/my-families');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
+
 
 }

@@ -1,4 +1,4 @@
-import { AuthenticatedInGuard } from '@remult/angular';
+import { AuthenticatedInGuard, NotSignedInGuard } from '@remult/angular';
 import { Context } from 'remult';
 import { Injectable } from "@angular/core";
 
@@ -79,5 +79,13 @@ export class distCenterOrLabGuard extends AuthenticatedInGuard {
 
     isAllowed() {
         return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.lab) || c.isAllowed(Roles.distCenterAdmin);
+    }
+}
+
+@Injectable()
+export class EventListGuard extends NotSignedInGuard {
+
+    isAllowed() {
+        return c => !c.authenticated() || !c.isAllowed(Roles.distCenterAdmin)
     }
 }

@@ -1,5 +1,5 @@
-import { IdEntity, Context, Entity, FieldsMetadata, Allow } from "remult";
-import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
+import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata } from "remult";
+import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
@@ -14,13 +14,14 @@ import { settings } from "cluster";
 import { SelectHelperComponent } from "../select-helper/select-helper.component";
 import { DialogService } from "../select-popup/dialog";
 import { saveToExcel } from '../shared/saveToExcel';
-import { getSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 
 import { DistributionCenters } from "../manage/distribution-centers";
 import { AddressHelper } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { InputTypes } from "remult/inputTypes";
+import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 
 
 
@@ -202,12 +203,113 @@ export class Event extends IdEntity {
         }
     })
     registeredVolunteers: number;
+    getCity() {
+        return this.addressHelper.getGeocodeInformation().getCity();
+    }
 
 
     constructor(private context: Context) {
         super();
     }
+    static rowButtons(settings: ApplicationSettings, dialog: DialogService, busy: BusyService): RowButton<Event>[] {
+        return [
+            {
+                name: settings.lang.eventInfo,
+                click: async (e) => {
+                    openDialog(InputAreaComponent, x => x.args = {
+                        title: settings.lang.eventInfo,
+                        settings: {
+                            fields: () => this.displayColumns(e._.repository.metadata.fields)
+                                .map(x => mapFieldMetadataToFieldRef(e._, x))
+                        },
+                        ok: () => e.save(),
+                        cancel: () => e._.undoChanges(),
+                        buttons: [
+                            {
+                                text: settings.lang.volunteers,
+                                click: () => e.showVolunteers(dialog, busy)
+                            }
+                        ]
+                    });
+                }
+            },
+            {
+                name: settings.lang.volunteers,
+                click: async (e) => {
+                    e.showVolunteers(dialog, busy);
+                }
+            }
+        ];
+    }
 
+    static displayColumns(e: FieldsMetadata<Event>) {
+        return [
+            e.name,
+            { width: '100', field: e.registeredVolunteers },
+            { width: '100', field: e.requiredVolunteers },
+            { width: '150', field: e.eventDate },
+            e.startTime,
+            e.endTime,
+            { width: '150', field: e.eventStatus },
+            e.description,
+            e.distributionCenter,
+            e.address,
+            e.phone1,
+            e.phone1Description
+        ];
+    }
+    get thePhoneDescription() {
+        if (this.phone1?.thePhone)
+            return this.phone1Description;
+        if (this.distributionCenter.phone1?.thePhone)
+            return this.distributionCenter.phone1Description;
+        return getSettings(this.context).helpText;
+    }
+    getPhone(): Phone {
+        if (this.phone1?.thePhone)
+            return this.phone1;
+        if (this.distributionCenter.phone1?.thePhone)
+            return this.distributionCenter.phone1;
+        return getSettings(this.context).helpPhone;
+    }
+    get thePhone() {
+        return this.getPhone()?.thePhone;
+    }
+    get thePhoneDisplay() {
+        if (this.getPhone()?.thePhone)
+            return this.getPhone().displayValue;
+    }
+    get theAddress() {
+        if (this.getAddress().ok())
+            return this.getAddress().getAddress();
+    }
+    getAddress(): AddressHelper {
+        if (this.addressHelper.ok())
+            return this.addressHelper;
+        if (this.distributionCenter.addressHelper.ok())
+            return this.distributionCenter.addressHelper;
+        return getSettings(this.context).addressHelper;
+    }
+    get city() {
+        if (this.getAddress().ok())
+            return this.getAddress().getGeocodeInformation().getCity();
+    }
+    get longLat() {
+        if (this.getAddress().ok())
+            return this.getAddress().getGeocodeInformation().getlonglat();
+    }
+
+
+}
+export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo<any>) {
+    let y = x as DataControlSettings<any, any>;
+    if (y.getValue) {
+        return y;
+    }
+    if (y.field) {
+        return { ...y, field: e.fields.find(y.field as FieldMetadata) };
+    }
+    return e.fields.find(y as FieldMetadata);
 }
 @Entity<volunteersInEvent>({
     key: 'volunteersInEvent',
@@ -331,3 +433,31 @@ export class volunteersInEvent extends IdEntity {
 }
 
 
+
+export interface EventInList {
+    id: string
+    name: string,
+    description: string,
+    eventDate: Date,
+    startTime: string,
+    endTime: string,
+    city: string,
+    theAddress: string,
+    longLat: string,
+    thePhone: string,
+    thePhoneDisplay: string,
+    thePhoneDescription: string,
+    requiredVolunteers: number,
+    registeredVolunteers: number
+
+
+}
+
+export function eventDisplayDate(e: EventInList) {
+
+    if (e.eventDate) {
+        if (typeof e.eventDate === "string")
+            e.eventDate = new Date(e.eventDate);
+        return e.eventDate.toLocaleDateString();
+    }
+}

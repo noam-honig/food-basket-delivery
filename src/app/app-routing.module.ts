@@ -25,7 +25,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles,SignedInAndNotOverviewGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles,SignedInAndNotOverviewGuard, EventListGuard } from './auth/roles';
 import { AuthenticatedInGuard } from '@remult/angular';
 import { Context } from 'remult';
 
@@ -52,6 +52,7 @@ import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
 import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
+import { OrgEventsComponent } from './org-events/org-events.component';
 
 
 @Injectable()
@@ -129,6 +130,7 @@ export const routes: Routes = [
   
   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
+  { path: 'events', component: OrgEventsComponent, canActivate: [EventListGuard] },
   { path: 'events', component: EventsComponent, canActivate: [distCenterAdminGuard] },
   
   LoginFromSmsComponent.route,
@@ -154,7 +156,7 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard,
-    MltAdminGuard,SignedInAndNotOverviewGuard]
+    MltAdminGuard,SignedInAndNotOverviewGuard,EventListGuard]
 
 })
 
