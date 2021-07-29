@@ -40,7 +40,7 @@ export async function InitContext(context: Context, user?: UserInfo) {
         let result: DistributionCenters;
         let dist: number;
         if (!centers)
-            centers = await this.context.for(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
+            centers = await context.for(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
         for (const c of centers) {
             let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
             if (result === undefined || myDist < dist) {
@@ -54,7 +54,7 @@ export async function InitContext(context: Context, user?: UserInfo) {
         if (context.isAllowed(Roles.admin)) {
             return new Filter();
         } else if (context.authenticated())
-            return center.isEqualTo(this.context.currentUser.distributionCenter);
+            return center.isEqualTo(context.currentUser.distributionCenter);
     }
     context.filterDistCenter=(distCenterColumn, distCenter): Filter=> {
         let allowed = context.filterCenterAllowedForUser(distCenterColumn);
