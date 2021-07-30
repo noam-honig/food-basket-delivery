@@ -84,6 +84,14 @@ export class EventCardComponent implements OnInit {
     if (e instanceof Event)
       b.click(e);
   }
+  showVolunteers(e: EventInList) {
+    if (e instanceof Event)
+      e.showVolunteers(this.dialog, this.busy);
+  }
+  edit(e: EventInList) {
+    if (e instanceof Event)
+      e.openEditDialog(this.dialog, this.busy);
+  }
   getRelativeDate(e: EventInList) {
     let today = new Date();
     today.setHours(0);
@@ -98,12 +106,13 @@ export class EventCardComponent implements OnInit {
 
     }
   }
+
   volunteerText(e: EventInList) {
     if (e.requiredVolunteers > 0) {
       if (e.requiredVolunteers == e.registeredVolunteers) {
         return "הארוע מלא";
       }
-    // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
+      // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
     }
     if (this.context.isAllowed(Roles.distCenterAdmin))
       return e.registeredVolunteers + " מתנדבים";
