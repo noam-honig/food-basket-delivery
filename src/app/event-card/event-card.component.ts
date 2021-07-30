@@ -22,6 +22,9 @@ export class EventCardComponent implements OnInit {
   }
   dates: { date: string, events: EventInList[] }[] = [];
   cities: { id: string, count: number, caption: string }[] = [];
+  trackBy(i: number, e: EventInList) {
+    return e.id;
+  }
 
 
   @Field({
@@ -129,9 +132,13 @@ export class EventCardComponent implements OnInit {
   }
   sortEvents() {
     if (!this.volunteerLocation)
-      this.dates.forEach(d => d.events.sort((a, b) => a.eventDate?.valueOf() - b.eventDate?.valueOf()));
+      this.dates.forEach(d => d.events.sort((a, b) => {
+        let r = a.eventDate?.valueOf() - b.eventDate?.valueOf();
+        if (r != 0) return r;
+        return a.startTime?.localeCompare(b.startTime);
+      }));
     else
-      this.dates.forEach(d => d.events.sort((a, b) => GetDistanceBetween(a.location, b.location)));
+      this.dates.forEach(d => d.events.sort((a, b) => GetDistanceBetween(this.volunteerLocation, a.location) - GetDistanceBetween(this.volunteerLocation, b.location)));
   }
 
 }

@@ -3,9 +3,9 @@
 <mat-divider></mat-divider>
 <div *ngFor="let d of dates">
     <h3>{{d.date}}</h3>
-    <div class="events-container">
-        <ng-container *ngFor="let e of d.events">
-            <mat-card class="event-card" [class.registered]="e.registeredToEvent" *ngIf="filter(e)">
+    <div class="events-container" [transition-group]="'flip-list'">
+        <ng-container *ngFor="let e of d.events ; trackBy: trackBy">
+            <mat-card transition-group-item class="event-card" [class.registered]="e.registeredToEvent" *ngIf="filter(e)">
                 <div *ngIf="isAdmin()" style="    display: flex;
                 justify-content: space-between;
                 margin-bottom: 10px;">

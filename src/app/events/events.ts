@@ -110,7 +110,9 @@ export class Event extends IdEntity {
             registeredVolunteers,
             registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
             eventLogo: (await this.context.getSettings()).logoUrl,
-            location
+            location,
+            orgName: (await this.context.getSettings()).organisationName
+
         }
     }
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
@@ -302,6 +304,9 @@ export class Event extends IdEntity {
     get location() {
         return this.getAddress()?.location();
     }
+    get orgName() {
+        return getSettings(this.context).orgName;
+    }
 
 
     constructor(private context: Context) {
@@ -348,13 +353,13 @@ export class Event extends IdEntity {
         return [
             e.name,
             e.type,
-            { width: '100', field: e.registeredVolunteers },
-            { width: '100', field: e.requiredVolunteers },
+            e.description,
             { width: '150', field: e.eventDate },
             e.startTime,
             e.endTime,
+            { width: '100', field: e.requiredVolunteers },
+            { width: '100', field: e.registeredVolunteers },
             { width: '150', field: e.eventStatus },
-            e.description,
             e.distributionCenter,
             e.address,
             e.phone1,
@@ -579,7 +584,8 @@ export interface EventInList {
     registeredToEvent: boolean,
     site?: string,
     eventLogo: string,
-    location: Location
+    location: Location,
+    orgName: string
 
 
 }
