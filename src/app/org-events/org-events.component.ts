@@ -62,9 +62,12 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     let helper: HelpersBase = context.currentUser;
     if (!helper && phone)
       helper = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
+    let midnightToday = new Date();
+    midnightToday.setHours(0);
+
     return Promise.all((await context.for(Event).find({
       orderBy: e => [e.eventDate, e.startTime],
-      where: e => e.eventStatus.isEqualTo(eventStatus.active)
+      where: e => e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(midnightToday))
     })).map(async e => await e.toEventInList(helper)));
   }
 
