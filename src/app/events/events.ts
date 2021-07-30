@@ -247,7 +247,7 @@ export class Event extends IdEntity {
     })
     name: string;
     @Field()
-    type: EventType;
+    type: EventType = EventType.foodDelivery;
     @Field()
     eventStatus: eventStatus;
     @Field({ translation: l => l.eventDescription })
