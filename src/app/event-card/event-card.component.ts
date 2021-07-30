@@ -1,11 +1,12 @@
-import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
+import { day, Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from 'remult';
+import { Context, Field, getFields } from 'remult';
 import { EventInfoComponent } from '../event-info/event-info.component';
-import { BusyService, openDialog, RowButton } from '@remult/angular';
+import { BusyService, DataAreaSettings, DataControl, openDialog, RowButton } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Roles } from '../auth/roles';
+import { use } from '../translate';
 
 
 
@@ -20,11 +21,56 @@ export class EventCardComponent implements OnInit {
   isAdmin() {
     return this.context.isAllowed(Roles.distCenterAdmin);
   }
+  dates: { date: string, events: EventInList[] }[] = [];
+  cities: { id: string, count: number, caption: string }[] = [];
 
 
+  @Field({
+    caption: 'איפה?'
+  })
+  city: string = '';
+  area: DataAreaSettings;
 
-  @Input() events: EventInList[];
+  _events: EventInList[];
+  @Input()
+  set events(val: EventInList[]) {
+    this._events = val;
+    this.dates = [];
+    for (const d of [use.language.past, use.language.today, use.language.tomorrow, use.language.thisWeek, use.language.nextWeek, use.language.later]) {
+
+      this.dates.push({ date: d, events: [] });
+    }
+    this.cities.splice(0);
+    for (const e of val) {
+      this.dates.find(d => d.date == eventDisplayDate(e, true)).events.push(e);
+      let city = this.cities.find(c => c.id == e.city);
+      if (!city) {
+        this.cities.push({ id: e.city, count: 1, caption: '' });
+      } else
+        city.count++;
+    }
+    this.cities.sort((b, a) => a.count - b.count);
+    this.cities.forEach(c => c.caption = c.id + " - " + c.count);
+    this.cities.splice(0, 0, { id: '', count: val.length, caption: 'כל הארץ - ' + val.length });
+    this.dates = this.dates.filter(d => d.events.length > 0);
+    this.dates.forEach(d => d.events.sort((a, b) => a.eventDate?.valueOf() - b.eventDate?.valueOf()));
+    this.area = new DataAreaSettings({
+      fields: () => [{
+        field: this.$.city,
+        valueList: this.cities
+      }]
+    })
+  }
+  filter(e: EventInList) {
+    return this.city == '' || e.city==this.city;
+  }
+  get events() {
+    return this._events;
+  }
+  get $() { return getFields(this, this.context) }
+
   ngOnInit(): void {
+
   }
   eventDetails(e: EventInList) {
     openDialog(EventInfoComponent, x => x.e = e);
@@ -35,6 +81,20 @@ export class EventCardComponent implements OnInit {
   clickButton(b: RowButton<Event>, e: EventInList) {
     if (e instanceof Event)
       b.click(e);
+  }
+  getRelativeDate(e: EventInList) {
+    let today = new Date();
+    today.setHours(0);
+    let t = today.valueOf();
+    let d = e.eventDate.valueOf();
+
+    if (d > t) {
+      if (d < t + day)
+        return use.language.today;
+      if (d < t + day * 2)
+        return use.language.tomorrow;
+
+    }
   }
 
 }

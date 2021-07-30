@@ -22,6 +22,7 @@ import { AddressHelper } from "../shared/googleApiHelpers";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { InputTypes } from "remult/inputTypes";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
+import * as moment from "moment";
 
 
 
@@ -92,7 +93,7 @@ export class Event extends IdEntity {
             requiredVolunteers,
             registeredVolunteers,
             registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
-            eventLogo:this.context.settings.logoUrl
+            eventLogo: this.context.settings.logoUrl
         }
     }
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
@@ -518,12 +519,38 @@ export interface EventInList {
 
 
 }
-
-export function eventDisplayDate(e: EventInList) {
-
+export const day = 86400000;
+export function eventDisplayDate(e: EventInList, group = false) {
     if (e.eventDate) {
         if (typeof e.eventDate === "string")
             e.eventDate = new Date(e.eventDate);
-        return e.eventDate.toLocaleDateString();
+
+        let today = new Date();
+        today.setHours(0);
+        let t = today.valueOf();
+        let d = e.eventDate.valueOf();
+        if (d > t) {
+            if (d < t + day)
+                return use.language.today;
+            if (d < t + day * 2)
+                return use.language.tomorrow;
+            if (group) {
+                let endOfWeek = t - today.getDay() * day + day * 7;
+                if (d < endOfWeek)
+                    return use.language.thisWeek;
+                if (d < endOfWeek + day * 7)
+                    return use.language.nextWeek;
+                if (group)
+                    return use.language.later;
+            }
+
+        }
+        if (group)
+            return use.language.past;
+
+
+        return moment(d).locale(use.language.languageCodeHe).format('DD/MM (dddd)')
     }
+    if (group)
+        return use.language.past;
 }

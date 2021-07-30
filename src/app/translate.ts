@@ -1118,6 +1118,12 @@ export class Language {
   volunteerOpportunities = "הזדמנויות התנדבות";
   add = "הוספה";
   invalidDate = "תאריך לא תקין";
+  today = "היום";
+  tomorrow = "מחר";
+  thisWeek = "השבוע";
+  nextWeek = "שבוע הבא";
+  later = "מאוחר יותר";
+  past = "עבר";
 }
 
 const defaultLang = new Language();

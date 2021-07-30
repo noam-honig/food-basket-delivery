@@ -1,27 +1,32 @@
-<div class="events-container">
+<data-area [settings]="area"></data-area>
+<div *ngFor="let d of dates">
+    <h3>{{d.date}}</h3>
+    <div class="events-container">
+        <ng-container *ngFor="let e of d.events">
+            <mat-card class="event-card" [class.registered]="e.registeredToEvent" *ngIf="filter(e)">
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
+                    *ngIf="isAdmin()">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let b of menuOptions" (click)="clickButton(b,e) ">
+                        <mat-icon>{{b.icon}}</mat-icon>
+                        <span>{{b.name}}</span>
+                    </button>
 
-    <mat-card class="event-card" *ngFor="let e of events" [class.registered]="e.registeredToEvent">
-        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
-            *ngIf="isAdmin()">
-            <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item *ngFor="let b of menuOptions" (click)="clickButton(b,e) ">
-                <mat-icon>{{b.icon}}</mat-icon>
-                <span>{{b.name}}</span>
-            </button>
-
-        </mat-menu>
-        <div style="text-align: center;" (click)="eventDetails(e)">
-            <img class="event-image" [src]="e.eventLogo">
-        </div>
-        <strong (click)="eventDetails(e)">{{e.name}}</strong>
-        <span (click)="eventDetails(e)">{{e.city}}</span>
-        <div (click)="eventDetails(e)">
-            <span>{{displayDate(e)}}<span *ngIf="e.startTime">,
-                    {{e.startTime}}</span><span *ngIf="e.endTime"> -
-                    {{e.endTime}}</span>
-            </span>
-        </div>
-    </mat-card>
+                </mat-menu>
+                <div style="text-align: center;" (click)="eventDetails(e)">
+                    <img class="event-image" [src]="e.eventLogo">
+                </div>
+                <strong (click)="eventDetails(e)">{{e.name}}</strong>
+                <span (click)="eventDetails(e)">{{e.city}}</span>
+                <div (click)="eventDetails(e)">
+                    <span>{{displayDate(e)}}<span *ngIf="e.startTime">,
+                            {{e.startTime}}</span><span *ngIf="e.endTime"> -
+                            {{e.endTime}}</span>
+                    </span>
+                </div>
+            </mat-card>
+        </ng-container>
+    </div>
 </div>
