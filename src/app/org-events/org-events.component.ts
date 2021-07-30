@@ -18,12 +18,12 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private context: Context,public settings:ApplicationSettings) {
+  constructor(private context: Context, public settings: ApplicationSettings) {
 
   }
   getLogo() {
     return ApplicationSettings.get(this.context).logoUrl;
-    
+
   }
   ngOnDestroy(): void {
     if (this.unObserve)
@@ -52,10 +52,10 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
       let c = new Context();
       c.setDataProvider(dp);
       await InitContext(c, undefined, org);
-
-
+      let settings = await c.getSettings();
+      if (settings.donotShowEventsInGeneralList || settings.forWho.args.leftToRight)
+        continue;
       let items = await OrgEventsComponent.getEvents(phone, c);
-
       r.push(...items.map(i => ({ ...i, site: org })));
 
     }

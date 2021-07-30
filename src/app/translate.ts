@@ -1128,7 +1128,8 @@ export class Language {
   cancelUser="משתמש ביטול השתתפות";
   cancelDate="מועד ביטול השתתפות";
   lastUpdate="מועד עדכון";
-  fromGeneralList="נרשם דרך הרשימה הכלללית"
+  fromGeneralList="נרשם דרך הרשימה הכלללית";
+  donotShowEventsInGeneralList = "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים";
 }
 
 const defaultLang = new Language();

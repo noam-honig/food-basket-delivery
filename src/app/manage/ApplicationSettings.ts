@@ -297,7 +297,8 @@ export class ApplicationSettings extends EntityBase {
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
   @Field()
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
-
+  @Field()
+  donotShowEventsInGeneralList: boolean;
 
   @Field({
     translation: l => l.defaultStatusType
