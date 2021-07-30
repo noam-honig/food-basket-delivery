@@ -122,6 +122,7 @@ export class RegisterDonorComponent implements OnInit {
     }
     catch (err) {
       this.dialog.exception("donor form", err);
+      throw err;
     }
 
     await openDialog(YesNoQuestionComponent, x => x.args = {
@@ -180,7 +181,8 @@ class donorForm {
   @Field<donorForm, string>({
     caption: "כתובת",
     validate: (e, col) => {
-      Validators.required(e, col, "אנא הזן ערך");
+      if (!e.selfDeliver)
+        Validators.required(e, col, "אנא הזן ערך");
     }
   })
   address: string;
@@ -201,7 +203,7 @@ class donorForm {
     { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }]
 
   })
-  donationType: FamilySources;
+  donationType: string;
   @Field()
   docref: string;
 
@@ -224,7 +226,7 @@ class donorForm {
     f.phone1 = this.phone;
     f.email = this.email;
     f.custom1 = this.docref;
-    f.familySource = this.donationType;
+    f.familySource = await this.context.for(FamilySources).findId(this.donationType);
 
     await f.save();
     var quantity = 0;

@@ -587,7 +587,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             let b = await context.for(BasketType).findId(basketId);
             result.baskets.push({
                 id: basketId,
-                name: b.name,
+                name: b?.name,
                 unassignedFamilies: +r['b'],
                 basket: undefined
             });
