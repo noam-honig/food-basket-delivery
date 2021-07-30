@@ -26,6 +26,19 @@ import * as moment from "moment";
 
 
 
+@ValueListFieldType(EventType, {
+    caption: 'סוג התנדבות'
+})
+export class EventType {
+    static foodDelivery = new EventType("חלוקת מזון", "");
+    static packaging = new EventType("אריזת חבילות");
+    static other = new EventType("אחר");
+    constructor(public caption: string, public id: string = undefined) {
+
+    }
+}
+
+
 @ValueListFieldType(eventStatus, {
     translation: l => l.eventStatus,
     defaultValue: () => eventStatus.active
@@ -64,6 +77,7 @@ export class Event extends IdEntity {
         let {
             id,
             name,
+            type,
             description,
             eventDate,
             startTime,
@@ -80,6 +94,7 @@ export class Event extends IdEntity {
         return {
             id,
             name,
+            type,
             description,
             eventDate,
             startTime,
@@ -212,6 +227,8 @@ export class Event extends IdEntity {
     })
     name: string;
     @Field()
+    type: EventType;
+    @Field()
     eventStatus: eventStatus;
     @Field({ translation: l => l.eventDescription })
     description: string;
@@ -309,6 +326,7 @@ export class Event extends IdEntity {
     static displayColumns(e: FieldsMetadata<Event>) {
         return [
             e.name,
+            e.type,
             { width: '100', field: e.registeredVolunteers },
             { width: '100', field: e.requiredVolunteers },
             { width: '150', field: e.eventDate },
@@ -501,6 +519,7 @@ export class volunteersInEvent extends IdEntity {
 export interface EventInList {
     id: string
     name: string,
+    type: EventType,
     description: string,
     eventDate: Date,
     startTime: string,
@@ -515,7 +534,7 @@ export interface EventInList {
     registeredVolunteers: number,
     registeredToEvent: boolean,
     site?: string,
-    eventLogo: string
+    eventLogo: string,
 
 
 }

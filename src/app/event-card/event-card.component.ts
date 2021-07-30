@@ -1,4 +1,4 @@
-import { day, Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
+import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context, Field, getFields } from 'remult';
@@ -29,6 +29,8 @@ export class EventCardComponent implements OnInit {
     caption: 'איפה?'
   })
   city: string = '';
+  @Field({ caption: 'סוג התנדבות' })
+  type: EventType;
   area: DataAreaSettings;
 
   _events: EventInList[];
@@ -55,14 +57,15 @@ export class EventCardComponent implements OnInit {
     this.dates = this.dates.filter(d => d.events.length > 0);
     this.dates.forEach(d => d.events.sort((a, b) => a.eventDate?.valueOf() - b.eventDate?.valueOf()));
     this.area = new DataAreaSettings({
-      fields: () => [{
+      fields: () => [[{
         field: this.$.city,
         valueList: this.cities
-      }]
+      }, this.$.type]]
     })
   }
   filter(e: EventInList) {
-    return this.city == '' || e.city==this.city;
+    return (this.city == '' || e.city == this.city) &&
+      (this.type == undefined || e.type.id == this.type.id);
   }
   get events() {
     return this._events;
