@@ -18,8 +18,10 @@ import { BasketType } from './families/BasketType';
 import { fitAsync, itAsync } from './shared/test-helper';
 import { Helpers } from './helpers/helpers';
 import { RegisterURL, urlDbOperator } from './resgister-url/regsiter-url';
+import { initConfig } from './helpers/init-context';
 
 describe('AppComponent', () => {
+  initConfig.disableForTesting = true;
   var context = new Context();
   var bt: SqlDefs<BasketType>;
   var f: SqlDefs<Families>;

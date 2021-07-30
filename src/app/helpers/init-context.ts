@@ -10,6 +10,9 @@ import { Language } from "../translate";
 import { ApplicationSettings, settingsForSite } from "../manage/ApplicationSettings";
 
 
+export const initConfig = {
+    disableForTesting: false
+}
 const helpersCache = new Map<string, Helpers>();
 export async function InitContext(context: Context, user?: UserInfo, site?: string) {
     let h: Helpers;
@@ -19,6 +22,9 @@ export async function InitContext(context: Context, user?: UserInfo, site?: stri
     if (!site)
         site = Sites.getValidSchemaFromContext(context);
     context.settings = settingsForSite.get(site);
+    if (!context.settings && !initConfig.disableForTesting)
+        context.settings = await ApplicationSettings.getAsync(context);
+
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {

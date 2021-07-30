@@ -18,7 +18,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private context: Context) {
+  constructor(private context: Context,public settings:ApplicationSettings) {
 
   }
   getLogo() {

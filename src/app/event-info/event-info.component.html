@@ -3,6 +3,7 @@
     <div style="text-align: center;">
         <img class="event-image" [src]="e.eventLogo">
     </div>
+    <strong>{{settings.organisationName}}</strong>
     <span>{{e.city}}, {{e.type.caption}}</span>
     <span>{{displayDate()}}<span *ngIf="e.startTime">,
             {{e.startTime}}</span><span *ngIf="e.endTime"> -

@@ -20,7 +20,9 @@
                 <div style="text-align: center;" (click)="eventDetails(e)">
                     <img class="event-image" [src]="e.eventLogo">
                 </div>
-                <strong (click)="eventDetails(e)">{{e.name}}</strong>
+                <strong (click)="eventDetails(e)">
+                    <mat-icon *ngIf="e.registeredToEvent" style="color:green">done</mat-icon> {{e.name}}
+                </strong>
 
                 <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}, {{e.type.caption}} </span>
                 <div (click)="eventDetails(e)">

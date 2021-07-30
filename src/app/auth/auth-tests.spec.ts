@@ -7,7 +7,7 @@ import { AuthService, TokenService } from './auth-service';
 import { Phone } from "../model-shared/phone";
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { actionInfo } from 'remult/src/server-action';
-import { InitContext } from '../helpers/init-context';
+import { initConfig, InitContext } from '../helpers/init-context';
 
 
 
@@ -22,8 +22,9 @@ Helpers.verifyHash = async (a, b) => {
 };
 AuthService.signJwt = async (x) => JSON.stringify(x);
 AuthService.decodeJwt = async x => JSON.parse(x);
-describe('users and security', () => {
 
+describe('users and security', () => {
+    initConfig.disableForTesting = true;
     actionInfo.runningOnServer = true;
     it("user can only update their own info", async(async () => {
         let { c, context } = await getHelperContext();

@@ -1,14 +1,12 @@
 <div class="full-page" *ngIf="!isAdmin()">
     <div class="grow-item">
-        <div>
+        <div style="text-align:center;">
             <img src="{{getLogo()}}" style="max-width:120px" />
-            <div class="mat-headline" style="align-self: center;"> חגי
-                -
-                אפליקציה לחלוקת מזון
+            <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
             </div>
-            <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות המזון הקרובות</div>
+            <mat-divider></mat-divider>
+            <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות הקרובות</div>
         </div>
-        <mat-divider></mat-divider>
         <app-event-card [events]="events"></app-event-card>
     </div>
 </div>

@@ -141,8 +141,12 @@ export async function serverInit() {
                 settings.id = 1;
                 await settings.save();
             } else {
+
+                if (settings.organisationName == "מערכת חלוקה") {
+                        settings.organisationName = "חגי - אפליקציה לחלוקת מזון"
+                }
                 settings.logoUrl = '/assets/apple-touch-icon.png';
-                if (settings.$.logoUrl.wasChanged())
+                if (settings._.wasChanged())
                     await settings.save();
             }
 
@@ -185,7 +189,7 @@ export async function serverInit() {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let context = new Context();
-                    let h =await  SqlFor(context.for(Helpers));
+                    let h = await SqlFor(context.for(Helpers));
                     var sql = new SqlBuilder(context);
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];

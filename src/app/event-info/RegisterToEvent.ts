@@ -49,7 +49,7 @@ export class RegisterToEvent {
     rememberMeOnThisDevice: boolean;
     get $() { return getFields(this); }
     async registerToEvent(e: EventInList) {
-
+        this.rememberMeOnThisDevice = storedInfo().name!='';
         if (!this.context.authenticated())
             await openDialog(InputAreaComponent, x => x.args = {
                 title: getSettings(this.context).lang.register,
@@ -60,8 +60,9 @@ export class RegisterToEvent {
                 ok: async () => {
 
                     this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
+                    RegisterToEvent.volunteerInfo = { phone: this.phone.thePhone, name: this.name };
                     if (this.rememberMeOnThisDevice)
-                        localStorage.setItem(infoKeyInStorage, JSON.stringify({ phone: this.phone.thePhone, name: this.name }));
+                        localStorage.setItem(infoKeyInStorage, JSON.stringify(RegisterToEvent.volunteerInfo));
                     if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
                         RegisterToEvent.volunteerInfoChanged.fire();
 
