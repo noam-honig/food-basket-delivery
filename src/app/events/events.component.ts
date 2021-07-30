@@ -118,9 +118,11 @@ export class EventsComponent implements OnInit {
   }
   add() {
     this.events.addNewRow();
-    
+    let c = this.events.currentRow;
+    this.events.rows = [...this.events.rows];
+    this.events.currentRow = c;
     this.events.currentRow.openEditDialog(this.dialog, this.busy, () => {
-      this.events.items.splice(this.events.items.indexOf(this.events.currentRow),1);
+      this.events.items.splice(this.events.items.indexOf(this.events.currentRow), 1);
     });
   }
 

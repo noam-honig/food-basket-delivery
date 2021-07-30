@@ -92,8 +92,10 @@ export class EventCardComponent implements OnInit {
       e.showVolunteers(this.dialog, this.busy);
   }
   edit(e: EventInList) {
-    if (e instanceof Event)
+    if (e instanceof Event) {
       e.openEditDialog(this.dialog, this.busy);
+      this.events = this._events;
+    }
   }
   getRelativeDate(e: EventInList) {
     let today = new Date();
