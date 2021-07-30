@@ -156,7 +156,8 @@ export abstract class HelpersBase extends IdEntity {
 
     @Field({
         translation: l => l.assignedDriver,
-        allowApiUpdate: Roles.admin
+        allowApiUpdate: Roles.admin,
+        lazy:true
     })
     theHelperIAmEscorting: HelpersBase;
 
@@ -165,6 +166,7 @@ export abstract class HelpersBase extends IdEntity {
     @Field({
         translation: l => l.escort
         , allowApiUpdate: Roles.admin
+        ,lazy:true
     })
     escort: HelpersBase;
 
