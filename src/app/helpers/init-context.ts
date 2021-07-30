@@ -14,20 +14,12 @@ export const initConfig = {
     disableForTesting: false
 }
 const helpersCache = new Map<string, Helpers>();
-export async function InitContext(context: Context, user?: UserInfo, site?: string) {
+export async function InitContext(context: Context, user?: UserInfo) {
     let h: Helpers;
     let gotUser = !!user;
     if (user === undefined)
-        user = context.user;
-    if (!site)
-        site = Sites.getValidSchemaFromContext(context);
-    context.getSettings = async () => {
-        let r = settingsForSite.get(site);
-        if (!r)
-            return r = await ApplicationSettings.getAsync(context);
-        return r;
-    }
- 
+        user = context.user; 
+
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {
@@ -85,6 +77,5 @@ declare module 'remult' {
         filterCenterAllowedForUser(center: FilterFactory<DistributionCenters>): Filter;
         filterDistCenter(distCenterColumn: FilterFactory<DistributionCenters>, distCenter: DistributionCenters): Filter
         lang: Language;
-        getSettings: () => Promise<ApplicationSettings>;
     }
 }

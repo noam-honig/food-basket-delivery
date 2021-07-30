@@ -26,8 +26,9 @@ function storedInfo(): VolunteerInfo {
 export class RegisterToEvent {
     constructor(private context: Context) {
         if (!actionInfo.runningOnServer) {
-            this.phone = new Phone(storedInfo().phone);
-            this.name = storedInfo().name;
+
+            this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
+            this.name = RegisterToEvent.volunteerInfo.name;
         }
     }
     static volunteerInfo: VolunteerInfo;
@@ -87,9 +88,12 @@ export class RegisterToEvent {
         this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone, this.context));
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
+
+            let orig = this.context;
             this.context = new Context();
             this.context.setDataProvider(dp);
-            await InitContext(this.context, undefined, site);
+            Sites.setSiteToContext(this.context, site, orig);
+            await InitContext(this.context);
         }
         let helper: HelpersBase;
         if (this.context.authenticated()) {

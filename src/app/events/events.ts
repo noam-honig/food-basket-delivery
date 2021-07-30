@@ -90,7 +90,9 @@ export class Event extends IdEntity {
             thePhoneDescription,
             requiredVolunteers,
             registeredVolunteers,
-            location
+            location,
+            orgName,
+            eventLogo
         } = this;
         return {
             id,
@@ -109,9 +111,9 @@ export class Event extends IdEntity {
             requiredVolunteers,
             registeredVolunteers,
             registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
-            eventLogo: (await this.context.getSettings()).logoUrl,
+            eventLogo,
             location,
-            orgName: (await this.context.getSettings()).organisationName
+            orgName
 
         }
     }
@@ -295,9 +297,7 @@ export class Event extends IdEntity {
         }
     })
     registeredVolunteers: number;
-    getCity() {
-        return this.addressHelper.getGeocodeInformation().getCity();
-    }
+
     get eventLogo() {
         return getSettings(this.context).logoUrl;
     }
@@ -400,8 +400,8 @@ export class Event extends IdEntity {
     }
     get city() {
         if (this.getAddress().ok())
-            return this.getAddress().getGeocodeInformation().getCity();
-    }
+        return this.getAddress().getGeocodeInformation().getCity();
+}
     get longLat() {
         if (this.getAddress().ok())
             return this.getAddress().getGeocodeInformation().getlonglat();

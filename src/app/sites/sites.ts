@@ -68,6 +68,13 @@ export class Sites {
             return Sites.guestSchema;
         }
     }
+    static setSiteToContext(c: Context, site: string, origContext: Context) {
+        let url = origContext.getPathInUrl();
+        let parts = url.split('/');
+        parts[1] = site;
+        url = parts.join('/');;
+        c.getPathInUrl = () => url;
+    }
 
     static getOrganizationFromContext(y: Context) {
         if (!Sites.multipleSites)
