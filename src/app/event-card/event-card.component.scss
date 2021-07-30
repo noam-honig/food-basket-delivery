@@ -3,16 +3,32 @@
     display: flex;
     flex-direction: column;
     margin: 12px;
+    @media (max-width: 720px) {
+        width: 100%;
+        font-size: x-large;
+    }
+
+    strong {
+        @media (max-width: 720px) {
+            font-size: x-large;
+            font-weight: 600;
+        }
+    }
 }
 .event-image {
     width: 120px;
     height: 120px;
+    @media (max-width: 720px) {
+        width: 150px;
+        height: 150px;
+    }
 }
-.events-container{
+
+.events-container {
     display: flex;
     flex-wrap: wrap;
 }
 
 .registered {
-    background-color:lightgreen !important
-  }
+    background-color: lightgreen !important;
+}

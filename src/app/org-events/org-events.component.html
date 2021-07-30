@@ -1,5 +1,7 @@
 <div class="full-page" *ngIf="!isAdmin()">
-    <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות המזון הקרובות</div>
-    <app-event-card class="grow-item" [events]="events"></app-event-card>
+    <div class="grow-item">
+        <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות המזון הקרובות</div>
+        <app-event-card [events]="events"></app-event-card>
+    </div>
 </div>
 <app-events *ngIf="isAdmin()"></app-events>

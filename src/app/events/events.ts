@@ -17,7 +17,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 
 import { DistributionCenters } from "../manage/distribution-centers";
-import { AddressHelper } from "../shared/googleApiHelpers";
+import { AddressHelper, Location } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { InputTypes } from "remult/inputTypes";
@@ -89,7 +89,8 @@ export class Event extends IdEntity {
             thePhoneDisplay,
             thePhoneDescription,
             requiredVolunteers,
-            registeredVolunteers
+            registeredVolunteers,
+            location
         } = this;
         return {
             id,
@@ -108,7 +109,8 @@ export class Event extends IdEntity {
             requiredVolunteers,
             registeredVolunteers,
             registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
-            eventLogo: this.context.settings.logoUrl
+            eventLogo: this.context.settings.logoUrl,
+            location
         }
     }
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
@@ -280,6 +282,9 @@ export class Event extends IdEntity {
     }
     get eventLogo() {
         return getSettings(this.context).logoUrl;
+    }
+    get location() {
+        return this.getAddress()?.location();
     }
 
 
@@ -535,6 +540,7 @@ export interface EventInList {
     registeredToEvent: boolean,
     site?: string,
     eventLogo: string,
+    location: Location
 
 
 }

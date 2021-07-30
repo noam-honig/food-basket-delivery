@@ -1,4 +1,5 @@
-<data-area [settings]="area"></data-area>
+<data-area [settings]="area"></data-area><button mat-raised-button color="primary" (click)="sortByDistance()">הצג לפי
+    מרחק ממני</button>
 <div *ngFor="let d of dates">
     <h3>{{d.date}}</h3>
     <div class="events-container">
@@ -19,7 +20,8 @@
                     <img class="event-image" [src]="e.eventLogo">
                 </div>
                 <strong (click)="eventDetails(e)">{{e.name}}</strong>
-                <span (click)="eventDetails(e)">{{e.city}}, {{e.type.caption}} </span>
+
+                <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}, {{e.type.caption}} </span>
                 <div (click)="eventDetails(e)">
                     <span>{{displayDate(e)}}<span *ngIf="e.startTime">,
                             {{e.startTime}}</span><span *ngIf="e.endTime"> -

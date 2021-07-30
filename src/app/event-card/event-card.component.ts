@@ -7,8 +7,7 @@ import { BusyService, DataAreaSettings, DataControl, openDialog, RowButton } fro
 import { DialogService } from '../select-popup/dialog';
 import { Roles } from '../auth/roles';
 import { use } from '../translate';
-
-
+import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-event-card',
@@ -55,7 +54,7 @@ export class EventCardComponent implements OnInit {
     this.cities.forEach(c => c.caption = c.id + " - " + c.count);
     this.cities.splice(0, 0, { id: '', count: val.length, caption: 'כל הארץ - ' + val.length });
     this.dates = this.dates.filter(d => d.events.length > 0);
-    this.dates.forEach(d => d.events.sort((a, b) => a.eventDate?.valueOf() - b.eventDate?.valueOf()));
+    this.sortEvents();
     this.area = new DataAreaSettings({
       fields: () => [[{
         field: this.$.city,
@@ -98,6 +97,22 @@ export class EventCardComponent implements OnInit {
         return use.language.tomorrow;
 
     }
+  }
+  distance(e: EventInList) {
+    if (!this.volunteerLocation)
+      return undefined;
+    return GetDistanceBetween(this.volunteerLocation, e.location).toFixed(1) + " " + this.settings.lang.km;
+  }
+  volunteerLocation: Location;
+  async sortByDistance() {
+    this.volunteerLocation = await getCurrentLocation(true, this.dialog);
+    this.sortEvents();
+  }
+  sortEvents() {
+    if (!this.volunteerLocation)
+      this.dates.forEach(d => d.events.sort((a, b) => a.eventDate?.valueOf() - b.eventDate?.valueOf()));
+    else
+      this.dates.forEach(d => d.events.sort((a, b) => GetDistanceBetween(a.location, b.location)));
   }
 
 }
