@@ -109,21 +109,26 @@ export class Event extends IdEntity {
             requiredVolunteers,
             registeredVolunteers,
             registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
-            eventLogo: this.context.settings.logoUrl,
+            eventLogo: (await this.context.getSettings()).logoUrl,
             location
         }
     }
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
         if (!helper)
             return false;
-        return !!(await this.context.for(volunteersInEvent).findFirst(v => v.helper.isEqualTo(helper).and(v.eventId.isEqualTo(this.id))))
+        return !!(await this.context.for(volunteersInEvent).findFirst(v =>
+            v.helper.isEqualTo(helper).and(
+                v.eventId.isEqualTo(this.id)).and(
+                    v.canceled.isEqualTo(false)
+                )))
     }
     @Field<Event>({
         serverExpression: self => self.volunteeredIsRegisteredToEvent(self.context.currentUser)
     })
     registeredToEvent: boolean;
-    showVolunteers(dialog: DialogService, busy: BusyService): void {
-        openDialog(GridDialogComponent, x => x.args = {
+    async showVolunteers(dialog: DialogService, busy: BusyService) {
+        await this.save();
+        await openDialog(GridDialogComponent, x => x.args = {
             title: this.name,
             stateName: 'helpers-per-event',
 
@@ -152,6 +157,8 @@ export class Event extends IdEntity {
                     {
                         caption: getLang(this.context).volunteerStatus,
                         getValue: v => {
+                            if (v.canceled)
+                                return "ביטל השתתפות";
                             if (v.assignedDeliveries > 0)
                                 if (v.lastAssignTime < v.lastSmsTime)
                                     return getLang(this.context).smsSent;
@@ -169,9 +176,16 @@ export class Event extends IdEntity {
                     ev.helperEmail,
                     { width: '100', field: ev.duplicateToNextEvent },
                     ev.createDate,
-                    ev.createUser
+                    ev.createUser,
+                    ev.canceled,
+                    ev.cancelUser,
+                    ev.cancelDate,
+                    ev.lastUpdate,
+                    ev.fromGeneralList
                 ],
                 rowCssClass: v => {
+                    if (v.canceled)
+                        return "forzen";
                     if (v.assignedDeliveries > 0)
                         if (v.lastAssignTime < v.lastSmsTime)
                             return 'deliveredOk';
@@ -215,13 +229,15 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.context).remove,
                         click: async eh => {
-                            await eh.delete();
-                            x.args.settings.items.splice(x.args.settings.items.indexOf(eh), 1)
+                            eh.canceled = !eh.canceled;
+                            await eh.save();
+
                         }
                     }
                 ]
             })
         });
+        await this._.reload();
     }
     @Field<Event>({
         translation: l => l.eventName,
@@ -272,7 +288,7 @@ export class Event extends IdEntity {
             var sql = new SqlBuilder(context);
             return sql.columnCount(self, {
                 from: vie,
-                where: () => [sql.eq(vie.eventId, self.id)]
+                where: () => [sql.eq(vie.eventId, self.id), vie.canceled.isEqualTo(false)]
             })
         }
     })
@@ -401,6 +417,7 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
 @Entity<volunteersInEvent>({
     key: 'volunteersInEvent',
     allowApiCrud: Allow.authenticated,
+    allowApiDelete: false,
     apiDataFilter: (self, context) => {
         if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return undefined;
@@ -412,6 +429,11 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
             self.createDate = new Date();
             self.createUser = self.context.currentUser;
         }
+        if (self.canceled && self.$.canceled.wasChanged()) {
+            self.cancelUser = self.context.currentUser;
+            self.cancelDate = new Date();
+        }
+        self.lastUpdate = new Date();
     }
 })
 export class volunteersInEvent extends IdEntity {
@@ -511,6 +533,23 @@ export class volunteersInEvent extends IdEntity {
     createDate: Date;
     @Field({ translation: l => l.createUser, allowApiUpdate: false })
     createUser: Helpers;
+
+    @ChangeDateColumn()
+    cancelDate: Date;
+    @Field({ translation: l => l.createUser, allowApiUpdate: false })
+    cancelUser: Helpers;
+
+    @ChangeDateColumn()
+    lastUpdate: Date;
+
+    @Field({ allowApiUpdate: false })
+    canceled: boolean;
+    @Field({ allowApiUpdate: false })
+    fromGeneralList: boolean;
+
+
+
+
 
 
 

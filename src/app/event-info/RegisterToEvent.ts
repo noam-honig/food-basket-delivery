@@ -49,7 +49,7 @@ export class RegisterToEvent {
     rememberMeOnThisDevice: boolean;
     get $() { return getFields(this); }
     async registerToEvent(e: EventInList) {
-        this.rememberMeOnThisDevice = storedInfo().name!='';
+        this.rememberMeOnThisDevice = storedInfo().name != '';
         if (!this.context.authenticated())
             await openDialog(InputAreaComponent, x => x.args = {
                 title: getSettings(this.context).lang.register,
@@ -89,7 +89,7 @@ export class RegisterToEvent {
             let dp = Sites.getDataProviderForOrg(site);
             this.context = new Context();
             this.context.setDataProvider(dp);
-            await InitContext(this.context);
+            await InitContext(this.context, undefined, site);
         }
         let helper: HelpersBase;
         if (this.context.authenticated()) {
@@ -109,10 +109,15 @@ export class RegisterToEvent {
             where: v => v.eventId.isEqualTo(id).and(v.helper.isEqualTo(helper)),
             createIfNotFound: register
         });
-        if (register)
+        if (register) {
+            helperInEvent.canceled = false;
+            helperInEvent.fromGeneralList = !!site;
             await helperInEvent.save();
-        else
-            await helperInEvent.delete();
+        }
+        else {
+            helperInEvent.canceled = true;
+            await helperInEvent.save();
+        }
         return (await this.context.for(Event).findId(id)).toEventInList(helper);
     }
 }

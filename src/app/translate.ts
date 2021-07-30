@@ -1124,6 +1124,11 @@ export class Language {
   nextWeek = "שבוע הבא";
   later = "מאוחר יותר";
   past = "עבר";
+  canceled="ביטל השתתפות";
+  cancelUser="משתמש ביטול השתתפות";
+  cancelDate="מועד ביטול השתתפות";
+  lastUpdate="מועד עדכון";
+  fromGeneralList="נרשם דרך הרשימה הכלללית"
 }
 
 const defaultLang = new Language();

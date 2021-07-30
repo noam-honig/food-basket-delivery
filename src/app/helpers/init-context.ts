@@ -21,10 +21,13 @@ export async function InitContext(context: Context, user?: UserInfo, site?: stri
         user = context.user;
     if (!site)
         site = Sites.getValidSchemaFromContext(context);
-    context.settings = settingsForSite.get(site);
-    if (!context.settings && !initConfig.disableForTesting)
-        context.settings = await ApplicationSettings.getAsync(context);
-
+    context.getSettings = async () => {
+        let r = settingsForSite.get(site);
+        if (!r)
+            return r = await ApplicationSettings.getAsync(context);
+        return r;
+    }
+ 
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {
@@ -82,6 +85,6 @@ declare module 'remult' {
         filterCenterAllowedForUser(center: FilterFactory<DistributionCenters>): Filter;
         filterDistCenter(distCenterColumn: FilterFactory<DistributionCenters>, distCenter: DistributionCenters): Filter
         lang: Language;
-        settings: ApplicationSettings;
+        getSettings: () => Promise<ApplicationSettings>;
     }
 }
