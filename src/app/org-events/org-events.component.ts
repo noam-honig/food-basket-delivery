@@ -62,4 +62,3 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   }
 
 }
-console.log("asdfasfdsafdsafasd");

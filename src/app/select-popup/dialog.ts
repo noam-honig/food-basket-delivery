@@ -111,7 +111,6 @@ export class DialogService {
         valueChange: async self => {
 
             if (self.context.authenticated()) {
-                await self.$.distCenter.load();
                 self.refreshDistCenter.next();
             }
         }
