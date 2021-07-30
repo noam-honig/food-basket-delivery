@@ -139,6 +139,7 @@ export class AuthService {
 
         if (!settings.currentUserIsValidForAppLoadTest && this.context.authenticated()) {
             this.signout();
+
         }
         if (dialog)
             context.userChange.observe(() => {

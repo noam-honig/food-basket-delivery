@@ -98,7 +98,7 @@ import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
 import { Context } from 'remult';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
-import {  Helpers } from './helpers/helpers';
+import { Helpers } from './helpers/helpers';
 import { ImagesComponent } from './images/images.component';
 import { DeliveryImagesComponent } from './delivery-images/delivery-images.component'
 import { InitContext } from './helpers/init-context';
@@ -290,11 +290,20 @@ export function initApp(session: TokenService, settings: SettingsService, contex
   return async () => {
 
     try {
-      await session.loadUserInfo();
-      await context.userChange.observe(async () => {
-        await InitContext(context);
+      try {
+        await session.loadUserInfo();
+        await context.userChange.observe(async () => {
+          await InitContext(context);
 
-      });
+        });
+      } catch {
+        session.setToken(undefined,true);
+        await context.userChange.observe(async () => {
+          await InitContext(context);
+
+        });
+        console.error("Failed ti init existing user");
+      }
 
       await settings.init();
 

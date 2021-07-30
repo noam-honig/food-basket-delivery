@@ -9,6 +9,7 @@ import { Phone } from '../model-shared/phone';
 import { Sites } from '../sites/sites';
 import { InitContext } from '../helpers/init-context';
 import { Roles } from '../auth/roles';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-org-events',
@@ -19,6 +20,10 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
   constructor(private context: Context) {
 
+  }
+  getLogo() {
+    return ApplicationSettings.get(this.context).logoUrl;
+    
   }
   ngOnDestroy(): void {
     if (this.unObserve)
@@ -46,8 +51,8 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
       let dp = Sites.getDataProviderForOrg(org);
       let c = new Context();
       c.setDataProvider(dp);
-      await InitContext(c, undefined,org);
-      
+      await InitContext(c, undefined, org);
+
 
       let items = await OrgEventsComponent.getEvents(phone, c);
 

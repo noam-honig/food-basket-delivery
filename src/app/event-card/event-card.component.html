@@ -1,5 +1,6 @@
 <data-area [settings]="area"></data-area><button mat-raised-button color="primary" (click)="sortByDistance()">הצג לפי
     מרחק ממני</button>
+<mat-divider></mat-divider>
 <div *ngFor="let d of dates">
     <h3>{{d.date}}</h3>
     <div class="events-container">
