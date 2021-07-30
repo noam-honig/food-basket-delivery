@@ -91,7 +91,8 @@ export class Event extends IdEntity {
             thePhoneDescription,
             requiredVolunteers,
             registeredVolunteers,
-            registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper)
+            registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
+            eventLogo:this.context.settings.logoUrl
         }
     }
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
@@ -258,6 +259,9 @@ export class Event extends IdEntity {
     registeredVolunteers: number;
     getCity() {
         return this.addressHelper.getGeocodeInformation().getCity();
+    }
+    get eventLogo() {
+        return getSettings(this.context).logoUrl;
     }
 
 
@@ -509,7 +513,8 @@ export interface EventInList {
     requiredVolunteers: number,
     registeredVolunteers: number,
     registeredToEvent: boolean,
-    site?: string
+    site?: string,
+    eventLogo: string
 
 
 }

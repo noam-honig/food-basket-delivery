@@ -5,17 +5,20 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { Helpers } from "./helpers";
 import { GetDistanceBetween, Location } from "../shared/googleApiHelpers";
 import { Roles } from "../auth/roles";
-import { getLang } from "../sites/sites";
+import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
+import { ApplicationSettings, settingsForSite } from "../manage/ApplicationSettings";
 
 
 const helpersCache = new Map<string, Helpers>();
-export async function InitContext(context: Context, user?: UserInfo) {
+export async function InitContext(context: Context, user?: UserInfo, site?: string) {
     let h: Helpers;
     let gotUser = !!user;
     if (user === undefined)
         user = context.user;
-
+    if (!site)
+        site = Sites.getValidSchemaFromContext(context);
+    context.settings = settingsForSite.get(site);
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {
@@ -50,13 +53,13 @@ export async function InitContext(context: Context, user?: UserInfo) {
         }
         return result;
     }
-    context.filterCenterAllowedForUser=(center)=>{
+    context.filterCenterAllowedForUser = (center) => {
         if (context.isAllowed(Roles.admin)) {
             return new Filter();
         } else if (context.authenticated())
             return center.isEqualTo(context.currentUser.distributionCenter);
     }
-    context.filterDistCenter=(distCenterColumn, distCenter): Filter=> {
+    context.filterDistCenter = (distCenterColumn, distCenter): Filter => {
         let allowed = context.filterCenterAllowedForUser(distCenterColumn);
         if (distCenter != null)
             return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
@@ -70,8 +73,9 @@ declare module 'remult' {
         defaultBasketType: () => Promise<BasketType>
         defaultDistributionCenter: () => Promise<DistributionCenters>;
         findClosestDistCenter(loc: Location, centers?: DistributionCenters[]): Promise<DistributionCenters>;
-        filterCenterAllowedForUser(center: FilterFactory<DistributionCenters>):Filter;
+        filterCenterAllowedForUser(center: FilterFactory<DistributionCenters>): Filter;
         filterDistCenter(distCenterColumn: FilterFactory<DistributionCenters>, distCenter: DistributionCenters): Filter
-        lang:Language;
+        lang: Language;
+        settings: ApplicationSettings;
     }
 }

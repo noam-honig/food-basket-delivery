@@ -13,7 +13,7 @@
 
         </mat-menu>
         <div style="text-align: center;" (click)="eventDetails(e)">
-            <img class="event-image" src="https://salmaz.herokuapp.com/shabatm/assets/apple-touch-icon.png">
+            <img class="event-image" [src]="e.eventLogo">
         </div>
         <strong (click)="eventDetails(e)">{{e.name}}</strong>
         <span (click)="eventDetails(e)">{{e.city}}</span>

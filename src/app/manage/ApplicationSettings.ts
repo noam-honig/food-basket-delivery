@@ -508,7 +508,7 @@ export function setCustomColumnInfo(v: customColumnInfo, caption: string, values
     v.values = values.split(',').map(x => x.trim());
   }
 }
-const settingsForSite = new Map<string, ApplicationSettings>();
+export const settingsForSite = new Map<string, ApplicationSettings>();
 export function setSettingsForSite(site: string, lang: ApplicationSettings) {
   settingsForSite.set(site, lang);
 }

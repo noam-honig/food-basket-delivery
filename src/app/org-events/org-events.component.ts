@@ -46,7 +46,8 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
       let dp = Sites.getDataProviderForOrg(org);
       let c = new Context();
       c.setDataProvider(dp);
-      await InitContext(c);
+      await InitContext(c, undefined,org);
+      
 
       let items = await OrgEventsComponent.getEvents(phone, c);
 

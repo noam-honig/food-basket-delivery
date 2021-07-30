@@ -1,7 +1,7 @@
 <mat-dialog-content class="dialog-container">
     <h3>{{e.name}}</h3>
     <div style="text-align: center;">
-        <img class="event-image" src="https://salmaz.herokuapp.com/shabatm/assets/apple-touch-icon.png">
+        <img class="event-image" [src]="e.eventLogo">
     </div>
     <span>{{e.city}}</span>
     <span>{{displayDate()}}<span *ngIf="e.startTime">,
