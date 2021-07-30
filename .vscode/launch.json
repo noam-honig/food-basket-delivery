@@ -55,7 +55,7 @@
             "type": "node",
             "request": "launch",
             "name": "build languages ",
-            "program": "${workspaceFolder}/dist-server/app/server/buildLanguages.js",
+            "program": "${workspaceFolder}/src/app/server/buildLanguages.ts",
             "args": [],
             "skipFiles": [
                 "<node_internals>/**"

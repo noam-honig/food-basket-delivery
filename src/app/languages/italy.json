@@ -44,6 +44,11 @@
     "valueInCode": "פעילות",
     "valueInEnglish": "Active"
   },
+  "add": {
+    "google": "Aggiungere",
+    "valueInCode": "הוספה",
+    "valueInEnglish": "Add"
+  },
   "addAllFamilies": {
     "google": "Aggiungi tutte le famiglie",
     "valueInCode": "הוסף את כל המשפחות",
@@ -251,27 +256,27 @@
   },
   "archiveCurrentDelivery": {
     "google": "Archivia la consegna corrente",
-    "valueInCode": "העבר משלוח נוכחי לארכיב?",
+    "valueInCode": "העבר משלוח נוכחי לארכיון?",
     "valueInEnglish": "Archive current delivery"
   },
   "archiveCurrentEvent": {
     "google": "Stasera c'è un evento per l'archivio?",
-    "valueInCode": "העבר ארוע קיים לארכיב?",
+    "valueInCode": "העבר הזדמנות התנדבות לארכיון?",
     "valueInEnglish": "Archive existing event?"
   },
   "archiveDate": {
     "google": "Archivio: data di aggiornamento",
-    "valueInCode": "ארכיב: מועד עדכון",
+    "valueInCode": "ארכיון: מועד עדכון",
     "valueInEnglish": "Archive: Date of update"
   },
   "archiveDeliveries": {
     "google": "Consegne in archivio",
-    "valueInCode": "העברה לארכיב",
+    "valueInCode": "העברה לארכיון",
     "valueInEnglish": "Archive deliveries"
   },
   "archiveDeliveriesHelp": {
     "google": "Vengono archiviate solo le consegne contrassegnate come \"consegnate\" o \"non riuscite\". L'archivio può essere visualizzato in qualsiasi momento durante la cronologia delle consegne.",
-    "valueInCode": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים",
+    "valueInCode": "העברה לארכיון תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיון בכל עת במסך היסטורית משלוחים",
     "valueInEnglish": "Only deliveries marked as 'delivered' or 'failed' are archived . The archive can be viewed at any time under delivery History."
   },
   "archiveDelivery": {
@@ -296,7 +301,7 @@
   },
   "archiveUser": {
     "google": "Archivio: aggiornamenti utente",
-    "valueInCode": "ארכיב: משתמש מעדכן",
+    "valueInCode": "ארכיון: משתמש מעדכן",
     "valueInEnglish": "Archive: User updates"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
@@ -333,6 +338,16 @@
     "google": "Per un'esercitazione sull'assegnazione della consegna e l'evento di distribuzione, fare clic qui",
     "valueInCode": "לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן",
     "valueInEnglish": "For a tutorial on delivery assignment and distribution event click here"
+  },
+  "askVolunteerForAPhotoToHelp": {
+    "google": "Chiedi al volontario una foto che aiuterà il prossimo volontario",
+    "valueInCode": "בקש מהתמנדב תמונה שתעזור למתנדב הבא",
+    "valueInEnglish": "Ask the volunteer for a picture that will help the next volunteer"
+  },
+  "askVolunteerForLocationOnDelivery": {
+    "google": "Chiedi al volontario di aggiornare una posizione al momento della consegna del cestino",
+    "valueInCode": "בקש מהמתנדב לעדכן מיקום בעת מסירת הסל",
+    "valueInEnglish": "Ask the volunteer to update a location when handing over the basket"
   },
   "assign": {
     "google": "Assegnare",
@@ -573,6 +588,21 @@
     "google": "Annulla tutte le consegne assegnate al volontario",
     "valueInCode": "בטל שיוך כל המשלוחים למתנדב",
     "valueInEnglish": "Cancel all deliveries assigned to volunteer"
+  },
+  "cancelDate": {
+    "google": "Data di cancellazione della partecipazione",
+    "valueInCode": "מועד ביטול השתתפות",
+    "valueInEnglish": "Date of cancellation of participation"
+  },
+  "canceled": {
+    "google": "Partecipazione annullata",
+    "valueInCode": "ביטל השתתפות",
+    "valueInEnglish": "Canceled participation"
+  },
+  "cancelUser": {
+    "google": "Disattivazione dell'utente",
+    "valueInCode": "משתמש ביטול השתתפות",
+    "valueInEnglish": "User opt-out"
   },
   "cantMergeOneFamily": {
     "google": "Impossibile unire solo una famiglia",
@@ -899,6 +929,11 @@
     "valueInCode": "כמות ברירת מחדל",
     "valueInEnglish": "Default number of parcels"
   },
+  "defaultQuestionForVolunteerWhenUploadingPhoto": {
+    "google": "Allega una foto per aiutare il prossimo volontario",
+    "valueInCode": "צרף תמונה שתעזור למתנדב הבא",
+    "valueInEnglish": "Attach a photo to help the next volunteer"
+  },
   "defaultSelfPickup": {
     "google": "Auto pickup predefinito",
     "valueInCode": "באים לקחת ברירת מחדל",
@@ -984,6 +1019,11 @@
     "google": "Elimina le consegne non consegnate a queste famiglie",
     "valueInCode": "מחק משלוחים שטרם נמסרו למשפחות אלו",
     "valueInEnglish": "Delete undelivered deliveries to these families"
+  },
+  "deletePhoto": {
+    "google": "Elimina immagine",
+    "valueInCode": "מחק תמונה",
+    "valueInEnglish": "Delete image"
   },
   "delivered": {
     "google": "consegnato",
@@ -1260,6 +1300,11 @@
     "valueInCode": "סיימו",
     "valueInEnglish": "Finish"
   },
+  "donotShowEventsInGeneralList": {
+    "google": "Non presentare opportunità di volontariato nell'elenco di tutte le organizzazioni",
+    "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
+    "valueInEnglish": "Do not present volunteering opportunities in the list of all organizations"
+  },
   "drawingHelpText": {
     "google": "Fare clic sulla mappa in diversi punti per evidenziare l'area desiderata e fare doppio clic per terminare",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
@@ -1267,7 +1312,7 @@
   },
   "duplicateEvents": {
     "google": "Duplica un evento",
-    "valueInCode": "שכפל ארוע",
+    "valueInCode": "שכפל התנדבות",
     "valueInEnglish": "Duplicate an event"
   },
   "DuplicateFamiliesComponent": {
@@ -1277,7 +1322,7 @@
   },
   "duplicateForNextEvent": {
     "google": "Una copia per il prossimo evento",
-    "valueInCode": "העתק לאירוע הבא",
+    "valueInCode": "העתק להזדמנות התנדבות הבאה",
     "valueInEnglish": "A copy for the next event"
   },
   "editComment": {
@@ -1377,7 +1422,7 @@
   },
   "eventInfo": {
     "google": "Dettagli dell'evento",
-    "valueInCode": "פרטי ארוע",
+    "valueInCode": "פרטי התנדבות",
     "valueInEnglish": "Event details"
   },
   "eventIsFull": {
@@ -1387,7 +1432,7 @@
   },
   "eventName": {
     "google": "Titolo evento",
-    "valueInCode": "כותרת ארוע",
+    "valueInCode": "כותרת",
     "valueInEnglish": "Event Title"
   },
   "eventPreparation": {
@@ -1397,7 +1442,7 @@
   },
   "eventsComponent": {
     "google": "eventi",
-    "valueInCode": "ארועים",
+    "valueInCode": "הזדמנויות התנדבות",
     "valueInEnglish": "Events"
   },
   "eventStatus": {
@@ -1820,6 +1865,11 @@
     "valueInCode": "מתאריך",
     "valueInEnglish": "Dated"
   },
+  "fromGeneralList": {
+    "google": "Iscritti tramite l'elenco generale",
+    "valueInCode": "נרשם דרך הרשימה הכלללית",
+    "valueInEnglish": "Registered through the general list"
+  },
   "frozen": {
     "google": "congelato",
     "valueInCode": "מוקפא",
@@ -2035,6 +2085,11 @@
     "valueInCode": "בטל תוקף סיסמה",
     "valueInEnglish": "Disable password"
   },
+  "invalidDate": {
+    "google": "Data non valida",
+    "valueInCode": "תאריך לא תקין",
+    "valueInEnglish": "Invalid date"
+  },
   "invalidPhoneNumber": {
     "google": "Il numero di telefono non è corretto",
     "valueInCode": "מספר טלפון אינו תקין",
@@ -2085,6 +2140,11 @@
     "valueInCode": "שם משפחה",
     "valueInEnglish": "Last Name"
   },
+  "lastUpdate": {
+    "google": "Data di aggiornamento",
+    "valueInCode": "מועד עדכון",
+    "valueInEnglish": "Update date"
+  },
   "lastUpdateDate": {
     "google": "Scadenza",
     "valueInCode": "מועד עדכון אחרון",
@@ -2094,6 +2154,11 @@
     "google": "Aggiornamento utente",
     "valueInCode": "משתמש מעדכן",
     "valueInEnglish": "Updating user"
+  },
+  "later": {
+    "google": "Dopo",
+    "valueInCode": "מאוחר יותר",
+    "valueInEnglish": "Later"
   },
   "latestAssigned": {
     "google": "Ultimo associato",
@@ -2460,6 +2525,11 @@
     "valueInCode": "המשך לשלב הבא",
     "valueInEnglish": "Proceed to the next step"
   },
+  "nextWeek": {
+    "google": "La prossima settimana",
+    "valueInCode": "שבוע הבא",
+    "valueInEnglish": "Next Week"
+  },
   "no": {
     "google": "No",
     "valueInCode": "לא",
@@ -2559,6 +2629,11 @@
     "google": "Diverse famiglie",
     "valueInCode": "מספר משפחות",
     "valueInEnglish": "Several families"
+  },
+  "numOfPhotos": {
+    "google": "Diverse foto scattate dal volontario",
+    "valueInCode": "מספר תמונות שצלם המתנדב",
+    "valueInEnglish": "Several photos taken by the volunteer"
   },
   "on": {
     "google": "B",
@@ -2665,6 +2740,11 @@
     "valueInCode": "הסיסמה נמחקה",
     "valueInEnglish": "Password deleted"
   },
+  "past": {
+    "google": "Mosso",
+    "valueInCode": "עבר",
+    "valueInEnglish": "Moved"
+  },
   "phone": {
     "google": "Telefono",
     "valueInCode": "טלפון",
@@ -2715,6 +2795,11 @@
     "valueInCode": "טלפונים",
     "valueInEnglish": "Phones"
   },
+  "photos_taken_by_volunteer": {
+    "google": "Foto scattate dal volontario",
+    "valueInCode": "תמונות שצילם המתנדב",
+    "valueInEnglish": "Pictures taken by the volunteer"
+  },
   "pickupLocation": {
     "google": "Punto di raccolta",
     "valueInCode": "נקודת איסוף",
@@ -2737,7 +2822,7 @@
   },
   "pleaseRegisterToTheFollowingEvents": {
     "google": "Si prega di iscriversi per i prossimi eventi",
-    "valueInCode": "אנא הרשמו לאירועים הקרובים",
+    "valueInCode": "אנא הרשמו להתנדבויות הבאות",
     "valueInEnglish": "Please sign up for upcoming events"
   },
   "pleaseSelectDistributionList": {
@@ -2844,6 +2929,11 @@
     "google": "Domanda al volontariato",
     "valueInCode": "שאלה למתנדב",
     "valueInEnglish": "Question to volunteer"
+  },
+  "questionForVolunteerWhenUploadingPhoto": {
+    "google": "Cosa scrivere a un volontario quando vuoi una foto",
+    "valueInCode": "מה לכתוב למתנדב כשרוצים תמונה",
+    "valueInEnglish": "What to write to a volunteer when you want a picture"
   },
   "questionsAndAnswers": {
     "google": "Domande e risposte",
@@ -3113,7 +3203,7 @@
   },
   "revertArchive": {
     "google": "Ritorna dall'archivio",
-    "valueInCode": "החזר מארכיב",
+    "valueInCode": "החזר מארכיון",
     "valueInEnglish": "Return from archive"
   },
   "routeOptimization": {
@@ -3145,6 +3235,11 @@
     "google": "Salva",
     "valueInCode": "שמור",
     "valueInEnglish": "Save"
+  },
+  "save_photo_and_display_to_next_volunteer": {
+    "google": "Salva e presenta al prossimo volontario",
+    "valueInCode": "שמור והצג למתנדב הבא",
+    "valueInEnglish": "Save and present to the next volunteer"
   },
   "saveAndPreview": {
     "google": "Salva e visualizza l'anteprima",
@@ -3418,7 +3513,7 @@
   },
   "showArchive": {
     "google": "Visualizza archivio",
-    "valueInCode": "הצג ארכיב",
+    "valueInCode": "הצג ארכיון",
     "valueInEnglish": "View archive"
   },
   "showAsignDeliveryFor": {
@@ -3711,6 +3806,11 @@
     "valueInCode": "מתנדב זה מוגדר כמתנדב ברירת מחדל לעוד",
     "valueInEnglish": "This volunteer is defined as a default volunteer for more"
   },
+  "thisWeek": {
+    "google": "Questa settimana",
+    "valueInCode": "השבוע",
+    "valueInEnglish": "This week"
+  },
   "timeToDisconnect": {
     "google": "Disconnetti timeout in minuti",
     "valueInCode": "זמן בדקות לניתוק אוטומטית",
@@ -3731,10 +3831,20 @@
     "valueInCode": "עד תאריך",
     "valueInEnglish": "Until"
   },
+  "today": {
+    "google": "In data odierna",
+    "valueInCode": "היום",
+    "valueInEnglish": "Today"
+  },
   "toDelete": {
     "google": "Cancellare",
     "valueInCode": "למחיקה",
     "valueInEnglish": "To delete"
+  },
+  "tomorrow": {
+    "google": "Domani",
+    "valueInCode": "מחר",
+    "valueInEnglish": "tomorrow"
   },
   "toNewFamilies": {
     "google": "Per le nuove famiglie",
@@ -4076,6 +4186,11 @@
     "valueInCode": "שם",
     "valueInEnglish": "Name"
   },
+  "volunteerOpportunities": {
+    "google": "Opportunità di volontariato",
+    "valueInCode": "הזדמנויות התנדבות",
+    "valueInEnglish": "Volunteering opportunities"
+  },
   "volunteerPhoneNumber": {
     "google": "Numero di telefono del volontario",
     "valueInCode": "מספר הטלפון של המתנדב",
@@ -4115,6 +4230,11 @@
     "google": "Telefoni per aiuto volontario",
     "valueInCode": "טלפונים לעזרה למתנדב",
     "valueInEnglish": "Phones for volunteer help"
+  },
+  "wantToVolnteerMore": {
+    "google": "Vuoi fare più volontariato?",
+    "valueInCode": "רוצה להתנדב עוד?",
+    "valueInEnglish": "Want to volunteer more?"
   },
   "wasAssignedTo": {
     "google": "assegnato con",

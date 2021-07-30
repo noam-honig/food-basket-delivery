@@ -8,6 +8,7 @@
   },
   "files": [
     "./src/app/server/server.ts",
-    "./src/app/server/doSomething.ts"
+    "./src/app/server/doSomething.ts",
+    "./src/app/server/buildLanguages.ts"
   ]
 }
