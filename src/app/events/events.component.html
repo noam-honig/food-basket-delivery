@@ -1,6 +1,8 @@
 <div class="full-page">
-    <div>
-        <button mat-raised-button color="primary" (click)="copyLink()">{{settings.lang.copyLinkForVolunteer}}</button>
+    <div style="    display: flex;
+    justify-content: space-between;">
+        <button mat-raised-button color="primary" (click)="add()">{{settings.lang.add}}</button>
+        <button mat-raised-button (click)="copyLink()">{{settings.lang.copyLinkForVolunteer}}</button>
 
     </div>
     <mat-tab-group class="grow-item">

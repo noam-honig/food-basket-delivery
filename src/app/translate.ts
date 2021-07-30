@@ -127,7 +127,7 @@ export function Field<entityType = any, valueType = any>(settings?: FieldOptions
 export function QuantityColumn<T>(settings?: FieldOptions & TranslatedCaption) {
   return IntegerField<T>(adjustSettings({ translation: l => l.quantity, ...settings }));
 }
-export function DateOnlyField<T = any>(settings?: FieldOptions<T, DateArray> & TranslatedCaption) {
+export function DateOnlyField<T = any>(settings?: FieldOptions<T, Date> & TranslatedCaption) {
   return origDateOnlyField<T>(adjustSettings(settings));
 }
 
@@ -943,7 +943,7 @@ export class Language {
   endsOnDistributionCenter = "סיים במרכז החלוקה";
   parcelSummary = 'הצג סיכום סוגי סלים';
   useCurrentLocationForStart = "חשב מסלול ממיקום נוכחי";
-  eventName = "כותרת ארוע";
+  eventName = "כותרת";
   eventDescription = "תאור";
   eventDate = "תאריך";
   eventTime = "שעה";
@@ -954,11 +954,11 @@ export class Language {
   requiredVolunteers = "מספר מתנדבים נדרש";
   attendingVolunteers = "מספר מתנדבים שנרשמו";
   eventStatus = "סטטוס";
-  eventsComponent = "ארועים";
+  eventsComponent = "הזדמנויות התנדבות";
   weeklyReportMltComponent = "דוח שבועי מתחשבים";
   HelperGiftsComponent = "באר המשאלות";
   RegisterURLComponent = "ניהול אתרי רישום";
-  pleaseRegisterToTheFollowingEvents = "אנא הרשמו לאירועים הקרובים";
+  pleaseRegisterToTheFollowingEvents = "אנא הרשמו להתנדבויות הבאות";
   illBeThere = "רשום אותי לארוע זה";
   registeredToEvent = "הנך רשום לארוע זה";
   iCantMakeIt = "לא אוכל להגיע לארוע";
@@ -1057,12 +1057,12 @@ export class Language {
   addRepeatFamilies = "בחירת משפחות שהמתנדב היה אצלהם בעבר";
   isDefinedAsLeadVolunteerOf = "מוגדר המתנדב מוביל";
   volunteerPreferences = "העדפות מתנדב";
-  eventInfo = "פרטי ארוע";
+  eventInfo = "פרטי התנדבות";
   volunteerStatus = "מצב מתנדב";
   newVolunteer = "מתנדב חדש";
   showArchive = "הצג ארכיון";
-  duplicateEvents = "שכפל ארוע";
-  archiveCurrentEvent = "העבר ארוע קיים לארכיון?";
+  duplicateEvents = "שכפל התנדבות";
+  archiveCurrentEvent = "העבר הזדמנות התנדבות לארכיון?";
   basedNoAssignmentOrder = "לפי סדר שיוך";
   volunteerComment = "הערת מתנדב";
   archiveDate = "ארכיון: מועד עדכון";
@@ -1083,7 +1083,7 @@ export class Language {
   familyHistory = "היסטורית משפחה";
   includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
   latestAssigned = "שיוך אחרון";
-  duplicateForNextEvent = "העתק לאירוע הבא";
+  duplicateForNextEvent = "העתק להזדמנות התנדבות הבאה";
   assignRepeatFamily = 'שייך משפחה שהמתנדב היה אצלה';
   done = 'טופל';
   copyLinkForVolunteer = "העתק קישור לרישום עצמי של מתנדבים";
@@ -1116,6 +1116,8 @@ export class Language {
   photos_taken_by_volunteer = 'תמונות שצילם המתנדב';
   save_photo_and_display_to_next_volunteer = 'שמור והצג למתנדב הבא';
   volunteerOpportunities = "הזדמנויות התנדבות";
+  add = "הוספה";
+  invalidDate = "תאריך לא תקין";
 }
 
 const defaultLang = new Language();

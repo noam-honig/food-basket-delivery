@@ -32,7 +32,7 @@ export class EventsComponent implements OnInit {
   constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events = new GridSettings(this.context.for(Event), {
+  events = new GridSettings<Event>(this.context.for(Event), {
     allowUpdate: this.context.isAllowed(Roles.admin),
     allowInsert: this.context.isAllowed(Roles.admin),
 
@@ -115,6 +115,13 @@ export class EventsComponent implements OnInit {
   copyLink() {
     copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/register');
     this.dialog.Info(this.settings.lang.linkCopied);
+  }
+  add() {
+    this.events.addNewRow();
+    
+    this.events.currentRow.openEditDialog(this.dialog, this.busy, () => {
+      this.events.items.splice(this.events.items.indexOf(this.events.currentRow),1);
+    });
   }
 
 

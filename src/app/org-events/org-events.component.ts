@@ -8,6 +8,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Phone } from '../model-shared/phone';
 import { Sites } from '../sites/sites';
 import { InitContext } from '../helpers/init-context';
+import { Roles } from '../auth/roles';
 
 @Component({
   selector: 'app-org-events',
@@ -20,11 +21,17 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
   }
   ngOnDestroy(): void {
-    this.unObserve();
+    if (this.unObserve)
+      this.unObserve();
   }
   unObserve: Unobserve;
+  isAdmin() {
+    return this.context.isAllowed(Roles.distCenterAdmin);
+  }
   events: EventInList[] = [];
   async ngOnInit() {
+    if (this.isAdmin())
+      return
     this.unObserve = await RegisterToEvent.volunteerInfoChanged.dispatcher.observe(async () => {
       if (Sites.getOrganizationFromContext(this.context) == Sites.guestSchema)
         this.events = await OrgEventsComponent.getAllEvents(RegisterToEvent.volunteerInfo.phone);

@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata } from "remult";
+import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators } from "remult";
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField } from "../translate";
 import { getLang } from '../sites/sites';
@@ -204,14 +204,23 @@ export class Event extends IdEntity {
             })
         });
     }
-    @Field({ translation: l => l.eventName })
+    @Field<Event>({
+        translation: l => l.eventName,
+        validate: (s, c) => Validators.required(s, c, s.context.lang.nameIsTooShort)
+    })
     name: string;
     @Field()
     eventStatus: eventStatus;
     @Field({ translation: l => l.eventDescription })
     description: string;
-    @DateOnlyField({ translation: l => l.eventDate })
-    eventDate: Date;
+    @DateOnlyField<Event>({
+        translation: l => l.eventDate,
+        validate: (s, c) => {
+            if (!c.value || c.value.getFullYear() < 2018)
+                c.error = s.context.lang.invalidDate;
+        }
+    })
+    eventDate: Date = new Date();
     @Field({ inputType: InputTypes.time, translation: l => l.eventTime })
     @DataControl({ width: '110' })
     startTime: string;
@@ -255,26 +264,32 @@ export class Event extends IdEntity {
     constructor(private context: Context) {
         super();
     }
+    openEditDialog(dialog: DialogService, busy: BusyService, cancel: () => void = () => { }) {
+        openDialog(InputAreaComponent, x => x.args = {
+            title: use.language.eventInfo,
+            settings: {
+                fields: () => Event.displayColumns(this._.repository.metadata.fields)
+                    .map(x => mapFieldMetadataToFieldRef(this._, x))
+            },
+            ok: () => this.save(),
+            cancel: () => {
+                this._.undoChanges();
+                cancel();
+            },
+            buttons: [
+                {
+                    text: use.language.volunteers,
+                    click: () => this.showVolunteers(dialog, busy)
+                }
+            ]
+        });
+    }
     static rowButtons(settings: ApplicationSettings, dialog: DialogService, busy: BusyService): RowButton<Event>[] {
         return [
             {
                 name: settings.lang.eventInfo,
                 click: async (e) => {
-                    openDialog(InputAreaComponent, x => x.args = {
-                        title: settings.lang.eventInfo,
-                        settings: {
-                            fields: () => this.displayColumns(e._.repository.metadata.fields)
-                                .map(x => mapFieldMetadataToFieldRef(e._, x))
-                        },
-                        ok: () => e.save(),
-                        cancel: () => e._.undoChanges(),
-                        buttons: [
-                            {
-                                text: settings.lang.volunteers,
-                                click: () => e.showVolunteers(dialog, busy)
-                            }
-                        ]
-                    });
+                    e.openEditDialog(dialog, busy)
                 }
             },
             {
@@ -330,7 +345,7 @@ export class Event extends IdEntity {
     getAddress(): AddressHelper {
         if (this.addressHelper.ok())
             return this.addressHelper;
-        if (this.distributionCenter.addressHelper.ok())
+        if (this.distributionCenter?.addressHelper.ok())
             return this.distributionCenter.addressHelper;
         return getSettings(this.context).addressHelper;
     }
@@ -494,7 +509,7 @@ export interface EventInList {
     requiredVolunteers: number,
     registeredVolunteers: number,
     registeredToEvent: boolean,
-    site?:string
+    site?: string
 
 
 }
