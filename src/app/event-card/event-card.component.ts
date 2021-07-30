@@ -98,6 +98,16 @@ export class EventCardComponent implements OnInit {
 
     }
   }
+  volunteerText(e: EventInList) {
+    if (e.requiredVolunteers > 0) {
+      if (e.requiredVolunteers == e.registeredVolunteers) {
+        return "הארוע מלא";
+      }
+    // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
+    }
+    if (this.context.isAllowed(Roles.distCenterAdmin))
+      return e.registeredVolunteers + " מתנדבים";
+  }
   distance(e: EventInList) {
     if (!this.volunteerLocation)
       return undefined;
