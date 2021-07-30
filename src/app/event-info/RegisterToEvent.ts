@@ -67,8 +67,11 @@ export class RegisterToEvent {
 
                 }
             });
-        else
+        else {
+            this.phone = this.context.currentUser.phone;
+            this.name = this.context.currentUser.name;
             this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
+        }
     }
     async updateEvent(e: EventInList, update: EventInList) {
         if (e instanceof Event)
