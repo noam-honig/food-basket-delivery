@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Context, AndFilter, FieldsMetadata } from 'remult';
 import { BusyService, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
@@ -17,6 +17,7 @@ import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 import { DateOnlyValueConverter } from 'remult/valueConverters';
 import { EventInfoComponent } from '../event-info/event-info.component';
+import { EventCardComponent } from '../event-card/event-card.component';
 
 @Component({
   selector: 'app-events',
@@ -116,13 +117,13 @@ export class EventsComponent implements OnInit {
     copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/register');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
+  @ViewChild(EventCardComponent) card:EventCardComponent;
   add() {
     this.events.addNewRow();
-    let c = this.events.currentRow;
-    this.events.rows = [...this.events.rows];
-    this.events.currentRow = c;
+    this.card.refresh();
     this.events.currentRow.openEditDialog(this.dialog, this.busy, () => {
       this.events.items.splice(this.events.items.indexOf(this.events.currentRow), 1);
+      this.card.refresh();
     });
   }
 

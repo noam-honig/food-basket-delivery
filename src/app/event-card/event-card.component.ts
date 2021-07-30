@@ -39,23 +39,27 @@ export class EventCardComponent implements OnInit {
   @Input()
   set events(val: EventInList[]) {
     this._events = val;
+    this.refresh();
+  }
+   refresh() {
     this.dates = [];
     for (const d of [use.language.past, use.language.today, use.language.tomorrow, use.language.thisWeek, use.language.nextWeek, use.language.later]) {
 
       this.dates.push({ date: d, events: [] });
     }
     this.cities.splice(0);
-    for (const e of val) {
+    for (const e of this._events) {
       this.dates.find(d => d.date == eventDisplayDate(e, true)).events.push(e);
       let city = this.cities.find(c => c.id == e.city);
       if (!city) {
         this.cities.push({ id: e.city, count: 1, caption: '' });
-      } else
+      }
+      else
         city.count++;
     }
     this.cities.sort((b, a) => a.count - b.count);
     this.cities.forEach(c => c.caption = c.id + " - " + c.count);
-    this.cities.splice(0, 0, { id: '', count: val.length, caption: 'כל הארץ - ' + val.length });
+    this.cities.splice(0, 0, { id: '', count: this._events.length, caption: 'כל הארץ - ' + this._events.length });
     this.dates = this.dates.filter(d => d.events.length > 0);
     this.sortEvents();
     this.area = new DataAreaSettings({
@@ -63,8 +67,9 @@ export class EventCardComponent implements OnInit {
         field: this.$.city,
         valueList: this.cities
       }, this.$.type]]
-    })
+    });
   }
+
   filter(e: EventInList) {
     return (this.city == '' || e.city == this.city) &&
       (this.type == undefined || e.type.id == this.type.id);
@@ -94,7 +99,7 @@ export class EventCardComponent implements OnInit {
   edit(e: EventInList) {
     if (e instanceof Event) {
       e.openEditDialog(this.dialog, this.busy);
-      this.events = this._events;
+      this.refresh();
     }
   }
   getRelativeDate(e: EventInList) {
@@ -119,7 +124,7 @@ export class EventCardComponent implements OnInit {
       }
       // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
     }
-    if (this.context.isAllowed(Roles.distCenterAdmin))
+    if (this.context.isAllowed(Roles.distCenterAdmin)&&e.registeredVolunteers!=undefined)
       return e.registeredVolunteers + " מתנדבים";
   }
   distance(e: EventInList) {
