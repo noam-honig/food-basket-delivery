@@ -2,7 +2,7 @@ import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { RouteHelperService } from '@remult/angular';
+import { BusyService, RouteHelperService } from '@remult/angular';
 import { Context } from 'remult';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
@@ -15,6 +15,7 @@ import { Event, eventStatus, volunteersInEvent } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/roles';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { Phone } from "../model-shared/phone";
+import { OrgEventsComponent } from '../org-events/org-events.component';
 
 
 
@@ -31,8 +32,13 @@ export class MyFamiliesComponent implements OnInit {
   familyLists = new UserFamiliesList(this.context, this.settings);
   user: HelperUserInfo;
 
-  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService) {
+  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
+    private busy: BusyService) {
     this.user = context.user as HelperUserInfo;
+  }
+  hasEvents = false;
+  moveToOpertunities(){
+    this.helper.navigateToComponent(OrgEventsComponent);
   }
   async ngOnInit() {
 
@@ -79,62 +85,15 @@ export class MyFamiliesComponent implements OnInit {
       this.helper.navigateToComponent(LoginComponent);
 
     }
-    this.context.for(Event).find({ orderBy: e => [e.eventDate, e.startTime], where: e => e.eventStatus.isEqualTo(eventStatus.active) }).then(x => this.events = x);
-  }
-  @ViewChildren(MatExpansionPanel) lines: QueryList<MatExpansionPanel>;
-
-  volunteerEvents = new Map<string, volunteersInEvent>();
-  volunteerInEvent(e: Event) {
-    let r = this.volunteerEvents.get(e.id);
-    if (!r) {
-      this.volunteerEvents.set(e.id, r = this.context.for(volunteersInEvent).create());
-      this.context.for(volunteersInEvent).findFirst(ve => ve.eventId.isEqualTo(e.id).and(ve.helper.isEqualTo(this.familyLists.helper))).then(ev => {
-        if (ev) {
-          this.volunteerEvents.set(e.id, ev);
-          let index = this.events.indexOf(e);
-          if (index >= 0) {
-            this.lines.forEach((x, i) => {
-              if (i == index)
-                x.open();
-            })
-          }
-        }
-      });
-    }
-    return r;
-  }
-  getAddress(e: Event) {
-    if (e.addressHelper.ok())
-      return e.addressHelper;
-    return this.settings.addressHelper;
-  }
-  getPhone(e: Event) {
-    if (e.phone1)
-      return e.phone1;
-    return this.settings.helpPhone;
-  }
-  sendWhatsapp(phone: string) {
-    Phone.sendWhatsappToPhone(phone, '', this.context);
+    this.busy.donotWait(async () => {
+      this.hasEvents = (await this.context.for(Event).count())>0;
+    });
   }
 
-  async registerToEvent(e: Event) {
-    let ev = this.volunteerInEvent(e);
-    if (ev.isNew()) {
-      ev.eventId = e.id;
-      ev.helper = this.familyLists.helper;
-      await ev.save();
-      e.registeredVolunteers++;
-    }
-  }
-  async cancelEvent(e: Event) {
-    let ev = this.volunteerInEvent(e);
-    if (!ev.isNew()) {
-      await ev.delete();
-      e.registeredVolunteers--;
-      this.volunteerEvents.set(e.id, undefined);
-    }
-  }
-  events: Event[] = [];
+
+
+
+
 
 
 }

@@ -67,8 +67,9 @@ export class UserFamiliesList {
             }
         }
         await this.reload();
-
+        this.loaded = true;
     }
+    loaded = false;
     private async initHelper(h: HelpersBase) {
         this.helper = await h.getHelper();
         this.escort = undefined;

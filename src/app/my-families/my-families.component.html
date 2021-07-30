@@ -16,14 +16,14 @@
         <a href="{{settings.message1Link}}" target="_blank" class="no-print" style="display: block"
             *ngIf="!settings.message1OnlyWhenDone || familyLists.toDeliver.length==0">{{settings.message1Text}}</a>
         <ng-container *ngIf="!settings.message2OnlyWhenDone || familyLists.toDeliver.length==0">
-            <a href="{{settings.message2Link}}" target="_blank" class="no-print"
-                *ngIf="settings.message2Link" style="display: block">{{settings.message2Text}}</a>
+            <a href="{{settings.message2Link}}" target="_blank" class="no-print" *ngIf="settings.message2Link"
+                style="display: block">{{settings.message2Text}}</a>
             <span *ngIf="!settings.message2Link">
                 {{settings.message2Text}}
             </span>
         </ng-container>
     </div>
-    
+
     <mat-card *ngIf="settings.showDistCenterAsEndAddressForVolunteer&&familyLists.distCenter">
         <mat-card-title>{{settings.lang.pickupLocation}}: {{familyLists.distCenter.name}}</mat-card-title>
         <div class="phone-container" *ngIf="  familyLists.distCenter.addressHelper.ok()">
@@ -43,75 +43,9 @@
     <app-helper-families [familyLists]="familyLists">
     </app-helper-families>
 
+    <div *ngIf="hasEvents" style="text-align: center;">
 
-    <mat-card *ngIf="this.events&&this.events.length>0">
-        <h3>{{settings.lang.pleaseRegisterToTheFollowingEvents}}</h3>
-        <mat-accordion multi>
-            <mat-expansion-panel *ngFor="let e of events" [class.registered]="!volunteerInEvent(e).isNew()"
-                [attr.myId]="e.id">
-                <mat-expansion-panel-header [class.registered]="!volunteerInEvent(e).isNew()">
-                    <div style="display:flex;flex-direction: column;">
-                        <mat-panel-title *ngIf="e.name"> {{e.name}} <mat-icon
-                                *ngIf="!volunteerInEvent(e).isNew()" style="color:green">done</mat-icon>
-                        </mat-panel-title>
-                        <mat-panel-title>
-                            {{e.$.eventDate.displayValue}}<span *ngIf="e.startTime">,
-                                {{e.startTime}}</span><span *ngIf="e.endTime"> -
-                                {{e.endTime}}</span>
-                        </mat-panel-title>
+        <button mat-raised-button color="primary" (click)="moveToOpertunities()">{{settings.lang.wantToVolnteerMore}}</button>
+    </div>
 
-                    </div>
-                </mat-expansion-panel-header>
-                <div>
-                    {{e.description}}
-                </div>
-                <div>
-                    <div class="phone-container" *ngIf="getAddress(e).ok()">
-                        <span (click)="getAddress(e).openWaze()">
-                            <img src="assets/waze.png">
-
-                        </span>
-                        <div>
-                            <a (click)="getAddress(e).openWaze()">
-                                <span style="display:block"> {{e.address}} </span>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="phone-container" *ngIf="getPhone(e)">
-                        <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-                            (click)="sendWhatsapp(getPhone(e).thePhone)">
-                            <img src="assets/whatsapp.png">
-                        </span>
-                        <a href="tel:{{getPhone(e).thePhone}}">
-                            <button mat-mini-fab style="vertical-align: middle" color="primary">
-                                <mat-icon>call</mat-icon>
-                            </button>
-                        </a>
-                        <div>
-                            <a href="tel:{{getPhone(e).thePhone}}">{{getPhone(e).displayValue}}</a>,
-                            {{e.phone1? e.phone1Description:settings.helpText}}
-                        </div>
-                    </div>
-
-                </div>
-                <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}: {{e.registeredVolunteers}}
-                         /{{e.requiredVolunteers}} </div>
-                <button mat-raised-button color="primary"
-                    *ngIf="volunteerInEvent(e).isNew() && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
-                    (click)="registerToEvent(e)">{{settings.lang.illBeThere}}
-                </button>
-                <span mat-raised-button color="primary"
-                    *ngIf="volunteerInEvent(e).isNew() && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
-                </span>
-                <span *ngIf="!volunteerInEvent(e).isNew()">
-                    {{settings.lang.registeredToEvent}} <a (click)="cancelEvent(e)">{{settings.lang.iCantMakeIt}}</a>
-                </span>
-
-
-            </mat-expansion-panel>
-        </mat-accordion>
-
-    </mat-card>
 </ng-container>

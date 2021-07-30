@@ -1130,6 +1130,7 @@ export class Language {
   lastUpdate="מועד עדכון";
   fromGeneralList="נרשם דרך הרשימה הכלללית";
   donotShowEventsInGeneralList = "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים";
+  wantToVolnteerMore = "רוצה להתנדב עוד?";
 }
 
 const defaultLang = new Language();
