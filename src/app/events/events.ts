@@ -305,7 +305,7 @@ export class Event extends IdEntity {
         return this.getAddress()?.location();
     }
     get orgName() {
-        return getSettings(this.context).orgName;
+        return getSettings(this.context).organisationName;
     }
 
 
@@ -400,8 +400,8 @@ export class Event extends IdEntity {
     }
     get city() {
         if (this.getAddress().ok())
-        return this.getAddress().getGeocodeInformation().getCity();
-}
+            return this.getAddress().getGeocodeInformation().getCity();
+    }
     get longLat() {
         if (this.getAddress().ok())
             return this.getAddress().getGeocodeInformation().getlonglat();

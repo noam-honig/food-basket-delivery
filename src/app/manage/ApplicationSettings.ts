@@ -513,7 +513,7 @@ export const settingsForSite = new Map<string, ApplicationSettings>();
 export function setSettingsForSite(site: string, lang: ApplicationSettings) {
   settingsForSite.set(site, lang);
 }
-export function getSettings(context: Context) {
+export function getSettings(context: Context):ApplicationSettings {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
