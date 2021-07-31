@@ -41,7 +41,7 @@ export class EventCardComponent implements OnInit {
     this._events = val;
     this.refresh();
   }
-   refresh() {
+  refresh() {
     this.dates = [];
     for (const d of [use.language.past, use.language.today, use.language.tomorrow, use.language.thisWeek, use.language.nextWeek, use.language.later]) {
 
@@ -124,7 +124,7 @@ export class EventCardComponent implements OnInit {
       }
       // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
     }
-    if (this.context.isAllowed(Roles.distCenterAdmin)&&e.registeredVolunteers!=undefined)
+    if (this.context.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
       return e.registeredVolunteers + " מתנדבים";
   }
   distance(e: EventInList) {
@@ -134,7 +134,10 @@ export class EventCardComponent implements OnInit {
   }
   volunteerLocation: Location;
   async sortByDistance() {
-    this.volunteerLocation = await getCurrentLocation(true, this.dialog);
+    if (!this.volunteerLocation)
+      this.volunteerLocation = await getCurrentLocation(true, this.dialog);
+    else
+      this.volunteerLocation = undefined;;
     this.sortEvents();
   }
   sortEvents() {

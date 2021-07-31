@@ -1,19 +1,49 @@
+h3 {
+    background-color: #fafafa;
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    @media (max-width: 720px) {
+        margin-block-start: 0em;
+        margin-block-end: 0;
+    }
+}
 .event-card {
-    width: 200px;
+    width: 195px;
     display: flex;
     flex-direction: column;
-    margin: 8px;
+    margin: 5px;
     @media (max-width: 720px) {
         width: 100%;
-        font-size: x-large;
+        margin-left: 0px;
+        margin-right: 0px;
     }
 
     strong {
         @media (max-width: 720px) {
-            font-size: x-large;
             font-weight: 600;
         }
     }
+}
+.event-info {
+    display: flex;
+    flex-direction: column;
+    img {
+        max-width: 120px;
+        max-height: 120px;
+    }
+    @media (max-width: 720px) {
+        flex-direction: row;
+        img {
+            max-width: 80px;
+            max-height: 80px;
+            margin-left: 15px;
+        }
+    }
+}
+.event-detail {
+    display: flex;
+    flex-direction: column;
 }
 .event-image {
     width: 120px;

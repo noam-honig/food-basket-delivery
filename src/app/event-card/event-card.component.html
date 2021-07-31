@@ -1,41 +1,50 @@
-<data-area [settings]="area"></data-area><button mat-raised-button color="primary" (click)="sortByDistance()">הצג לפי
-    מרחק ממני</button>
-<mat-divider></mat-divider>
-<div *ngFor="let d of dates">
-    <h3>{{d.date}}</h3>
-    <div class="events-container" [transition-group]="'flip-list'">
-        <ng-container *ngFor="let e of d.events ; trackBy: trackBy">
-            <mat-card transition-group-item class="event-card" [class.registered]="e.registeredToEvent"
-                *ngIf="filter(e)">
-                <div *ngIf="isAdmin()" style="    display: flex;
+<div>
+    <data-area [settings]="area"></data-area><button mat-raised-button color="primary" (click)="sortByDistance()">
+        {{!volunteerLocation? 'הצג לפי מרחק ממני':'הצג לפי תאריך'}}
+    </button>
+    <mat-divider></mat-divider>
+</div>
+<div>
+    <div *ngFor="let d of dates">
+        <h3>{{d.date}}</h3>
+        <div class="events-container" [transition-group]="'flip-list'">
+            <ng-container *ngFor="let e of d.events ; trackBy: trackBy">
+                <mat-card transition-group-item class="event-card" [class.registered]="e.registeredToEvent"
+                    *ngIf="filter(e)">
+                    <div *ngIf="isAdmin()" style="display: flex;
                 justify-content: space-between;
                 margin-bottom: 10px;">
-                    <button mat-raised-button (click)="showVolunteers(e)">
-                        מתנדבים ({{e.registeredVolunteers}})
-                    </button>
-                    <button mat-icon-button (click)="edit(e)">
-                        <mat-icon>edit</mat-icon>
-                    </button>
+                        <button mat-raised-button (click)="showVolunteers(e)">
+                            מתנדבים ({{e.registeredVolunteers}})
+                        </button>
+                        <button mat-icon-button (click)="edit(e)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
 
-                </div>
-                <div style="text-align: center;" (click)="eventDetails(e)">
-                    <img class="event-image" [src]="e.eventLogo">
-                </div>
-                <strong (click)="eventDetails(e)">
-                    <mat-icon *ngIf="e.registeredToEvent" style="color:green">done</mat-icon> {{e.name}}
-                </strong>
-                <strong style="font-size: small;">
-                    {{e.orgName}}
-                </strong>
-                <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}, {{e.type.caption}} </span>
-                <div (click)="eventDetails(e)">
-                    <span>{{displayDate(e)}}<span *ngIf="e.startTime">,
-                            {{e.startTime}}</span><span *ngIf="e.endTime"> -
-                            {{e.endTime}}</span>
-                    </span>
-                </div>
-                <span>{{volunteerText(e)}}</span>
-            </mat-card>
-        </ng-container>
+                    </div>
+                    <div class="event-info">
+                        <div style="text-align: center;" (click)="eventDetails(e)">
+                            <img class="event-image" [src]="e.eventLogo">
+                        </div>
+                        <div class="event-detail">
+                            <strong (click)="eventDetails(e)">
+                                <mat-icon *ngIf="e.registeredToEvent" style="color:green">done</mat-icon> {{e.name}}
+                            </strong>
+                            <strong style="font-size: small;">
+                                {{e.orgName}}
+                            </strong>
+                            <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}, {{e.type.caption}} </span>
+                            <div (click)="eventDetails(e)">
+                                <strong>{{displayDate(e)}}</strong><span *ngIf="e.startTime">,
+                                    {{e.startTime}}</span><span *ngIf="e.endTime"> -
+                                    {{e.endTime}}</span>
+
+                            </div>
+                        </div>
+                        <span>{{volunteerText(e)}}</span>
+                    </div>
+                </mat-card>
+            </ng-container>
+        </div>
     </div>
 </div>
