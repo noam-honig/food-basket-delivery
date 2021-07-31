@@ -1,5 +1,6 @@
 <div class="full-page" *ngIf="!isAdmin()">
     <div class="grow-item">
+
         <div style="text-align:center;">
             <a href="https://noam-honig.github.io/salmaz/"><img src="{{getLogo()}}" style="max-width:120px" /></a>
             <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
@@ -8,6 +9,35 @@
             <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות הקרובות</div>
         </div>
         <app-event-card [events]="events"></app-event-card>
+
+        <mat-card class="headline">
+            <div class="headline">
+                <div>
+                    <img src="/assets/facebook-img.png">
+                    <div>
+                        <div class="head-line-text-1 mat-headline ">חגי - אפליקציה לחלוקת סלי
+                            מזון
+                        </div>
+                        <div class="mat-headline head-line-text-2">לארגונים המחלקים סלי מזון למשפחות על ידי מתנדבים
+                        </div>
+                        <div>להצטרפות צרו קשר
+                            <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
+                                (click)="sendWhatsapp(e.thePhone)">
+                                <img src="assets/whatsapp.png">
+                            </span>
+                            <button mat-icon-button>
+                                <mat-icon>
+                                    facebook
+                                </mat-icon>
+                            </button>
+                            <mat-icon>
+                                email
+                            </mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
     </div>
 </div>
 <app-events *ngIf="isAdmin()"></app-events>

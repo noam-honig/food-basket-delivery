@@ -1,0 +1,29 @@
+.headline {
+    background-color: #dbb372;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+
+    div > img {
+        max-height: 200px;
+    }
+    > div {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        max-width: 720px;
+    }
+}
+.head-line-text-1 {
+    align-self: center;
+    color: white;
+    font-size: xx-large;
+    font-weight: 500;
+}
+
+.head-line-text-2 {
+    align-self: center;
+    
+    font-size: x-large;
+    font-weight: 400;
+}
