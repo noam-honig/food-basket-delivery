@@ -9,7 +9,7 @@ import { Phone } from '../model-shared/phone';
 import { Sites } from '../sites/sites';
 import { InitContext } from '../helpers/init-context';
 import { Roles } from '../auth/roles';
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings, setSettingsForSite, settingsForSite } from '../manage/ApplicationSettings';
 
 @Component({
   selector: 'app-org-events',
@@ -55,15 +55,22 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
 
       await InitContext(c, undefined);
-      let settings = getSettings(c);
-      if (settings.donotShowEventsInGeneralList || settings.forWho.args.leftToRight)
-        continue;
-      let items = await OrgEventsComponent.getEvents(phone, c);
-      r.push(...items.map(i => ({ ...i, site: org })));
+
+      let settings = settingsForSite.get(org);
+      if (!settings) {
+        settings = await ApplicationSettings.getAsync(c);
+        setSettingsForSite(org, settings);
+      }
+      
+      if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
+        let items = await OrgEventsComponent.getEvents(phone, c);
+        r.push(...items.map(i => ({ ...i, site: org })));
+      }
 
     }
     return r;
   }
+
   @BackendMethod({ allowed: true })
   static async getEvents(phone: string, context?: Context): Promise<EventInList[]> {
 

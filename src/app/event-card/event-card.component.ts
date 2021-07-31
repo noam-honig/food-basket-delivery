@@ -116,7 +116,6 @@ export class EventCardComponent implements OnInit {
 
     }
   }
-
   volunteerText(e: EventInList) {
     if (e.requiredVolunteers > 0) {
       if (e.requiredVolunteers == e.registeredVolunteers) {
