@@ -14,6 +14,7 @@ import { SiteOverviewComponent } from '../site-overview/site-overview.component'
 import { SitesEntity } from '../sites/sites.entity';
 import { InputField, openDialog } from '@remult/angular';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { InitContext } from '../helpers/init-context';
 
 @Component({
   selector: 'app-overview',
@@ -119,7 +120,7 @@ export class OverviewComponent implements OnInit {
     };
 
     var builder = new SqlBuilder(context);
-    let f =SqlFor(context.for(ActiveFamilyDeliveries));
+    let f = SqlFor(context.for(ActiveFamilyDeliveries));
     let fd = SqlFor(context.for(FamilyDeliveries));
 
 
@@ -129,7 +130,7 @@ export class OverviewComponent implements OnInit {
       progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
-      var as =await  SqlFor(context.for(ApplicationSettings));
+      var as = await SqlFor(context.for(ApplicationSettings));
 
       let cols: any[] = [as.organisationName, as.logoUrl];
 
@@ -235,7 +236,12 @@ export class OverviewComponent implements OnInit {
       let otherContext = new Context();
       otherContext.setDataProvider(db);
       otherContext.setUser(context.user);
+      Sites.setSiteToContext(otherContext, id, context);
+      await InitContext(otherContext);
       let h = await otherContext.for(Helpers).create();
+      console.log({
+        count: await otherContext.for(Helpers).count()
+      })
       h.name = oh.name;
       h.realStoredPassword = oh.realStoredPassword;
       h.phone = oh.phone;
