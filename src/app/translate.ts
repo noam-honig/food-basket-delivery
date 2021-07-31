@@ -959,9 +959,9 @@ export class Language {
   HelperGiftsComponent = "באר המשאלות";
   RegisterURLComponent = "ניהול אתרי רישום";
   pleaseRegisterToTheFollowingEvents = "אנא הרשמו להתנדבויות הבאות";
-  illBeThere = "רשום אותי לארוע זה";
-  registeredToEvent = "הנך רשום לארוע זה";
-  iCantMakeIt = "לא אוכל להגיע לארוע";
+  illBeThere = "רשום אותי להתנדבות זו";
+  registeredToEvent = "הנך רשום להתנדבות זו";
+  iCantMakeIt = "לא אוכל להגיע להתנדבות";
   distributionCenterComment = "הערה";
   distributionCenterName = "שם";
   distributionCenterUniqueId = "סמל";

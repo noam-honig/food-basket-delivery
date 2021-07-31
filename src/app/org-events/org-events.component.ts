@@ -10,6 +10,7 @@ import { Sites } from '../sites/sites';
 import { InitContext } from '../helpers/init-context';
 import { Roles } from '../auth/roles';
 import { ApplicationSettings, getSettings, setSettingsForSite, settingsForSite } from '../manage/ApplicationSettings';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-org-events',
@@ -18,7 +19,7 @@ import { ApplicationSettings, getSettings, setSettingsForSite, settingsForSite }
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private context: Context, public settings: ApplicationSettings) {
+  constructor(private context: Context, public settings: ApplicationSettings, private dialog: DialogService) {
 
   }
   isGuest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
@@ -38,9 +39,12 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     if (this.isAdmin())
       return
+
     this.unObserve = await RegisterToEvent.volunteerInfoChanged.dispatcher.observe(async () => {
-      if (this.isGuest)
+      if (this.isGuest) {
+        this.dialog.trackVolunteer("list-events");
         this.events = await OrgEventsComponent.getAllEvents(RegisterToEvent.volunteerInfo.phone);
+      }
       else
         this.events = await OrgEventsComponent.getEvents(RegisterToEvent.volunteerInfo.phone);
     })
@@ -62,7 +66,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
         settings = await ApplicationSettings.getAsync(c);
         setSettingsForSite(org, settings);
       }
-      
+
       if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
         let items = await OrgEventsComponent.getEvents(phone, c);
         r.push(...items.map(i => ({ ...i, site: org })));

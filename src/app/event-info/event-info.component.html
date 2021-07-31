@@ -57,13 +57,13 @@ justify-content: space-between;">
     <div>
         <button mat-raised-button color="primary"
             *ngIf="!e.registeredToEvent && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
-            (click)="reg.registerToEvent(e)">{{settings.lang.illBeThere}}
+            (click)="reg.registerToEvent(e,dialog)">{{settings.lang.illBeThere}}
         </button>
         <span mat-raised-button color="primary"
             *ngIf="!e.registeredToEvent && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
         </span>
         <span *ngIf="e.registeredToEvent">
-            {{settings.lang.registeredToEvent}} <a (click)="reg.removeFromEvent(e)">{{settings.lang.iCantMakeIt}}</a>
+            {{settings.lang.registeredToEvent}} <a (click)="reg.removeFromEvent(e,dialog)">{{settings.lang.iCantMakeIt}}</a>
         </span>
     </div>
     <div style="margin-left:5px;margin-right: 5px;">

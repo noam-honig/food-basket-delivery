@@ -83,6 +83,7 @@ export class EventCardComponent implements OnInit {
 
   }
   eventDetails(e: EventInList) {
+    this.dialog.trackVolunteer("event-info:"+e.site);
     openDialog(EventInfoComponent, x => x.e = e);
   }
   displayDate(e: EventInList) {

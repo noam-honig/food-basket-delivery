@@ -6,6 +6,7 @@ import { Context } from 'remult';
 import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
+import { DialogService } from '../select-popup/dialog';
 import { RegisterToEvent } from './RegisterToEvent';
 
 
@@ -16,7 +17,7 @@ import { RegisterToEvent } from './RegisterToEvent';
 })
 export class EventInfoComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private context: Context) { }
+  constructor(public settings: ApplicationSettings, private context: Context,public dialog:DialogService) { }
   @Output() phoneChanged = new EventEmitter();
   e: EventInList;
   displayDate() {

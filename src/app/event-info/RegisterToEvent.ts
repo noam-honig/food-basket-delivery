@@ -6,6 +6,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 import { InitContext } from '../helpers/init-context';
 import { getSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
+import { DialogService } from '../select-popup/dialog';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { Sites } from '../sites/sites';
 import { Field } from '../translate';
@@ -49,7 +50,8 @@ export class RegisterToEvent {
     @Field({ translation: l => l.rememberMeOnThisDevice })
     rememberMeOnThisDevice: boolean;
     get $() { return getFields(this); }
-    async registerToEvent(e: EventInList) {
+    async registerToEvent(e: EventInList, dialog: DialogService) {
+        dialog.trackVolunteer("register-event:" + e.site);
         this.rememberMeOnThisDevice = storedInfo().name != '';
         if (!this.context.authenticated())
             await openDialog(InputAreaComponent, x => x.args = {
@@ -80,7 +82,8 @@ export class RegisterToEvent {
             await e._.reload();
         else Object.assign(e, update);
     }
-    async removeFromEvent(e: EventInList) {
+    async removeFromEvent(e: EventInList, dialog: DialogService) {
+        dialog.trackVolunteer("un-register-event:" + e.site);
         this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false));
     }
     @BackendMethod({ allowed: true })

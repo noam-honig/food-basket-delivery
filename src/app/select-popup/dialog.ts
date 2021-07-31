@@ -95,6 +95,20 @@ export class DialogService {
 
 
     }
+    trackVolunteer(action: string, value?: number) {
+        if (!value) {
+            value = 1;
+        }
+        let cat = Sites.getOrganizationFromContext(this.context);
+        if (!cat)
+            cat = '';
+        gtag('event', action, {
+            'event_category': 'volunteer',
+            'event_label': action + "/" + cat
+        });
+
+
+    }
     async getDistCenter(loc: Location) {
         if (this.distCenter != null)
             return this.distCenter;
