@@ -21,6 +21,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   constructor(private context: Context, public settings: ApplicationSettings) {
 
   }
+  isGuest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
   getLogo() {
     return ApplicationSettings.get(this.context).logoUrl;
 
@@ -38,7 +39,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     if (this.isAdmin())
       return
     this.unObserve = await RegisterToEvent.volunteerInfoChanged.dispatcher.observe(async () => {
-      if (Sites.getOrganizationFromContext(this.context) == Sites.guestSchema)
+      if (this.isGuest)
         this.events = await OrgEventsComponent.getAllEvents(RegisterToEvent.volunteerInfo.phone);
       else
         this.events = await OrgEventsComponent.getEvents(RegisterToEvent.volunteerInfo.phone);

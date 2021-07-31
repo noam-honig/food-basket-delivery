@@ -10,9 +10,9 @@
         </div>
         <app-event-card [events]="events"></app-event-card>
 
-        <mat-card class="headline">
+        <mat-card class="headline" *ngIf="isGuest">
             <div class="headline">
-                <div>
+                <div class="hagai-container">
                     <img src="/assets/facebook-img.png">
                     <div>
                         <div class="head-line-text-1 mat-headline ">חגי - אפליקציה לחלוקת סלי
@@ -20,22 +20,57 @@
                         </div>
                         <div class="mat-headline head-line-text-2">לארגונים המחלקים סלי מזון למשפחות על ידי מתנדבים
                         </div>
-                        <div>להצטרפות צרו קשר
-                            <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-                                (click)="sendWhatsapp(e.thePhone)">
-                                <img src="assets/whatsapp.png">
-                            </span>
-                            <button mat-icon-button>
-                                <mat-icon>
-                                    facebook
-                                </mat-icon>
-                            </button>
-                            <mat-icon>
-                                email
-                            </mat-icon>
+                        <div class="hagai-footer">להצטרפות צרו קשר
+
+                            <a href="https://wa.me/972507330590" target="_blank">
+                                <button mat-icon-button>
+                                    <img src="assets/whatsapp.png" style="max-width:27px">
+
+                                    שלחו ווטסאפ
+                                </button>
+                            </a>
+
+                            <a href="https://www.facebook.com/foodbasketdelivery/" target="_blank">
+                                <button mat-icon-button>
+                                    <mat-icon>
+                                        facebook
+                                    </mat-icon>
+                                    דף הפייסבוק של אפליקצית חגי
+                                </button>
+                            </a>
+
+                            <a href="mailto:noam.honig@gmail.com" target="_blank">
+                                <button mat-icon-button>
+                                    <mat-icon>
+                                        email
+                                    </mat-icon>
+                                    שלחו מייל noam.honig@gmail.com
+                                </button>
+                            </a>
+                            <a href="https://noam-honig.github.io/salmaz/" target="_blank">
+                                <button mat-icon-button>
+                                    <mat-icon>
+                                        language
+                                    </mat-icon>
+                                    אתר עם פרטים נוספים
+                                </button>
+                            </a>
+
+
                         </div>
                     </div>
                 </div>
+            </div>
+        </mat-card>
+        <mat-card *ngIf="isGuest" class="memorial">
+            <img src="https://noam-honig.github.io/hagai/img/1e104c7e-445a-40bd-ad9c-4458d6da86f9.jfif">
+            <div>
+                <div class="mat-headline">לזכרו של חגי איינמר - 1997 - 2020 </div>
+                <div class="mat-headline">האפליקציה מוקדשת לזכרו של אחייני האהוב חגי איינמר שנפטר ב 15 לינואר 2020.
+                    2020 </div>
+                <div class="mat-headline"><a href="http://noam-honig.github.io/hagai">לחצו כאן לפרטים נוספים על חגי</a>
+                </div>
+
             </div>
         </mat-card>
     </div>
