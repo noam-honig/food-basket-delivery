@@ -7,7 +7,7 @@ import { getLang, Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
 import { ClassType } from 'remult/classType';
-import { DateArray } from 'ngx-bootstrap/chronos/types';
+
 
 
 
@@ -110,7 +110,7 @@ CaptionTransformer.transformCaption = (context, key, caption) => {
   if (!r) {
     if (!reported.has(key)) {
       reported.add(key);
-      console.log('"' + key + "\",");
+      //console.log('"' + key + "\",");
     }
   }
   return r;

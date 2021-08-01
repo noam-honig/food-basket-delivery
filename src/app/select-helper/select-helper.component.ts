@@ -103,8 +103,8 @@ export class SelectHelperComponent implements OnInit {
       for (const d of (await db.execute(await sql.query({
         from: afd,
         where: () => [afd.courier.isDifferentFrom(null).and(DeliveryStatus.isAResultStatus(afd.deliverStatus))],
-        select: () => [
-          sql.columnWithAlias("distinct " + sql.getItemSql(afd.family), 'fam'),
+        select: async () => [
+          sql.columnWithAlias("distinct " + await sql.getItemSql(afd.family), 'fam'),
           sql.columnWithAlias(afd.courier, "courier"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
           sql.columnWithAlias(afd.addressLatitude, "lat"),
@@ -136,10 +136,10 @@ export class SelectHelperComponent implements OnInit {
             .and(DeliveryStatus.isAResultStatus(fd.deliverStatus))
             .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
         ],
-        select: () => [
+        select:async () => [
           sql1.columnWithAlias(fd.courier, "courier"),
           sql1.columnWithAlias(sql.max(fd.deliveryStatusDate), "delivery_date"),
-          sql1.columnWithAlias("count(distinct " + sql1.getItemSql(fd.family) + ")", "count")
+          sql1.columnWithAlias("count(distinct " + await  sql1.getItemSql(fd.family) + ")", "count")
         ],
         groupBy: () => [fd.courier]
       }))).rows) {
