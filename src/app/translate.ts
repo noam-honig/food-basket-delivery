@@ -1,5 +1,5 @@
 
-import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer, IntegerField } from 'remult';
+import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer, IntegerField as origIntegerField } from 'remult';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -124,8 +124,8 @@ function adjustSettings(settings: FieldOptions & TranslatedCaption) {
 export function Field<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
   return origField<entityType, valueType>(adjustSettings(settings));
 }
-export function IntegerField<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
-  return origField<entityType, valueType>(adjustSettings(settings));
+export function IntegerField<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption) {
+  return origIntegerField<entityType>(adjustSettings(settings));
 }
 export function QuantityColumn<T>(settings?: FieldOptions & TranslatedCaption) {
   return IntegerField<T>(adjustSettings({ translation: l => l.quantity, ...settings }));
