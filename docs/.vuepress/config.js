@@ -81,7 +81,8 @@ module.exports = {
             'add-to-home-screen',
             'events',
             'no-addresses',
-            'photos'
+            'photos',
+            'recruitment'
 
 
           ]
