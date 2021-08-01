@@ -5,13 +5,13 @@
     justify-content: center;
 
     div > img {
-        max-height: 200px;
+        max-height: 280px;
     }
     > div {
         display: flex;
         align-items: center;
         padding: 10px;
-        max-width: 720px;
+        max-width: 850px;
     }
 }
 .head-line-text-1 {
@@ -33,6 +33,7 @@
     text-align: right;
     margin-right: 10px;
     a {
+ //       background-color:red
     }
 }
 
@@ -43,7 +44,7 @@
 }
 .memorial {
     display: flex;
-
+    max-width:850px;
     flex-direction: row-reverse;
     margin-top: 10px;
     img {
