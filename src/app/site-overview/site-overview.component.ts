@@ -41,7 +41,7 @@ export class SiteOverviewComponent implements OnInit {
       message = "הי !שם!\n";
 
 
-    Phone.sendWhatsappToPhone(m.phone, message.replace('!שם!', m.name), this.context);
+    Phone.sendWhatsappToPhone(m.phone, message.replace('!שם!', m.name), this.context,true);
   }
 
 }

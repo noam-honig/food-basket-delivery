@@ -53,7 +53,7 @@ export class Phone {
     Phone.sendWhatsappToPhone(this.thePhone, message, context);
   }
 
-  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context) {
+  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context, test = false) {
     phone = Phone.fixPhoneInput(phone, context);
     if (phone.startsWith('0')) {
       phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
@@ -63,8 +63,10 @@ export class Phone {
 
     if (phone.startsWith('+'))
       phone = phone.substr(1);
-
-    window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
+    if (test)
+      window.open('whatsapp://send/?phone=' + phone + '&text=' + encodeURI(smsMessage), '_blank');
+    else
+      window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
   }
 
   static formatPhone(s: string) {
