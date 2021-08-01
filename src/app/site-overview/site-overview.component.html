@@ -9,7 +9,7 @@
     מנהלים:
     <table>
         <tr *ngFor="let m of managers">
-            <td><a href="" (click)="sendWhatsapp(m)"> {{m.name}}</a></td>
+            <td><a  (click)="sendWhatsapp(m)"> {{m.name}}</a></td>
             <td> {{m.lastSignInDate|date}} </td>
             <td> {{m.phone}}</td>
         </tr>
