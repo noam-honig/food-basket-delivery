@@ -79,7 +79,6 @@ module.exports = {
             'distribution-map',
             'import-from-excel',
             'add-to-home-screen',
-            'events',
             'no-addresses',
             'photos',
             'recruitment'
