@@ -7,7 +7,7 @@ import { RegisterToEvent } from '../event-info/RegisterToEvent';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Phone } from '../model-shared/phone';
 import { Sites } from '../sites/sites';
-import { InitContext } from '../helpers/init-context';
+import { createSiteContext, InitContext } from '../helpers/init-context';
 import { Roles } from '../auth/roles';
 import { ApplicationSettings, getSettings, setSettingsForSite, settingsForSite } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
@@ -53,13 +53,8 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   static async getAllEvents(phone: string, context?: Context): Promise<EventInList[]> {
     let r: EventInList[] = [];
     for (const org of Sites.schemas) {
-      let dp = Sites.getDataProviderForOrg(org);
-      let c = new Context();
-      c.setDataProvider(dp);
-      Sites.setSiteToContext(c, org, context);
 
-
-      await InitContext(c, undefined);
+      let c = await createSiteContext(org,context);
 
       let settings = settingsForSite.get(org);
       if (!settings) {

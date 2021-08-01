@@ -1,11 +1,22 @@
 <h3 matDialogHeader>{{args.site.name}} ({{args.site.site}})</h3>
-<ul>
-    <li *ngFor="let i of args.statistics">
-        {{i.caption}} - {{args.site.stats[i.caption]}}
-    </li>
-</ul>
+<mat-dialog-content>
+    {{args.site.lastSignIn|date}}
+    <ul>
+        <li *ngFor="let i of args.statistics">
+            {{i.caption}} - {{args.site.stats[i.caption]}}
+        </li>
+    </ul>
+    מנהלים:
+    <table>
+        <tr *ngFor="let m of managers">
+            <td><a href="" (click)="sendWhatsapp(m)"> {{m.name}}</a></td>
+            <td> {{m.lastSignInDate|date}} </td>
+            <td> {{m.phone}}</td>
+        </tr>
+    </table>
 
 
+</mat-dialog-content>
 
 <mat-dialog-actions>
 

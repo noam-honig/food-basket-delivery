@@ -28,6 +28,10 @@ export class OverviewComponent implements OnInit {
   sortBy: string;
   async ngOnInit() {
     this.overview = await OverviewComponent.getOverview();
+    for (const s of this.overview.sites) {
+      s.lastSignIn = new Date(s.lastSignIn);
+    }
+    this.overview.sites.sort((a, b) => b.lastSignIn?.valueOf()-a.lastSignIn?.valueOf());
 
   }
   searchString = '';
@@ -131,8 +135,13 @@ export class OverviewComponent implements OnInit {
       let dp = Sites.getDataProviderForOrg(org);
 
       var as = await SqlFor(context.for(ApplicationSettings));
+      var h = await SqlFor(context.for(Helpers));
 
-      let cols: any[] = [as.organisationName, as.logoUrl];
+      let cols: any[] = [as.organisationName, as.logoUrl, builder.build("(", builder.query({
+        from: h,
+        select: () => [builder.max(h.lastSignInDate)],
+        where: () => [h.admin.isEqualTo(true)]
+      }), ")")];
 
       for (const dateRange of result.statistics) {
         let key = 'a' + cols.length;
@@ -160,12 +169,14 @@ export class OverviewComponent implements OnInit {
         name: row[zz.getColumnKeyInResultForIndexInSelect(0)],
         site: org,
         logo: row[zz.getColumnKeyInResultForIndexInSelect(1)],
-        stats: {}
+        stats: {},
+        lastSignIn: row[zz.getColumnKeyInResultForIndexInSelect(2)]
+
       };
 
 
       result.sites.push(site);
-      let i = 2;
+      let i = 3;
       for (const dateRange of result.statistics) {
         let r = row[zz.getColumnKeyInResultForIndexInSelect(i++)];
 
@@ -288,6 +299,7 @@ export interface siteItem {
   site: string;
   name: string;
   logo: string;
+  lastSignIn: Date;
   stats: {
     [index: string]: number;
   }

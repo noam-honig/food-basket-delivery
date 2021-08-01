@@ -18,7 +18,7 @@ export async function InitContext(context: Context, user?: UserInfo) {
     let h: Helpers;
     let gotUser = !!user;
     if (user === undefined)
-        user = context.user; 
+        user = context.user;
 
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
@@ -67,6 +67,14 @@ export async function InitContext(context: Context, user?: UserInfo) {
         return allowed;
     }
     context.lang = getLang(context);
+}
+export async function createSiteContext(site: string, original: Context) {
+    let dp = Sites.getDataProviderForOrg(site);
+    let c = new Context();
+    c.setDataProvider(dp);
+    Sites.setSiteToContext(c, site, original);
+    await InitContext(c, undefined);
+    return c;
 }
 declare module 'remult' {
     export interface Context {
