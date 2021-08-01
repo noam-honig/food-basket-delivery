@@ -124,6 +124,9 @@ function adjustSettings(settings: FieldOptions & TranslatedCaption) {
 export function Field<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
   return origField<entityType, valueType>(adjustSettings(settings));
 }
+export function IntegerField<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
+  return origField<entityType, valueType>(adjustSettings(settings));
+}
 export function QuantityColumn<T>(settings?: FieldOptions & TranslatedCaption) {
   return IntegerField<T>(adjustSettings({ translation: l => l.quantity, ...settings }));
 }

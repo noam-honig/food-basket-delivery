@@ -36,9 +36,9 @@ import { DataControl, getValueList } from '@remult/angular';
 export class BasketType extends IdEntity {
   @Field({ translation: l => l.basketTypeName })
   name: string;
-  @Field({ caption: BasketType.boxes1Name })
+  @IntegerField({ caption: BasketType.boxes1Name })
   boxes: number = 1;
-  @Field({ caption: BasketType.boxes2Name })
+  @IntegerField({ caption: BasketType.boxes2Name })
   boxes2: number = 0;
 
   static boxes1Name = !use ? '' : use.language.boxes1Name;

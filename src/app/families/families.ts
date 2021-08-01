@@ -17,7 +17,7 @@ import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/A
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { DateOnlyField, Field, FieldType, use, Entity, QuantityColumn } from "../translate";
+import { DateOnlyField, Field, FieldType, use, Entity, QuantityColumn, IntegerField } from "../translate";
 import { FamilyStatus } from "./FamilyStatus";
 
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
@@ -459,7 +459,7 @@ export class Families extends IdEntity {
   })
 
   tz2: string;
-  @Field()
+  @IntegerField()
   familyMembers: number;
   @DateOnlyField()
   birthDate: Date;
@@ -477,7 +477,7 @@ export class Families extends IdEntity {
   nextBirthday: Date
   @Field({ translation: l => l.defaultBasketType })
   basketType: BasketType;
-  @QuantityColumn({ translation: l => l.defaultQuantity, allowApiUpdate: Roles.admin })
+  @IntegerField({ translation: l => l.defaultQuantity, allowApiUpdate: Roles.admin })
   quantity: number;
   @Field({ includeInApi: true, translation: l => l.familySource })
   familySource: FamilySources;
@@ -530,7 +530,7 @@ export class Families extends IdEntity {
   area: string;
   @Field()
   addressComment: string;
-  @Field()
+  @IntegerField()
   postalCode: number;
   @Field({ translation: l => l.defaultDeliveryComment })
   deliveryComments: string;
@@ -686,7 +686,7 @@ export class Families extends IdEntity {
     }
   })
   previousDeliveryComment: string;
-  @Field({
+  @IntegerField({
     sqlExpression: async (selfDefs, context) => {
       let self = SqlFor(selfDefs);
       let fd = SqlFor(context.for(FamilyDeliveries));

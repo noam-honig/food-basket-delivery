@@ -22,7 +22,7 @@ import { getLang } from '../sites/sites';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
-import { use, Field } from '../translate';
+import { use, Field, IntegerField } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters } from '../manage/distribution-centers';
 
@@ -390,19 +390,19 @@ export class helperHistoryInfo extends EntityBase {
   phone: Phone;
   @CompanyColumn()
   company: string;
-  @Field({ translation: l => l.deliveries })
+  @IntegerField({ translation: l => l.deliveries })
   deliveries: number;
-  @Field({ translation: l => l.delveriesSuccesfull })
+  @IntegerField({ translation: l => l.delveriesSuccesfull })
   succesful: number;
-  @Field({ translation: l => l.selfAssigned })
+  @IntegerField({ translation: l => l.selfAssigned })
   selfassigned: number;
-  @Field({ translation: l => l.families })
+  @IntegerField({ translation: l => l.families })
   families: number;
-  @Field({ translation: l => l.dates })
+  @IntegerField({ translation: l => l.dates })
   dates: number;
-  @Field({ caption: 'מתנות שמומשו' })
+  @IntegerField({ caption: 'מתנות שמומשו' })
   giftsConsumed: number;
-  @Field({ caption: 'מתנות זמינות' })
+  @IntegerField({ caption: 'מתנות זמינות' })
   giftsPending: number;
 
 

@@ -1,6 +1,6 @@
 import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators } from "remult";
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog, RowButton } from '@remult/angular';
-import { use, ValueListFieldType, Field, DateOnlyField } from "../translate";
+import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -268,7 +268,7 @@ export class Event extends IdEntity {
     @Field({ inputType: InputTypes.time, translation: l => l.eventEndTime })
     @DataControl({ width: '110' })
     endTime: string;
-    @Field({ translation: l => l.requiredVolunteers })
+    @IntegerField({ translation: l => l.requiredVolunteers })
     requiredVolunteers: number;
     @Field()
     addressApiResult: string;

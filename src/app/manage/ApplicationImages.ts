@@ -1,5 +1,5 @@
 
-import { Entity, Context, EntityBase, Field } from 'remult';
+import { Entity, Context, EntityBase, Field, IntegerField } from 'remult';
 import { Roles } from '../auth/roles';
 @Entity({
   key: 'ApplicationImages',
@@ -7,7 +7,7 @@ import { Roles } from '../auth/roles';
   allowApiUpdate: Roles.admin
 })
 export class ApplicationImages extends EntityBase {
-  @Field()
+  @IntegerField()
   id: number;
   @Field({ caption: "איקון דף base64" })
   base64Icon: string;

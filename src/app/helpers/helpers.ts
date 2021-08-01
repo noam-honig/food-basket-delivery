@@ -28,7 +28,7 @@ import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { EmailSvc } from '../shared/utils';
-import { use, Field, FieldType } from '../translate';
+import { use, Field, FieldType, IntegerField } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
@@ -132,9 +132,9 @@ export abstract class HelpersBase extends IdEntity {
 
     @CompanyColumn()
     company: string;
-    @Field({ allowApiUpdate: Roles.distCenterAdmin })
+    @IntegerField({ allowApiUpdate: Roles.distCenterAdmin })
     totalKm: number;
-    @Field({ allowApiUpdate: Roles.distCenterAdmin })
+    @IntegerField({ allowApiUpdate: Roles.distCenterAdmin })
     totalTime: number;
     @Field({ includeInApi: Roles.distCenterAdmin })
     shortUrlKey: string;

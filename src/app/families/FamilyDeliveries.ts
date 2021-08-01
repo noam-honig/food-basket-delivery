@@ -16,7 +16,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService } from "../select-popup/dialog";
-import { use, FieldType, Field, ValueListFieldType, Entity, QuantityColumn } from "../translate";
+import { use, FieldType, Field, ValueListFieldType, Entity, QuantityColumn, IntegerField } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings, openDialog } from "@remult/angular";
@@ -236,7 +236,7 @@ export class FamilyDeliveries extends IdEntity {
     courierCommentsDate: Date;
     @Field({ includeInApi: Roles.admin })
     internalDeliveryComment: string;
-    @Field({
+    @IntegerField({
         allowApiUpdate: Roles.distCenterAdmin
     })
     routeOrder: number;
@@ -346,7 +346,7 @@ export class FamilyDeliveries extends IdEntity {
     addressOk: boolean;
     @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false })
     fixedCourier: HelpersBase;
-    @Field({ allowApiUpdate: false })
+    @IntegerField({ allowApiUpdate: false })
     familyMembers: number;
     @Field({
         dbName: 'phone',

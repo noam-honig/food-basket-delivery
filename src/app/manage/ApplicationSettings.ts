@@ -19,7 +19,7 @@ import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, Language, use, TranslationOptions, Field, FieldType } from "../translate";
+import { translationConfig, Language, use, TranslationOptions, Field, FieldType ,IntegerField} from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -115,7 +115,7 @@ export class ApplicationSettings extends EntityBase {
     return this.lang.languageCode == 'iw' && !this.isSytemForMlt();
   }
 
-  @Field()
+  @IntegerField()
   id: number;
   @Field()
   organisationName: string;
@@ -192,7 +192,7 @@ export class ApplicationSettings extends EntityBase {
   }
   @Field()
   commonQuestions: string;
-  @Field({ allowApiUpdate: false })
+  @IntegerField({ allowApiUpdate: false })
   dataStructureVersion: number;
   @Field({ translation: l => l.successButtonSettingName })
   deliveredButtonText: string;
@@ -279,9 +279,9 @@ export class ApplicationSettings extends EntityBase {
   requireConfidentialityApprove: boolean;
   @Field()
   requireComplexPassword: boolean;
-  @Field()
+  @IntegerField()
   timeToDisconnect: number;
-  @Field()
+  @IntegerField()
   daysToForcePasswordChange: number;
   @Field()
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
@@ -289,13 +289,13 @@ export class ApplicationSettings extends EntityBase {
   showDistCenterAsEndAddressForVolunteer: boolean;
   @Field()
   routeStrategy: routeStrategy;
-  @Field({ translation: l => l.maxDeliveriesBeforeBusy })
+  @IntegerField({ translation: l => l.maxDeliveriesBeforeBusy })
   BusyHelperAllowedFreq_nom: number;
-  @Field({ translation: l => l.daysCountForBusy })
+  @IntegerField({ translation: l => l.daysCountForBusy })
   BusyHelperAllowedFreq_denom: number;
-  @Field()
+  @IntegerField()
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
-  @Field()
+  @IntegerField()
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
   @Field()
   donotShowEventsInGeneralList: boolean;
@@ -513,7 +513,7 @@ export const settingsForSite = new Map<string, ApplicationSettings>();
 export function setSettingsForSite(site: string, lang: ApplicationSettings) {
   settingsForSite.set(site, lang);
 }
-export function getSettings(context: Context):ApplicationSettings {
+export function getSettings(context: Context): ApplicationSettings {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
