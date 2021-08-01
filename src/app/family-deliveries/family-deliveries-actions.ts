@@ -1,8 +1,8 @@
 import { Context, AndFilter, EntityWhere } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
-import {  HelpersBase } from "../helpers/helpers";
-import { use, Field, FieldType, QuantityColumn } from "../translate";
+import { HelpersBase } from "../helpers/helpers";
+import { use, Field, FieldType, QuantityColumn, ValueListFieldType } from "../translate";
 import { getLang } from '../sites/sites';
 import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -15,7 +15,7 @@ import { getSettings } from "../manage/ApplicationSettings";
 import { Controller } from "remult";
 import { DataAreaFieldsSetting, DataControl, InputField } from "@remult/angular";
 
-import { getFields, ValueListFieldType } from "remult/src/remult3";
+import { getFields } from "remult";
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
@@ -330,11 +330,11 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     }
 }
 
-@FieldType({
+
+@ValueListFieldType(HelperStrategy, {
     defaultValue: () => HelperStrategy.familyDefault,
     translation: l => l.volunteer
 })
-@ValueListFieldType(HelperStrategy)
 class HelperStrategy {
     static familyDefault = new HelperStrategy(0, use.language.volunteerByFamilyDefault, x => { });
     static currentHelper = new HelperStrategy(1, use.language.volunteerByCrrentDelivery, x => {
@@ -360,7 +360,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     @QuantityColumn()
     quantity: number;
     @Field()
-    helperStrategy: HelperStrategy;
+    helperStrategy: HelperStrategy = HelperStrategy.familyDefault;
     @Field()
     helper: HelpersBase;
     @Field({ translation: l => l.archiveCurrentDelivery })
@@ -368,7 +368,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     @Field({ translation: l => l.newDeliveryForAll })
     newDeliveryForAll: boolean;
     @Field()
-    selfPickup: SelfPickupStrategy;
+    selfPickup: SelfPickupStrategy = SelfPickupStrategy.familyDefault;
     @Field()
     archiveHelper: ArchiveHelper = new ArchiveHelper();
 
@@ -394,7 +394,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                     ],
                     { field: this.$.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
                     { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
-                    this.helperStrategy,
+                    this.$.helperStrategy,
                     { field: this.$.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
                     ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(context, this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
                     this.$.autoArchive,

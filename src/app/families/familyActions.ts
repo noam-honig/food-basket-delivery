@@ -86,7 +86,7 @@ export class NewDelivery extends ActionOnRows<Families> {
                 this.basketType = await this.context.defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
-                if (this.distributionCenter)
+                if (!this.distributionCenter)
                     this.distributionCenter = await context.defaultDistributionCenter();
                 return [
                     this.$.useFamilyBasket,

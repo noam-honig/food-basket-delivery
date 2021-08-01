@@ -151,7 +151,7 @@ export class CreateNewEvent {
         this.distributionCenter = dialog.distCenter;
 
         if (!this.distributionCenter) {
-            //  this.distributionCenter = await DistributionCenters.getDefault(this.context);
+              this.distributionCenter = await this.context.defaultDistributionCenter();
             if (!this.distributionCenter) {
                 await dialog.Error(getLang(this.context).pleaseSelectDistributionList);
                 return;
