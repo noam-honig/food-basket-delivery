@@ -78,7 +78,7 @@ export class SelectHelperComponent implements OnInit {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,
-        phone: h.phone.displayValue,
+        phone: h.phone?.displayValue,
         distance: 99999999
       });
       if (h.preferredDistributionAreaAddressHelper.ok()) {
@@ -300,7 +300,7 @@ function mapHelpers<hType extends HelpersBase>(helpers: hType[], getFamilies: (h
     helper: h,
     helperId: h.id,
     name: h.name,
-    phone: h.phone.displayValue,
+    phone: h.phone?.displayValue,
     assignedDeliveries: getFamilies(h)
 
   } as helperInList));

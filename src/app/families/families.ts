@@ -30,7 +30,7 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 
 
-import { GroupsValue } from "../manage/groups";
+import { Groups, GroupsValue } from "../manage/groups";
 
 
 
@@ -488,7 +488,7 @@ export class Families extends IdEntity {
   @Field({ translation: l => l.familyHelpPhone2 })
   socialWorkerPhone2: Phone;
   @Field()
-  groups: GroupsValue;
+  groups: GroupsValue = new GroupsValue('');
   @Field({ translation: l => l.specialAsignment })
   special: YesNo;
   @Field()
