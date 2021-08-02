@@ -29,6 +29,59 @@
                 {{settings.lang.defaulyHelpPhoneExplanation}} <br />
                 <data-area [settings]="settingsMore"></data-area>
             </mat-card>
+
+
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{settings.lang.basketTypes}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <data-grid [settings]="basketType" height="300"></data-grid>
+
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{settings.lang.distributionLists}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <data-grid [settings]="distributionCenters" height="300"></data-grid>
+
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{settings.lang.familySources}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <data-grid [settings]="sources" height="300"></data-grid>
+
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{settings.lang.familyGroups}}
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            {{settings.lang.distributionListsHelp}}
+            <data-grid [settings]="groups" height="300"></data-grid>
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{settings.lang.volunteerTexts}}
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
             <mat-card>
                 <mat-card-title>
                     {{settings.$.smsText.metadata.caption}}
@@ -85,71 +138,22 @@
                 <data-area [settings]="emailConfiguration"></data-area>
                 <button mat-raised-button (click)="sendTestEmail()">שלח מייל נסיון</button>
             </mat-card>
-            <mat-card *ngIf="settings.allowSendSuccessMessageOption&&settings.helpPhone">
+            <mat-card >
                 <mat-card-title>
-                    הודעה למשפחה על מסירה מוצלחת
+                    תבנית הודעת ווטסאפ ממתנדב למשפחה
                 </mat-card-title>
-                <data-control [field]="settings.$.sendSuccessMessageToFamily"></data-control>
-                <ng-container *ngIf="settings.sendSuccessMessageToFamily">
-                    הודעה זו תשלח למשפחה כאשר התנדב לוחץ על כפתור נמסר בהצלחה
+                <data-control [field]="settings.$.sendSuccessMessageToFamily" *ngIf="settings.allowSendSuccessMessageOption&&settings.helpPhone"></data-control>
+                <ng-container >
+                    הודעה זו תופיע כאשר המתנדב לוחץ על צלמית הווטסאפ לצד הטלפון של המשפחה
+                    <ul>
+                        <li>!משפחה! יוחלף בשם המשפחה</li>
+                    </ul>
                     <textarea [(ngModel)]="settings.successMessageText" class="form-control" lines=3></textarea>
 
                     <h4>הודעה לדוגמא</h4>
                     <pre>{{testSuccessSms()}}</pre>
                 </ng-container>
             </mat-card>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.basketTypes}}
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <data-grid [settings]="basketType" height="300"></data-grid>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.distributionLists}}
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <data-grid [settings]="distributionCenters" height="300"></data-grid>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.familySources}}
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <data-grid [settings]="sources" height="300"></data-grid>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.familyGroups}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-
-            {{settings.lang.distributionListsHelp}}
-            <data-grid [settings]="groups" height="300"></data-grid>
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.volunteerTexts}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
             <data-area [settings]="settingsMessages"></data-area>
             <button mat-raised-button (click)="saveAndPreview()" color="primary" style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
             <data-area [settings]="settings2Messages"></data-area>

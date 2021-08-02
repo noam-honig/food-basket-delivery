@@ -116,7 +116,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 2) {
 
-        let f =SqlFor(context.for(Families));
+        let f = SqlFor(context.for(Families));
         dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -130,7 +130,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 4) {
         console.log("updating update date");
-        let f =SqlFor(context.for(Families));
+        let f = SqlFor(context.for(Families));
         dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -448,6 +448,12 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await version(37, async () => {
         settings.askVolunteerForAPhotoToHelp = true;
         await settings.save();
+    });
+    await version(38, async () => {
+        if (settings.successMessageText == "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!") {
+            settings.successMessageText = "שלום !משפחה!, ";
+            await settings.save();
+        }
     });
 
 

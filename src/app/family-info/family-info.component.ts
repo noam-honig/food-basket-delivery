@@ -21,6 +21,7 @@ import { UserFamiliesList } from '../my-families/user-families';
 import { openDialog } from '@remult/angular';
 import { relativeDateName } from '../model-shared/types';
 import { ImageInfo } from '../images/images.component';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
 @Component({
   selector: 'app-family-info',
@@ -132,7 +133,7 @@ export class FamilyInfoComponent implements OnInit {
     window.location.href = "tel:" + col.thePhone;
   }
   async sendWhatsapp(phone: Phone) {
-    phone.sendWhatsapp(this.context, this.settings.lang.hello + ' ' + this.f.name + ',');
+    phone.sendWhatsapp(this.context, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @BackendMethod({ allowed: Allow.authenticated })
