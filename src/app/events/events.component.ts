@@ -51,7 +51,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          let archiveCurrentEvent = new InputField<boolean>({ caption: this.settings.lang.archiveCurrentEvent });
+          let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: this.settings.lang.archiveCurrentEvent });
           archiveCurrentEvent.value = true;
           let date = new InputField<Date>({ caption: this.settings.lang.eventDate, valueConverter: DateOnlyValueConverter });
           date.value = new Date();
@@ -60,6 +60,7 @@ export class EventsComponent implements OnInit {
             settings: {
               fields: () => [archiveCurrentEvent, date]
             },
+            cancel: () => { },
             ok: async () => {
               await this.busy.doWhileShowingBusy(async () => {
                 for (const current of this.events.selectedRows) {
@@ -117,7 +118,7 @@ export class EventsComponent implements OnInit {
     copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/events');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
-  @ViewChild(EventCardComponent) card:EventCardComponent;
+  @ViewChild(EventCardComponent) card: EventCardComponent;
   add() {
     this.events.addNewRow();
     this.card.refresh();
