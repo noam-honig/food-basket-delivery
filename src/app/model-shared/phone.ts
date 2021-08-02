@@ -38,7 +38,7 @@ export class Phone {
   static fixPhoneInput(s: string, context: Context) {
     if (!s)
       return s;
-    let orig = s;
+    let orig = s.trim();
     s = s.replace(/\D/g, '');
     if (orig.startsWith('+'))
       return '+' + s;

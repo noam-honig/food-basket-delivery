@@ -14,9 +14,7 @@
                     <div *ngIf="isAdmin()" style="display: flex;
                 justify-content: space-between;
                 margin-bottom: 10px;">
-                        <button mat-raised-button (click)="showVolunteers(e)">
-                            מתנדבים ({{e.registeredVolunteers}})
-                        </button>
+                        
                         <button mat-icon-button (click)="edit(e)">
                             <mat-icon>edit</mat-icon>
                         </button>
@@ -40,8 +38,9 @@
                                     {{e.endTime}}</span>
 
                             </div>
+                            <span>{{volunteerText(e)}}</span>
+                            <a (click)="showVolunteers(e)">{{adminVolunteers(e)}}</a>
                         </div>
-                        <span>{{volunteerText(e)}}</span>
                     </div>
                 </mat-card>
             </ng-container>

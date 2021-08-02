@@ -38,7 +38,11 @@ export class RegisterToEvent {
     @Field<RegisterToEvent>({
         translation: l => l.phone,
         valueType: Phone,
-        validate: (e, c) => Phone.validatePhone(c, e.context, true)
+        validate: (e, c) => {
+            c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone, e.context))
+            Phone.validatePhone(c, e.context, true);
+
+        }
     })
     phone: Phone;
     @Field<RegisterToEvent>({
@@ -88,7 +92,7 @@ export class RegisterToEvent {
     }
     @BackendMethod({ allowed: true })
     async registerVolunteerToEvent(id: string, site: string, register) {
-        this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone, this.context));
+
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
 

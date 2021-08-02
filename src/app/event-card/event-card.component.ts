@@ -83,7 +83,7 @@ export class EventCardComponent implements OnInit {
 
   }
   eventDetails(e: EventInList) {
-    this.dialog.trackVolunteer("event-info:"+e.site);
+    this.dialog.trackVolunteer("event-info:" + e.site);
     openDialog(EventInfoComponent, x => x.e = e);
   }
   displayDate(e: EventInList) {
@@ -119,13 +119,19 @@ export class EventCardComponent implements OnInit {
   }
   volunteerText(e: EventInList) {
     if (e.requiredVolunteers > 0) {
-      if (e.requiredVolunteers == e.registeredVolunteers) {
+      if (e.requiredVolunteers <= e.registeredVolunteers) {
         return "הארוע מלא";
       }
       // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
     }
+
+  }
+  adminVolunteers(e: EventInList) {
     if (this.context.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
-      return e.registeredVolunteers + " מתנדבים";
+      if (e.requiredVolunteers)
+        return e.registeredVolunteers + '/' + e.requiredVolunteers + ' מתנדבים';
+      else
+        return e.registeredVolunteers + " מתנדבים";
   }
   distance(e: EventInList) {
     if (!this.volunteerLocation)
