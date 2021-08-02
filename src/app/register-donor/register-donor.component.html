@@ -17,7 +17,7 @@
                 <data-control style="color:#f66d37" [field]="donor.$.selfDeliver"></data-control>
                 <a mat-raised-button color="accent" href="https://www.mitchashvim.org.il/labs" target="_blank">רשימת מעבדות</a>
             </div>
-            <data-control [column]="donor.$.name"></data-control>
+            <data-control [field]="donor.$.name"></data-control>
             <h5 style="color:green">במידה וציוד המחשבים ברשותך מלפני שנת 2012, לא נוכל לאסוף אותו. תודה על הכוונה!</h5>
             <data-area [settings]="area"></data-area>
             <app-address-input [field]="donor.$.address" [autoInit]="true"></app-address-input>
