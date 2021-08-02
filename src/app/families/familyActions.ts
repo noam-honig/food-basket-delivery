@@ -3,7 +3,7 @@ import { Families } from "./families";
 
 import { BasketType } from "./BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
-import {  HelpersBase } from "../helpers/helpers";
+import { HelpersBase } from "../helpers/helpers";
 
 import { FamilyStatus } from "./FamilyStatus";
 
@@ -76,7 +76,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     constructor(context: Context) {
         super(context, Families, {
             validate: async () => {
-                
+
                 if (!this.distributionCenter) {
                     this.$.distributionCenter.error = getLang(this.context).mustSelectDistributionList;
                     throw this.$.distributionCenter.error;
@@ -169,10 +169,9 @@ export class updateGroup extends ActionOnRows<Families> {
 
     @Field({
         translation: l => l.familyGroup
-
     })
     @DataControl({
-        valueList: context => getValueList<Groups>(context.for(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })
+        valueList: async context => (await getValueList<Groups>(context.for(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
     })
     group: string;
     @Field()
