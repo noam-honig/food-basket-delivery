@@ -1127,13 +1127,14 @@ export class Language {
   nextWeek = "שבוע הבא";
   later = "מאוחר יותר";
   past = "עבר";
-  canceled="ביטל השתתפות";
-  cancelUser="משתמש ביטול השתתפות";
-  cancelDate="מועד ביטול השתתפות";
-  lastUpdate="מועד עדכון";
-  fromGeneralList="נרשם דרך הרשימה הכלללית";
+  canceled = "ביטל השתתפות";
+  cancelUser = "משתמש ביטול השתתפות";
+  cancelDate = "מועד ביטול השתתפות";
+  lastUpdate = "מועד עדכון";
+  fromGeneralList = "נרשם דרך הרשימה הכלללית";
   donotShowEventsInGeneralList = "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים";
   wantToVolnteerMore = "רוצה להתנדב עוד?";
+  registerStatusDate = "תאריך סטטוס רישום";
 }
 
 const defaultLang = new Language();

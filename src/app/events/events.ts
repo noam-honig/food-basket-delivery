@@ -140,9 +140,13 @@ export class Event extends IdEntity {
                 text: getLang(this.context).addVolunteer,
                 click: () => openDialog(SelectHelperComponent, y => y.args = {
                     onSelect: async h => {
-                        let eh = this.context.for(volunteersInEvent).create();
-                        eh.helper = await h;
-                        eh.eventId = this.id;
+
+                        let eh = await this.context.for(volunteersInEvent).findFirst({
+                            where: v => v.helper.isEqualTo(h).and(v.eventId.isEqualTo(this.id)),
+                            useCache: false,
+                            createIfNotFound: true
+                        });
+                        eh.canceled = false;
                         await eh.save();
                         x.args.settings.reloadData()
                     }
@@ -152,8 +156,8 @@ export class Event extends IdEntity {
             settings: new GridSettings(this.context.for(volunteersInEvent), {
 
                 rowsInPage: 50,
-                where: ve => ve.eventId.isEqualTo(this.id)
-                ,
+                where: ve => ve.eventId.isEqualTo(this.id),
+                orderBy: ve => ve.registerStatusDate.descending(),
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
                 columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
@@ -179,13 +183,13 @@ export class Event extends IdEntity {
                     { width: '150', field: ev.helperPhone },
                     ev.helperEmail,
                     { width: '100', field: ev.duplicateToNextEvent },
+                    ev.registerStatusDate,
+                    ev.fromGeneralList,
                     ev.createDate,
                     ev.createUser,
                     ev.canceled,
-                    ev.cancelUser,
-                    ev.cancelDate,
-                    ev.lastUpdate,
-                    ev.fromGeneralList
+                    ev.cancelUser
+
                 ],
                 rowCssClass: v => {
                     if (v.canceled)
@@ -436,9 +440,10 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
         }
         if (self.canceled && self.$.canceled.wasChanged()) {
             self.cancelUser = self.context.currentUser;
-            self.cancelDate = new Date();
+
         }
-        self.lastUpdate = new Date();
+        if (self.isNew() || self.$.canceled.wasChanged())
+            self.registerStatusDate = new Date();
     }
 })
 export class volunteersInEvent extends IdEntity {
@@ -540,14 +545,13 @@ export class volunteersInEvent extends IdEntity {
     createUser: Helpers;
 
     @ChangeDateColumn()
-    cancelDate: Date;
+    registerStatusDate: Date;
     @Field({ translation: l => l.createUser, allowApiUpdate: false })
     cancelUser: Helpers;
 
-    @ChangeDateColumn()
-    lastUpdate: Date;
 
-    @Field({ allowApiUpdate: false })
+
+    @Field({ allowApiUpdate: Roles.distCenterAdmin })
     canceled: boolean;
     @Field({ allowApiUpdate: false })
     fromGeneralList: boolean;
