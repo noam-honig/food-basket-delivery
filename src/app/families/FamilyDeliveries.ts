@@ -188,7 +188,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false,
         translation: l => l.familyName,
         sqlExpression: (entity, context) => {
-            let r = context.isAllowed(Roles.admin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+            let r = context.isAllowed(Roles.distCenterAdmin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
             return r;
         }
     })

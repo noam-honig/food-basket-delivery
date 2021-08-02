@@ -24,11 +24,13 @@ import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { ClassType } from 'remult/classType';
+import { iterateConfig } from 'remult/src/context';
 
 declare const lang = '';
 export const initSettings = {
     disableSchemaInit: false
 }
+iterateConfig.pageSize=100;
 
 export async function serverInit() {
     try {

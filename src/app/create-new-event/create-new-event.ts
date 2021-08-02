@@ -101,7 +101,7 @@ export class CreateNewEvent {
     }
 
     async iterateFamilies(what: (f: Families) => Promise<any>, progress: ProgressListener) {
-        let pt = new PromiseThrottle(10);
+        //let pt = new PromiseThrottle(10);
         let i = 0;
 
 
@@ -128,10 +128,10 @@ export class CreateNewEvent {
             }
             if (match) {
                 i++;
-                await pt.push(what(f));
+                await what(f);
             }
         }
-        await pt.done();
+    //    await pt.done();
         return i;
 
 

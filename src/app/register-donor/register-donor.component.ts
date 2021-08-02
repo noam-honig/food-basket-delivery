@@ -23,37 +23,14 @@ import { ValueListFieldType } from 'remult/src/remult3';
 declare var gtag;
 declare var fbq;
 
-/*
-edit the Wix forms: 
-
-// API Reference: https://www.wix.com/velo/reference/api-overview/introduction
-// “Hello, World!” Example: https://learn-code.wix.com/en/article/1-hello-world
-import wixWindow from 'wix-window';
-
-
-// ...
-
-$w.onReady(function () {
-  // Write your JavaScript here
-  let referrer = wixWindow.referrer;  // "http://somesite.com"
-  //$w('#button4').label = referrer;
-
-  $w('#button4').onClick ( () => {
-    wixWindow.openModal("https://mlt-test.herokuapp.com/mlt/register-donor?refer=" + referrer, {
-              "width": 650, "height": 800} );
-  } );
-  // To select an element by ID use: $w("#elementID")
-
-  // Click "Preview" to run your code
-});
-*/
-
 @Component({
   selector: 'app-register-donor',
   templateUrl: './register-donor.component.html',
   styleUrls: ['./register-donor.component.scss']
 })
 export class RegisterDonorComponent implements OnInit {
+  static MinQuantity = 10;
+
   constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
 
   showCCMessage(): boolean {
@@ -97,6 +74,14 @@ export class RegisterDonorComponent implements OnInit {
   hasQuantity() {
     return +this.donor.laptop > 0 || +this.donor.computer > 0 || +this.donor.screen > 0;
   }
+  
+  hasEnough() {
+    let total = (this.donor.laptop != undefined ? (this.donor.laptop) : 0) +
+                (this.donor.computer != undefined ? (this.donor.computer) : 0) +
+                (this.donor.screen != undefined ? (this.donor.screen) : 0);
+    return this.donor.selfDeliver || total >= RegisterDonorComponent.MinQuantity;
+  }
+  
   async submit() {
 
     if (!this.hasQuantity()) {
@@ -105,6 +90,10 @@ export class RegisterDonorComponent implements OnInit {
     }
     if (!this.hasMandatoryFields()) {
       this.dialog.Error("יש למלא שדות חובה");
+      return;
+    }
+    if (!this.hasEnough()) {
+      this.dialog.Error("לצערינו לא נוכל לאסוף תרומות עם פחות מ-" + RegisterDonorComponent.MinQuantity + " פריטים. נשמח אם תביאו את הציוד אל אחת מנקודות האיסוף שלנו");
       return;
     }
     try {
@@ -199,7 +188,8 @@ class donorForm {
   screen: number;
   @Field({ caption: "סוג תרומה" })
   @DataControl({
-    valueList: [{ id: 'ac52f4b0-6896-4ae3-8cc0-18ed17136e38', caption: 'תרומה פרטית' },
+    valueList: [
+      //{ id: 'ac52f4b0-6896-4ae3-8cc0-18ed17136e38', caption: 'תרומה פרטית' },
     { id: '0b9e0645-206a-457c-8785-97163073366d', caption: 'תרומת בית עסק' }]
 
   })
