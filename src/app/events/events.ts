@@ -23,6 +23,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { InputTypes } from "remult/inputTypes";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import * as moment from "moment";
+import { DateOnlyValueConverter } from "remult/valueConverters";
 
 
 
@@ -79,7 +80,7 @@ export class Event extends IdEntity {
             name,
             type,
             description,
-            eventDate,
+            eventDateJson,
             startTime,
             endTime,
             city,
@@ -99,7 +100,7 @@ export class Event extends IdEntity {
             name,
             type,
             description,
-            eventDate,
+            eventDateJson,
             startTime,
             endTime,
             city,
@@ -311,7 +312,9 @@ export class Event extends IdEntity {
     get orgName() {
         return getSettings(this.context).organisationName;
     }
-
+    get eventDateJson() {
+        return DateOnlyValueConverter.toJson(this.eventDate);
+    }
 
     constructor(private context: Context) {
         super();
@@ -574,7 +577,7 @@ export interface EventInList {
     name: string,
     type: EventType,
     description: string,
-    eventDate: Date,
+    eventDateJson: string,
     startTime: string,
     endTime: string,
     city: string,
@@ -609,16 +612,17 @@ const month = [
 
 ]
 export const day = 86400000;
-export function eventDisplayDate(e: EventInList, group = false) {
-    if (e.eventDate) {
-        if (typeof e.eventDate === "string")
-            e.eventDate = new Date(e.eventDate);
+export function eventDisplayDate(e: EventInList, group = false, today: Date = undefined) {
 
-        let today = new Date();
-        today.setHours(0);
+    if (e.eventDateJson) {
+        let edd = DateOnlyValueConverter.fromJson(e.eventDateJson);
+        if (!today)
+            today = new Date()
+        today = DateOnlyValueConverter.fromJson(DateOnlyValueConverter.toJson(today));
+        let todayJson = DateOnlyValueConverter.toJson(today);
         let t = today.valueOf();
-        let d = e.eventDate.valueOf();
-        if (d > t-day) {
+        let d = edd.valueOf();
+        if (d > t - day) {
             if (d < t + day)
                 return use.language.today;
             if (d < t + day * 2)
@@ -633,11 +637,11 @@ export function eventDisplayDate(e: EventInList, group = false) {
                     return "אוגוסט";
                 if (d < new Date(2021, 8, 8).valueOf())
                     return "ראש השנה";
-                if (e.eventDate.getFullYear()==today.getFullYear())
-                    return month[e.eventDate.getMonth()]
-                
+                if (edd.getFullYear() == today.getFullYear())
+                    return month[edd.getMonth()]
+
                 if (group)
-                return month[e.eventDate.getMonth()]+" "+today.getFullYear().toString();
+                    return month[edd.getMonth()] + " " + today.getFullYear().toString();
             }
 
         }

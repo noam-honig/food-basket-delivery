@@ -19,6 +19,7 @@ import { fitAsync, itAsync } from './shared/test-helper';
 import { Helpers } from './helpers/helpers';
 import { RegisterURL, urlDbOperator } from './resgister-url/regsiter-url';
 import { initConfig } from './helpers/init-context';
+import { eventDisplayDate, EventInList } from './events/events';
 
 describe('AppComponent', () => {
   initConfig.disableForTesting = true;
@@ -53,7 +54,7 @@ describe('AppComponent', () => {
       })).toBe("select e1.id from Families e1 where status <> 98 and e1.id in (select fd.family from FamilyDeliveries fd where archive = false)");
 
   });
-  it("test custom filter",async()=>{
+  it("test custom filter", async () => {
     expect(await sql.build(FamilyDeliveries.onTheWayFilter())).toBe("deliverStatus = 0 and courier <> ''");
   });
   it("test build", async () => {
@@ -78,7 +79,7 @@ describe('AppComponent', () => {
       outerJoin: () => [{ to: u, on: () => [sql.build(h, ' like textcat(textcat(\'%\',', u.URL, '),\'%\')')] }],
       where: () => [sql.build(u.URL, ' is null')]
     })
-    expect (q).toBe("select distinct split_part(referredBy, '/', 3) as url from Helpers e1 left outer join RegisterURL e2 on Helpers like textcat(textcat('%',e2.URL),'%') where e2.URL is null");
+    expect(q).toBe("select distinct split_part(referredBy, '/', 3) as url from Helpers e1 left outer join RegisterURL e2 on Helpers like textcat(textcat('%',e2.URL),'%') where e2.URL is null");
 
 
   })
@@ -185,7 +186,7 @@ describe('AppComponent', () => {
     q({
       select: () => [bt.id],
       from: bt,
-      innerJoin:async () => [{ to: f, on:async () => [sql.build(await f.basketType.getDbName(),' = ', bt.id)] }]
+      innerJoin: async () => [{ to: f, on: async () => [sql.build(await f.basketType.getDbName(), ' = ', bt.id)] }]
     }, 'select p.id from BasketType p left join Families e1 on basketType = p.id');
 
   });
@@ -454,6 +455,19 @@ describe('AppComponent', () => {
   it("valid phoneb", () => {
     let test = (phone: string, expected: boolean) => expect(isPhoneValidForIsrael(phone)).toBe(expected, phone);
     test('039197373', true);
+  });
+  it("test event date", () => {
+      let today = new Date("2021-08-03T08:38:19.237Z");
+      let x={} as EventInList;
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-02"},true,today)).toBe("עבר")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-03"},true,today)).toBe("היום")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-04"},true,today)).toBe("מחר")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-05"},true,today)).toBe("השבוע")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-10"},true,today)).toBe("שבוע הבא")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-15"},true,today)).toBe("אוגוסט")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-25"},true,today)).toBe("ראש השנה")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-09-03"},true,today)).toBe("ראש השנה")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-09-13"},true,today)).toBe("ספטמבר")
   });
 
 

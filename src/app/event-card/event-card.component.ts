@@ -144,7 +144,7 @@ export class EventCardComponent implements OnInit {
 
 }
 function compareEventDate(a: EventInList, b: EventInList) {
-  let r = a.eventDate?.valueOf() - b.eventDate?.valueOf();
+  let r = a.eventDateJson?.localeCompare(b.eventDateJson);
   if (r != 0) return r;
   return a.startTime?.localeCompare(b.startTime);
 }
