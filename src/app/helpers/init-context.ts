@@ -35,6 +35,7 @@ export async function InitContext(context: Context, user?: UserInfo) {
             if (y.length > 0)
                 defaultBasketType = y[0];
         });
+        return defaultBasketType;
     }
     context.defaultDistributionCenter = async () =>
         (await context.for(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))

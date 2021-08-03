@@ -593,6 +593,21 @@ export interface EventInList {
 
 
 }
+const month = [
+    "ינואר",
+    "פברואר",
+    "מרץ",
+    "אפריל",
+    "מאי",
+    "יוני",
+    "יולי",
+    "אוגוסט",
+    "ספטמבר",
+    "אוקטובר",
+    "נובמבר",
+    "דצמבר"
+
+]
 export const day = 86400000;
 export function eventDisplayDate(e: EventInList, group = false) {
     if (e.eventDate) {
@@ -603,7 +618,7 @@ export function eventDisplayDate(e: EventInList, group = false) {
         today.setHours(0);
         let t = today.valueOf();
         let d = e.eventDate.valueOf();
-        if (d > t) {
+        if (d > t-day) {
             if (d < t + day)
                 return use.language.today;
             if (d < t + day * 2)
@@ -614,8 +629,15 @@ export function eventDisplayDate(e: EventInList, group = false) {
                     return use.language.thisWeek;
                 if (d < endOfWeek + day * 7)
                     return use.language.nextWeek;
+                if (d < new Date(2021, 7, 22).valueOf())
+                    return "אוגוסט";
+                if (d < new Date(2021, 8, 8).valueOf())
+                    return "ראש השנה";
+                if (e.eventDate.getFullYear()==today.getFullYear())
+                    return month[e.eventDate.getMonth()]
+                
                 if (group)
-                    return use.language.later;
+                return month[e.eventDate.getMonth()]+" "+today.getFullYear().toString();
             }
 
         }
