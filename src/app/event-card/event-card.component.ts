@@ -158,11 +158,13 @@ export class EventCardComponent implements OnInit {
   }
   volunteerLocation: Location;
   async sortByDistance() {
-    if (!this.volunteerLocation)
-      this.volunteerLocation = await getCurrentLocation(true, this.dialog);
-    else
-      this.volunteerLocation = undefined;;
-    this.sortEvents();
+    try {
+      if (!this.volunteerLocation)
+        this.volunteerLocation = await getCurrentLocation(true, this.dialog);
+      else
+        this.volunteerLocation = undefined;;
+      this.sortEvents();
+    } catch { }
   }
   sortEvents() {
     if (!this.volunteerLocation)
