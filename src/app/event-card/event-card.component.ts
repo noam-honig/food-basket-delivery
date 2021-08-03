@@ -8,7 +8,7 @@ import { DialogService } from '../select-popup/dialog';
 import { Roles } from '../auth/roles';
 import { use } from '../translate';
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
-
+const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: undefined };
 @Component({
   selector: 'app-event-card',
   templateUrl: './event-card.component.html',
@@ -22,6 +22,7 @@ export class EventCardComponent implements OnInit {
   }
   dates: { date: string, events: EventInList[] }[] = [];
   cities: { id: string, count: number, caption: string }[] = [];
+  types: { id: string, count: number, caption: string }[] = [];
   trackBy(i: number, e: EventInList) {
     return e.id;
   }
@@ -32,7 +33,7 @@ export class EventCardComponent implements OnInit {
   })
   city: string = '';
   @Field({ caption: 'סוג התנדבות' })
-  type: EventType;
+  type: EventType = AllTypes;
   area: DataAreaSettings;
 
   _events: EventInList[];
@@ -41,13 +42,21 @@ export class EventCardComponent implements OnInit {
     this._events = val;
     this.refresh();
   }
+  showLocation = false;
   refresh() {
     this.dates = [];
     this.events.sort((a, b) => compareEventDate(a, b))
 
+    let firstLongLat: string;
+
 
     this.cities.splice(0);
+    this.types.splice(0);
     for (const e of this._events) {
+      if (!firstLongLat)
+        firstLongLat = e.longLat;
+      if (e.longLat != firstLongLat)
+        this.showLocation = true;
       let d = this.dates.find(d => d.date == eventDisplayDate(e, true));
       if (!d)
         this.dates.push(d = { date: eventDisplayDate(e, true), events: [] });
@@ -58,23 +67,43 @@ export class EventCardComponent implements OnInit {
       }
       else
         city.count++;
+      let type = this.types.find(c => c.id == e.type?.id);
+      if (!type) {
+        this.types.push({ id: e.type?.id, count: 1, caption: e.type?.caption });
+      }
+      else
+        type.count++;
     }
     this.cities.sort((b, a) => a.count - b.count);
     this.cities.forEach(c => c.caption = c.id + " - " + c.count);
     this.cities.splice(0, 0, { id: '', count: this._events.length, caption: 'כל הארץ - ' + this._events.length });
+
+    this.types.sort((b, a) => a.count - b.count);
+    this.types.forEach(c => c.caption = c.caption + " - " + c.count);
+
+
+    this.types.splice(0, 0, AllTypes);
+    console.log(this.types);
+
+
     this.dates = this.dates.filter(d => d.events.length > 0);
     this.sortEvents();
     this.area = new DataAreaSettings({
       fields: () => [[{
         field: this.$.city,
-        valueList: this.cities
-      }, this.$.type]]
+        valueList: this.cities,
+        visible: () => this.cities.length > 2
+      }, {
+        field: this.$.type,
+        valueList: this.types,
+        visible: () => this.types.length > 2
+      }]]
     });
   }
 
   filter(e: EventInList) {
     return (this.city == '' || e.city == this.city) &&
-      (this.type == undefined || e.type.id == this.type.id);
+      (this.type == undefined || this.type == AllTypes || e.type.id == this.type.id);
   }
   get events() {
     return this._events;

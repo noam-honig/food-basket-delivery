@@ -1,5 +1,6 @@
 <div>
-    <data-area [settings]="area"></data-area><button mat-raised-button color="primary" (click)="sortByDistance()">
+    <data-area [settings]="area"></data-area>
+    <button mat-raised-button color="primary" (click)="sortByDistance()" *ngIf="showLocation">
         {{!volunteerLocation? 'הצג לפי מרחק ממני':'הצג לפי תאריך'}}
     </button>
     <mat-divider></mat-divider>

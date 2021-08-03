@@ -1,14 +1,22 @@
 <div class="full-page" *ngIf="!isAdmin()">
     <div class="grow-item">
-
-        <div style="text-align:center;">
-            <a href="https://noam-honig.github.io/salmaz/"><img src="{{getLogo()}}" style="max-width:120px" /></a>
-            <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
+        <ng-container *ngIf="events.length>1">
+            <div style="text-align:center;">
+                <a href="https://noam-honig.github.io/salmaz/"><img src="{{getLogo()}}" style="max-width:120px" /></a>
+                <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
+                </div>
+                <mat-divider></mat-divider>
+                <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות הקרובות</div>
             </div>
-            <mat-divider></mat-divider>
-            <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות הקרובות</div>
+
+            <app-event-card [events]="events"></app-event-card>
+        </ng-container>
+        <div style="display: flex;
+        justify-content: center;">
+            <mat-card *ngIf="events.length==1" style="max-width: 300px;">
+                <app-event-info [e]="events[0]"></app-event-info>
+            </mat-card>
         </div>
-        <app-event-card [events]="events"></app-event-card>
 
         <mat-card class="headline" *ngIf="isGuest">
             <div class="headline">
@@ -62,7 +70,7 @@
                 </div>
             </div>
         </mat-card>
-        <mat-card *ngIf="isGuest" style="display:flex;justify-content: center;" >
+        <mat-card *ngIf="isGuest" style="display:flex;justify-content: center;">
             <div class="memorial">
                 <img src="https://noam-honig.github.io/hagai/img/1e104c7e-445a-40bd-ad9c-4458d6da86f9.jfif">
                 <div>

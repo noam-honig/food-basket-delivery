@@ -19,9 +19,17 @@ import { MergeFamiliesComponent } from '../merge-families/merge-families.compone
 export class TestMapComponent implements OnInit {
 
   constructor(private context: Context) { }
+  filterGroup: string='';
+  groups: { familiesCount: number, name: string }[];
+  refreshBaskets() {
+    this.groups = [
+      { name: '', familiesCount: 1 },
+      { name: 'a', familiesCount: 1 },
+      { name: 'b', familiesCount: 1 }
+    ]
+  }
   async ngOnInit() {
-    let f = await this.context.for(Families).find();
-    openDialog(MergeFamiliesComponent, x => x.families = [f[0], f[1], f[2]]);
+    this.refreshBaskets();
   }
 
 

@@ -1,6 +1,7 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { InputField } from '@remult/angular';
 import { EventEmitter } from 'events';
+
 import { Context } from 'remult';
 
 import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
@@ -19,6 +20,7 @@ export class EventInfoComponent implements OnInit {
 
   constructor(public settings: ApplicationSettings, private context: Context,public dialog:DialogService) { }
   @Output() phoneChanged = new EventEmitter();
+  @Input()
   e: EventInList;
   displayDate() {
     return eventDisplayDate(this.e);
