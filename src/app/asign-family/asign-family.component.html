@@ -69,7 +69,7 @@
             <mat-label>{{settings.lang.familyGroups}}</mat-label>
             <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
               <option value="">{{settings.lang.allGroups}}</option>
-              <option *ngFor="let g of groups" value="{{g.name}}">{{g.name}} - {{g.familiesCount}}
+              <option *ngFor="let g of groups;trackBy:trackGroup" value="{{g.name}}">{{g.name}} - {{g.familiesCount}}
               </option>
             </select>
           </mat-form-field>
@@ -79,7 +79,7 @@
             <mat-label>{{settings.lang.distributionCity}}</mat-label>
             <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
               <option value="">{{settings.lang.allCities}}</option>
-              <option *ngFor="let c of cities" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+              <option *ngFor="let c of cities;trackBy:trackCity" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
             </select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
@@ -87,14 +87,14 @@
             <mat-label>{{settings.lang.region}}</mat-label>
             <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterArea">
               <option [value]="settings.lang.allRegions">{{settings.lang.allRegions}}</option>
-              <option *ngFor="let c of areas" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+              <option *ngFor="let c of areas;trackBy:trackCity" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
             </select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
             *ngIf="settings.showBasketOnAssing">
             <mat-label>{{settings.lang.basketType}}</mat-label>
             <select matNativeControl class="form-control" #lang   (change)="refreshBaskets()"[(ngModel)]="basketType">
-              <option *ngFor="let b of baskets" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
+              <option *ngFor="let b of baskets;trackBy:trackBasket" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
                   {{b.unassignedFamilies}}</span></option>
             </select>
           </mat-form-field>

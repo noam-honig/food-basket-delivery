@@ -126,7 +126,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
     async initHelper(helper: HelpersBase) {
-        let other =  helper.theHelperIAmEscorting;
+        let other = helper.theHelperIAmEscorting;
         if (other) {
 
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
@@ -284,7 +284,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
 
     baskets: BasketInfo[] = [];
+    trackBasket(undefined, c: CityInfo) {
+        return c.name;
+    }
     cities: CityInfo[] = [];
+    trackCity(x, c: CityInfo) {
+        return c.name;
+    }
     areas: CityInfo[] = [];
     specialFamilies = 0;
     showRepeatFamilies = false;
@@ -299,6 +305,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     familyLists = new UserFamiliesList(this.context, this.settings);
     filterGroup = '';
     groups: GroupsStats[] = [];
+    trackGroup(a, g: GroupsStats) {
+        return g.name;
+    }
     phone: string;
     helper: Helpers;
 
@@ -1095,7 +1104,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             from: fd,
             select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
             where: () => [context.filterDistCenter(fd.distributionCenter, distCenter),
-                FamilyDeliveries.readyFilter(args.filterCity, args.filterGroup, args.filterArea, basket)],
+            FamilyDeliveries.readyFilter(args.filterCity, args.filterGroup, args.filterArea, basket)],
             groupBy: () => [fd.addressLatitude, fd.addressLongitude],
             having: () => [sql.build("sum(quantity)", '> 4')]
         }));
