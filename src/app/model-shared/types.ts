@@ -47,10 +47,13 @@ export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityT
   })
 }
 export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption) {
-  return DateTimeColumn<entityType>({
-    ...{ allowApiUpdate: false },
-    ...settings
-  })
+  return (a, b) => {
+    DataControl({ readonly: true })(a, b)
+    return DateTimeColumn<entityType>({
+      ...{ allowApiUpdate: false },
+      ...settings
+    })(a, b)
+  }
 }
 
 

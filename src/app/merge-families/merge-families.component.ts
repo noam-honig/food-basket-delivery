@@ -191,7 +191,7 @@ export class MergeFamiliesComponent implements OnInit {
         newFamily.updateDelivery(fd);
         await fd.save();
       }
-      (await context.for(Families).findId(oldId)).delete();
+      await (await context.for(Families).findId(oldId)).delete();
     }
   }
 
