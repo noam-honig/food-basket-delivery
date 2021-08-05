@@ -169,10 +169,9 @@ s.parentNode.insertBefore(b, s);})();
         eb.logApiEndPoints = false;
 
 
-
     if (Sites.multipleSites) {
-        let createSchemaApi = async schema => {
-            let area = eb.addArea('/' + schema + '/api', req => {
+        
+            let area = eb.addArea('/*/api', req => {
                 if (req.user) {
                     let context = new Context();
                     context.setReq(req);
@@ -183,16 +182,14 @@ s.parentNode.insertBefore(b, s);})();
             });
             registerActionsOnServer(area);
             registerEntitiesOnServer(area);
-            registerImageUrls(app, (req) => eb.getValidContext(req), '/' + schema);
-        };
-        for (const schema of Sites.schemas) {
-            createSchemaApi(schema);
-        }
+            registerImageUrls(app, (req) => eb.getValidContext(req), '/*' );
+        
+        
         OverviewComponent.createSchemaApi = async schema => {
             let stack: [] = app._router.stack;
             stack.splice(stack.length - 1, 1);
 
-            createSchemaApi(schema);
+            
             app.use('/*', async (req, res) => {
                 await sendIndex(res, req);
             });
