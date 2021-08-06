@@ -83,7 +83,7 @@ export class EventCardComponent implements OnInit {
 
 
     this.types.splice(0, 0, AllTypes);
-    console.log(this.types);
+    
 
 
     this.dates = this.dates.filter(d => d.events.length > 0);
