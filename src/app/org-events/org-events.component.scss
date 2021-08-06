@@ -1,5 +1,16 @@
-.headline {
+.description-text{
+    color:white
+}
+.sub-header {
+    @media (min-width: 720px) {
+        font-size: large;
+    }
+}
+.headline-card{
     background-color: #dbb372;
+}
+.headline {
+    
     text-align: center;
     display: flex;
     justify-content: center;
@@ -29,11 +40,14 @@
 }
 .hagai-footer {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     text-align: right;
     margin-right: 10px;
+    @media (max-width: 720px) {
+        flex-direction: column;
+    }
     a {
- //       background-color:red
+        //       background-color:red
     }
 }
 
@@ -44,7 +58,7 @@
 }
 .memorial {
     display: flex;
-    max-width:850px;
+    max-width: 850px;
     flex-direction: row-reverse;
     margin-top: 10px;
     img {
@@ -53,7 +67,7 @@
     @media (max-width: 720px) {
         flex-direction: column;
         align-items: center;
-        img{
+        img {
             margin-bottom: 10px;
         }
     }

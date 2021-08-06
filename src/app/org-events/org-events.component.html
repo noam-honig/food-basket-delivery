@@ -5,8 +5,14 @@
                 <a href="https://noam-honig.github.io/salmaz/"><img src="{{getLogo()}}" style="max-width:120px" /></a>
                 <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
                 </div>
-                <mat-divider></mat-divider>
-                <div class="mat-headline" style="align-self: center;">בואו להתנדב בחלוקות הקרובות</div>
+                <div class="sub-header" style="align-self: center;">
+                    <p>בואו להתנדב ולסייע למשפחות נזקקות לקראת החגים.</p>
+                    <p>
+                        כאן תוכלו למצוא את המיקום הקרוב אליכם, במועד שנוח לכם לעשות מצווה גדולה במאמץ קטן!</p>
+                    <p>
+                        תודה מראש לכל המלאכים המתנדבים 😊
+                    </p>
+                </div>
             </div>
 
             <app-event-card [events]="events"></app-event-card>
@@ -18,7 +24,7 @@
             </mat-card>
         </div>
 
-        <mat-card class="headline" *ngIf="isGuest">
+        <mat-card class="headline-card" *ngIf="isGuest">
             <div class="headline">
                 <div class="hagai-container">
                     <img src="/assets/facebook-img.png">
@@ -28,46 +34,60 @@
                         </div>
                         <div class="mat-headline head-line-text-2">לארגונים המחלקים סלי מזון למשפחות על ידי מתנדבים
                         </div>
-                        <div class="hagai-footer">להצטרפות צרו קשר
-
-                            <a href="https://wa.me/972507330590" target="_blank">
-                                <button mat-icon-button>
-                                    <img src="assets/whatsapp.png" style="max-width:27px">
-
-                                </button>
-                                שלחו ווטסאפ
-                            </a>
-
-                            <a href="https://www.facebook.com/foodbasketdelivery/" target="_blank">
-                                <button mat-icon-button>
-                                    <mat-icon>
-                                        facebook
-                                    </mat-icon>
-                                </button>
-                                בקרו בדף הפייסבוק של אפליקצית חגי
-                            </a>
-
-                            <a href="mailto:noam.honig@gmail.com" target="_blank">
-                                <button mat-icon-button>
-                                    <mat-icon>
-                                        email
-                                    </mat-icon>
-                                </button>
-                                שלחו מייל noam.honig@gmail.com
-                            </a>
-                            <a href="https://noam-honig.github.io/salmaz/" target="_blank">
-                                <button mat-icon-button>
-                                    <mat-icon>
-                                        language
-                                    </mat-icon>
-                                </button>
-                                לחצו לפרטים נוספים
-                            </a>
-
-
+                        <div class="description-text">
+                            <p>
+                                אפליקציית חגי, זוכת פרס הנשיא
+                                להתנדבות, היא אפליקציה ללא מטרות רווח לזכרו של חגי איינמר ז״ל המסייעת למאות עמותות
+                                לחלק ביעילות מירבית סלי מזון לנזקקים בכל הארץ.
+                            </p>
+                            <p>
+                                באמצעות האפליקציה חולקו עדי היום מליוני סלי מזון למאות אלפי מקבלי סיוע.
+                                גלו מעורבות חברתית ועזרו לנו, במאמץ קטן, להגיע לכל נזקק בישראל!
+                            </p>
                         </div>
+
                     </div>
                 </div>
+
+            </div>
+            <div>להצטרפות צרו קשר</div>
+            <div class="hagai-footer">
+
+                <a href="https://wa.me/972507330590" target="_blank">
+                    <button mat-icon-button>
+                        <img src="assets/whatsapp.png" style="max-width:27px">
+
+                    </button>
+                    שלחו ווטסאפ
+                </a>
+
+                <a href="https://www.facebook.com/foodbasketdelivery/" target="_blank">
+                    <button mat-icon-button>
+                        <mat-icon>
+                            facebook
+                        </mat-icon>
+                    </button>
+                    בקרו בדף הפייסבוק של אפליקצית חגי
+                </a>
+
+                <a href="mailto:noam.honig@gmail.com" target="_blank">
+                    <button mat-icon-button>
+                        <mat-icon>
+                            email
+                        </mat-icon>
+                    </button>
+                    שלחו מייל noam.honig@gmail.com
+                </a>
+                <a href="https://noam-honig.github.io/salmaz/" target="_blank">
+                    <button mat-icon-button>
+                        <mat-icon>
+                            language
+                        </mat-icon>
+                    </button>
+                    לחצו לפרטים נוספים
+                </a>
+
+
             </div>
         </mat-card>
         <mat-card *ngIf="isGuest" style="display:flex;justify-content: center;">
