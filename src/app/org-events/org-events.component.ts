@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Event } from '../events/events';
 
-import { BackendMethod, Context, Unobserve } from 'remult';
+import { BackendMethod, Context, SqlDatabase, Unobserve } from 'remult';
 import { EventInList, eventStatus } from '../events/events';
 import { RegisterToEvent } from '../event-info/RegisterToEvent';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -11,6 +11,8 @@ import { createSiteContext, InitContext } from '../helpers/init-context';
 import { Roles } from '../auth/roles';
 import { ApplicationSettings, getSettings, setSettingsForSite, settingsForSite } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
+import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder';
+import { Events } from 'pg';
 
 @Component({
   selector: 'app-org-events',
@@ -50,11 +52,23 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     })
   }
   @BackendMethod({ allowed: true })
-  static async getAllEvents(phone: string, context?: Context): Promise<EventInList[]> {
+  static async getAllEvents(phone: string, context?: Context, db?: SqlDatabase): Promise<EventInList[]> {
     let r: EventInList[] = [];
-    for (const org of Sites.schemas) {
+    let sql = new SqlBuilder(context);
+    let e = SqlFor(context.for(Event));
 
-      let c = await createSiteContext(org,context);
+    let query = '';
+    for (const org of Sites.schemas) {
+      if (query != '')
+        query += ' union all ';
+      query += await sql.build('select ', ["'" + org + "' site"],' from ',org+'.'+await e.metadata.getDbName(),
+      " where ", [ e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))]);
+    }
+    let sites = (await db.execute(' select distinct site from ('+ query+') x')).rows.map(x => x.site);
+  
+    for (const org of sites) {
+
+      let c = await createSiteContext(org, context);
 
       let settings = settingsForSite.get(org);
       if (!settings) {

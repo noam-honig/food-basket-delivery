@@ -54,7 +54,6 @@ export class eventStatus {
 
     }
 }
-
 @Entity<Event>({
     key: 'events',
     allowApiCrud: Roles.admin,
