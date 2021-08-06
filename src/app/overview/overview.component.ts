@@ -15,6 +15,7 @@ import { SitesEntity } from '../sites/sites.entity';
 import { InputField, openDialog } from '@remult/angular';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InitContext } from '../helpers/init-context';
+import { Phone } from '../model-shared/phone';
 
 @Component({
   selector: 'app-overview',
@@ -31,7 +32,7 @@ export class OverviewComponent implements OnInit {
     for (const s of this.overview.sites) {
       s.lastSignIn = new Date(s.lastSignIn);
     }
-    this.overview.sites.sort((a, b) => b.lastSignIn?.valueOf()-a.lastSignIn?.valueOf());
+    this.overview.sites.sort((a, b) => b.lastSignIn?.valueOf() - a.lastSignIn?.valueOf());
 
   }
   searchString = '';
@@ -192,10 +193,13 @@ export class OverviewComponent implements OnInit {
   async createNewSchema() {
     let id = new InputField<string>({ caption: 'id' });
     let name = new InputField<string>({ caption: 'שם הארגון' });
+    let address = new InputField<string>({ caption: 'כתובת מרכז חלוקה' });
+    let manager = new InputField<string>({ caption: 'שם מנהל' });
+    let phone = new InputField<string>({ caption: 'טלפון', inputType: 'tel' });
     openDialog(InputAreaComponent, x => x.args = {
       title: 'הוספת סביבה חדשה',
       settings: {
-        fields: () => [id, name]
+        fields: () => [id, name, address, manager, phone]
       },
       validate: async () => {
         let x = validSchemaName(id.value);
@@ -214,7 +218,7 @@ export class OverviewComponent implements OnInit {
       cancel: () => { },
       ok: async () => {
         try {
-          let r = await OverviewComponent.createSchema(id.value, name.value);
+          let r = await OverviewComponent.createSchema(id.value, name.value, address.value, manager.value, phone.value);
           if (!r.ok)
             throw r.errorText;
           window.open(location.href = '/' + id.value, '_blank');
@@ -223,12 +227,11 @@ export class OverviewComponent implements OnInit {
         catch (err) {
           this.dialog.Error(err);
         }
-
       }
     });
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async createSchema(id: string, name: string, context?: Context): Promise<{
+  static async createSchema(id: string, name: string, address: string, manager: string, phone: string, context?: Context): Promise<{
     ok: boolean,
     errorText: string
   }> {
@@ -249,24 +252,30 @@ export class OverviewComponent implements OnInit {
       otherContext.setUser(context.user);
       Sites.setSiteToContext(otherContext, id, context);
       await InitContext(otherContext);
-      let h = await otherContext.for(Helpers).create();
-      console.log({
-        count: await otherContext.for(Helpers).count()
-      })
-      h.name = oh.name;
-      h.realStoredPassword = oh.realStoredPassword;
-      h.phone = oh.phone;
-      h.admin = oh.admin;
-      await h.save();
+      {
+        let h = await otherContext.for(Helpers).create();
+        h.name = oh.name;
+        h.realStoredPassword = oh.realStoredPassword;
+        h.phone = oh.phone;
+        h.admin = oh.admin;
+        await h.save();
+      }
+      if (manager && phone) {
+        let h2 = await otherContext.for(Helpers).create();
+        h2.name = manager;
+        h2.phone = new Phone(phone);
+        h2.admin = true;
+        await h2.save();
+      }
       let settings = await ApplicationSettings.getAsync(otherContext);
 
       settings.organisationName = name;
+      settings.address = address;
       await settings.save();
 
       let s = context.for(SitesEntity).create();
       s.id = id;
       await s.save();
-
 
 
 

@@ -168,7 +168,6 @@ s.parentNode.insertBefore(b, s);})();
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
 
-
     if (Sites.multipleSites) {
         
             let area = eb.addArea('/*/api', req => {
