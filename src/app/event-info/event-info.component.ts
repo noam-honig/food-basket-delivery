@@ -8,6 +8,7 @@ import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../even
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
 import { DialogService } from '../select-popup/dialog';
+import { getLang } from '../sites/sites';
 import { RegisterToEvent } from './RegisterToEvent';
 
 
@@ -27,6 +28,9 @@ export class EventInfoComponent implements OnInit {
   }
   openWaze() {
     window.open('waze://?ll=' + this.e.longLat + "&q=" + encodeURI(this.e.theAddress) + '&navigate=yes');
+  }
+  openGoogleMap(){
+    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.context).languageCode, '_blank');
   }
   reg = new RegisterToEvent(this.context);
 

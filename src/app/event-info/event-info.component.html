@@ -14,16 +14,20 @@
     </div>
     <div *ngIf="e.theAddress" class="space-above">
         <strong>{{settings.lang.address}}</strong>
-        <div class="phone-container">
+        <div class="phone-container" style="justify-content: space-between;">
+
             <span (click)="openWaze()">
                 <img src="assets/waze.png">
 
             </span>
-            <div>
+            <div style="flex-grow:1">
                 <a (click)="openWaze()">
                     <span style="display:block"> {{e.theAddress}} </span>
                 </a>
             </div>
+            <span (click)="openGoogleMap()">
+                <img src="assets/google_maps_icon.png">
+            </span>
         </div>
     </div>
     <div *ngIf="e.thePhone" class="space-above">
@@ -46,7 +50,7 @@
         </div>
     </div>
 
-    <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}: 
+    <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}:
         {{e.requiredVolunteers}} / {{e.registeredVolunteers}} </div>
 
 
@@ -63,7 +67,8 @@ justify-content: space-between;">
             *ngIf="!e.registeredToEvent && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
         </span>
         <span *ngIf="e.registeredToEvent">
-            {{settings.lang.registeredToEvent}} <a (click)="reg.removeFromEvent(e,dialog)">{{settings.lang.iCantMakeIt}}</a>
+            {{settings.lang.registeredToEvent}} <a
+                (click)="reg.removeFromEvent(e,dialog)">{{settings.lang.iCantMakeIt}}</a>
         </span>
     </div>
     <div style="margin-left:5px;margin-right: 5px;">
