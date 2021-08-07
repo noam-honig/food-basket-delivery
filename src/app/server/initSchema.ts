@@ -13,7 +13,7 @@ import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
-import { TranslationOptions } from '../translate';
+import { Language, TranslationOptions } from '../translate';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { InitContext } from '../helpers/init-context';
 
@@ -452,6 +452,13 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await version(38, async () => {
         if (settings.successMessageText == "שלום !משפחה!, אחד המתנדבים שלנו מסר לכם סל. בברכה !ארגון!") {
             settings.successMessageText = "שלום !משפחה!, ";
+            await settings.save();
+        }
+    });
+    await version(39, async () => {
+        let l = new Language();
+        if (settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto != l.defaultQuestionForVolunteerWhenUploadingPhoto) {
+            settings.questionForVolunteerWhenUploadingPhoto = settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
             await settings.save();
         }
     });

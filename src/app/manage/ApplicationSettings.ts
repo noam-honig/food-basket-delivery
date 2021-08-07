@@ -19,7 +19,7 @@ import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, Language, use, TranslationOptions, Field, FieldType ,IntegerField} from "../translate";
+import { translationConfig, Language, use, TranslationOptions, Field, FieldType, IntegerField, langByCode } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Injectable } from '@angular/core';
@@ -85,7 +85,7 @@ export class ApplicationSettings extends EntityBase {
     return r;
   }
 
-  lang = getLang(this.context);
+
   @BackendMethod({ allowed: Allow.authenticated })
   static async getPhoneOptions(deliveryId: string, context?: Context) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
@@ -210,6 +210,7 @@ export class ApplicationSettings extends EntityBase {
   message2OnlyWhenDone: boolean;
   @Field()
   forWho: TranslationOptions;
+  get lang() { return langByCode(this.forWho.args.languageFile); }
   @Field({ dbName: 'forSoldiers' })
   _old_for_soliders: boolean;
   @Field({ translation: l => l.enableSelfPickupModule })
