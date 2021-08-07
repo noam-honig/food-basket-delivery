@@ -95,7 +95,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async refreshRoute() {
-    var useCurrentLocation = new InputField<boolean>({ caption: use.language.useCurrentLocationForStart });
+    var useCurrentLocation = new InputField<boolean>({ caption: use.language.useCurrentLocationForStart, valueType: Boolean });
     var strategy = new InputField<routeStrategy>({ valueType: routeStrategy });
     strategy.value = this.settings.routeStrategy;
 
@@ -108,6 +108,7 @@ export class HelperFamiliesComponent implements OnInit {
           { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
         ]
       },
+      cancel:()=>{},
       ok: async () => {
         await this.updateCurrentLocation(useCurrentLocation.value);
         if (this.familyLists.helper.wasChanged())
@@ -599,9 +600,9 @@ export class HelperFamiliesComponent implements OnInit {
   updateComment(f: ActiveFamilyDeliveries) {
     openDialog(GetVolunteerFeedback, x => x.args = {
       comment: f.courierComments,
-      cancel:()=>undefined,
-      family:f,
-      helpText:()=>'',
+      cancel: () => undefined,
+      family: f,
+      helpText: () => '',
       ok: async comment => {
         if (f.isNew())
           return;

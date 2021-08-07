@@ -262,6 +262,7 @@ export class Families extends IdEntity {
 
     let newDelivery = this.createDelivery(await dialog.getDistCenter(this.addressHelper.location()));
     let arciveCurrentDelivery = new InputField<boolean>({
+      valueType:Boolean,
       caption: getLang(this.context).archiveCurrentDelivery,
       defaultValue: () => true
     });
