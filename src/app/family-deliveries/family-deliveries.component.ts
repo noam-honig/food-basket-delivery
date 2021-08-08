@@ -587,7 +587,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.fixedCourier,
         deliveries.familyMembers,
         { field: deliveries.messageStatus, width: '130' },
-        deliveries.receptionComments
+        deliveries.receptionComments,
+        deliveries.numOfPhotos
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
         if (getCustomColumnVisible(c)) {

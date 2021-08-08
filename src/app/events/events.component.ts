@@ -33,7 +33,7 @@ export class EventsComponent implements OnInit {
   constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events = new GridSettings<Event>(this.context.for(Event), {
+  events:GridSettings<Event> = new GridSettings<Event>(this.context.for(Event), {
     allowUpdate: this.context.isAllowed(Roles.admin),
     allowInsert: this.context.isAllowed(Roles.admin),
 
@@ -76,7 +76,9 @@ export class EventsComponent implements OnInit {
                   e.phone1Description = current.phone1Description;
                   e.distributionCenter = current.distributionCenter;
                   await e.save();
-                  for (const c of await this.context.for(volunteersInEvent).find({ where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id.value)) })) {
+                  for (const c of await this.context.for(volunteersInEvent).find({
+                    where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
+                  })) {
                     let v = this.context.for(volunteersInEvent).create();
                     v.eventId = e.id;
                     v.helper = c.helper;
@@ -85,7 +87,7 @@ export class EventsComponent implements OnInit {
 
                   }
                   if (archiveCurrentEvent.value) {
-                    current.eventStatus.value = eventStatus.archive;
+                    current.eventStatus = eventStatus.archive;
                     await current.save();
                   }
                 }
