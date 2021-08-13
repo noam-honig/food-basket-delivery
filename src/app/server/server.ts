@@ -111,9 +111,11 @@ s.parentNode.insertBefore(b, s);})();
             if (settings.forWho.args.leftToRight) {
                 result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
             }
+            console.log({ langCode: settings.forWho.args.languageCode });
             if (settings.forWho.args.languageCode) {
                 let lang = settings.forWho.args.languageCode;
                 result = result.replace(/&language=iw&/, `&language=${lang}&`)
+                .replace(/&amp;language=iw&amp;/, `&language=${lang}&`)
                     .replace(/טוען/g, 'Loading');
             }
             if (settings.forWho.args.languageFile) {
@@ -169,26 +171,26 @@ s.parentNode.insertBefore(b, s);})();
         eb.logApiEndPoints = false;
 
     if (Sites.multipleSites) {
-        
-            let area = eb.addArea('/*/api', req => {
-                if (req.user) {
-                    let context = new Context();
-                    context.setReq(req);
-                    if (context.isAllowed(Sites.getOrgRole(context)))
-                        return true;
-                }
-                return false;
-            });
-            registerActionsOnServer(area);
-            registerEntitiesOnServer(area);
-            registerImageUrls(app, (req) => eb.getValidContext(req), '/*' );
-        
-        
+
+        let area = eb.addArea('/*/api', req => {
+            if (req.user) {
+                let context = new Context();
+                context.setReq(req);
+                if (context.isAllowed(Sites.getOrgRole(context)))
+                    return true;
+            }
+            return false;
+        });
+        registerActionsOnServer(area);
+        registerEntitiesOnServer(area);
+        registerImageUrls(app, (req) => eb.getValidContext(req), '/*');
+
+
         OverviewComponent.createSchemaApi = async schema => {
             let stack: [] = app._router.stack;
             stack.splice(stack.length - 1, 1);
 
-            
+
             app.use('/*', async (req, res) => {
                 await sendIndex(res, req);
             });
