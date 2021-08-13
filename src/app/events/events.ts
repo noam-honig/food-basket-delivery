@@ -161,6 +161,7 @@ export class Event extends IdEntity {
                 orderBy: ve => ve.registerStatusDate.descending(),
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
+                showFilter: true,
                 columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
                     { width: '100', field: ev.helperName },
                     {
@@ -631,12 +632,12 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
                 let endOfWeek = t - today.getDay() * day + day * 7;
                 if (d < endOfWeek)
                     return use.language.thisWeek;
+                if (d < new Date(2021, 8, 8).valueOf())
+                    return "ראש השנה";
                 if (d < endOfWeek + day * 7)
                     return use.language.nextWeek;
                 if (d < new Date(2021, 7, 22).valueOf())
                     return "אוגוסט";
-                if (d < new Date(2021, 8, 8).valueOf())
-                    return "ראש השנה";
                 if (edd.getFullYear() == today.getFullYear())
                     return month[edd.getMonth()]
 

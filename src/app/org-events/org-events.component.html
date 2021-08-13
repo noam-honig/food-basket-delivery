@@ -1,11 +1,11 @@
 <div class="full-page" *ngIf="!isAdmin()">
     <div class="grow-item">
-        <ng-container *ngIf="events.length>1">
+        <ng-container *ngIf="events.length!=1">
             <div style="text-align:center;">
                 <a href="https://noam-honig.github.io/salmaz/"><img src="{{getLogo()}}" style="max-width:120px" /></a>
                 <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
                 </div>
-                <div class="sub-header" style="align-self: center;">
+                <div class="sub-header" style="align-self: center;" *ngIf="isGuest">
                     <p>בואו להתנדב ולסייע למשפחות נזקקות לקראת החגים.</p>
                     <p>
                         כאן תוכלו למצוא את המיקום הקרוב אליכם, במועד שנוח לכם לעשות מצווה גדולה במאמץ קטן!</p>

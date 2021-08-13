@@ -19,7 +19,8 @@ import { SqlBuilder } from './SqlBuilder';
 @FieldType<Email>({
   valueConverter: {
     toJson: x => x ? x.address : '',
-    fromJson: x => x ? new Email(x) : null
+    fromJson: x => x ? new Email(x) : null,
+    displayValue:x=>x.address
   },
   translation: l => l.email
 })
