@@ -1200,6 +1200,11 @@
     "valueInCode": "נמסרו",
     "valueInEnglish": "Delivered"
   },
+  "delveriesSuccessfulEver": {
+    "google": "mai consegnato",
+    "valueInCode": "נמסרו אי פעם",
+    "valueInEnglish": "Ever delivered"
+  },
   "dialForHelp": {
     "google": "Chiamare per aiuto",
     "valueInCode": "חייג לקבלת עזרה",
@@ -1977,7 +1982,7 @@
   },
   "iCantMakeIt": {
     "google": "Non posso andare all'evento",
-    "valueInCode": "לא אוכל להגיע לארוע",
+    "valueInCode": "לא אוכל להגיע להתנדבות",
     "valueInEnglish": "I can't go to the event"
   },
   "IConfirmEula": {
@@ -2012,7 +2017,7 @@
   },
   "illBeThere": {
     "google": "Registrami per questo evento",
-    "valueInCode": "רשום אותי לארוע זה",
+    "valueInCode": "רשום אותי להתנדבות זו",
     "valueInEnglish": "Sign me up for this event"
   },
   "importFamily": {
@@ -2997,7 +3002,7 @@
   },
   "registeredToEvent": {
     "google": "Sei registrato per questo evento",
-    "valueInCode": "הנך רשום לארוע זה",
+    "valueInCode": "הנך רשום להתנדבות זו",
     "valueInEnglish": "You are registered for this event"
   },
   "registerFamilyReplyEmailText": {
@@ -3009,6 +3014,11 @@
     "google": "Questo messaggio verrà inviato al volontario dopo la registrazione al sistema",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
     "valueInEnglish": "This message will be sent to the volunteer after registering for the system"
+  },
+  "registerStatusDate": {
+    "google": "Data stato registrazione",
+    "valueInCode": "תאריך סטטוס רישום",
+    "valueInEnglish": "Registration status date"
   },
   "RegisterURLComponent": {
     "google": "Gestione dei siti di registrazione",

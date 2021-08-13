@@ -857,4 +857,6 @@ export class donor {
   fromGeneralList = 'נרשם דרך הרשימה הכלללית';
   donotShowEventsInGeneralList = 'אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים';
   wantToVolnteerMore = 'רוצה להתנדב עוד?';
+  registerStatusDate = 'תאריך סטטוס רישום';
+  delveriesSuccessfulEver = 'נמסרו אי פעם';
 }

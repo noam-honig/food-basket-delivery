@@ -857,4 +857,6 @@ export class en {
   fromGeneralList = 'Registered through the general list';
   donotShowEventsInGeneralList = 'Do not present volunteering opportunities in the list of all organizations';
   wantToVolnteerMore = 'Want to volunteer more?';
+  registerStatusDate = 'Registration status date';
+  delveriesSuccessfulEver = 'Ever delivered';
 }

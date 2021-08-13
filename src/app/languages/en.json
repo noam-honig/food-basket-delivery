@@ -1097,6 +1097,10 @@
     "google": "Delivered",
     "valueInCode": "נמסרו"
   },
+  "delveriesSuccessfulEver": {
+    "google": "Ever delivered",
+    "valueInCode": "נמסרו אי פעם"
+  },
   "dialForHelp": {
     "google": "Call for help",
     "valueInCode": "חייג לקבלת עזרה"
@@ -1758,7 +1762,7 @@
   },
   "iCantMakeIt": {
     "google": "I can't go to the event",
-    "valueInCode": "לא אוכל להגיע לארוע"
+    "valueInCode": "לא אוכל להגיע להתנדבות"
   },
   "IConfirmEula": {
     "google": "I agree to the Terms of Use",
@@ -1787,7 +1791,7 @@
   },
   "illBeThere": {
     "google": "Sign me up for this event",
-    "valueInCode": "רשום אותי לארוע זה"
+    "valueInCode": "רשום אותי להתנדבות זו"
   },
   "importFamily": {
     "google": "To absorb the family",
@@ -2616,7 +2620,7 @@
   },
   "registeredToEvent": {
     "google": "You are registered for this event",
-    "valueInCode": "הנך רשום לארוע זה"
+    "valueInCode": "הנך רשום להתנדבות זו"
   },
   "registerFamilyReplyEmailText": {
     "google": "This message will be sent to the donor after registering for the system",
@@ -2625,6 +2629,10 @@
   "registerHelperReplyEmailText": {
     "google": "This message will be sent to the volunteer after registering for the system",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
+  },
+  "registerStatusDate": {
+    "google": "Registration status date",
+    "valueInCode": "תאריך סטטוס רישום"
   },
   "RegisterURLComponent": {
     "google": "Management of registration sites",

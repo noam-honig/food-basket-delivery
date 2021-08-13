@@ -1135,6 +1135,7 @@ export class Language {
   donotShowEventsInGeneralList = "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים";
   wantToVolnteerMore = "רוצה להתנדב עוד?";
   registerStatusDate = "תאריך סטטוס רישום";
+  delveriesSuccessfulEver = "נמסרו אי פעם";
 }
 
 const defaultLang = new Language();

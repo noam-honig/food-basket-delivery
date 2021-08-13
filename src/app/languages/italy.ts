@@ -857,4 +857,6 @@ export class italy {
   fromGeneralList = "Iscritti tramite l'elenco generale";
   donotShowEventsInGeneralList = "Non presentare opportunità di volontariato nell'elenco di tutte le organizzazioni";
   wantToVolnteerMore = 'Vuoi fare più volontariato?';
+  registerStatusDate = 'Data stato registrazione';
+  delveriesSuccessfulEver = 'mai consegnato';
 }

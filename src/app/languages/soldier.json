@@ -959,6 +959,10 @@
     "google": "נמסרו",
     "valueInCode": "נמסרו"
   },
+  "delveriesSuccessfulEver": {
+    "google": "נמסרו אי פעם",
+    "valueInCode": "נמסרו אי פעם"
+  },
   "dialForHelp": {
     "google": "חייג לקבלת עזרה",
     "valueInCode": "חייג לקבלת עזרה"
@@ -1581,7 +1585,7 @@
   },
   "iCantMakeIt": {
     "google": "לא אוכל להגיע לארוע",
-    "valueInCode": "לא אוכל להגיע לארוע"
+    "valueInCode": "לא אוכל להגיע להתנדבות"
   },
   "IConfirmEula": {
     "google": "אני מסכים לתנאי השימוש",
@@ -1609,7 +1613,7 @@
   },
   "illBeThere": {
     "google": "רשום אותי לארוע זה",
-    "valueInCode": "רשום אותי לארוע זה"
+    "valueInCode": "רשום אותי להתנדבות זו"
   },
   "importFamily": {
     "google": "לקלוט את משפחת",
@@ -2397,7 +2401,7 @@
   },
   "registeredToEvent": {
     "google": "הנך רשום לארוע זה",
-    "valueInCode": "הנך רשום לארוע זה"
+    "valueInCode": "הנך רשום להתנדבות זו"
   },
   "registerFamilyReplyEmailText": {
     "google": "הודעה זו תשלח לתורם אחרי שנרשם למערכת",
@@ -2406,6 +2410,10 @@
   "registerHelperReplyEmailText": {
     "google": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
+  },
+  "registerStatusDate": {
+    "google": "תאריך סטטוס רישום",
+    "valueInCode": "תאריך סטטוס רישום"
   },
   "RegisterURLComponent": {
     "google": "ניהול אתרי רישום",

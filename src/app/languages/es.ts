@@ -857,4 +857,6 @@ export class es {
   fromGeneralList = 'Registrado a través de la lista general';
   donotShowEventsInGeneralList = 'No presente oportunidades de voluntariado en la lista de todas las organizaciones.';
   wantToVolnteerMore = '¿Quiere ser voluntario más?';
+  registerStatusDate = 'Fecha de estado de registro';
+  delveriesSuccessfulEver = 'Alguna vez entregado';
 }

@@ -495,7 +495,7 @@ export class volunteersInEvent extends IdEntity {
     })
     assignedDeliveries: number;
     @Field({
-        translation: l => l.delveriesSuccesfull,
+        translation: l => l.delveriesSuccessfulEver,
         sqlExpression: async (selfDefs, context) => {
             let sql = new SqlBuilder(context);
             let self = SqlFor(selfDefs);
@@ -550,7 +550,7 @@ export class volunteersInEvent extends IdEntity {
 
     @ChangeDateColumn()
     registerStatusDate: Date;
-    @Field({ translation: l => l.createUser, allowApiUpdate: false })
+    @Field({ translation: l => l.cancelUser, allowApiUpdate: false })
     cancelUser: Helpers;
 
 

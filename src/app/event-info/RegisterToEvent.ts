@@ -115,6 +115,7 @@ export class RegisterToEvent {
                 helper.name = this.name;
                 await helper.save();
             }
+            this.context.currentUser = helper as Helpers;
         }
         let helperInEvent = await this.context.for(volunteersInEvent).findFirst({
             where: v => v.eventId.isEqualTo(id).and(v.helper.isEqualTo(helper)),
