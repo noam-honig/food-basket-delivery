@@ -80,7 +80,7 @@ export class EventsComponent implements OnInit {
       }
     ],
     numOfColumnsInGrid: 100,
-    columnSettings: e => Event.displayColumns(e),
+    columnSettings: e => Event.displayColumns(e, this.dialog),
     rowButtons: Event.rowButtons(this.settings, this.dialog, this.busy)
   });
   listOptions: RowButton<any>[] = [

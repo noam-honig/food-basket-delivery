@@ -324,7 +324,7 @@ export class Event extends IdEntity {
         openDialog(InputAreaComponent, x => x.args = {
             title: use.language.eventInfo,
             settings: {
-                fields: () => Event.displayColumns(this._.repository.metadata.fields)
+                fields: () => Event.displayColumns(this._.repository.metadata.fields, dialog)
                     .map(x => mapFieldMetadataToFieldRef(this._, x))
             },
             ok: () => this.save(),
@@ -406,8 +406,8 @@ export class Event extends IdEntity {
         });
     }
 
-    static displayColumns(e: FieldsMetadata<Event>) {
-        return [
+    static displayColumns(e: FieldsMetadata<Event>, dialog: DialogService) {
+        let r = [
             e.name,
             e.type,
             e.description,
@@ -422,6 +422,9 @@ export class Event extends IdEntity {
             e.phone1,
             e.phone1Description
         ];
+        // if (!dialog.hasManyCenters)
+        //     r = r.filter(x => x != e.distributionCenter);
+        return r;
     }
     get thePhoneDescription() {
         if (this.phone1?.thePhone)
@@ -681,10 +684,10 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
                 let endOfWeek = t - today.getDay() * day + day * 7;
                 if (d < endOfWeek)
                     return use.language.thisWeek;
-                if (d < new Date(2021, 8, 8).valueOf())
-                    return "ראש השנה";
                 if (d < endOfWeek + day * 7)
                     return use.language.nextWeek;
+                if (d < new Date(2021, 8, 8).valueOf())
+                    return "ראש השנה";
                 if (d < new Date(2021, 7, 22).valueOf())
                     return "אוגוסט";
                 if (edd.getFullYear() == today.getFullYear())
