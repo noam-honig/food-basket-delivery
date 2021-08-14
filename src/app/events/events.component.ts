@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Context, AndFilter, FieldsMetadata } from 'remult';
 import { BusyService, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
@@ -33,7 +33,7 @@ export class EventsComponent implements OnInit {
   constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events:GridSettings<Event> = new GridSettings<Event>(this.context.for(Event), {
+  events: GridSettings<Event> = new GridSettings<Event>(this.context.for(Event), {
     allowUpdate: this.context.isAllowed(Roles.admin),
     allowInsert: this.context.isAllowed(Roles.admin),
 
@@ -51,50 +51,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: this.settings.lang.archiveCurrentEvent });
-          archiveCurrentEvent.value = true;
-          let date = new InputField<Date>({ caption: this.settings.lang.eventDate, valueConverter: DateOnlyValueConverter });
-          date.value = new Date();
-          await openDialog(InputAreaComponent, x => x.args = {
-            title: this.settings.lang.duplicateEvents,
-            settings: {
-              fields: () => [archiveCurrentEvent, date]
-            },
-            cancel: () => { },
-            ok: async () => {
-              await this.busy.doWhileShowingBusy(async () => {
-                for (const current of this.events.selectedRows) {
-                  let e = this.context.for(Event).create();
-                  e.name = current.name;
-                  e.description = current.description;
-                  e.requiredVolunteers = current.requiredVolunteers;
-                  e.startTime = current.startTime;
-                  e.endTime = current.endTime;
-                  e.eventDate = date.value;
-                  e.address = current.address;
-                  e.phone1 = current.phone1;
-                  e.phone1Description = current.phone1Description;
-                  e.distributionCenter = current.distributionCenter;
-                  await e.save();
-                  for (const c of await this.context.for(volunteersInEvent).find({
-                    where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
-                  })) {
-                    let v = this.context.for(volunteersInEvent).create();
-                    v.eventId = e.id;
-                    v.helper = c.helper;
-                    v.duplicateToNextEvent = true;
-                    await v.save();
-
-                  }
-                  if (archiveCurrentEvent.value) {
-                    current.eventStatus = eventStatus.archive;
-                    await current.save();
-                  }
-                }
-                this.events.reloadData();
-              });
-            }
-          });
+          await Event.duplicateEvent(this.context, this.busy, this.events.selectedRows, () => this.events.reloadData());
         }
         , visible: () => this.events.selectedRows.length > 0
 
@@ -112,6 +69,8 @@ export class EventsComponent implements OnInit {
     rowButtons: Event.rowButtons(this.settings, this.dialog, this.busy)
   });
 
+
+  
 
   ngOnInit() {
     new columnOrderAndWidthSaver(this.events).load('events-component');

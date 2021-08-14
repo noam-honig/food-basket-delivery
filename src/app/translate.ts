@@ -1136,6 +1136,7 @@ export class Language {
   wantToVolnteerMore = "רוצה להתנדב עוד?";
   registerStatusDate = "תאריך סטטוס רישום";
   delveriesSuccessfulEver = "נמסרו אי פעם";
+  moveToArchive = "העבר לארכיון";
 }
 
 const defaultLang = new Language();

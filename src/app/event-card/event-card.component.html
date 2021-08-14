@@ -19,6 +19,7 @@
                         <button mat-icon-button (click)="edit(e)">
                             <mat-icon>edit</mat-icon>
                         </button>
+                        <app-dots-menu [item]="e" [buttons]="menuOptions" *ngIf="isAdmin()"></app-dots-menu>
 
                     </div>
                     <div class="event-info">

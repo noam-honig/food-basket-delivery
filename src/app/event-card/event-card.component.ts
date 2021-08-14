@@ -1,4 +1,4 @@
-import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
+import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Context, Field, getFields } from 'remult';
@@ -16,7 +16,29 @@ const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: un
 })
 export class EventCardComponent implements OnInit {
   constructor(public settings: ApplicationSettings, private context: Context, private dialog: DialogService, private busy: BusyService) { }
-  menuOptions = Event.rowButtons(this.settings, this.dialog, this.busy);
+  menuOptions: RowButton<Event>[] = [
+    {
+      name: use.language.duplicateEvents,
+      click: (e) => {
+        Event.duplicateEvent(this.context, this.busy, [e], (newEvents) => {
+          if (e.eventStatus == eventStatus.archive) {
+            this.events = this.events.filter(x => x != e);
+          }
+          this.events.push(...newEvents);
+          this.refresh();
+        });
+      }
+    },
+    {
+      name: use.language.moveToArchive,
+      click: async e => {
+        e.eventStatus = eventStatus.archive;
+        await e.save();
+        this.events = this.events.filter(x => x != e);
+        this.refresh();
+      }
+    }
+  ];
   isAdmin() {
     return this.context.isAllowed(Roles.distCenterAdmin);
   }
@@ -83,7 +105,7 @@ export class EventCardComponent implements OnInit {
 
 
     this.types.splice(0, 0, AllTypes);
-    
+
 
 
     this.dates = this.dates.filter(d => d.events.length > 0);

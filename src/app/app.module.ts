@@ -105,6 +105,7 @@ import { InitContext } from './helpers/init-context';
 import { EventInfoComponent } from './event-info/event-info.component';
 import { EventCardComponent } from './event-card/event-card.component';
 import { OrgEventsComponent } from './org-events/org-events.component';
+import { DotsMenuComponent } from './dots-menu/dots-menu.component';
 
 
 
@@ -205,7 +206,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     DeliveryImagesComponent,
     EventInfoComponent,
     EventCardComponent,
-    OrgEventsComponent
+    OrgEventsComponent,
+    DotsMenuComponent
 
 
   ],

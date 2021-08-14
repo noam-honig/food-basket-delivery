@@ -1,5 +1,5 @@
 import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators } from "remult";
-import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog, RowButton } from '@remult/angular';
+import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
@@ -355,6 +355,55 @@ export class Event extends IdEntity {
                 }
             }
         ];
+    }
+    static async duplicateEvent(context: Context, busy: BusyService, events: Event[], done: (createdEvents: Event[]) => void) {
+        let settings = getSettings(context);
+        let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
+        archiveCurrentEvent.value = true;
+        let date = new InputField<Date>({ caption: settings.lang.eventDate, valueConverter: DateOnlyValueConverter });
+        date.value = new Date();
+        await openDialog(InputAreaComponent, x => x.args = {
+            title: settings.lang.duplicateEvents,
+            settings: {
+                fields: () => [archiveCurrentEvent, date]
+            },
+            cancel: () => { },
+            ok: async () => {
+                await busy.doWhileShowingBusy(async () => {
+                    let r: Event[] = [];
+                    for (const current of events) {
+                        let e = context.for(Event).create();
+                        r.push(e);
+                        e.name = current.name;
+                        e.description = current.description;
+                        e.requiredVolunteers = current.requiredVolunteers;
+                        e.startTime = current.startTime;
+                        e.endTime = current.endTime;
+                        e.eventDate = date.value;
+                        e.address = current.address;
+                        e.phone1 = current.phone1;
+                        e.phone1Description = current.phone1Description;
+                        e.distributionCenter = current.distributionCenter;
+                        await e.save();
+                        for (const c of await context.for(volunteersInEvent).find({
+                            where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
+                        })) {
+                            let v = context.for(volunteersInEvent).create();
+                            v.eventId = e.id;
+                            v.helper = c.helper;
+                            v.duplicateToNextEvent = true;
+                            await v.save();
+
+                        }
+                        if (archiveCurrentEvent.value) {
+                            current.eventStatus = eventStatus.archive;
+                            await current.save();
+                        }
+                    }
+                    done(r);
+                });
+            }
+        });
     }
 
     static displayColumns(e: FieldsMetadata<Event>) {
