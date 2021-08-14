@@ -1,8 +1,14 @@
 <div>
     <data-area [settings]="area"></data-area>
-    <button mat-raised-button color="primary" (click)="sortByDistance()" *ngIf="showLocation">
-        {{!volunteerLocation? 'הצג לפי מרחק ממני':'הצג לפי תאריך'}}
-    </button>
+    <div style="display:flex;    justify-content: space-between;
+    flex-direction: row-reverse;">
+        <app-dots-menu [buttons]="listOptions" *ngIf="isAdmin()"></app-dots-menu>
+        <div>
+            <button mat-raised-button color="primary" (click)="sortByDistance()" *ngIf="showLocation">
+                {{!volunteerLocation? 'הצג לפי מרחק ממני':'הצג לפי תאריך'}}
+            </button>
+        </div>
+    </div>
     <mat-divider></mat-divider>
 </div>
 <div>
@@ -15,10 +21,11 @@
                     <div *ngIf="isAdmin()" style="display: flex;
                 justify-content: space-between;
                 margin-bottom: 10px;">
-                        
+
                         <button mat-icon-button (click)="edit(e)">
                             <mat-icon>edit</mat-icon>
                         </button>
+                        <strong *ngIf="isAdmin()">{{getStatus(e)}}</strong>
                         <app-dots-menu [item]="e" [buttons]="menuOptions" *ngIf="isAdmin()"></app-dots-menu>
 
                     </div>

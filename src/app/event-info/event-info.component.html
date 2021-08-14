@@ -1,5 +1,12 @@
 <mat-dialog-content class="dialog-container">
-    <h3>{{e.name}}</h3>
+    <div style="display: flex;
+    justify-content: space-between;
+    align-items: center;">
+        <h3>{{e.name}}</h3>
+        <button mat-icon-button (click)="edit()">
+            <mat-icon>edit</mat-icon>
+        </button>
+    </div>
     <div style="text-align: center;">
         <img class="event-image" [src]="e.eventLogo">
     </div>

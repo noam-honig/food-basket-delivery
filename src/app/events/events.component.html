@@ -7,7 +7,7 @@
     </div>
     <mat-tab-group class="grow-item">
         <mat-tab [label]="settings.lang.eventsComponent">
-            <app-event-card #card [events]="events.items"></app-event-card>
+            <app-event-card #card [events]="events.items" [listOptions]="listOptions"></app-event-card>
         </mat-tab>
         <mat-tab [label]="settings.lang.list">
             <data-grid [settings]="events" class="grow-item"></data-grid>

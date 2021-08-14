@@ -26,6 +26,7 @@ import { EventCardComponent } from '../event-card/event-card.component';
 })
 export class EventsComponent implements OnInit {
   showArchive = false;
+  showPast = false;
   destroyHelper = new DestroyHelper();
   ngOnDestroy(): void {
     this.destroyHelper.destroy();
@@ -39,7 +40,14 @@ export class EventsComponent implements OnInit {
 
 
     rowsInPage: 25,
-    where: e => new AndFilter(this.dialog.filterDistCenter(e.distributionCenter), this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)),
+    where: [e => [this.dialog.filterDistCenter(e.distributionCenter), this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)],
+    e => {
+      if (!this.showPast) {
+        let d = new Date();
+        d.setDate(d.getDate() - 7);
+        return e.eventDate.isGreaterOrEqualTo(d)
+      }
+    }],
     orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
     newRow: async e =>
       e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),
@@ -57,20 +65,42 @@ export class EventsComponent implements OnInit {
 
       },
       {
+        name: this.settings.lang.showPast,
+        click: () => {
+          this.showPast = !this.showPast;
+          this.events.reloadData();
+        }
+      },
+      {
         name: this.settings.lang.showArchive,
         click: () => {
           this.showArchive = !this.showArchive;
           this.events.reloadData();
         }
-      },
+      }
     ],
     numOfColumnsInGrid: 100,
     columnSettings: e => Event.displayColumns(e),
     rowButtons: Event.rowButtons(this.settings, this.dialog, this.busy)
   });
+  listOptions: RowButton<any>[] = [
+    {
+      name: this.settings.lang.showPast,
+      click: () => {
+        this.showPast = !this.showPast;
+        this.events.reloadData();
+      }
+    },
+    {
+      name: this.settings.lang.showArchive,
+      click: () => {
+        this.showArchive = !this.showArchive;
+        this.events.reloadData();
+      }
+    }
+  ];
 
 
-  
 
   ngOnInit() {
     new columnOrderAndWidthSaver(this.events).load('events-component');

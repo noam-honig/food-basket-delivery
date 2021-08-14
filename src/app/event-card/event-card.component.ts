@@ -16,6 +16,7 @@ const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: un
 })
 export class EventCardComponent implements OnInit {
   constructor(public settings: ApplicationSettings, private context: Context, private dialog: DialogService, private busy: BusyService) { }
+  @Input() listOptions:RowButton<any>[]=[];
   menuOptions: RowButton<Event>[] = [
     {
       name: use.language.duplicateEvents,
@@ -39,6 +40,12 @@ export class EventCardComponent implements OnInit {
       }
     }
   ];
+  getStatus(e: EventInList) {
+    if (e instanceof Event)
+      if (e.eventStatus != eventStatus.active)
+        return e.eventStatus.caption;
+    return '';
+  }
   isAdmin() {
     return this.context.isAllowed(Roles.distCenterAdmin);
   }

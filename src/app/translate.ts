@@ -1137,6 +1137,7 @@ export class Language {
   registerStatusDate = "תאריך סטטוס רישום";
   delveriesSuccessfulEver = "נמסרו אי פעם";
   moveToArchive = "העבר לארכיון";
+  showPast = "הצג עבר";
 }
 
 const defaultLang = new Language();

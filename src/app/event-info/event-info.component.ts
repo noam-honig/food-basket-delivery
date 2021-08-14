@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { InputField } from '@remult/angular';
+import { BusyService, InputField } from '@remult/angular';
 import { EventEmitter } from 'events';
 
 import { Context } from 'remult';
@@ -19,7 +19,7 @@ import { RegisterToEvent } from './RegisterToEvent';
 })
 export class EventInfoComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private context: Context,public dialog:DialogService) { }
+  constructor(public settings: ApplicationSettings, private context: Context, public dialog: DialogService, private busy: BusyService) { }
   @Output() phoneChanged = new EventEmitter();
   @Input()
   e: EventInList;
@@ -29,12 +29,16 @@ export class EventInfoComponent implements OnInit {
   openWaze() {
     window.open('waze://?ll=' + this.e.longLat + "&q=" + encodeURI(this.e.theAddress) + '&navigate=yes');
   }
-  openGoogleMap(){
+  openGoogleMap() {
     window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.context).languageCode, '_blank');
   }
   reg = new RegisterToEvent(this.context);
 
   ngOnInit(): void {
+  }
+  edit() {
+    if (this.e instanceof Event)
+      this.e.openEditDialog(this.dialog, this.busy);
   }
 
 
