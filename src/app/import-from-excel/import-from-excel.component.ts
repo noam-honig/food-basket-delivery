@@ -791,7 +791,7 @@ export class ImportFromExcelComponent implements OnInit {
                     if (g.isNew())
                         await g.save();
                 }
-                updateCol(f.$.find(this.f.groups), v, ', ');
+                f.groups =  f.groups.addGroup(v);
             }, columns: [this.f.groups]
         });
         this.columns.push({
