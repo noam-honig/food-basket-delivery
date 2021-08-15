@@ -247,7 +247,7 @@ export class FamilyDeliveries extends IdEntity {
     relativeDeliveryStatusDate() {
         return relativeDateName(this.context, { d: this.deliveryStatusDate });
     }
-    @Field({ allowApiUpdate: false, translation: l => l.courierAsignDate })
+    @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser })
     courierAssignUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
