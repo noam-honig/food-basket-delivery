@@ -766,7 +766,7 @@ export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Fam
         addColumn("X" + use.language.phone2 + 'orig', f.phone2?.thePhone, 's');
         addColumn("X" + use.language.phone3 + 'orig', f.phone3?.thePhone, 's');
         addColumn("X" + use.language.phone4 + 'orig', f.phone4?.thePhone, 's');
-        await f.basketType.addBasketTypes(f.quantity, addColumn);
+        await f.basketType?.addBasketTypes(f.quantity, addColumn);
     });
 }
 

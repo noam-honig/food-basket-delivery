@@ -659,7 +659,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
           await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
             async (fd, addColumn) => {
-              await fd.basketType.addBasketTypes(fd.quantity, addColumn);
+              await fd.basketType?.addBasketTypes(fd.quantity, addColumn);
               fd.addStatusExcelColumn(addColumn);
               if (includeFamilyInfo)
                 await fd.addFamilyInfoToExcelFile(addColumn);
