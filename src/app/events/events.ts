@@ -372,18 +372,22 @@ export class Event extends IdEntity {
                 await busy.doWhileShowingBusy(async () => {
                     let r: Event[] = [];
                     for (const current of events) {
-                        let e = context.for(Event).create();
+                        let e = context.for(Event).create({
+                            name: current.name,
+                            type: current.type,
+                            description: current.description,
+                            requiredVolunteers: current.requiredVolunteers,
+                            startTime: current.startTime,
+                            endTime: current.endTime,
+                            eventDate: date.value,
+                            address: current.address,
+                            phone1: current.phone1,
+                            phone1Description: current.phone1Description,
+                            distributionCenter: current.distributionCenter
+                        });
                         r.push(e);
-                        e.name = current.name;
-                        e.description = current.description;
-                        e.requiredVolunteers = current.requiredVolunteers;
-                        e.startTime = current.startTime;
-                        e.endTime = current.endTime;
-                        e.eventDate = date.value;
-                        e.address = current.address;
-                        e.phone1 = current.phone1;
-                        e.phone1Description = current.phone1Description;
-                        e.distributionCenter = current.distributionCenter;
+
+
                         await e.save();
                         for (const c of await context.for(volunteersInEvent).find({
                             where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
