@@ -26,7 +26,7 @@ export class columnOrderAndWidthSaver {
                 } else {
                     r = this.grid.columns.items.find(c => !c.field && c.caption == x.caption);
                 }
-                if (x.width)
+                if (x.width&&r)
                     r.width = x.width;
                 return r;
             }).filter(x => x !== undefined);

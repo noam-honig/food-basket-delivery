@@ -417,13 +417,11 @@ export class Event extends IdEntity {
             { width: '100', field: e.requiredVolunteers },
             { width: '100', field: e.registeredVolunteers },
             { width: '150', field: e.eventStatus },
-            e.distributionCenter,
+            { field: e.distributionCenter, visible: () => dialog.hasManyCenters },
             e.address,
             e.phone1,
             e.phone1Description
         ];
-        // if (!dialog.hasManyCenters)
-        //     r = r.filter(x => x != e.distributionCenter);
         return r;
     }
     get thePhoneDescription() {
