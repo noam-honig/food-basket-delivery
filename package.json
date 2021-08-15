@@ -79,7 +79,7 @@
     "twilio": "^3.48.1",
     "uuid": "^3.3.2",
     "web-animations-js": "^2.3.2",
-    "xlsx": "^0.14.5",
+    "xlsx": "^0.17.0",
     "zone.js": "~0.11.3"
   },
   "devDependencies": {
