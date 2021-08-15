@@ -384,7 +384,12 @@ export class ApplicationSettings extends EntityBase {
 export class PhoneOption {
 
   static assignerOrOrg = new PhoneOption("assignerOrOrg", "הטלפון ממנו יצא הSMS", async args => {
-    if (args.settings.helpText) {
+    if (args.d.distributionCenter?.phone1?.thePhone) {
+      args.addPhone(args.d.distributionCenter.phone1Description, args.d.distributionCenter.phone1.displayValue);
+      if (args.d.distributionCenter.phone2)
+      args.addPhone(args.d.distributionCenter.phone2Description, args.d.distributionCenter.phone2.displayValue);
+    }
+    else if (args.settings.helpText) {
       args.addPhone(args.settings.helpText, args.settings.$.helpPhone.displayValue);
     }
     else {
