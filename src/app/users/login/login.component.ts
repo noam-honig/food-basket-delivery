@@ -6,7 +6,7 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Context, getFields } from 'remult';
+import { BackendMethod, Context, getFields } from 'remult';
 import { RouteHelperService, NotSignedInGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
@@ -185,11 +185,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
   newUserState = new loginState(async () => {
     try {
-      let h = this.context.for(Helpers).create();
-      h.phone = this.phone;
-      h.name = this.name;
-      h.preferredDistributionAreaAddress = this.preferredDistributionArea;
-      await h.save();
+      await LoginComponent.registerNewUser(this.phone.thePhone, this.name);
       this.doLogin();
 
     }
@@ -198,6 +194,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.loginState = this.phoneState;
     }
   });
+  @BackendMethod({ allowed: true })
+  static async registerNewUser(phone: string, name: string, context?: Context) {
+    let h = context.for(Helpers).create();
+    h.phone = new Phone(phone);
+    h.name = name;
+    await h.save();
+  }
 
   loginState = this.phoneState;
 
