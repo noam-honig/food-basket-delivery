@@ -42,30 +42,37 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     if (this.isAdmin())
       return
 
+    let sites = (new URL(document.location.href)).searchParams.get("sites");
     this.unObserve = await RegisterToEvent.volunteerInfoChanged.dispatcher.observe(async () => {
       if (this.isGuest) {
         this.dialog.trackVolunteer("list-events");
-        this.events = await OrgEventsComponent.getAllEvents(RegisterToEvent.volunteerInfo.phone);
+        this.events = await OrgEventsComponent.getAllEvents(RegisterToEvent.volunteerInfo.phone, sites);
       }
       else
         this.events = await OrgEventsComponent.getEvents(RegisterToEvent.volunteerInfo.phone);
     })
   }
   @BackendMethod({ allowed: true })
-  static async getAllEvents(phone: string, context?: Context, db?: SqlDatabase): Promise<EventInList[]> {
+  static async getAllEvents(phone: string, sitesFilter: string, context?: Context, db?: SqlDatabase): Promise<EventInList[]> {
     let r: EventInList[] = [];
     let sql = new SqlBuilder(context);
     let e = SqlFor(context.for(Event));
 
+    let schemas = Sites.schemas;
+    if (sitesFilter) {
+      let x = sitesFilter.split(',');
+      if (x.length > 0)
+        schemas = x;
+    }
     let query = '';
-    for (const org of Sites.schemas) {
+    for (const org of schemas) {
       if (query != '')
         query += ' union all ';
-      query += await sql.build('select ', ["'" + org + "' site"],' from ',org+'.'+await e.metadata.getDbName(),
-      " where ", [ e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))]);
+      query += await sql.build('select ', ["'" + org + "' site"], ' from ', org + '.' + await e.metadata.getDbName(),
+        " where ", [e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))]);
     }
-    let sites = (await db.execute(' select distinct site from ('+ query+') x')).rows.map(x => x.site);
-  
+    let sites = (await db.execute(' select distinct site from (' + query + ') x')).rows.map(x => x.site);
+
     for (const org of sites) {
 
       let c = await createSiteContext(org, context);
