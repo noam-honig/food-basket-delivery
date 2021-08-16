@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;">
         <h3>{{e.name}}</h3>
-        <button mat-icon-button (click)="edit()">
+        <button mat-icon-button (click)="edit()" *ngIf="isAdmin()">
             <mat-icon>edit</mat-icon>
         </button>
     </div>

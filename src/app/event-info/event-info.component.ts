@@ -3,6 +3,7 @@ import { BusyService, InputField } from '@remult/angular';
 import { EventEmitter } from 'events';
 
 import { Context } from 'remult';
+import { Roles } from '../auth/roles';
 
 import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -33,6 +34,9 @@ export class EventInfoComponent implements OnInit {
     window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.context).languageCode, '_blank');
   }
   reg = new RegisterToEvent(this.context);
+  isAdmin(){
+    return this.context.isAllowed(Roles.admin);
+  }
 
   ngOnInit(): void {
   }
@@ -45,10 +49,4 @@ export class EventInfoComponent implements OnInit {
   sendWhatsapp(phone: string) {
     Phone.sendWhatsappToPhone(phone, '', this.context);
   }
-
-  async cancelEvent(e: EventInList) {
-
-  }
-
-
 }
