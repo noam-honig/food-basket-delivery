@@ -16,7 +16,7 @@ const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: un
 })
 export class EventCardComponent implements OnInit {
   constructor(public settings: ApplicationSettings, private context: Context, private dialog: DialogService, private busy: BusyService) { }
-  @Input() listOptions:RowButton<any>[]=[];
+  @Input() listOptions: RowButton<any>[] = [];
   menuOptions: RowButton<Event>[] = [
     {
       name: use.language.duplicateEvents,
@@ -163,16 +163,15 @@ export class EventCardComponent implements OnInit {
       this.refresh();
     }
   }
-
-  volunteerText(e: EventInList) {
+  isFull(e: EventInList) {
     if (e.requiredVolunteers > 0) {
       if (e.requiredVolunteers <= e.registeredVolunteers) {
-        return "הארוע מלא";
+        return true;
       }
-      // return "חסרים " + (e.requiredVolunteers - e.registeredVolunteers) + " מתנדבים";
     }
-
+    return false;
   }
+
   adminVolunteers(e: EventInList) {
     if (this.context.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
       if (e.requiredVolunteers)
