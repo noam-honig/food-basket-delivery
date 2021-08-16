@@ -49,7 +49,7 @@ export class EventCardComponent implements OnInit {
   isAdmin() {
     return this.context.isAllowed(Roles.distCenterAdmin);
   }
-  dates: { date: string, events: EventInList[] }[] = [];
+  dates: dateEvents[] = [];
   cities: { id: string, count: number, caption: string }[] = [];
   types: { id: string, count: number, caption: string }[] = [];
   trackBy(i: number, e: EventInList) {
@@ -134,6 +134,9 @@ export class EventCardComponent implements OnInit {
     return (this.city == '' || e.city == this.city) &&
       (this.type == undefined || this.type == AllTypes || e.type.id == this.type.id);
   }
+  hasEvents(d: dateEvents) {
+    return !!d.events.find(x=>this.filter(x));
+  }
   get events() {
     return this._events;
   }
@@ -208,3 +211,4 @@ function compareEventDate(a: EventInList, b: EventInList) {
   return a.startTime?.localeCompare(b.startTime);
 }
 
+interface dateEvents{ date: string, events: EventInList[] }
