@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Context, FieldRef, EntityBase } from 'remult';
+import { UrlBuilder, Entity, Context, FieldRef, EntityBase, ExcludeEntityFromApi } from 'remult';
 import { Field } from '../translate';
 
 
@@ -91,11 +91,11 @@ export async function GetGeoInformation(address: string, context: Context) {
 }
 
 
+@ExcludeEntityFromApi()
 @Entity({
     key: "GeocodeCache",
     allowApiRead: false,
-    allowApiCrud: false,
-    includeInApi: false
+    allowApiCrud: false
 })
 export class GeocodeCache extends EntityBase {
     @Field()

@@ -1,5 +1,5 @@
 
-import { Filter, AndFilter, Context, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories } from "remult";
+import { Filter, AndFilter, Context, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories, ExcludeEntityFromApi } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -16,7 +16,7 @@ import { Field } from '../translate';
 
 export class FamilyDeliveryStats {
     constructor(private context: Context) { }
-    
+
     ready = new FamilyDeliveresStatistics(getLang(this.context).unAsigned,
         f => FamilyDeliveries.readyFilter().and(
             f.special.isDifferentFrom(YesNo.Yes))
@@ -43,7 +43,7 @@ export class FamilyDeliveryStats {
             }
         }
         await Promise.all(r.baskets.map(async b => {
-            b.basket =  await this.context.for(BasketType).findId(b.id);
+            b.basket = await this.context.for(BasketType).findId(b.id);
         }))
         return r;
     }
@@ -170,10 +170,11 @@ export interface groupStats {
     totalReady: number
 
 }
+@ExcludeEntityFromApi()
 @Entity<CitiesStats>({
-    includeInApi: false,
-    key: 'citiesStats',
-    dbName: async (self, context) => {
+    key: 'citiesStats'
+}, (options, context) =>
+    options.dbName = async (self) => {
         let f = SqlFor(context.for(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(context);
 
@@ -185,7 +186,7 @@ export interface groupStats {
             sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', f.city, ') as result')
     }
-})
+)
 export class CitiesStats {
     @Field()
     city: string;
@@ -194,8 +195,9 @@ export class CitiesStats {
 }
 @Entity<CitiesStatsPerDistCenter>({
     allowApiRead: false,
-    key: 'citiesStatsPerDistCenter',
-    dbName: async (self, context) => {
+    key: 'citiesStatsPerDistCenter'
+}, (options, context) =>
+    options.dbName = async (self) => {
         let f = SqlFor(context.for(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(context);
 
@@ -206,8 +208,7 @@ export class CitiesStats {
             context.filterCenterAllowedForUser(f.distributionCenter),
             sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
-    }
-})
+    })
 
 export class CitiesStatsPerDistCenter extends EntityBase {
     @Field()

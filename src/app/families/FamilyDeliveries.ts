@@ -49,7 +49,7 @@ export class MessageStatus {
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
     customFilterBuilder: () => FamilyDeliveries.customFilter,
-    apiDataFilter: (self, context) => {
+    apiDataFilter: (self) => {
 
         return FamilyDeliveries.isAllowedForUser();
 
@@ -186,12 +186,14 @@ export class FamilyDeliveries extends IdEntity {
     family: string;
     @Field({
         allowApiUpdate: false,
-        translation: l => l.familyName,
-        sqlExpression: (entity, context) => {
-            let r = context.isAllowed(Roles.distCenterAdmin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
-            return r;
-        }
-    })
+        translation: l => l.familyName
+    },
+        (options, context) =>
+            options.sqlExpression = (entity) => {
+                let r = context.isAllowed(Roles.distCenterAdmin) || !getSettings(context).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+                return r;
+            }
+    )
     name: string;
 
     @Field({
@@ -390,8 +392,8 @@ export class FamilyDeliveries extends IdEntity {
     })
     phone4Description: string;
 
-    @Field({
-        sqlExpression: async (self, context) => {
+    @Field({}, (options, context) =>
+        options.sqlExpression = async (self) => {
             var sql = new SqlBuilder(context);
 
             var fd = SqlFor(context.for(FamilyDeliveries));
@@ -404,7 +406,7 @@ export class FamilyDeliveries extends IdEntity {
                     ' where ', sql.and(sql.not(sql.eq(fd.id, f.id)), sql.eq(fd.family, f.family), sql.eq(fd.courier, f.courier), DeliveryStatus.isAResultStatus(fd.deliverStatus)), ")")
             }], false), 'courierBeenHereBefore');
         }
-    })
+    )
     courierBeenHereBefore: boolean;
     @Field({ allowApiUpdate: c => c.authenticated() && getSettings(c).isSytemForMlt() })
     archive: boolean;
@@ -412,17 +414,17 @@ export class FamilyDeliveries extends IdEntity {
     archiveDate: Date;
     @Field({ includeInApi: Roles.admin, translation: l => l.archiveUser })
     archiveUser: HelpersBase;
-    @Field({
-        sqlExpression: async (selfDefs, context) => {
+    @Field({}, (options, context) => options.
+        sqlExpression = async (selfDefs) => {
             var sql = new SqlBuilder(context);
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.gtAny(self.deliveryStatusDate, 'current_date -1'), self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))], then: true }], false);
 
         }
-    })
+    )
     visibleToCourier: boolean;
-    @Field({
-        sqlExpression: async (self, context) => {
+    @Field({}, (options, context) => options.
+        sqlExpression = async (self) => {
             var sql = new SqlBuilder(context);
 
             var helper = SqlFor(context.for(Helpers));
@@ -443,7 +445,7 @@ export class FamilyDeliveries extends IdEntity {
                     , " from ", await helper.metadata.getDbName(), " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
             }], MessageStatus.noVolunteer.id);
         }
-    })
+    )
     messageStatus: MessageStatus;
     @CustomColumn(() => questionForVolunteers[1])
     a1: string;
@@ -455,8 +457,9 @@ export class FamilyDeliveries extends IdEntity {
     a4: string;
 
     @Field({
-        includeInApi: Roles.admin,
-        sqlExpression: async (selfDefs, context) => {
+        includeInApi: Roles.admin
+    },
+        (options, context) => options.sqlExpression = async (selfDefs) => {
             let self = SqlFor(selfDefs);
             let images = SqlFor(context.for(DeliveryImage));
             let sql = new SqlBuilder(context);
@@ -466,7 +469,7 @@ export class FamilyDeliveries extends IdEntity {
             });
 
         }
-    })
+    )
     numOfPhotos: number;
     static customFilter = new CustomFilterBuilder<FamilyDeliveries, {
         allowedForUser?: boolean,
@@ -511,7 +514,7 @@ export class FamilyDeliveries extends IdEntity {
             if (basket != null)
                 where = where.and(self.basketType.isEqualTo(basket))
 
-            result.push( where);
+            result.push(where);
         }
         if (c.onTheWayFilter)
             result.push(self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null)));
@@ -806,7 +809,7 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
     translate: async (context, f) => {
-        return Filter.translateCustomWhere<FamilyDeliveries>(context.for(FamilyDeliveries).metadata, Filter.createFilterFactories(context.for(FamilyDeliveries).metadata), f,context);
+        return Filter.translateCustomWhere<FamilyDeliveries>(context.for(FamilyDeliveries).metadata, Filter.createFilterFactories(context.for(FamilyDeliveries).metadata), f, context);
     }
 });
 

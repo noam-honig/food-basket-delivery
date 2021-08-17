@@ -64,14 +64,15 @@ export class eventStatus {
             if (self.distributionCenter == null)
                 self.distributionCenter = await self.context.defaultDistributionCenter();
         }
-    },
-
-    apiDataFilter: (self, context) => {
-        if (context.isAllowed(Roles.admin))
-            return undefined;
-        return self.eventStatus.isEqualTo(eventStatus.active);
     }
-})
+},
+    (options, context) =>
+        options.apiDataFilter = (self) => {
+            if (context.isAllowed(Roles.admin))
+                return undefined;
+            return self.eventStatus.isEqualTo(eventStatus.active);
+        }
+)
 export class Event extends IdEntity {
     async toEventInList(helper: HelpersBase): Promise<EventInList> {
         let {
@@ -291,17 +292,19 @@ export class Event extends IdEntity {
     @Field({ translation: l => l.phone1Description })
     phone1Description: string;
     @Field({
-        translation: l => l.attendingVolunteers,
-        sqlExpression: async (selfDefs, context) => {
-            var vie = SqlFor(context.for(volunteersInEvent));
-            let self = SqlFor(selfDefs);
-            var sql = new SqlBuilder(context);
-            return sql.columnCount(self, {
-                from: vie,
-                where: () => [sql.eq(vie.eventId, self.id), vie.canceled.isEqualTo(false)]
-            })
-        }
-    })
+        translation: l => l.attendingVolunteers
+    },
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                var vie = SqlFor(context.for(volunteersInEvent));
+                let self = SqlFor(selfDefs);
+                var sql = new SqlBuilder(context);
+                return sql.columnCount(self, {
+                    from: vie,
+                    where: () => [sql.eq(vie.eventId, self.id), vie.canceled.isEqualTo(false)]
+                })
+            }
+    )
     registeredVolunteers: number;
 
     get eventLogo() {
@@ -484,26 +487,27 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
 @Entity<volunteersInEvent>({
     key: 'volunteersInEvent',
     allowApiCrud: Allow.authenticated,
-    allowApiDelete: false,
-    apiDataFilter: (self, context) => {
-        if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
-            return undefined;
-        return self.helper.isEqualTo(context.currentUser);
-    }
-    ,
-    saving: (self) => {
-        if (self.isNew() && self.context.backend) {
-            self.createDate = new Date();
-            self.createUser = self.context.currentUser;
-        }
-        if (self.canceled && self.$.canceled.wasChanged()) {
-            self.cancelUser = self.context.currentUser;
+    allowApiDelete: false
+},
+    (options, context) => {
+        options.apiDataFilter = (self) => {
+            if (context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+                return undefined;
+            return self.helper.isEqualTo(context.currentUser);
+        };
+        options.saving = (self) => {
+            if (self.isNew() && context.backend) {
+                self.createDate = new Date();
+                self.createUser = context.currentUser;
+            }
+            if (self.canceled && self.$.canceled.wasChanged()) {
+                self.cancelUser = context.currentUser;
 
+            }
+            if (self.isNew() || self.$.canceled.wasChanged())
+                self.registerStatusDate = new Date();
         }
-        if (self.isNew() || self.$.canceled.wasChanged())
-            self.registerStatusDate = new Date();
-    }
-})
+    })
 export class volunteersInEvent extends IdEntity {
     @Field()
     eventId: string;
@@ -511,89 +515,100 @@ export class volunteersInEvent extends IdEntity {
     helper: HelpersBase;
 
     @Field<volunteersInEvent>({
-        translation: l => l.volunteerName,
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
-            return sql.columnInnerSelect(self, {
-                from: h,
-                select: () => [h.name],
-                where: () => [sql.eq(h.id, self.helper)]
-            });
-        }
-    })
+        translation: l => l.volunteerName
+    },
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(context.for(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.name],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
     helperName: string;
     @Field({
-        translation: l => l.volunteerPhoneNumber,
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
-            return sql.columnInnerSelect(self, {
-                from: h,
-                select: () => [h.phone],
-                where: () => [sql.eq(h.id, self.helper)]
-            });
-        }
-    })
+        translation: l => l.volunteerPhoneNumber
+    },
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(context.for(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.phone],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
     helperPhone: Phone;
     @Field({
-        translation: l => l.deliveriesAssigned,
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let d = SqlFor(context.for(ActiveFamilyDeliveries));
-            return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
-        }
-    })
+        translation: l => l.deliveriesAssigned
+    },
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let d = SqlFor(context.for(ActiveFamilyDeliveries));
+                return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
+            }
+    )
     assignedDeliveries: number;
     @Field({
-        translation: l => l.delveriesSuccessfulEver,
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let d = SqlFor(context.for(FamilyDeliveries));
-            return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
-        }
-    })
+        translation: l => l.delveriesSuccessfulEver
+    },
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let d = SqlFor(context.for(FamilyDeliveries));
+                return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
+            }
+    )
     succesfulDeliveries: number;
     @Field({
-        translation: l => l.email,
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
-            return sql.columnInnerSelect(self, {
-                from: h,
-                select: () => [h.email],
-                where: () => [sql.eq(h.id, self.helper)]
-            });
-        }
-    })
+        translation: l => l.email
+    },
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(context.for(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.email],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
     helperEmail: string;
-    @Field({
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let h = SqlFor(context.for(Helpers));
-            return sql.columnInnerSelect(self, {
-                from: h,
-                select: () => [h.smsDate],
-                where: () => [sql.eq(h.id, self.helper)]
-            });
-        }
-    })
+    @Field({},
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(context.for(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.smsDate],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
     lastSmsTime: Date;
-    @Field({
-
-        sqlExpression: async (selfDefs, context) => {
-            let sql = new SqlBuilder(context);
-            let self = SqlFor(selfDefs);
-            let d = SqlFor(context.for(FamilyDeliveries));
-            return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
-        }
-    })
+    @Field({},
+        (options, context) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(context);
+                let self = SqlFor(selfDefs);
+                let d = SqlFor(context.for(FamilyDeliveries));
+                return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
+            }
+    )
     lastAssignTime: Date;
     @Field({ translation: l => l.duplicateForNextEvent })
     duplicateToNextEvent: boolean;
@@ -614,15 +629,6 @@ export class volunteersInEvent extends IdEntity {
     @Field({ allowApiUpdate: false })
     fromGeneralList: boolean;
 
-
-
-
-
-
-
-    constructor(private context: Context) {
-        super();
-    }
 }
 
 

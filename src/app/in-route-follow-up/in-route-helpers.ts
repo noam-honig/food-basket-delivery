@@ -17,8 +17,9 @@ import { DateOnlyField } from "remult/src/remult3";
 @Entity<InRouteHelpers>({
     key: 'in-route-helpers',
     allowApiRead: Roles.admin,
-    defaultOrderBy: (self) => self.minAssignDate,
-    dbName: async (self, context) => {
+    defaultOrderBy: (self) => self.minAssignDate
+},
+    (options, context) => options.dbName = async (self) => {
         let sql = new SqlBuilder(context);
 
         let f = SqlFor(context.for(ActiveFamilyDeliveries));
@@ -74,7 +75,7 @@ import { DateOnlyField } from "remult/src/remult3";
                 }), ')')]
             }), ') result ) result');
     }
-})
+)
 export class InRouteHelpers extends IdEntity {
     async helper() {
         return this.context.for(Helpers).findId(this.id);

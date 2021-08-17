@@ -1,5 +1,5 @@
-//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
+import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, registerEntitiesOnServer, registerActionsOnServer, initExpress } from 'remult/server';

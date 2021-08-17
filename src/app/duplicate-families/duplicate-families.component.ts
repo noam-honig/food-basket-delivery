@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendMethod, Context, SqlDatabase, FieldMetadata, EntityWhere, getFields } from 'remult';
+import { BackendMethod, Context, SqlDatabase, FieldMetadata, EntityWhere, getFields, Filter } from 'remult';
 import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
@@ -112,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere: () => x.args.settings.getFilterWithSelectedRows().where,
+              userWhere: (e) => Filter.toItem(x.args.settings.getFilterWithSelectedRows().where)(e),
               settings: this.settings
             }))
           , {
@@ -225,7 +225,7 @@ export class DuplicateFamiliesComponent implements OnInit {
     if (compare.name) {
       groupBy.push('name');
     }
-    q =await  sql.build('select ', [
+    q = await sql.build('select ', [
       sql.columnWithAlias(sql.max('address'), 'address'),
       sql.columnWithAlias(sql.max('name'), '"name"'),
       sql.columnWithAlias(sql.max('tz'), 'tz'),
@@ -233,7 +233,7 @@ export class DuplicateFamiliesComponent implements OnInit {
       , q, ') as result');
     if (where.length > 0)
       q += ' where ' + await sql.and(...where);
-    q += ' group by ' +await sql.build([groupBy]);
+    q += ' group by ' + await sql.build([groupBy]);
     q += ' having count(distinct id)>1';
 
 

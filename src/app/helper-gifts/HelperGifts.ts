@@ -13,16 +13,17 @@ import { Field, use } from "../translate";
     key: "HelperGifts",
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
-    allowApiInsert: Roles.admin,
-    apiDataFilter: (self, context) => {
+    allowApiInsert: Roles.admin
+}, (options, context) => {
+    options.apiDataFilter = (self) => {
         if (context.isAllowed(Roles.admin))
             return undefined;
         return self.assignedToHelper.isEqualTo(context.currentUser);
-    },
-    saving: (self) => {
+    };
+    options.saving = (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = self.context.currentUser;
+            self.userCreated = context.currentUser;
         }
         else {
             if (self.$.giftURL.wasChanged()) {
@@ -35,7 +36,7 @@ import { Field, use } from "../translate";
             }
             if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
-                self.assignedByUser = self.context.currentUser;
+                self.assignedByUser = context.currentUser;
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
@@ -70,9 +71,7 @@ export class HelperGifts extends IdEntity {
     wasClicked: boolean;
 
 
-    constructor(private context: Context) {
-        super();
-    }
+
     @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
         let helper = await context.for(Helpers).findId(helperId);

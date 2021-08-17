@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
-import { Context, EntityWhere } from 'remult';
+import { Context, EntityWhere, Filter } from 'remult';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';
@@ -33,7 +33,7 @@ export class InRouteFollowUpComponent implements OnInit {
   helpers = new GridSettings(this.context.for(InRouteHelpers), {
 
 
-    where: [h => h.name.contains(this.searchString), () => this.currentOption.where],
+    where: [h => h.name.contains(this.searchString), x => Filter.toItem(this.currentOption.where)(x)],
 
     rowsInPage: 25,
     knowTotalRows: true,

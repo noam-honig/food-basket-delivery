@@ -19,51 +19,52 @@ function log(s: string) {
 @Entity<HelpersAndStats>({
 
     key: "helpersAndStats",
-    allowApiRead: Roles.distCenterAdmin,
+    allowApiRead: Roles.distCenterAdmin
+},
+    (options, context) =>
+        options.dbName = async (self) => {
 
-    dbName: async (self, context) => {
+            let f = SqlFor(context.for(ActiveFamilyDeliveries).metadata);
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries).metadata);
+            let h = SqlFor(context.for(Helpers).metadata);
+            var sql = new SqlBuilder(context);
 
-        let h = SqlFor(context.for(Helpers).metadata);
-        var sql = new SqlBuilder(context);
-
-        let helperFamilies = (where: () => any[]) => {
-            return {
-                from: f,
-                where: () => [ context.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+            let helperFamilies = (where: () => any[]) => {
+                return {
+                    from: f,
+                    where: () => [context.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                }
             }
+            return sql.entityDbName({
+                select: () => [
+                    h.id,
+                    h.name,
+                    h.phone,
+                    h.smsDate,
+                    h.reminderSmsDate,
+                    h.company,
+                    h.totalKm,
+                    h.totalTime,
+                    h.shortUrlKey,
+                    h.eventComment,
+                    h.needEscort,
+                    h.theHelperIAmEscorting,
+                    h.escort,
+                    h.distributionCenter,
+                    h.archive,
+                    h.frozenTill,
+                    h.internalComment,
+                    h.leadHelper,
+                    h.myGiftsURL,
+
+                    sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.deliveriesInProgress),
+                    sql.countInnerSelect(helperFamilies(() => []), self.allDeliveires),
+
+                ],
+                from: h
+            });
         }
-        return sql.entityDbName({
-            select: () => [
-                h.id,
-                h.name,
-                h.phone,
-                h.smsDate,
-                h.reminderSmsDate,
-                h.company,
-                h.totalKm,
-                h.totalTime,
-                h.shortUrlKey,
-                h.eventComment,
-                h.needEscort,
-                h.theHelperIAmEscorting,
-                h.escort,
-                h.distributionCenter,
-                h.archive,
-                h.frozenTill,
-                h.internalComment,
-                h.leadHelper,
-                h.myGiftsURL,
-
-                sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.deliveriesInProgress),
-                sql.countInnerSelect(helperFamilies(() => []), self.allDeliveires),
-
-            ],
-            from: h
-        });
-    }
-})
+)
 export class HelpersAndStats extends HelpersBase {
 
 

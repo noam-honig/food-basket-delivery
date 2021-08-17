@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, EntityBase, getFields } from 'remult';
+import { Context, SqlDatabase, EntityBase, getFields, ExcludeEntityFromApi } from 'remult';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import {  Helpers, CompanyColumn } from '../helpers/helpers';
@@ -376,9 +376,9 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
 }
+@ExcludeEntityFromApi()
 @Entity({
-  key: 'helperHistoryInfo',
-  includeInApi: false
+  key: 'helperHistoryInfo'
 })
 export class helperHistoryInfo extends EntityBase {
 

@@ -6,17 +6,19 @@ import { HelpersBase } from "../helpers/helpers";
 @Entity<DeliveryImage>({
     key: 'delivery_images',
     allowApiCrud: Allow.authenticated,
-    allowApiUpdate: false,
-    apiDataFilter: (self, context) => {
-        if (!context.isAllowed([Roles.admin]))
-            return self.uploadingVolunteer.isEqualTo(context.currentUser)
-    },
-    saving: self => {
-        if (self.isNew())
-            self.uploadingVolunteer = self.context.currentUser
-    }
+    allowApiUpdate: false
+},
+    (options, context) => {
+        options.apiDataFilter = (self) => {
+            if (!context.isAllowed([Roles.admin]))
+                return self.uploadingVolunteer.isEqualTo(context.currentUser)
+        };
+        options.saving = self => {
+            if (self.isNew())
+                self.uploadingVolunteer = context.currentUser
+        }
 
-})
+    })
 export class DeliveryImage extends IdEntity {
     @Field()
     deliveryId: string;
@@ -24,9 +26,7 @@ export class DeliveryImage extends IdEntity {
     uploadingVolunteer: HelpersBase;
     @Field()
     image: string;
-    constructor(private context: Context) {
-        super();
-    }
+
 }
 @Entity({
     key: 'family_images',

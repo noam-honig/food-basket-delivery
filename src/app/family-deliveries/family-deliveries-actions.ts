@@ -1,4 +1,4 @@
-import { Context, AndFilter, EntityWhere } from "remult";
+import { Context, AndFilter, EntityWhere, Filter } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelpersBase } from "../helpers/helpers";
@@ -186,7 +186,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
             },
             validateInComponent: async c => {
-                let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), c.userWhere, this.args.additionalWhere])
+                let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.toItem(c.userWhere), this.args.additionalWhere])
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
                         getLang(this.context).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.context).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
@@ -234,7 +234,7 @@ export class ArchiveHelper {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = context.for(ActiveFamilyDeliveries);
 
-        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(), where]);
+        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(), Filter.toItem(where)]);
 
         if (onTheWay > 0) {
             this.markOnTheWayAsDelivered = true;
@@ -245,7 +245,7 @@ export class ArchiveHelper {
         }
 
         if (usingSelfPickupModule) {
-            let selfPickup = await repo.count([d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), where]);
+            let selfPickup = await repo.count([d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), Filter.toItem(where)]);
 
             if (selfPickup > 0) {
                 this.markSelfPickupAsDelivered = true;

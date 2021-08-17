@@ -1,5 +1,5 @@
 
-import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity } from 'remult';
+import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity, OptionsFactory } from 'remult';
 import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
@@ -20,7 +20,7 @@ import { SqlBuilder } from './SqlBuilder';
   valueConverter: {
     toJson: x => x ? x.address : '',
     fromJson: x => x ? new Email(x) : null,
-    displayValue:x=>x.address
+    displayValue: x => x.address
   },
   translation: l => l.email
 })
@@ -41,19 +41,19 @@ export class Email {
   }
 }
 
-export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption) {
+export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, Date>>) {
   return Field<entityType, Date>({
     ...{ displayValue: (e, x) => x ? x.toLocaleString("he-il") : '' },
     ...settings
-  })
+  }, ...options)
 }
-export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption) {
+export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, Date>>) {
   return (a, b) => {
     DataControl({ readonly: true })(a, b)
     return DateTimeColumn<entityType>({
       ...{ allowApiUpdate: false },
       ...settings
-    })(a, b)
+    }, ...options)(a, b)
   }
 }
 

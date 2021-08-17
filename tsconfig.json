@@ -18,12 +18,25 @@
     "lib": [
       "es2018",
       "dom"
-    ]
-    
+    ],
+    "paths": {
+      "@remult/*": [
+        "../radweb/projects/*"
+      ],
+      "remult": [
+        "../radweb/projects/core"
+      ],
+      "remult/*": [
+        "../radweb/projects/core/*"
+      ],
+      "*": [
+        "node_modules/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
-    "strictTemplates":true
+    "strictTemplates": true
   }
 }

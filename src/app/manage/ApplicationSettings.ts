@@ -7,9 +7,8 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
       visible: () => info().visible
     })(target, key);
     return Field({
-      caption: () => info().caption,
       includeInApi: includeInApi
-    })(target, key);
+    }, (options) => options.caption = info().caption)(target, key);
   };
 }
 
@@ -387,7 +386,7 @@ export class PhoneOption {
     if (args.d.distributionCenter?.phone1?.thePhone) {
       args.addPhone(args.d.distributionCenter.phone1Description, args.d.distributionCenter.phone1.displayValue);
       if (args.d.distributionCenter.phone2)
-      args.addPhone(args.d.distributionCenter.phone2Description, args.d.distributionCenter.phone2.displayValue);
+        args.addPhone(args.d.distributionCenter.phone2Description, args.d.distributionCenter.phone2.displayValue);
     }
     else if (args.settings.helpText) {
       args.addPhone(args.settings.helpText, args.settings.$.helpPhone.displayValue);

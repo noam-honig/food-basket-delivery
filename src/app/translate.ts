@@ -1,5 +1,5 @@
 
-import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer, IntegerField as origIntegerField } from 'remult';
+import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer, IntegerField as origIntegerField, OptionsFactory } from 'remult';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -115,37 +115,45 @@ CaptionTransformer.transformCaption = (context, key, caption) => {
   }
   return r;
 }
-function adjustSettings(settings: FieldOptions & TranslatedCaption) {
+function adjustSettings(settings: FieldOptions & TranslatedCaption, options: OptionsFactory<FieldOptions>) {
+  let opts: OptionsFactory<FieldOptions> = [settings];
   if (settings && settings.translation) {
-    settings.caption = (context) => settings.translation(getLang(context));
+    opts.push((o, context) => {
+      o.caption = settings.translation(getLang(context));
+    });
   }
-  return settings;
+  opts.push(...options);
+  return opts;
 }
-export function Field<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
-  return origField<entityType, valueType>(adjustSettings(settings));
+export function Field<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, valueType>>) {
+  return origField<entityType, valueType>(...adjustSettings(settings, options));
 }
-export function IntegerField<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption) {
-  return origIntegerField<entityType>(adjustSettings(settings));
+export function IntegerField<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, number>>) {
+  return origIntegerField<entityType>(...adjustSettings(settings, options));
 }
-export function QuantityColumn<T>(settings?: FieldOptions & TranslatedCaption) {
-  return IntegerField<T>(adjustSettings({ translation: l => l.quantity, ...settings }));
+export function QuantityColumn<T>(settings?: FieldOptions & TranslatedCaption, ...options: OptionsFactory<FieldOptions<T, number>>) {
+  return IntegerField<T>({ translation: l => l.quantity, ...settings }, ...options);
 }
-export function DateOnlyField<T = any>(settings?: FieldOptions<T, Date> & TranslatedCaption) {
-  return origDateOnlyField<T>(adjustSettings(settings));
+export function DateOnlyField<T = any>(settings?: FieldOptions<T, Date> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<T, Date>>) {
+  return origDateOnlyField<T>(...adjustSettings(settings, options));
 }
 
 
-export function FieldType<valueType = any>(settings?: FieldOptions<any, valueType> & TranslatedCaption) {
-  return origFieldType<valueType>(adjustSettings(settings));
+export function FieldType<valueType = any>(settings?: FieldOptions<any, valueType> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<any, valueType>>) {
+  return origFieldType<valueType>(...adjustSettings(settings, options));
 }
-export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(type: ClassType<valueType>, settings?: FieldOptions<entityType, valueType> & TranslatedCaption) {
-  return origValueListFieldType<valueType>(type, adjustSettings(settings));
+export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(type: ClassType<valueType>, settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, valueType>>) {
+  return origValueListFieldType<valueType>(type, ...adjustSettings(settings, options));
 }
-export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption) {
+export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption, ...options: OptionsFactory<EntityOptions<T>>) {
+  let opts: OptionsFactory<EntityOptions<T>> = [settings];
   if (settings.translation) {
-    settings.caption = (context) => settings.translation(getLang(context));
+    opts.push((o, context) => {
+      o.caption = settings.translation(getLang(context));
+    });
   }
-  return origEntity<T>(settings);
+  opts.push(...options);
+  return origEntity<T>(...opts);
 }
 
 

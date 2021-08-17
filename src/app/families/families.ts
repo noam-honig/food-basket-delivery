@@ -59,13 +59,7 @@ declare type factoryFor<T> = {
     allowApiUpdate: Roles.admin,
     allowApiDelete: false,
     allowApiInsert: Roles.admin,
-    apiDataFilter: (self, context) => {
-      if (!context.isAllowed(Roles.admin)) {
-        if (context.isAllowed(Roles.admin))
-          return undefined;
-        return self.id.isEqualTo('no rows');
-      }
-    },
+
     saving: async (self) => {
       if (self.disableOnSavingRow)
         return;
@@ -142,7 +136,16 @@ declare type factoryFor<T> = {
         }
       }
     }
-  })
+  },
+  (options, context) =>
+    options.apiDataFilter = (self) => {
+      if (!context.isAllowed(Roles.admin)) {
+        if (context.isAllowed(Roles.admin))
+          return undefined;
+        return self.id.isEqualTo('no rows');
+      }
+    },
+)
 export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
@@ -262,7 +265,7 @@ export class Families extends IdEntity {
 
     let newDelivery = this.createDelivery(await dialog.getDistCenter(this.addressHelper.location()));
     let arciveCurrentDelivery = new InputField<boolean>({
-      valueType:Boolean,
+      valueType: Boolean,
       caption: getLang(this.context).archiveCurrentDelivery,
       defaultValue: () => true
     });
@@ -668,38 +671,43 @@ export class Families extends IdEntity {
   }
 
 
-  @Field({
-    sqlExpression: (self, context) => {
-      return dbNameFromLastDelivery(self, context, fde => fde.deliverStatus, "prevStatus");
-    }
-  })
+  @Field({},
+    (options, context) =>
+      options.sqlExpression = (self) => {
+        return dbNameFromLastDelivery(self, context, fde => fde.deliverStatus, "prevStatus");
+      }
+  )
   previousDeliveryStatus: DeliveryStatus;
-  @ChangeDateColumn({
-    sqlExpression: (self, context) => {
-      return dbNameFromLastDelivery(self, context, fde => fde.deliveryStatusDate, "prevDate");
-    }
-  })
+  @ChangeDateColumn({},
+    (options, context) =>
+      options.sqlExpression = (self) => {
+        return dbNameFromLastDelivery(self, context, fde => fde.deliveryStatusDate, "prevDate");
+      }
+  )
   previousDeliveryDate: Date;
   @Field<Families>({
-    translation: l => l.previousDeliveryNotes,
-    sqlExpression: (self, context) => {
-      return dbNameFromLastDelivery(self, context, fde => fde.courierComments, "prevComment");
-    }
-  })
+    translation: l => l.previousDeliveryNotes
+  },
+    (options, context) =>
+      options.sqlExpression = (self) => {
+        return dbNameFromLastDelivery(self, context, fde => fde.courierComments, "prevComment");
+      }
+  )
   previousDeliveryComment: string;
-  @IntegerField({
-    sqlExpression: async (selfDefs, context) => {
-      let self = SqlFor(selfDefs);
-      let fd = SqlFor(context.for(FamilyDeliveries));
-      let sql = new SqlBuilder(context);
-      return sql.columnCount(self, {
-        from: fd,
-        where: () => [sql.eq(fd.family, self.id),
-        fd.archive.isEqualTo(false).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus))]
-      });
+  @IntegerField({},
+    (options, context) =>
+      options.sqlExpression = async (selfDefs) => {
+        let self = SqlFor(selfDefs);
+        let fd = SqlFor(context.for(FamilyDeliveries));
+        let sql = new SqlBuilder(context);
+        return sql.columnCount(self, {
+          from: fd,
+          where: () => [sql.eq(fd.family, self.id),
+          fd.archive.isEqualTo(false).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus))]
+        });
 
-    }
-  })
+      }
+  )
   numOfActiveReadyDeliveries: number;
   @Field()
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא

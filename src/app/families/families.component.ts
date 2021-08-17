@@ -384,7 +384,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    userWhere: f => this.families.getFilterWithSelectedRows().where,
+                    userWhere: f => Filter.toItem( this.families.getFilterWithSelectedRows().where)(f),
                     settings: this.settings
                 }))
             , {

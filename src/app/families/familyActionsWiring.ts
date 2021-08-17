@@ -132,7 +132,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
     }
 
     composeWhere(where: EntityWhere<T>) {
-        return [where, this.args.additionalWhere]
+        return Filter.toItem(where, this.args.additionalWhere);
     }
 
     @BackendMethod<ActionOnRows<any>>({ allowed: (context, self) => context.isAllowed(self.args.allowed), queue: true })

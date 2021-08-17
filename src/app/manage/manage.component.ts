@@ -490,7 +490,7 @@ export class ManageComponent implements OnInit {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage);
   }
-  onFileChange(id: string, column: FieldRef<any,string>) {
+  onFileChange(id: string, column: FieldRef<any, string>) {
     const inputNode: any = document.querySelector('#' + id);
 
     if (typeof (FileReader) !== 'undefined') {
@@ -585,31 +585,32 @@ export class ManageComponent implements OnInit {
 @Entity<GroupsStatsPerDistributionCenter>({
   allowApiRead: Roles.distCenterAdmin,
   defaultOrderBy: (self) => self.name,
-  key: 'GroupsStatsPerDistributionCenter',
-  dbName: async (self, context) => {
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let g = SqlFor(context.for(Groups));
-    let d = SqlFor(context.for(DistributionCenters));
-    let sql = new SqlBuilder(context);
-    sql.addEntity(f, 'Families');
-    sql.addEntity(g, 'groups');
-    return sql.entityDbName(
-      {
-        select: () => [g.name, sql.columnWithAlias(d.id, self.distCenter), sql.countInnerSelect({
-          from: f,
+  key: 'GroupsStatsPerDistributionCenter'
+},
+  (options, context) =>
+    options.dbName = async (self) => {
+      let f = SqlFor(context.for(ActiveFamilyDeliveries));
+      let g = SqlFor(context.for(Groups));
+      let d = SqlFor(context.for(DistributionCenters));
+      let sql = new SqlBuilder(context);
+      sql.addEntity(f, 'Families');
+      sql.addEntity(g, 'groups');
+      return sql.entityDbName(
+        {
+          select: () => [g.name, sql.columnWithAlias(d.id, self.distCenter), sql.countInnerSelect({
+            from: f,
 
-          where: () => [
-            sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-            FamilyDeliveries.readyFilter(),
-            sql.eq(f.distributionCenter, d.id)]
+            where: () => [
+              sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
+              FamilyDeliveries.readyFilter(),
+              sql.eq(f.distributionCenter, d.id)]
 
-        }, self.familiesCount)],
-        from: g,
-        crossJoin: () => [d],
+          }, self.familiesCount)],
+          from: g,
+          crossJoin: () => [d],
 
-      })
-  }
-})
+        })
+    })
 export class GroupsStatsPerDistributionCenter extends EntityBase implements GroupsStats {
   @Field()
   name: string;
@@ -627,28 +628,27 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   allowApiRead: Roles.distCenterAdmin,
   key: 'GroupsStatsForAllDeliveryCenters',
   defaultOrderBy: self => self.name,
-  dbName: async (self, context) => {
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let g = SqlFor(context.for(Groups));
+},
+  (options, context) => {
+    options.dbName = async (self) => {
+      let f = SqlFor(context.for(ActiveFamilyDeliveries));
+      let g = SqlFor(context.for(Groups));
 
-    let sql = new SqlBuilder(context);
-    sql.addEntity(f, 'Families');
-    sql.addEntity(g, 'groups');
-    return sql.entityDbName(
-      {
-        select: async () => [g.name, await sql.countInnerSelect({
-          from: f,
-
-          where: () => [
-            sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-            FamilyDeliveries.readyFilter()]
-        }, self.familiesCount)],
-        from: g
-
-
-      })
-  }
-})
+      let sql = new SqlBuilder(context);
+      sql.addEntity(f, 'Families');
+      sql.addEntity(g, 'groups');
+      return sql.entityDbName(
+        {
+          select: async () => [g.name, await sql.countInnerSelect({
+            from: f,
+            where: () => [
+              sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
+              FamilyDeliveries.readyFilter()]
+          }, self.familiesCount)],
+          from: g
+        })
+    }
+  })
 export class GroupsStatsForAllDeliveryCenters extends EntityBase implements GroupsStats {
   @Field()
   name: string;

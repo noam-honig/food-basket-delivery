@@ -70,18 +70,19 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     key: "HelpersBase",
     dbName: "Helpers",
     allowApiCrud: false,
-    allowApiRead: Allow.authenticated,
-    apiDataFilter: (self, context) => {
+    allowApiRead: Allow.authenticated
+},
+    (options, context) => options.apiDataFilter = (self) => {
         if (!context.authenticated())
             return self.id.isEqualTo("No User");
         else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
-            
+
             return self.id.isIn([context.currentUser, context.currentUser.theHelperIAmEscorting, context.currentUser.escort].
                 filter(x => !!x).map(x => x.id));
         }
 
     }
-})
+)
 export abstract class HelpersBase extends IdEntity {
 
     static async showSelectDialog(col: FieldRef<any, HelpersBase>, args: {
@@ -157,7 +158,7 @@ export abstract class HelpersBase extends IdEntity {
     @Field({
         translation: l => l.assignedDriver,
         allowApiUpdate: Roles.admin,
-        lazy:true
+        lazy: true
     })
     theHelperIAmEscorting: HelpersBase;
 
@@ -166,7 +167,7 @@ export abstract class HelpersBase extends IdEntity {
     @Field({
         translation: l => l.escort
         , allowApiUpdate: Roles.admin
-        ,lazy:true
+        , lazy: true
     })
     escort: HelpersBase;
 
@@ -199,13 +200,13 @@ export abstract class HelpersBase extends IdEntity {
         translation: l => l.helperInternalComment
     })
     internalComment: string;
-    @Field<Helpers>({
-        sqlExpression: async (selfDefs, context) => {
+    @Field<Helpers>({}, (options, context) => options.
+        sqlExpression = async (selfDefs) => {
             let sql = new SqlBuilder(context);
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
         }
-    })
+    )
     isFrozen: boolean;
 
 
@@ -345,17 +346,18 @@ export abstract class HelpersBase extends IdEntity {
         }
 
 
-    },
-    apiDataFilter: (self, context) => {
+    }
+}, (options, context) =>
+    options.apiDataFilter = (self) => {
         if (!context.authenticated())
             return self.id.isEqualTo("No User");
         else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
             return self.allowedIds.contains(context.user.id);
     }
-})
+)
 
 export class Helpers extends HelpersBase {
-    
+
     static async generateHash(password: string) {
         return await (await import('password-hash')).generate(password)
     }
@@ -555,13 +557,13 @@ export class Helpers extends HelpersBase {
 
         super(context);
     }
-    @Field<Helpers>({
-        sqlExpression: async (selfDefs, context) => {
+    @Field<Helpers>({},
+        (options, context) => options.sqlExpression = async (selfDefs) => {
             let self = SqlFor(selfDefs);
             let sql = new SqlBuilder(context);
             return sql.build(self.id, ' || ', self.escort, ' || ', self.theHelperIAmEscorting);
         }
-    })
+    )
     allowedIds: string;
 
 

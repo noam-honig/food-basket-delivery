@@ -642,7 +642,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ].map(a => a.gridButton({
         afterAction: async () => await this.refresh(),
         dialog: this.dialog,
-        userWhere: (x) => this.deliveries.getFilterWithSelectedRows().where,
+        userWhere: (x) => Filter.toItem(this.deliveries.getFilterWithSelectedRows().where)(x),
         settings: this.settings
       })),
       {
