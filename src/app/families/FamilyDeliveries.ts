@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, CustomFilterBuilder } from 'remult';
+import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, CustomFilterBuilder, isBackend } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -70,7 +70,7 @@ export class MessageStatus {
         if (self.$.courier.wasChanged())
             self.routeOrder = 0;
 
-        if (self.context.backend) {
+        if (isBackend()) {
             if (!self.disableChangeLogging) {
 
                 if (!self.isNew() || self.courier)

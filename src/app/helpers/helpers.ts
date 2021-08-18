@@ -1,5 +1,5 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow } from 'remult';
+import { Context, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -246,7 +246,7 @@ export abstract class HelpersBase extends IdEntity {
                 self.escort = null;
         }
 
-        if (self.context.backend) {
+        if (isBackend()) {
 
             let canUpdate = false;
             if (self.isNew())

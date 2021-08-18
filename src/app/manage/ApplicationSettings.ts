@@ -1,4 +1,4 @@
-import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata, Allow } from 'remult';
+import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata, Allow, isBackend } from 'remult';
 import { DataControl } from '@remult/angular';
 export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowed) {
   return (target, key) => {
@@ -50,7 +50,7 @@ export class RemovedFromListExcelImportStrategy {
   allowApiUpdate: Roles.admin,
   saving: async (self) => {
 
-    if (self.context.backend) {
+    if (isBackend()) {
 
       await self.addressHelper.updateApiResultIfChanged();
 
@@ -369,9 +369,7 @@ export class ApplicationSettings extends EntityBase {
   }
 
   static get(context: Context) {
-    if (context.backend) {
-
-    }
+    
     return getSettings(context);
 
   }

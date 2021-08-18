@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators } from "remult";
+import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend } from "remult";
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
 import { getLang } from '../sites/sites';
@@ -59,7 +59,7 @@ export class eventStatus {
     allowApiCrud: Roles.admin,
     allowApiRead: Allow.authenticated,
     saving: async (self) => {
-        if (self.context.backend) {
+        if (isBackend()) {
             await self.addressHelper.updateApiResultIfChanged();
             if (self.distributionCenter == null)
                 self.distributionCenter = await self.context.defaultDistributionCenter();
@@ -496,7 +496,7 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
             return self.helper.isEqualTo(context.currentUser);
         };
         options.saving = (self) => {
-            if (self.isNew() && context.backend) {
+            if (self.isNew() && isBackend()) {
                 self.createDate = new Date();
                 self.createUser = context.currentUser;
             }

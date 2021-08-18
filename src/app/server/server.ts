@@ -167,9 +167,7 @@ s.parentNode.insertBefore(b, s);})();
                         url = req.originalUrl;
                     else
                         url = req.path;
-                } else if (!context.backend || typeof (window) != "undefined") {
-                    url = window.location.pathname;
-                }
+                } 
                 context.getSite = () => getSiteFromUrl(url);
                 if (!context.isAllowed(Sites.getOrgRole(context)))
                     context.setUser(undefined);

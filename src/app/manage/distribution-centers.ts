@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FilterFactories, Allow } from "remult";
+import { IdEntity, Context, Entity, FilterFactories, Allow, isBackend } from "remult";
 import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -36,7 +36,7 @@ import { use, FieldType, Field } from "../translate";
 
 
   saving: async (self) => {
-    if (self.context.backend) {
+    if (isBackend()) {
       await self.addressHelper.updateApiResultIfChanged();
     }
   }

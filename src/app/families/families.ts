@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Context, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata } from 'remult';
+import { Context, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend } from 'remult';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -63,7 +63,7 @@ declare type factoryFor<T> = {
     saving: async (self) => {
       if (self.disableOnSavingRow)
         return;
-      if (self.context.backend) {
+      if (isBackend()) {
         if (!self.quantity || self.quantity < 1)
           self.quantity = 1;
         if (self.$.area.wasChanged() && self.area)
@@ -119,7 +119,7 @@ declare type factoryFor<T> = {
         }
 
       }
-      else if (!self.context.backend) {
+      else if (!isBackend()) {
         let statusChangedOutOfActive = self.$.status.wasChanged() && self.status != FamilyStatus.Active;
         if (statusChangedOutOfActive) {
           let activeDeliveries = self.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
@@ -820,7 +820,7 @@ export class Families extends IdEntity {
   private delayCheckDuplicateFamilies() {
     if (this._disableAutoDuplicateCheck)
       return;
-    if (this.context.backend)
+    if (isBackend())
       return;
     if (!this.tzDelay)
       this.tzDelay = new delayWhileTyping(1000);
