@@ -288,21 +288,21 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: TokenService, settings: SettingsService, context: Remult) {
+export function initApp(session: TokenService, settings: SettingsService, remult: Remult) {
   return async () => {
 
     try {
       try {
-        context.getSite = () => getSiteFromUrl(window.location.pathname)
+        remult.getSite = () => getSiteFromUrl(window.location.pathname)
         await session.loadUserInfo();
-        await context.userChange.observe(async () => {
-          await InitContext(context);
+        await remult.userChange.observe(async () => {
+          await InitContext(remult);
 
         });
       } catch {
         session.setToken(undefined, true);
-        await context.userChange.observe(async () => {
-          await InitContext(context);
+        await remult.userChange.observe(async () => {
+          await InitContext(remult);
 
         });
         console.error("Failed ti init existing user");

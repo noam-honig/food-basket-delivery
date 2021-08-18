@@ -2,10 +2,10 @@
     
     <div class="grow-item" *ngIf="display==deliveryList">
         <span *ngIf="deliveredSinceEver==0" class="mat-card-title" style="text-align: center;">
-            {{comp.context.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
+            {{comp.remult.user.name}} כיף שבאת, תודה שבחרת להתחשב - יאללה מתחילים!
         </span>
         <span *ngIf="deliveredSinceEver>0" class="mat-card-title" style="text-align: center;">
-            {{comp.context.user.name}} תודה על {{deliveredSinceEver}} תרומות שאספת! - יאללה ממשיכים!
+            {{comp.remult.user.name}} תודה על {{deliveredSinceEver}} תרומות שאספת! - יאללה ממשיכים!
         </span>
         <span *ngIf="showFrozen()">
             לבקשתך, לא נחבר לך תרומות לאיסוף עד {{userFrozenTill}}

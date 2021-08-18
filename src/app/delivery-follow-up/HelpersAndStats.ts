@@ -21,18 +21,18 @@ function log(s: string) {
     key: "helpersAndStats",
     allowApiRead: Roles.distCenterAdmin
 },
-    (options, context) =>
+    (options, remult) =>
         options.dbName = async (self) => {
 
-            let f = SqlFor(context.repo(ActiveFamilyDeliveries).metadata);
+            let f = SqlFor( remult.repo(ActiveFamilyDeliveries).metadata);
 
-            let h = SqlFor(context.repo(Helpers).metadata);
-            var sql = new SqlBuilder(context);
+            let h = SqlFor( remult.repo(Helpers).metadata);
+            var sql = new SqlBuilder(remult);
 
             let helperFamilies = (where: () => any[]) => {
                 return {
                     from: f,
-                    where: () => [context.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                    where: () => [remult.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
                 }
             }
             return sql.entityDbName({
@@ -81,7 +81,7 @@ export class HelpersAndStats extends HelpersBase {
 
 
 
-    constructor(context: Remult) {
-        super(context);
+    constructor(remult: Remult) {
+        super(remult);
     }
 }

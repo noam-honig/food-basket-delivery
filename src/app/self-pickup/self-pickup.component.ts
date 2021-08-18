@@ -26,7 +26,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   };
 
   constructor(private busy: BusyService
-    , private context: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
+    , private remult: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.families.reloadData();
     }, this.destroyHelper);
@@ -37,7 +37,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = '';
   showAllFamilies = false;
-  families = new GridSettings(this.context.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(this. remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {
@@ -47,7 +47,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
 
     await this.families.get({
       where: f => {
-        let r = f.name.contains(this.searchString).and(this.context.filterDistCenter(f.distributionCenter, this.dialog.distCenter));
+        let r = f.name.contains(this.searchString).and(this.remult.filterDistCenter(f.distributionCenter, this.dialog.distCenter));
         if (!this.showAllFamilies) {
           return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
         }

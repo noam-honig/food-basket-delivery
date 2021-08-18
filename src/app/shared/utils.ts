@@ -65,6 +65,6 @@ export class EmailSvc {
   constructor() {
 
   }
-  static sendMail: (subject: string, message: string, email: string, context: Remult) => Promise<boolean>;
+  static sendMail: (subject: string, message: string, email: string, remult: Remult) => Promise<boolean>;
 
 }

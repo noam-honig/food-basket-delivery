@@ -24,7 +24,7 @@ export class HelperAssignmentComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<any>,
     public settings: ApplicationSettings,
-    public context: Remult
+    public remult: Remult
   ) {
   }
   @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;

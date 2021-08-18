@@ -11,7 +11,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class PrintVolunteersComponent implements OnInit {
 
-  constructor(private context: Remult, private busy: BusyService) { }
+  constructor(private remult: Remult, private busy: BusyService) { }
   volunteers: volunteer[] = [];
   total: number = 0;
   ngOnInit() {
@@ -22,10 +22,10 @@ export class PrintVolunteersComponent implements OnInit {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async volunteersForPrint(context?: Remult) {
+  static async volunteersForPrint(remult?: Remult) {
     let total = 0;
     let volunteers: volunteer[] = [];
-    for await (const d of context.repo(ActiveFamilyDeliveries).iterate()) {
+    for await (const d of  remult.repo(ActiveFamilyDeliveries).iterate()) {
       let v = volunteers.find(v => d.courier && v.id == d.courier.id);
       if (!v) {
         v = {

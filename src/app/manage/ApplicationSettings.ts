@@ -61,11 +61,11 @@ export class RemovedFromListExcelImportStrategy {
         }
       }
       if (self.helpPhone)
-        self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone, self.context));
+        self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone, self.remult));
       if (self.forWho)
-        setLangForSite(Sites.getValidSchemaFromContext(self.context), self.forWho);
-      setSettingsForSite(Sites.getValidSchemaFromContext(self.context), self);
-      logChanges(self._, self.context, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest] });
+        setLangForSite(Sites.getValidSchemaFromContext(self.remult), self.forWho);
+      setSettingsForSite(Sites.getValidSchemaFromContext(self.remult), self);
+      logChanges(self._, self.remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest] });
     }
   }
 })
@@ -86,21 +86,21 @@ export class ApplicationSettings extends EntityBase {
 
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static async getPhoneOptions(deliveryId: string, context?: Remult) {
+  static async getPhoneOptions(deliveryId: string, remult?: Remult) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await context.repo(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
+    let d = await  remult.repo(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
-    let family = await context.repo(Families).findFirst(f => f.id.isEqualTo(d.family));
+    let family = await  remult.repo(Families).findFirst(f => f.id.isEqualTo(d.family));
     let r: phoneOption[] = [];
-    let settings = await ApplicationSettings.getAsync(context);
+    let settings = await ApplicationSettings.getAsync(remult);
     for (const x of settings.getPhoneStrategy()) {
       if (x.option) {
         await x.option.build({
           family: family,
           d: d,
-          context: context,
+          remult,
 
           phoneItem: x,
           settings,
@@ -149,7 +149,7 @@ export class ApplicationSettings extends EntityBase {
   addressApiResult: string;
   @Field({ translation: l => l.deliveryCenterAddress })
   address: string;
-  addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
+  addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
   @Field({ translation: l => l.successMessageColumnName })
   commentForSuccessDelivery: string;
   @Field({ translation: l => l.leftByDoorMessageColumnName })
@@ -329,7 +329,7 @@ export class ApplicationSettings extends EntityBase {
   familyCustom4Caption: string;
   @Field({ translation: l => l.customColumn + " 4 " + l.optionalValues, includeInApi: Roles.admin })
   familyCustom4Values: string;
-  @Field<ApplicationSettings>({ serverExpression: (self) => self.context.authenticated() })
+  @Field<ApplicationSettings>({ serverExpression: (self) => self.remult.authenticated() })
   currentUserIsValidForAppLoadTest: boolean;
   @Field({ translation: l => l.questionForVolunteer + " 1 " + l.caption })
   questionForVolunteer1Caption: string;
@@ -364,17 +364,17 @@ export class ApplicationSettings extends EntityBase {
 
 
 
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
     super()
   }
 
-  static get(context: Remult) {
+  static get(remult: Remult) {
     
-    return getSettings(context);
+    return getSettings(remult);
 
   }
-  static async getAsync(context: Remult): Promise<ApplicationSettings> {
-    return (await context.repo(ApplicationSettings).findFirst());
+  static async getAsync(remult: Remult): Promise<ApplicationSettings> {
+    return (await  remult.repo(ApplicationSettings).findFirst());
   }
 
 }
@@ -405,7 +405,7 @@ export class PhoneOption {
   static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
     if (args.family.fixedCourier && args.d.courier != args.family.fixedCourier) {
       let h = await args.family.fixedCourier;
-      args.addPhone(getLang(args.context).defaultVolunteer + ": " + h.name, h.phone.displayValue);
+      args.addPhone(getLang(args.remult).defaultVolunteer + ": " + h.name, h.phone.displayValue);
     }
   });
 
@@ -447,7 +447,7 @@ export interface qaItem {
 export interface phoneBuildArgs {
   family: import('../families/families').Families,
   d: import('../families/FamilyDeliveries').FamilyDeliveries,
-  context: Remult,
+  remult: Remult,
   phoneItem: PhoneItem,
   settings: ApplicationSettings,
   addPhone: (name: string, value: string) => void
@@ -456,14 +456,14 @@ export interface phoneBuildArgs {
 
 @Injectable()
 export class SettingsService {
-  constructor(private context: Remult, private http: HttpClient) {
+  constructor(private remult: Remult, private http: HttpClient) {
 
   }
   instance: ApplicationSettings;
   async init() {
 
-    this.instance = await ApplicationSettings.getAsync(this.context);
-    setSettingsForSite(Sites.getValidSchemaFromContext(this.context), this.instance);
+    this.instance = await ApplicationSettings.getAsync(this.remult);
+    setSettingsForSite(Sites.getValidSchemaFromContext(this.remult), this.instance);
 
     translationConfig.forWho = this.instance.forWho;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;
@@ -516,15 +516,15 @@ export const settingsForSite = new Map<string, ApplicationSettings>();
 export function setSettingsForSite(site: string, lang: ApplicationSettings) {
   settingsForSite.set(site, lang);
 }
-export function getSettings(context: Remult): ApplicationSettings {
-  let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
+export function getSettings(remult: Remult): ApplicationSettings {
+  let r = settingsForSite.get(Sites.getValidSchemaFromContext(remult));
   if (r)
     return r;
   //if (context.backend) {
-  return new ApplicationSettings(context);
+  return new ApplicationSettings(remult);
   throw "can't find application settings on server for this request";
 
-  return ApplicationSettings.get(context);;
+  return ApplicationSettings.get(remult);;
 }
 
 interface customColumnInfo {
@@ -533,11 +533,11 @@ interface customColumnInfo {
   values?: string[]
 
 }
-export function includePhoneInApi(context: Remult) {
-  var s = getSettings(context);
+export function includePhoneInApi(remult: Remult) {
+  var s = getSettings(remult);
   if (!s.hideFamilyPhoneFromVolunteer)
     return true;
-  if (context.isAllowed(Roles.distCenterAdmin))
+  if (remult.isAllowed(Roles.distCenterAdmin))
     return true
   return false;
 

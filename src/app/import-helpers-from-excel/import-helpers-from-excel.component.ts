@@ -26,7 +26,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-  constructor(private context: Remult, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private remult: Remult, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
 
   }
 
@@ -94,9 +94,9 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async insertHelperRows(rowsToInsert: excelRowInfo[], context?: Remult) {
+  static async insertHelperRows(rowsToInsert: excelRowInfo[], remult?: Remult) {
     for (const r of rowsToInsert) {
-      let f = context.repo(Helpers).create();
+      let f =  remult.repo(Helpers).create();
       for (const val in r.values) {
         f[val] = r.values[val].newValue;
       }
@@ -142,20 +142,20 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Remult) {
+  static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, remult?: Remult) {
     for (const r of rowsToUpdate) {
-      await ImportHelpersFromExcelComponent.actualUpdateCol(r, columnMemberName, context);
+      await ImportHelpersFromExcelComponent.actualUpdateCol(r, columnMemberName, remult);
     }
     return rowsToUpdate;
   }
   async updateCol(i: excelRowInfo, col: FieldMetadata) {
-    await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.key, this.context);
+    await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.key, this.remult);
   }
-  static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Remult) {
+  static async actualUpdateCol(i: excelRowInfo, colMemberName: string, remult: Remult) {
     let c = ExcelHelper.actualGetColInfo(i, colMemberName);
     if (c.existingDisplayValue == c.newDisplayValue)
       return;
-    let f = await context.repo(Helpers).findFirst(f => f.id.isEqualTo(i.duplicateHelperInfo[0].id));
+    let f = await  remult.repo(Helpers).findFirst(f => f.id.isEqualTo(i.duplicateHelperInfo[0].id));
     let val = c.newValue;
     if (val === null)
       val = '';
@@ -266,7 +266,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
 
   async readLine(row: number): Promise<excelRowInfo> {
-    let f = this.context.repo(Helpers).create();
+    let f = this. remult.repo(Helpers).create();
 
 
     let helper = new columnUpdateHelper();
@@ -285,7 +285,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       s.what();
     }
 
-    f.phone = new Phone(Phone.fixPhoneInput(f.phone.thePhone, this.context));
+    f.phone = new Phone(Phone.fixPhoneInput(f.phone.thePhone, this.remult));
 
 
     let info: excelRowInfo = {
@@ -341,7 +341,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       } else
         col.value = val;
     }
-    this.helper = this.context.repo(Helpers).metadata.fields;
+    this.helper = this. remult.repo(Helpers).metadata.fields;
     if (false) {
       try {
         this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));
@@ -544,7 +544,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     return 'טלפון זהה';
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Remult) {
+  static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], remult?: Remult) {
     let result: serverCheckResults = {
       errorRows: [],
       identicalRows: [],
@@ -553,7 +553,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     } as serverCheckResults;
     for (const info of excelRowInfo) {
 
-      info.duplicateHelperInfo = (await context.repo(Helpers).find({ where: h => h.phone.isEqualTo(new Phone(info.phone)) })).map(x => {
+      info.duplicateHelperInfo = (await  remult.repo(Helpers).find({ where: h => h.phone.isEqualTo(new Phone(info.phone)) })).map(x => {
         return {
           id: x.id,
           name: x.name
@@ -566,7 +566,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         info.error = 'מתנדב קיים יותר מפעם אחת בבסיס הנתונים';
         result.errorRows.push(info);
       } else {
-        let ef = await context.repo(Helpers).findFirst(f => f.id.isEqualTo(info.duplicateHelperInfo[0].id));
+        let ef = await  remult.repo(Helpers).findFirst(f => f.id.isEqualTo(info.duplicateHelperInfo[0].id));
         let hasDifference = false;
         for (const columnMemberName of columnsInCompareMemeberName) {
 

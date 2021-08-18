@@ -16,7 +16,7 @@ export class GeoCodeOptions {
 }
 
 var pendingRequests = new Map<string, Promise<GeocodeInformation>>();
-export async function GetGeoInformation(address: string, context: Remult) {
+export async function GetGeoInformation(address: string, remult: Remult) {
 
     if (!address || address == '' || address.trim() == '')
         return new GeocodeInformation();
@@ -24,13 +24,13 @@ export async function GetGeoInformation(address: string, context: Remult) {
         return new GeocodeInformation();
     }
     address = address.trim();
-    let cacheEntry = await context.repo(GeocodeCache).findId(address, { createIfNotFound: true });
+    let cacheEntry = await  remult.repo(GeocodeCache).findId(address, { createIfNotFound: true });
     if (!cacheEntry.isNew()) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);
     }
 
-    let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync(context);
+    let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync(remult);
     let b = settings.forWho.args.bounds;
     let x = pendingRequests.get(address);
     if (!x) {
@@ -372,13 +372,13 @@ export class AddressHelper {
         return this.addressColumn().value;
     }
 
-    constructor(private context: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
+    constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
 
 
     }
     async updateApiResultIfChanged() {
-        if (this.addressColumn().wasChanged() || !this.ok()) {
-            let geo = await GetGeoInformation(this.addressColumn().value, this.context);
+        if (this.addressColumn().valueChanged() || !this.ok()) {
+            let geo = await GetGeoInformation(this.addressColumn().value, this.remult);
             this.apiResultColumn().value = geo.saveToString();
         }
     }

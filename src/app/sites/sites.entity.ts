@@ -10,11 +10,11 @@ import { Sites } from "./sites";
         self.id = self.id.toLowerCase().trim();
         if (self.isNew()) {
             self.createDate = new Date();
-            if (self.context.user)
-                self.createUser = self.context.user.id;
+            if (self.remult.user)
+                self.createUser = self.remult.user.id;
         }
         else {
-            if (self.$.id.wasChanged())
+            if (self.$.id.valueChanged())
                 self.$.id.error = 'not allowed to change';
         }
     }
@@ -27,14 +27,14 @@ export class SitesEntity extends EntityBase {
     @Field()
     createUser: string;
 
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
         super();
     }
-    static async completeInit(context: Remult) {
-        let sites = await context.repo(SitesEntity).find();
+    static async completeInit(remult: Remult) {
+        let sites = await  remult.repo(SitesEntity).find();
         let missingInDb = Sites.schemas.filter(siteFromEnv => !sites.find(y => y.id == siteFromEnv));
         for (const s of missingInDb) {
-            let r = await context.repo(SitesEntity).create();
+            let r = await  remult.repo(SitesEntity).create();
             r.id = s;
             await r.save();
         }

@@ -213,7 +213,7 @@
     <button mat-raised-button color="accent" (click)="cancel()" *ngIf="args.disableSave">
         {{settings.lang.close}}
     </button>
-    &nbsp; <a *ngIf="families.currentRow&&families.currentRow.$.address.wasChanged()"
+    &nbsp; <a *ngIf="families.currentRow&&families.currentRow.$.address.valueChanged()"
         (click)="families.currentRow.save()" target="_blank">{{settings.lang.checkAddress}}</a>
 
 </mat-dialog-actions>

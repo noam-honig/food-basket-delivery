@@ -31,7 +31,7 @@ import { CreateNewEvent } from './create-new-event/create-new-event';
 })
 export class AppComponent {
   isAdmin() {
-    return this.context.isAllowed(Roles.admin);
+    return this.remult.isAllowed(Roles.admin);
   }
   lang: Language;
   isEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
@@ -41,7 +41,7 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
     public helper: RouteHelperService,
-    public context: Remult,
+    public remult: Remult,
     public settings: ApplicationSettings,
     private busy: BusyService
   ) {
@@ -56,7 +56,7 @@ export class AppComponent {
 
   }
 
-  createNewEventAction = new CreateNewEvent(this.context);
+  createNewEventAction = new CreateNewEvent(this.remult);
 
 
 
@@ -80,7 +80,7 @@ export class AppComponent {
   }
   prevLogoUrl = '';
   getLogo() {
-    let result = ApplicationSettings.get(this.context).logoUrl;
+    let result = ApplicationSettings.get(this.remult).logoUrl;
     if (result) {
       this.prevLogoUrl = result;
     }
@@ -97,17 +97,17 @@ export class AppComponent {
       if (this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
         return this.activeRoute.snapshot.firstChild.data.name;
     }
-    return ApplicationSettings.get(this.context).organisationName;
+    return ApplicationSettings.get(this.remult).organisationName;
   }
   toolbarColor = 'primary';
   showSideBar() {
-    if (!this.context.authenticated())
+    if (!this.remult.authenticated())
       return false;
     if (this.activeRoute&&this.activeRoute.firstChild&&this.activeRoute.firstChild.snapshot&&this.activeRoute.firstChild.snapshot.routeConfig&&this.activeRoute.firstChild.snapshot.routeConfig.path=="playback") {
       return false;
 
     }
-    if (this.settings.isSytemForMlt() && !this.context.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
+    if (this.settings.isSytemForMlt() && !this.remult.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
       return false;
     return true;
   }

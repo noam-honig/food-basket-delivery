@@ -14,33 +14,33 @@ import { Field, use } from "../translate";
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: Roles.admin
-}, (options, context) => {
+}, (options, remult) => {
     options.apiDataFilter = (self) => {
-        if (context.isAllowed(Roles.admin))
+        if (remult.isAllowed(Roles.admin))
             return undefined;
-        return self.assignedToHelper.isEqualTo(context.currentUser);
+        return self.assignedToHelper.isEqualTo(remult.currentUser);
     };
     options.saving = (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = context.currentUser;
+            self.userCreated = remult.currentUser;
         }
         else {
-            if (self.$.giftURL.wasChanged()) {
+            if (self.$.giftURL.valueChanged()) {
                 self.$.giftURL.error = 'ניתן לקלוט מתנות חדשות .לא ניתן לשנות לינק למתנה';
                 return;
             }
-            if (self.$.assignedToHelper.wasChanged() && self.wasConsumed != false) {
+            if (self.$.assignedToHelper.valueChanged() && self.wasConsumed != false) {
                 self.$.giftURL.error = 'אין לשייך מתנה שכבר מומשה למתנדב אחר';
                 return;
             }
-            if (self.$.assignedToHelper.wasChanged() && self.assignedToHelper) {
+            if (self.$.assignedToHelper.valueChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
-                self.assignedByUser = context.currentUser;
+                self.assignedByUser = remult.currentUser;
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
-            if (self.$.wasConsumed.wasChanged()) {
+            if (self.$.wasConsumed.valueChanged()) {
                 self.wasClicked = self.wasConsumed;
             }
         }
@@ -73,10 +73,10 @@ export class HelperGifts extends IdEntity {
 
 
     @BackendMethod({ allowed: Roles.admin })
-    static async assignGift(helperId: string, context?: Remult) {
-        let helper = await context.repo(Helpers).findId(helperId);
-        if (await context.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.currentUser)) > 0) {
-            let g = await context.repo(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.currentUser));
+    static async assignGift(helperId: string, remult?: Remult) {
+        let helper = await  remult.repo(Helpers).findId(helperId);
+        if (await  remult.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(remult.currentUser)) > 0) {
+            let g = await  remult.repo(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(remult.currentUser));
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;
@@ -89,25 +89,25 @@ export class HelperGifts extends IdEntity {
         throw new Error('אין מתנות לחלוקה');
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async importUrls(urls: string[], context?: Remult) {
+    static async importUrls(urls: string[], remult?: Remult) {
         for (const url of urls) {
-            let g = await context.repo(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
+            let g = await  remult.repo(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
             if (!g) {
-                g = context.repo(HelperGifts).create();
+                g =  remult.repo(HelperGifts).create();
                 g.giftURL = url;
                 await g.save();
             }
         }
     }
     @BackendMethod({ allowed: true })
-    static async getMyPendingGiftsCount(h: Helpers, context?: Remult) {
-        let gifts = await context.repo(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
+    static async getMyPendingGiftsCount(h: Helpers, remult?: Remult) {
+        let gifts = await  remult.repo(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @BackendMethod({ allowed: true })
-    static async getMyFirstGiftURL(h: HelpersBase, context?: Remult) {
-        let gifts = await context.repo(HelperGifts).find({
+    static async getMyFirstGiftURL(h: HelpersBase, remult?: Remult) {
+        let gifts = await  remult.repo(HelperGifts).find({
             where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
         });
@@ -121,13 +121,13 @@ export class HelperGifts extends IdEntity {
 
 
 
-export async function showUsersGifts(helperId: string, context: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+export async function showUsersGifts(helperId: string, remult: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
     openDialog(MyGiftsDialogComponent, x => x.args = {
         helperId: helperId
     });
 }
 
-export async function showHelperGifts(hid: Helpers, context: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+export async function showHelperGifts(hid: Helpers, remult: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
 
 
     let helperName = hid.name;
@@ -136,13 +136,13 @@ export async function showHelperGifts(hid: Helpers, context: Remult, settings: A
 
         buttons: [{
             text: 'הענק משאלה',
-            visible: () => context.isAllowed(Roles.admin),
+            visible: () => remult.isAllowed(Roles.admin),
             click: async x => {
                 await HelperGifts.assignGift(hid.id);
                 //this.refresh();
             },
         }],
-        settings: new GridSettings(context.repo(HelperGifts), {
+        settings: new GridSettings( remult.repo(HelperGifts), {
             allowUpdate: true,
 
             rowsInPage: 50,

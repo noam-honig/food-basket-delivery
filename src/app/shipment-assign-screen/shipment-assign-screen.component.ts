@@ -54,15 +54,15 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   async showAssignment(rh: relevantHelper) {
-    let h = await this.context.repo(Helpers).findId(rh.helper.id);
+    let h = await this. remult.repo(Helpers).findId(rh.helper.id);
     openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.context.repo(ActiveFamilyDeliveries).find({
+      for (const fd of await this. remult.repo(ActiveFamilyDeliveries).find({
         where: fd => FamilyDeliveries.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = await this.context.repo(Helpers).findId(h.id);
+        fd.courier = await this. remult.repo(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -72,9 +72,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this.context.repo(Helpers).findId(f.assignedHelper.id);
+    let helper = await this. remult.repo(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.context.repo(ActiveFamilyDeliveries).find({
+      for (const fd of await this. remult.repo(ActiveFamilyDeliveries).find({
         where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
         fd.courier = null;
@@ -93,7 +93,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       onSelect: async selectedHelper => {
         let h = this.data.helpers[selectedHelper.id];
         if (!h) {
-          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this.context.repo(Helpers).findId(selectedHelper.id));;
+          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this. remult.repo(Helpers).findId(selectedHelper.id));;
           this.data[h.id] = h;
         }
         this.assignHelper(h, f);
@@ -110,7 +110,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   togglerShowHelper(forFamily: familyInfo) {
     this.openFamilies.set(forFamily, !this.openFamilies.get(forFamily));
   }
-  constructor(private context: Remult, private busy: BusyService, private settings: ApplicationSettings) { }
+  constructor(private remult: Remult, private busy: BusyService, private settings: ApplicationSettings) { }
   data: data;
   families: familyInfo[] = [];
   async ngOnInit() {
@@ -170,7 +170,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async getShipmentAssignInfo(context?: Remult, db?: SqlDatabase) {
+  static async getShipmentAssignInfo(remult?: Remult, db?: SqlDatabase) {
     let result: data = {
       helpers: {},
       unAssignedFamilies: {}
@@ -178,17 +178,17 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     let i = 0;
     //collect helpers
-    for (let h of await context.repo(Helpers).find({ where: h => Helpers.active(h).and(h.preferredDistributionAreaAddress.isDifferentFrom('')), limit: 1000 })) {
+    for (let h of await  remult.repo(Helpers).find({ where: h => Helpers.active(h).and(h.preferredDistributionAreaAddress.isDifferentFrom('')), limit: 1000 })) {
       result.helpers[h.id] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
       i++;
     }
 
     //remove busy helpers
     {
-      let fd = SqlFor(context.repo(FamilyDeliveries));
-      let sql = new SqlBuilder(context);
+      let fd = SqlFor( remult.repo(FamilyDeliveries));
+      let sql = new SqlBuilder(remult);
       let busyLimitdate = new Date();
-      busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
+      busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(remult).BusyHelperAllowedFreq_denom);
 
 
       for (let busy of (await db.execute(await sql.query({
@@ -196,16 +196,16 @@ export class ShipmentAssignScreenComponent implements OnInit {
         from: fd,
         where: () => [DeliveryStatus.isAResultStatus(fd.deliverStatus).and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
         groupBy: () => [fd.courier],
-        having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(context).BusyHelperAllowedFreq_nom)]
+        having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(remult).BusyHelperAllowedFreq_nom)]
       }))).rows) {
         result.helpers[busy.courier] = undefined;
       }
     }
 
     {
-      let sql = new SqlBuilder(context);
+      let sql = new SqlBuilder(remult);
 
-      let fd = SqlFor(context.repo(FamilyDeliveries));
+      let fd = SqlFor( remult.repo(FamilyDeliveries));
       for (let r of (await db.execute(await sql.query({
         select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
@@ -222,9 +222,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     //highlight new Helpers
     {
-      let sql = new SqlBuilder(context);
-      let h = SqlFor(context.repo(Helpers));
-      let fd = SqlFor(context.repo(FamilyDeliveries));
+      let sql = new SqlBuilder(remult);
+      let h = SqlFor( remult.repo(Helpers));
+      let fd = SqlFor( remult.repo(FamilyDeliveries));
       for (let helper of (await db.execute(await sql.query({
         select: () => [h.id],
         from: h,
@@ -242,8 +242,8 @@ export class ShipmentAssignScreenComponent implements OnInit {
       }
     }
     {
-      let sql = new SqlBuilder(context);
-      let fd =await  SqlFor(context.repo(ActiveFamilyDeliveries));
+      let sql = new SqlBuilder(remult);
+      let fd =await  SqlFor( remult.repo(ActiveFamilyDeliveries));
 
       let sqlResult = await db.execute(
         await sql.query({
@@ -271,7 +271,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
           id: await getValueFromResult(r, fd.family),
           name: await getValueFromResult(r, fd.name),
           address: await getValueFromResult(r, fd.address),
-          createDateString: relativeDateName(context, { d: await getValueFromResult(r, fd.createDate) }),
+          createDateString: relativeDateName(remult, { d: await getValueFromResult(r, fd.createDate) }),
           location: {
             lat: +await getValueFromResult(r, fd.addressLatitude),
             lng: +await getValueFromResult(r, fd.addressLongitude)
@@ -279,7 +279,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
           deliveries: [{
             basketTypeId: await getValueFromResult(r, fd.basketType),
             quantity: await getValueFromResult(r, fd.quantity),
-            basketTypeName: (await context.repo(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
+            basketTypeName: (await  remult.repo(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
             id: await getValueFromResult(r, fd.id)
 
           }],

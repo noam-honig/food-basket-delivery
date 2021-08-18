@@ -26,9 +26,9 @@ export class SelectFamilyComponent implements OnInit {
     allowShowAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
-  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Remult, public settings: ApplicationSettings) { }
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private remult: Remult, public settings: ApplicationSettings) { }
   searchString: string = '';
-  families = new GridSettings(this.context.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(this. remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
   showAll = false;
   selectFirst() {
@@ -67,7 +67,7 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: f => {
-        let result = this.context.filterDistCenter(f.distributionCenter, this.args.distCenter);
+        let result = this.remult.filterDistCenter(f.distributionCenter, this.args.distCenter);
         {
           let r = f.name.contains(this.searchString);
           if (this.args.selectStreet)

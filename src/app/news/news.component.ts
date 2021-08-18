@@ -30,7 +30,7 @@ import { DeliveryImagesComponent } from '../delivery-images/delivery-images.comp
 })
 export class NewsComponent implements OnInit, OnDestroy {
     isAdmin(){
-        return this.context.isAllowed(Roles.admin);
+        return this.remult.isAllowed(Roles.admin);
     }
     static needsWorkRoute: Route = {
         path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard]
@@ -44,7 +44,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         openDialog(DeliveryImagesComponent, x => x.args = n);
     }
 
-    constructor(private dialog: DialogService, private context: Remult, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
+    constructor(private dialog: DialogService, private remult: Remult, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
         dialog.onStatusChange(() => this.refresh(), this.destroyHelper);
         dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
@@ -83,14 +83,14 @@ export class NewsComponent implements OnInit, OnDestroy {
             this.filters.setToNeedsWork();
         }
         this.refresh();
-        this.familySources.push(...(await this.context.repo(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id, name: x.name } as familySource }));
+        this.familySources.push(...(await this. remult.repo(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id, name: x.name } as familySource }));
 
     }
     newsRows = 50;
     async refresh() {
 
         this.busy.donotWait(async () => {
-            this.news = await this.context.repo(FamilyDeliveries).find({
+            this.news = await this. remult.repo(FamilyDeliveries).find({
                 where: n => {
                     return new AndFilter(this.filters.where(n), this.dialog.filterDistCenter(n.distributionCenter));
 

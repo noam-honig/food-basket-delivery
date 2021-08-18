@@ -25,7 +25,7 @@ function storedInfo(): VolunteerInfo {
 
 @Controller('event-Info')
 export class RegisterToEvent {
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
         if (!actionInfo.runningOnServer) {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
@@ -39,15 +39,15 @@ export class RegisterToEvent {
         translation: l => l.phone,
         valueType: Phone,
         validate: (e, c) => {
-            c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone, e.context))
-            Phone.validatePhone(c, e.context, true);
+            c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone, e.remult))
+            Phone.validatePhone(c, e.remult, true);
 
         }
     })
     phone: Phone;
     @Field<RegisterToEvent>({
         caption: "שם",
-        validate: (e, name) => Validators.required(e, name, e.context.lang.nameIsTooShort)
+        validate: (e, name) => Validators.required(e, name, e.remult.lang.nameIsTooShort)
     })
 
     name: string;
@@ -57,9 +57,9 @@ export class RegisterToEvent {
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
         this.rememberMeOnThisDevice = storedInfo().name != '';
-        if (!this.context.authenticated())
+        if (!this.remult.authenticated())
             await openDialog(InputAreaComponent, x => x.args = {
-                title: getSettings(this.context).lang.register,
+                title: getSettings(this.remult).lang.register,
                 settings: {
                     fields: () => [this.$.phone, this.$.name, this.$.rememberMeOnThisDevice]
                 },
@@ -76,8 +76,8 @@ export class RegisterToEvent {
                 }
             });
         else {
-            this.phone = this.context.currentUser.phone;
-            this.name = this.context.currentUser.name;
+            this.phone = this.remult.currentUser.phone;
+            this.name = this.remult.currentUser.name;
             this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
         }
     }
@@ -96,18 +96,18 @@ export class RegisterToEvent {
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
 
-            let orig = this.context;
-            this.context = new Remult();
-            this.context.setDataProvider(dp);
-            Sites.setSiteToContext(this.context, site, orig);
-            await InitContext(this.context);
+            let orig = this.remult;
+            this.remult = new Remult();
+            this.remult.setDataProvider(dp);
+            Sites.setSiteToContext(this.remult, site, orig);
+            await InitContext(this.remult);
         }
         let helper: HelpersBase;
-        if (this.context.authenticated()) {
-            helper = this.context.currentUser;
+        if (this.remult.authenticated()) {
+            helper = this.remult.currentUser;
         }
         else {
-            helper = await this.context.repo(Helpers).findFirst({
+            helper = await this. remult.repo(Helpers).findFirst({
                 where: h => h.phone.isEqualTo(this.phone),
                 createIfNotFound: register
             });
@@ -115,9 +115,9 @@ export class RegisterToEvent {
                 helper.name = this.name;
                 await helper.save();
             }
-            this.context.currentUser = helper as Helpers;
+            this.remult.currentUser = helper as Helpers;
         }
-        let helperInEvent = await this.context.repo(volunteersInEvent).findFirst({
+        let helperInEvent = await this. remult.repo(volunteersInEvent).findFirst({
             where: v => v.eventId.isEqualTo(id).and(v.helper.isEqualTo(helper)),
             createIfNotFound: register
         });
@@ -130,7 +130,7 @@ export class RegisterToEvent {
             helperInEvent.canceled = true;
             await helperInEvent.save();
         }
-        return (await this.context.repo(Event).findId(id)).toEventInList(helper);
+        return (await this. remult.repo(Event).findId(id)).toEventInList(helper);
     }
 }
 const infoKeyInStorage = "myVolunteerInfo";

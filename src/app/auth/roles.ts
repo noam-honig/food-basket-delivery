@@ -1,4 +1,4 @@
-import { AuthenticatedInGuard, NotSignedInGuard } from '@remult/angular';
+import { AuthenticatedInGuard, NotAuthenticatedGuard } from '@remult/angular';
 import { Remult } from 'remult';
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
@@ -33,7 +33,7 @@ export class distCenterAdminGuard extends AuthenticatedInGuard {
 export class distCenterOrOverviewOrAdmin extends AuthenticatedInGuard {
 
     isAllowed() {
-        return this.context.isAllowed([Roles.distCenterAdmin, Roles.admin, Roles.overview]);
+        return this.remult.isAllowed([Roles.distCenterAdmin, Roles.admin, Roles.overview]);
     }
 }
 
@@ -86,9 +86,9 @@ export class distCenterOrLabGuard extends AuthenticatedInGuard {
 
 @Injectable()
 export class EventListGuard implements CanActivate {
-    constructor(private context: Remult) { }
+    constructor(private remult: Remult) { }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-        return !this.context.authenticated() || !this.context.isAllowed(Roles.distCenterAdmin)
+        return !this.remult.authenticated() || !this.remult.isAllowed(Roles.distCenterAdmin)
     }
 
 

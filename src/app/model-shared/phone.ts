@@ -35,31 +35,31 @@ export class Phone {
   static toJson(x: Phone): string {
     return x ? x.thePhone : '';
   }
-  static fixPhoneInput(s: string, context: Remult) {
+  static fixPhoneInput(s: string, remult: Remult) {
     if (!s)
       return s;
     let orig = s.trim();
     s = s.replace(/\D/g, '');
     if (orig.startsWith('+'))
       return '+' + s;
-    let forWho = getSettings(context).forWho;
+    let forWho = getSettings(remult).forWho;
     if (forWho && forWho.args.suppressPhoneZeroAddition)
       return s;
     if (s.length == 9 && s[0] != '0' && s[0] != '3')
       s = '0' + s;
     return s;
   }
-  sendWhatsapp(context: Remult, message = "") {
-    Phone.sendWhatsappToPhone(this.thePhone, message, context);
+  sendWhatsapp(remult: Remult, message = "") {
+    Phone.sendWhatsappToPhone(this.thePhone, message, remult);
   }
 
-  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Remult, test = false) {
-    phone = Phone.fixPhoneInput(phone, context);
+  static sendWhatsappToPhone(phone: string, smsMessage: string, remult: Remult, test = false) {
+    phone = Phone.fixPhoneInput(phone, remult);
     if (phone.startsWith('0')) {
-      phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
+      phone = getSettings(remult).getInternationalPhonePrefix() + phone.substr(1);
     }
-    if (getSettings(context).forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
-      phone = getSettings(context).getInternationalPhonePrefix() + phone;
+    if (getSettings(remult).forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
+      phone = getSettings(remult).getInternationalPhonePrefix() + phone;
 
     if (phone.startsWith('+'))
       phone = phone.substr(1);
@@ -83,34 +83,34 @@ export class Phone {
 
     return x;
   }
-  static validatePhone(col: FieldRef<any, Phone>, context: Remult, required = false) {
+  static validatePhone(col: FieldRef<any, Phone>, remult: Remult, required = false) {
     if (!col.value || col.value.thePhone == '') {
       if (required)
-        col.error = getLang(context).invalidPhoneNumber;
+        col.error = getLang(remult).invalidPhoneNumber;
       return;
     }
-    if (getLang(context).languageCode != 'iw')
+    if (getLang(remult).languageCode != 'iw')
       if (col.value.thePhone.length < 10)
-        col.error = getLang(context).invalidPhoneNumber;
+        col.error = getLang(remult).invalidPhoneNumber;
       else
         return;
 
     if (!isPhoneValidForIsrael(col.value.thePhone)) {
-      col.error = getLang(context).invalidPhoneNumber;
+      col.error = getLang(remult).invalidPhoneNumber;
     }
     /*
         if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
           if (col.displayValue.length != 12) {
-            col.validationError = getLang(context).invalidPhoneNumber;
+            col.validationError = getLang(remult).invalidPhoneNumber;
           }
     
         } else if (col.displayValue.startsWith('0')) {
           if (col.displayValue.length != 11) {
-            col.validationError = getLang(context).invalidPhoneNumber;
+            col.validationError = getLang(remult).invalidPhoneNumber;
           }
         }
         else {
-          col.validationError = getLang(context).invalidPhoneNumber;
+          col.validationError = getLang(remult).invalidPhoneNumber;
         }
       */
   }

@@ -11,7 +11,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class BasketSummaryComponent implements OnInit {
 
-  constructor(private context: Remult, public settings: ApplicationSettings) { }
+  constructor(private remult: Remult, public settings: ApplicationSettings) { }
   families: UserFamiliesList;
   boxes1Name = BasketType.boxes1Name;
   boxes2Name = BasketType.boxes2Name;

@@ -10,7 +10,7 @@ import { DateOnlyValueConverter } from 'remult/valueConverters';
 import { HelpersBase } from '../helpers/helpers';
 
 export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
-  context: Repository<E>,
+  repo: Repository<E>,
   grid: T,
   fileName: string,
   busy: BusyService,
@@ -48,7 +48,7 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
     let rowNum = titleRow + 1;
 
 
-    let rows = context.iterate(grid.getFilterWithSelectedRows());
+    let rows = repo.iterate(grid.getFilterWithSelectedRows());
 
     if (true)
 

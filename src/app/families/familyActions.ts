@@ -73,21 +73,21 @@ export class NewDelivery extends ActionOnRows<Families> {
     })
 
     excludeGroups: GroupsValue;
-    constructor(context: Remult) {
-        super(context, Families, {
+    constructor(remult: Remult) {
+        super(remult, Families, {
             validate: async () => {
 
                 if (!this.distributionCenter) {
-                    this.$.distributionCenter.error = getLang(this.context).mustSelectDistributionList;
+                    this.$.distributionCenter.error = getLang(this.remult).mustSelectDistributionList;
                     throw this.$.distributionCenter.error;
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType = await this.context.defaultBasketType();
+                this.basketType = await this.remult.defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.dialog.distCenter;
                 if (!this.distributionCenter)
-                    this.distributionCenter = await context.defaultDistributionCenter();
+                    this.distributionCenter = await remult.defaultDistributionCenter();
                 return [
                     this.$.useFamilyBasket,
                     { field: this.$.basketType, visible: () => !this.useFamilyBasket },
@@ -107,7 +107,7 @@ export class NewDelivery extends ActionOnRows<Families> {
             additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
 
 
-            title: getLang(context).newDelivery,
+            title: getLang(remult).newDelivery,
             icon: 'add_shopping_cart',
             forEach: async f => {
 
@@ -171,15 +171,15 @@ export class updateGroup extends ActionOnRows<Families> {
         translation: l => l.familyGroup
     })
     @DataControl({
-        valueList: async context => (await getValueList<Groups>(context.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
+        valueList: async remult => (await getValueList<Groups>( remult.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
     })
     group: string;
     @Field()
     action: UpdateGroupStrategy = UpdateGroupStrategy.add;
-    constructor(context: Remult) {
-        super(context, Families, {
+    constructor(remult: Remult) {
+        super(remult, Families, {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
-            title: getLang(context).assignAFamilyGroup,
+            title: getLang(remult).assignAFamilyGroup,
             forEach: async f => {
                 this.action.whatToDo(f.groups, this.group, x => f.groups = x);
             }
@@ -205,9 +205,9 @@ export class UpdateStatus extends ActionOnRows<Families> {
     @Field({ translation: l => l.deleteExistingComment })
     deleteExistingComment: boolean;
 
-    constructor(context: Remult) {
-        super(context, Families, {
-            help: () => getLang(this.context).updateStatusHelp,
+    constructor(remult: Remult) {
+        super(remult, Families, {
+            help: () => getLang(this.remult).updateStatusHelp,
             dialogColumns: async () => {
                 if (!this.status)
                     this.status = FamilyStatus.Active;
@@ -221,7 +221,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 
                 ]
             },
-            title: getLang(context).updateFamilyStatus,
+            title: getLang(remult).updateFamilyStatus,
             forEach: async f => {
                 f.status = this.status;
                 if (this.deleteExistingComment) {
@@ -233,7 +233,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment += this.comment;
                 }
                 if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
-                    for await (const fd of this.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
+                    for await (const fd of this. remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
                         if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive = true;
@@ -256,9 +256,9 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     @Field()
     basket: BasketType;
 
-    constructor(context: Remult) {
-        super(context, Families, {
-            title: getLang(context).updateDefaultBasket,
+    constructor(remult: Remult) {
+        super(remult, Families, {
+            title: getLang(remult).updateDefaultBasket,
             forEach: async f => { f.basketType = this.basket },
         });
     }
@@ -272,15 +272,15 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     updateExistingDeliveries: boolean;
 
 
-    constructor(context: Remult) {
-        super(context, Families, {
+    constructor(remult: Remult) {
+        super(remult, Families, {
             visible: c => c.settings.usingSelfPickupModule,
-            title: getLang(context).updateDefaultSelfPickup,
+            title: getLang(remult).updateDefaultSelfPickup,
             forEach: async f => {
                 {
                     f.defaultSelfPickup = this.selfPickup;
                     if (this.updateExistingDeliveries) {
-                        for await (const fd of this.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
+                        for await (const fd of this. remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
                             if (this.selfPickup) {
                                 if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
                                     fd.deliverStatus = DeliveryStatus.SelfPickup;
@@ -304,9 +304,9 @@ export class UpdateArea extends ActionOnRows<Families> {
     @Field({ translation: l => l.region })
     area: string;
 
-    constructor(context: Remult) {
-        super(context, Families, {
-            title: getLang(context).updateArea,
+    constructor(remult: Remult) {
+        super(remult, Families, {
+            title: getLang(remult).updateArea,
             forEach: async f => { f.area = this.area.trim() },
         });
     }
@@ -316,9 +316,9 @@ export class UpdateQuantity extends ActionOnRows<Families> {
     @QuantityColumn()
     quantity: number;
 
-    constructor(context: Remult) {
-        super(context, Families, {
-            title: getLang(context).updateDefaultQuantity,
+    constructor(remult: Remult) {
+        super(remult, Families, {
+            title: getLang(remult).updateDefaultQuantity,
             forEach: async f => { f.quantity = this.quantity },
         });
     }
@@ -328,9 +328,9 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
     @Field()
     familySource: FamilySources;
 
-    constructor(context: Remult) {
-        super(context, Families, {
-            title: getLang(context).updateFamilySource,
+    constructor(remult: Remult) {
+        super(remult, Families, {
+            title: getLang(remult).updateFamilySource,
             forEach: async f => { f.familySource = this.familySource }
         });
     }
@@ -341,14 +341,14 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     clearVoulenteer: boolean;
     @Field()
     courier: HelpersBase;
-    constructor(context: Remult) {
-        super(context, Families, {
+    constructor(remult: Remult) {
+        super(remult, Families, {
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
                 { field: this.$.courier, visible: () => !this.clearVoulenteer }
             ],
 
-            title: getLang(context).updateDefaultVolunteer,
+            title: getLang(remult).updateDefaultVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer) {
                     fd.fixedCourier = null;
@@ -371,13 +371,13 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
 
     @Field()
     familyActionInfo: any;
-    constructor(context: Remult, public orig: ActionOnRows<Families>) {
-        super(context, ActiveFamilyDeliveries, {
+    constructor(remult: Remult, public orig: ActionOnRows<Families>) {
+        super(remult, ActiveFamilyDeliveries, {
             forEach: async fd => {
                 if (this.processedFamilies.get(fd.family))
                     return;
                 this.processedFamilies.set(fd.family, true);
-                let f = await context.repo(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
+                let f = await  remult.repo(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
                 if (f) {
                     await orig.args.forEach(f);
                     await f.save();
@@ -409,20 +409,20 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
 }
 @Controller('updateGroupForDeliveries')
 export class updateGroupForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(context: Remult) {
-        super(context, new updateGroup(context))
+    constructor(remult: Remult) {
+        super(remult, new updateGroup(remult))
     }
 }
 @Controller('UpdateAreaForDeliveries')
 export class UpdateAreaForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(context: Remult) {
-        super(context, new UpdateArea(context))
+    constructor(remult: Remult) {
+        super(remult, new UpdateArea(remult))
     }
 }
 @Controller('UpdateStatusForDeliveries')
 export class UpdateStatusForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(context: Remult) {
-        super(context, new UpdateStatus(context))
+    constructor(remult: Remult) {
+        super(remult, new UpdateStatus(remult))
     }
 }
 

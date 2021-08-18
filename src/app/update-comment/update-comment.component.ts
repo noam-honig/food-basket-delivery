@@ -30,7 +30,7 @@ export class GetVolunteerFeedback implements OnInit {
   };
   constructor(
     public dialogRef: MatDialogRef<any>,
-    private context: Remult,
+    private remult: Remult,
     private dialog: DialogService,
     public settings: ApplicationSettings
   ) {
@@ -93,7 +93,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this.context.repo(DeliveryImage).create({
+        await this. remult.repo(DeliveryImage).create({
           deliveryId: this.args.family.id, image: image.image
         }).save();
         this.args.family.needsWork = true;
@@ -105,7 +105,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   }
 
   helpText() {
-    let s = ApplicationSettings.get(this.context);
+    let s = ApplicationSettings.get(this.remult);
     return this.args.helpText(s);
   }
   images: ImageInfo[] = [];

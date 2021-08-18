@@ -3,8 +3,8 @@ import { EmailSvc } from '../shared/utils';
 import { Remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 
-EmailSvc.sendMail = async (subject: string, message: string, email: string, context: Remult) => {
-    let settings = await ApplicationSettings.getAsync(context);
+EmailSvc.sendMail = async (subject: string, message: string, email: string, remult: Remult) => {
+    let settings = await ApplicationSettings.getAsync(remult);
     if (!settings.isSytemForMlt())
         return;
     if (!email || !email.includes('@'))

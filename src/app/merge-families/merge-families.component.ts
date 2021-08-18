@@ -28,13 +28,13 @@ function phoneDigits(val: Phone | string) {
 
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(public context: Remult, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
+  constructor(public remult: Remult, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
     this.families.sort((a, b) => b.createDate.valueOf() - a.createDate.valueOf());
     this.families.sort((a, b) => a.status.id - b.status.id);
-    this.family = await this.context.repo(Families).findId(this.families[0].id);
+    this.family = await this. remult.repo(Families).findId(this.families[0].id);
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
@@ -96,7 +96,7 @@ export class MergeFamiliesComponent implements OnInit {
     }
 
     for (const c of this.family.$) {
-      if (c.metadata.options.allowApiUpdate === undefined || this.context.isAllowedForInstance(this.family, c.metadata.options.allowApiUpdate)) {
+      if (c.metadata.options.allowApiUpdate === undefined || this.remult.isAllowedForInstance(this.family, c.metadata.options.allowApiUpdate)) {
         switch (c) {
           case this.family.$.addressApiResult:
           case this.family.$.addressLatitude:
@@ -161,7 +161,7 @@ export class MergeFamiliesComponent implements OnInit {
       await MergeFamiliesComponent.mergeFamilies(this.families.map(x => x.id));
       this.merged = true;
       this.dialogRef.close();
-      let deliveries = await this.context.repo(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)))
+      let deliveries = await this. remult.repo(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)))
       if (deliveries > 0) {
 
         await this.family.showDeliveryHistoryDialog({
@@ -181,17 +181,17 @@ export class MergeFamiliesComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async mergeFamilies(ids: string[], context?: Remult) {
+  static async mergeFamilies(ids: string[], remult?: Remult) {
     let id = ids.splice(0, 1)[0];
-    let newFamily = await context.repo(Families).findId(id);
+    let newFamily = await  remult.repo(Families).findId(id);
 
     for (const oldId of ids) {
-      for await (const fd of context.repo(FamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(oldId) })) {
+      for await (const fd of  remult.repo(FamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(oldId) })) {
         fd.family = id;
         newFamily.updateDelivery(fd);
         await fd.save();
       }
-      await (await context.repo(Families).findId(oldId)).delete();
+      await (await  remult.repo(Families).findId(oldId)).delete();
     }
   }
 

@@ -98,7 +98,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     dict = new Map<string, google.maps.Marker>();
     disableMapBoundsRefrest = 0;
-    constructor(private context: Remult, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
+    constructor(private remult: Remult, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
         this.mediaMatcher.addListener((mql) => {
             if (mql.matches) {
                 let x = this.gmapElement.nativeElement.offsetWidth;
@@ -267,7 +267,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private async initMap() {
         if (!this.mapInit) {
             if (!this.center) {
-                var x = (await ApplicationSettings.get(this.context)).addressHelper.location();
+                var x = (await ApplicationSettings.get(this.remult)).addressHelper.location();
                 this.center = new google.maps.LatLng(x.lat, x.lng);
             }
             var mapProp: google.maps.MapOptions = {

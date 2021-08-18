@@ -21,12 +21,12 @@ import { Events } from 'pg';
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private context: Remult, public settings: ApplicationSettings, private dialog: DialogService) {
+  constructor(private remult: Remult, public settings: ApplicationSettings, private dialog: DialogService) {
 
   }
-  isGuest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
+  isGuest = Sites.getOrganizationFromContext(this.remult) == Sites.guestSchema;
   getLogo() {
-    return ApplicationSettings.get(this.context).logoUrl;
+    return ApplicationSettings.get(this.remult).logoUrl;
 
   }
   ngOnDestroy(): void {
@@ -35,7 +35,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   }
   unObserve: Unobserve;
   isAdmin() {
-    return this.context.isAllowed(Roles.distCenterAdmin);
+    return this.remult.isAllowed(Roles.distCenterAdmin);
   }
   events: EventInList[] = [];
   async ngOnInit() {
@@ -53,10 +53,10 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     })
   }
   @BackendMethod({ allowed: true })
-  static async getAllEvents(phone: string, sitesFilter: string, context?: Remult, db?: SqlDatabase): Promise<EventInList[]> {
+  static async getAllEvents(phone: string, sitesFilter: string, remult?: Remult, db?: SqlDatabase): Promise<EventInList[]> {
     let r: EventInList[] = [];
-    let sql = new SqlBuilder(context);
-    let e = SqlFor(context.repo(Event));
+    let sql = new SqlBuilder(remult);
+    let e = SqlFor( remult.repo(Event));
 
     let schemas = Sites.schemas;
     if (sitesFilter) {
@@ -75,7 +75,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
     for (const org of sites) {
 
-      let c = await createSiteContext(org, context);
+      let c = await createSiteContext(org, remult);
 
       let settings = settingsForSite.get(org);
       if (!settings) {
@@ -93,14 +93,14 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   }
 
   @BackendMethod({ allowed: true })
-  static async getEvents(phone: string, context?: Remult): Promise<EventInList[]> {
+  static async getEvents(phone: string, remult?: Remult): Promise<EventInList[]> {
 
 
-    let helper: HelpersBase = context.currentUser;
+    let helper: HelpersBase = remult.currentUser;
     if (!helper && phone)
-      helper = await context.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
+      helper = await  remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
 
-    return Promise.all((await context.repo(Event).find({
+    return Promise.all((await  remult.repo(Event).find({
       orderBy: e => [e.eventDate, e.startTime],
       where: e => e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))
     })).map(async e => await e.toEventInList(helper)));

@@ -10,10 +10,10 @@ import { Roles } from '../auth/roles';
 
 
 let tempConnections: any = {};
-ServerEventAuthorizeAction.authorize = (key, context) => {
+ServerEventAuthorizeAction.authorize = (key, remult) => {
     let x = tempConnections[key];
     if (x)
-        x(context);
+        x(remult);
 };
 class userInSite {
     close() {
@@ -47,8 +47,8 @@ export class ServerEvents {
     constructor(private app: Express, getBridge: () => ExpressBridge) {
         this.app.get('/*/api/stream', async (req, res) => {
 
-            let context = await getBridge().getValidContext(req);
-            let org = Sites.getOrganizationFromContext(context);
+            let remult = await getBridge().getValidContext(req);
+            let org = Sites.getOrganizationFromContext(remult);
             res.writeHead(200, {
                 "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
                 "Access-Control-Allow-Credentials": "true",
@@ -58,13 +58,13 @@ export class ServerEvents {
             });
             let key = new Date().toISOString();
 
-            tempConnections[key] = (context: Remult) => {
+            tempConnections[key] = (remult: Remult) => {
                 let x = this.sites.get(org);
                 if (!x) {
                     x = [];
                     this.sites.set(org, x);
                 }
-                x.push(new userInSite((<HelperUserInfo>context.user).distributionCenter, res, context.isAllowed(Roles.admin)));
+                x.push(new userInSite((<HelperUserInfo>remult.user).distributionCenter, res, remult.isAllowed(Roles.admin)));
                 tempConnections[key] = undefined;
 
             };
@@ -85,10 +85,10 @@ export class ServerEvents {
         });
     }
 
-    SendMessage(x: string, context: Remult, distributionCenter: string) {
+    SendMessage(x: string, remult: Remult, distributionCenter: string) {
         let z = this;
         setTimeout(() => {
-            let org = Sites.getOrganizationFromContext(context);
+            let org = Sites.getOrganizationFromContext(remult);
             let y = z.sites.get(org);
             if (y)
                 y.forEach(y => y.write(distributionCenter, "data:" + x + "\n\n"));

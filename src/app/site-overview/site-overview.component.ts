@@ -14,7 +14,7 @@ import { Phone } from '../model-shared/phone';
 })
 export class SiteOverviewComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<any>, private context: Remult) { }
+  constructor(public dialogRef: MatDialogRef<any>, private remult: Remult) { }
   args: {
     site: siteItem,
     statistics: dateRange[]
@@ -27,8 +27,8 @@ export class SiteOverviewComponent implements OnInit {
     window.open(location.origin + '/' + this.args.site.site, '_blank');
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async siteInfo(site: string, context?: Remult): Promise<Manager[]> {
-    let c = await createSiteContext(site, context);
+  static async siteInfo(site: string, remult?: Remult): Promise<Manager[]> {
+    let c = await createSiteContext(site, remult);
     return (await c.repo(Helpers).find({ where: x => x.admin.isEqualTo(true), orderBy: x => x.lastSignInDate.descending() })).map(
       ({ name, phone, lastSignInDate }) => ({
         name, phone: phone?.thePhone, lastSignInDate
@@ -41,7 +41,7 @@ export class SiteOverviewComponent implements OnInit {
       message = "הי !שם!\n";
 
 
-    Phone.sendWhatsappToPhone(m.phone, message.replace('!שם!', m.name), this.context,true);
+    Phone.sendWhatsappToPhone(m.phone, message.replace('!שם!', m.name), this.remult,true);
   }
 
 }

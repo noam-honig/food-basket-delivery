@@ -44,7 +44,7 @@ import { BasketType } from '../families/BasketType';
 })
 export class DistributionMap implements OnInit, OnDestroy {
   showChart = true;
-  constructor(private context: Remult, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private remult: Remult, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
       busy.donotWait(async () => {
@@ -77,13 +77,13 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   buttons: GridButton[] = [
     ...[
-      new UpdateAreaForDeliveries(this.context),
-      new UpdateDistributionCenter(this.context),
-      new UpdateCourier(this.context),
-      new updateGroupForDeliveries(this.context),
-      new NewDelivery(this.context),
-      new UpdateDeliveriesStatus(this.context),
-      new DeleteDeliveries(this.context)
+      new UpdateAreaForDeliveries(this.remult),
+      new UpdateDistributionCenter(this.remult),
+      new UpdateCourier(this.remult),
+      new updateGroupForDeliveries(this.remult),
+      new NewDelivery(this.remult),
+      new UpdateDeliveriesStatus(this.remult),
+      new DeleteDeliveries(this.remult)
     ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
@@ -213,7 +213,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     defaultValue: () => use.language.allRegions,
     valueChange: () => this.refreshDeliveries(),
 
-    valueList: async () => this.context.isAllowed(Roles.admin) ? await Families.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))]) : []
+    valueList: async () => this.remult.isAllowed(Roles.admin) ? await Families.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))]) : []
 
   });
   area = new DataAreaSettings();
@@ -222,7 +222,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   async refreshDeliveries() {
     let allInAlll = false;
     let deliveries: deliveryOnMap[];
-    if (this.context.isAllowed(Roles.overview)) {
+    if (this.remult.isAllowed(Roles.overview)) {
       this.overviewMap = true;
       deliveries = await DistributionMap.GetLocationsForOverview();
       allInAlll = true;
@@ -254,7 +254,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-            let fd = await this.context.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
+            let fd = await this. remult.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
             await fd.showDetailsDialog({
               onSave: async () => {
                 familyOnMap.marker.setMap(null);
@@ -334,10 +334,10 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.calcSelectedDeliveries();
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Remult, db?: SqlDatabase) {
-    let f = SqlFor(context.repo(ActiveFamilyDeliveries));
-    let h = SqlFor(context.repo(Helpers));
-    let sql = new SqlBuilder(context);
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, remult?: Remult, db?: SqlDatabase) {
+    let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+    let h = SqlFor( remult.repo(Helpers));
+    let sql = new SqlBuilder(remult);
     sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(await sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
@@ -350,10 +350,10 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
 
       where: () => {
-        let where: any[] = [context.filterCenterAllowedForUser(f.distributionCenter)];
+        let where: any[] = [remult.filterCenterAllowedForUser(f.distributionCenter)];
         if (distCenter !== undefined)
-          where.push(context.filterDistCenter(f.distributionCenter, distCenter));
-        if (area !== undefined && area !== null && area != getLang(context).allRegions) {
+          where.push(remult.filterDistCenter(f.distributionCenter, distCenter));
+        if (area !== undefined && area !== null && area != getLang(remult).allRegions) {
           where.push(f.area.isEqualTo(area));
         }
 
@@ -378,12 +378,12 @@ export class DistributionMap implements OnInit, OnDestroy {
     }) as deliveryOnMap[];
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async GetLocationsForOverview(context?: Remult) {
+  static async GetLocationsForOverview(remult?: Remult) {
 
     let result: deliveryOnMap[] = []
-    let f = SqlFor(context.repo(FamilyDeliveries));
+    let f = SqlFor( remult.repo(FamilyDeliveries));
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
     sql.addEntity(f, "fd");
 
 

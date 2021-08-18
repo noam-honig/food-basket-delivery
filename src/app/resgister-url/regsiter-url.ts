@@ -16,22 +16,22 @@ export class RegisterURL extends IdEntity {
     @Field({ caption: "שם ייחודי לדוחות", allowApiUpdate: Roles.distCenterAdmin })
     prettyName: string
 
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
         super();
     }
 
     urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
-        return this.context.repo(RegisterURL).findFirst(g => g.URL.contains(s));
+        return this. remult.repo(RegisterURL).findFirst(g => g.URL.contains(s));
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async loadUrlsFromTables(context?: Remult, db?: SqlDatabase) {
+    static async loadUrlsFromTables(remult?: Remult, db?: SqlDatabase) {
 
-        let h = SqlFor(context.repo(Helpers));
-        let f = SqlFor(context.repo(Families));
-        let u = SqlFor(context.repo(RegisterURL));
-        let sql = new SqlBuilder(context);
+        let h = SqlFor( remult.repo(Helpers));
+        let f = SqlFor( remult.repo(Families));
+        let u = SqlFor( remult.repo(RegisterURL));
+        let sql = new SqlBuilder(remult);
         let urls = [];
 
         async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldMetadata) {
@@ -50,10 +50,10 @@ export class RegisterURL extends IdEntity {
 
         for (const url of urls) {
             if ((url != undefined) && (url != '')) {
-                let g = await context.repo(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
+                let g = await  remult.repo(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
                 if (!g) {
                     console.log("adding entry for: ", url);
-                    g = context.repo(RegisterURL).create();
+                    g =  remult.repo(RegisterURL).create();
                     g.URL = url;
                     g.prettyName = url;
                     await g.save();

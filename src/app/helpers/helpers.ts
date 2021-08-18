@@ -72,12 +72,12 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     allowApiCrud: false,
     allowApiRead: Allow.authenticated
 },
-    (options, context) => options.apiDataFilter = (self) => {
-        if (!context.authenticated())
+    (options, remult) => options.apiDataFilter = (self) => {
+        if (!remult.authenticated())
             return self.id.isEqualTo("No User");
-        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
+        else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
 
-            return self.id.isIn([context.currentUser, context.currentUser.theHelperIAmEscorting, context.currentUser.escort].
+            return self.id.isIn([remult.currentUser, remult.currentUser.theHelperIAmEscorting, remult.currentUser.escort].
                 filter(x => !!x).map(x => x.id));
         }
 
@@ -106,13 +106,13 @@ export abstract class HelpersBase extends IdEntity {
             })
     }
     getHelper(): Promise<Helpers> {
-        return this.context.repo(Helpers).findId(this.id);
+        return this. remult.repo(Helpers).findId(this.id);
     }
     isCurrentUser(): boolean {
-        return this.id == this.context.user.id;
+        return this.id == this.remult.user.id;
     }
 
-    constructor(protected context: Remult) {
+    constructor(protected remult: Remult) {
 
         super();
     }
@@ -120,7 +120,7 @@ export abstract class HelpersBase extends IdEntity {
         translation: l => l.volunteerName,
         validate: (h) => {
             if (!h.name)
-                h.$.name.error = getLang(h.context).nameIsTooShort;
+                h.$.name.error = getLang(h.remult).nameIsTooShort;
         }
     })
     name: string;
@@ -200,9 +200,9 @@ export abstract class HelpersBase extends IdEntity {
         translation: l => l.helperInternalComment
     })
     internalComment: string;
-    @Field<Helpers>({}, (options, context) => options.
+    @Field<Helpers>({}, (options, remult) => options.
         sqlExpression = async (selfDefs) => {
-            let sql = new SqlBuilder(context);
+            let sql = new SqlBuilder(remult);
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
         }
@@ -252,28 +252,28 @@ export abstract class HelpersBase extends IdEntity {
             if (self.isNew())
                 canUpdate = true;
             else {
-                let updatingMyOwnHelperInfo = self.$.id.originalValue == self.context.user.id;
+                let updatingMyOwnHelperInfo = self.$.id.originalValue == self.remult.user.id;
                 if (updatingMyOwnHelperInfo) {
                     if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue)
                         canUpdate = true;
-                    if (self.$.admin.originalValue && self.context.isAllowed([Roles.admin, Roles.overview]))
+                    if (self.$.admin.originalValue && self.remult.isAllowed([Roles.admin, Roles.overview]))
                         canUpdate = true;
-                    if (self.$.distCenterAdmin.originalValue && self.context.isAllowed(Roles.distCenterAdmin))
+                    if (self.$.distCenterAdmin.originalValue && self.remult.isAllowed(Roles.distCenterAdmin))
                         canUpdate = true;
                     if (!self.realStoredPassword && self.realStoredPassword.length == 0) //it's the first time I'm setting the password
                         canUpdate = true;
-                    if (([self.$.admin, self.$.distCenterAdmin, self.$.password].filter(x => x.wasChanged()).length == 0))
+                    if (([self.$.admin, self.$.distCenterAdmin, self.$.password].filter(x => x.valueChanged()).length == 0))
                         canUpdate = true;
                 }
                 else {
-                    if (self.context.isAllowed(Roles.admin))
+                    if (self.remult.isAllowed(Roles.admin))
                         canUpdate = true;
 
-                    if (self.context.isAllowed(Roles.distCenterAdmin)) {
+                    if (self.remult.isAllowed(Roles.distCenterAdmin)) {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = self.context.currentUser.distributionCenter;
+                                self.distributionCenter = self.remult.currentUser.distributionCenter;
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -281,7 +281,7 @@ export abstract class HelpersBase extends IdEntity {
                         if (self.$.distCenterAdmin.originalValue || self.admin) {
                             if (!canUpdate)
                                 canUpdate = [self.$.name, self.$.phone, self.$.password, self.$.distCenterAdmin, self.$.distributionCenter, self.$.admin]
-                                    .filter(x => x.wasChanged()).length == 0;
+                                    .filter(x => x.valueChanged()).length == 0;
                         }
                     }
 
@@ -290,21 +290,21 @@ export abstract class HelpersBase extends IdEntity {
 
             if (!canUpdate)
                 throw "Not Allowed";
-            if (self.password && self.$.password.wasChanged() && self.password != Helpers.emptyPassword) {
-                let context = self.context;
+            if (self.password && self.$.password.valueChanged() && self.password != Helpers.emptyPassword) {
+                let remult = self.remult;
                 let password = self.$.password;
-                validatePasswordColumn(context, password);
+                validatePasswordColumn(remult, password);
                 if (self.$.password.error)
                     return;
                 //throw self.password.metadata.caption + " - " + self.password.validationError;
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if ((await self.context.repo(Helpers).count()) == 0) {
+            if ((await self. remult.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
-            self.phone = new Phone(Phone.fixPhoneInput(self.phone.thePhone, self.context));
+            self.phone = new Phone(Phone.fixPhoneInput(self.phone.thePhone, self.remult));
             if (!self._disableDuplicateCheck)
                 await Validators.unique(self, self.$.phone, use.language.alreadyExist);
             if (self.isNew())
@@ -312,10 +312,10 @@ export abstract class HelpersBase extends IdEntity {
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
             if (!self.needEscort)
                 self.escort = null;
-            if (self.$.escort.wasChanged()) {
+            if (self.$.escort.valueChanged()) {
                 let h = self.escort;
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = self.context.currentUser;
+                    self.$.escort.originalValue.theHelperIAmEscorting = self.remult.currentUser;
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -326,7 +326,7 @@ export abstract class HelpersBase extends IdEntity {
             await self.preferredDistributionAreaAddressHelper.updateApiResultIfChanged();
             await self.preferredFinishAddressHelper.updateApiResultIfChanged();
 
-            logChanges(self._, self.context, {
+            logChanges(self._, self.remult, {
                 excludeColumns: [
                     self.$.smsDate,
                     self.$.createDate,
@@ -347,12 +347,12 @@ export abstract class HelpersBase extends IdEntity {
 
 
     }
-}, (options, context) =>
+}, (options, remult) =>
     options.apiDataFilter = (self) => {
-        if (!context.authenticated())
+        if (!remult.authenticated())
             return self.id.isEqualTo("No User");
-        else if (!context.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
-            return self.allowedIds.contains(context.user.id);
+        else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
+            return self.allowedIds.contains(remult.user.id);
     }
 )
 
@@ -370,7 +370,7 @@ export class Helpers extends HelpersBase {
         return this;
     }
     async displayEditDialog(dialog: DialogService, busy: BusyService) {
-        let settings = getSettings(this.context);
+        let settings = getSettings(this.remult);
         await openDialog(InputAreaComponent, x => x.args = {
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
             ok: async () => {
@@ -381,7 +381,7 @@ export class Helpers extends HelpersBase {
             },
             settings: {
                 fields: () => {
-                    let r = Helpers.selectColumns(this._.repository.metadata.fields, this.context).map(map => {
+                    let r = Helpers.selectColumns(this._.repository.metadata.fields, this.remult).map(map => {
 
                         return ({
                             ...map,
@@ -399,8 +399,8 @@ export class Helpers extends HelpersBase {
 
         });
     }
-    static selectColumns(self: FieldsMetadata<Helpers>, context: Remult) {
-        let settings = getSettings(context);
+    static selectColumns(self: FieldsMetadata<Helpers>, remult: Remult) {
+        let settings = getSettings(remult);
         let r: DataControlSettings<Helpers>[] = [
             {
                 field: self.name,
@@ -416,27 +416,27 @@ export class Helpers extends HelpersBase {
             width: '120'
         });
 
-        if (context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
                 field: self.isIndependent,
                 width: '120'
             });
         };
 
-        if (context.isAllowed(Roles.admin)) {
+        if (remult.isAllowed(Roles.admin)) {
             r.push({
                 field: self.admin,
                 width: '160'
             });
 
         }
-        if (context.isAllowed(Roles.distCenterAdmin)) {
+        if (remult.isAllowed(Roles.distCenterAdmin)) {
             r.push({
                 field: self.distCenterAdmin, width: '160'
             });
         }
         let hadCenter = false;
-        if (context.isAllowed(Roles.lab) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt()) {
             r.push({
                 field: self.labAdmin, width: '120'
             });
@@ -454,7 +454,7 @@ export class Helpers extends HelpersBase {
         });
         r.push(self.createDate);
 
-        if (context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
                 field: self.frozenTill, width: '120'
             });
@@ -463,7 +463,7 @@ export class Helpers extends HelpersBase {
             });
         }
 
-        if (context.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
             r.push({
                 field: self.referredBy, width: '120'
             });
@@ -475,7 +475,7 @@ export class Helpers extends HelpersBase {
 
 
 
-        if (context.isAllowed(Roles.admin) && !hadCenter) {
+        if (remult.isAllowed(Roles.admin) && !hadCenter) {
             r.push(self.distributionCenter);
         }
         r.push(self.email);
@@ -495,7 +495,7 @@ export class Helpers extends HelpersBase {
         return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent;
     }
     async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
-        let ctx = this.context.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
+        let ctx = this. remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         openDialog(GridDialogComponent, x => x.args = {
             title: use.language.deliveriesFor + ' ' + this.name,
             stateName: 'deliveries-for-volunteer',
@@ -553,14 +553,14 @@ export class Helpers extends HelpersBase {
 
     static usingCompanyModule: boolean;
 
-    constructor(context: Remult) {
+    constructor(remult: Remult) {
 
-        super(context);
+        super(remult);
     }
     @Field<Helpers>({},
-        (options, context) => options.sqlExpression = async (selfDefs) => {
+        (options, remult) => options.sqlExpression = async (selfDefs) => {
             let self = SqlFor(selfDefs);
-            let sql = new SqlBuilder(context);
+            let sql = new SqlBuilder(remult);
             return sql.build(self.id, ' || ', self.escort, ' || ', self.theHelperIAmEscorting);
         }
     )
@@ -588,7 +588,7 @@ export class Helpers extends HelpersBase {
     addressApiResult: string;
     @Field({ translation: l => l.preferredDistributionArea })
     preferredDistributionAreaAddress: string;
-    preferredDistributionAreaAddressHelper = new AddressHelper(this.context,
+    preferredDistributionAreaAddressHelper = new AddressHelper(this.remult,
         () => this.$.preferredDistributionAreaAddress,
         () => this.$.addressApiResult);
 
@@ -604,13 +604,13 @@ export class Helpers extends HelpersBase {
                     continue;
                 ids.push(fd.family);
                 i++;
-                let f = await this.context.repo((await import('../families/families')).Families).findId(fd.family);
+                let f = await this. remult.repo((await import('../families/families')).Families).findId(fd.family);
                 f.fixedCourier = fd.courier;
                 await f.save();
             }
         });
 
-        let otherFamilies = await this.context.repo((await import('../families/families')).Families).find({
+        let otherFamilies = await this. remult.repo((await import('../families/families')).Families).find({
             where: f => f.fixedCourier.isEqualTo(this)
                 .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
         });
@@ -645,10 +645,10 @@ export class Helpers extends HelpersBase {
             this.$.phone.error = "טלפון לא תקין";
             throw this.$.phone.error;
         }
-        let settings = await ApplicationSettings.getAsync(this.context);
+        let settings = await ApplicationSettings.getAsync(this.remult);
         if (!settings.isSytemForMlt())
             throw "Not Allowed";
-        this.context.setUser({
+        this.remult.setUser({
             id: 'WIX',
             name: 'WIX',
             roles: []
@@ -658,10 +658,10 @@ export class Helpers extends HelpersBase {
 
         if (settings.registerHelperReplyEmailText && settings.registerHelperReplyEmailText != '') {
             let message = (await import('../asign-family/send-sms-action')).SendSmsAction.getMessage(settings.registerHelperReplyEmailText,
-                settings.organisationName, '', this.name, this.context.user.name, '');
+                settings.organisationName, '', this.name, this.remult.user.name, '');
 
             try {
-                await this.email.Send(settings.lang.thankYouForHelp, message, this.context);
+                await this.email.Send(settings.lang.thankYouForHelp, message, this.remult);
             } catch (err) {
                 console.error('send mail', err);
             }
@@ -675,7 +675,7 @@ export class Helpers extends HelpersBase {
         dbName: 'preferredDistributionAreaAddress2'
     })
     preferredFinishAddress: string;
-    preferredFinishAddressHelper = new AddressHelper(this.context, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);
+    preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);
 
 
 
@@ -726,7 +726,7 @@ export class Helpers extends HelpersBase {
         includeInApi: Roles.distCenterAdmin,
 
         validate: (self) => {
-            if (self.context.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
+            if (self.remult.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
                 return;
             }
             if (self.$.distCenterAdmin)
@@ -786,9 +786,9 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
-export function validatePasswordColumn(context: Remult, password: FieldRef<any, string>) {
-    if (getSettings(context).requireComplexPassword) {
-        var l = getLang(context);
+export function validatePasswordColumn(remult: Remult, password: FieldRef<any, string>) {
+    if (getSettings(remult).requireComplexPassword) {
+        var l = getLang(remult);
         if (password.value.length < 8)
             password.error = l.passwordTooShort;
         if (!password.value.match(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))

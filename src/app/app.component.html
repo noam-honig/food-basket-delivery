@@ -15,7 +15,7 @@
       </p>
       <p style="text-align: center">{{dialog.dc.addressHelper.getGeocodeInformation().getAddress()}}</p>
     </div>
-    <h4 *ngIf="context.user">{{lang.hello}} {{context.user.name}}</h4>
+    <h4 *ngIf="remult.user">{{lang.hello}} {{remult.user.name}}</h4>
     <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()" target="_blank">מדריך למנהל</a>
     <mat-nav-list role="list">
       <mat-list-item  *ngIf="createNewEventAction.isAllowed()" >
@@ -33,7 +33,7 @@
 
       </ng-container>
 
-      <mat-list-item *ngIf="context.user">
+      <mat-list-item *ngIf="remult.user">
         <a matLine (click)="signOut()">{{lang.exit}}</a>
       </mat-list-item>
     </mat-nav-list>

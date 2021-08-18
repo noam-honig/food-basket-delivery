@@ -30,7 +30,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, public context: Remult, public settings: ApplicationSettings, private zone: NgZone) {
+  constructor(private dialog: DialogService, public remult: Remult, public settings: ApplicationSettings, private zone: NgZone) {
 
   }
   @Input() f: ActiveFamilyDeliveries;
@@ -49,19 +49,19 @@ export class FamilyInfoComponent implements OnInit {
     this.dialog.messageDialog(await FamilyInfoComponent.ShowFamilyTz(this.f.id));
   }
   courierCommentsDateRelativeDate() {
-    return relativeDateName(this.context, { d: this.f.courierCommentsDate })
+    return relativeDateName(this.remult, { d: this.f.courierCommentsDate })
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  static async ShowFamilyTz(deliveryId: string, context?: Remult) {
-    let s = await ApplicationSettings.getAsync(context);
+  static async ShowFamilyTz(deliveryId: string, remult?: Remult) {
+    let s = await ApplicationSettings.getAsync(remult);
     if (!s.showTzToVolunteer)
       return "";
-    var d = await context.repo(ActiveFamilyDeliveries).findId(deliveryId);
+    var d = await  remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
     if (!d)
       return;
-    if (!d.courier.isCurrentUser() && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+    if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
       return "";
-    var f = await context.repo(Families).findId(d.family);
+    var f = await  remult.repo(Families).findId(d.family);
     if (!f)
       return "";
     return f.name + ":" + f.tz;
@@ -106,10 +106,10 @@ export class FamilyInfoComponent implements OnInit {
   }
 
   async labSelfReception(d: ActiveFamilyDeliveries) {
-    if (await this.dialog.YesNoPromise(getLang(this.context).shouldArchiveDelivery)) {
+    if (await this.dialog.YesNoPromise(getLang(this.remult).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter = this.context.currentUser.distributionCenter;
+        d.distributionCenter = this.remult.currentUser.distributionCenter;
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }
@@ -133,31 +133,31 @@ export class FamilyInfoComponent implements OnInit {
     window.location.href = "tel:" + col.thePhone;
   }
   async sendWhatsapp(phone: Phone) {
-    phone.sendWhatsapp(this.context, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
+    phone.sendWhatsapp(this.remult, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @BackendMethod({ allowed: Allow.authenticated })
-  static async privateCall(deliveryId: string, context?: Remult): Promise<{
+  static async privateCall(deliveryId: string, remult?: Remult): Promise<{
     phone?: string,
     error?: string
   }> {
     let cleanPhone = '';
-    let reqInfo = Sites.getOrganizationFromContext(context) + "/proxy/" + context.user.id + " => " + deliveryId;
+    let reqInfo = Sites.getOrganizationFromContext(remult) + "/proxy/" + remult.user.id + " => " + deliveryId;
     try {
-      let settings = await ApplicationSettings.getAsync(context);
+      let settings = await ApplicationSettings.getAsync(remult);
       if (!settings.usePhoneProxy)
         throw "פרוקסי לא מופעל לסביבה זו";
-      let fd = await context.repo(ActiveFamilyDeliveries).findId(deliveryId);
+      let fd = await  remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
       if (!fd) throw "משלוח לא נמצא";
-      if (!fd.courier.isCurrentUser() && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+      if (!fd.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
         throw "אינך רשאי לחייג למשפחה זו";
 
-      cleanPhone = Phone.fixPhoneInput(fd.phone1.thePhone, context);
+      cleanPhone = Phone.fixPhoneInput(fd.phone1.thePhone, remult);
       if (!cleanPhone) return { error: "למשפחה זו לא מעודכן טלפון" };
       if (cleanPhone.startsWith('0'))
         cleanPhone = cleanPhone.substring(1);
       cleanPhone = "+972" + cleanPhone;
-      let h = await context.repo(Helpers).findId(context.user.id);
+      let h = await  remult.repo(Helpers).findId(remult.user.id);
       if (!h)
         throw "מתנדב לא נמצא";
       let vPhone = h.phone.thePhone;

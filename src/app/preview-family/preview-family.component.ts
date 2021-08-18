@@ -16,9 +16,9 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 @DialogConfig({minWidth:350})
 export class PreviewFamilyComponent implements OnInit {
 
-  familyLists = new UserFamiliesList(this.context,this.settings);
+  familyLists = new UserFamiliesList(this.remult,this.settings);
   public argsFamily: ActiveFamilyDeliveries;
-  constructor(public context: Remult, private dialogRef: MatDialogRef<any>
+  constructor(public remult: Remult, private dialogRef: MatDialogRef<any>
   ,public settings:ApplicationSettings) { }
   async ngOnInit() {
 

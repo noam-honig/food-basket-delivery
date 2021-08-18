@@ -29,12 +29,12 @@ export class MyFamiliesComponent implements OnInit {
   static route: Route = {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
-  familyLists = new UserFamiliesList(this.context, this.settings);
+  familyLists = new UserFamiliesList(this.remult, this.settings);
   user: HelperUserInfo;
 
-  constructor(public context: Remult, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
+  constructor(public remult: Remult, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
     private busy: BusyService) {
-    this.user = context.user as HelperUserInfo;
+    this.user = remult.user as HelperUserInfo;
   }
   hasEvents = false;
   moveToOpertunities(){
@@ -45,11 +45,11 @@ export class MyFamiliesComponent implements OnInit {
     let done = ''
     try {
       done += '1';
-      let id = this.context.user.id;
+      let id = this.remult.user.id;
       if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
         id = this.user.theHelperIAmEscortingId;
       done += '2';
-      let helper = await this.context.repo(Helpers).findFirst(h => h.id.isEqualTo(id));
+      let helper = await this. remult.repo(Helpers).findFirst(h => h.id.isEqualTo(id));
       if (helper)
         done += 'helper id:' + helper.id;
       else done += "3";
@@ -76,8 +76,8 @@ export class MyFamiliesComponent implements OnInit {
     }
     catch (err) {
       let info = done += " - " + checkCookie();
-      if (this.context.user)
-        info += " user: " + this.context.user.name;
+      if (this.remult.user)
+        info += " user: " + this.remult.user.name;
       else
         info += " NO USER ";
       this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed + info, err);
@@ -86,7 +86,7 @@ export class MyFamiliesComponent implements OnInit {
 
     }
     this.busy.donotWait(async () => {
-      this.hasEvents = (await this.context.repo(Event).count())>0;
+      this.hasEvents = (await this. remult.repo(Event).count())>0;
     });
   }
 

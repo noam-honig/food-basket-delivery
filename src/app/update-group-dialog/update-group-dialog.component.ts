@@ -16,7 +16,7 @@ import { InputField } from '@remult/angular';
 
 export class UpdateGroupDialogComponent implements OnInit {
 
-  constructor(private context: Remult, private dialog: DialogService,
+  constructor(private remult: Remult, private dialog: DialogService,
     private dialogRef: MatDialogRef<any>, public settings: ApplicationSettings) {
 
 
@@ -34,7 +34,7 @@ export class UpdateGroupDialogComponent implements OnInit {
 
   availableGroups: Groups[] = [];
   async ngOnInit() {
-    this.availableGroups = await this.context.repo(Groups).find({ limit: 1000 });
+    this.availableGroups = await this. remult.repo(Groups).find({ limit: 1000 });
   }
 
   groups = new InputField<GroupsValue>({valueType:GroupsValue});

@@ -24,7 +24,7 @@ import { getLang } from '../sites/sites';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit, OnDestroy {
-  constructor(private dialog: DialogService, public context: Remult, private busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.helpers.reloadData();
     }, this.destroyHelper);
@@ -51,7 +51,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   showDeleted = false;
   searchString: string = '';
   numOfColsInGrid = 4;
-  helpers = new GridSettings(this.context.repo(Helpers), {
+  helpers = new GridSettings(this. remult.repo(Helpers), {
     showFilter: true,
     allowDelete: false,
     allowInsert: true,
@@ -64,14 +64,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
+          await saveToExcel(this.settings, this. remult.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
             async (h, addColumn) => {
               addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation().getCity(), 's');
               addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation().getCity(), 's');
 
             });
         }
-        , visible: () => this.context.isAllowed(Roles.admin)
+        , visible: () => this.remult.isAllowed(Roles.admin)
       },
       {
         name: use.language.showDeletedHelpers,
@@ -88,7 +88,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.helpers.reloadData();
           }
         },
-        visible: () => this.settings.showHelperComment && this.context.isAllowed(Roles.admin)
+        visible: () => this.settings.showHelperComment && this.remult.isAllowed(Roles.admin)
 
       },
       {
@@ -99,7 +99,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.helpers.reloadData();
           }
         },
-        visible: () => this.context.isAllowed(Roles.admin)
+        visible: () => this.remult.isAllowed(Roles.admin)
       }
 
     ],
@@ -124,7 +124,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: this.settings.lang.sendWhats,
-        click: h => h.phone.sendWhatsapp(this.context),
+        click: h => h.phone.sendWhatsapp(this.remult),
 
         icon: 'textsms'
       },
@@ -136,7 +136,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.dialog.Info(use.language.passwordWasReset);
           });
         },
-        visible: h => (this.context.isAllowed(Roles.admin) || !h.admin)
+        visible: h => (this.remult.isAllowed(Roles.admin) || !h.admin)
       },
       {
         name: use.language.invalidatePassword,
@@ -146,7 +146,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.dialog.Info(use.language.passwordInvalidated);
           });
         },
-        visible: h => ((this.context.isAllowed(Roles.admin) || !h.admin) && this.settings.daysToForcePasswordChange > 0)
+        visible: h => ((this.remult.isAllowed(Roles.admin) || !h.admin) && this.settings.daysToForcePasswordChange > 0)
       },
       {
         name: use.language.sendInviteBySms,
@@ -158,18 +158,18 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.freezeHelper,
-        visible: () => this.context.isAllowed(Roles.admin) && this.settings.isSytemForMlt(),
+        visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt(),
         click: async h => this.editFreezeDate(h)
       },
       {
         textInMenu: h => h.archive ? use.language.unDeleteHelper : use.language.archiveHelper,
-        visible: () => this.context.isAllowed(Roles.admin),
+        visible: () => this.remult.isAllowed(Roles.admin),
         click: async h => {
           if (h.archive)
             await h.reactivate();
           else {
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
-              question: getLang(this.context).areYouSureYouWantToDelete + ' ' + h.name + '?'
+              question: getLang(this.remult).areYouSureYouWantToDelete + ' ' + h.name + '?'
             }, q => q.yes)) {
               await h.deactivate();
               this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
@@ -198,12 +198,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
     ,
     columnSettings: helpers => {
       this.numOfColsInGrid = 4;
-      if (this.context.isAllowed(Roles.admin))
+      if (this.remult.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.isSytemForMlt())
         this.numOfColsInGrid += 6;
 
-      return Helpers.selectColumns(helpers, this.context);
+      return Helpers.selectColumns(helpers, this.remult);
     },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name),
 
@@ -226,7 +226,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   private editFreezeDate(h: Helpers) {
     openDialog(InputAreaComponent, x => x.args = {
-      title: getLang(this.context).freezeHelper,
+      title: getLang(this.remult).freezeHelper,
       ok: () => {
         h.save();
       },
@@ -253,43 +253,43 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   @BackendMethod({ allowed: Roles.admin })
-  static async resetPassword(helperId: string, context?: Remult) {
+  static async resetPassword(helperId: string, remult?: Remult) {
 
-    await context.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+    await  remult.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.realStoredPassword = '';
       await h.save();
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async invalidatePassword(helperId: string, context?: Remult) {
+  static async invalidatePassword(helperId: string, remult?: Remult) {
 
-    await context.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+    await  remult.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.passwordChangeDate = new Date(1901, 1, 1);
       await h.save();
     });
   }
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async sendInvite(helperId: string, context?: Remult) {
-    let h = await context.repo(Helpers).findFirst(x => x.id.isEqualTo(helperId));
+  static async sendInvite(helperId: string, remult?: Remult) {
+    let h = await  remult.repo(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
-      return getLang(context).unfitForInvite;
+      return getLang(remult).unfitForInvite;
     if (!(h.admin || h.distCenterAdmin))
-      return getLang(context).unfitForInvite;
-    let url = context.getOrigin() + '/' + Sites.getOrganizationFromContext(context);
-    let s = await ApplicationSettings.getAsync(context);
+      return getLang(remult).unfitForInvite;
+    let url = remult.getOrigin() + '/' + Sites.getOrganizationFromContext(remult);
+    let s = await ApplicationSettings.getAsync(remult);
     let hasPassword = h.password && h.password.length > 0;
-    let message = getLang(context).hello + ` ${h.name}
-`+ getLang(context).welcomeTo + ` ${s.organisationName}.
-`+ getLang(context).pleaseEnterUsing + `
+    let message = getLang(remult).hello + ` ${h.name}
+`+ getLang(remult).welcomeTo + ` ${s.organisationName}.
+`+ getLang(remult).pleaseEnterUsing + `
 ${url}
 `;
     if (!hasPassword) {
-      message += getLang(context).enterFirstTime
+      message += getLang(remult).enterFirstTime
     }
-    let from = await context.repo(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
-    await new SendSmsUtils().sendSms(h.phone.thePhone, from.phone.thePhone, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
-    return getLang(context).inviteSentSuccesfully
+    let from = await  remult.repo(Helpers).findFirst(h => h.id.isEqualTo(remult.user.id));
+    await new SendSmsUtils().sendSms(h.phone.thePhone, from.phone.thePhone, message, remult.getOrigin(), Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+    return getLang(remult).inviteSentSuccesfully
 
 
 
@@ -300,7 +300,7 @@ ${url}
 
 
   async ngOnInit() {
-    let s = await ApplicationSettings.getAsync(this.context);
+    let s = await ApplicationSettings.getAsync(this.remult);
     this.helpers.columns.numOfColumnsInGrid = this.numOfColsInGrid;
 
 
@@ -310,16 +310,16 @@ ${url}
 
 
   @BackendMethod({ allowed: Roles.admin })
-  static async clearCommentsOnServer(context?: Remult) {
-    for await (const h of context.repo(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
+  static async clearCommentsOnServer(remult?: Remult) {
+    for await (const h of  remult.repo(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
       h.eventComment = '';
       await h.save();
     }
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async clearEscortsOnServer(context?: Remult) {
-    for await (const h of context.repo(Helpers).iterate()) {
+  static async clearEscortsOnServer(remult?: Remult) {
+    for await (const h of  remult.repo(Helpers).iterate()) {
       h.escort = null;
       h.needEscort = false;
       h.theHelperIAmEscorting = null;

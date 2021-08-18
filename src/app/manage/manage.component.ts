@@ -55,7 +55,7 @@ export class ManageComponent implements OnInit {
     try {
       await this.settings.save();
 
-      this.context.clearAllCache();
+      this.remult.clearAllCache();
       this.dialog.refreshFamiliesAndDistributionCenters();
       await this.settingService.init();
     } catch (err) {
@@ -75,9 +75,9 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Remult, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
+  constructor(private dialog: DialogService, private remult: Remult, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
 
-  basketType = new GridSettings(this.context.repo(BasketType), {
+  basketType = new GridSettings(this. remult.repo(BasketType), {
     showFilter: true,
     columnSettings: x => [
       x.name,
@@ -102,7 +102,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
   showArchivedDistributionCenters = false;
-  distributionCenters = new GridSettings(this.context.repo(DistributionCenters), {
+  distributionCenters = new GridSettings(this. remult.repo(DistributionCenters), {
     gridButtons: [
       {
         name: this.settings.lang.showDeletedDistributionCenters,
@@ -115,9 +115,9 @@ export class ManageComponent implements OnInit {
       {
         name: this.settings.lang.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
+          await saveToExcel(this.settings, this. remult.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
         }
-        , visible: () => this.context.isAllowed(Roles.admin)
+        , visible: () => this.remult.isAllowed(Roles.admin)
       },
     ],
     rowCssClass: c => c.archive ? 'deliveredProblem' : c.isFrozen ? 'forzen' : '',
@@ -149,7 +149,7 @@ export class ManageComponent implements OnInit {
       textInMenu: c => c.archive ? this.settings.lang.unDeleteDistributionCenter : this.settings.lang.deleteDistributionCenter,
       icon: 'delete',
       click: async c => {
-        if (!c.archive && (await this.context.repo(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
+        if (!c.archive && (await this. remult.repo(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
           this.dialog.Error(this.settings.lang.mustHaveAtLeastOneActiveDistributionList);
           return;
         }
@@ -204,7 +204,7 @@ export class ManageComponent implements OnInit {
       this.dialog.refreshFamiliesAndDistributionCenters();
     }, 1000);
   }
-  sources = new GridSettings(this.context.repo(FamilySources), {
+  sources = new GridSettings(this. remult.repo(FamilySources), {
     showFilter: true,
     columnSettings: s => [
       s.name,
@@ -219,7 +219,7 @@ export class ManageComponent implements OnInit {
     ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
-  groups = new GridSettings(this.context.repo(Groups), {
+  groups = new GridSettings(this. remult.repo(Groups), {
     showFilter: true,
     saving: () => this.refreshEnvironmentAfterSave(),
 
@@ -263,7 +263,7 @@ export class ManageComponent implements OnInit {
   });
   async saveAndPreview() {
     await this.save();
-    let f = this.context.repo(ActiveFamilyDeliveries).create();
+    let f = this. remult.repo(ActiveFamilyDeliveries).create();
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments,
@@ -338,8 +338,8 @@ export class ManageComponent implements OnInit {
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async TestSendEmail(to: string, text: string, context?: Remult) {
-    return await EmailSvc.sendMail("test email", text, to, context);
+  static async TestSendEmail(to: string, text: string, remult?: Remult) {
+    return await EmailSvc.sendMail("test email", text, to, remult);
   }
 
   prefereces = new DataAreaSettings({
@@ -384,23 +384,23 @@ export class ManageComponent implements OnInit {
 
 
   testSms() {
-    return SendSmsAction.getMessage(this.settings.smsText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.smsText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.remult.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSmsReminder() {
-    return SendSmsAction.getMessage(this.settings.reminderSmsText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+    return SendSmsAction.getMessage(this.settings.reminderSmsText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.remult.user.name, window.location.origin + '/x/zxcvdf');
   }
   testEmailHelper() {
     if (this.settings.registerHelperReplyEmailText)
-      return SendSmsAction.getMessage(this.settings.registerHelperReplyEmailText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+      return SendSmsAction.getMessage(this.settings.registerHelperReplyEmailText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.remult.user.name, window.location.origin + '/x/zxcvdf');
   }
   testEmailDonor() {
     if (this.settings.registerFamilyReplyEmailText)
-      return SendSmsAction.getMessage(this.settings.registerFamilyReplyEmailText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.context.user.name, window.location.origin + '/x/zxcvdf');
+      return SendSmsAction.getMessage(this.settings.registerFamilyReplyEmailText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.remult.user.name, window.location.origin + '/x/zxcvdf');
   }
   testSuccessSms() {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, 'ישראל ישראלי');
   }
-  images = new GridSettings(this.context.repo(ApplicationImages), {
+  images = new GridSettings(this. remult.repo(ApplicationImages), {
     showFilter: true,
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -518,7 +518,7 @@ export class ManageComponent implements OnInit {
     }
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this.context.repo(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
+    let count = await this. remult.repo(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
     if (!await this.dialog.YesNoPromise(this.settings.lang.areYouSureYouWantToDelete + " " + count + this.settings.lang.families + "?"))
       return;
     await openDialog(InputAreaComponent, x => {
@@ -549,13 +549,13 @@ export class ManageComponent implements OnInit {
     this.settings.boxes1Name = this.settings.lang.boxes1Name;
     this.settings.boxes2Name = this.settings.lang.boxes2Name;
     this.settings.questionForVolunteerWhenUploadingPhoto = this.settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
-    var b = await this.context.repo(BasketType).findFirst();
+    var b = await this. remult.repo(BasketType).findFirst();
     if (b) {
       b.name = this.settings.lang.foodParcel;
       await b.save();
       this.basketType.reloadData();
     }
-    let d = await this.context.repo(DistributionCenters).findFirst();
+    let d = await this. remult.repo(DistributionCenters).findFirst();
     if (d) {
       d.name = this.settings.lang.defaultDistributionListName;
       await d.save();
@@ -563,11 +563,11 @@ export class ManageComponent implements OnInit {
     }
   }
   @BackendMethod({ allowed: Roles.admin, queue: true })
-  static async deleteFamiliesOnServer(context?: Remult, progress?: ProgressListener) {
+  static async deleteFamiliesOnServer(remult?: Remult, progress?: ProgressListener) {
 
 
     let i = 0;
-    for await (const f of context.repo(Families).iterate({
+    for await (const f of  remult.repo(Families).iterate({
       where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
       orderBy: f => f.createDate.descending(),
       progress
@@ -587,12 +587,12 @@ export class ManageComponent implements OnInit {
   defaultOrderBy: (self) => self.name,
   key: 'GroupsStatsPerDistributionCenter'
 },
-  (options, context) =>
+  (options, remult) =>
     options.dbName = async (self) => {
-      let f = SqlFor(context.repo(ActiveFamilyDeliveries));
-      let g = SqlFor(context.repo(Groups));
-      let d = SqlFor(context.repo(DistributionCenters));
-      let sql = new SqlBuilder(context);
+      let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+      let g = SqlFor( remult.repo(Groups));
+      let d = SqlFor( remult.repo(DistributionCenters));
+      let sql = new SqlBuilder(remult);
       sql.addEntity(f, 'Families');
       sql.addEntity(g, 'groups');
       return sql.entityDbName(
@@ -619,7 +619,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   @Field()
   familiesCount: number;
 
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
     super();
   }
 
@@ -629,12 +629,12 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   key: 'GroupsStatsForAllDeliveryCenters',
   defaultOrderBy: self => self.name,
 },
-  (options, context) => {
+  (options, remult) => {
     options.dbName = async (self) => {
-      let f = SqlFor(context.repo(ActiveFamilyDeliveries));
-      let g = SqlFor(context.repo(Groups));
+      let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+      let g = SqlFor( remult.repo(Groups));
 
-      let sql = new SqlBuilder(context);
+      let sql = new SqlBuilder(remult);
       sql.addEntity(f, 'Families');
       sql.addEntity(g, 'groups');
       return sql.entityDbName(
@@ -655,7 +655,7 @@ export class GroupsStatsForAllDeliveryCenters extends EntityBase implements Grou
   @Field()
   familiesCount: number;
 
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
     super();
   }
 }

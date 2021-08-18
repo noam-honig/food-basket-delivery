@@ -13,8 +13,8 @@ import { RegisterURL } from './regsiter-url';
 
 export class RegisterURLComponent implements OnInit {
 
-  constructor(private context: Remult) { }
-  urls = new GridSettings(this.context.repo(RegisterURL), {
+  constructor(private remult: Remult) { }
+  urls = new GridSettings(this. remult.repo(RegisterURL), {
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 2,

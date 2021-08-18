@@ -21,8 +21,8 @@ import { use, FieldType, Field } from "../translate";
 })
 @DataControl<any, DistributionCenters>({
   hideDataOnInput: true,
-  valueList: context => {
-    return DistributionCenters.getValueList(context)
+  valueList: remult => {
+    return DistributionCenters.getValueList(remult)
   },
   width: '150',
 })
@@ -42,7 +42,7 @@ import { use, FieldType, Field } from "../translate";
   }
 })
 export class DistributionCenters extends IdEntity {
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
     super();
   }
 
@@ -56,7 +56,7 @@ export class DistributionCenters extends IdEntity {
     translation: l => l.deliveryCenterAddress
   })
   address: string;
-  addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
+  addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
   @Field({ translation: l => l.distributionCenterComment })
   comments: string;
   @Field({ translation: l => l.phone1 })
@@ -84,30 +84,30 @@ export class DistributionCenters extends IdEntity {
 
 
   matchesCurrentUser() {
-    return this.id == (<HelperUserInfo>this.context.user).distributionCenter;
+    return this.id == (<HelperUserInfo>this.remult.user).distributionCenter;
   }
 
-  async SendMessageToBrowser(message: string, context: Remult) {
+  async SendMessageToBrowser(message: string, remult: Remult) {
 
-    await (await import('../families/families')).Families.SendMessageToBrowsers(message, context, this.id);
+    await (await import('../families/families')).Families.SendMessageToBrowsers(message, remult, this.id);
   }
 
 
   checkAllowedForUser() {
-    if (this.context.isAllowed(Roles.admin)) {
+    if (this.remult.isAllowed(Roles.admin)) {
       return true;
-    } else if (this.context.isAllowed(Roles.distCenterAdmin))
-      return (<HelperUserInfo>this.context.user).distributionCenter == this.id;
+    } else if (this.remult.isAllowed(Roles.distCenterAdmin))
+      return (<HelperUserInfo>this.remult.user).distributionCenter == this.id;
     return false;
   }
   async getRouteStartGeo() {
 
     if (this.addressApiResult && this.address && this.addressHelper.ok())
       return this.addressHelper.getGeocodeInformation();
-    return (await ApplicationSettings.getAsync(this.context)).addressHelper.getGeocodeInformation();
+    return (await ApplicationSettings.getAsync(this.remult)).addressHelper.getGeocodeInformation();
   }
-  static async getValueList(context: Remult, showAllOptions = false) {
-    let r = await getValueList<DistributionCenters>(context.repo(DistributionCenters), {
+  static async getValueList(remult: Remult, showAllOptions = false) {
+    let r = await getValueList<DistributionCenters>( remult.repo(DistributionCenters), {
       where: c => c.archive.isEqualTo(false)
     })
     if (showAllOptions) {

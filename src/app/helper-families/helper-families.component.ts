@@ -74,7 +74,7 @@ export class HelperFamiliesComponent implements OnInit {
     }, 1000);
   }
 
-  constructor(public auth: AuthService, private dialog: DialogService, public context: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
+  constructor(public auth: AuthService, private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -122,21 +122,21 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   reminderSmsRelativeDate() {
-    return relativeDateName(this.context, { d: this.familyLists.helper.reminderSmsDate });
+    return relativeDateName(this.remult, { d: this.familyLists.helper.reminderSmsDate });
   }
 
 
   @BackendMethod({ allowed: Roles.indie })
-  static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, context?: Remult, db?: SqlDatabase) {
-    if (!getSettings(context).isSytemForMlt())
+  static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, remult?: Remult, db?: SqlDatabase) {
+    if (!getSettings(remult).isSytemForMlt())
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd = SqlFor(context.repo(ActiveFamilyDeliveries));
+    let fd = SqlFor( remult.repo(ActiveFamilyDeliveries));
 
-    let sql = new SqlBuilder(context);
-    let settings = await ApplicationSettings.getAsync(context);
-    let privateDonation = selfAssign ? (await context.repo(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
+    let sql = new SqlBuilder(remult);
+    let settings = await ApplicationSettings.getAsync(remult);
+    let privateDonation = selfAssign ? (await  remult.repo(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
 
     for (const r of (await db.execute(await sql.query({
       select: () => [
@@ -158,7 +158,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
     }))).rows) {
       let existing = result.find(async x => x.item.familyId == await getValueFromResult(r, fd.family));
-      let basketName = (await context.repo(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
+      let basketName = (await  remult.repo(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
       if (existing) {
         existing.name += ", " + await getValueFromResult(r, fd.quantity) + " X " + basketName;
         existing.item.totalItems += await getValueFromResult(r, fd.quantity);
@@ -257,7 +257,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (this.settings.helpText && this.settings.helpPhone)
       return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
-      var h = this.context.currentUser;
+      var h = this.remult.currentUser;
       return r + h.name + ", " + h.phone.displayValue;
     }
   }
@@ -302,9 +302,9 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.busy, this.familyLists.toDeliver, this.dialog);
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Remult) {
+  static async cancelAssignAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
     let dist: DistributionCenters = null;
-    await pagedRowsIterator(context.repo(ActiveFamilyDeliveries), {
+    await pagedRowsIterator( remult.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         fd.courier = null;
@@ -313,7 +313,7 @@ export class HelperFamiliesComponent implements OnInit {
         await fd.save();
       }
     });
-    await dist.SendMessageToBrowser(getLang(context).cancelAssignmentForHelperFamilies, context);
+    await dist.SendMessageToBrowser(getLang(remult).cancelAssignmentForHelperFamilies, remult);
   }
   distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number): number {
     if (i == 0) { return undefined; }
@@ -325,10 +325,10 @@ export class HelperFamiliesComponent implements OnInit {
     return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async okAllForHelperOnServer(helper: HelpersBase, context?: Remult) {
+  static async okAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
     let dist: DistributionCenters = null;
 
-    await pagedRowsIterator(context.repo(ActiveFamilyDeliveries), {
+    await pagedRowsIterator( remult.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
@@ -338,7 +338,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
     });
     if (dist)
-      await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, context);
+      await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, remult);
   }
   notMLT() {
     return !this.settings.isSytemForMlt();
@@ -357,7 +357,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    await new moveDeliveriesHelper(this.context, this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true);
+    await new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true);
 
   }
 
@@ -381,12 +381,12 @@ export class HelperFamiliesComponent implements OnInit {
       if (this.familyLists.helper.leadHelper) {
         this.otherDependentVolunteers.push(this.familyLists.helper.leadHelper);
       }
-      this.otherDependentVolunteers.push(...await this.context.repo(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
+      this.otherDependentVolunteers.push(...await this. remult.repo(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
     });
   }
   otherDependentVolunteers: HelpersBase[] = [];
 
-  allDoneMessage() { return ApplicationSettings.get(this.context).messageForDoneDelivery; };
+  allDoneMessage() { return ApplicationSettings.get(this.remult).messageForDoneDelivery; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
   }
@@ -394,27 +394,27 @@ export class HelperFamiliesComponent implements OnInit {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  static async sendSuccessMessageToFamily(deliveryId: string, context?: Remult) {
-    var settings = getSettings(context);
+  static async sendSuccessMessageToFamily(deliveryId: string, remult?: Remult) {
+    var settings = getSettings(remult);
     if (!settings.allowSendSuccessMessageOption)
       return;
     if (!settings.sendSuccessMessageToFamily)
       return;
-    let fd = await context.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
+    let fd = await  remult.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
     if (!fd)
       console.log("did not send sms to " + deliveryId + " failed to find delivery");
     if (!fd.phone1)
       return;
     if (!fd.phone1.canSendWhatsapp())
       return;
-    let phone = Phone.fixPhoneInput(fd.phone1.thePhone, context);
+    let phone = Phone.fixPhoneInput(fd.phone1.thePhone, remult);
     if (phone.length != 10) {
       console.log(phone + " doesn't match sms structure");
       return;
     }
 
 
-    await new SendSmsUtils().sendSms(phone, settings.helpPhone.thePhone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), context.getOrigin(), Sites.getOrganizationFromContext(context), settings);
+    await new SendSmsUtils().sendSms(phone, settings.helpPhone.thePhone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), remult.getOrigin(), Sites.getOrganizationFromContext(remult), settings);
   }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
     openDialog(GetVolunteerFeedback, x => x.args = {
@@ -517,7 +517,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async sendWhatsapp() {
-    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, this.context);
+    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, this.remult);
     await this.updateMessageSent("Whatsapp");
   }
   async customSms() {
@@ -546,7 +546,7 @@ export class HelperFamiliesComponent implements OnInit {
   prepareMessage(reminder: boolean) {
     this.isReminderMessage = reminder;
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.context, this.familyLists.helper, window.origin, reminder, this.context.user.name, async (phone, message, sender, link) => {
+      await SendSmsAction.generateMessage(this.remult, this.familyLists.helper, window.origin, reminder, this.remult.user.name, async (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
         this.smsLink = link;
@@ -568,7 +568,7 @@ export class HelperFamiliesComponent implements OnInit {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
         save: async (comment) => {
-          let hist = this.context.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+          let hist = this. remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
           hist.volunteer = this.familyLists.helper;
           hist.comment = comment;
           await hist.save();
@@ -584,7 +584,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async updateMessageSent(type: string) {
 
-    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, this.context, type);
+    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, this.remult, type);
   }
   async copyMessage() {
     copy(this.smsMessage);
@@ -634,7 +634,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
       if (endOnDist)
         url += "/" + encodeURI((this.routeStart).getAddress());
-      window.open(url + "?hl=" + getLang(this.context).languageCode, '_blank');
+      window.open(url + "?hl=" + getLang(this.remult).languageCode, '_blank');
     }
     //window.open(url,'_blank');
   }

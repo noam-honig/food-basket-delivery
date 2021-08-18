@@ -31,7 +31,7 @@ declare var fbq;
 export class RegisterDonorComponent implements OnInit {
   static MinQuantity = 10;
 
-  constructor(private dialog: DialogService, private context: Remult, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
+  constructor(private dialog: DialogService, private remult: Remult, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
 
   showCCMessage(): boolean {
     if (this.activeRoute.routeConfig.data && this.activeRoute.routeConfig.data.isCC)
@@ -41,7 +41,7 @@ export class RegisterDonorComponent implements OnInit {
 
   refer: string = null;
   isDone = false;
-  donor = new donorForm(this.context);
+  donor = new donorForm(this.remult);
   area = new DataAreaSettings({
     fields: () =>
       [
@@ -139,10 +139,10 @@ export class EquipmentAge {
 }
 @Controller('register-donor')
 class donorForm {
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
 
   }
-  get $() { return getFields(this, this.context) }
+  get $() { return getFields(this, this.remult) }
   @Field({
     caption: "שם מלא",
     validate: Validators.required.withMessage("אנא הזן ערך")
@@ -154,7 +154,7 @@ class donorForm {
     validate: (self, col) => {
       if (!col.value || col.value.thePhone == '')
         col.error = "אנא הזן ערך";
-      Phone.validatePhone(col, self.context);
+      Phone.validatePhone(col, self.remult);
     }
   })
   phone: Phone;
@@ -200,15 +200,15 @@ class donorForm {
 
   @BackendMethod({ allowed: true })
   async createDonor() {
-    let settings = await ApplicationSettings.getAsync(this.context);
+    let settings = await ApplicationSettings.getAsync(this.remult);
     if (!settings.isSytemForMlt())
       throw "Not Allowed";
-    this.context.setUser({
+    this.remult.setUser({
       id: 'WIX',
       name: 'WIX',
       roles: []
     });
-    let f = this.context.repo(Families).create();
+    let f = this. remult.repo(Families).create();
     f.name = this.name;
     if (!this.address)
       this.address = '';
@@ -216,7 +216,7 @@ class donorForm {
     f.phone1 = this.phone;
     f.email = this.email;
     f.custom1 = this.docref;
-    f.familySource = await this.context.repo(FamilySources).findId(this.donationType);
+    f.familySource = await this. remult.repo(FamilySources).findId(this.donationType);
 
     await f.save();
     var quantity = 0;
@@ -225,11 +225,11 @@ class donorForm {
       if (q > 0) {
         quantity += q;
 
-        await Families.addDelivery(f.id, await self.context.repo(BasketType).findId(type), null, null, {
+        await Families.addDelivery(f.id, await self. remult.repo(BasketType).findId(type), null, null, {
           comment: '',
           quantity: q,
           selfPickup: isSelfDeliver,
-        }, self.context);
+        }, self.remult);
       }
     }
     if (this.computerAge === undefined || this.computerAge.isNew)
@@ -245,11 +245,11 @@ class donorForm {
     await addDelivery('מסך', this.screen, this.selfDeliver);
 
     if (quantity == 0) {
-      await Families.addDelivery(f.id, await self.context.repo(BasketType).findId('לא פורט'), null, null, {
+      await Families.addDelivery(f.id, await self. remult.repo(BasketType).findId('לא פורט'), null, null, {
         comment: '',
         quantity: 1,
         selfPickup: false
-      }, this.context);
+      }, this.remult);
     }
 
 
@@ -258,7 +258,7 @@ class donorForm {
       let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText,
         settings.organisationName, f.name, '', '', '');
       try {
-        await f.email.Send(settings.lang.thankYouForDonation, message, this.context);
+        await f.email.Send(settings.lang.thankYouForDonation, message, this.remult);
       } catch (err) {
         console.error('send mail', err);
       }

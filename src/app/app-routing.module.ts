@@ -57,11 +57,11 @@ import { OrgEventsComponent } from './org-events/org-events.component';
 
 @Injectable()
 export class MltOnlyGuard implements CanActivate {
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
 
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-        let site = Sites.getOrganizationFromContext(this.context);
+        let site = Sites.getOrganizationFromContext(this.remult);
         
         if (site == 'mlt')
             return true;
@@ -72,14 +72,14 @@ export class MltOnlyGuard implements CanActivate {
 }
 @Injectable()
 export class MltAdminGuard implements CanActivate {
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
 
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-        let site = Sites.getOrganizationFromContext(this.context);
+        let site = Sites.getOrganizationFromContext(this.remult);
         
         if (site == 'mlt')
-            return this.context.isAllowed(Roles.admin);
+            return this.remult.isAllowed(Roles.admin);
         return false;
     }
 

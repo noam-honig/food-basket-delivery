@@ -41,8 +41,8 @@ serverInit().then(async (dataSource) => {
     }
 
     async function sendIndex(res: express.Response, req: express.Request) {
-        let context = await eb.getValidContext(req);
-        let org = Sites.getOrganizationFromContext(context);
+        let remult = await eb.getValidContext(req);
+        let org = Sites.getOrganizationFromContext(remult);
         if (redirect.includes(org)) {
             res.redirect(process.env.REDIRECT_TARGET + org);
             return;
@@ -56,9 +56,9 @@ serverInit().then(async (dataSource) => {
 
         if (fs.existsSync(index)) {
             let x = '';
-            let settings = (await ApplicationSettings.getAsync(context));
-            setLangForSite(Sites.getValidSchemaFromContext(context), settings.forWho);
-            setSettingsForSite(Sites.getValidSchemaFromContext(context), settings);
+            let settings = (await ApplicationSettings.getAsync(remult));
+            setLangForSite(Sites.getValidSchemaFromContext(remult), settings.forWho);
+            setSettingsForSite(Sites.getValidSchemaFromContext(remult), settings);
             x = settings.organisationName;
             let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
             let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;
@@ -160,7 +160,7 @@ s.parentNode.insertBefore(b, s);})();
     let eb = initExpress(
         app,
         {
-            initRequest: async (context, req) => {
+            initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
                     if (req.originalUrl)
@@ -168,12 +168,12 @@ s.parentNode.insertBefore(b, s);})();
                     else
                         url = req.path;
                 } 
-                context.getSite = () => getSiteFromUrl(url);
-                if (!context.isAllowed(Sites.getOrgRole(context)))
-                    context.setUser(undefined);
-                context.setDataProvider(dataSource(context));
-                context.getOrigin = ()=> req.headers['origin'] as string;
-                await InitContext(context, undefined)
+                remult.getSite = () => getSiteFromUrl(url);
+                if (!remult.isAllowed(Sites.getOrgRole(remult)))
+                    remult.setUser(undefined);
+                remult.setDataProvider(dataSource(remult));
+                remult.getOrigin = ()=> req.headers['origin'] as string;
+                await InitContext(remult, undefined)
             },
 
             disableAutoApi: Sites.multipleSites,
@@ -244,8 +244,8 @@ export interface monitorResult {
 function registerImageUrls(app, getContext: (req: express.Request) => Promise<Remult>, sitePrefix: string) {
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
-            let context = await getContext(req);
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64PhoneHomeImage;
+            let remult = await getContext(req);
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(remult)).base64PhoneHomeImage;
             res.contentType('png');
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -272,9 +272,9 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
     })
     app.use(sitePrefix + '/favicon.ico', async (req, res) => {
         try {
-            let context = await getContext(req);
+            let remult = await getContext(req);
             res.contentType('ico');
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(context)).base64Icon;
+            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(remult)).base64Icon;
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;

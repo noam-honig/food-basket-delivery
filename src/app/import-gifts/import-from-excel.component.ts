@@ -9,7 +9,7 @@ import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/ang
 })
 export class GeneralImportFromExcelComponent implements OnInit {
 
-  constructor(private context: Remult, private busy: BusyService, private dialog: MatDialogRef<any>) { }
+  constructor(private remult: Remult, private busy: BusyService, private dialog: MatDialogRef<any>) { }
 
   ngOnInit() {
 

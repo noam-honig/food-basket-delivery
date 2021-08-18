@@ -31,12 +31,12 @@ export class EventsComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroyHelper.destroy();
   }
-  constructor(private context: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
+  constructor(private remult: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events: GridSettings<Event> = new GridSettings<Event>(this.context.repo(Event), {
-    allowUpdate: this.context.isAllowed(Roles.admin),
-    allowInsert: this.context.isAllowed(Roles.admin),
+  events: GridSettings<Event> = new GridSettings<Event>(this. remult.repo(Event), {
+    allowUpdate: this.remult.isAllowed(Roles.admin),
+    allowInsert: this.remult.isAllowed(Roles.admin),
 
 
     rowsInPage: 25,
@@ -59,7 +59,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          await Event.duplicateEvent(this.context, this.busy, this.events.selectedRows, () => this.events.reloadData());
+          await Event.duplicateEvent(this.remult, this.busy, this.events.selectedRows, () => this.events.reloadData());
         }
         , visible: () => this.events.selectedRows.length > 0
 
@@ -106,7 +106,7 @@ export class EventsComponent implements OnInit {
     new columnOrderAndWidthSaver(this.events).load('events-component');
   }
   copyLink() {
-    copy(window.origin + '/' + Sites.getOrganizationFromContext(this.context) + '/events');
+    copy(window.origin + '/' + Sites.getOrganizationFromContext(this.remult) + '/events');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
   @ViewChild(EventCardComponent) card: EventCardComponent;

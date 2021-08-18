@@ -28,7 +28,7 @@ export interface DoWorkOnServerHelper<T extends IdEntity> {
 
 
 export abstract class ActionOnRows<T extends IdEntity>  {
-    constructor(protected context: Remult,
+    constructor(protected remult: Remult,
         private entity: {
             new(...args: any[]): T;
         },
@@ -49,7 +49,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => [...getFields(this, this.context)];
+            args.dialogColumns = async x => [...getFields(this, this.remult)];
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -58,13 +58,13 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
     }
-    get $() { return getFields<this>(this, this.context) };
+    get $() { return getFields<this>(this, this.remult) };
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
             name: this.args.title,
             visible: () => {
-                let r = this.context.isAllowed(this.args.allowed);
+                let r = this.remult.isAllowed(this.args.allowed);
                 if (!r)
                     return false;
                 if (this.args.visible) {
@@ -92,8 +92,8 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                         },
                         ok: async () => {
-                            let groupName = this.context.repo(this.entity).metadata.caption;
-                            let count = await this.context.repo(this.entity).count(this.composeWhere(component.userWhere))
+                            let groupName = this. remult.repo(this.entity).metadata.caption;
+                            let count = await this. remult.repo(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                                 let r = await this.internalForTestingCallTheServer({
                                     count,
@@ -125,7 +125,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: await Filter.packWhere(this.context.repo(this.entity).metadata, info.where),
+            packedWhere: await Filter.packWhere(this. remult.repo(this.entity).metadata, info.where),
         }, p);
 
         return r;
@@ -135,18 +135,18 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         return Filter.toItem(where, this.args.additionalWhere);
     }
 
-    @BackendMethod<ActionOnRows<any>>({ allowed: (context, self) => context.isAllowed(self.args.allowed), queue: true })
+    @BackendMethod<ActionOnRows<any>>({ allowed: (remult, self) => remult.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
         await this.serialHelper?.deserializeOnServer();
-        let where = this.composeWhere(x => Filter.unpackWhere(this.context.repo(this.entity).metadata, info.packedWhere));
+        let where = this.composeWhere(x => Filter.unpackWhere(this. remult.repo(this.entity).metadata, info.packedWhere));
 
-        let count = await this.context.repo(this.entity).count(where);
+        let count = await this. remult.repo(this.entity).count(where);
         if (count != info.count) {
-            console.log({ count, packCount: info.count, name: this.context.repo(this.entity).metadata.caption });
+            console.log({ count, packCount: info.count, name: this. remult.repo(this.entity).metadata.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;
-        let r = await pagedRowsIterator<T>(this.context.repo(this.entity), {
+        let r = await pagedRowsIterator<T>(this. remult.repo(this.entity), {
             where,
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
@@ -158,9 +158,9 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + this.context.repo(this.entity).metadata.caption + " " + getLang(this.context).updated;
+        let message = this.args.title + ": " + r + " " + this. remult.repo(this.entity).metadata.caption + " " + getLang(this.remult).updated;
 
-        await Families.SendMessageToBrowsers(message, this.context, '');
+        await Families.SendMessageToBrowsers(message, this.remult, '');
         return r;
     }
 
@@ -192,7 +192,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
 }
 
 
-export async function pagedRowsIterator<T extends EntityBase>(context: Repository<T>, args: {
+export async function pagedRowsIterator<T extends EntityBase>(remult: Repository<T>, args: {
 
 
     forEachRow: (f: T) => Promise<void>,
@@ -200,7 +200,7 @@ export async function pagedRowsIterator<T extends EntityBase>(context: Repositor
 } & IterateOptions<T>) {
     let updated = 0;
     let pt = new PromiseThrottle(10);
-    for await (const f of context.iterate({ where: args.where, orderBy: args.orderBy })) {
+    for await (const f of remult.iterate({ where: args.where, orderBy: args.orderBy })) {
 
         await pt.push(args.forEachRow(f));
         updated++;

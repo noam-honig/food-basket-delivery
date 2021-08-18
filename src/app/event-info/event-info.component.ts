@@ -20,7 +20,7 @@ import { RegisterToEvent } from './RegisterToEvent';
 })
 export class EventInfoComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private context: Remult, public dialog: DialogService, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private remult: Remult, public dialog: DialogService, private busy: BusyService) { }
   @Output() phoneChanged = new EventEmitter();
   @Input()
   e: EventInList;
@@ -31,11 +31,11 @@ export class EventInfoComponent implements OnInit {
     window.open('waze://?ll=' + this.e.longLat + "&q=" + encodeURI(this.e.theAddress) + '&navigate=yes');
   }
   openGoogleMap() {
-    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.context).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.remult).languageCode, '_blank');
   }
-  reg = new RegisterToEvent(this.context);
+  reg = new RegisterToEvent(this.remult);
   isAdmin(){
-    return this.context.isAllowed(Roles.admin);
+    return this.remult.isAllowed(Roles.admin);
   }
 
   ngOnInit(): void {
@@ -47,6 +47,6 @@ export class EventInfoComponent implements OnInit {
 
 
   sendWhatsapp(phone: string) {
-    Phone.sendWhatsappToPhone(phone, '', this.context);
+    Phone.sendWhatsappToPhone(phone, '', this.remult);
   }
 }

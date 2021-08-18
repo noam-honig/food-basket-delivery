@@ -24,7 +24,7 @@ import { Phone } from '../model-shared/phone';
 })
 export class OverviewComponent implements OnInit {
 
-  constructor(private context: Remult, private dialog: DialogService) { }
+  constructor(private remult: Remult, private dialog: DialogService) { }
   overview: overviewResult;
   sortBy: string;
   async ngOnInit() {
@@ -47,7 +47,7 @@ export class OverviewComponent implements OnInit {
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption]);
   }
   @BackendMethod({ allowed: Roles.overview, queue: true })
-  static async getOverview(context?: Remult, progress?: ProgressListener) {
+  static async getOverview(remult?: Remult, progress?: ProgressListener) {
     let today = new Date();
     let onTheWay = "בדרך";
     let inEvent = "באירוע";
@@ -124,9 +124,9 @@ export class OverviewComponent implements OnInit {
       sites: []
     };
 
-    var builder = new SqlBuilder(context);
-    let f = SqlFor(context.repo(ActiveFamilyDeliveries));
-    let fd = SqlFor(context.repo(FamilyDeliveries));
+    var builder = new SqlBuilder(remult);
+    let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+    let fd = SqlFor( remult.repo(FamilyDeliveries));
 
 
 
@@ -135,8 +135,8 @@ export class OverviewComponent implements OnInit {
       progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
-      var as = await SqlFor(context.repo(ApplicationSettings));
-      var h = await SqlFor(context.repo(Helpers));
+      var as = await SqlFor( remult.repo(ApplicationSettings));
+      var h = await SqlFor( remult.repo(Helpers));
 
       let cols: any[] = [as.organisationName, as.logoUrl, builder.build("(", builder.query({
         from: h,
@@ -231,11 +231,11 @@ export class OverviewComponent implements OnInit {
     });
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async createSchema(id: string, name: string, address: string, manager: string, phone: string, context?: Remult): Promise<{
+  static async createSchema(id: string, name: string, address: string, manager: string, phone: string, remult?: Remult): Promise<{
     ok: boolean,
     errorText: string
   }> {
-    let r = await OverviewComponent.validateNewSchema(id, context);
+    let r = await OverviewComponent.validateNewSchema(id, remult);
     if (r) {
       return {
         ok: false,
@@ -245,12 +245,12 @@ export class OverviewComponent implements OnInit {
     try {
       if (!name || name.length == 0)
         name = id;
-      let oh = await context.repo(Helpers).findId(context.user.id);
+      let oh = await  remult.repo(Helpers).findId(remult.user.id);
       let db = await OverviewComponent.createDbSchema(id);
       let otherContext = new Remult();
       otherContext.setDataProvider(db);
-      otherContext.setUser(context.user);
-      Sites.setSiteToContext(otherContext, id, context);
+      otherContext.setUser(remult.user);
+      Sites.setSiteToContext(otherContext, id, remult);
       await InitContext(otherContext);
       {
         let h = await otherContext.repo(Helpers).create();
@@ -273,7 +273,7 @@ export class OverviewComponent implements OnInit {
       settings.address = address;
       await settings.save();
 
-      let s = context.repo(SitesEntity).create();
+      let s =  remult.repo(SitesEntity).create();
       s.id = id;
       await s.save();
 
@@ -291,8 +291,8 @@ export class OverviewComponent implements OnInit {
   static createSchemaApi = async (id: string) => { };
 
   @BackendMethod({ allowed: Roles.overview })
-  static async validateNewSchema(id: string, context?: Remult) {
-    let x = await context.repo(SitesEntity).findId(id);
+  static async validateNewSchema(id: string, remult?: Remult) {
+    let x = await  remult.repo(SitesEntity).findId(id);
     if (x) {
       return "מזהה כבר קיים";
     }

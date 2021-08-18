@@ -8,7 +8,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
     handlers: { [key: string]: DetachedRouteHandle } = {};
     constructor(
-        private context: Remult
+        private remult: Remult
     ) { }
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         let x = (<any>route.component).prototype[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
@@ -36,7 +36,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
-        this.context.clearAllCache();
+        this.remult.clearAllCache();
         if (!!route.routeConfig) {
             let h = this.handlers[route.routeConfig.path];
             if (h) {

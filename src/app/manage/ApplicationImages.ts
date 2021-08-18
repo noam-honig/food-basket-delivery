@@ -15,7 +15,7 @@ export class ApplicationImages extends EntityBase {
   base64PhoneHomeImage: string;
 
 
-  static async getAsync(context: Remult): Promise<ApplicationImages> {
-    return context.repo(ApplicationImages).findFirst(undefined);
+  static async getAsync(remult: Remult): Promise<ApplicationImages> {
+    return  remult.repo(ApplicationImages).findFirst(undefined);
   }
 }

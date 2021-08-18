@@ -33,8 +33,8 @@ import { SqlBuilder } from './SqlBuilder';
   forceEqualFilter: false
 })
 export class Email {
-  async Send(subject: string, message: string, context: Remult) {
-    await EmailSvc.sendMail(subject, message, this.address, context);
+  async Send(subject: string, message: string, remult: Remult) {
+    await EmailSvc.sendMail(subject, message, this.address, remult);
   }
   constructor(public readonly address: string) {
 
@@ -109,15 +109,15 @@ class a {
 }
 
 
-export function relativeDateName(context: Remult, args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
+export function relativeDateName(remult: Remult, args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
   let d = args.d;
   if (!d)
     return '';
-  return moment(d).locale(getLang(context).languageCodeHe).fromNow();
+  return moment(d).locale(getLang(remult).languageCodeHe).fromNow();
 
 }
 
-export function logChanges(e: EntityRef<any>, context: Remult, args?: {
+export function logChanges(e: EntityRef<any>, remult: Remult, args?: {
   excludeColumns?: FieldRef<any, any>[],
   excludeValues?: FieldRef<any, any>[]
 }) {
@@ -132,7 +132,7 @@ export function logChanges(e: EntityRef<any>, context: Remult, args?: {
   let cols = '';
   let vals = '';
   for (const c of e.fields) {
-    if (c.wasChanged()) {
+    if (c.valueChanged()) {
       if (!args.excludeColumns.includes(c)) {
         cols += c.metadata.key + "|";
         if (!args.excludeValues.includes(c)) {
@@ -151,7 +151,7 @@ export function logChanges(e: EntityRef<any>, context: Remult, args?: {
   if (cols) {
     var p = '';
     try {
-      p = Sites.getOrganizationFromContext(context);
+      p = Sites.getOrganizationFromContext(remult);
     }
     catch {
     }
@@ -159,8 +159,8 @@ export function logChanges(e: EntityRef<any>, context: Remult, args?: {
     if (e.isNew()) {
       p += "(new)";
     }
-    if (context.user)
-      p += ", user=" + context.user.id + " (" + context.user.name + ")";
+    if (remult.user)
+      p += ", user=" + remult.user.id + " (" + remult.user.name + ")";
     p += " :" + vals + "\t cols=" + cols;
     console.log(p)
   }

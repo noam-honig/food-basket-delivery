@@ -66,20 +66,20 @@ declare type factoryFor<T> = {
       if (isBackend()) {
         if (!self.quantity || self.quantity < 1)
           self.quantity = 1;
-        if (self.$.area.wasChanged() && self.area)
+        if (self.$.area.valueChanged() && self.area)
           self.area = self.area.trim();
 
 
 
-        if (self.$.address.wasChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
+        if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
           await self.reloadGeoCoding();
         }
-        let currentUser = self.context.currentUser;
+        let currentUser = self.remult.currentUser;
         if (self.isNew()) {
           self.createDate = new Date();
           self.createUser = currentUser;
         }
-        if (self.$.status.wasChanged()) {
+        if (self.$.status.valueChanged()) {
           self.statusDate = new Date();
           self.statusUser = currentUser;
         }
@@ -91,8 +91,8 @@ declare type factoryFor<T> = {
 
 
 
-        if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.wasChanged())) {
-          for await (const fd of await self.context.repo(FamilyDeliveries).find({
+        if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.valueChanged())) {
+          for await (const fd of await self. remult.repo(FamilyDeliveries).find({
             where: fd =>
               fd.family.isEqualTo(self.id).and(
                 fd.archive.isEqualTo(false).and(
@@ -100,15 +100,15 @@ declare type factoryFor<T> = {
                 ))
           })) {
             self.updateDelivery(fd);
-            if (self.$.basketType.wasChanged() && fd.basketType == self.$.basketType.originalValue)
+            if (self.$.basketType.valueChanged() && fd.basketType == self.$.basketType.originalValue)
               fd.basketType = self.basketType;
-            if (self.$.quantity.wasChanged() && fd.quantity == self.$.quantity.originalValue)
+            if (self.$.quantity.valueChanged() && fd.quantity == self.$.quantity.originalValue)
               fd.quantity = self.quantity;
-            if (self.$.deliveryComments.wasChanged() && fd.deliveryComments == self.$.deliveryComments.originalValue)
+            if (self.$.deliveryComments.valueChanged() && fd.deliveryComments == self.$.deliveryComments.originalValue)
               fd.deliveryComments = self.deliveryComments;
-            if (self.$.fixedCourier.wasChanged() && fd.courier == self.$.fixedCourier.originalValue)
+            if (self.$.fixedCourier.valueChanged() && fd.courier == self.$.fixedCourier.originalValue)
               fd.courier = self.fixedCourier;
-            if (self.$.defaultSelfPickup.wasChanged())
+            if (self.$.defaultSelfPickup.valueChanged())
               if (self.defaultSelfPickup)
                 if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
                   fd.deliverStatus = DeliveryStatus.SelfPickup;
@@ -120,12 +120,12 @@ declare type factoryFor<T> = {
 
       }
       else if (!isBackend()) {
-        let statusChangedOutOfActive = self.$.status.wasChanged() && self.status != FamilyStatus.Active;
+        let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
         if (statusChangedOutOfActive) {
-          let activeDeliveries = self.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
+          let activeDeliveries = self. remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
           if (await activeDeliveries.count() > 0) {
             if (await openDialog(YesNoQuestionComponent, async x => x.args = {
-              question: getLang(self.context).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.context).deliveries_ShouldWeDeleteThem
+              question: getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
             }, y => y.yes)) {
               for await (const d of activeDeliveries) {
                 await d.delete();
@@ -137,10 +137,10 @@ declare type factoryFor<T> = {
       }
     }
   },
-  (options, context) =>
+  (options, remult) =>
     options.apiDataFilter = (self) => {
-      if (!context.isAllowed(Roles.admin)) {
-        if (context.isAllowed(Roles.admin))
+      if (!remult.isAllowed(Roles.admin)) {
+        if (remult.isAllowed(Roles.admin))
           return undefined;
         return self.id.isEqualTo('no rows');
       }
@@ -148,9 +148,9 @@ declare type factoryFor<T> = {
 )
 export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
-  static async getDefaultVolunteers(context?: Remult, db?: SqlDatabase) {
-    var sql = new SqlBuilder(context);
-    let f = SqlFor(context.repo(Families));
+  static async getDefaultVolunteers(remult?: Remult, db?: SqlDatabase) {
+    var sql = new SqlBuilder(remult);
+    let f = SqlFor( remult.repo(Families));
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
@@ -165,7 +165,7 @@ export class Families extends IdEntity {
       count: x.count
     }));
     for (const r of result) {
-      let h = await context.repo(Helpers).findId(r.id);
+      let h = await  remult.repo(Helpers).findId(r.id);
       if (h)
         r.name = h.name;
     }
@@ -184,7 +184,7 @@ export class Families extends IdEntity {
   async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
     openDialog(GridDialogComponent, x => x.args = {
-      title: getLang(this.context).deliveriesFor + ' ' + this.name,
+      title: getLang(this.remult).deliveriesFor + ' ' + this.name,
       stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
       buttons: [{
@@ -195,7 +195,7 @@ export class Families extends IdEntity {
     });
   }
   public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
-    let result = new GridSettings(this.context.repo(FamilyDeliveries), {
+    let result = new GridSettings(this. remult.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
       rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -213,7 +213,7 @@ export class Families extends IdEntity {
           })
         },
         ...(await import("../family-deliveries/family-deliveries.component")).getDeliveryGridButtons({
-          context: this.context,
+          remult: this.remult,
           refresh: () => result.reloadData(),
           deliveries: () => result,
           dialog: args.dialog,
@@ -254,7 +254,7 @@ export class Families extends IdEntity {
     if (!args)
       args = {};
     if (!args.doNotCheckIfHasExistingDeliveries) {
-      let hasExisting = await this.context.repo(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(DeliveryStatus.isNotAResultStatus(d.deliverStatus)));
+      let hasExisting = await this. remult.repo(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(DeliveryStatus.isNotAResultStatus(d.deliverStatus)));
       if (hasExisting > 0) {
         if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
           this.showDeliveryHistoryDialog({ dialog, settings, busy });
@@ -266,7 +266,7 @@ export class Families extends IdEntity {
     let newDelivery = this.createDelivery(await dialog.getDistCenter(this.addressHelper.location()));
     let arciveCurrentDelivery = new InputField<boolean>({
       valueType: Boolean,
-      caption: getLang(this.context).archiveCurrentDelivery,
+      caption: getLang(this.remult).archiveCurrentDelivery,
       defaultValue: () => true
     });
     if (args.copyFrom != undefined) {
@@ -275,7 +275,7 @@ export class Families extends IdEntity {
     }
     let selfPickup = new InputField<boolean>({
       valueType: Boolean,
-      caption: getLang(this.context).familySelfPickup,
+      caption: getLang(this.remult).familySelfPickup,
       defaultValue: () => this.defaultSelfPickup
     });
     if (args.copyFrom) {
@@ -304,15 +304,15 @@ export class Families extends IdEntity {
             return r;
           }
         },
-        title: getLang(this.context).newDeliveryFor + this.name,
+        title: getLang(this.remult).newDeliveryFor + this.name,
         validate: async () => {
           let count = await newDelivery.duplicateCount();
           if (count > 0) {
-            if (await dialog.YesNoPromise(getLang(this.context).familyAlreadyHasAnActiveDelivery)) {
+            if (await dialog.YesNoPromise(getLang(this.remult).familyAlreadyHasAnActiveDelivery)) {
               return;
             }
             else {
-              throw getLang(this.context).notOk;
+              throw getLang(this.remult).notOk;
             }
           }
         },
@@ -328,7 +328,7 @@ export class Families extends IdEntity {
           }
           if (args.aDeliveryWasAdded)
             await args.aDeliveryWasAdded(newId);
-          dialog.Info(getLang(this.context).deliveryCreatedSuccesfully);
+          dialog.Info(getLang(this.remult).deliveryCreatedSuccesfully);
         }
         , cancel: () => { }
 
@@ -342,12 +342,12 @@ export class Families extends IdEntity {
     selfPickup: boolean,
     deliverStatus?: DeliveryStatus,
     archive?: boolean
-  }, context?: Remult) {
-    let f = await context.repo(Families).findId(familyId);
+  }, remult?: Remult) {
+    let f = await  remult.repo(Families).findId(familyId);
     if (f) {
 
       if (!distCenter)
-        distCenter = await context.findClosestDistCenter(f.addressHelper.location());
+        distCenter = await remult.findClosestDistCenter(f.addressHelper.location());
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;
@@ -362,11 +362,11 @@ export class Families extends IdEntity {
       await fd.save();
       return fd.id;
     }
-    throw getLang(context).familyWasNotFound;
+    throw getLang(remult).familyWasNotFound;
 
   }
   createDelivery(distCenter: DistributionCenters) {
-    let fd = this.context.repo(FamilyDeliveries).create();
+    let fd = this. remult.repo(FamilyDeliveries).create();
     fd.family = this.id;
     fd.distributionCenter = distCenter;
     fd.special = this.special;
@@ -414,7 +414,7 @@ export class Families extends IdEntity {
   }
   getAddressDescription() {
     if (this.isGpsAddress()) {
-      return getLang(this.context).gpsLocationNear + ' ' + this.addressByGoogle;
+      return getLang(this.remult).gpsLocationNear + ' ' + this.addressByGoogle;
 
     }
     return this.address;
@@ -428,7 +428,7 @@ export class Families extends IdEntity {
 
   __disableGeocoding = false;
 
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
     super();
   }
   disableChangeLogging = false;
@@ -517,7 +517,7 @@ export class Families extends IdEntity {
   })
 
   address: string;
-  addressHelper = new AddressHelper(this.context, () => this.$.address, () => this.$.addressApiResult);
+  addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
 
 
   @Field()
@@ -609,7 +609,7 @@ export class Families extends IdEntity {
         geo = new GeocodeInformation(result.result);
     }
     if (geo == undefined && !this.__disableGeocoding)
-      geo = await GetGeoInformation(this.address, this.context);
+      geo = await GetGeoInformation(this.address, this.remult);
     if (geo == undefined) {
       geo = new GeocodeInformation();
     }
@@ -672,34 +672,34 @@ export class Families extends IdEntity {
 
 
   @Field({},
-    (options, context) =>
+    (options, remult) =>
       options.sqlExpression = (self) => {
-        return dbNameFromLastDelivery(self, context, fde => fde.deliverStatus, "prevStatus");
+        return dbNameFromLastDelivery(self, remult, fde => fde.deliverStatus, "prevStatus");
       }
   )
   previousDeliveryStatus: DeliveryStatus;
   @ChangeDateColumn({},
-    (options, context) =>
+    (options, remult) =>
       options.sqlExpression = (self) => {
-        return dbNameFromLastDelivery(self, context, fde => fde.deliveryStatusDate, "prevDate");
+        return dbNameFromLastDelivery(self, remult, fde => fde.deliveryStatusDate, "prevDate");
       }
   )
   previousDeliveryDate: Date;
   @Field<Families>({
     translation: l => l.previousDeliveryNotes
   },
-    (options, context) =>
+    (options, remult) =>
       options.sqlExpression = (self) => {
-        return dbNameFromLastDelivery(self, context, fde => fde.courierComments, "prevComment");
+        return dbNameFromLastDelivery(self, remult, fde => fde.courierComments, "prevComment");
       }
   )
   previousDeliveryComment: string;
   @IntegerField({},
-    (options, context) =>
+    (options, remult) =>
       options.sqlExpression = async (selfDefs) => {
         let self = SqlFor(selfDefs);
-        let fd = SqlFor(context.repo(FamilyDeliveries));
-        let sql = new SqlBuilder(context);
+        let fd = SqlFor( remult.repo(FamilyDeliveries));
+        let sql = new SqlBuilder(remult);
         return sql.columnCount(self, {
           from: fd,
           where: () => [sql.eq(fd.family, self.id),
@@ -774,10 +774,10 @@ export class Families extends IdEntity {
     window.open('waze://?ll=' + this.addressHelper.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address) + '&navigate=yes');
   }
   openGoogleMaps() {
-    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.context).languageCode + '&query=' + this.address, '_blank');
+    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.address, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.context).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.remult).languageCode, '_blank');
   }
   showOnGovMap() {
     window.open('https://www.govmap.gov.il/?q=' + this.address + '&z=10', '_blank');
@@ -787,8 +787,8 @@ export class Families extends IdEntity {
 
 
 
-  static SendMessageToBrowsers = (s: string, context: Remult, distCenter: string) => { };
-  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Remult) {
+  static SendMessageToBrowsers = (s: string, remult: Remult, distCenter: string) => { };
+  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, remult: Remult) {
     switch (updateType) {
       case 1:
         switch (n.deliverStatus) {
@@ -804,15 +804,15 @@ export class Families extends IdEntity {
           case DeliveryStatus.FailedOther:
             let duration = '';
             if (n.courierAssingTime && n.deliveryStatusDate)
-              duration = ' ' + getLang(context).within + ' ' + Math.round((n.deliveryStatusDate.valueOf() - n.courierAssingTime.valueOf()) / 60000) + " " + getLang(context).minutes;
-            return n.deliverStatus.caption + (n.courierComments ? ", \"" + n.courierComments + "\" - " : '') + ' ' + getLang(context).forFamily + ' ' + n.name + ' ' + (courierName ? (getLang(context).by + ' ' + courierName) : '') + duration + "!";
+              duration = ' ' + getLang(remult).within + ' ' + Math.round((n.deliveryStatusDate.valueOf() - n.courierAssingTime.valueOf()) / 60000) + " " + getLang(remult).minutes;
+            return n.deliverStatus.caption + (n.courierComments ? ", \"" + n.courierComments + "\" - " : '') + ' ' + getLang(remult).forFamily + ' ' + n.name + ' ' + (courierName ? (getLang(remult).by + ' ' + courierName) : '') + duration + "!";
         }
-        return getLang(context).theFamily + ' ' + n.name + ' ' + getLang(context).wasUpdatedTo + ' ' + n.deliverStatus.caption;
+        return getLang(remult).theFamily + ' ' + n.name + ' ' + getLang(remult).wasUpdatedTo + ' ' + n.deliverStatus.caption;
       case 2:
         if (n.courier)
-          return getLang(context).theFamily + ' ' + n.name + ' ' + getLang(context).wasAssignedTo + ' ' + courierName;
+          return getLang(remult).theFamily + ' ' + n.name + ' ' + getLang(remult).wasAssignedTo + ' ' + courierName;
         else
-          return getLang(context).assignmentCanceledFor + " " + n.name;
+          return getLang(remult).assignmentCanceledFor + " " + n.name;
     }
     return n.deliverStatus.caption;
   }
@@ -831,9 +831,9 @@ export class Families extends IdEntity {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getAreas(context?: Remult, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
-    var sql = new SqlBuilder(context);
-    let f = SqlFor(context.repo(Families));
+  static async getAreas(remult?: Remult, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
+    var sql = new SqlBuilder(remult);
+    let f = SqlFor( remult.repo(Families));
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.area, 'count (*) as count'],
@@ -861,7 +861,7 @@ export class Families extends IdEntity {
     this.$.name.error = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = getLang(this.context).valueAlreadyExistsFor + ' "' + d.name + '" ' + getLang(this.context).atAddress + ' ' + d.address;
+      let errorText = getLang(this.remult).valueAlreadyExistsFor + ' "' + d.name + '" ' + getLang(this.remult).atAddress + ' ' + d.address;
       if (d.tz)
         this.$.tz.error = errorText;
       if (d.tz2)
@@ -874,26 +874,26 @@ export class Families extends IdEntity {
         this.$.phone3.error = errorText;
       if (d.phone4)
         this.$.phone4.error = errorText;
-      if (d.nameDup && this.$.name.wasChanged()) {
+      if (d.nameDup && this.$.name.valueChanged()) {
         if (!foundExactName)
           this.$.name.error = errorText;
         if (this.name && d.name && this.name.trim() == d.name.trim())
           foundExactName = true;
       }
     }
-    Phone.validatePhone(this.$.phone1, this.context);
-    Phone.validatePhone(this.$.phone2, this.context);
-    Phone.validatePhone(this.$.phone3, this.context);
-    Phone.validatePhone(this.$.phone4, this.context);
+    Phone.validatePhone(this.$.phone1, this.remult);
+    Phone.validatePhone(this.$.phone2, this.remult);
+    Phone.validatePhone(this.$.phone3, this.remult);
+    Phone.validatePhone(this.$.phone4, this.remult);
 
 
   }
   @BackendMethod({ allowed: Roles.admin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, context?: Remult, db?: SqlDatabase) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, remult?: Remult, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
-    var sql = new SqlBuilder(context);
-    var f = SqlFor(context.repo(Families));
+    var sql = new SqlBuilder(remult);
+    var f = SqlFor( remult.repo(Families));
 
     let compareAsNumber = (col: FieldMetadata<any>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
@@ -1112,21 +1112,21 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export function displayDupInfo(info: duplicateFamilyInfo, context: Remult) {
+export function displayDupInfo(info: duplicateFamilyInfo, remult: Remult) {
   let r = [];
 
 
   if (info.tz) {
-    r.push(getLang(context).identicalSocialSecurityNumber + ' ');
+    r.push(getLang(remult).identicalSocialSecurityNumber + ' ');
   }
   if (info.sameAddress) {
-    r.push(getLang(context).sameAddress + " ");
+    r.push(getLang(remult).sameAddress + " ");
   }
   if (info.phone1 || info.phone2 || info.phone3 || info.phone4) {
-    r.push(getLang(context).identicalPhone);
+    r.push(getLang(remult).identicalPhone);
   }
   if (info.nameDup) {
-    r.push(getLang(context).similarName);
+    r.push(getLang(remult).similarName);
   }
   return info.address + ": " + r.join(', ');
 }
@@ -1136,7 +1136,7 @@ export interface autocompleteResult {
   result: GeocodeResult
 }
 
-export function sendWhatsappToFamily(f: familyLikeEntity, context: Remult, phone?: string) {
+export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
@@ -1146,7 +1146,7 @@ export function sendWhatsappToFamily(f: familyLikeEntity, context: Remult, phone
     }
   }
   Phone.sendWhatsappToPhone(phone,
-    use.language.hello + ' ' + f.name + ',', context);
+    use.language.hello + ' ' + f.name + ',', remult);
 }
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
@@ -1164,10 +1164,10 @@ export interface familyLikeEntity {
   phone4: Phone;
 }
 
-async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Remult, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
+async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult: Remult, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
   let self = SqlFor(selfDefs);
-  let fd = SqlFor(context.repo(FamilyDeliveries));
-  let sql = new SqlBuilder(context);
+  let fd = SqlFor( remult.repo(FamilyDeliveries));
+  let sql = new SqlBuilder(remult);
   return sql.columnInnerSelect(self, {
     select: () => [sql.columnWithAlias(col(fd), alias)],
     from: fd,

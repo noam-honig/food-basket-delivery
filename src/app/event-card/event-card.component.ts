@@ -15,13 +15,13 @@ const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: un
   styleUrls: ['./event-card.component.scss']
 })
 export class EventCardComponent implements OnInit {
-  constructor(public settings: ApplicationSettings, private context: Remult, private dialog: DialogService, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private remult: Remult, private dialog: DialogService, private busy: BusyService) { }
   @Input() listOptions: RowButton<any>[] = [];
   menuOptions: RowButton<Event>[] = [
     {
       name: use.language.duplicateEvents,
       click: (e) => {
-        Event.duplicateEvent(this.context, this.busy, [e], (newEvents) => {
+        Event.duplicateEvent(this.remult, this.busy, [e], (newEvents) => {
           if (e.eventStatus == eventStatus.archive) {
             this.events = this.events.filter(x => x != e);
           }
@@ -47,7 +47,7 @@ export class EventCardComponent implements OnInit {
     return '';
   }
   isAdmin() {
-    return this.context.isAllowed(Roles.distCenterAdmin);
+    return this.remult.isAllowed(Roles.distCenterAdmin);
   }
   dates: dateEvents[] = [];
   cities: { id: string, count: number, caption: string }[] = [];
@@ -140,7 +140,7 @@ export class EventCardComponent implements OnInit {
   get events() {
     return this._events;
   }
-  get $() { return getFields(this, this.context) }
+  get $() { return getFields(this, this.remult) }
 
   ngOnInit(): void {
 
@@ -176,7 +176,7 @@ export class EventCardComponent implements OnInit {
   }
 
   adminVolunteers(e: EventInList) {
-    if (this.context.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
+    if (this.remult.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
       if (e.requiredVolunteers)
         return e.registeredVolunteers + '/' + e.requiredVolunteers + ' מתנדבים';
       else

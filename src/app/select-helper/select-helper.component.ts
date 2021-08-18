@@ -49,7 +49,7 @@ export class SelectHelperComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<any>,
 
-    public context: Remult,
+    public remult: Remult,
     private busy: BusyService,
     public settings: ApplicationSettings
 
@@ -60,7 +60,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(undefined);
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, context?: Remult, db?: SqlDatabase) {
+  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, remult?: Remult, db?: SqlDatabase) {
     let helpers = new Map<string, helperInList>();
 
 
@@ -74,7 +74,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of context.repo(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
+    for await (const h of  remult.repo(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,
@@ -83,19 +83,19 @@ export class SelectHelperComponent implements OnInit {
       });
       if (h.preferredDistributionAreaAddressHelper.ok()) {
         let theH = helpers.get(h.id);
-        check(theH, h.preferredDistributionAreaAddressHelper.location(), getLang(context).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress);
+        check(theH, h.preferredDistributionAreaAddressHelper.location(), getLang(remult).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress);
       }
       if (h.preferredFinishAddressHelper.ok()) {
         let theH = helpers.get(h.id);
-        check(theH, h.preferredFinishAddressHelper.location(), getLang(context).preferredDistributionArea + ": " + h.preferredFinishAddress);
+        check(theH, h.preferredFinishAddressHelper.location(), getLang(remult).preferredDistributionArea + ": " + h.preferredFinishAddress);
       }
     }
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
     if (!selectDefaultVolunteer) {
 
       /* ----    calculate active deliveries and distances    ----*/
-      let afd = SqlFor(context.repo(ActiveFamilyDeliveries));
+      let afd = SqlFor( remult.repo(ActiveFamilyDeliveries));
 
 
 
@@ -116,18 +116,18 @@ export class SelectHelperComponent implements OnInit {
             h.assignedDeliveries = 1;
           else
             h.assignedDeliveries++;
-          if (!getSettings(context).isSytemForMlt())
-            check(h, { lat: d.lat, lng: d.lng }, getLang(context).delivery + ": " + d.address);
+          if (!getSettings(remult).isSytemForMlt())
+            check(h, { lat: d.lat, lng: d.lng }, getLang(remult).delivery + ": " + d.address);
         }
       }
 
       /*  ---------- calculate completed deliveries and "busy" status -------------*/
-      let sql1 = new SqlBuilder(context);
+      let sql1 = new SqlBuilder(remult);
 
-      let fd = SqlFor(context.repo(FamilyDeliveries));
+      let fd = SqlFor( remult.repo(FamilyDeliveries));
 
       let limitDate = new Date();
-      limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
+      limitDate.setDate(limitDate.getDate() - getSettings(remult).BusyHelperAllowedFreq_denom);
 
       for (const d of (await db.execute(await sql1.query({
         from: fd,
@@ -145,14 +145,14 @@ export class SelectHelperComponent implements OnInit {
       }))).rows) {
         let h = helpers.get(d.courier);
         if (h) {
-          h.lastCompletedDeliveryString = relativeDateName(context, { d: d.delivery_date });
+          h.lastCompletedDeliveryString = relativeDateName(remult, { d: d.delivery_date });
           h.totalRecentDeliveries = d.count;
-          h.isBusyVolunteer = (h.totalRecentDeliveries > getSettings(context).BusyHelperAllowedFreq_nom) ? "busyVolunteer" : "";
+          h.isBusyVolunteer = (h.totalRecentDeliveries > getSettings(remult).BusyHelperAllowedFreq_nom) ? "busyVolunteer" : "";
         }
       }
     } else {
 
-      let afd = SqlFor(context.repo(Families));
+      let afd = SqlFor( remult.repo(Families));
       for (const d of (await db.execute(await sql.query({
         from: afd,
         where: () => [afd.fixedCourier.isDifferentFrom(null).and(afd.status.isEqualTo(FamilyStatus.Active))],
@@ -169,12 +169,12 @@ export class SelectHelperComponent implements OnInit {
           else
             h.fixedFamilies++;
 
-          check(h, { lat: d.lat, lng: d.lng }, getLang(context).family + ": " + d.address);
+          check(h, { lat: d.lat, lng: d.lng }, getLang(remult).family + ": " + d.address);
         }
       }
     }
     if (familyId) {
-      for (const fd of await context.repo(FamilyDeliveries).find({
+      for (const fd of await  remult.repo(FamilyDeliveries).find({
         where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
       })) {
         if (fd.courier) {
@@ -247,7 +247,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this.context.repo(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
+      this.filteredHelpers = mapHelpers(await this. remult.repo(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
       this.showingRecentHelpers = false;
     });
 
@@ -260,7 +260,7 @@ export class SelectHelperComponent implements OnInit {
 
   }
   showCompany() {
-    return ApplicationSettings.get(this.context).showCompanies;
+    return ApplicationSettings.get(this.remult).showCompanies;
   }
   selectFirst() {
     if (this.filteredHelpers.length > 0)
@@ -270,7 +270,7 @@ export class SelectHelperComponent implements OnInit {
     let helper: HelpersBase;
     if (h) {
       if (!h.helper)
-        h.helper = await this.context.repo(Helpers).findId(h.helperId);
+        h.helper = await this. remult.repo(Helpers).findId(h.helperId);
       helper = h.helper;
     }
     this.args.onSelect(helper);

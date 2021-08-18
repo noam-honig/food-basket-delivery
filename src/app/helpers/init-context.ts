@@ -14,38 +14,38 @@ export const initConfig = {
     disableForTesting: false
 }
 const helpersCache = new Map<string, Helpers>();
-export async function InitContext(context: Remult, user?: UserInfo) {
+export async function InitContext(remult: Remult, user?: UserInfo) {
     let h: Helpers;
     let gotUser = !!user;
     if (user === undefined)
-        user = context.user;
+        user = remult.user;
 
-    if (context.authenticated() || gotUser) {
+    if (remult.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {
-            h = await context.repo(Helpers).findId(user.id);
+            h = await  remult.repo(Helpers).findId(user.id);
             helpersCache.set(user.id, h);
         }
     }
     let defaultBasketType: BasketType;
-    context.defaultBasketType = async () => {
+    remult.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
-        await context.repo(BasketType).find({ orderBy: x => x.id }).then(y => {
+        await  remult.repo(BasketType).find({ orderBy: x => x.id }).then(y => {
             if (y.length > 0)
                 defaultBasketType = y[0];
         });
         return defaultBasketType;
     }
-    context.defaultDistributionCenter = async () =>
-        (await context.repo(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
-    context.currentUser = h;
+    remult.defaultDistributionCenter = async () =>
+        (await  remult.repo(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
+    remult.currentUser = h;
 
-    context.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
+    remult.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
         let result: DistributionCenters;
         let dist: number;
         if (!centers)
-            centers = await context.repo(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
+            centers = await  remult.repo(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
         for (const c of centers) {
             let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
             if (result === undefined || myDist < dist) {
@@ -55,19 +55,19 @@ export async function InitContext(context: Remult, user?: UserInfo) {
         }
         return result;
     }
-    context.filterCenterAllowedForUser = (center) => {
-        if (context.isAllowed(Roles.admin)) {
+    remult.filterCenterAllowedForUser = (center) => {
+        if (remult.isAllowed(Roles.admin)) {
             return new Filter();
-        } else if (context.authenticated())
-            return center.isEqualTo(context.currentUser.distributionCenter);
+        } else if (remult.authenticated())
+            return center.isEqualTo(remult.currentUser.distributionCenter);
     }
-    context.filterDistCenter = (distCenterColumn, distCenter): Filter => {
-        let allowed = context.filterCenterAllowedForUser(distCenterColumn);
+    remult.filterDistCenter = (distCenterColumn, distCenter): Filter => {
+        let allowed = remult.filterCenterAllowedForUser(distCenterColumn);
         if (distCenter != null)
             return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
         return allowed;
     }
-    context.lang = getLang(context);
+    remult.lang = getLang(remult);
 }
 
 

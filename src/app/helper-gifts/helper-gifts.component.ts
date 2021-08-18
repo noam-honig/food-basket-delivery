@@ -9,8 +9,8 @@ import { HelperGifts } from "./HelperGifts";
   styleUrls: ["./helper-gifts.component.scss"]
 })
 export class HelperGiftsComponent implements OnInit {
-  constructor(private context: Remult) { }
-  gifts = new GridSettings(this.context.repo(HelperGifts),{
+  constructor(private remult: Remult) { }
+  gifts = new GridSettings(this. remult.repo(HelperGifts),{
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 7,

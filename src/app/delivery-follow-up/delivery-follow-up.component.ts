@@ -35,16 +35,16 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard]
   }
   async deliveryDetails(c: helperFollowupInfo) {
-    let h = await this.context.repo(Helpers).findId(c.id);
+    let h = await this. remult.repo(Helpers).findId(c.id);
     await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
     this.refresh();
   }
 
-  familyLists = new UserFamiliesList(this.context, this.settings);
+  familyLists = new UserFamiliesList(this.remult, this.settings);
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
-    let h = await this.context.repo(Helpers).findId(c.id);
+    let h = await this. remult.repo(Helpers).findId(c.id);
     if (!h) {//if there is a row with an invalid helper id - I want it to at least work
       h.id = c.id;
     }
@@ -104,16 +104,16 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
         for (const h of this.helpers) {
           if (!h.smsWasSent) {
-            await SendSmsAction.SendSms(await this.context.repo(Helpers).findId(h.id), false);
+            await SendSmsAction.SendSms(await this. remult.repo(Helpers).findId(h.id), false);
           }
         }
       });
       this.refresh();
     }
   }
-  stats = new DeliveryStats(this.context);
+  stats = new DeliveryStats(this.remult);
   updateChart() {
-    this.stats = new DeliveryStats(this.context);
+    this.stats = new DeliveryStats(this.remult);
 
     for (const h of this.helpers) {
       this.stats.process(h);
@@ -149,7 +149,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private busy: BusyService, private context: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
+  constructor(private busy: BusyService, private remult: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
 
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
   }
@@ -166,11 +166,11 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async helpersStatus(distCenter: DistributionCenters, context?: Remult, db?: SqlDatabase) {
-    let fd = SqlFor(context.repo(FamilyDeliveries));
+  static async helpersStatus(distCenter: DistributionCenters, remult?: Remult, db?: SqlDatabase) {
+    let fd = SqlFor( remult.repo(FamilyDeliveries));
 
-    let h = SqlFor(context.repo(Helpers));
-    var sql = new SqlBuilder(context);
+    let h = SqlFor( remult.repo(Helpers));
+    var sql = new SqlBuilder(remult);
     sql.addEntity(fd, 'fd');
     let r = await db.execute(log(await sql.build((await sql.query({
       from: fd,
@@ -188,7 +188,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.sumWithAlias(1, 'problem', DeliveryStatus.isProblem(fd.deliverStatus))
 
       ],
-      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(context.filterDistCenter(fd.distributionCenter, distCenter))],
+      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(remult.filterDistCenter(fd.distributionCenter, distCenter))],
 
     })).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {
@@ -203,7 +203,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         inProgress: +r['inprogress'],
         problem: +r['problem'],
         viewedSms: signindate && smsDate && signindate > smsDate,
-        smsDateName: smsDate ? relativeDateName(context, { d: smsDate }) : '',
+        smsDateName: smsDate ? relativeDateName(remult, { d: smsDate }) : '',
         smsWasSent: smsDate && smsDate > maxAsign,
 
         eventComment: r['comment1']
@@ -224,14 +224,14 @@ export class DeliveryStats {
       }
     }
   }
-  constructor(private context: Remult) {
+  constructor(private remult: Remult) {
 
   }
-  notOutYet = new DeliveryStatistic(getLang(this.context).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
-  onTheWay = new DeliveryStatistic(getLang(this.context).onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
-  smsNotOpenedYet = new DeliveryStatistic(getLang(this.context).smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
-  delivered = new DeliveryStatistic(getLang(this.context).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
-  problem = new DeliveryStatistic(getLang(this.context).problems, f => f.problem > 0, colors.red);
+  notOutYet = new DeliveryStatistic(getLang(this.remult).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
+  onTheWay = new DeliveryStatistic(getLang(this.remult).onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
+  smsNotOpenedYet = new DeliveryStatistic(getLang(this.remult).smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
+  delivered = new DeliveryStatistic(getLang(this.remult).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
+  problem = new DeliveryStatistic(getLang(this.remult).problems, f => f.problem > 0, colors.red);
 }
 export class DeliveryStatistic {
   constructor(public name: string, public rule: (f: helperFollowupInfo) => boolean, public color: string) {

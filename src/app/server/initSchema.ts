@@ -22,10 +22,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
-    let context = new Remult();
-    await InitContext(context);
-    context.setDataProvider(dataSource);
-    let sql = new SqlBuilder(context);
+    let remult = new Remult();
+    await InitContext(remult);
+    remult.setDataProvider(dataSource);
+    let sql = new SqlBuilder(remult);
     let createFamilyIndex = async (name: string, ...columns: FieldMetadata[]) => {
         await dataSource.execute(await sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
     }
@@ -34,15 +34,15 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
 
 
-    let f = SqlFor(context.repo(Families));
+    let f = SqlFor( remult.repo(Families));
     //create index for family deliveries if required
 
-    var fd = SqlFor(context.repo(FamilyDeliveries));
+    var fd = SqlFor( remult.repo(FamilyDeliveries));
 
     //
 
-    if ((await context.repo(BasketType).count() == 0)) {
-        let h = context.repo(BasketType).create();
+    if ((await  remult.repo(BasketType).count() == 0)) {
+        let h =  remult.repo(BasketType).create();
         h.id = '';
         h.name = 'רגיל';
         h.boxes = 1;
@@ -51,7 +51,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
 
-    /*await context.repo(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
+    /*await  remult.repo(Families).foreach(f => f.addressLongitude.isEqualTo(0), async ff => {
         let g = ff.getGeocodeInformation();
         ff.addressOk = !g.partialMatch();
         ff.addressLongitude.value = g.location().lng;
@@ -60,8 +60,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await ff.save();
     });*/
 
-    let settings = await context.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
-    let l = getLang(context);
+    let settings = await  remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
+    let l = getLang(remult);
     if (settings.isNew()) {
         settings.id = 1;
         settings.organisationName = l.defaultOrgName;;
@@ -90,14 +90,14 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await settings.save();
 
 
-    let images = await context.repo(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
+    let images = await  remult.repo(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
     if (!images) {
-        images = context.repo(ApplicationImages).create();
+        images =  remult.repo(ApplicationImages).create();
         images.id = 1;
         await images.save();
     }
-    if ((await context.repo(DistributionCenters).count() == 0)) {
-        let h = context.repo(DistributionCenters).create();
+    if ((await  remult.repo(DistributionCenters).count() == 0)) {
+        let h =  remult.repo(DistributionCenters).create();
         h.id = '';
         h.name = l.defaultDistributionListName;
         h.address = settings.address;
@@ -116,7 +116,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 2) {
 
-        let f = SqlFor(context.repo(Families));
+        let f = SqlFor( remult.repo(Families));
         dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -130,7 +130,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if (settings.dataStructureVersion == 4) {
         console.log("updating update date");
-        let f = SqlFor(context.repo(Families));
+        let f = SqlFor( remult.repo(Families));
         dataSource.execute(await sql.update(f, {
             set: () => [[f.lastUpdateDate, f.createDate]]
         }));
@@ -160,7 +160,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await settings.save();
     }
     if (settings.dataStructureVersion == 9) {
-        if ((await context.repo(Families).count()) > 0)
+        if ((await  remult.repo(Families).count()) > 0)
             await dataSource.execute(await sql.build('update ', fd, ' set ', fd.name, ' = ', f.name, ' from ', f, ' where ', await sql.build(f, '.', f.id), ' = ', fd.family));
         settings.dataStructureVersion = 10;
         await settings.save();
@@ -214,7 +214,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         }
     }
     await version(13, async () => {
-        if ((await context.repo(Families).count()) > 0)
+        if ((await  remult.repo(Families).count()) > 0)
             await dataSource.execute(await sql.update(f, {
                 set: () => [
                     [f.status, sql.case([{ when: ['deliverstatus=99'], then: 99 }], 0)],
@@ -227,7 +227,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     })
 
     if (settings.dataStructureVersion == 13) {
-        await pagedRowsIterator(context.repo(Families), {
+        await pagedRowsIterator( remult.repo(Families), {
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
                 let g = f.addressHelper.getGeocodeInformation();
@@ -246,7 +246,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await version(15, async () => {
         let fromArchive = (col: FieldMetadata) =>
             [col, sql.build('archive_', col.getDbName())] as [FieldMetadata, any];
-        if ((await context.repo(Families).count()) > 0)
+        if ((await  remult.repo(Families).count()) > 0)
             await dataSource.execute(await sql.update(fd, {
                 set: () => [
                     [fd.archive, true],
@@ -278,7 +278,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             }));
     });
     await version(16, async () => {
-        if ((await context.repo(Families).count()) > 0)
+        if ((await  remult.repo(Families).count()) > 0)
             await dataSource.execute(await sql.insert({
                 into: fd,
                 from: f,
@@ -348,14 +348,14 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await dataSource.execute(await sql.update(fd, { set: () => [[fd.quantity, 1]] }));
     });
     await version(20, async () => {
-        let dc = await context.repo(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
+        let dc = await  remult.repo(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
         for await (const d of dc) {
             d.name = 'חלוקת מזון';
             await d.save();
         }
     });
     await version(21, async () => {
-        if ((await context.repo(Families).count()) > 0)
+        if ((await  remult.repo(Families).count()) > 0)
             await dataSource.execute(await sql.update(fd, {
                 set: () => [[fd.fixedCourier, f.fixedCourier], [fd.familyMembers, f.familyMembers]],
                 from: f,
@@ -363,7 +363,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             }));
     });
     await version(22, async () => {
-        await pagedRowsIterator(context.repo(Families), {
+        await pagedRowsIterator( remult.repo(Families), {
             where: f => f.addressOk.isEqualTo(false),
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
@@ -382,8 +382,8 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         }));
         console.log("fixing deliveries mismatch with family info ", r.rows.length);
         for (const id of r.rows.map(x => x.id)) {
-            let fd = await context.repo(FamilyDeliveries).findId(id);
-            let f = await context.repo(Families).findId(fd.family);
+            let fd = await  remult.repo(FamilyDeliveries).findId(id);
+            let f = await  remult.repo(Families).findId(fd.family);
             f.updateDelivery(fd);
             await fd.save();
         }

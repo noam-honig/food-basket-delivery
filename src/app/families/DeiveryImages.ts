@@ -8,14 +8,14 @@ import { HelpersBase } from "../helpers/helpers";
     allowApiCrud: Allow.authenticated,
     allowApiUpdate: false
 },
-    (options, context) => {
+    (options, remult) => {
         options.apiDataFilter = (self) => {
-            if (!context.isAllowed([Roles.admin]))
-                return self.uploadingVolunteer.isEqualTo(context.currentUser)
+            if (!remult.isAllowed([Roles.admin]))
+                return self.uploadingVolunteer.isEqualTo(remult.currentUser)
         };
         options.saving = self => {
             if (self.isNew())
-                self.uploadingVolunteer = context.currentUser
+                self.uploadingVolunteer = remult.currentUser
         }
 
     })

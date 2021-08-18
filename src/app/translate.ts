@@ -102,11 +102,11 @@ const reported = new Set<string>([
   "citiesStats",
   "courier",
   "helperHistoryInfo"]);
-CaptionTransformer.transformCaption = (context, key, caption) => {
+CaptionTransformer.transformCaption = (remult, key, caption) => {
 
   if (caption)
     return caption;
-  let r = getLang(context)[key];
+  let r = getLang(remult)[key];
   if (!r) {
     if (!reported.has(key)) {
       reported.add(key);
@@ -118,8 +118,8 @@ CaptionTransformer.transformCaption = (context, key, caption) => {
 function adjustSettings(settings: FieldOptions & TranslatedCaption, options: OptionsFactory<FieldOptions>) {
   let opts: OptionsFactory<FieldOptions> = [settings];
   if (settings && settings.translation) {
-    opts.push((o, context) => {
-      o.caption = settings.translation(getLang(context));
+    opts.push((o, remult) => {
+      o.caption = settings.translation(getLang(remult));
     });
   }
   opts.push(...options);
@@ -148,8 +148,8 @@ export function ValueListFieldType<entityType = any, valueType extends ValueList
 export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption, ...options: OptionsFactory<EntityOptions<T>>) {
   let opts: OptionsFactory<EntityOptions<T>> = [settings];
   if (settings.translation) {
-    opts.push((o, context) => {
-      o.caption = settings.translation(getLang(context));
+    opts.push((o, remult) => {
+      o.caption = settings.translation(getLang(remult));
     });
   }
   opts.push(...options);

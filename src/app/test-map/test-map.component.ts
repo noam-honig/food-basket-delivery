@@ -18,7 +18,7 @@ import { MergeFamiliesComponent } from '../merge-families/merge-families.compone
 
 export class TestMapComponent implements OnInit {
 
-  constructor(private context: Remult) { }
+  constructor(private remult: Remult) { }
   filterGroup: string='';
   groups: { familiesCount: number, name: string }[];
   refreshBaskets() {

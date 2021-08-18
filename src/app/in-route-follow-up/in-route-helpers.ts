@@ -19,18 +19,18 @@ import { DateOnlyField } from "remult/src/remult3";
     allowApiRead: Roles.admin,
     defaultOrderBy: (self) => self.minAssignDate
 },
-    (options, context) => options.dbName = async (self) => {
-        let sql = new SqlBuilder(context);
+    (options, remult) => options.dbName = async (self) => {
+        let sql = new SqlBuilder(remult);
 
-        let f = SqlFor(context.repo(ActiveFamilyDeliveries));
-        let history = SqlFor(context.repo(FamilyDeliveries));
-        let com = SqlFor(context.repo(HelperCommunicationHistory));
-        let h = SqlFor(context.repo(Helpers));
-        let h2 = SqlFor(context.repo(Helpers));
+        let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+        let history = SqlFor( remult.repo(FamilyDeliveries));
+        let com = SqlFor( remult.repo(HelperCommunicationHistory));
+        let h = SqlFor( remult.repo(Helpers));
+        let h2 = SqlFor( remult.repo(Helpers));
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [context.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                where: () => [remult.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
             }
         }
         let comInnerSelect = (col: FieldMetadata, toCol: FieldMetadata) => {
@@ -78,7 +78,7 @@ import { DateOnlyField } from "remult/src/remult3";
 )
 export class InRouteHelpers extends IdEntity {
     async helper() {
-        return this.context.repo(Helpers).findId(this.id);
+        return this. remult.repo(Helpers).findId(this.id);
     }
     async showHistory() {
         let h = await this.helper();
@@ -91,12 +91,12 @@ export class InRouteHelpers extends IdEntity {
                     await this.addCommunication(() => gridDialog.args.settings.reloadData());
                 }
             }],
-            settings: new GridSettings(this.context.repo(HelperCommunicationHistory), {
+            settings: new GridSettings(this. remult.repo(HelperCommunicationHistory), {
                 numOfColumnsInGrid: 6,
                 knowTotalRows: true,
                 rowButtons: [
                     {
-                        name: getLang(this.context).editComment,
+                        name: getLang(this.remult).editComment,
                         click: async (r) => {
                             await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
                                 title: 'הוסף הערה',
@@ -130,7 +130,7 @@ export class InRouteHelpers extends IdEntity {
             title: 'הוסף תכתובת',
 
             save: async (comment) => {
-                let hist = this.context.repo(HelperCommunicationHistory).create();
+                let hist = this. remult.repo(HelperCommunicationHistory).create();
                 hist.volunteer = await this.helper();
                 hist.comment = comment;
                 await hist.save();
@@ -142,7 +142,7 @@ export class InRouteHelpers extends IdEntity {
     }
 
     async showAssignment() {
-        let h = await this.context.repo(Helpers).findId(this.id);
+        let h = await this. remult.repo(Helpers).findId(this.id);
         await openDialog(
             HelperAssignmentComponent, s => s.argsHelper = h);
         this._.reload();
@@ -151,7 +151,7 @@ export class InRouteHelpers extends IdEntity {
     @Field({ translation: l => l.volunteerName })
     name: string;
     relativeDate(val: Date) {
-        return relativeDateName(this.context, { d: val });
+        return relativeDateName(this.remult, { d: val });
     }
     @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
@@ -199,7 +199,7 @@ export class InRouteHelpers extends IdEntity {
     })
     frozenTill: Date;
 
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
         super();
     }
 }
@@ -213,7 +213,7 @@ export class InRouteHelpers extends IdEntity {
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = self.context.currentUser;
+            self.createUser = self.remult.currentUser;
         }
     }
 })
@@ -230,7 +230,7 @@ export class HelperCommunicationHistory extends IdEntity {
     @DataControl({ width: '400' })
     comment: string;
 
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
         super()
     }
 

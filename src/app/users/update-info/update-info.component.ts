@@ -20,7 +20,7 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
 export class UpdateInfoComponent implements OnInit, AfterViewInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
-    private context: Remult,
+    private remult: Remult,
     public sessionManager: AuthService,
     public settings: ApplicationSettings,
     private helper: RouteHelperService) {
@@ -44,7 +44,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
 
   async ngOnInit() {
-    this.h = await this.context.currentUser.getHelper();
+    this.h = await this.remult.currentUser.getHelper();
     await this.h._.reload();
     if (!this.h.password)
       this.confirmPassword.value = '';

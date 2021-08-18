@@ -65,7 +65,7 @@ function getFarthest(fromPoint: Location, addresses: familiesInRoute[]) {
     return farthest;
 }
 
-export async function getRouteInfo(families: familiesInRoute[], optimize: boolean, startLongLat: string, destinationLongLat: string, context: Remult) {
+export async function getRouteInfo(families: familiesInRoute[], optimize: boolean, startLongLat: string, destinationLongLat: string, remult: Remult) {
     if (families.length > 25)
         return {};
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
@@ -82,7 +82,7 @@ export async function getRouteInfo(families: familiesInRoute[], optimize: boolea
         origin: startLongLat,
         destination: destinationLongLat,
         waypoints: waypoints,
-        language: getLang(context).languageCode,
+        language: getLang(remult).languageCode,
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);
@@ -98,7 +98,7 @@ export async function getRouteInfo(families: familiesInRoute[], optimize: boolea
     }
     return r;
 }
-export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], context: Remult, useGoogle: boolean, strategy: routeStrategy, volunteerLocation: Location) {
+export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], remult: Remult, useGoogle: boolean, strategy: routeStrategy, volunteerLocation: Location) {
 
 
     let result: {
@@ -199,11 +199,11 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
 
 
     let destination = strategy.args.getRouteEnd(distCenterLocation, addresses);
-    if (!(await import("../manage/ApplicationSettings")).getSettings(context).isSytemForMlt() && helper.preferredFinishAddressHelper.ok()) {
+    if (!(await import("../manage/ApplicationSettings")).getSettings(remult).isSytemForMlt() && helper.preferredFinishAddressHelper.ok()) {
         destination = helper.preferredFinishAddressHelper.location();
     }
 
-    let r = await getRouteInfo(addresses, useGoogle, toLongLat(routeStart), toLongLat(destination), context);
+    let r = await getRouteInfo(addresses, useGoogle, toLongLat(routeStart), toLongLat(destination), remult);
     if (r.status == 'OK' && r.routes && r.routes.length > 0 && r.routes[0].waypoint_order) {
         result.ok = true;
         let i = 1;
@@ -238,7 +238,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         for (const addre of addresses) {
             for (const f of addre.families) {
                 f.routeOrder = i++;
-                if (f.$.routeOrder.wasChanged())
+                if (f.$.routeOrder.valueChanged())
                     await f.save();
             }
         }

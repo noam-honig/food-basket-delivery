@@ -26,12 +26,12 @@ export function getToken() {
 }
 @Injectable()
 export class TokenService {
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
 
     }
     keyInStorage: string;
     async loadUserInfo() {
-        let org = Sites.getOrganizationFromContext(this.context);
+        let org = Sites.getOrganizationFromContext(this.remult);
         this.keyInStorage = "authorization/" + org;
         let token = sessionStorage.getItem(this.keyInStorage);
         if (!token)
@@ -43,7 +43,7 @@ export class TokenService {
         let user: UserInfo = undefined;
         if (token) {
             user =await  AuthService.decodeJwt(token);
-            await InitContext(this.context,user);
+            await InitContext(this.remult,user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -55,7 +55,7 @@ export class TokenService {
         }
         
         
-        await this.context.setUser(user);
+        await this.remult.setUser(user);
 
     }
 }
@@ -89,16 +89,16 @@ export class AuthService {
     }
 
     @BackendMethod({ allowed: true })
-    static async loginFromSms(key: string, context?: Remult) {
+    static async loginFromSms(key: string, remult?: Remult) {
 
         let r: LoginResponse = { valid: false };
-        let h = await context.repo(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+        let h = await  remult.repo(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
 
         if (h) {
             r.phone = h.phone.thePhone;
-            let info = await buildHelperUserInfo(h, context);
+            let info = await buildHelperUserInfo(h, remult);
             let userIsOk = false;
-            if (context.user && JSON.stringify(context.user.roles) == JSON.stringify(info.roles) && context.user.id == info.id)
+            if (remult.user && JSON.stringify(remult.user.roles) == JSON.stringify(info.roles) && remult.user.id == info.id)
                 userIsOk = true;
             if (!h.realStoredPassword && !h.userRequiresPassword())
                 userIsOk = true;
@@ -107,12 +107,12 @@ export class AuthService {
 
             if (userIsOk) {
                 h.lastSignInDate = new Date();
-                context.setUser(info);
+                remult.setUser(info);
 
                 await h.save();
                 return {
                     valid: true,
-                    authToken: await buildToken(info, getSettings(context)),
+                    authToken: await buildToken(info, getSettings(remult)),
                     requirePassword: false
                 } as LoginResponse
             }
@@ -125,7 +125,7 @@ export class AuthService {
         private dialog: DialogService,
         private tokenService: TokenService,
 
-        private context: Remult,
+        private remult: Remult,
         private routeHelper: RouteHelperService,
         public settings: ApplicationSettings,
         private zone: NgZone
@@ -137,13 +137,13 @@ export class AuthService {
         }
 
 
-        if (!settings.currentUserIsValidForAppLoadTest && this.context.authenticated()) {
+        if (!settings.currentUserIsValidForAppLoadTest && this.remult.authenticated()) {
             this.signout();
 
         }
         if (dialog)
-            context.userChange.observe(() => {
-                dialog.refreshEventListener(this.context.isAllowed(Roles.distCenterAdmin));
+            remult.userChange.observe(() => {
+                dialog.refreshEventListener(this.remult.isAllowed(Roles.distCenterAdmin));
                 dialog.refreshFamiliesAndDistributionCenters();
             });
 
@@ -152,7 +152,7 @@ export class AuthService {
         this.inactiveTimeout();
         this.serverTokenRenewal();
         this.userInactive.subscribe(() => {
-            if (this.context.authenticated()) {
+            if (this.remult.authenticated()) {
                 this.dialog.Error(this.settings.lang.sessionExpiredPleaseRelogin);
                 this.signout();
 
@@ -171,16 +171,16 @@ export class AuthService {
         }
         if (loginResponse.authToken) {
             await this.tokenService.setToken(loginResponse.authToken, remember);
-            this.dialog.analytics('login ' + (this.context.isAllowed(Roles.admin) ? 'delivery admin' : ''));
+            this.dialog.analytics('login ' + (this.remult.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.failedSmsSignInPhone) {
                 this.failedSmsSignInPhone = null;
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             }
-            else if (this.context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+            else if (this.remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 this.routeHelper.navigateToComponent((await import("../asign-family/asign-family.component")).AsignFamilyComponent);
-            else if (this.context.isAllowed(Roles.lab))
+            else if (this.remult.isAllowed(Roles.lab))
                 this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
-            else if (this.context.isAllowed(Roles.overview))
+            else if (this.remult.isAllowed(Roles.overview))
                 this.routeHelper.navigateToComponent(OverviewComponent);
             else
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
@@ -207,11 +207,11 @@ export class AuthService {
     }
 
     @BackendMethod({ allowed: true })
-    static async login(args: loginArgs, context?: Remult): Promise<loginResult> {
+    static async login(args: loginArgs, remult?: Remult): Promise<loginResult> {
 
         let r: loginResult = {};
-        let settings = getSettings(context);
-        let h = await context.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(args.phone)));
+        let settings = getSettings(remult);
+        let h = await  remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(args.phone)));
         if (!h) {
             r.newUser = true;
             return r;
@@ -231,10 +231,10 @@ export class AuthService {
 
         }
 
-        let result: HelperUserInfo = await buildHelperUserInfo(h, context);
+        let result: HelperUserInfo = await buildHelperUserInfo(h, remult);
 
 
-        context.setUser(result);
+        remult.setUser(result);
 
 
 
@@ -306,7 +306,7 @@ export class AuthService {
 
     async signout() {
         await this.tokenService.setToken(undefined, true);
-        this.context.clearAllCache();
+        this.remult.clearAllCache();
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
@@ -323,7 +323,7 @@ export class AuthService {
     }
     async serverTokenRenewal() {
         if (this.settings.timeToDisconnect > 0) {
-            if (this.context.authenticated())
+            if (this.remult.authenticated())
                 try {
                     let r = await AuthService.renewToken();
                     if (!r)
@@ -342,16 +342,16 @@ export class AuthService {
         }
     }
     @BackendMethod({ allowed: Allow.authenticated })
-    static async renewToken(context?: Remult) {
-        if (!context.authenticated())
+    static async renewToken(remult?: Remult) {
+        if (!remult.authenticated())
             return undefined;
-        let h = await context.repo(Helpers).findId(context.user.id);
+        let h = await  remult.repo(Helpers).findId(remult.user.id);
         if (!h)
             return undefined;
-        let newInfo = await buildHelperUserInfo(h, context);
-        newInfo.roles = newInfo.roles.filter(x => context.user.roles.includes(x));
+        let newInfo = await buildHelperUserInfo(h, remult);
+        newInfo.roles = newInfo.roles.filter(x => remult.user.roles.includes(x));
 
-        return buildToken(newInfo, getSettings(context));
+        return buildToken(newInfo, getSettings(remult));
 
     }
 
@@ -391,17 +391,17 @@ export interface loginArgs {
 
 }
 
-async function buildHelperUserInfo(h: Helpers, context: Remult) {
+async function buildHelperUserInfo(h: Helpers, remult: Remult) {
     let result: HelperUserInfo = {
         id: h.id,
-        roles: [Sites.getOrgRole(context)],
+        roles: [Sites.getOrgRole(remult)],
         name: h.name,
         distributionCenter: h.distributionCenter?.id,
         theHelperIAmEscortingId: h.theHelperIAmEscorting?.id,
         escortedHelperName: h.theHelperIAmEscorting ? (h.theHelperIAmEscorting).name : ''
     };
     if (h.admin) {
-        if (Sites.isOverviewSchema(context))
+        if (Sites.isOverviewSchema(remult))
             result.roles.push(Roles.overview);
         else {
             result.roles.push(Roles.admin);
@@ -411,7 +411,7 @@ async function buildHelperUserInfo(h: Helpers, context: Remult) {
     if (h.distCenterAdmin) {
         result.roles.push(Roles.distCenterAdmin);
     }
-    if (getSettings(context).isSytemForMlt()) {
+    if (getSettings(remult).isSytemForMlt()) {
         if (h.labAdmin || h.admin)
             result.roles.push(Roles.lab);
         if (h.isIndependent || h.admin || h.distCenterAdmin)

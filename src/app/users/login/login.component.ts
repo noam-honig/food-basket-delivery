@@ -7,7 +7,7 @@ import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 import { BackendMethod, Remult, getFields } from 'remult';
-import { RouteHelperService, NotSignedInGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
+import { RouteHelperService, NotAuthenticatedGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
@@ -26,7 +26,7 @@ import { InputTypes } from 'remult/inputTypes';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, AfterViewInit {
-  static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotSignedInGuard] };
+  static route: Route = { path: 'login', component: LoginComponent, canActivate: [NotAuthenticatedGuard] };
   @DataControl({ allowClick: () => false })
   @Field({ translation: l => l.phone, valueType: Phone })
   phone: Phone;
@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   phoneArea = new DataAreaSettings({
     fields: () => [this.$.phone, this.$.remember]
   });
-  get $() { return getFields(this, this.context) }
+  get $() { return getFields(this, this.remult) }
   nameArea = new DataAreaSettings({
     fields: () => [this.$.name]
   });
@@ -75,7 +75,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
-    private context: Remult,
+    private remult: Remult,
     public settings: ApplicationSettings
   ) { }
   ngAfterViewInit(): void {
@@ -94,7 +94,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
 
   }
-  isguest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
+  isguest = Sites.getOrganizationFromContext(this.remult) == Sites.guestSchema;
   @ViewChild("stepper", { static: false }) stepper: MatStepper;
   @ViewChild("passwordForm", { static: false }) passwordForm: ElementRef;
   @ViewChild("phoneForm", { static: false }) phoneForm: ElementRef;
@@ -142,7 +142,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
 
   phoneState = new loginState(async () => {
-    this.phone = new Phone((await import('../../model-shared/phone')).Phone.fixPhoneInput(this.phone.thePhone, this.context));
+    this.phone = new Phone((await import('../../model-shared/phone')).Phone.fixPhoneInput(this.phone.thePhone, this.remult));
     if (!this.phone || this.phone.thePhone.length < 10) {
       this.dialog.Error(this.settings.lang.invalidPhoneNumber);
       return;
@@ -170,7 +170,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
         return;
       }
-      validatePasswordColumn(this.context, this.$.newPassword);
+      validatePasswordColumn(this.remult, this.$.newPassword);
       if (this.$.newPassword.error) {
         this.dialog.Error(this.$.newPassword.error);
         return;
@@ -195,8 +195,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   });
   @BackendMethod({ allowed: true })
-  static async registerNewUser(phone: string, name: string, context?: Remult) {
-    let h = context.repo(Helpers).create();
+  static async registerNewUser(phone: string, name: string, remult?: Remult) {
+    let h =  remult.repo(Helpers).create();
     h.phone = new Phone(phone);
     h.name = name;
     await h.save();
@@ -212,7 +212,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   }
   getLogo() {
-    return ApplicationSettings.get(this.context).logoUrl;
+    return ApplicationSettings.get(this.remult).logoUrl;
   }
   login() {
 
@@ -221,7 +221,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   orgName() {
-    return ApplicationSettings.get(this.context).organisationName;
+    return ApplicationSettings.get(this.remult).organisationName;
   }
 }
 

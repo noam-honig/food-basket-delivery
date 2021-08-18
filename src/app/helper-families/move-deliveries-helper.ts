@@ -11,11 +11,11 @@ import { Families } from "../families/families";
 import { openDialog } from "@remult/angular";
 
 export class moveDeliveriesHelper {
-    constructor(private context: Remult, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
+    constructor(private remult: Remult, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
 
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '') {
 
-        let deliveries = await this.context.repo(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
+        let deliveries = await this. remult.repo(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
         if (deliveries > 0)
             this.dialog.YesNoQuestion(extraMessage + " " + this.settings.lang.transfer + " " + deliveries + " " + this.settings.lang.deliveriesFrom + '"' + from.name + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + to.name + '"', async () => {
 
@@ -31,12 +31,12 @@ export class moveDeliveriesHelper {
             });
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async moveDeliveriesBetweenVolunteers(helperFrom: HelpersBase, to: HelpersBase, context?: Remult) {
+    static async moveDeliveriesBetweenVolunteers(helperFrom: HelpersBase, to: HelpersBase, remult?: Remult) {
         let t = new PromiseThrottle(10);
-        let settings = getSettings(context);
+        let settings = getSettings(remult);
         let i = 0;
 
-        for await (const fd of context.repo(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(helperFrom).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
+        for await (const fd of  remult.repo(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(helperFrom).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
             fd.courier = to;
             fd._disableMessageToUsers = true;
             await t.push(fd.save());
@@ -47,7 +47,7 @@ export class moveDeliveriesHelper {
             let m = i + " " + settings.lang.deliveries + " " + settings.lang.movedFrom + " " +
                 helperFrom.name + " " + settings.lang.to + " " +
                 to.name
-            Families.SendMessageToBrowsers(m, context, '');
+            Families.SendMessageToBrowsers(m, remult, '');
             return m;
         }
         return undefined;

@@ -54,9 +54,9 @@ import { GroupsValue } from '../manage/groups';
 })
 export class FamiliesComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
-    static async getCities(context?: Remult, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
-        var sql = new SqlBuilder(context);
-        let f = SqlFor(context.repo(Families));
+    static async getCities(remult?: Remult, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
+        var sql = new SqlBuilder(remult);
+        let f = SqlFor( remult.repo(Families));
         let r = await db.execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
@@ -71,13 +71,13 @@ export class FamiliesComponent implements OnInit {
         }));
     }
 
-    test = new NewDelivery(this.context);
+    test = new NewDelivery(this.remult);
     limit = 25;
 
 
     showHoverButton: boolean = false;
 
-    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Remult, public settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public remult: Remult, public settings: ApplicationSettings) {
 
     }
 
@@ -90,7 +90,7 @@ export class FamiliesComponent implements OnInit {
 
         });
     }
-    isAdmin = this.context.isAllowed(Roles.admin);
+    isAdmin = this.remult.isAllowed(Roles.admin);
 
     resetRow() {
         var focus: Families;
@@ -104,7 +104,7 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        let family = this.context.repo(Families).create();
+        let family = this. remult.repo(Families).create();
         family.name = this.searchString;
         family.showFamilyDialog({
             focusOnAddress: true,
@@ -186,9 +186,9 @@ export class FamiliesComponent implements OnInit {
         this.searchString = '';
         this.doSearch();
     }
-    stats = new Stats(this.context);
+    stats = new Stats(this.remult);
     async saveToExcel() {
-        await saveFamiliesToExcel(this.context, this.families, this.busy, this.settings.lang.families);
+        await saveFamiliesToExcel(this.remult, this.families, this.busy, this.settings.lang.families);
     }
 
 
@@ -199,7 +199,7 @@ export class FamiliesComponent implements OnInit {
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
 
-    families: GridSettings<Families> = new GridSettings(this.context.repo(Families), {
+    families: GridSettings<Families> = new GridSettings(this. remult.repo(Families), {
         showFilter: true,
         allowUpdate: true,
         allowInsert: this.isAdmin,
@@ -208,7 +208,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = await this.context.defaultBasketType();
+                f.basketType = await this.remult.defaultBasketType();
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {
@@ -371,15 +371,15 @@ export class FamiliesComponent implements OnInit {
         },
         gridButtons: ([
             ...[
-                new NewDelivery(this.context),
-                new updateGroup(this.context),
-                new UpdateArea(this.context),
-                new UpdateStatus(this.context),
-                new UpdateSelfPickup(this.context),
-                new UpdateDefaultVolunteer(this.context),
-                new UpdateBasketType(this.context),
-                new UpdateQuantity(this.context),
-                new UpdateFamilySource(this.context)
+                new NewDelivery(this.remult),
+                new updateGroup(this.remult),
+                new UpdateArea(this.remult),
+                new UpdateStatus(this.remult),
+                new UpdateSelfPickup(this.remult),
+                new UpdateDefaultVolunteer(this.remult),
+                new UpdateBasketType(this.remult),
+                new UpdateQuantity(this.remult),
+                new UpdateFamilySource(this.remult)
             ].map(x => x.gridButton(
                 {
                     afterAction: async () => await this.refresh(),
@@ -426,7 +426,7 @@ export class FamiliesComponent implements OnInit {
             ,
             {
                 name: this.settings.lang.sendWhatsAppToFamily,
-                click: f => sendWhatsappToFamily(f, this.context),
+                click: f => sendWhatsappToFamily(f, this.remult),
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
             }
@@ -719,8 +719,8 @@ interface statsOnTab {
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
-export async function saveFamiliesToExcel(context: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
+    await saveToExcel<Families, GridSettings<Families>>(getSettings(remult),  remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation();
         let street = f.address;
         let house = '';

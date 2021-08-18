@@ -28,7 +28,7 @@ export class DateRangeComponent implements OnInit {
   fromDate: Date;
   @DateOnlyField()
   toDate: Date;
-  get $() { return getFields(this, this.context) };
+  get $() { return getFields(this, this.remult) };
   rangeArea = new DataAreaSettings({
     fields: () => [[this.$.fromDate, this.$.toDate]],
   });
@@ -65,7 +65,7 @@ export class DateRangeComponent implements OnInit {
     }
     this.dateChanged.emit();
   }
-  constructor(public settings: ApplicationSettings, private context: Remult) {
+  constructor(public settings: ApplicationSettings, private remult: Remult) {
   }
 
   ngOnInit() {

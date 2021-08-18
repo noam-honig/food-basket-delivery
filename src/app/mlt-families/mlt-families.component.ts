@@ -51,7 +51,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   canSelectDonors() {
-    return this.context.isAllowed(Roles.indie) && this.getFamilies('toDeliver').length < this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself;
+    return this.remult.isAllowed(Roles.indie) && this.getFamilies('toDeliver').length < this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself;
   }
 
   myQRCode() {
@@ -59,14 +59,14 @@ export class MltFamiliesComponent implements OnInit {
   }
 
 
-  constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Remult, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private remult: Remult, private busy: BusyService) { }
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.context.currentUser);
-    this.thisHelper = this.context.currentUser;
+    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.remult.currentUser);
+    this.thisHelper = this.remult.currentUser;
     this.myPhoneNumber = this.thisHelper.phone;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
     this.distCentersButtons = [];
@@ -101,8 +101,8 @@ export class MltFamiliesComponent implements OnInit {
 
   async countFamilies() {
     let consumed: string[] = []
-    let list: FamilyDeliveries[] = await this.context.repo(FamilyDeliveries).find(
-      { where: fd => fd.courier.isEqualTo(this.context.currentUser).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
+    let list: FamilyDeliveries[] = await this. remult.repo(FamilyDeliveries).find(
+      { where: fd => fd.courier.isEqualTo(this.remult.currentUser).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -127,7 +127,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async showMyGifts() {
-    showUsersGifts(this.context.user.id, this.context, this.settings, this.dialog, this.busy);
+    showUsersGifts(this.remult.user.id, this.remult, this.settings, this.dialog, this.busy);
   }
 
   async assignNewDelivery() {
@@ -172,12 +172,12 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.indie })
-  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Remult) {
+  static async assignFamilyDeliveryToIndie(deliveryIds: string[], remult?: Remult) {
     for (const id of deliveryIds) {
 
-      let fd = await context.repo(ActiveFamilyDeliveries).findId(id);
+      let fd = await  remult.repo(ActiveFamilyDeliveries).findId(id);
       if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-        fd.courier = context.currentUser;
+        fd.courier = remult.currentUser;
         await fd.save();
       }
     }
@@ -215,7 +215,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async getClosestDistCenters() {
-    let distCenters = await this.context.repo(DistributionCenters).find({ where: x => DistributionCenters.isActive(x) });
+    let distCenters = await this. remult.repo(DistributionCenters).find({ where: x => DistributionCenters.isActive(x) });
     distCenters = distCenters.filter(x => x.addressHelper.ok());
     let volunteerLocation: Location = undefined;
     try {
@@ -271,11 +271,11 @@ export class MltFamiliesComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static async changeDestination(newDestinationId: DistributionCenters, context?: Remult) {
-    let s = getSettings(context);
+  static async changeDestination(newDestinationId: DistributionCenters, remult?: Remult) {
+    let s = getSettings(remult);
     if (!s.isSytemForMlt())
       throw "not allowed";
-    for (const fd of await context.repo(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.currentUser) })) {
+    for (const fd of await  remult.repo(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(remult.currentUser) })) {
       fd.distributionCenter = newDestinationId;
       await fd.save();
     }

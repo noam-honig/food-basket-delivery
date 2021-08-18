@@ -25,7 +25,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
 
-  constructor(public context: Remult) { }
+  constructor(public remult: Remult) { }
 
 
   totalPerBasket = [];
@@ -95,17 +95,17 @@ export class WeeklyReportMltComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
+  static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
     let totalPerBasket: { URL: string, basketType: string, total: number, added: number, collected: number, received: number }[] = [];
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
 
 
-    let fd = SqlFor(context.repo(FamilyDeliveries));
-    let u = SqlFor(context.repo(RegisterURL));
+    let fd = SqlFor( remult.repo(FamilyDeliveries));
+    let u = SqlFor( remult.repo(RegisterURL));
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
     sql.addEntity(fd, "fd")
 
     let q = await sql.build(sql.query({
@@ -132,15 +132,15 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getVolunteersData(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
+  static async getVolunteersData(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let h = SqlFor(context.repo(Helpers));
+    let h = SqlFor( remult.repo(Helpers));
 
-    let u = SqlFor(context.repo(RegisterURL));
+    let u = SqlFor( remult.repo(RegisterURL));
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
 
     let q = await sql.build(sql.query({
       select: () => [
@@ -160,14 +160,14 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getDonorsData(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
+  static async getDonorsData(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let u = SqlFor(context.repo(RegisterURL));
-    let f = SqlFor(context.repo(Families));
+    let u = SqlFor( remult.repo(RegisterURL));
+    let f = SqlFor( remult.repo(Families));
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
 
     let q =await  sql.build(sql.query({
       select: () => [
@@ -187,14 +187,14 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getVolunteerAverage(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
+  static async getVolunteerAverage(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
 
-    let f =await  SqlFor(context.repo(FamilyDeliveries));
+    let f =await  SqlFor( remult.repo(FamilyDeliveries));
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
     sql.addEntity(f, "FamilyDeliveries")
     let deliveries = await db.execute(await sql.build(sql.query({
       select: () => [f.courier,

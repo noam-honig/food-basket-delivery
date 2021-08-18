@@ -46,7 +46,7 @@ export class DeliveryHistoryComponent implements OnInit {
   onlyDone: boolean = true;
   @Field({ translation: l => l.showOnlyArchivedDeliveries })
   onlyArchived: boolean = false;
-  get $() { return getFields(this, this.context) }
+  get $() { return getFields(this, this.remult) }
   rangeArea = new DataAreaSettings({
     fields: () => {
       return [this.$.onlyDone, this.$.onlyArchived]
@@ -67,7 +67,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.destroyHelper.destroy();
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private context: Remult, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
+  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
     this.helperStorage = new InMemoryDataProvider();
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
     let stam = new Remult();
@@ -79,14 +79,14 @@ export class DeliveryHistoryComponent implements OnInit {
       numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 10 : 7),
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
-        visible: () => this.context.isAllowed(Roles.admin),
+        visible: () => this.remult.isAllowed(Roles.admin),
         click: async () => {
           await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.$.courier);
         }
       },
       {
         name: 'הענק מתנה',
-        visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
+        visible: () => this.settings.isSytemForMlt() && this.remult.isAllowed(Roles.admin),
         click: async () => {
           let rows = this.helperInfo.selectedRows;
 
@@ -98,7 +98,7 @@ export class DeliveryHistoryComponent implements OnInit {
           if (await openDialog(YesNoQuestionComponent, q => q.args = {
             question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
           }, q => q.yes)) {
-            if (await context.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(null)) >= rows.length) {
+            if (await  remult.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(null)) >= rows.length) {
               for (const h of rows) {
                 await HelperGifts.assignGift(h.courier);
               }
@@ -114,13 +114,13 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           name: this.settings.lang.deliveries,
           click: async x => {
-            let h = await this.context.repo(Helpers).findId(x.courier);
+            let h = await this. remult.repo(Helpers).findId(x.courier);
             h.showDeliveryHistory(this.dialog, this.busy);
           },
         },
         {
           name: 'הענק מתנה',
-          visible: () => this.settings.isSytemForMlt() && this.context.isAllowed(Roles.admin),
+          visible: () => this.settings.isSytemForMlt() && this.remult.isAllowed(Roles.admin),
           click: async x => {
             await HelperGifts.assignGift(x.courier);
             this.refresh();
@@ -189,7 +189,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
 
-    let rows: any[] = this.helperStorage.rows[(await this.context.repo(helperHistoryInfo).metadata.getDbName())];
+    let rows: any[] = this.helperStorage.rows[(await this. remult.repo(helperHistoryInfo).metadata.getDbName())];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -205,14 +205,14 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
-  deliveries = new GridSettings(this.context.repo(FamilyDeliveries), {
+  deliveries = new GridSettings(this. remult.repo(FamilyDeliveries), {
     showFilter: true,
     rowCssClass: d => d.deliverStatus.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-        await saveToExcel(this.settings, this.context.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+        await saveToExcel(this.settings, this. remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -220,7 +220,7 @@ export class DeliveryHistoryComponent implements OnInit {
               await f.addFamilyInfoToExcelFile(addColumn);
 
           });
-      }, visible: () => this.context.isAllowed(Roles.admin)
+      }, visible: () => this.remult.isAllowed(Roles.admin)
     }],
     columnSettings: d => {
       let r: DataControlInfo<FamilyDeliveries>[] = [
@@ -286,19 +286,19 @@ export class DeliveryHistoryComponent implements OnInit {
             dialog: this.dialog
           });
         }
-        , textInMenu: () => getLang(this.context).deliveryDetails
+        , textInMenu: () => getLang(this.remult).deliveryDetails
       },
       {
         name: '',
         icon: 'replay',
         showInLine: true,
-        visible: x => (x.archive) && this.context.isAllowed(Roles.admin),
+        visible: x => (x.archive) && this.remult.isAllowed(Roles.admin),
         click: async fd => {
           fd.archive = false;
           await fd.save();
           this.refresh();
         }
-        , textInMenu: () => getLang(this.context).revertArchive
+        , textInMenu: () => getLang(this.remult).revertArchive
       }
     ]
   });
@@ -311,19 +311,19 @@ export class DeliveryHistoryComponent implements OnInit {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, context?: Remult, db?: SqlDatabase) {
+  static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, remult?: Remult, db?: SqlDatabase) {
 
 
     toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-    var sql = new SqlBuilder(context);
-    var fd =await  SqlFor(context.repo(FamilyDeliveries));
+    var sql = new SqlBuilder(remult);
+    var fd =await  SqlFor( remult.repo(FamilyDeliveries));
 
-    var h =await  SqlFor(context.repo(Helpers));
-    var hg =await  SqlFor(context.repo(HelperGifts));
+    var h =await  SqlFor( remult.repo(Helpers));
+    var hg =await  SqlFor( remult.repo(HelperGifts));
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(
-      fd.deliveryStatusDate.isLessThan(toDate)).and(context.filterDistCenter(fd.distributionCenter, distCenter));
+      fd.deliveryStatusDate.isLessThan(toDate)).and(remult.filterDistCenter(fd.distributionCenter, distCenter));
     if (onlyDone)
       r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
     if (onlyArchived)

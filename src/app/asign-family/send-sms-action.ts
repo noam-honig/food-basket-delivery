@@ -14,13 +14,13 @@ export class SendSmsAction {
             .replace('!משפחה!', family);
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async SendSms(h: HelpersBase, reminder: Boolean, context?: Remult) {
+    static async SendSms(h: HelpersBase, reminder: Boolean, remult?: Remult) {
 
         try {
-            await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
+            await SendSmsAction.generateMessage(remult, h, remult.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, sender, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
-                await SendSmsAction.documentHelperMessage(reminder, h, context, "SMS");
+                new SendSmsUtils().sendSms(phone, sender, message, remult.getOrigin(), Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+                await SendSmsAction.documentHelperMessage(reminder, h, remult, "SMS");
             });
         }
         catch (err) {
@@ -31,14 +31,14 @@ export class SendSmsAction {
 
 
 
-    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, context: Remult, type: string) {
+    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, remult: Remult, type: string) {
         let h = await hi.getHelper();
         if (reminder)
             h.reminderSmsDate = new Date();
         else
             h.smsDate = new Date();
         await h.save();
-        let hist = context.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+        let hist =  remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
         hist.volunteer = h;
         if (reminder) {
             hist.comment = 'Reminder ' + type;
@@ -84,10 +84,10 @@ export class SendSmsAction {
 
         }
     }
-    public static async getSenderPhone(context: Remult) {
-        let sender = (await ApplicationSettings.getAsync(context)).helpPhone?.thePhone;
+    public static async getSenderPhone(remult: Remult) {
+        let sender = (await ApplicationSettings.getAsync(remult)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            sender = context.currentUser.phone.thePhone;
+            sender = remult.currentUser.phone.thePhone;
         }
         return sender;
     }

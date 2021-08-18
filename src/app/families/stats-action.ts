@@ -26,14 +26,14 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    constructor(private context: Remult) {
+    constructor(private remult: Remult) {
 
     }
-    outOfList = new FaimilyStatistics(getLang(this.context).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
-    frozen = new FaimilyStatistics(getLang(this.context).frozen, f => f.status.isEqualTo(FamilyStatus.Frozen), colors.orange);
-    toDelete = new FaimilyStatistics(getLang(this.context).toDelete, f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
-    active = new FaimilyStatistics(getLang(this.context).active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
-    problem = new FaimilyStatistics(getLang(this.context).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false).and(f.defaultSelfPickup.isEqualTo(false))), colors.orange);
+    outOfList = new FaimilyStatistics(getLang(this.remult).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
+    frozen = new FaimilyStatistics(getLang(this.remult).frozen, f => f.status.isEqualTo(FamilyStatus.Frozen), colors.orange);
+    toDelete = new FaimilyStatistics(getLang(this.remult).toDelete, f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
+    active = new FaimilyStatistics(getLang(this.remult).active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
+    problem = new FaimilyStatistics(getLang(this.remult).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false).and(f.defaultSelfPickup.isEqualTo(false))), colors.orange);
 
     async getData(distCenter: DistributionCenters) {
         let r = await Stats.getFamilyStats(distCenter?.id);
@@ -46,18 +46,18 @@ export class Stats {
         return r;
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async getFamilyStats(distCenter: string, context?: Remult) {
+    static async getFamilyStats(distCenter: string, remult?: Remult) {
         let result = { data: {}, groups: [] as groupStats[] };
-        let stats = new Stats(context);
+        let stats = new Stats(remult);
         let pendingStats = [];
         for (let s in stats) {
             let x = stats[s];
             if (x instanceof FaimilyStatistics) {
-                pendingStats.push(x.saveTo(distCenter, result.data, context));
+                pendingStats.push(x.saveTo(distCenter, result.data, remult));
             }
         }
 
-        await context.repo(Groups).find({
+        await  remult.repo(Groups).find({
             limit: 1000,
             orderBy: f =>  f.name 
         }).then(groups => {
@@ -67,7 +67,7 @@ export class Stats {
                     total: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.repo(Families).count(f => f.groups.contains(x.name).and(
+                pendingStats.push( remult.repo(Families).count(f => f.groups.contains(x.name).and(
                     f.status.isEqualTo(FamilyStatus.Active))).then(r => x.total = r));
             }
         });
@@ -87,9 +87,9 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(distCenter: string, data: any, context: Remult) {
+    async saveTo(distCenter: string, data: any, remult: Remult) {
 
-        data[this.name] = await context.repo(Families).count(f => this.rule(f)).then(c => this.value = c);
+        data[this.name] = await  remult.repo(Families).count(f => this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

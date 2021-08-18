@@ -12,8 +12,8 @@ export class Sites {
         this.schemas.push(id);
     }
 
-    static isOverviewSchema(context: Remult) {
-        return Sites.getOrganizationFromContext(context) == Sites.guestSchema;
+    static isOverviewSchema(remult: Remult) {
+        return Sites.getOrganizationFromContext(remult) == Sites.guestSchema;
     }
     static guestSchema = 'guest';
     static schemas = [];
@@ -110,8 +110,8 @@ const langForSite = new Map<string, Language>();
 export function setLangForSite(site: string, lang: TranslationOptions) {
     langForSite.set(site, langByCode(lang.args.languageFile));
 }
-export function getLang(context: Remult) {
-    let r = langForSite.get(Sites.getValidSchemaFromContext(context));
+export function getLang(remult: Remult) {
+    let r = langForSite.get(Sites.getValidSchemaFromContext(remult));
     if (r)
         return r;
     return use.language;

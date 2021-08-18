@@ -242,14 +242,14 @@ export class PlaybackComponent implements OnInit {
   timeline: timelineStep[] = [];
 
   @BackendMethod({ allowed: Roles.admin })
-  static async GetTimeline(fromDateDate: Date, toDateDate: Date, context?: Remult, db?: SqlDatabase) {
-    let f = SqlFor(context.repo(FamilyDeliveries));
+  static async GetTimeline(fromDateDate: Date, toDateDate: Date, remult?: Remult, db?: SqlDatabase) {
+    let f = SqlFor( remult.repo(FamilyDeliveries));
 
 
 
     toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
 
-    let sql = new SqlBuilder(context);
+    let sql = new SqlBuilder(remult);
     sql.addEntity(f, "Families");
     let r = (await db.execute(await sql.query({
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],

@@ -9,7 +9,7 @@ import { ValueListValueConverter } from 'remult/valueConverters';
 
 
 @DataControl({
-  valueList: async context => DeliveryStatus.getOptions(context)
+  valueList: async remult => DeliveryStatus.getOptions(remult)
   , width: '150'
 
 })
@@ -98,12 +98,12 @@ export class DeliveryStatus {
   static isNotProblem(self: FilterFactory<DeliveryStatus>) {
     return self.isNotIn(this.problemStatuses()).and(self.isDifferentFrom(DeliveryStatus.Frozen));
   }
-  static getOptions(context: Remult) {
+  static getOptions(remult: Remult) {
     let op = new ValueListValueConverter(DeliveryStatus).getOptions();
-    if (!getSettings(context).usingSelfPickupModule) {
+    if (!getSettings(remult).usingSelfPickupModule) {
       op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
     }
-    if (!getSettings(context).isSytemForMlt()) {
+    if (!getSettings(remult).isSytemForMlt()) {
       op = op.filter(x =>
         x.id != DeliveryStatus.FailedNotReady.id &&
         x.id != DeliveryStatus.FailedTooFar.id

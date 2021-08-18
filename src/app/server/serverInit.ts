@@ -116,10 +116,10 @@ export async function serverInit() {
                 await verifySchemaExistance(pool, Sites.guestSchema);
             }
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
-            let context = new Remult();
+            let remult = new Remult();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
 
-            context.setDataProvider(dp)
+            remult.setDataProvider(dp)
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
             if (!initSettings.disableSchemaInit) {
@@ -131,13 +131,13 @@ export async function serverInit() {
                     DistributionCenters
                 ]) {
 
-                    await builder.createIfNotExist(context.repo(entity).metadata);
-                    await builder.verifyAllColumns(context.repo(entity).metadata);
+                    await builder.createIfNotExist( remult.repo(entity).metadata);
+                    await builder.verifyAllColumns( remult.repo(entity).metadata);
                 }
 
             }
-            await SitesEntity.completeInit(context);
-            let settings = await context.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
+            await SitesEntity.completeInit(remult);
+            let settings = await  remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
             if (settings.isNew()) {
                 settings.organisationName = "מערכת חלוקה";
                 settings.id = 1;
@@ -190,9 +190,9 @@ export async function serverInit() {
             for (const s of Sites.schemas) {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
-                    let context = new Remult();
-                    let h = await SqlFor(context.repo(Helpers));
-                    var sql = new SqlBuilder(context);
+                    let remult = new Remult();
+                    let h = await SqlFor( remult.repo(Helpers));
+                    var sql = new SqlBuilder(remult);
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];
                     if (!d)
