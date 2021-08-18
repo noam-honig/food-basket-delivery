@@ -1,6 +1,6 @@
 import { Express, Response } from 'express';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { ExpressBridge } from 'remult/server';
 import { Sites } from '../sites/sites';
 import { HelperUserInfo } from '../helpers/helpers';
@@ -58,7 +58,7 @@ export class ServerEvents {
             });
             let key = new Date().toISOString();
 
-            tempConnections[key] = (context: Context) => {
+            tempConnections[key] = (context: Remult) => {
                 let x = this.sites.get(org);
                 if (!x) {
                     x = [];
@@ -85,7 +85,7 @@ export class ServerEvents {
         });
     }
 
-    SendMessage(x: string, context: Context, distributionCenter: string) {
+    SendMessage(x: string, context: Remult, distributionCenter: string) {
         let z = this;
         setTimeout(() => {
             let org = Sites.getOrganizationFromContext(context);

@@ -1,5 +1,5 @@
 
-import { Filter, AndFilter, Context, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories, ExcludeEntityFromApi } from "remult";
+import { Filter, AndFilter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories, ExcludeEntityFromApi } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -15,7 +15,7 @@ import { Field } from '../translate';
 
 
 export class FamilyDeliveryStats {
-    constructor(private context: Context) { }
+    constructor(private context: Remult) { }
 
     ready = new FamilyDeliveresStatistics(getLang(this.context).unAsigned,
         f => FamilyDeliveries.readyFilter().and(
@@ -48,7 +48,7 @@ export class FamilyDeliveryStats {
         return r;
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
+    static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters, context?: Remult, db?: SqlDatabase) {
         let result = {
             data: {}, baskets: [] as {
                 id: string,
@@ -152,7 +152,7 @@ export class FamilyDeliveresStatistics {
     }
 
     value = 0;
-    async saveTo(distCenter: DistributionCenters, data: any, context: Context) {
+    async saveTo(distCenter: DistributionCenters, data: any, context: Remult) {
         try {
 
             data[this.name] = await context.repo(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), context.filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);

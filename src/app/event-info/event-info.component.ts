@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output } from '@angular/core';
 import { BusyService, InputField } from '@remult/angular';
 import { EventEmitter } from 'events';
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
@@ -20,7 +20,7 @@ import { RegisterToEvent } from './RegisterToEvent';
 })
 export class EventInfoComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private context: Context, public dialog: DialogService, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private context: Remult, public dialog: DialogService, private busy: BusyService) { }
   @Output() phoneChanged = new EventEmitter();
   @Input()
   e: EventInList;

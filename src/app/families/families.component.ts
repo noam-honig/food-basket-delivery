@@ -23,7 +23,7 @@ import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Route } from '@angular/router';
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 
 
@@ -54,7 +54,7 @@ import { GroupsValue } from '../manage/groups';
 })
 export class FamiliesComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
-    static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
+    static async getCities(context?: Remult, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder(context);
         let f = SqlFor(context.repo(Families));
         let r = await db.execute(await sql.query({
@@ -77,7 +77,7 @@ export class FamiliesComponent implements OnInit {
 
     showHoverButton: boolean = false;
 
-    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Context, public settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public context: Remult, public settings: ApplicationSettings) {
 
     }
 
@@ -719,7 +719,7 @@ interface statsOnTab {
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
-export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
+export async function saveFamiliesToExcel(context: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
     await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation();
         let street = f.address;

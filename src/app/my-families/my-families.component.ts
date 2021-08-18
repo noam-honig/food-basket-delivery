@@ -3,7 +3,7 @@ import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
 import { BusyService, RouteHelperService } from '@remult/angular';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 import { Helpers, HelperUserInfo } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -32,7 +32,7 @@ export class MyFamiliesComponent implements OnInit {
   familyLists = new UserFamiliesList(this.context, this.settings);
   user: HelperUserInfo;
 
-  constructor(public context: Context, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
+  constructor(public context: Remult, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
     private busy: BusyService) {
     this.user = context.user as HelperUserInfo;
   }

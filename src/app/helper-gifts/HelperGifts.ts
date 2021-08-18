@@ -1,4 +1,4 @@
-import { Context, Entity, IdEntity, BackendMethod, Allow } from "remult";
+import { Remult, Entity, IdEntity, BackendMethod, Allow } from "remult";
 import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
@@ -73,7 +73,7 @@ export class HelperGifts extends IdEntity {
 
 
     @BackendMethod({ allowed: Roles.admin })
-    static async assignGift(helperId: string, context?: Context) {
+    static async assignGift(helperId: string, context?: Remult) {
         let helper = await context.repo(Helpers).findId(helperId);
         if (await context.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.currentUser)) > 0) {
             let g = await context.repo(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.currentUser));
@@ -89,7 +89,7 @@ export class HelperGifts extends IdEntity {
         throw new Error('אין מתנות לחלוקה');
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async importUrls(urls: string[], context?: Context) {
+    static async importUrls(urls: string[], context?: Remult) {
         for (const url of urls) {
             let g = await context.repo(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
             if (!g) {
@@ -100,13 +100,13 @@ export class HelperGifts extends IdEntity {
         }
     }
     @BackendMethod({ allowed: true })
-    static async getMyPendingGiftsCount(h: Helpers, context?: Context) {
+    static async getMyPendingGiftsCount(h: Helpers, context?: Remult) {
         let gifts = await context.repo(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @BackendMethod({ allowed: true })
-    static async getMyFirstGiftURL(h: HelpersBase, context?: Context) {
+    static async getMyFirstGiftURL(h: HelpersBase, context?: Remult) {
         let gifts = await context.repo(HelperGifts).find({
             where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
@@ -121,13 +121,13 @@ export class HelperGifts extends IdEntity {
 
 
 
-export async function showUsersGifts(helperId: string, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+export async function showUsersGifts(helperId: string, context: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
     openDialog(MyGiftsDialogComponent, x => x.args = {
         helperId: helperId
     });
 }
 
-export async function showHelperGifts(hid: Helpers, context: Context, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+export async function showHelperGifts(hid: Helpers, context: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
 
 
     let helperName = hid.name;

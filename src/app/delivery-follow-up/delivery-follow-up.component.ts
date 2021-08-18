@@ -8,7 +8,7 @@ import { BusyService, openDialog } from '@remult/angular';
 import { Helpers } from '../helpers/helpers';
 
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { Route } from '@angular/router';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -149,7 +149,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private busy: BusyService, private context: Context, private dialog: DialogService, public settings: ApplicationSettings) {
+  constructor(private busy: BusyService, private context: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
 
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
   }
@@ -166,7 +166,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   }
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async helpersStatus(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
+  static async helpersStatus(distCenter: DistributionCenters, context?: Remult, db?: SqlDatabase) {
     let fd = SqlFor(context.repo(FamilyDeliveries));
 
     let h = SqlFor(context.repo(Helpers));
@@ -224,7 +224,7 @@ export class DeliveryStats {
       }
     }
   }
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
 
   }
   notOutYet = new DeliveryStatistic(getLang(this.context).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);

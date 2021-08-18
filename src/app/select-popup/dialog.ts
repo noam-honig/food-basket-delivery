@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Context, getFields, BackendMethod, ContainsFilterFactory } from 'remult';
+import { Remult, getFields, BackendMethod, ContainsFilterFactory } from 'remult';
 
 
 import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
@@ -70,7 +70,7 @@ export class DialogService {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Context, private routeReuseStrategy: RouteReuseStrategy) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private context: Remult, private routeReuseStrategy: RouteReuseStrategy) {
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
             this.distCenter = null;
@@ -165,7 +165,7 @@ export class DialogService {
             let EventSource: any = window['EventSource'];
             if (enable && typeof (EventSource) !== "undefined") {
                 this.zone.run(() => {
-                    var source = new EventSource(Context.apiBaseUrl + '/' + 'stream', { withCredentials: true });
+                    var source = new EventSource(Remult.apiBaseUrl + '/' + 'stream', { withCredentials: true });
                     if (this.eventSource) {
                         this.eventSource.close();
                         this.eventSource = undefined;
@@ -220,7 +220,7 @@ export class DialogService {
         await DialogService.doLog(message);
     }
     @BackendMethod({ allowed: true })
-    static async doLog(s: string, context?: Context) {
+    static async doLog(s: string, context?: Remult) {
         console.log(s);
     }
 }
@@ -268,7 +268,7 @@ export class DestroyHelper {
 let showing = false;
 @Injectable()
 export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
-    constructor(private dialog: DialogService, private zone: NgZone, private context: Context) {
+    constructor(private dialog: DialogService, private zone: NgZone, private context: Remult) {
         super();
     }
     lastErrorString: '';

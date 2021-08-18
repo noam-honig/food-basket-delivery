@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Context, Controller, BackendMethod, getFields, ProgressListener } from 'remult';
+import { Remult, Controller, BackendMethod, getFields, ProgressListener } from 'remult';
 import { RouteHelperService, BusyService, DataControl, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Sites, getLang } from '../sites/sites';
@@ -56,7 +56,7 @@ export class CreateNewEvent {
     basketType: BasketType;
 
 
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
 
 
     }

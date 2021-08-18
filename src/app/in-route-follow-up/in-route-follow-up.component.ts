@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
-import { Context, EntityWhere, Filter } from 'remult';
+import { Remult, EntityWhere, Filter } from 'remult';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';
@@ -22,7 +22,7 @@ import { Roles } from '../auth/roles';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
+  constructor(private context: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
 
   searchString: string = '';
   clearSearch() {

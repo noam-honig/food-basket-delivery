@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -90,7 +90,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
     x.sendSmsToAll();
 
   }
-  constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) { }
+  constructor(private context: Remult, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) { }
   data: data;
   helpers: helperInfo[] = [];
   async ngOnInit() {

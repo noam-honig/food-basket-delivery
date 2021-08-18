@@ -27,7 +27,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
 
 import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles,SignedInAndNotOverviewGuard, EventListGuard } from './auth/roles';
 import { AuthenticatedInGuard } from '@remult/angular';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
@@ -57,7 +57,7 @@ import { OrgEventsComponent } from './org-events/org-events.component';
 
 @Injectable()
 export class MltOnlyGuard implements CanActivate {
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
 
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
@@ -72,7 +72,7 @@ export class MltOnlyGuard implements CanActivate {
 }
 @Injectable()
 export class MltAdminGuard implements CanActivate {
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
 
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {

@@ -16,7 +16,7 @@ import { foreachSync, PromiseThrottle } from '../shared/utils';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 import { BasketType } from '../families/BasketType';
 
@@ -373,7 +373,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
 
-    constructor(public dialog: DialogService, private context: Context, public busy: BusyService, public settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, private context: Remult, public busy: BusyService, public settings: ApplicationSettings) {
         this.dialog.onDistCenterChange(() => this.refreshBaskets(), this.destroyHelper);
 
     }
@@ -494,7 +494,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo, context?: Context, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
+    static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo, context?: Remult, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
 
         let result: GetBasketStatusActionResponse = {
             baskets: [],
@@ -608,7 +608,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         return result;
     }
     @BackendMethod({ allowed: Allow.authenticated, blockUser: false })
-    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy, context?: Context) {
+    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy, context?: Remult) {
 
         if (!context.isAllowed(Roles.distCenterAdmin)) {
             if (!helper.isCurrentUser()) {
@@ -663,7 +663,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, context?: Context, db?: SqlDatabase) {
+    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, context?: Remult, db?: SqlDatabase) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
             families: [],
@@ -998,7 +998,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     static async assignMultipleFamilies(helper: HelpersBase, args: {
         ids: string[],
         quantity: number,
-    }, context?: Context) {
+    }, context?: Remult) {
         let familyDeliveries = await context.repo(ActiveFamilyDeliveries).find({
             where: fd =>
                 fd.id.isIn(args.ids).and(FamilyDeliveries.readyFilter())
@@ -1094,7 +1094,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         filterGroup: string,
         filterArea: string
     },
-        context?: Context,
+        context?: Remult,
         db?: SqlDatabase
     ) {
         var sql = new SqlBuilder(context);

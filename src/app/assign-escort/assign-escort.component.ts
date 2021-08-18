@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
@@ -18,7 +18,7 @@ import { DataAreaSettings, openDialog } from '@remult/angular';
 })
 export class AssignEscortComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService, private settings: ApplicationSettings) { }
+  constructor(private context: Remult, private dialog: DialogService, private settings: ApplicationSettings) { }
   @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
   async ngOnInit() {
     if (!environment.production) {

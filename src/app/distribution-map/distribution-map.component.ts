@@ -9,7 +9,7 @@ import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBound
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Context, SqlDatabase } from 'remult';
+import { Remult, SqlDatabase } from 'remult';
 import { BackendMethod } from 'remult';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -44,7 +44,7 @@ import { BasketType } from '../families/BasketType';
 })
 export class DistributionMap implements OnInit, OnDestroy {
   showChart = true;
-  constructor(private context: Context, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private context: Remult, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
       busy.donotWait(async () => {
@@ -334,7 +334,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.calcSelectedDeliveries();
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
+  static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Remult, db?: SqlDatabase) {
     let f = SqlFor(context.repo(ActiveFamilyDeliveries));
     let h = SqlFor(context.repo(Helpers));
     let sql = new SqlBuilder(context);
@@ -378,7 +378,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     }) as deliveryOnMap[];
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async GetLocationsForOverview(context?: Context) {
+  static async GetLocationsForOverview(context?: Remult) {
 
     let result: deliveryOnMap[] = []
     let f = SqlFor(context.repo(FamilyDeliveries));

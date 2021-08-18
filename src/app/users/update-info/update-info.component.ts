@@ -6,7 +6,7 @@ import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { AuthenticatedInGuard, RouteHelperService, InputField, GridSettings, DataAreaSettings } from '@remult/angular';
 import { Route } from '@angular/router';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 
@@ -20,7 +20,7 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
 export class UpdateInfoComponent implements OnInit, AfterViewInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
-    private context: Context,
+    private context: Remult,
     public sessionManager: AuthService,
     public settings: ApplicationSettings,
     private helper: RouteHelperService) {

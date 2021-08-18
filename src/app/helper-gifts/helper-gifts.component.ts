@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Context } from "remult";
+import { Remult } from "remult";
 import { GridSettings, openDialog } from "@remult/angular";
 import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
 import { HelperGifts } from "./HelperGifts";
@@ -9,7 +9,7 @@ import { HelperGifts } from "./HelperGifts";
   styleUrls: ["./helper-gifts.component.scss"]
 })
 export class HelperGiftsComponent implements OnInit {
-  constructor(private context: Context) { }
+  constructor(private context: Remult) { }
   gifts = new GridSettings(this.context.repo(HelperGifts),{
     allowUpdate: true,
     allowInsert: true,

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Entity, BackendMethod, SqlDatabase, EntityWhere, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from 'remult';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { Phone } from "../model-shared/phone";
 
@@ -43,7 +43,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
 
-    constructor(private context: Context, private dialog: DialogService, private busy: BusyService, private routeHelper: RouteHelperService, public settings: ApplicationSettings) {
+    constructor(private context: Remult, private dialog: DialogService, private busy: BusyService, private routeHelper: RouteHelperService, public settings: ApplicationSettings) {
 
     }
     updateRowsPage: number;
@@ -154,7 +154,7 @@ export class ImportFromExcelComponent implements OnInit {
         }
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, context?: Context) {
+    static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, context?: Remult) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = context.repo(Families).create();
@@ -221,7 +221,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, context?: Context) {
+    static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, context?: Remult) {
         for (const r of rowsToUpdate) {
             await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, context, getSettings(context));
         }
@@ -232,7 +232,7 @@ export class ImportFromExcelComponent implements OnInit {
         let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType);
         i.values = r[0].values;
     }
-    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, context: Context, settings: ApplicationSettings) {
+    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, context: Remult, settings: ApplicationSettings) {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
@@ -1085,7 +1085,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, context?: Context, db?: SqlDatabase) {
+    static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, context?: Remult, db?: SqlDatabase) {
         let result: serverCheckResults = {
             errorRows: [],
             identicalRows: [],
@@ -1436,7 +1436,7 @@ interface columnUpdater {
     columns: FieldMetadata[];
 }
 class columnUpdateHelper {
-    constructor(private context: Context, private dialog: DialogService, private autoAdd: boolean, public fd: ActiveFamilyDeliveries) {
+    constructor(private context: Remult, private dialog: DialogService, private autoAdd: boolean, public fd: ActiveFamilyDeliveries) {
 
     }
     laterSteps: laterSteps[] = [];
@@ -1512,7 +1512,7 @@ function onlyNameMatch(f: duplicateFamilyInfo) {
         && !f.tz2);
 }
 
-async function compareValuesWithRow(context: Context, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
+async function compareValuesWithRow(context: Remult, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
     let basketType = await context.repo(BasketType).findId(info.basketType);
     let distCenter = await context.repo(DistributionCenters).findId(info.distCenter);

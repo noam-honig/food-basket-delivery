@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "../model-shared/phone";
-import { Context, Controller, getFields, Validators } from 'remult';
+import { Remult, Controller, getFields, Validators } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -31,7 +31,7 @@ declare var fbq;
 export class RegisterDonorComponent implements OnInit {
   static MinQuantity = 10;
 
-  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
+  constructor(private dialog: DialogService, private context: Remult, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
 
   showCCMessage(): boolean {
     if (this.activeRoute.routeConfig.data && this.activeRoute.routeConfig.data.isCC)
@@ -139,7 +139,7 @@ export class EquipmentAge {
 }
 @Controller('register-donor')
 class donorForm {
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
 
   }
   get $() { return getFields(this, this.context) }

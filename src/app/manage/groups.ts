@@ -1,5 +1,5 @@
 import { DataControl, openDialog } from "@remult/angular";
-import { IdEntity, Context, Entity } from "remult";
+import { IdEntity, Remult, Entity } from "remult";
 import { Roles } from "../auth/roles";
 import { Field, FieldType, use } from "../translate";
 

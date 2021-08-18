@@ -13,7 +13,7 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
 }
 
 import { GeocodeInformation, GetGeoInformation, AddressHelper } from "../shared/googleApiHelpers";
-import { Entity, Context } from 'remult';
+import { Entity, Remult } from 'remult';
 import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
@@ -86,7 +86,7 @@ export class ApplicationSettings extends EntityBase {
 
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static async getPhoneOptions(deliveryId: string, context?: Context) {
+  static async getPhoneOptions(deliveryId: string, context?: Remult) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
     let d = await context.repo(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
     if (!d)
@@ -364,16 +364,16 @@ export class ApplicationSettings extends EntityBase {
 
 
 
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
     super()
   }
 
-  static get(context: Context) {
+  static get(context: Remult) {
     
     return getSettings(context);
 
   }
-  static async getAsync(context: Context): Promise<ApplicationSettings> {
+  static async getAsync(context: Remult): Promise<ApplicationSettings> {
     return (await context.repo(ApplicationSettings).findFirst());
   }
 
@@ -447,7 +447,7 @@ export interface qaItem {
 export interface phoneBuildArgs {
   family: import('../families/families').Families,
   d: import('../families/FamilyDeliveries').FamilyDeliveries,
-  context: Context,
+  context: Remult,
   phoneItem: PhoneItem,
   settings: ApplicationSettings,
   addPhone: (name: string, value: string) => void
@@ -456,7 +456,7 @@ export interface phoneBuildArgs {
 
 @Injectable()
 export class SettingsService {
-  constructor(private context: Context, private http: HttpClient) {
+  constructor(private context: Remult, private http: HttpClient) {
 
   }
   instance: ApplicationSettings;
@@ -516,7 +516,7 @@ export const settingsForSite = new Map<string, ApplicationSettings>();
 export function setSettingsForSite(site: string, lang: ApplicationSettings) {
   settingsForSite.set(site, lang);
 }
-export function getSettings(context: Context): ApplicationSettings {
+export function getSettings(context: Remult): ApplicationSettings {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(context));
   if (r)
     return r;
@@ -533,7 +533,7 @@ interface customColumnInfo {
   values?: string[]
 
 }
-export function includePhoneInApi(context: Context) {
+export function includePhoneInApi(context: Remult) {
   var s = getSettings(context);
   if (!s.hideFamilyPhoneFromVolunteer)
     return true;

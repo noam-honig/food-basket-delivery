@@ -4,7 +4,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { DialogConfig } from '@remult/angular';
 
 @Component({
@@ -13,9 +13,9 @@ import { DialogConfig } from '@remult/angular';
   styleUrls: ['./helper-assignment.component.scss']
 })
 @DialogConfig({
-  minWidth:'95%',
-  height:'98%',
-  panelClass:'assign-volunteer-dialog'
+  minWidth: '95%',
+  height: '98%',
+  panelClass: 'assign-volunteer-dialog'
 
 
 })
@@ -23,8 +23,8 @@ export class HelperAssignmentComponent implements OnInit {
   public argsHelper: HelpersBase;
   constructor(
     private dialogRef: MatDialogRef<any>,
-    public settings:ApplicationSettings,
-    public context:Context
+    public settings: ApplicationSettings,
+    public context: Remult
   ) {
   }
   @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;

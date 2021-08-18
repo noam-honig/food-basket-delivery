@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, SqlDatabase, EntityBase, getFields, ExcludeEntityFromApi } from 'remult';
+import { Remult, SqlDatabase, EntityBase, getFields, ExcludeEntityFromApi } from 'remult';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import {  Helpers, CompanyColumn } from '../helpers/helpers';
@@ -67,10 +67,10 @@ export class DeliveryHistoryComponent implements OnInit {
     this.destroyHelper.destroy();
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private context: Context, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
+  constructor(private context: Remult, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
     this.helperStorage = new InMemoryDataProvider();
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
-    let stam = new Context();
+    let stam = new Remult();
     stam.setDataProvider(this.helperStorage);
     this.helperInfo = new GridSettings(stam.repo(helperHistoryInfo), {
       showFilter: true,
@@ -311,7 +311,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, context?: Context, db?: SqlDatabase) {
+  static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, context?: Remult, db?: SqlDatabase) {
 
 
     toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);

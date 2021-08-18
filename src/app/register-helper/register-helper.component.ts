@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
@@ -16,7 +16,7 @@ declare var fbq;
   styleUrls: ['./register-helper.component.scss']
 })
 export class RegisterHelperComponent implements OnInit {
-  constructor(private dialog: DialogService, private context: Context, private settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private context: Remult, private settings: ApplicationSettings) { }
 
   refer: string = null;
   isDone = false;

@@ -1,5 +1,5 @@
 
-import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Context, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity, OptionsFactory } from 'remult';
+import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Remult, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity, OptionsFactory } from 'remult';
 import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
@@ -33,7 +33,7 @@ import { SqlBuilder } from './SqlBuilder';
   forceEqualFilter: false
 })
 export class Email {
-  async Send(subject: string, message: string, context: Context) {
+  async Send(subject: string, message: string, context: Remult) {
     await EmailSvc.sendMail(subject, message, this.address, context);
   }
   constructor(public readonly address: string) {
@@ -109,7 +109,7 @@ class a {
 }
 
 
-export function relativeDateName(context: Context, args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
+export function relativeDateName(context: Remult, args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
   let d = args.d;
   if (!d)
     return '';
@@ -117,7 +117,7 @@ export function relativeDateName(context: Context, args: { d?: Date, dontShowTim
 
 }
 
-export function logChanges(e: EntityRef<any>, context: Context, args?: {
+export function logChanges(e: EntityRef<any>, context: Remult, args?: {
   excludeColumns?: FieldRef<any, any>[],
   excludeValues?: FieldRef<any, any>[]
 }) {

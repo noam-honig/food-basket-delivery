@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Event } from '../events/events';
 
-import { BackendMethod, Context, SqlDatabase, Unobserve } from 'remult';
+import { BackendMethod, Remult, SqlDatabase, Unobserve } from 'remult';
 import { EventInList, eventStatus } from '../events/events';
 import { RegisterToEvent } from '../event-info/RegisterToEvent';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -21,7 +21,7 @@ import { Events } from 'pg';
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private context: Context, public settings: ApplicationSettings, private dialog: DialogService) {
+  constructor(private context: Remult, public settings: ApplicationSettings, private dialog: DialogService) {
 
   }
   isGuest = Sites.getOrganizationFromContext(this.context) == Sites.guestSchema;
@@ -53,7 +53,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     })
   }
   @BackendMethod({ allowed: true })
-  static async getAllEvents(phone: string, sitesFilter: string, context?: Context, db?: SqlDatabase): Promise<EventInList[]> {
+  static async getAllEvents(phone: string, sitesFilter: string, context?: Remult, db?: SqlDatabase): Promise<EventInList[]> {
     let r: EventInList[] = [];
     let sql = new SqlBuilder(context);
     let e = SqlFor(context.repo(Event));
@@ -93,7 +93,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   }
 
   @BackendMethod({ allowed: true })
-  static async getEvents(phone: string, context?: Context): Promise<EventInList[]> {
+  static async getEvents(phone: string, context?: Remult): Promise<EventInList[]> {
 
 
     let helper: HelpersBase = context.currentUser;

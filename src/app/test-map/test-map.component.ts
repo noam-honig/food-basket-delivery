@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { openDialog } from '@remult/angular';
-import { Context, IdEntity } from 'remult';
+import { Remult, IdEntity } from 'remult';
 import { CreateNewEvent } from '../create-new-event/create-new-event';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 import { Families } from '../families/families';
@@ -18,7 +18,7 @@ import { MergeFamiliesComponent } from '../merge-families/merge-families.compone
 
 export class TestMapComponent implements OnInit {
 
-  constructor(private context: Context) { }
+  constructor(private context: Remult) { }
   filterGroup: string='';
   groups: { familiesCount: number, name: string }[];
   refreshBaskets() {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, BackendMethod, Entity, SqlDatabase, ProgressListener } from 'remult';
+import { Remult, BackendMethod, Entity, SqlDatabase, ProgressListener } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -24,7 +24,7 @@ import { Phone } from '../model-shared/phone';
 })
 export class OverviewComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService) { }
+  constructor(private context: Remult, private dialog: DialogService) { }
   overview: overviewResult;
   sortBy: string;
   async ngOnInit() {
@@ -47,7 +47,7 @@ export class OverviewComponent implements OnInit {
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption]);
   }
   @BackendMethod({ allowed: Roles.overview, queue: true })
-  static async getOverview(context?: Context, progress?: ProgressListener) {
+  static async getOverview(context?: Remult, progress?: ProgressListener) {
     let today = new Date();
     let onTheWay = "בדרך";
     let inEvent = "באירוע";
@@ -231,7 +231,7 @@ export class OverviewComponent implements OnInit {
     });
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async createSchema(id: string, name: string, address: string, manager: string, phone: string, context?: Context): Promise<{
+  static async createSchema(id: string, name: string, address: string, manager: string, phone: string, context?: Remult): Promise<{
     ok: boolean,
     errorText: string
   }> {
@@ -247,7 +247,7 @@ export class OverviewComponent implements OnInit {
         name = id;
       let oh = await context.repo(Helpers).findId(context.user.id);
       let db = await OverviewComponent.createDbSchema(id);
-      let otherContext = new Context();
+      let otherContext = new Remult();
       otherContext.setDataProvider(db);
       otherContext.setUser(context.user);
       Sites.setSiteToContext(otherContext, id, context);
@@ -291,7 +291,7 @@ export class OverviewComponent implements OnInit {
   static createSchemaApi = async (id: string) => { };
 
   @BackendMethod({ allowed: Roles.overview })
-  static async validateNewSchema(id: string, context?: Context) {
+  static async validateNewSchema(id: string, context?: Remult) {
     let x = await context.repo(SitesEntity).findId(id);
     if (x) {
       return "מזהה כבר קיים";

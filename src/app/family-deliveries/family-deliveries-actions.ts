@@ -1,4 +1,4 @@
-import { Context, AndFilter, EntityWhere, Filter } from "remult";
+import { Remult, AndFilter, EntityWhere, Filter } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelpersBase } from "../helpers/helpers";
@@ -19,12 +19,12 @@ import { getFields } from "remult";
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
-    constructor(context: Context, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
+    constructor(context: Remult, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
         super(context, ActiveFamilyDeliveries, buildArgsForFamilyDeliveries(args, context));
     }
 
 }
-function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, context: Context) {
+function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, context: Remult) {
     if (args.orderBy)
         throw "didn't expect order by";
     args.orderBy = x => [x.createDate.descending(), x.id]//to handle the case where paging is used, and items are added with different ids
@@ -49,7 +49,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     @Field()
     status: FamilyStatus;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             dialogColumns: async c => [
                 this.$.updateFamilyStatus,
@@ -84,7 +84,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
 
 
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, ActiveFamilyDeliveries, {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
@@ -131,7 +131,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     @Field({ translation: l => l.setAsDefaultVolunteer })
     updateAlsoAsFixed: boolean;
     usedCouriers: string[] = [];
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, ActiveFamilyDeliveries, {
             help: () => getLang(this.context).updateVolunteerHelp,
             dialogColumns: async () => [
@@ -176,7 +176,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
     deleteExistingComment: boolean;
 
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             title: getLang(context).updateDeliveriesStatus,
             help: () => getSettings(context).isSytemForMlt() ? '' : getLang(this.context).updateDeliveriesStatusHelp,
@@ -230,7 +230,7 @@ export class ArchiveHelper {
 
 
     get $() { return getFields(this) }
-    async initArchiveHelperBasedOnCurrentDeliveryInfo(context: Context, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
+    async initArchiveHelperBasedOnCurrentDeliveryInfo(context: Remult, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = context.repo(ActiveFamilyDeliveries);
 
@@ -271,7 +271,7 @@ export class ArchiveHelper {
 export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     @Field()
     archiveHelper: ArchiveHelper = new ArchiveHelper();
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             dialogColumns: async c => {
                 return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.context, this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
@@ -294,7 +294,7 @@ export class UpdateBasketType extends ActionOnFamilyDeliveries {
     @Field()
     basketType: BasketType;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             allowed: Roles.distCenterAdmin,
             title: getLang(context).updateBasketType,
@@ -308,7 +308,7 @@ export class UpdateQuantity extends ActionOnFamilyDeliveries {
     @QuantityColumn()
     quantity: number;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             allowed: Roles.distCenterAdmin,
             title: getLang(context).updateBasketQuantity,
@@ -322,7 +322,7 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     @Field()
     distributionCenter: DistributionCenters;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             title: getLang(context).updateDistributionList,
             forEach: async f => { f.distributionCenter = this.distributionCenter },
@@ -346,7 +346,7 @@ class HelperStrategy {
     static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
         x.newDelivery.courier = x.helper;
     });
-    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelpersBase, context: Context }) => void) {
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelpersBase, context: Remult }) => void) {
 
     }
 }
@@ -379,7 +379,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     useCurrentDistributionCenter: boolean;
 
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, {
             dialogColumns: async (component) => {
                 this.basketType = await this.context.defaultBasketType();

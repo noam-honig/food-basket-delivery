@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular
 import * as copy from 'copy-to-clipboard';
 import { DialogService, extractError } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Context, FieldRef, BackendMethod, Allow } from 'remult';
+import { Remult, FieldRef, BackendMethod, Allow } from 'remult';
 
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -30,7 +30,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 })
 export class FamilyInfoComponent implements OnInit {
 
-  constructor(private dialog: DialogService, public context: Context, public settings: ApplicationSettings, private zone: NgZone) {
+  constructor(private dialog: DialogService, public context: Remult, public settings: ApplicationSettings, private zone: NgZone) {
 
   }
   @Input() f: ActiveFamilyDeliveries;
@@ -52,7 +52,7 @@ export class FamilyInfoComponent implements OnInit {
     return relativeDateName(this.context, { d: this.f.courierCommentsDate })
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  static async ShowFamilyTz(deliveryId: string, context?: Context) {
+  static async ShowFamilyTz(deliveryId: string, context?: Remult) {
     let s = await ApplicationSettings.getAsync(context);
     if (!s.showTzToVolunteer)
       return "";
@@ -137,7 +137,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
   @BackendMethod({ allowed: Allow.authenticated })
-  static async privateCall(deliveryId: string, context?: Context): Promise<{
+  static async privateCall(deliveryId: string, context?: Remult): Promise<{
     phone?: string,
     error?: string
   }> {

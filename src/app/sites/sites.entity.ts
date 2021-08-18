@@ -1,4 +1,4 @@
-import { Entity, Context, EntityBase } from "remult";
+import { Entity, Remult, EntityBase } from "remult";
 import { Field } from '../translate';
 import { Roles } from "../auth/roles";
 import { Sites } from "./sites";
@@ -27,10 +27,10 @@ export class SitesEntity extends EntityBase {
     @Field()
     createUser: string;
 
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         super();
     }
-    static async completeInit(context: Context) {
+    static async completeInit(context: Remult) {
         let sites = await context.repo(SitesEntity).find();
         let missingInDb = Sites.schemas.filter(siteFromEnv => !sites.find(y => y.id == siteFromEnv));
         for (const s of missingInDb) {

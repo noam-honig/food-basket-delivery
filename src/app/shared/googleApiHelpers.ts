@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Context, FieldRef, EntityBase, ExcludeEntityFromApi } from 'remult';
+import { UrlBuilder, Entity, Remult, FieldRef, EntityBase, ExcludeEntityFromApi } from 'remult';
 import { Field } from '../translate';
 
 
@@ -16,7 +16,7 @@ export class GeoCodeOptions {
 }
 
 var pendingRequests = new Map<string, Promise<GeocodeInformation>>();
-export async function GetGeoInformation(address: string, context: Context) {
+export async function GetGeoInformation(address: string, context: Remult) {
 
     if (!address || address == '' || address.trim() == '')
         return new GeocodeInformation();
@@ -372,7 +372,7 @@ export class AddressHelper {
         return this.addressColumn().value;
     }
 
-    constructor(private context: Context, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
+    constructor(private context: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
 
 
     }

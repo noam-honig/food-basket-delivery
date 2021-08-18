@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FilterFactories, Allow, isBackend } from "remult";
+import { IdEntity, Remult, Entity, FilterFactories, Allow, isBackend } from "remult";
 import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -42,7 +42,7 @@ import { use, FieldType, Field } from "../translate";
   }
 })
 export class DistributionCenters extends IdEntity {
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
     super();
   }
 
@@ -87,7 +87,7 @@ export class DistributionCenters extends IdEntity {
     return this.id == (<HelperUserInfo>this.context.user).distributionCenter;
   }
 
-  async SendMessageToBrowser(message: string, context: Context) {
+  async SendMessageToBrowser(message: string, context: Remult) {
 
     await (await import('../families/families')).Families.SendMessageToBrowsers(message, context, this.id);
   }
@@ -106,7 +106,7 @@ export class DistributionCenters extends IdEntity {
       return this.addressHelper.getGeocodeInformation();
     return (await ApplicationSettings.getAsync(this.context)).addressHelper.getGeocodeInformation();
   }
-  static async getValueList(context: Context, showAllOptions = false) {
+  static async getValueList(context: Remult, showAllOptions = false) {
     let r = await getValueList<DistributionCenters>(context.repo(DistributionCenters), {
       where: c => c.archive.isEqualTo(false)
     })

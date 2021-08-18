@@ -1,4 +1,4 @@
-import { Context, Filter, FilterFactory } from 'remult';
+import { Remult, Filter, FilterFactory } from 'remult';
 
 import { use, ValueListFieldType } from '../translate';
 
@@ -98,7 +98,7 @@ export class DeliveryStatus {
   static isNotProblem(self: FilterFactory<DeliveryStatus>) {
     return self.isNotIn(this.problemStatuses()).and(self.isDifferentFrom(DeliveryStatus.Frozen));
   }
-  static getOptions(context: Context) {
+  static getOptions(context: Remult) {
     let op = new ValueListValueConverter(DeliveryStatus).getOptions();
     if (!getSettings(context).usingSelfPickupModule) {
       op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);

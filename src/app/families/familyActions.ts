@@ -1,4 +1,4 @@
-import { Context, AndFilter, getFields, SqlDatabase } from "remult";
+import { Remult, AndFilter, getFields, SqlDatabase } from "remult";
 import { Families } from "./families";
 
 import { BasketType } from "./BasketType";
@@ -73,7 +73,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     })
 
     excludeGroups: GroupsValue;
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             validate: async () => {
 
@@ -176,7 +176,7 @@ export class updateGroup extends ActionOnRows<Families> {
     group: string;
     @Field()
     action: UpdateGroupStrategy = UpdateGroupStrategy.add;
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
             title: getLang(context).assignAFamilyGroup,
@@ -205,7 +205,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
     @Field({ translation: l => l.deleteExistingComment })
     deleteExistingComment: boolean;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             help: () => getLang(this.context).updateStatusHelp,
             dialogColumns: async () => {
@@ -256,7 +256,7 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     @Field()
     basket: BasketType;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             title: getLang(context).updateDefaultBasket,
             forEach: async f => { f.basketType = this.basket },
@@ -272,7 +272,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     updateExistingDeliveries: boolean;
 
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             visible: c => c.settings.usingSelfPickupModule,
             title: getLang(context).updateDefaultSelfPickup,
@@ -304,7 +304,7 @@ export class UpdateArea extends ActionOnRows<Families> {
     @Field({ translation: l => l.region })
     area: string;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             title: getLang(context).updateArea,
             forEach: async f => { f.area = this.area.trim() },
@@ -316,7 +316,7 @@ export class UpdateQuantity extends ActionOnRows<Families> {
     @QuantityColumn()
     quantity: number;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             title: getLang(context).updateDefaultQuantity,
             forEach: async f => { f.quantity = this.quantity },
@@ -328,7 +328,7 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
     @Field()
     familySource: FamilySources;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             title: getLang(context).updateFamilySource,
             forEach: async f => { f.familySource = this.familySource }
@@ -341,7 +341,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     clearVoulenteer: boolean;
     @Field()
     courier: HelpersBase;
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, Families, {
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
@@ -371,7 +371,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
 
     @Field()
     familyActionInfo: any;
-    constructor(context: Context, public orig: ActionOnRows<Families>) {
+    constructor(context: Remult, public orig: ActionOnRows<Families>) {
         super(context, ActiveFamilyDeliveries, {
             forEach: async fd => {
                 if (this.processedFamilies.get(fd.family))
@@ -409,19 +409,19 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
 }
 @Controller('updateGroupForDeliveries')
 export class updateGroupForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, new updateGroup(context))
     }
 }
 @Controller('UpdateAreaForDeliveries')
 export class UpdateAreaForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, new UpdateArea(context))
     }
 }
 @Controller('UpdateStatusForDeliveries')
 export class UpdateStatusForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context, new UpdateStatus(context))
     }
 }

@@ -1,7 +1,7 @@
 import { BackendMethod, FilterFactories } from 'remult';
 import { Filter } from 'remult';
 import { Families } from "./families";
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { BasketInfo } from "../asign-family/asign-family.component";
 
 import { Roles } from "../auth/roles";
@@ -26,7 +26,7 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
 
     }
     outOfList = new FaimilyStatistics(getLang(this.context).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
@@ -46,7 +46,7 @@ export class Stats {
         return r;
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async getFamilyStats(distCenter: string, context?: Context) {
+    static async getFamilyStats(distCenter: string, context?: Remult) {
         let result = { data: {}, groups: [] as groupStats[] };
         let stats = new Stats(context);
         let pendingStats = [];
@@ -87,7 +87,7 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(distCenter: string, data: any, context: Context) {
+    async saveTo(distCenter: string, data: any, context: Remult) {
 
         data[this.name] = await context.repo(Families).count(f => this.rule(f)).then(c => this.value = c);
     }

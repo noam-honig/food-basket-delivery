@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Context, BackendMethod, Allow } from 'remult';
+import { Remult, BackendMethod, Allow } from 'remult';
 import { Roles } from '../auth/roles';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -59,7 +59,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
 
-  constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Context, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private context: Remult, private busy: BusyService) { }
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
     return this.comp.familyLists;
@@ -172,7 +172,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.indie })
-  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
+  static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Remult) {
     for (const id of deliveryIds) {
 
       let fd = await context.repo(ActiveFamilyDeliveries).findId(id);
@@ -271,7 +271,7 @@ export class MltFamiliesComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static async changeDestination(newDestinationId: DistributionCenters, context?: Context) {
+  static async changeDestination(newDestinationId: DistributionCenters, context?: Remult) {
     let s = getSettings(context);
     if (!s.isSytemForMlt())
       throw "not allowed";

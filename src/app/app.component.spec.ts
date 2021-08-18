@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import '../app/manage/ApplicationSettings';
 
 
-import { IdEntity, Context } from 'remult';
+import { IdEntity, Remult } from 'remult';
 
 import { SqlBuilder, QueryBuilder, SqlFor, SqlDefs } from "./model-shared/SqlBuilder";
 import { Phone, isPhoneValidForIsrael } from "./model-shared/phone";
@@ -23,7 +23,7 @@ import { eventDisplayDate, EventInList } from './events/events';
 
 describe('AppComponent', () => {
   initConfig.disableForTesting = true;
-  var context = new Context();
+  var context = new Remult();
   var bt: SqlDefs<BasketType>;
   var f: SqlDefs<Families>;
   let afd: SqlDefs<ActiveFamilyDeliveries>;

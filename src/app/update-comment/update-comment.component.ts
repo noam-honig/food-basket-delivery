@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 
 import { DialogService } from '../select-popup/dialog';
@@ -30,7 +30,7 @@ export class GetVolunteerFeedback implements OnInit {
   };
   constructor(
     public dialogRef: MatDialogRef<any>,
-    private context: Context,
+    private context: Remult,
     private dialog: DialogService,
     public settings: ApplicationSettings
   ) {

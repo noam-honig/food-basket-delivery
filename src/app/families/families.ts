@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Context, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend } from 'remult';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend } from 'remult';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -148,7 +148,7 @@ declare type factoryFor<T> = {
 )
 export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
-  static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
+  static async getDefaultVolunteers(context?: Remult, db?: SqlDatabase) {
     var sql = new SqlBuilder(context);
     let f = SqlFor(context.repo(Families));
     let r = await db.execute(await sql.query({
@@ -342,7 +342,7 @@ export class Families extends IdEntity {
     selfPickup: boolean,
     deliverStatus?: DeliveryStatus,
     archive?: boolean
-  }, context?: Context) {
+  }, context?: Remult) {
     let f = await context.repo(Families).findId(familyId);
     if (f) {
 
@@ -428,7 +428,7 @@ export class Families extends IdEntity {
 
   __disableGeocoding = false;
 
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
     super();
   }
   disableChangeLogging = false;
@@ -787,8 +787,8 @@ export class Families extends IdEntity {
 
 
 
-  static SendMessageToBrowsers = (s: string, context: Context, distCenter: string) => { };
-  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Context) {
+  static SendMessageToBrowsers = (s: string, context: Remult, distCenter: string) => { };
+  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, context: Remult) {
     switch (updateType) {
       case 1:
         switch (n.deliverStatus) {
@@ -831,7 +831,7 @@ export class Families extends IdEntity {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
+  static async getAreas(context?: Remult, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
     var sql = new SqlBuilder(context);
     let f = SqlFor(context.repo(Families));
     let r = await db.execute(await sql.query({
@@ -889,7 +889,7 @@ export class Families extends IdEntity {
 
   }
   @BackendMethod({ allowed: Roles.admin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, context?: Context, db?: SqlDatabase) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, context?: Remult, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder(context);
@@ -1112,7 +1112,7 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export function displayDupInfo(info: duplicateFamilyInfo, context: Context) {
+export function displayDupInfo(info: duplicateFamilyInfo, context: Remult) {
   let r = [];
 
 
@@ -1136,7 +1136,7 @@ export interface autocompleteResult {
   result: GeocodeResult
 }
 
-export function sendWhatsappToFamily(f: familyLikeEntity, context: Context, phone?: string) {
+export function sendWhatsappToFamily(f: familyLikeEntity, context: Remult, phone?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
@@ -1164,7 +1164,7 @@ export interface familyLikeEntity {
   phone4: Phone;
 }
 
-async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Context, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
+async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Remult, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
   let self = SqlFor(selfDefs);
   let fd = SqlFor(context.repo(FamilyDeliveries));
   let sql = new SqlBuilder(context);

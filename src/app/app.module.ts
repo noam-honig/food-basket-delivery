@@ -96,7 +96,7 @@ import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
 import { Helpers } from './helpers/helpers';
 import { ImagesComponent } from './images/images.component';
@@ -250,7 +250,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [TokenService, SettingsService, Context],
+      deps: [TokenService, SettingsService, Remult],
       useFactory: initApp,
       multi: true,
 
@@ -288,7 +288,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: TokenService, settings: SettingsService, context: Context) {
+export function initApp(session: TokenService, settings: SettingsService, context: Remult) {
   return async () => {
 
     try {

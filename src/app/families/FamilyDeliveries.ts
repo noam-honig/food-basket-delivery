@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Context, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, CustomFilterBuilder, isBackend } from 'remult';
+import { Remult, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, CustomFilterBuilder, isBackend } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -110,7 +110,7 @@ export class FamilyDeliveries extends IdEntity {
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })
-    static async getFamilyImages(family: string, delivery: string, context?: Context): Promise<ImageInfo[]> {
+    static async getFamilyImages(family: string, delivery: string, context?: Remult): Promise<ImageInfo[]> {
         if (!Roles.admin) {
             let d = await context.repo(FamilyDeliveries).findId(delivery);
             if (d.courier != context.currentUser)
@@ -540,7 +540,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     disableChangeLogging = false;
     _disableMessageToUsers = false;
-    constructor(protected context: Context) {
+    constructor(protected context: Remult) {
         super();
     }
 
@@ -826,7 +826,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
-function logChanged(context: Context, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: FieldRef<any, HelpersBase>, wasChanged: (() => void)) {
+function logChanged(context: Remult, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: FieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.value = context.currentUser;

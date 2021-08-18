@@ -1,5 +1,5 @@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from "@angular/router";
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Injectable } from "@angular/core";
 
 @Injectable()
@@ -8,7 +8,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
     handlers: { [key: string]: DetachedRouteHandle } = {};
     constructor(
-        private context: Context
+        private context: Remult
     ) { }
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         let x = (<any>route.component).prototype[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];

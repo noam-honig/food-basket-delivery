@@ -1,4 +1,4 @@
-import { CustomFilterBuilder, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Context } from 'remult';
+import { CustomFilterBuilder, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Remult } from 'remult';
 import { filterHelper } from 'remult/src/filter/filter-interfaces';
 import { InitContext } from '../helpers/init-context';
 
@@ -10,7 +10,7 @@ import { InitContext } from '../helpers/init-context';
 
 
 export class SqlBuilder {
-    static filterTranslators: { translate: (c: Context, f: Filter) => Promise<Filter> }[] = [];
+    static filterTranslators: { translate: (c: Remult, f: Filter) => Promise<Filter> }[] = [];
     max(val: any): any {
         return this.func('max', val);
     }
@@ -278,7 +278,7 @@ export class SqlBuilder {
 
         return this.build(...result);
     }
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         if (context&&!context.getSite)
             InitContext(context);
 

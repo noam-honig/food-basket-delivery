@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DataAreaSettings, DataControl, InputField } from '@remult/angular';
 import { DateOnlyValueConverter } from 'remult/valueConverters';
-import { Context, DateOnlyField, getFields } from 'remult';
+import { Remult, DateOnlyField, getFields } from 'remult';
 
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -65,7 +65,7 @@ export class DateRangeComponent implements OnInit {
     }
     this.dateChanged.emit();
   }
-  constructor(public settings: ApplicationSettings, private context: Context) {
+  constructor(public settings: ApplicationSettings, private context: Remult) {
   }
 
   ngOnInit() {

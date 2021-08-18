@@ -11,7 +11,7 @@ import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 import { use, TranslationOptions } from '../translate';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -74,7 +74,7 @@ export class HelperFamiliesComponent implements OnInit {
     }, 1000);
   }
 
-  constructor(public auth: AuthService, private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) { }
+  constructor(public auth: AuthService, private dialog: DialogService, public context: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -127,7 +127,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.indie })
-  static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, context?: Context, db?: SqlDatabase) {
+  static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, context?: Remult, db?: SqlDatabase) {
     if (!getSettings(context).isSytemForMlt())
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
@@ -302,7 +302,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.busy, this.familyLists.toDeliver, this.dialog);
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Context) {
+  static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Remult) {
     let dist: DistributionCenters = null;
     await pagedRowsIterator(context.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
@@ -325,7 +325,7 @@ export class HelperFamiliesComponent implements OnInit {
     return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async okAllForHelperOnServer(helper: HelpersBase, context?: Context) {
+  static async okAllForHelperOnServer(helper: HelpersBase, context?: Remult) {
     let dist: DistributionCenters = null;
 
     await pagedRowsIterator(context.repo(ActiveFamilyDeliveries), {
@@ -394,7 +394,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  static async sendSuccessMessageToFamily(deliveryId: string, context?: Context) {
+  static async sendSuccessMessageToFamily(deliveryId: string, context?: Remult) {
     var settings = getSettings(context);
     if (!settings.allowSendSuccessMessageOption)
       return;

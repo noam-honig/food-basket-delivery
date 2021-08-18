@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Context, FilterFactories, FindOptions, BackendMethod, SqlDatabase } from 'remult';
+import { Remult, FilterFactories, FindOptions, BackendMethod, SqlDatabase } from 'remult';
 import { Filter, AndFilter } from 'remult';
 
 import { BusyService, DialogConfig } from '@remult/angular';
@@ -49,7 +49,7 @@ export class SelectHelperComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<any>,
 
-    public context: Context,
+    public context: Remult,
     private busy: BusyService,
     public settings: ApplicationSettings
 
@@ -60,7 +60,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(undefined);
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, context?: Context, db?: SqlDatabase) {
+  static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, context?: Remult, db?: SqlDatabase) {
     let helpers = new Map<string, helperInList>();
 
 

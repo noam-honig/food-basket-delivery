@@ -3,7 +3,7 @@ import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
 import { BusyService, DataAreaFieldsSetting, DataAreaSettings, DialogConfig, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Context, BackendMethod } from 'remult';
+import { Remult, BackendMethod } from 'remult';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -47,7 +47,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   constructor(
     private dialogRef: MatDialogRef<any>,
 
-    private context: Context,
+    private context: Remult,
     public settings: ApplicationSettings,
     public dialog: DialogService,
     private cd: ChangeDetectorRef,
@@ -122,7 +122,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async SendCustomMessageToCourier(h: HelpersBase, message: string, context?: Context) {
+  static async SendCustomMessageToCourier(h: HelpersBase, message: string, context?: Remult) {
     await new SendSmsUtils().sendSms(h.phone.thePhone, await SendSmsAction.getSenderPhone(context), message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
 
   }

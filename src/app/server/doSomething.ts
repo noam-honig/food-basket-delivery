@@ -12,7 +12,7 @@ import * as AWS from 'aws-sdk';
 import { serverInit } from "./serverInit";
 
 
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { GeocodeCache, GeocodeInformation, getAddress } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import * as fs from 'fs';
@@ -147,7 +147,7 @@ class htmlReport {
 }
 
 async function buildDocs() {
-    var c = new Context();
+    var c = new Remult();
     
     var s = "## Data Model\n Here's a detailed list of all the entities used in the rest api";
     let list: any[] = [Families, FamilyDeliveries, Helpers, Event, volunteersInEvent, ApplicationSettings];

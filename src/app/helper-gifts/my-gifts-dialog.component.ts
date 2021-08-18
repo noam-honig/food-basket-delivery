@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -21,7 +21,7 @@ export class MyGiftsDialogComponent implements OnInit {
   };
 
   constructor(
-    private context: Context,
+    private context: Remult,
     public settings: ApplicationSettings
   ) { }
 

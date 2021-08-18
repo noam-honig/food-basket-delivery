@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Route } from '@angular/router';
-import { Context, BackendMethod, SqlDatabase } from 'remult';
+import { Remult, BackendMethod, SqlDatabase } from 'remult';
 import { toInt } from 'ngx-bootstrap/chronos/utils/type-checks';
 import { DateOnlyValueConverter } from 'remult/valueConverters';
 
@@ -25,7 +25,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
 
-  constructor(public context: Context) { }
+  constructor(public context: Remult) { }
 
 
   totalPerBasket = [];
@@ -95,7 +95,7 @@ export class WeeklyReportMltComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
+  static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
     let totalPerBasket: { URL: string, basketType: string, total: number, added: number, collected: number, received: number }[] = [];
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
@@ -132,7 +132,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getVolunteersData(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
+  static async getVolunteersData(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
@@ -160,7 +160,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getDonorsData(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
+  static async getDonorsData(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
@@ -187,7 +187,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getVolunteerAverage(fromDate?: string, toDate?: string, context?: Context, db?: SqlDatabase) {
+  static async getVolunteerAverage(fromDate?: string, toDate?: string, context?: Remult, db?: SqlDatabase) {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 

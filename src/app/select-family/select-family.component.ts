@@ -4,7 +4,7 @@ import { BusyService, GridSettings } from '@remult/angular';
 import { AndFilter, FilterFactories } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Filter } from 'remult';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -26,7 +26,7 @@ export class SelectFamilyComponent implements OnInit {
     allowShowAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
-  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context, public settings: ApplicationSettings) { }
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Remult, public settings: ApplicationSettings) { }
   searchString: string = '';
   families = new GridSettings(this.context.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;

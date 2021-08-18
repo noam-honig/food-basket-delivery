@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from 'remult/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { Context, Entity, SqlDatabase } from 'remult';
+import { Remult, Entity, SqlDatabase } from 'remult';
 import '../app-routing.module';
 import '../create-new-event/create-new-event'
 
@@ -116,7 +116,7 @@ export async function serverInit() {
                 await verifySchemaExistance(pool, Sites.guestSchema);
             }
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
-            let context = new Context();
+            let context = new Remult();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
 
             context.setDataProvider(dp)
@@ -155,7 +155,7 @@ export async function serverInit() {
             InitSchemas(pool);
 
             Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
-            return (y: Context) => {
+            return (y: Remult) => {
                 let org = Sites.getValidSchemaFromContext(y);
 
                 return new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
@@ -190,7 +190,7 @@ export async function serverInit() {
             for (const s of Sites.schemas) {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
-                    let context = new Context();
+                    let context = new Remult();
                     let h = await SqlFor(context.repo(Helpers));
                     var sql = new SqlBuilder(context);
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));

@@ -1,5 +1,5 @@
 import { DataControl } from "@remult/angular";
-import { Context, FieldRef } from "remult";
+import { Remult, FieldRef } from "remult";
 import { InputTypes } from "remult/inputTypes";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
@@ -35,7 +35,7 @@ export class Phone {
   static toJson(x: Phone): string {
     return x ? x.thePhone : '';
   }
-  static fixPhoneInput(s: string, context: Context) {
+  static fixPhoneInput(s: string, context: Remult) {
     if (!s)
       return s;
     let orig = s.trim();
@@ -49,11 +49,11 @@ export class Phone {
       s = '0' + s;
     return s;
   }
-  sendWhatsapp(context: Context, message = "") {
+  sendWhatsapp(context: Remult, message = "") {
     Phone.sendWhatsappToPhone(this.thePhone, message, context);
   }
 
-  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Context, test = false) {
+  static sendWhatsappToPhone(phone: string, smsMessage: string, context: Remult, test = false) {
     phone = Phone.fixPhoneInput(phone, context);
     if (phone.startsWith('0')) {
       phone = getSettings(context).getInternationalPhonePrefix() + phone.substr(1);
@@ -83,7 +83,7 @@ export class Phone {
 
     return x;
   }
-  static validatePhone(col: FieldRef<any, Phone>, context: Context, required = false) {
+  static validatePhone(col: FieldRef<any, Phone>, context: Remult, required = false) {
     if (!col.value || col.value.thePhone == '') {
       if (required)
         col.error = getLang(context).invalidPhoneNumber;

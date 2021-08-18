@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend } from "remult";
+import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend } from "remult";
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
 import { getLang } from '../sites/sites';
@@ -320,7 +320,7 @@ export class Event extends IdEntity {
         return DateOnlyValueConverter.toJson(this.eventDate);
     }
 
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         super();
     }
     openEditDialog(dialog: DialogService, busy: BusyService, cancel: () => void = () => { }) {
@@ -359,7 +359,7 @@ export class Event extends IdEntity {
             }
         ];
     }
-    static async duplicateEvent(context: Context, busy: BusyService, events: Event[], done: (createdEvents: Event[]) => void) {
+    static async duplicateEvent(context: Remult, busy: BusyService, events: Event[], done: (createdEvents: Event[]) => void) {
         let settings = getSettings(context);
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;

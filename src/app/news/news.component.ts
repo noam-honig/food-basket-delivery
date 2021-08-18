@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Context, AndFilter, FilterFactories } from 'remult';
+import { Remult, AndFilter, FilterFactories } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';
@@ -44,7 +44,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         openDialog(DeliveryImagesComponent, x => x.args = n);
     }
 
-    constructor(private dialog: DialogService, private context: Context, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
+    constructor(private dialog: DialogService, private context: Remult, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
         dialog.onStatusChange(() => this.refresh(), this.destroyHelper);
         dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 @Component({
@@ -9,7 +9,7 @@ import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/ang
 })
 export class GeneralImportFromExcelComponent implements OnInit {
 
-  constructor(private context: Context, private busy: BusyService, private dialog: MatDialogRef<any>) { }
+  constructor(private context: Remult, private busy: BusyService, private dialog: MatDialogRef<any>) { }
 
   ngOnInit() {
 

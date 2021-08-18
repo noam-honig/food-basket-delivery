@@ -11,7 +11,7 @@ import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSe
 import "../helpers/helpers.component";
 import "../event-info/RegisterToEvent";
 //import '../app.module';
-import { Context, SqlDatabase } from 'remult';
+import { Remult, SqlDatabase } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -177,7 +177,7 @@ s.parentNode.insertBefore(b, s);})();
             },
 
             disableAutoApi: Sites.multipleSites,
-            queueStorage: await preparePostgresQueueStorage(dataSource(new Context()))
+            queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
     if (process.env.logUrls != "true")
         eb.logApiEndPoints = false;
@@ -241,7 +241,7 @@ export interface monitorResult {
     helpers: number;
 }
 
-function registerImageUrls(app, getContext: (req: express.Request) => Promise<Context>, sitePrefix: string) {
+function registerImageUrls(app, getContext: (req: express.Request) => Promise<Remult>, sitePrefix: string) {
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
             let context = await getContext(req);

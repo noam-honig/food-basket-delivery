@@ -1,4 +1,4 @@
-import { FieldMetadata, Context, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "remult";
+import { FieldMetadata, Remult, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "remult";
 import { Roles } from "../auth/roles";
 import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "../helpers/helpers";
@@ -16,7 +16,7 @@ export class RegisterURL extends IdEntity {
     @Field({ caption: "שם ייחודי לדוחות", allowApiUpdate: Roles.distCenterAdmin })
     prettyName: string
 
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         super();
     }
 
@@ -26,7 +26,7 @@ export class RegisterURL extends IdEntity {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
+    static async loadUrlsFromTables(context?: Remult, db?: SqlDatabase) {
 
         let h = SqlFor(context.repo(Helpers));
         let f = SqlFor(context.repo(Families));

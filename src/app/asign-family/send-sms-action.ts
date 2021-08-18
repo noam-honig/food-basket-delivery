@@ -2,7 +2,7 @@ import { BackendMethod } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
@@ -14,7 +14,7 @@ export class SendSmsAction {
             .replace('!משפחה!', family);
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async SendSms(h: HelpersBase, reminder: Boolean, context?: Context) {
+    static async SendSms(h: HelpersBase, reminder: Boolean, context?: Remult) {
 
         try {
             await SendSmsAction.generateMessage(context, h, context.getOrigin(), reminder, context.user.name, async (phone, message, sender) => {
@@ -31,7 +31,7 @@ export class SendSmsAction {
 
 
 
-    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, context: Context, type: string) {
+    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, context: Remult, type: string) {
         let h = await hi.getHelper();
         if (reminder)
             h.reminderSmsDate = new Date();
@@ -48,7 +48,7 @@ export class SendSmsAction {
         await hist.save();
     }
 
-    static async generateMessage(ds: Context, helperIn: HelpersBase, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
+    static async generateMessage(ds: Remult, helperIn: HelpersBase, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
         let helper = await helperIn.getHelper();
         if (!origin) {
             throw 'Couldnt determine origin for sms';
@@ -84,7 +84,7 @@ export class SendSmsAction {
 
         }
     }
-    public static async getSenderPhone(context: Context) {
+    public static async getSenderPhone(context: Remult) {
         let sender = (await ApplicationSettings.getAsync(context)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
             sender = context.currentUser.phone.thePhone;

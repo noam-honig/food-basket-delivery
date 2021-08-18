@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FieldMetadata, FieldsMetadata, Entity, FieldRef, BackendMethod } from 'remult';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 
 
@@ -26,7 +26,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-  constructor(private context: Context, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private context: Remult, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
 
   }
 
@@ -94,7 +94,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async insertHelperRows(rowsToInsert: excelRowInfo[], context?: Context) {
+  static async insertHelperRows(rowsToInsert: excelRowInfo[], context?: Remult) {
     for (const r of rowsToInsert) {
       let f = context.repo(Helpers).create();
       for (const val in r.values) {
@@ -142,7 +142,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Context) {
+  static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, context?: Remult) {
     for (const r of rowsToUpdate) {
       await ImportHelpersFromExcelComponent.actualUpdateCol(r, columnMemberName, context);
     }
@@ -151,7 +151,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   async updateCol(i: excelRowInfo, col: FieldMetadata) {
     await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.key, this.context);
   }
-  static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Context) {
+  static async actualUpdateCol(i: excelRowInfo, colMemberName: string, context: Remult) {
     let c = ExcelHelper.actualGetColInfo(i, colMemberName);
     if (c.existingDisplayValue == c.newDisplayValue)
       return;
@@ -544,7 +544,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     return 'טלפון זהה';
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Context) {
+  static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], context?: Remult) {
     let result: serverCheckResults = {
       errorRows: [],
       identicalRows: [],

@@ -3,7 +3,7 @@
 import { FieldOptions, Entity, IdEntity, Allow, IntegerField } from 'remult';
 
 
-import { Context, } from 'remult';
+import { Remult, } from 'remult';
 
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';

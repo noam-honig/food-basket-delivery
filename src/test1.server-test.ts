@@ -1,6 +1,6 @@
 //import { CustomModuleLoader } from '../../radweb/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/out-tsc/server-test/radweb/projects');
-import { Context, SqlDatabase } from "remult";
+import { Remult, SqlDatabase } from "remult";
 import './app/manage/ApplicationSettings';
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
@@ -28,7 +28,7 @@ initSettings.disableSchemaInit = true;
 
 async function init() {
 
-    let context = new Context();
+    let context = new Remult();
     await InitContext(context);
     let helperWhoIsAdmin: Helpers;
 
@@ -390,7 +390,7 @@ async function init() {
             await f.createDelivery(a).save();
             await f.createDelivery(a).save();
             await f.createDelivery(b).save();
-            let c2 = new Context();
+            let c2 = new Remult();
             c2.setDataProvider(sql);
             let distAdmin = await c2.repo(Helpers).create({
                 id: 'distCenterAdmin',

@@ -1,5 +1,5 @@
 
-import { Context, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend } from 'remult';
+import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -112,7 +112,7 @@ export abstract class HelpersBase extends IdEntity {
         return this.id == this.context.user.id;
     }
 
-    constructor(protected context: Context) {
+    constructor(protected context: Remult) {
 
         super();
     }
@@ -399,7 +399,7 @@ export class Helpers extends HelpersBase {
 
         });
     }
-    static selectColumns(self: FieldsMetadata<Helpers>, context: Context) {
+    static selectColumns(self: FieldsMetadata<Helpers>, context: Remult) {
         let settings = getSettings(context);
         let r: DataControlSettings<Helpers>[] = [
             {
@@ -553,7 +553,7 @@ export class Helpers extends HelpersBase {
 
     static usingCompanyModule: boolean;
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
 
         super(context);
     }
@@ -786,7 +786,7 @@ export interface HelperUserInfo extends UserInfo {
     escortedHelperName: string;
     distributionCenter: string;
 }
-export function validatePasswordColumn(context: Context, password: FieldRef<any, string>) {
+export function validatePasswordColumn(context: Remult, password: FieldRef<any, string>) {
     if (getSettings(context).requireComplexPassword) {
         var l = getLang(context);
         if (password.value.length < 8)

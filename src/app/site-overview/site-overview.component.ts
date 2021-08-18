@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { siteItem, dateRange } from '../overview/overview.component';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BackendMethod, Context } from 'remult';
+import { BackendMethod, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { createSiteContext } from '../helpers/init-context';
 import { Helpers } from '../helpers/helpers';
@@ -14,7 +14,7 @@ import { Phone } from '../model-shared/phone';
 })
 export class SiteOverviewComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<any>, private context: Context) { }
+  constructor(public dialogRef: MatDialogRef<any>, private context: Remult) { }
   args: {
     site: siteItem,
     statistics: dateRange[]
@@ -27,7 +27,7 @@ export class SiteOverviewComponent implements OnInit {
     window.open(location.origin + '/' + this.args.site.site, '_blank');
   }
   @BackendMethod({ allowed: Roles.overview })
-  static async siteInfo(site: string, context?: Context): Promise<Manager[]> {
+  static async siteInfo(site: string, context?: Remult): Promise<Manager[]> {
     let c = await createSiteContext(site, context);
     return (await c.repo(Helpers).find({ where: x => x.admin.isEqualTo(true), orderBy: x => x.lastSignInDate.descending() })).map(
       ({ name, phone, lastSignInDate }) => ({

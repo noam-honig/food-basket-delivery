@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
-import { Context, BackendMethod } from 'remult';
+import { Remult, BackendMethod } from 'remult';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -11,7 +11,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class PrintVolunteersComponent implements OnInit {
 
-  constructor(private context: Context, private busy: BusyService) { }
+  constructor(private context: Remult, private busy: BusyService) { }
   volunteers: volunteer[] = [];
   total: number = 0;
   ngOnInit() {
@@ -22,7 +22,7 @@ export class PrintVolunteersComponent implements OnInit {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async volunteersForPrint(context?: Context) {
+  static async volunteersForPrint(context?: Remult) {
     let total = 0;
     let volunteers: volunteer[] = [];
     for await (const d of context.repo(ActiveFamilyDeliveries).iterate()) {

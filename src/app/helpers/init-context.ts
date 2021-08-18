@@ -1,4 +1,4 @@
-import { AndFilter, Context, Filter, FilterFactory, UserInfo } from "remult";
+import { AndFilter, Remult, Filter, FilterFactory, UserInfo } from "remult";
 import { BasketType } from "../families/BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
 
@@ -14,13 +14,11 @@ export const initConfig = {
     disableForTesting: false
 }
 const helpersCache = new Map<string, Helpers>();
-export async function InitContext(context: Context, user?: UserInfo) {
+export async function InitContext(context: Remult, user?: UserInfo) {
     let h: Helpers;
     let gotUser = !!user;
     if (user === undefined)
         user = context.user;
-  
-
 
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
@@ -73,16 +71,16 @@ export async function InitContext(context: Context, user?: UserInfo) {
 }
 
 
-export async function createSiteContext(site: string, original: Context) {
+export async function createSiteContext(site: string, original: Remult) {
     let dp = Sites.getDataProviderForOrg(site);
-    let c = new Context();
+    let c = new Remult();
     c.setDataProvider(dp);
     Sites.setSiteToContext(c, site, original);
     await InitContext(c, undefined);
     return c;
 }
 declare module 'remult' {
-    export interface Context {
+    export interface Remult {
         currentUser: Helpers;
         defaultBasketType: () => Promise<BasketType>
         defaultDistributionCenter: () => Promise<DistributionCenters>;

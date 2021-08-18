@@ -1,4 +1,4 @@
-import { Context, DataProvider } from "remult";
+import { Remult, DataProvider } from "remult";
 
 
 import { Roles } from "../auth/roles";
@@ -12,7 +12,7 @@ export class Sites {
         this.schemas.push(id);
     }
 
-    static isOverviewSchema(context: Context) {
+    static isOverviewSchema(context: Remult) {
         return Sites.getOrganizationFromContext(context) == Sites.guestSchema;
     }
     static guestSchema = 'guest';
@@ -37,7 +37,7 @@ export class Sites {
                 if (!site) {
                     site = Sites.guestSchema;
                 }
-                Context.apiBaseUrl = '/' + site + '/api';
+                Remult.apiBaseUrl = '/' + site + '/api';
             }
 
 
@@ -55,7 +55,7 @@ export class Sites {
 
     }
 
-    static getValidSchemaFromContext(y: Context) {
+    static getValidSchemaFromContext(y: Remult) {
         if (!Sites.multipleSites)
             return '';
         try {
@@ -68,16 +68,16 @@ export class Sites {
             return Sites.guestSchema;
         }
     }
-    static setSiteToContext(c: Context, site: string, origContext: Context) {
+    static setSiteToContext(c: Remult, site: string, origContext: Remult) {
         c.getSite = () => site;
     }
 
-    static getOrganizationFromContext(y: Context) {
+    static getOrganizationFromContext(y: Remult) {
         if (!Sites.multipleSites)
             return '';
         return y.getSite();
     }
-    static getOrgRole(y: Context) {
+    static getOrgRole(y: Remult) {
         return 'org:' + Sites.getOrganizationFromContext(y);
     }
 
@@ -110,7 +110,7 @@ const langForSite = new Map<string, Language>();
 export function setLangForSite(site: string, lang: TranslationOptions) {
     langForSite.set(site, langByCode(lang.args.languageFile));
 }
-export function getLang(context: Context) {
+export function getLang(context: Remult) {
     let r = langForSite.get(Sites.getValidSchemaFromContext(context));
     if (r)
         return r;

@@ -5,7 +5,7 @@ import { DialogService, extractError } from "../select-popup/dialog";
 import {  Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
-import { Allow, BackendMethod, Context, UserInfo } from 'remult';
+import { Allow, BackendMethod, Remult, UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
@@ -26,7 +26,7 @@ export function getToken() {
 }
 @Injectable()
 export class TokenService {
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
 
     }
     keyInStorage: string;
@@ -89,7 +89,7 @@ export class AuthService {
     }
 
     @BackendMethod({ allowed: true })
-    static async loginFromSms(key: string, context?: Context) {
+    static async loginFromSms(key: string, context?: Remult) {
 
         let r: LoginResponse = { valid: false };
         let h = await context.repo(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
@@ -125,7 +125,7 @@ export class AuthService {
         private dialog: DialogService,
         private tokenService: TokenService,
 
-        private context: Context,
+        private context: Remult,
         private routeHelper: RouteHelperService,
         public settings: ApplicationSettings,
         private zone: NgZone
@@ -207,7 +207,7 @@ export class AuthService {
     }
 
     @BackendMethod({ allowed: true })
-    static async login(args: loginArgs, context?: Context): Promise<loginResult> {
+    static async login(args: loginArgs, context?: Remult): Promise<loginResult> {
 
         let r: loginResult = {};
         let settings = getSettings(context);
@@ -342,7 +342,7 @@ export class AuthService {
         }
     }
     @BackendMethod({ allowed: Allow.authenticated })
-    static async renewToken(context?: Context) {
+    static async renewToken(context?: Remult) {
         if (!context.authenticated())
             return undefined;
         let h = await context.repo(Helpers).findId(context.user.id);
@@ -391,7 +391,7 @@ export interface loginArgs {
 
 }
 
-async function buildHelperUserInfo(h: Helpers, context: Context) {
+async function buildHelperUserInfo(h: Helpers, context: Remult) {
     let result: HelperUserInfo = {
         id: h.id,
         roles: [Sites.getOrgRole(context)],

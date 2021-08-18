@@ -1,4 +1,4 @@
-import { Context, Allowed, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, BackendMethod, ProgressListener, FilterFactories, EntityBase, getFields, Repository, IterateOptions } from "remult";
+import { Remult, Allowed, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, BackendMethod, ProgressListener, FilterFactories, EntityBase, getFields, Repository, IterateOptions } from "remult";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -28,7 +28,7 @@ export interface DoWorkOnServerHelper<T extends IdEntity> {
 
 
 export abstract class ActionOnRows<T extends IdEntity>  {
-    constructor(protected context: Context,
+    constructor(protected context: Remult,
         private entity: {
             new(...args: any[]): T;
         },

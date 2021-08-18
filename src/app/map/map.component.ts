@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { BusyService } from '@remult/angular';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -98,7 +98,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     dict = new Map<string, google.maps.Marker>();
     disableMapBoundsRefrest = 0;
-    constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
+    constructor(private context: Remult, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
         this.mediaMatcher.addListener((mql) => {
             if (mql.matches) {
                 let x = this.gmapElement.nativeElement.offsetWidth;

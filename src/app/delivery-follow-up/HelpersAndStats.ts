@@ -2,7 +2,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Entity } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { use, Field } from "../translate";
@@ -81,7 +81,7 @@ export class HelpersAndStats extends HelpersBase {
 
 
 
-    constructor(context: Context) {
+    constructor(context: Remult) {
         super(context);
     }
 }

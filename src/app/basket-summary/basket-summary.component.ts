@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { BasketType } from '../families/BasketType';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
@@ -11,7 +11,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class BasketSummaryComponent implements OnInit {
 
-  constructor(private context: Context, public settings: ApplicationSettings) { }
+  constructor(private context: Remult, public settings: ApplicationSettings) { }
   families: UserFamiliesList;
   boxes1Name = BasketType.boxes1Name;
   boxes2Name = BasketType.boxes2Name;

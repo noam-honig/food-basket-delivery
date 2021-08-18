@@ -1,7 +1,7 @@
 import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Context, Field, getFields } from 'remult';
+import { Remult, Field, getFields } from 'remult';
 import { EventInfoComponent } from '../event-info/event-info.component';
 import { BusyService, DataAreaSettings, DataControl, openDialog, RowButton } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
@@ -15,7 +15,7 @@ const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: un
   styleUrls: ['./event-card.component.scss']
 })
 export class EventCardComponent implements OnInit {
-  constructor(public settings: ApplicationSettings, private context: Context, private dialog: DialogService, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private context: Remult, private dialog: DialogService, private busy: BusyService) { }
   @Input() listOptions: RowButton<any>[] = [];
   menuOptions: RowButton<Event>[] = [
     {

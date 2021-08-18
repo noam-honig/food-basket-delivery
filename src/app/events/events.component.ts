@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Context, AndFilter, FieldsMetadata } from 'remult';
+import { Remult, AndFilter, FieldsMetadata } from 'remult';
 import { BusyService, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { Event, volunteersInEvent, eventStatus } from './events';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -31,7 +31,7 @@ export class EventsComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroyHelper.destroy();
   }
-  constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
+  constructor(private context: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
   events: GridSettings<Event> = new GridSettings<Event>(this.context.repo(Event), {

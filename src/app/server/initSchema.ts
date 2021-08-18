@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { SqlDatabase, FieldMetadata, Context } from 'remult';
+import { SqlDatabase, FieldMetadata, Remult } from 'remult';
 //import '../app.module';
 
 //
@@ -22,7 +22,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
 
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
-    let context = new Context();
+    let context = new Remult();
     await InitContext(context);
     context.setDataProvider(dataSource);
     let sql = new SqlBuilder(context);

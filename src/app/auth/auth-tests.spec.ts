@@ -1,5 +1,5 @@
 import { TestBed, async, inject } from '@angular/core/testing';
-import { Context, InMemoryDataProvider, } from 'remult';
+import { Remult, InMemoryDataProvider, } from 'remult';
 
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Roles } from './roles';
@@ -218,7 +218,7 @@ describe('users and security', () => {
         expect(r.valid).toBe(true);
     }));
 });
-function getAuthService(context: Context) {
+function getAuthService(context: Remult) {
     var s = new ApplicationSettings(context);
     s.currentUserIsValidForAppLoadTest = true;
     let jwt = new TokenService(context);
@@ -230,7 +230,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
         args = {};
     }
     let mem = new InMemoryDataProvider();
-    var context = new Context();
+    var context = new Remult();
     context.setDataProvider(mem);
     await context.userChange.observe(async () => InitContext(context));
     let c = context.repo(Helpers);

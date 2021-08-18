@@ -8,7 +8,7 @@ import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } 
 
 
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Context, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata } from 'remult';
+import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -75,7 +75,7 @@ export class ManageComponent implements OnInit {
     this.helpPhones = this.settings.getPhoneStrategy();
     this.qaItems = this.settings.getQuestions();
   }
-  constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
+  constructor(private dialog: DialogService, private context: Remult, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
 
   basketType = new GridSettings(this.context.repo(BasketType), {
     showFilter: true,
@@ -338,7 +338,7 @@ export class ManageComponent implements OnInit {
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async TestSendEmail(to: string, text: string, context?: Context) {
+  static async TestSendEmail(to: string, text: string, context?: Remult) {
     return await EmailSvc.sendMail("test email", text, to, context);
   }
 
@@ -563,7 +563,7 @@ export class ManageComponent implements OnInit {
     }
   }
   @BackendMethod({ allowed: Roles.admin, queue: true })
-  static async deleteFamiliesOnServer(context?: Context, progress?: ProgressListener) {
+  static async deleteFamiliesOnServer(context?: Remult, progress?: ProgressListener) {
 
 
     let i = 0;
@@ -619,7 +619,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   @Field()
   familiesCount: number;
 
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
     super();
   }
 
@@ -655,7 +655,7 @@ export class GroupsStatsForAllDeliveryCenters extends EntityBase implements Grou
   @Field()
   familiesCount: number;
 
-  constructor(private context: Context) {
+  constructor(private context: Remult) {
     super();
   }
 }

@@ -1,5 +1,5 @@
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
-import { UrlBuilder, Context } from "remult";
+import { UrlBuilder, Remult } from "remult";
 import { use, ValueListFieldType, } from "../translate";
 import { Location, toLongLat, GetDistanceBetween } from "../shared/googleApiHelpers"
 import * as fetch from 'node-fetch';
@@ -65,7 +65,7 @@ function getFarthest(fromPoint: Location, addresses: familiesInRoute[]) {
     return farthest;
 }
 
-export async function getRouteInfo(families: familiesInRoute[], optimize: boolean, startLongLat: string, destinationLongLat: string, context: Context) {
+export async function getRouteInfo(families: familiesInRoute[], optimize: boolean, startLongLat: string, destinationLongLat: string, context: Remult) {
     if (families.length > 25)
         return {};
     let u = new UrlBuilder('https://maps.googleapis.com/maps/api/directions/json');
@@ -98,7 +98,7 @@ export async function getRouteInfo(families: familiesInRoute[], optimize: boolea
     }
     return r;
 }
-export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], context: Context, useGoogle: boolean, strategy: routeStrategy, volunteerLocation: Location) {
+export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], context: Remult, useGoogle: boolean, strategy: routeStrategy, volunteerLocation: Location) {
 
 
     let result: {

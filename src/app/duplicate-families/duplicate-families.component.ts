@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendMethod, Context, SqlDatabase, FieldMetadata, EntityWhere, getFields, Filter } from 'remult';
+import { BackendMethod, Remult, SqlDatabase, FieldMetadata, EntityWhere, getFields, Filter } from 'remult';
 import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
@@ -39,7 +39,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   tz: boolean = false;
   get $() { return getFields(this, this.context) }
   area = new DataAreaSettings({ fields: () => [[this.$.address, this.$.name, this.$.phone, this.$.tz, this.$.onlyActive]] });
-  constructor(private context: Context, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
+  constructor(private context: Remult, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
   }
   duplicateFamilies: duplicateFamilies[] = [];
@@ -173,7 +173,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: true })
-  static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, context?: Context, db?: SqlDatabase) {
+  static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, context?: Remult, db?: SqlDatabase) {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";
     let sql = new SqlBuilder(context);

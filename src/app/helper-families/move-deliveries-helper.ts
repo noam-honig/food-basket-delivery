@@ -1,7 +1,7 @@
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { Context, BackendMethod } from "remult";
+import { Remult, BackendMethod } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
@@ -11,7 +11,7 @@ import { Families } from "../families/families";
 import { openDialog } from "@remult/angular";
 
 export class moveDeliveriesHelper {
-    constructor(private context: Context, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
+    constructor(private context: Remult, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
 
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '') {
 
@@ -31,7 +31,7 @@ export class moveDeliveriesHelper {
             });
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async moveDeliveriesBetweenVolunteers(helperFrom: HelpersBase, to: HelpersBase, context?: Context) {
+    static async moveDeliveriesBetweenVolunteers(helperFrom: HelpersBase, to: HelpersBase, context?: Remult) {
         let t = new PromiseThrottle(10);
         let settings = getSettings(context);
         let i = 0;

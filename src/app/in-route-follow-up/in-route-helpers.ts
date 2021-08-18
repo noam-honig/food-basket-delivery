@@ -1,4 +1,4 @@
-import { IdEntity, Context, Entity, FieldMetadata } from "remult";
+import { IdEntity, Remult, Entity, FieldMetadata } from "remult";
 import { Roles } from "../auth/roles";
 import { DateTimeColumn, relativeDateName, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -199,7 +199,7 @@ export class InRouteHelpers extends IdEntity {
     })
     frozenTill: Date;
 
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         super();
     }
 }
@@ -230,7 +230,7 @@ export class HelperCommunicationHistory extends IdEntity {
     @DataControl({ width: '400' })
     comment: string;
 
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         super()
     }
 

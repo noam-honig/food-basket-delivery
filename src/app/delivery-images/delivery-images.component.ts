@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Context, IdEntity } from 'remult';
+import { Remult, IdEntity } from 'remult';
 import { FamilyImage } from '../families/DeiveryImages';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ImageInfo } from '../images/images.component';
@@ -13,7 +13,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class DeliveryImagesComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private context: Context) { }
+  constructor(public settings: ApplicationSettings, private context: Remult) { }
   args: FamilyDeliveries
 
   images: myImageInfo[];

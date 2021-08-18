@@ -6,7 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { RouteHelperService, BusyService } from '@remult/angular';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
@@ -41,7 +41,7 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
     public helper: RouteHelperService,
-    public context: Context,
+    public context: Remult,
     public settings: ApplicationSettings,
     private busy: BusyService
   ) {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context, BackendMethod, SqlDatabase } from 'remult';
+import { Remult, BackendMethod, SqlDatabase } from 'remult';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from '../helpers/helpers';
@@ -52,7 +52,7 @@ export class SelectCompanyComponent implements OnInit {
 
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getCompanies(context?: Context, db?: SqlDatabase) {
+  static async getCompanies(context?: Remult, db?: SqlDatabase) {
     var sql = new SqlBuilder(context);
     let h = SqlFor(context.repo(Helpers));
     let r = await db.execute(await sql.query({

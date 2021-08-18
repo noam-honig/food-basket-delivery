@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Context, SqlDatabase } from 'remult';
+import { Remult, SqlDatabase } from 'remult';
 import { GridSettings, openDialog } from '@remult/angular';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
@@ -13,7 +13,7 @@ import { RegisterURL } from './regsiter-url';
 
 export class RegisterURLComponent implements OnInit {
 
-  constructor(private context: Context) { }
+  constructor(private context: Remult) { }
   urls = new GridSettings(this.context.repo(RegisterURL), {
     allowUpdate: true,
     allowInsert: true,

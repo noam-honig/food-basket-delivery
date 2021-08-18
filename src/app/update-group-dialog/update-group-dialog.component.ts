@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { Groups, GroupsValue } from '../manage/groups';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { InputField } from '@remult/angular';
 
 export class UpdateGroupDialogComponent implements OnInit {
 
-  constructor(private context: Context, private dialog: DialogService,
+  constructor(private context: Remult, private dialog: DialogService,
     private dialogRef: MatDialogRef<any>, public settings: ApplicationSettings) {
 
 

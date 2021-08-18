@@ -1,7 +1,7 @@
 import { Phone } from "../model-shared/phone";
 
 
-import { Context, IdEntity, Entity, Allow } from 'remult';
+import { Remult, IdEntity, Entity, Allow } from 'remult';
 import { Roles } from "../auth/roles";
 
 import { DataControl, getValueList } from "@remult/angular";

@@ -3,7 +3,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType } from "../families/BasketType";
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
@@ -30,7 +30,7 @@ export class UserFamiliesList {
     }
     forceShowMap = false;
 
-    constructor(private context: Context, private settings: ApplicationSettings) { }
+    constructor(private context: Remult, private settings: ApplicationSettings) { }
     toDeliver: ActiveFamilyDeliveries[] = [];
     delivered: ActiveFamilyDeliveries[] = [];
     problem: ActiveFamilyDeliveries[] = [];

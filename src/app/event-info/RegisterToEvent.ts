@@ -1,5 +1,5 @@
 import { DataControl, openDialog } from '@remult/angular';
-import { BackendMethod, Context, Controller, getFields, Validators, EventSource } from 'remult';
+import { BackendMethod, Remult, Controller, getFields, Validators, EventSource } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event } from '../events/events';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -25,7 +25,7 @@ function storedInfo(): VolunteerInfo {
 
 @Controller('event-Info')
 export class RegisterToEvent {
-    constructor(private context: Context) {
+    constructor(private context: Remult) {
         if (!actionInfo.runningOnServer) {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
@@ -97,7 +97,7 @@ export class RegisterToEvent {
             let dp = Sites.getDataProviderForOrg(site);
 
             let orig = this.context;
-            this.context = new Context();
+            this.context = new Remult();
             this.context.setDataProvider(dp);
             Sites.setSiteToContext(this.context, site, orig);
             await InitContext(this.context);

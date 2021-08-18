@@ -6,7 +6,7 @@ import { AuthService, loginResult } from '../../auth/auth-service';
 import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { BackendMethod, Context, getFields } from 'remult';
+import { BackendMethod, Remult, getFields } from 'remult';
 import { RouteHelperService, NotSignedInGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
 
 import { AdminGuard } from '../../auth/roles';
@@ -75,7 +75,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
-    private context: Context,
+    private context: Remult,
     public settings: ApplicationSettings
   ) { }
   ngAfterViewInit(): void {
@@ -195,7 +195,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   });
   @BackendMethod({ allowed: true })
-  static async registerNewUser(phone: string, name: string, context?: Context) {
+  static async registerNewUser(phone: string, name: string, context?: Remult) {
     let h = context.repo(Helpers).create();
     h.phone = new Phone(phone);
     h.name = name;

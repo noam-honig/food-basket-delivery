@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Helpers } from './helpers';
 import { Route } from '@angular/router';
 import { BackendMethod } from 'remult';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
 
@@ -24,7 +24,7 @@ import { getLang } from '../sites/sites';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit, OnDestroy {
-  constructor(private dialog: DialogService, public context: Context, private busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private dialog: DialogService, public context: Remult, private busy: BusyService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.helpers.reloadData();
     }, this.destroyHelper);
@@ -253,7 +253,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   @BackendMethod({ allowed: Roles.admin })
-  static async resetPassword(helperId: string, context?: Context) {
+  static async resetPassword(helperId: string, context?: Remult) {
 
     await context.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.realStoredPassword = '';
@@ -261,7 +261,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async invalidatePassword(helperId: string, context?: Context) {
+  static async invalidatePassword(helperId: string, context?: Remult) {
 
     await context.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.passwordChangeDate = new Date(1901, 1, 1);
@@ -270,7 +270,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   }
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async sendInvite(helperId: string, context?: Context) {
+  static async sendInvite(helperId: string, context?: Remult) {
     let h = await context.repo(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
       return getLang(context).unfitForInvite;
@@ -310,7 +310,7 @@ ${url}
 
 
   @BackendMethod({ allowed: Roles.admin })
-  static async clearCommentsOnServer(context?: Context) {
+  static async clearCommentsOnServer(context?: Remult) {
     for await (const h of context.repo(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
       h.eventComment = '';
       await h.save();
@@ -318,7 +318,7 @@ ${url}
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async clearEscortsOnServer(context?: Context) {
+  static async clearEscortsOnServer(context?: Remult) {
     for await (const h of context.repo(Helpers).iterate()) {
       h.escort = null;
       h.needEscort = false;

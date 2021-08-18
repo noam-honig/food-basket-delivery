@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { BusyService, DataControlSettings, FieldCollection, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
-import { Context, BackendMethod, Fields, FieldRef, FieldMetadata } from 'remult';
+import { Remult, BackendMethod, Fields, FieldRef, FieldMetadata } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService, extractError } from '../select-popup/dialog';
@@ -28,7 +28,7 @@ function phoneDigits(val: Phone | string) {
 
 export class MergeFamiliesComponent implements OnInit {
 
-  constructor(public context: Context, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
+  constructor(public context: Remult, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
@@ -181,7 +181,7 @@ export class MergeFamiliesComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async mergeFamilies(ids: string[], context?: Context) {
+  static async mergeFamilies(ids: string[], context?: Remult) {
     let id = ids.splice(0, 1)[0];
     let newFamily = await context.repo(Families).findId(id);
 

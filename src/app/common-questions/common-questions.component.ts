@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationSettings, qaItem, phoneOption } from '../manage/ApplicationSettings';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Context } from 'remult';
+import { Remult } from 'remult';
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -12,29 +12,28 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 })
 export class CommonQuestionsComponent implements OnInit {
 
-  questions:qaItem[];
+  questions: qaItem[];
   args: {
-    family:ActiveFamilyDeliveries
+    family: ActiveFamilyDeliveries
   };
-  phoneOptions: phoneOption[]=[];
-  constructor(public settings: ApplicationSettings, private dialog: MatDialogRef<any>,private context:Context) { 
+  phoneOptions: phoneOption[] = [];
+  constructor(public settings: ApplicationSettings, private dialog: MatDialogRef<any>) {
     this.questions = settings.getQuestions();
 
   }
-  async init(family:ActiveFamilyDeliveries){
-    this.args ={family: family};
+  async init(family: ActiveFamilyDeliveries) {
+    this.args = { family: family };
     this.phoneOptions = await ApplicationSettings.getPhoneOptions(family.id);
   }
 
   async ngOnInit() {
-    
+
   }
-  cancel()
-  {
+  cancel() {
     this.dialog.close();
   }
-  updateFailedDelivery=false;
-  confirm(){
+  updateFailedDelivery = false;
+  confirm() {
     this.updateFailedDelivery = true;
     this.dialog.close();
   }

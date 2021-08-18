@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Context, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from 'remult';
+import { Remult, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from 'remult';
 import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -435,7 +435,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return undefined;
   }
   constructor(
-    private context: Context,
+    private context: Remult,
     public dialog: DialogService,
     private busy: BusyService,
     public settings: ApplicationSettings,
@@ -707,7 +707,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   });
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getGroups(dist: DistributionCenters, readyOnly = false, context?: Context) {
+  static async getGroups(dist: DistributionCenters, readyOnly = false, context?: Remult) {
     let pendingStats = [];
     let result: groupStats[] = [];
     await context.repo(Groups).find({
@@ -734,7 +734,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     return result;
   }
   @BackendMethod({ allowed: Roles.lab })
-  static async getDeliveriesByPhone(phoneNumIn: string, context?: Context, db?: SqlDatabase) {
+  static async getDeliveriesByPhone(phoneNumIn: string, context?: Remult, db?: SqlDatabase) {
     let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder(context);
 
@@ -788,7 +788,7 @@ interface statsOnTab {
 }
 
 export interface deliveryButtonsHelper {
-  context: Context,
+  context: Remult,
   dialog: DialogService,
   busy: BusyService,
   settings: ApplicationSettings,

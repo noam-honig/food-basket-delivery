@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
 import { BusyService, InputField, openDialog } from '@remult/angular';
-import { BackendMethod, Context, SqlDatabase } from 'remult';
+import { BackendMethod, Remult, SqlDatabase } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -110,7 +110,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   togglerShowHelper(forFamily: familyInfo) {
     this.openFamilies.set(forFamily, !this.openFamilies.get(forFamily));
   }
-  constructor(private context: Context, private busy: BusyService, private settings: ApplicationSettings) { }
+  constructor(private context: Remult, private busy: BusyService, private settings: ApplicationSettings) { }
   data: data;
   families: familyInfo[] = [];
   async ngOnInit() {
@@ -170,7 +170,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   @BackendMethod({ allowed: Roles.admin })
-  static async getShipmentAssignInfo(context?: Context, db?: SqlDatabase) {
+  static async getShipmentAssignInfo(context?: Remult, db?: SqlDatabase) {
     let result: data = {
       helpers: {},
       unAssignedFamilies: {}

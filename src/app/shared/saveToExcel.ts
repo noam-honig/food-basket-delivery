@@ -1,4 +1,4 @@
-import { Entity, Context, EntityBase, Repository,  FieldRef } from 'remult';
+import { Entity, Remult, EntityBase, Repository,  FieldRef } from 'remult';
 import { BusyService, GridSettings } from '@remult/angular';
 
 import { DateTimeColumn } from "../model-shared/types";
