@@ -5,7 +5,7 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { Helpers } from "./helpers";
 import { GetDistanceBetween, Location } from "../shared/googleApiHelpers";
 import { Roles } from "../auth/roles";
-import { getLang, Sites } from "../sites/sites";
+import { getLang, getSiteFromUrl, Sites } from "../sites/sites";
 import { Language } from "../translate";
 import { ApplicationSettings, settingsForSite } from "../manage/ApplicationSettings";
 
@@ -19,6 +19,8 @@ export async function InitContext(context: Context, user?: UserInfo) {
     let gotUser = !!user;
     if (user === undefined)
         user = context.user;
+  
+
 
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
@@ -69,6 +71,8 @@ export async function InitContext(context: Context, user?: UserInfo) {
     }
     context.lang = getLang(context);
 }
+
+
 export async function createSiteContext(site: string, original: Context) {
     let dp = Sites.getDataProviderForOrg(site);
     let c = new Context();
@@ -86,5 +90,7 @@ declare module 'remult' {
         filterCenterAllowedForUser(center: FilterFactory<DistributionCenters>): Filter;
         filterDistCenter(distCenterColumn: FilterFactory<DistributionCenters>, distCenter: DistributionCenters): Filter
         lang: Language;
+        getSite(): string;
+        getOrigin():string;
     }
 }

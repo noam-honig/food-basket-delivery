@@ -279,7 +279,7 @@ export class SqlBuilder {
         return this.build(...result);
     }
     constructor(private context: Context) {
-        if (context&&!context.filterCenterAllowedForUser)
+        if (context&&!context.getSite)
             InitContext(context);
 
     }

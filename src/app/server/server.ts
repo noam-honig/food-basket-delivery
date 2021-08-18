@@ -12,7 +12,7 @@ import "../helpers/helpers.component";
 import "../event-info/RegisterToEvent";
 //import '../app.module';
 import { Context, SqlDatabase } from 'remult';
-import { Sites, setLangForSite } from '../sites/sites';
+import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
@@ -115,7 +115,7 @@ s.parentNode.insertBefore(b, s);})();
             if (settings.forWho.args.languageCode) {
                 let lang = settings.forWho.args.languageCode;
                 result = result.replace(/&language=iw&/, `&language=${lang}&`)
-                .replace(/&amp;language=iw&amp;/, `&language=${lang}&`)
+                    .replace(/&amp;language=iw&amp;/, `&language=${lang}&`)
                     .replace(/טוען/g, 'Loading');
             }
             if (settings.forWho.args.languageFile) {
@@ -160,10 +160,24 @@ s.parentNode.insertBefore(b, s);})();
     let eb = initExpress(
         app,
         {
-            initRequest: async c => {
-                await InitContext(c)
+            initRequest: async (context, req) => {
+                let url = '';
+                if (req) {
+                    if (req.originalUrl)
+                        url = req.originalUrl;
+                    else
+                        url = req.path;
+                } else if (!context.backend || typeof (window) != "undefined") {
+                    url = window.location.pathname;
+                }
+                context.getSite = () => getSiteFromUrl(url);
+                if (!context.isAllowed(Sites.getOrgRole(context)))
+                    context.setUser(undefined);
+                context.setDataProvider(dataSource(context));
+                context.getOrigin = ()=> req.headers['origin'] as string;
+                await InitContext(context, undefined)
             },
-            dataProvider: dataSource,
+
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new Context()))
         });
@@ -172,15 +186,7 @@ s.parentNode.insertBefore(b, s);})();
 
     if (Sites.multipleSites) {
 
-        let area = eb.addArea('/*/api', req => {
-            if (req.user) {
-                let context = new Context();
-                context.setReq(req);
-                if (context.isAllowed(Sites.getOrgRole(context)))
-                    return true;
-            }
-            return false;
-        });
+        let area = eb.addArea('/*/api');
         registerActionsOnServer(area);
         registerEntitiesOnServer(area);
         registerImageUrls(app, (req) => eb.getValidContext(req), '/*');
@@ -197,17 +203,7 @@ s.parentNode.insertBefore(b, s);})();
 
         };
         {
-            let area = eb.addArea('/' + Sites.guestSchema + '/api', req => {
-                if (req.user) {
-                    let context = new Context();
-                    context.setReq(req);
-                    if (context.isAllowed(Sites.getOrgRole(context)))
-                        return true;
-
-
-                }
-                return false;
-            });
+            let area = eb.addArea('/' + Sites.guestSchema + '/api');
             registerActionsOnServer(area);
             registerEntitiesOnServer(area);
         }

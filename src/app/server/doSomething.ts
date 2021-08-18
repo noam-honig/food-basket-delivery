@@ -148,13 +148,7 @@ class htmlReport {
 
 async function buildDocs() {
     var c = new Context();
-    c.setReq({
-        getBaseUrl: () => '',
-        clientIp: '',
-        user: undefined,
-        get: undefined,
-        getHeader: undefined
-    });
+    
     var s = "## Data Model\n Here's a detailed list of all the entities used in the rest api";
     let list: any[] = [Families, FamilyDeliveries, Helpers, Event, volunteersInEvent, ApplicationSettings];
     for (const iterator of allEntities) {

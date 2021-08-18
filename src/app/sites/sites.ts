@@ -69,30 +69,24 @@ export class Sites {
         }
     }
     static setSiteToContext(c: Context, site: string, origContext: Context) {
-        let url = origContext.getPathInUrl();
-        let parts = url.split('/');
-        parts[1] = site;
-        url = parts.join('/');;
-        c.getPathInUrl = () => url;
+        c.getSite = () => site;
     }
 
     static getOrganizationFromContext(y: Context) {
         if (!Sites.multipleSites)
             return '';
-        if (!y.getPathInUrl)
-            return '';
-        let url = y.getPathInUrl();
-        if (!url)
-            return '';
-        let org = url.split('/')[1];
-        if (org && org.toLowerCase() == 'api')
-            org = url.split('/')[2];
-        return org;
+        return y.getSite();
     }
     static getOrgRole(y: Context) {
         return 'org:' + Sites.getOrganizationFromContext(y);
     }
 
+}
+export function getSiteFromUrl(url: string) {
+    let site = url.split('/')[1];
+    if (site && site.toLowerCase() == 'api')
+        site = url.split('/')[2];
+    return site;
 }
 
 

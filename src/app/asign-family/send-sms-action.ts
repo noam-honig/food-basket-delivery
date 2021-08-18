@@ -1,6 +1,6 @@
 import { BackendMethod } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import {  HelpersBase } from '../helpers/helpers';
+import { HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
 import { Context } from 'remult';
 import { Roles } from "../auth/roles";

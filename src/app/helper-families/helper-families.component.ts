@@ -108,7 +108,7 @@ export class HelperFamiliesComponent implements OnInit {
           { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
         ]
       },
-      cancel:()=>{},
+      cancel: () => { },
       ok: async () => {
         await this.updateCurrentLocation(useCurrentLocation.value);
         if (this.familyLists.helper.wasChanged())

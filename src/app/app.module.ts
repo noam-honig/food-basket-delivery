@@ -61,7 +61,7 @@ import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/imp
 import { PlaybackComponent } from './playback/playback.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { environment } from '../environments/environment';
-import { Sites } from './sites/sites';
+import { getSiteFromUrl, Sites } from './sites/sites';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { OverviewComponent } from './overview/overview.component';
 import { TransitionGroupComponent, TransitionGroupItemDirective } from './overview/transition-group';
@@ -293,13 +293,14 @@ export function initApp(session: TokenService, settings: SettingsService, contex
 
     try {
       try {
+        context.getSite = () => getSiteFromUrl(window.location.pathname)
         await session.loadUserInfo();
         await context.userChange.observe(async () => {
           await InitContext(context);
 
         });
       } catch {
-        session.setToken(undefined,true);
+        session.setToken(undefined, true);
         await context.userChange.observe(async () => {
           await InitContext(context);
 
