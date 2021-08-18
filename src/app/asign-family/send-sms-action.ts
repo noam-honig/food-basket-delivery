@@ -38,7 +38,7 @@ export class SendSmsAction {
         else
             h.smsDate = new Date();
         await h.save();
-        let hist = context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+        let hist = context.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
         hist.volunteer = h;
         if (reminder) {
             hist.comment = 'Reminder ' + type;

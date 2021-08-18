@@ -92,7 +92,7 @@ export class AuthService {
     static async loginFromSms(key: string, context?: Context) {
 
         let r: LoginResponse = { valid: false };
-        let h = await context.for(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+        let h = await context.repo(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
 
         if (h) {
             r.phone = h.phone.thePhone;
@@ -211,7 +211,7 @@ export class AuthService {
 
         let r: loginResult = {};
         let settings = getSettings(context);
-        let h = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(args.phone)));
+        let h = await context.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(args.phone)));
         if (!h) {
             r.newUser = true;
             return r;
@@ -345,7 +345,7 @@ export class AuthService {
     static async renewToken(context?: Context) {
         if (!context.authenticated())
             return undefined;
-        let h = await context.for(Helpers).findId(context.user.id);
+        let h = await context.repo(Helpers).findId(context.user.id);
         if (!h)
             return undefined;
         let newInfo = await buildHelperUserInfo(h, context);

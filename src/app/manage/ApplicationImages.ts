@@ -16,6 +16,6 @@ export class ApplicationImages extends EntityBase {
 
 
   static async getAsync(context: Context): Promise<ApplicationImages> {
-    return context.for(ApplicationImages).findFirst(undefined);
+    return context.repo(ApplicationImages).findFirst(undefined);
   }
 }

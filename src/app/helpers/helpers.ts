@@ -106,7 +106,7 @@ export abstract class HelpersBase extends IdEntity {
             })
     }
     getHelper(): Promise<Helpers> {
-        return this.context.for(Helpers).findId(this.id);
+        return this.context.repo(Helpers).findId(this.id);
     }
     isCurrentUser(): boolean {
         return this.id == this.context.user.id;
@@ -300,7 +300,7 @@ export abstract class HelpersBase extends IdEntity {
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if ((await self.context.for(Helpers).count()) == 0) {
+            if ((await self.context.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
@@ -495,7 +495,7 @@ export class Helpers extends HelpersBase {
         return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent;
     }
     async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
-        let ctx = this.context.for((await import('../families/FamilyDeliveries')).FamilyDeliveries);
+        let ctx = this.context.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         openDialog(GridDialogComponent, x => x.args = {
             title: use.language.deliveriesFor + ' ' + this.name,
             stateName: 'deliveries-for-volunteer',
@@ -604,13 +604,13 @@ export class Helpers extends HelpersBase {
                     continue;
                 ids.push(fd.family);
                 i++;
-                let f = await this.context.for((await import('../families/families')).Families).findId(fd.family);
+                let f = await this.context.repo((await import('../families/families')).Families).findId(fd.family);
                 f.fixedCourier = fd.courier;
                 await f.save();
             }
         });
 
-        let otherFamilies = await this.context.for((await import('../families/families')).Families).find({
+        let otherFamilies = await this.context.repo((await import('../families/families')).Families).find({
             where: f => f.fixedCourier.isEqualTo(this)
                 .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
         });

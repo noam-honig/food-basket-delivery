@@ -22,15 +22,15 @@ export class RegisterURL extends IdEntity {
 
     urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
-        return this.context.for(RegisterURL).findFirst(g => g.URL.contains(s));
+        return this.context.repo(RegisterURL).findFirst(g => g.URL.contains(s));
     }
 
     @BackendMethod({ allowed: Roles.admin })
     static async loadUrlsFromTables(context?: Context, db?: SqlDatabase) {
 
-        let h = SqlFor(context.for(Helpers));
-        let f = SqlFor(context.for(Families));
-        let u = SqlFor(context.for(RegisterURL));
+        let h = SqlFor(context.repo(Helpers));
+        let f = SqlFor(context.repo(Families));
+        let u = SqlFor(context.repo(RegisterURL));
         let sql = new SqlBuilder(context);
         let urls = [];
 
@@ -50,10 +50,10 @@ export class RegisterURL extends IdEntity {
 
         for (const url of urls) {
             if ((url != undefined) && (url != '')) {
-                let g = await context.for(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
+                let g = await context.repo(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
                 if (!g) {
                     console.log("adding entry for: ", url);
-                    g = context.for(RegisterURL).create();
+                    g = context.repo(RegisterURL).create();
                     g.URL = url;
                     g.prettyName = url;
                     await g.save();

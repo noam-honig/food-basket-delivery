@@ -14,7 +14,7 @@ import { RegisterURL } from './regsiter-url';
 export class RegisterURLComponent implements OnInit {
 
   constructor(private context: Context) { }
-  urls = new GridSettings(this.context.for(RegisterURL), {
+  urls = new GridSettings(this.context.repo(RegisterURL), {
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 2,

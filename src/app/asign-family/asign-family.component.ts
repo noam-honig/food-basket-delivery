@@ -107,12 +107,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         if (this.isValidPhone()) {
             let thisPhone = new Phone(this.phone);
             this.phone = cleanPhone;
-            let helper = await this.context.for(Helpers).findFirst(h => h.phone.isEqualTo(thisPhone));
+            let helper = await this.context.repo(Helpers).findFirst(h => h.phone.isEqualTo(thisPhone));
             if (helper) {
 
                 this.initHelper(helper);
             } else {
-                helper = this.context.for(Helpers).create();
+                helper = this.context.repo(Helpers).create();
                 helper.phone = thisPhone;
                 this.initHelper(helper);
 
@@ -228,10 +228,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await this.busy.donotWait(async () => {
             let groups: Promise<GroupsStats[]>;
             if (!this.dialog.distCenter) {
-                groups = this.context.for(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
+                groups = this.context.repo(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
             }
             else
-                groups = this.context.for(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(this.dialog.filterDistCenter(f.distCenter)), limit: 1000 });
+                groups = this.context.repo(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(this.dialog.filterDistCenter(f.distCenter)), limit: 1000 });
             groups.then(g => {
                 this.groups = g;
                 if (this.filterGroup != '' && !this.groups.find(x => x.name == this.filterGroup)) {
@@ -248,7 +248,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.baskets = [this.allBaskets];
             this.baskets.push(...await Promise.all(r.baskets.map(async x => ({
                 ...x,
-                basket: await this.context.for(BasketType).findId(x.id)
+                basket: await this.context.repo(BasketType).findId(x.id)
             }))));
             this.allBaskets.unassignedFamilies = 0;
             let found = false;
@@ -357,7 +357,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             onSelect: async h => {
                 if (h) {
                     this.clearHelperInfo(false);
-                    this.initHelper(await this.context.for(Helpers).findId(h.id));
+                    this.initHelper(await this.context.repo(Helpers).findId(h.id));
                 }
                 else {
                     this.clearHelperInfo();
@@ -413,7 +413,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.donotWait(async () => {
-            let f = await this.context.for(ActiveFamilyDeliveries).findId(familyId);
+            let f = await this.context.repo(ActiveFamilyDeliveries).findId(familyId);
             if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && !f.courier) {
                 this.performSpecificFamilyAssignment(f, 'assign based on map');
             }
@@ -452,7 +452,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
-                                let f = await this.context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(FamilyDeliveries.readyFilter()));
+                                let f = await this.context.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(FamilyDeliveries.readyFilter()));
                                 f.courier = this.helper;
                                 await f.save();
                             }
@@ -506,7 +506,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
         let countFamilies = (additionalWhere?: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter) => {
-            return context.for(ActiveFamilyDeliveries).count(f => {
+            return context.repo(ActiveFamilyDeliveries).count(f => {
                 let where = FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket).and(context.filterDistCenter(f.distributionCenter, distCenter));
                 if (additionalWhere) {
                     where = where.and(additionalWhere(f));
@@ -520,8 +520,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
         let sql = new SqlBuilder(context);
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
-        let fd = SqlFor(context.for(FamilyDeliveries));
+        let f = SqlFor(context.repo(ActiveFamilyDeliveries));
+        let fd = SqlFor(context.repo(FamilyDeliveries));
         if (helper) {
             let r = await db.execute(await sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(context.filterDistCenter(f.distributionCenter, distCenter)).and(FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
                 filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
@@ -531,7 +531,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
         if (!distCenter) {
-            for await (let c of context.for(CitiesStats).iterate({
+            for await (let c of context.repo(CitiesStats).iterate({
                 orderBy: ff => ff.city,
             })) {
                 var ci = {
@@ -548,7 +548,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
             }
         } else {
-            for await (let c of context.for(CitiesStatsPerDistCenter).iterate({
+            for await (let c of context.repo(CitiesStatsPerDistCenter).iterate({
                 orderBy: ff => ff.city,
                 where: ff => context.filterDistCenter(ff.distributionCenter, distCenter)
             })) {
@@ -593,7 +593,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-            let b = await context.for(BasketType).findId(basketId);
+            let b = await context.repo(BasketType).findId(basketId);
             result.baskets.push({
                 id: basketId,
                 name: b?.name,
@@ -617,7 +617,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!args)
             args = {};
-        let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
+        let existingFamilies = await context.repo(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helper).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
         });
@@ -673,7 +673,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
         if (!helper)
             throw "helper does not exist";
-        let existingFamilies = await context.for(ActiveFamilyDeliveries).find({
+        let existingFamilies = await context.repo(ActiveFamilyDeliveries).find({
             where: f => f.courier.isEqualTo(helper).and(
                 f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
             orderBy: f => f.routeOrder.descending()
@@ -715,7 +715,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             if (refFam.length == 0) {
                 let from = new Date();
                 from.setDate(from.getDate() - 1);
-                refFam = await context.for(ActiveFamilyDeliveries).find({
+                refFam = await context.repo(ActiveFamilyDeliveries).find({
                     where: f => f.courier.isEqualTo(helper).and(DeliveryStatus.isAResultStatus(f.deliverStatus)).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
                     orderBy: f => f.deliveryStatusDate.descending(),
                     limit: 1
@@ -745,7 +745,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             if (locationReferenceFamilies.length > 0 && info.preferRepeatFamilies && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
             }
-            let f = SqlFor(context.for(ActiveFamilyDeliveries));
+            let f = SqlFor(context.repo(ActiveFamilyDeliveries));
             let sql = new SqlBuilder(context);
             sql.addEntity(f, 'Families');
             let r = (await db.execute(await sql.query({
@@ -756,7 +756,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     let res = [];
                     res.push(where);
                     if (info.preferRepeatFamilies)
-                        res.push(filterRepeatFamilies(sql, f, SqlFor(context.for(FamilyDeliveries)), helper));
+                        res.push(filterRepeatFamilies(sql, f, SqlFor(context.repo(FamilyDeliveries)), helper));
                     return res;
                 }
             })));
@@ -792,7 +792,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 waitingFamilies.splice(waitingFamilies.indexOf(fqr), 1);
                 locationReferenceFamilies.push(fqr);
                 boundsExtend(fqr);
-                for (const family of await context.for(ActiveFamilyDeliveries).find({
+                for (const family of await context.repo(ActiveFamilyDeliveries).find({
                     where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(fqr.lng).and(f.addressLatitude.isEqualTo(fqr.lat)))
                         .and(context.filterDistCenter(f.distributionCenter, distCenter))
                 })) {
@@ -999,7 +999,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         ids: string[],
         quantity: number,
     }, context?: Context) {
-        let familyDeliveries = await context.for(ActiveFamilyDeliveries).find({
+        let familyDeliveries = await context.repo(ActiveFamilyDeliveries).find({
             where: fd =>
                 fd.id.isIn(args.ids).and(FamilyDeliveries.readyFilter())
         });
@@ -1098,7 +1098,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         db?: SqlDatabase
     ) {
         var sql = new SqlBuilder(context);
-        var fd = SqlFor(context.for(ActiveFamilyDeliveries));
+        var fd = SqlFor(context.repo(ActiveFamilyDeliveries));
 
         let result = await db.execute(await sql.query({
             from: fd,

@@ -31,10 +31,10 @@ describe('AppComponent', () => {
   var sql = new SqlBuilder(context);
   beforeEach(async () => {
     sql = new SqlBuilder(context);
-    f = SqlFor(context.for(Families));
-    afd = SqlFor(context.for(ActiveFamilyDeliveries));
-    fd = SqlFor(context.for(FamilyDeliveries));
-    bt = SqlFor(context.for(BasketType));
+    f = SqlFor(context.repo(Families));
+    afd = SqlFor(context.repo(ActiveFamilyDeliveries));
+    fd = SqlFor(context.repo(FamilyDeliveries));
+    bt = SqlFor(context.repo(BasketType));
     sql.addEntity(bt, 'p');
     sql.addEntity(afd, 'fd');
     sql.addEntity(fd, 'h');
@@ -67,8 +67,8 @@ describe('AppComponent', () => {
     expect(await sql.func('max', f.id)).toBe("max(id)");
   });
   it("test bla bla", async () => {
-    let h = SqlFor(context.for(Helpers));
-    let u = SqlFor(context.for(RegisterURL));
+    let h = SqlFor(context.repo(Helpers));
+    let u = SqlFor(context.repo(RegisterURL));
     let sql = new SqlBuilder(context);
     let urls = [];
 
@@ -145,7 +145,7 @@ describe('AppComponent', () => {
     }, 'select p.id from BasketType p where p.boxes = 5');
   });
   it('Where', () => {
-    let b = context.for(BasketType).create({ id: '11', name: 'basket' });
+    let b = context.repo(BasketType).create({ id: '11', name: 'basket' });
 
     q({
       select: () => [fd.id],
@@ -154,7 +154,7 @@ describe('AppComponent', () => {
     }, "select h.id from FamilyDeliveries h where basketType = '11'");
   });
   it('another where', async () => {
-    let b = context.for(BasketType).create({ id: '11', name: 'basket' });
+    let b = context.repo(BasketType).create({ id: '11', name: 'basket' });
     expect(await sql.build(fd.basketType.isEqualTo(b))).toBe("basketType = '11'")
 
   });
@@ -212,7 +212,7 @@ describe('AppComponent', () => {
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
   it('delete 2', async () => {
-    let p = SqlFor(context.for(BasketType));
+    let p = SqlFor(context.repo(BasketType));
     expect(await sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', async () => {
@@ -223,7 +223,7 @@ describe('AppComponent', () => {
   });
   it('update 2 ', async () => {
     sql.getEntityAlias(f);
-    let pd = SqlFor(context.for(Families));
+    let pd = SqlFor(context.repo(Families));
     expect(await sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
@@ -349,7 +349,7 @@ describe('AppComponent', () => {
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
   it("updatePhone", () => {
-    let f = context.for(Families).create();
+    let f = context.repo(Families).create();
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('04-8767772');
     expect(f.phone1Description).toBe(undefined);
@@ -359,7 +359,7 @@ describe('AppComponent', () => {
     expect(f.phone3Description).toBe(undefined);
   });
   it("updatePhone2", () => {
-    let f = context.for(Families).create();
+    let f = context.repo(Families).create();
     f.phone1 = new Phone('0507330590');
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('0507330590');
@@ -371,7 +371,7 @@ describe('AppComponent', () => {
     expect(f.phone4Description).toBe(undefined);
   });
   it("updatePhone3", () => {
-    let f = context.for(Families).create();
+    let f = context.repo(Families).create();
     f.phone2 = new Phone('0507330590');
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('04-8767772');
@@ -383,10 +383,10 @@ describe('AppComponent', () => {
     expect(f.phone4Description).toBe(undefined);
   });
   it("properMerge4", () => {
-    let f = context.for(Families).create();
-    let f2 = context.for(Families).create();
+    let f = context.repo(Families).create();
+    let f2 = context.repo(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
-    c.family = context.for(Families).create();
+    c.family = context.repo(Families).create();
     c.family.phone1 = new Phone('0507330590');
     c.families = [f, f2];
     f.phone1 = new Phone('0507330590');
@@ -402,10 +402,10 @@ describe('AppComponent', () => {
     expect(processPhone('-').length).toBe(1);
   });
   it("properMerge", () => {
-    let f = context.for(Families).create();
-    let f2 = context.for(Families).create();
+    let f = context.repo(Families).create();
+    let f2 = context.repo(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
-    c.family = context.for(Families).create();
+    c.family = context.repo(Families).create();
     c.families = [f, f2];
     f.tz = '1';
     f2.tz = '2';
@@ -414,10 +414,10 @@ describe('AppComponent', () => {
     expect(c.family.tz2).toBe('2');
   });
   it("properMerge1", () => {
-    let f = context.for(Families).create();
-    let f2 = context.for(Families).create();
+    let f = context.repo(Families).create();
+    let f2 = context.repo(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
-    c.family = context.for(Families).create();
+    c.family = context.repo(Families).create();
     c.families = [f, f2];
 
     f2.tz = '2';
@@ -425,10 +425,10 @@ describe('AppComponent', () => {
     expect(c.family.tz).toBe('2');
   });
   it("properMerge2", () => {
-    let f = context.for(Families).create();
-    let f2 = context.for(Families).create();
+    let f = context.repo(Families).create();
+    let f2 = context.repo(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
-    c.family = context.for(Families).create();
+    c.family = context.repo(Families).create();
     c.families = [f, f2];
     f.tz = '1';
     f2.tz = '01';
@@ -437,10 +437,10 @@ describe('AppComponent', () => {
 
   });
   it("properMerge3", () => {
-    let f = context.for(Families).create();
-    let f2 = context.for(Families).create();
+    let f = context.repo(Families).create();
+    let f2 = context.repo(Families).create();
     let c = new MergeFamiliesComponent(context, undefined, undefined, undefined, undefined);
-    c.family = context.for(Families).create();
+    c.family = context.repo(Families).create();
     c.families = [f, f2];
     f.phone1 = new Phone('1');
     f.phone1Description = 'd1';

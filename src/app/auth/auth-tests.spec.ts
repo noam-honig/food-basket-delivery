@@ -233,7 +233,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     var context = new Context();
     context.setDataProvider(mem);
     await context.userChange.observe(async () => InitContext(context));
-    let c = context.for(Helpers);
+    let c = context.repo(Helpers);
     let h = c.create();
     h.name = 'test';
     h.phone = new Phone(PHONE);

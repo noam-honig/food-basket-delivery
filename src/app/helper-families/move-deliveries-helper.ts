@@ -15,7 +15,7 @@ export class moveDeliveriesHelper {
 
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '') {
 
-        let deliveries = await this.context.for(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
+        let deliveries = await this.context.repo(ActiveFamilyDeliveries).count(f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)));
         if (deliveries > 0)
             this.dialog.YesNoQuestion(extraMessage + " " + this.settings.lang.transfer + " " + deliveries + " " + this.settings.lang.deliveriesFrom + '"' + from.name + '"' + " " + this.settings.lang.toVolunteer + " " + '"' + to.name + '"', async () => {
 
@@ -36,7 +36,7 @@ export class moveDeliveriesHelper {
         let settings = getSettings(context);
         let i = 0;
 
-        for await (const fd of context.for(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(helperFrom).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
+        for await (const fd of context.repo(ActiveFamilyDeliveries).iterate({ where: f => f.courier.isEqualTo(helperFrom).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
             fd.courier = to;
             fd._disableMessageToUsers = true;
             await t.push(fd.save());

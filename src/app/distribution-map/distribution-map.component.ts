@@ -254,7 +254,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-            let fd = await this.context.for(ActiveFamilyDeliveries).findId(familyOnMap.id);
+            let fd = await this.context.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
             await fd.showDetailsDialog({
               onSave: async () => {
                 familyOnMap.marker.setMap(null);
@@ -335,8 +335,8 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, context?: Context, db?: SqlDatabase) {
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let h = SqlFor(context.for(Helpers));
+    let f = SqlFor(context.repo(ActiveFamilyDeliveries));
+    let h = SqlFor(context.repo(Helpers));
     let sql = new SqlBuilder(context);
     sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(await sql.query({
@@ -381,7 +381,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetLocationsForOverview(context?: Context) {
 
     let result: deliveryOnMap[] = []
-    let f = SqlFor(context.for(FamilyDeliveries));
+    let f = SqlFor(context.repo(FamilyDeliveries));
 
     let sql = new SqlBuilder(context);
     sql.addEntity(f, "fd");

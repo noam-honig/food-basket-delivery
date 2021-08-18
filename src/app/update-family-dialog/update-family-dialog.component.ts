@@ -190,7 +190,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this.context.for(FamilyImage).create({
+        await this.context.repo(FamilyImage).create({
           familyId: this.args.family.id, image: image.image
         }).save();
       }
@@ -210,7 +210,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       aDeliveryWasAdded: async (id) => {
         if (this.delivery)
           this.refreshDeliveryStatistics = true;
-        this.delivery = await this.context.for(ActiveFamilyDeliveries).findId(id);
+        this.delivery = await this.context.repo(ActiveFamilyDeliveries).findId(id);
       }
     });
   }
@@ -220,12 +220,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
 
-  families = new GridSettings(this.context.for(Families), { allowUpdate: true });
+  families = new GridSettings(this.context.repo(Families), { allowUpdate: true });
 
   delivery: ActiveFamilyDeliveries;
 
   async showDuplicate(dup: duplicateFamilyInfo) {
-    let f = await this.context.for(Families).findId(dup.id);
+    let f = await this.context.repo(Families).findId(dup.id);
     openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
@@ -261,7 +261,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
-        this.args.familyDelivery = await this.context.for(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
+        this.args.familyDelivery = await this.context.repo(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
         this.args.familyId = this.args.familyDelivery.family;
       }
 
@@ -271,7 +271,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         this.args.familyId = this.args.familyDelivery.family;
       }
       if (this.args.familyId)
-        this.args.family = await this.context.for(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
+        this.args.family = await this.context.repo(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
     }
     if (this.args.familyDelivery)
       this.delivery = this.args.familyDelivery;
@@ -280,7 +280,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     this.families.currentRow = this.args.family;
-    this.images = await (await this.context.for(FamilyImage).find({ where: i => i.familyId.isEqualTo(this.args.family.id) })).map(i => ({
+    this.images = await (await this.context.repo(FamilyImage).find({ where: i => i.familyId.isEqualTo(this.args.family.id) })).map(i => ({
       image: i.image,
       entity: i
     } as ImageInfo));

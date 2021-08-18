@@ -160,7 +160,7 @@ async function buildDocs() {
 
     for (const type of list) {
 
-        var e = c.for(type).metadata;
+        var e = c.repo(type).metadata;
         s += "\n\n## " + e.key + `
 | name | caption | type | extra info |
 | --- | --- | --- | --- |

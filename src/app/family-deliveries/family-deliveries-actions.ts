@@ -60,7 +60,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
             forEach: async fd => {
                 await fd.delete();
                 if (this.updateFamilyStatus) {
-                    let f = await this.context.for(Families).findId(fd.family);
+                    let f = await this.context.repo(Families).findId(fd.family);
                     f.status = this.status;
                     await f.save();
                 }
@@ -97,7 +97,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
             forEach: async fd => {
 
 
-                let f = await this.context.for(Families).findId(fd.family);
+                let f = await this.context.repo(Families).findId(fd.family);
                 if (f) {
                     if (this.byCurrentCourier) {
                         if (fd.courier)
@@ -149,7 +149,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
                 else {
                     fd.courier = this.courier;
                     if (this.updateAlsoAsFixed) {
-                        let f = await this.context.for(Families).findId(fd.family);
+                        let f = await this.context.repo(Families).findId(fd.family);
                         if (f) {
                             f.fixedCourier = this.courier;
                             if (f.wasChanged()) {
@@ -186,7 +186,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
             },
             validateInComponent: async c => {
-                let deliveriesWithResultStatus = await this.context.for(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.toItem(c.userWhere), this.args.additionalWhere])
+                let deliveriesWithResultStatus = await this.context.repo(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.toItem(c.userWhere), this.args.additionalWhere])
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
                         getLang(this.context).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.context).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
@@ -232,7 +232,7 @@ export class ArchiveHelper {
     get $() { return getFields(this) }
     async initArchiveHelperBasedOnCurrentDeliveryInfo(context: Context, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result: DataAreaFieldsSetting<any>[] = [];
-        let repo = context.for(ActiveFamilyDeliveries);
+        let repo = context.repo(ActiveFamilyDeliveries);
 
         let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(), Filter.toItem(where)]);
 
@@ -426,7 +426,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 if (existingDelivery.wasChanged())
                     await existingDelivery.save();
 
-                let f = await this.context.for(Families).findId(existingDelivery.family);
+                let f = await this.context.repo(Families).findId(existingDelivery.family);
                 if (!f || f.status != FamilyStatus.Active)
                     return;
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter);

@@ -81,7 +81,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
       }],
-      settings: new GridSettings(this.context.for(Families), {
+      settings: new GridSettings(this.context.repo(Families), {
         columnSettings: f => {
           let r = [
             f.name,
@@ -177,8 +177,8 @@ export class DuplicateFamiliesComponent implements OnInit {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";
     let sql = new SqlBuilder(context);
-    let f = SqlFor(context.for(Families));
-    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+    let f = SqlFor(context.repo(Families));
+    let fd = SqlFor(context.repo(ActiveFamilyDeliveries));
     let q = '';
     for (const tz of [f.tz, f.tz2]) {
       for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {

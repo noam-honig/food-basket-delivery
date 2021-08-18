@@ -31,10 +31,10 @@ export class SitesEntity extends EntityBase {
         super();
     }
     static async completeInit(context: Context) {
-        let sites = await context.for(SitesEntity).find();
+        let sites = await context.repo(SitesEntity).find();
         let missingInDb = Sites.schemas.filter(siteFromEnv => !sites.find(y => y.id == siteFromEnv));
         for (const s of missingInDb) {
-            let r = await context.for(SitesEntity).create();
+            let r = await context.repo(SitesEntity).create();
             r.id = s;
             await r.save();
         }

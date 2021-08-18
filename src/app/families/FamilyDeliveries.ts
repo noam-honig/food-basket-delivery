@@ -66,7 +66,7 @@ export class MessageStatus {
         if (self.quantity < 1)
             self.quantity = 1;
         if (self.distributionCenter == null)
-            self.distributionCenter = await self.context.for(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
+            self.distributionCenter = await self.context.repo(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
         if (self.$.courier.wasChanged())
             self.routeOrder = 0;
 
@@ -94,7 +94,7 @@ export class MessageStatus {
             }
             if (!self.deliverStatus.IsAResultStatus()
                 && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
-                let f = await self.context.for(Families).findId(self.family);
+                let f = await self.context.repo(Families).findId(self.family);
                 if (f)
                     f.updateDelivery(self);
 
@@ -112,15 +112,15 @@ export class FamilyDeliveries extends IdEntity {
     })
     static async getFamilyImages(family: string, delivery: string, context?: Context): Promise<ImageInfo[]> {
         if (!Roles.admin) {
-            let d = await context.for(FamilyDeliveries).findId(delivery);
+            let d = await context.repo(FamilyDeliveries).findId(delivery);
             if (d.courier != context.currentUser)
                 return [];
         }
-        let r = (await context.for(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
+        let r = (await context.repo(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
         return r;
     }
     async loadVolunteerImages(): Promise<import("../images/images.component").ImageInfo[]> {
-        return (await this.context.for(DeliveryImage).find({ where: i => i.deliveryId.isEqualTo(this.id) })).map(i => ({
+        return (await this.context.repo(DeliveryImage).find({ where: i => i.deliveryId.isEqualTo(this.id) })).map(i => ({
             image: i.image,
             entity: i
         } as ImageInfo));
@@ -170,7 +170,7 @@ export class FamilyDeliveries extends IdEntity {
         this.deliveryComments = originalDelivery.deliveryComments;
     }
     async duplicateCount() {
-        return await this.context.for(ActiveFamilyDeliveries).count(
+        return await this.context.repo(ActiveFamilyDeliveries).count(
             fd => fd.family.isEqualTo(this.family).and(
                 DeliveryStatus.isNotAResultStatus(fd.deliverStatus)).and(
                     fd.basketType.isEqualTo(this.basketType).and(
@@ -396,7 +396,7 @@ export class FamilyDeliveries extends IdEntity {
         options.sqlExpression = async (self) => {
             var sql = new SqlBuilder(context);
 
-            var fd = SqlFor(context.for(FamilyDeliveries));
+            var fd = SqlFor(context.repo(FamilyDeliveries));
             let f = SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(fd, 'fd');
@@ -427,7 +427,7 @@ export class FamilyDeliveries extends IdEntity {
         sqlExpression = async (self) => {
             var sql = new SqlBuilder(context);
 
-            var helper = SqlFor(context.for(Helpers));
+            var helper = SqlFor(context.repo(Helpers));
             let f = SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(helper, 'h');
@@ -461,7 +461,7 @@ export class FamilyDeliveries extends IdEntity {
     },
         (options, context) => options.sqlExpression = async (selfDefs) => {
             let self = SqlFor(selfDefs);
-            let images = SqlFor(context.for(DeliveryImage));
+            let images = SqlFor(context.repo(DeliveryImage));
             let sql = new SqlBuilder(context);
             return sql.columnCount(self, {
                 from: images,
@@ -501,7 +501,7 @@ export class FamilyDeliveries extends IdEntity {
         }
         if (c.ready) {
             let { city, group, area } = c.ready;
-            let basket = await context.for(BasketType).findId(c.ready.basketId);
+            let basket = await context.repo(BasketType).findId(c.ready.basketId);
             let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
                 self.courier.isEqualTo(null)).and(context.filterCenterAllowedForUser(self.distributionCenter));
             if (group)
@@ -545,7 +545,7 @@ export class FamilyDeliveries extends IdEntity {
     }
 
     async addFamilyInfoToExcelFile(addColumn) {
-        var f = await this.context.for(Families).findId(this.family);
+        var f = await this.context.repo(Families).findId(this.family);
         let settings = await ApplicationSettings.getAsync(this.context);
         if (f) {
             let x = f.addressHelper.getGeocodeInformation();
@@ -731,7 +731,7 @@ export class FamilyDeliveries extends IdEntity {
 
         let showFamilyDetails = this.context.isAllowed(Roles.admin);
         if (showFamilyDetails) {
-            let f = await this.context.for(Families).findId(this.family);
+            let f = await this.context.repo(Families).findId(this.family);
             if (f) {
 
                 openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
@@ -809,7 +809,7 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
     translate: async (context, f) => {
-        return Filter.translateCustomWhere<FamilyDeliveries>(context.for(FamilyDeliveries).metadata, Filter.createFilterFactories(context.for(FamilyDeliveries).metadata), f, context);
+        return Filter.translateCustomWhere<FamilyDeliveries>(context.repo(FamilyDeliveries).metadata, Filter.createFilterFactories(context.repo(FamilyDeliveries).metadata), f, context);
     }
 });
 

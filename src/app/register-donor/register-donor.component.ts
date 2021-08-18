@@ -208,7 +208,7 @@ class donorForm {
       name: 'WIX',
       roles: []
     });
-    let f = this.context.for(Families).create();
+    let f = this.context.repo(Families).create();
     f.name = this.name;
     if (!this.address)
       this.address = '';
@@ -216,7 +216,7 @@ class donorForm {
     f.phone1 = this.phone;
     f.email = this.email;
     f.custom1 = this.docref;
-    f.familySource = await this.context.for(FamilySources).findId(this.donationType);
+    f.familySource = await this.context.repo(FamilySources).findId(this.donationType);
 
     await f.save();
     var quantity = 0;
@@ -225,7 +225,7 @@ class donorForm {
       if (q > 0) {
         quantity += q;
 
-        await Families.addDelivery(f.id, await self.context.for(BasketType).findId(type), null, null, {
+        await Families.addDelivery(f.id, await self.context.repo(BasketType).findId(type), null, null, {
           comment: '',
           quantity: q,
           selfPickup: isSelfDeliver,
@@ -245,7 +245,7 @@ class donorForm {
     await addDelivery('מסך', this.screen, this.selfDeliver);
 
     if (quantity == 0) {
-      await Families.addDelivery(f.id, await self.context.for(BasketType).findId('לא פורט'), null, null, {
+      await Families.addDelivery(f.id, await self.context.repo(BasketType).findId('לא פורט'), null, null, {
         comment: '',
         quantity: 1,
         selfPickup: false

@@ -113,7 +113,7 @@ export class DialogService {
         if (this.distCenter != null)
             return this.distCenter;
         if (!this.allCenters)
-            this.allCenters = await this.context.for(DistributionCenters).find();
+            this.allCenters = await this.context.repo(DistributionCenters).find();
         return this.context.findClosestDistCenter(loc, this.allCenters);
 
     }
@@ -150,9 +150,9 @@ export class DialogService {
         this.dc = undefined;
 
         if (this.context.isAllowed(Roles.distCenterAdmin) && !this.context.isAllowed(Roles.admin))
-            this.context.for(DistributionCenters).findId((<HelperUserInfo>this.context.user).distributionCenter).then(x => this.dc = x);
+            this.context.repo(DistributionCenters).findId((<HelperUserInfo>this.context.user).distributionCenter).then(x => this.dc = x);
         if (this.context.isAllowed(Roles.admin)) {
-            this.hasManyCenters = await this.context.for(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
+            this.hasManyCenters = await this.context.repo(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
             this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = null;
@@ -283,7 +283,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorString = error.toString();
         this.lastErrorTime = new Date().valueOf();
         try {
-            var s = await this.context.for((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
+            var s = await this.context.repo((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
             if (s && this.context.authenticated() && !s.currentUserIsValidForAppLoadTest) {
                 let AuthService = (await import("../auth/auth-service")).AuthService;
                 AuthService.doSignOut();

@@ -56,7 +56,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   static async getAllEvents(phone: string, sitesFilter: string, context?: Context, db?: SqlDatabase): Promise<EventInList[]> {
     let r: EventInList[] = [];
     let sql = new SqlBuilder(context);
-    let e = SqlFor(context.for(Event));
+    let e = SqlFor(context.repo(Event));
 
     let schemas = Sites.schemas;
     if (sitesFilter) {
@@ -98,9 +98,9 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
     let helper: HelpersBase = context.currentUser;
     if (!helper && phone)
-      helper = await context.for(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
+      helper = await context.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
 
-    return Promise.all((await context.for(Event).find({
+    return Promise.all((await context.repo(Event).find({
       orderBy: e => [e.eventDate, e.startTime],
       where: e => e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))
     })).map(async e => await e.toEventInList(helper)));

@@ -28,7 +28,7 @@ export class SelectFamilyComponent implements OnInit {
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private context: Context, public settings: ApplicationSettings) { }
   searchString: string = '';
-  families = new GridSettings(this.context.for(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(this.context.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
   showAll = false;
   selectFirst() {

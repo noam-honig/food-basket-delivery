@@ -20,7 +20,7 @@ import { DataControl, getValueList } from '@remult/angular';
   translation: l => l.basketType
 })
 @DataControl({
-  valueList: context => getValueList(context.for(BasketType)),
+  valueList: context => getValueList(context.repo(BasketType)),
   width: '100'
 })
 @Entity<BasketType>({

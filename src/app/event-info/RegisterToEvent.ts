@@ -107,7 +107,7 @@ export class RegisterToEvent {
             helper = this.context.currentUser;
         }
         else {
-            helper = await this.context.for(Helpers).findFirst({
+            helper = await this.context.repo(Helpers).findFirst({
                 where: h => h.phone.isEqualTo(this.phone),
                 createIfNotFound: register
             });
@@ -117,7 +117,7 @@ export class RegisterToEvent {
             }
             this.context.currentUser = helper as Helpers;
         }
-        let helperInEvent = await this.context.for(volunteersInEvent).findFirst({
+        let helperInEvent = await this.context.repo(volunteersInEvent).findFirst({
             where: v => v.eventId.isEqualTo(id).and(v.helper.isEqualTo(helper)),
             createIfNotFound: register
         });
@@ -130,7 +130,7 @@ export class RegisterToEvent {
             helperInEvent.canceled = true;
             await helperInEvent.save();
         }
-        return (await this.context.for(Event).findId(id)).toEventInList(helper);
+        return (await this.context.repo(Event).findId(id)).toEventInList(helper);
     }
 }
 const infoKeyInStorage = "myVolunteerInfo";

@@ -93,7 +93,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this.context.for(DeliveryImage).create({
+        await this.context.repo(DeliveryImage).create({
           deliveryId: this.args.family.id, image: image.image
         }).save();
         this.args.family.needsWork = true;

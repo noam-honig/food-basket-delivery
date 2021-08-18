@@ -101,7 +101,7 @@ export class MltFamiliesComponent implements OnInit {
 
   async countFamilies() {
     let consumed: string[] = []
-    let list: FamilyDeliveries[] = await this.context.for(FamilyDeliveries).find(
+    let list: FamilyDeliveries[] = await this.context.repo(FamilyDeliveries).find(
       { where: fd => fd.courier.isEqualTo(this.context.currentUser).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
     let result = 0;
     for (const f of list) {
@@ -175,7 +175,7 @@ export class MltFamiliesComponent implements OnInit {
   static async assignFamilyDeliveryToIndie(deliveryIds: string[], context?: Context) {
     for (const id of deliveryIds) {
 
-      let fd = await context.for(ActiveFamilyDeliveries).findId(id);
+      let fd = await context.repo(ActiveFamilyDeliveries).findId(id);
       if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
         fd.courier = context.currentUser;
         await fd.save();
@@ -215,7 +215,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async getClosestDistCenters() {
-    let distCenters = await this.context.for(DistributionCenters).find({ where: x => DistributionCenters.isActive(x) });
+    let distCenters = await this.context.repo(DistributionCenters).find({ where: x => DistributionCenters.isActive(x) });
     distCenters = distCenters.filter(x => x.addressHelper.ok());
     let volunteerLocation: Location = undefined;
     try {
@@ -275,7 +275,7 @@ export class MltFamiliesComponent implements OnInit {
     let s = getSettings(context);
     if (!s.isSytemForMlt())
       throw "not allowed";
-    for (const fd of await context.for(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.currentUser) })) {
+    for (const fd of await context.repo(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(context.currentUser) })) {
       fd.distributionCenter = newDestinationId;
       await fd.save();
     }

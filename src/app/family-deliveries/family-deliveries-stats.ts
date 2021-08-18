@@ -43,7 +43,7 @@ export class FamilyDeliveryStats {
             }
         }
         await Promise.all(r.baskets.map(async b => {
-            b.basket = await this.context.for(BasketType).findId(b.id);
+            b.basket = await this.context.repo(BasketType).findId(b.id);
         }))
         return r;
     }
@@ -73,7 +73,7 @@ export class FamilyDeliveryStats {
             }
         }
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+        let f = SqlFor(context.repo(ActiveFamilyDeliveries));
 
         let sql = new SqlBuilder(context);
         sql.addEntity(f, "FamilyDeliveries")
@@ -91,7 +91,7 @@ export class FamilyDeliveryStats {
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-            let b = await context.for(BasketType).findId(basketId, { createIfNotFound: true });
+            let b = await context.repo(BasketType).findId(basketId, { createIfNotFound: true });
             result.baskets.push({
                 id: basketId,
                 name: b.name,
@@ -111,7 +111,7 @@ export class FamilyDeliveryStats {
 
         if (distCenter == null)
             pendingStats.push(
-                context.for(CitiesStats).find({
+                context.repo(CitiesStats).find({
                     orderBy: f => f.deliveries.descending()
                 }).then(cities => {
                     result.cities = cities.map(x => {
@@ -124,7 +124,7 @@ export class FamilyDeliveryStats {
             );
         else
             pendingStats.push(
-                context.for(CitiesStatsPerDistCenter).find({
+                context.repo(CitiesStatsPerDistCenter).find({
                     orderBy: f => f.families.descending(),
                     where: f => context.filterDistCenter(f.distributionCenter, distCenter)
 
@@ -155,7 +155,7 @@ export class FamilyDeliveresStatistics {
     async saveTo(distCenter: DistributionCenters, data: any, context: Context) {
         try {
 
-            data[this.name] = await context.for(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), context.filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);
+            data[this.name] = await context.repo(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), context.filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);
         }
         catch (err) {
             console.error(this.name, err);
@@ -175,7 +175,7 @@ export interface groupStats {
     key: 'citiesStats'
 }, (options, context) =>
     options.dbName = async (self) => {
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+        let f = SqlFor(context.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(context);
 
         return sql.build('(', (await sql.query({
@@ -198,7 +198,7 @@ export class CitiesStats {
     key: 'citiesStatsPerDistCenter'
 }, (options, context) =>
     options.dbName = async (self) => {
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
+        let f = SqlFor(context.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(context);
 
         return sql.build('(', (await sql.query({

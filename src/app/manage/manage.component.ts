@@ -77,7 +77,7 @@ export class ManageComponent implements OnInit {
   }
   constructor(private dialog: DialogService, private context: Context, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
 
-  basketType = new GridSettings(this.context.for(BasketType), {
+  basketType = new GridSettings(this.context.repo(BasketType), {
     showFilter: true,
     columnSettings: x => [
       x.name,
@@ -102,7 +102,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
   showArchivedDistributionCenters = false;
-  distributionCenters = new GridSettings(this.context.for(DistributionCenters), {
+  distributionCenters = new GridSettings(this.context.repo(DistributionCenters), {
     gridButtons: [
       {
         name: this.settings.lang.showDeletedDistributionCenters,
@@ -115,7 +115,7 @@ export class ManageComponent implements OnInit {
       {
         name: this.settings.lang.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.for(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
+          await saveToExcel(this.settings, this.context.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
         }
         , visible: () => this.context.isAllowed(Roles.admin)
       },
@@ -149,7 +149,7 @@ export class ManageComponent implements OnInit {
       textInMenu: c => c.archive ? this.settings.lang.unDeleteDistributionCenter : this.settings.lang.deleteDistributionCenter,
       icon: 'delete',
       click: async c => {
-        if (!c.archive && (await this.context.for(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
+        if (!c.archive && (await this.context.repo(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
           this.dialog.Error(this.settings.lang.mustHaveAtLeastOneActiveDistributionList);
           return;
         }
@@ -204,7 +204,7 @@ export class ManageComponent implements OnInit {
       this.dialog.refreshFamiliesAndDistributionCenters();
     }, 1000);
   }
-  sources = new GridSettings(this.context.for(FamilySources), {
+  sources = new GridSettings(this.context.repo(FamilySources), {
     showFilter: true,
     columnSettings: s => [
       s.name,
@@ -219,7 +219,7 @@ export class ManageComponent implements OnInit {
     ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
-  groups = new GridSettings(this.context.for(Groups), {
+  groups = new GridSettings(this.context.repo(Groups), {
     showFilter: true,
     saving: () => this.refreshEnvironmentAfterSave(),
 
@@ -263,7 +263,7 @@ export class ManageComponent implements OnInit {
   });
   async saveAndPreview() {
     await this.save();
-    let f = this.context.for(ActiveFamilyDeliveries).create();
+    let f = this.context.repo(ActiveFamilyDeliveries).create();
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments,
@@ -400,7 +400,7 @@ export class ManageComponent implements OnInit {
   testSuccessSms() {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, 'ישראל ישראלי');
   }
-  images = new GridSettings(this.context.for(ApplicationImages), {
+  images = new GridSettings(this.context.repo(ApplicationImages), {
     showFilter: true,
     numOfColumnsInGrid: 0,
     allowUpdate: true,
@@ -518,7 +518,7 @@ export class ManageComponent implements OnInit {
     }
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this.context.for(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
+    let count = await this.context.repo(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
     if (!await this.dialog.YesNoPromise(this.settings.lang.areYouSureYouWantToDelete + " " + count + this.settings.lang.families + "?"))
       return;
     await openDialog(InputAreaComponent, x => {
@@ -549,13 +549,13 @@ export class ManageComponent implements OnInit {
     this.settings.boxes1Name = this.settings.lang.boxes1Name;
     this.settings.boxes2Name = this.settings.lang.boxes2Name;
     this.settings.questionForVolunteerWhenUploadingPhoto = this.settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
-    var b = await this.context.for(BasketType).findFirst();
+    var b = await this.context.repo(BasketType).findFirst();
     if (b) {
       b.name = this.settings.lang.foodParcel;
       await b.save();
       this.basketType.reloadData();
     }
-    let d = await this.context.for(DistributionCenters).findFirst();
+    let d = await this.context.repo(DistributionCenters).findFirst();
     if (d) {
       d.name = this.settings.lang.defaultDistributionListName;
       await d.save();
@@ -567,7 +567,7 @@ export class ManageComponent implements OnInit {
 
 
     let i = 0;
-    for await (const f of context.for(Families).iterate({
+    for await (const f of context.repo(Families).iterate({
       where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
       orderBy: f => f.createDate.descending(),
       progress
@@ -589,9 +589,9 @@ export class ManageComponent implements OnInit {
 },
   (options, context) =>
     options.dbName = async (self) => {
-      let f = SqlFor(context.for(ActiveFamilyDeliveries));
-      let g = SqlFor(context.for(Groups));
-      let d = SqlFor(context.for(DistributionCenters));
+      let f = SqlFor(context.repo(ActiveFamilyDeliveries));
+      let g = SqlFor(context.repo(Groups));
+      let d = SqlFor(context.repo(DistributionCenters));
       let sql = new SqlBuilder(context);
       sql.addEntity(f, 'Families');
       sql.addEntity(g, 'groups');
@@ -631,8 +631,8 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
 },
   (options, context) => {
     options.dbName = async (self) => {
-      let f = SqlFor(context.for(ActiveFamilyDeliveries));
-      let g = SqlFor(context.for(Groups));
+      let f = SqlFor(context.repo(ActiveFamilyDeliveries));
+      let g = SqlFor(context.repo(Groups));
 
       let sql = new SqlBuilder(context);
       sql.addEntity(f, 'Families');

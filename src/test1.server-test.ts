@@ -56,17 +56,17 @@ async function init() {
     describe("helpers", () => {
         itAsync('helpers and stats work', async () => {
 
-            let h = await context.for(HelpersAndStats).find();
+            let h = await context.repo(HelpersAndStats).find();
         })
             ;
     });
     describe("the test", () => {
 
         beforeEach(async done => {
-            for (const d of await context.for(FamilyDeliveries).find()) {
+            for (const d of await context.repo(FamilyDeliveries).find()) {
                 await d.delete();
             }
-            for (const d of await context.for(Helpers).find()) {
+            for (const d of await context.repo(Helpers).find()) {
                 await d.delete();
             }
 
@@ -96,7 +96,7 @@ async function init() {
                 as.addressApiResult = g.saveToString();
                 await as.save();
             }
-            let h = context.for(Helpers).create();
+            let h = context.repo(Helpers).create();
             h.name = 'a';
             h._disableOnSavingRow = true;
             h.admin = true;
@@ -121,7 +121,7 @@ async function init() {
             }, context, sql);
         }
         async function createDelivery(distanceFromRoot: number) {
-            let d = context.for(ActiveFamilyDeliveries).create();
+            let d = context.repo(ActiveFamilyDeliveries).create();
             d.internalDeliveryComment = distanceFromRoot.toString();
             d.addressLatitude = distanceFromRoot;
             d.family = distanceFromRoot.toString();
@@ -236,24 +236,24 @@ async function init() {
     describe("test update family status", () => {
 
         beforeEach(async (done) => {
-            for (const d of await context.for(FamilyDeliveries).find()) {
+            for (const d of await context.repo(FamilyDeliveries).find()) {
                 await d.delete();
             }
-            for (const f of await context.for(Families).find()) {
+            for (const f of await context.repo(Families).find()) {
                 await f.delete();
             }
-            for (const f of await context.for(Helpers).find()) {
+            for (const f of await context.repo(Helpers).find()) {
                 await f.delete();
             }
-            for (const f of await context.for(DistributionCenters).find()) {
+            for (const f of await context.repo(DistributionCenters).find()) {
                 await f.delete();
             }
-            await context.for(DistributionCenters).create({ id: '', name: 'stam' }).save();
+            await context.repo(DistributionCenters).create({ id: '', name: 'stam' }).save();
             done();
         });
         itAsync("update status, updatesStatus and deletes delivery", async () => {
 
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
 
@@ -265,7 +265,7 @@ async function init() {
             fd2.deliverStatus = DeliveryStatus.FailedBadAddress;
             await fd2.save();
 
-            expect(+await context.for(ActiveFamilyDeliveries).count(x => x.family.isEqualTo(f.id))).toBe(2);
+            expect(+await context.repo(ActiveFamilyDeliveries).count(x => x.family.isEqualTo(f.id))).toBe(2);
 
             let b = new UpdateStatusForDeliveries(context);
             let u = b.orig as UpdateStatus;
@@ -277,19 +277,19 @@ async function init() {
                 where: x => x.id.isEqualTo(fd.id)
             });
 
-            let fd_after = await context.for(FamilyDeliveries).findId(fd.id);
+            let fd_after = await context.repo(FamilyDeliveries).findId(fd.id);
             expect(fd_after.archive).toBe(true, "fd");
-            let fd2_after = await context.for(FamilyDeliveries).findId(fd2.id);
+            let fd2_after = await context.repo(FamilyDeliveries).findId(fd2.id);
             expect(fd2_after.archive).toBe(true, "fd2");
         });
         itAsync("update status for delivery", async () => {
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
             let fd = f.createDelivery(null);
             await fd.save();
 
-            expect(+await context.for(ActiveFamilyDeliveries).count(x => x.id.isEqualTo(fd.id))).toBe(1);
+            expect(+await context.repo(ActiveFamilyDeliveries).count(x => x.id.isEqualTo(fd.id))).toBe(1);
             let u = new UpdateDeliveriesStatus(context);
 
             u.status = DeliveryStatus.Frozen;
@@ -298,12 +298,12 @@ async function init() {
                 count: 1,
                 where: x => x.id.isEqualTo(fd.id)
             });
-            let fd_after = await context.for(ActiveFamilyDeliveries).findId(fd.id);
+            let fd_after = await context.repo(ActiveFamilyDeliveries).findId(fd.id);
             expect(fd_after.deliverStatus).toBe(DeliveryStatus.Frozen, "fd");
 
         });
         itAsync("update area for family", async () => {
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
 
@@ -315,12 +315,12 @@ async function init() {
                 count: 1,
                 where: x => x.id.isEqualTo(f.id)
             });
-            let fd_after = await context.for(Families).findId(f.id);
+            let fd_after = await context.repo(Families).findId(f.id);
             expect(fd_after.area).toBe("north");
 
         });
         itAsync("update area", async () => {
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
             let fd = f.createDelivery(null);
@@ -336,13 +336,13 @@ async function init() {
                 where: x => x.id.isEqualTo(fd.id)
             });
 
-            let fd_after = await context.for(FamilyDeliveries).findId(fd.id);
+            let fd_after = await context.repo(FamilyDeliveries).findId(fd.id);
             expect(fd_after.area).toBe("north", "fd");
 
         });
         itAsync("test Action Where", async () => {
 
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
             let fd = f.createDelivery(null);
@@ -353,21 +353,21 @@ async function init() {
                 count: 0,
                 where: x => undefined
             });
-            expect(+(await context.for(FamilyDeliveries).count())).toBe(1);
+            expect(+(await context.repo(FamilyDeliveries).count())).toBe(1);
             fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
             await fd.save();
             await u.internalForTestingCallTheServer({
                 count: 1,
                 where: x => undefined
             });
-            expect(+(await context.for(FamilyDeliveries).count())).toBe(0);
+            expect(+(await context.repo(FamilyDeliveries).count())).toBe(0);
 
         });
         itAsync("test delete only works for user dist center", async () => {
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
-            let a = await context.for(DistributionCenters).create({
+            let a = await context.repo(DistributionCenters).create({
                 id: 'a',
                 name: 'a'
             }).save();
@@ -376,14 +376,14 @@ async function init() {
             expect(d.distributionCenter.name).toBe('a');
         });
         itAsync("test delete only works for user dist center", async () => {
-            let f = await context.for(Families).create();
+            let f = await context.repo(Families).create();
             f.name = "test";
             await f.save();
-            let a = await context.for(DistributionCenters).create({
+            let a = await context.repo(DistributionCenters).create({
                 id: 'a',
                 name: 'a'
             }).save();
-            let b = await context.for(DistributionCenters).create({
+            let b = await context.repo(DistributionCenters).create({
                 id: 'b',
                 name: 'b'
             }).save();
@@ -392,7 +392,7 @@ async function init() {
             await f.createDelivery(b).save();
             let c2 = new Context();
             c2.setDataProvider(sql);
-            let distAdmin = await c2.for(Helpers).create({
+            let distAdmin = await c2.repo(Helpers).create({
                 id: 'distCenterAdmin',
                 name: 'distCenterAdmin',
                 distributionCenter: b,
@@ -410,13 +410,13 @@ async function init() {
             } as HelperUserInfo);
             await InitContext(c2);
 
-            expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(3);
+            expect(+(await context.repo(ActiveFamilyDeliveries).count())).toBe(3);
             var u = new DeleteDeliveries(c2);
             await u.internalForTestingCallTheServer({
                 count: 1,
                 where: x => undefined
             });
-            expect(+(await context.for(ActiveFamilyDeliveries).count())).toBe(2);
+            expect(+(await context.repo(ActiveFamilyDeliveries).count())).toBe(2);
         });
 
     });

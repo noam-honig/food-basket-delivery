@@ -74,9 +74,9 @@ export class HelperGifts extends IdEntity {
 
     @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string, context?: Context) {
-        let helper = await context.for(Helpers).findId(helperId);
-        if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.currentUser)) > 0) {
-            let g = await context.for(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.currentUser));
+        let helper = await context.repo(Helpers).findId(helperId);
+        if (await context.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(context.currentUser)) > 0) {
+            let g = await context.repo(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(context.currentUser));
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;
@@ -91,9 +91,9 @@ export class HelperGifts extends IdEntity {
     @BackendMethod({ allowed: Roles.admin })
     static async importUrls(urls: string[], context?: Context) {
         for (const url of urls) {
-            let g = await context.for(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
+            let g = await context.repo(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
             if (!g) {
-                g = context.for(HelperGifts).create();
+                g = context.repo(HelperGifts).create();
                 g.giftURL = url;
                 await g.save();
             }
@@ -101,13 +101,13 @@ export class HelperGifts extends IdEntity {
     }
     @BackendMethod({ allowed: true })
     static async getMyPendingGiftsCount(h: Helpers, context?: Context) {
-        let gifts = await context.for(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
+        let gifts = await context.repo(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @BackendMethod({ allowed: true })
     static async getMyFirstGiftURL(h: HelpersBase, context?: Context) {
-        let gifts = await context.for(HelperGifts).find({
+        let gifts = await context.repo(HelperGifts).find({
             where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
         });
@@ -142,7 +142,7 @@ export async function showHelperGifts(hid: Helpers, context: Context, settings: 
                 //this.refresh();
             },
         }],
-        settings: new GridSettings(context.for(HelperGifts), {
+        settings: new GridSettings(context.repo(HelperGifts), {
             allowUpdate: true,
 
             rowsInPage: 50,

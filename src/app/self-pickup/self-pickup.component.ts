@@ -37,7 +37,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = '';
   showAllFamilies = false;
-  families = new GridSettings(this.context.for(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(this.context.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {

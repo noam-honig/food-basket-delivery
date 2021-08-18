@@ -171,7 +171,7 @@ export class updateGroup extends ActionOnRows<Families> {
         translation: l => l.familyGroup
     })
     @DataControl({
-        valueList: async context => (await getValueList<Groups>(context.for(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
+        valueList: async context => (await getValueList<Groups>(context.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
     })
     group: string;
     @Field()
@@ -233,7 +233,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment += this.comment;
                 }
                 if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
-                    for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
+                    for await (const fd of this.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
                         if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive = true;
@@ -280,7 +280,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                 {
                     f.defaultSelfPickup = this.selfPickup;
                     if (this.updateExistingDeliveries) {
-                        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
+                        for await (const fd of this.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
                             if (this.selfPickup) {
                                 if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
                                     fd.deliverStatus = DeliveryStatus.SelfPickup;
@@ -377,7 +377,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
                 if (this.processedFamilies.get(fd.family))
                     return;
                 this.processedFamilies.set(fd.family, true);
-                let f = await context.for(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
+                let f = await context.repo(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
                 if (f) {
                     await orig.args.forEach(f);
                     await f.save();

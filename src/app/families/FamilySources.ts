@@ -8,7 +8,7 @@ import { DataControl, getValueList } from "@remult/angular";
 import { use, Field, FieldType } from "../translate";
 
 @DataControl({
-  valueList: context => getValueList(context.for(FamilySources))
+  valueList: context => getValueList(context.repo(FamilySources))
 })
 @FieldType<FamilySources>({
   valueConverter: {

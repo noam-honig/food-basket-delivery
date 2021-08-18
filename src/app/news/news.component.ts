@@ -83,14 +83,14 @@ export class NewsComponent implements OnInit, OnDestroy {
             this.filters.setToNeedsWork();
         }
         this.refresh();
-        this.familySources.push(...(await this.context.for(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id, name: x.name } as familySource }));
+        this.familySources.push(...(await this.context.repo(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id, name: x.name } as familySource }));
 
     }
     newsRows = 50;
     async refresh() {
 
         this.busy.donotWait(async () => {
-            this.news = await this.context.for(FamilyDeliveries).find({
+            this.news = await this.context.repo(FamilyDeliveries).find({
                 where: n => {
                     return new AndFilter(this.filters.where(n), this.dialog.filterDistCenter(n.distributionCenter));
 

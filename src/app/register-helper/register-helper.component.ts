@@ -21,7 +21,7 @@ export class RegisterHelperComponent implements OnInit {
   refer: string = null;
   isDone = false;
 
-  helper = this.context.for(Helpers).create();
+  helper = this.context.repo(Helpers).create();
   
   area = new DataAreaSettings({
     fields: () => [

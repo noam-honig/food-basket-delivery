@@ -157,8 +157,8 @@ export class ImportFromExcelComponent implements OnInit {
     static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, context?: Context) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
-            let f = context.for(Families).create();
-            let fd = context.for(ActiveFamilyDeliveries).create();
+            let f = context.repo(Families).create();
+            let fd = context.repo(ActiveFamilyDeliveries).create();
             for (const val in r.values) {
                 columnFromKey(f, fd, val).inputValue = r.values[val].newValue;
             }
@@ -236,10 +236,10 @@ export class ImportFromExcelComponent implements OnInit {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
-        let basket = await context.for(BasketType).findId(i.basketType);
-        let distCenter = await context.for(DistributionCenters).findId(i.distCenter);
-        let f = await context.for(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
-        let fd = await context.for(ActiveFamilyDeliveries).findFirst(fd => {
+        let basket = await context.repo(BasketType).findId(i.basketType);
+        let distCenter = await context.repo(DistributionCenters).findId(i.distCenter);
+        let f = await context.repo(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
+        let fd = await context.repo(ActiveFamilyDeliveries).findFirst(fd => {
             let r = fd.family.isEqualTo(i.duplicateFamilyInfo[0].id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
             if (compareBasketType)
                 return r.and(fd.basketType.isEqualTo(basket));
@@ -420,8 +420,8 @@ export class ImportFromExcelComponent implements OnInit {
 
     async readLine(row: number, updatedFields: Map<FieldMetadata<any>, boolean>): Promise<excelRowInfo> {
 
-        let f = this.context.for(Families).create();
-        let fd = this.context.for(ActiveFamilyDeliveries).create();
+        let f = this.context.repo(Families).create();
+        let fd = this.context.repo(ActiveFamilyDeliveries).create();
         fd.basketType = this.defaultBasketType;
         fd.distributionCenter = this.distributionCenter;
         f.status = FamilyStatus.Active;
@@ -543,9 +543,9 @@ export class ImportFromExcelComponent implements OnInit {
             } else
                 col.value = val;
         }
-        this.fDefs = this.context.for(Families).metadata;
+        this.fDefs = this.context.repo(Families).metadata;
         this.f = this.fDefs.fields;
-        this.fdDefs = this.context.for(ActiveFamilyDeliveries).metadata;
+        this.fdDefs = this.context.repo(ActiveFamilyDeliveries).metadata;
         this.fd = this.fdDefs.fields;
         if (false) {
             try {
@@ -787,7 +787,7 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.groups.caption,
             updateFamily: async (v, f, h) => {
                 if (v && v.trim().length > 0) {
-                    let g = await this.context.for(Groups).findFirst({ createIfNotFound: true, where: g => g.name.isEqualTo(v.trim()) });
+                    let g = await this.context.repo(Groups).findFirst({ createIfNotFound: true, where: g => g.name.isEqualTo(v.trim()) });
                     if (g.isNew())
                         await g.save();
                 }
@@ -1098,7 +1098,7 @@ export class ImportFromExcelComponent implements OnInit {
             info.duplicateFamilyInfo = [];
             let findDuplicate = async (w: (f: FilterFactories<Families>) => Filter) => {
                 if (info.duplicateFamilyInfo.length == 0)
-                    info.duplicateFamilyInfo = (await context.for(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
+                    info.duplicateFamilyInfo = (await context.repo(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
                         .map(f => (<duplicateFamilyInfo>{
                             id: f.id,
                             address: f.address,
@@ -1238,12 +1238,12 @@ export class ImportFromExcelComponent implements OnInit {
     }
     stopAskingQuestions = false;
     async openFamilyInfo(r: excelRowInfo) {
-        let f = await this.context.for(Families).findId(r.duplicateFamilyInfo[0].id);
+        let f = await this.context.repo(Families).findId(r.duplicateFamilyInfo[0].id);
         await f.showFamilyDialog();
     }
     async familyHistory(r: excelRowInfo) {
-        let f = await this.context.for(Families).findId(r.duplicateFamilyInfo[0].id);
-        let result = new GridSettings(this.context.for(FamilyDeliveries), {
+        let f = await this.context.repo(Families).findId(r.duplicateFamilyInfo[0].id);
+        let result = new GridSettings(this.context.repo(FamilyDeliveries), {
             numOfColumnsInGrid: 7,
 
             rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -1390,7 +1390,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async updateFamily(i: duplicateFamilyInfo) {
-        let f = await this.context.for(Families).findFirst(f => f.id.isEqualTo(i.id));
+        let f = await this.context.repo(Families).findFirst(f => f.id.isEqualTo(i.id));
         f.showFamilyDialog();
 
     }
@@ -1449,7 +1449,7 @@ class columnUpdateHelper {
         getResult: (entity: T) => Y,
         updateResultTo: FieldRef<any, Y>,
         additionalUpdates?: ((entity: T) => void)) {
-        let x = await this.context.for(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
+        let x = await this.context.repo(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
         if (x.isNew()) {
             let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
@@ -1514,10 +1514,10 @@ function onlyNameMatch(f: duplicateFamilyInfo) {
 
 async function compareValuesWithRow(context: Context, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
-    let basketType = await context.for(BasketType).findId(info.basketType);
-    let distCenter = await context.for(DistributionCenters).findId(info.distCenter);
-    let ef = await context.for(Families).findId(withFamily);
-    let fd = await context.for(ActiveFamilyDeliveries).findFirst({
+    let basketType = await context.repo(BasketType).findId(info.basketType);
+    let distCenter = await context.repo(DistributionCenters).findId(info.distCenter);
+    let ef = await context.repo(Families).findId(withFamily);
+    let fd = await context.repo(ActiveFamilyDeliveries).findFirst({
         createIfNotFound: true,
         where: fd => {
             let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));

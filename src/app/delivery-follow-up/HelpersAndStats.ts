@@ -24,9 +24,9 @@ function log(s: string) {
     (options, context) =>
         options.dbName = async (self) => {
 
-            let f = SqlFor(context.for(ActiveFamilyDeliveries).metadata);
+            let f = SqlFor(context.repo(ActiveFamilyDeliveries).metadata);
 
-            let h = SqlFor(context.for(Helpers).metadata);
+            let h = SqlFor(context.repo(Helpers).metadata);
             var sql = new SqlBuilder(context);
 
             let helperFamilies = (where: () => any[]) => {

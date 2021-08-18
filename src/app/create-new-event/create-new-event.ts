@@ -77,7 +77,7 @@ export class CreateNewEvent {
         await settings.save();
 
         let pt = new PromiseThrottle(10);
-        for await (const fd of this.context.for(ActiveFamilyDeliveries).iterate({ where: fd => this.context.filterDistCenter(fd.distributionCenter, this.distributionCenter) })) {
+        for await (const fd of this.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => this.context.filterDistCenter(fd.distributionCenter, this.distributionCenter) })) {
             this.archiveHelper.forEach(fd);
             fd.archive = true;
             await pt.push(fd.save());
@@ -105,7 +105,7 @@ export class CreateNewEvent {
         let i = 0;
 
 
-        for await (let f of this.context.for(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active), progress })) {
+        for await (let f of this.context.repo(Families).iterate({ where: f => f.status.isEqualTo(FamilyStatus.Active), progress })) {
             let match = true;
             if (this.moreOptions) {
                 if (this.includeGroups?.hasAny()) {
@@ -158,7 +158,7 @@ export class CreateNewEvent {
             }
         }
 
-        let notDoneDeliveries = await this.context.for(ActiveFamilyDeliveries).count(x => FamilyDeliveries.readyFilter().and(this.context.filterDistCenter(x.distributionCenter, this.distributionCenter)));
+        let notDoneDeliveries = await this.context.repo(ActiveFamilyDeliveries).count(x => FamilyDeliveries.readyFilter().and(this.context.filterDistCenter(x.distributionCenter, this.distributionCenter)));
         if (notDoneDeliveries > 0) {
             await dialog.messageDialog(getLang(this.context).thereAre + " " + notDoneDeliveries + " " + getLang(this.context).notDoneDeliveriesShouldArchiveThem);
             routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
@@ -166,7 +166,7 @@ export class CreateNewEvent {
         }
         let threeHoursAgo = new Date();
         threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
-        let recentOnTheWay = await this.context.for(ActiveFamilyDeliveries).count(x => FamilyDeliveries.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)).and(this.context.filterDistCenter(x.distributionCenter, this.distributionCenter)));
+        let recentOnTheWay = await this.context.repo(ActiveFamilyDeliveries).count(x => FamilyDeliveries.onTheWayFilter().and(x.courierAssingTime.isGreaterOrEqualTo(threeHoursAgo)).and(this.context.filterDistCenter(x.distributionCenter, this.distributionCenter)));
         if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.context).thereAre + " " + recentOnTheWay + " " + getLang(this.context).deliveresOnTheWayAssignedInTheLast3Hours)) {
             routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
             return;
@@ -194,7 +194,7 @@ export class CreateNewEvent {
             validate: async () => {
 
 
-                let count = await this.context.for(ActiveFamilyDeliveries).count(x => this.context.filterDistCenter(x.distributionCenter, this.distributionCenter));
+                let count = await this.context.repo(ActiveFamilyDeliveries).count(x => this.context.filterDistCenter(x.distributionCenter, this.distributionCenter));
                 if (count > 0) {
                     if (!await dialog.YesNoPromise(getLang(this.context).confirmArchive + " " + count + " " + getLang(this.context).deliveries))
                         throw getLang(this.context).actionCanceled;

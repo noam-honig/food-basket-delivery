@@ -25,7 +25,7 @@ export async function InitContext(context: Context, user?: UserInfo) {
     if (context.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {
-            h = await context.for(Helpers).findId(user.id);
+            h = await context.repo(Helpers).findId(user.id);
             helpersCache.set(user.id, h);
         }
     }
@@ -33,21 +33,21 @@ export async function InitContext(context: Context, user?: UserInfo) {
     context.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
-        await context.for(BasketType).find({ orderBy: x => x.id }).then(y => {
+        await context.repo(BasketType).find({ orderBy: x => x.id }).then(y => {
             if (y.length > 0)
                 defaultBasketType = y[0];
         });
         return defaultBasketType;
     }
     context.defaultDistributionCenter = async () =>
-        (await context.for(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
+        (await context.repo(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
     context.currentUser = h;
 
     context.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
         let result: DistributionCenters;
         let dist: number;
         if (!centers)
-            centers = await context.for(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
+            centers = await context.repo(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
         for (const c of centers) {
             let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
             if (result === undefined || myDist < dist) {

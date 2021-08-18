@@ -74,7 +74,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of context.for(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
+    for await (const h of context.repo(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,
@@ -95,7 +95,7 @@ export class SelectHelperComponent implements OnInit {
     if (!selectDefaultVolunteer) {
 
       /* ----    calculate active deliveries and distances    ----*/
-      let afd = SqlFor(context.for(ActiveFamilyDeliveries));
+      let afd = SqlFor(context.repo(ActiveFamilyDeliveries));
 
 
 
@@ -124,7 +124,7 @@ export class SelectHelperComponent implements OnInit {
       /*  ---------- calculate completed deliveries and "busy" status -------------*/
       let sql1 = new SqlBuilder(context);
 
-      let fd = SqlFor(context.for(FamilyDeliveries));
+      let fd = SqlFor(context.repo(FamilyDeliveries));
 
       let limitDate = new Date();
       limitDate.setDate(limitDate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
@@ -152,7 +152,7 @@ export class SelectHelperComponent implements OnInit {
       }
     } else {
 
-      let afd = SqlFor(context.for(Families));
+      let afd = SqlFor(context.repo(Families));
       for (const d of (await db.execute(await sql.query({
         from: afd,
         where: () => [afd.fixedCourier.isDifferentFrom(null).and(afd.status.isEqualTo(FamilyStatus.Active))],
@@ -174,7 +174,7 @@ export class SelectHelperComponent implements OnInit {
       }
     }
     if (familyId) {
-      for (const fd of await context.for(FamilyDeliveries).find({
+      for (const fd of await context.repo(FamilyDeliveries).find({
         where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
       })) {
         if (fd.courier) {
@@ -247,7 +247,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this.context.for(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
+      this.filteredHelpers = mapHelpers(await this.context.repo(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
       this.showingRecentHelpers = false;
     });
 
@@ -270,7 +270,7 @@ export class SelectHelperComponent implements OnInit {
     let helper: HelpersBase;
     if (h) {
       if (!h.helper)
-        h.helper = await this.context.for(Helpers).findId(h.helperId);
+        h.helper = await this.context.repo(Helpers).findId(h.helperId);
       helper = h.helper;
     }
     this.args.onSelect(helper);

@@ -34,7 +34,7 @@ export class MergeFamiliesComponent implements OnInit {
   async ngOnInit() {
     this.families.sort((a, b) => b.createDate.valueOf() - a.createDate.valueOf());
     this.families.sort((a, b) => a.status.id - b.status.id);
-    this.family = await this.context.for(Families).findId(this.families[0].id);
+    this.family = await this.context.repo(Families).findId(this.families[0].id);
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
@@ -161,7 +161,7 @@ export class MergeFamiliesComponent implements OnInit {
       await MergeFamiliesComponent.mergeFamilies(this.families.map(x => x.id));
       this.merged = true;
       this.dialogRef.close();
-      let deliveries = await this.context.for(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)))
+      let deliveries = await this.context.repo(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.family.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)))
       if (deliveries > 0) {
 
         await this.family.showDeliveryHistoryDialog({
@@ -183,15 +183,15 @@ export class MergeFamiliesComponent implements OnInit {
   @BackendMethod({ allowed: Roles.admin })
   static async mergeFamilies(ids: string[], context?: Context) {
     let id = ids.splice(0, 1)[0];
-    let newFamily = await context.for(Families).findId(id);
+    let newFamily = await context.repo(Families).findId(id);
 
     for (const oldId of ids) {
-      for await (const fd of context.for(FamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(oldId) })) {
+      for await (const fd of context.repo(FamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(oldId) })) {
         fd.family = id;
         newFamily.updateDelivery(fd);
         await fd.save();
       }
-      await (await context.for(Families).findId(oldId)).delete();
+      await (await context.repo(Families).findId(oldId)).delete();
     }
   }
 

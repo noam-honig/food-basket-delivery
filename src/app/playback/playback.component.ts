@@ -243,7 +243,7 @@ export class PlaybackComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.admin })
   static async GetTimeline(fromDateDate: Date, toDateDate: Date, context?: Context, db?: SqlDatabase) {
-    let f = SqlFor(context.for(FamilyDeliveries));
+    let f = SqlFor(context.repo(FamilyDeliveries));
 
 
 

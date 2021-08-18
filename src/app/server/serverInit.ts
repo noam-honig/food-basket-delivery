@@ -131,13 +131,13 @@ export async function serverInit() {
                     DistributionCenters
                 ]) {
 
-                    await builder.createIfNotExist(context.for(entity).metadata);
-                    await builder.verifyAllColumns(context.for(entity).metadata);
+                    await builder.createIfNotExist(context.repo(entity).metadata);
+                    await builder.verifyAllColumns(context.repo(entity).metadata);
                 }
 
             }
             await SitesEntity.completeInit(context);
-            let settings = await context.for(ApplicationSettings).findId(1, { createIfNotFound: true });
+            let settings = await context.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
             if (settings.isNew()) {
                 settings.organisationName = "מערכת חלוקה";
                 settings.id = 1;
@@ -191,7 +191,7 @@ export async function serverInit() {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let context = new Context();
-                    let h = await SqlFor(context.for(Helpers));
+                    let h = await SqlFor(context.repo(Helpers));
                     var sql = new SqlBuilder(context);
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];

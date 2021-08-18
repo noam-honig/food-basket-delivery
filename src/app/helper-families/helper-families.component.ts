@@ -132,11 +132,11 @@ export class HelperFamiliesComponent implements OnInit {
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd = SqlFor(context.for(ActiveFamilyDeliveries));
+    let fd = SqlFor(context.repo(ActiveFamilyDeliveries));
 
     let sql = new SqlBuilder(context);
     let settings = await ApplicationSettings.getAsync(context);
-    let privateDonation = selfAssign ? (await context.for(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
+    let privateDonation = selfAssign ? (await context.repo(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
 
     for (const r of (await db.execute(await sql.query({
       select: () => [
@@ -158,7 +158,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
     }))).rows) {
       let existing = result.find(async x => x.item.familyId == await getValueFromResult(r, fd.family));
-      let basketName = (await context.for(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
+      let basketName = (await context.repo(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
       if (existing) {
         existing.name += ", " + await getValueFromResult(r, fd.quantity) + " X " + basketName;
         existing.item.totalItems += await getValueFromResult(r, fd.quantity);
@@ -304,7 +304,7 @@ export class HelperFamiliesComponent implements OnInit {
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase, context?: Context) {
     let dist: DistributionCenters = null;
-    await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
+    await pagedRowsIterator(context.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         fd.courier = null;
@@ -328,7 +328,7 @@ export class HelperFamiliesComponent implements OnInit {
   static async okAllForHelperOnServer(helper: HelpersBase, context?: Context) {
     let dist: DistributionCenters = null;
 
-    await pagedRowsIterator(context.for(ActiveFamilyDeliveries), {
+    await pagedRowsIterator(context.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
@@ -381,7 +381,7 @@ export class HelperFamiliesComponent implements OnInit {
       if (this.familyLists.helper.leadHelper) {
         this.otherDependentVolunteers.push(this.familyLists.helper.leadHelper);
       }
-      this.otherDependentVolunteers.push(...await this.context.for(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
+      this.otherDependentVolunteers.push(...await this.context.repo(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
     });
   }
   otherDependentVolunteers: HelpersBase[] = [];
@@ -400,7 +400,7 @@ export class HelperFamiliesComponent implements OnInit {
       return;
     if (!settings.sendSuccessMessageToFamily)
       return;
-    let fd = await context.for(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
+    let fd = await context.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
     if (!fd)
       console.log("did not send sms to " + deliveryId + " failed to find delivery");
     if (!fd.phone1)
@@ -568,7 +568,7 @@ export class HelperFamiliesComponent implements OnInit {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
         save: async (comment) => {
-          let hist = this.context.for((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+          let hist = this.context.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
           hist.volunteer = this.familyLists.helper;
           hist.comment = comment;
           await hist.save();

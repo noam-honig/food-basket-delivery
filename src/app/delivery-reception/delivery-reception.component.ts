@@ -25,7 +25,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   urlParams = new URLSearchParams(window.location.search);
   deliveriesForPhone: string[] = [];
 
-  deliveries = new GridSettings(this.context.for(FamilyDeliveries), {
+  deliveries = new GridSettings(this.context.repo(FamilyDeliveries), {
     allowUpdate: false,
     numOfColumnsInGrid: 3,
     rowCssClass: f => f.deliverStatus.getCss(),

@@ -72,7 +72,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
     let stam = new Context();
     stam.setDataProvider(this.helperStorage);
-    this.helperInfo = new GridSettings(stam.for(helperHistoryInfo), {
+    this.helperInfo = new GridSettings(stam.repo(helperHistoryInfo), {
       showFilter: true,
       allowSelection: true,
 
@@ -81,7 +81,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: this.settings.lang.exportToExcel,
         visible: () => this.context.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.settings, stam.for(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.$.courier);
+          await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.$.courier);
         }
       },
       {
@@ -98,7 +98,7 @@ export class DeliveryHistoryComponent implements OnInit {
           if (await openDialog(YesNoQuestionComponent, q => q.args = {
             question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
           }, q => q.yes)) {
-            if (await context.for(HelperGifts).count(g => g.assignedToHelper.isEqualTo(null)) >= rows.length) {
+            if (await context.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(null)) >= rows.length) {
               for (const h of rows) {
                 await HelperGifts.assignGift(h.courier);
               }
@@ -114,7 +114,7 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           name: this.settings.lang.deliveries,
           click: async x => {
-            let h = await this.context.for(Helpers).findId(x.courier);
+            let h = await this.context.repo(Helpers).findId(x.courier);
             h.showDeliveryHistory(this.dialog, this.busy);
           },
         },
@@ -189,7 +189,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
 
-    let rows: any[] = this.helperStorage.rows[(await this.context.for(helperHistoryInfo).metadata.getDbName())];
+    let rows: any[] = this.helperStorage.rows[(await this.context.repo(helperHistoryInfo).metadata.getDbName())];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -205,14 +205,14 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
-  deliveries = new GridSettings(this.context.for(FamilyDeliveries), {
+  deliveries = new GridSettings(this.context.repo(FamilyDeliveries), {
     showFilter: true,
     rowCssClass: d => d.deliverStatus.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-        await saveToExcel(this.settings, this.context.for(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+        await saveToExcel(this.settings, this.context.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
             await f.basketType.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -316,10 +316,10 @@ export class DeliveryHistoryComponent implements OnInit {
 
     toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
     var sql = new SqlBuilder(context);
-    var fd =await  SqlFor(context.for(FamilyDeliveries));
+    var fd =await  SqlFor(context.repo(FamilyDeliveries));
 
-    var h =await  SqlFor(context.for(Helpers));
-    var hg =await  SqlFor(context.for(HelperGifts));
+    var h =await  SqlFor(context.repo(Helpers));
+    var hg =await  SqlFor(context.repo(HelperGifts));
 
 
     let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(

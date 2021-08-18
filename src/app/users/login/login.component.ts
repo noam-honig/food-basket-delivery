@@ -196,7 +196,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
   @BackendMethod({ allowed: true })
   static async registerNewUser(phone: string, name: string, context?: Context) {
-    let h = context.for(Helpers).create();
+    let h = context.repo(Helpers).create();
     h.phone = new Phone(phone);
     h.name = name;
     await h.save();

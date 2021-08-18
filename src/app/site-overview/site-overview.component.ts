@@ -29,7 +29,7 @@ export class SiteOverviewComponent implements OnInit {
   @BackendMethod({ allowed: Roles.overview })
   static async siteInfo(site: string, context?: Context): Promise<Manager[]> {
     let c = await createSiteContext(site, context);
-    return (await c.for(Helpers).find({ where: x => x.admin.isEqualTo(true), orderBy: x => x.lastSignInDate.descending() })).map(
+    return (await c.repo(Helpers).find({ where: x => x.admin.isEqualTo(true), orderBy: x => x.lastSignInDate.descending() })).map(
       ({ name, phone, lastSignInDate }) => ({
         name, phone: phone?.thePhone, lastSignInDate
       })

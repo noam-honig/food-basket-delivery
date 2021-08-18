@@ -22,11 +22,11 @@ import { DateOnlyField } from "remult/src/remult3";
     (options, context) => options.dbName = async (self) => {
         let sql = new SqlBuilder(context);
 
-        let f = SqlFor(context.for(ActiveFamilyDeliveries));
-        let history = SqlFor(context.for(FamilyDeliveries));
-        let com = SqlFor(context.for(HelperCommunicationHistory));
-        let h = SqlFor(context.for(Helpers));
-        let h2 = SqlFor(context.for(Helpers));
+        let f = SqlFor(context.repo(ActiveFamilyDeliveries));
+        let history = SqlFor(context.repo(FamilyDeliveries));
+        let com = SqlFor(context.repo(HelperCommunicationHistory));
+        let h = SqlFor(context.repo(Helpers));
+        let h2 = SqlFor(context.repo(Helpers));
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
@@ -78,7 +78,7 @@ import { DateOnlyField } from "remult/src/remult3";
 )
 export class InRouteHelpers extends IdEntity {
     async helper() {
-        return this.context.for(Helpers).findId(this.id);
+        return this.context.repo(Helpers).findId(this.id);
     }
     async showHistory() {
         let h = await this.helper();
@@ -91,7 +91,7 @@ export class InRouteHelpers extends IdEntity {
                     await this.addCommunication(() => gridDialog.args.settings.reloadData());
                 }
             }],
-            settings: new GridSettings(this.context.for(HelperCommunicationHistory), {
+            settings: new GridSettings(this.context.repo(HelperCommunicationHistory), {
                 numOfColumnsInGrid: 6,
                 knowTotalRows: true,
                 rowButtons: [
@@ -130,7 +130,7 @@ export class InRouteHelpers extends IdEntity {
             title: 'הוסף תכתובת',
 
             save: async (comment) => {
-                let hist = this.context.for(HelperCommunicationHistory).create();
+                let hist = this.context.repo(HelperCommunicationHistory).create();
                 hist.volunteer = await this.helper();
                 hist.comment = comment;
                 await hist.save();
@@ -142,7 +142,7 @@ export class InRouteHelpers extends IdEntity {
     }
 
     async showAssignment() {
-        let h = await this.context.for(Helpers).findId(this.id);
+        let h = await this.context.repo(Helpers).findId(this.id);
         await openDialog(
             HelperAssignmentComponent, s => s.argsHelper = h);
         this._.reload();

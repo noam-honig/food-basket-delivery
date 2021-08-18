@@ -30,7 +30,7 @@ export class InRouteFollowUpComponent implements OnInit {
     this.helpers.reloadData();
   }
 
-  helpers = new GridSettings(this.context.for(InRouteHelpers), {
+  helpers = new GridSettings(this.context.repo(InRouteHelpers), {
 
 
     where: [h => h.name.contains(this.searchString), x => Filter.toItem(this.currentOption.where)(x)],
@@ -41,7 +41,7 @@ export class InRouteFollowUpComponent implements OnInit {
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,
-      click: () => saveToExcel(this.settings, this.context.for(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
+      click: () => saveToExcel(this.settings, this.context.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
     }],
     rowCssClass: x => {
       if ((!x.seenFirstAssign) && (!x.lastCommunicationDate || x.lastCommunicationDate < daysAgo(3)))
@@ -76,7 +76,7 @@ export class InRouteFollowUpComponent implements OnInit {
               click: () => h.showAssignment()
             }
           ],
-          settings: new GridSettings(this.context.for(ActiveFamilyDeliveries), {
+          settings: new GridSettings(this.context.repo(ActiveFamilyDeliveries), {
             numOfColumnsInGrid: 7,
             knowTotalRows: true,
             rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -123,7 +123,7 @@ export class InRouteFollowUpComponent implements OnInit {
     {
       name: use.language.volunteerInfo,
       click: async s => {
-        let h = await this.context.for(Helpers).findId(s.id);
+        let h = await this.context.repo(Helpers).findId(s.id);
         h.displayEditDialog(this.dialog, this.busy);
       }
     },
@@ -178,7 +178,7 @@ export class InRouteFollowUpComponent implements OnInit {
     openDialog(InputAreaComponent, x => x.args = {
       title: use.language.freezeHelper,
       ok: async () => {
-        let helper = await this.context.for(Helpers).findId(h.id);
+        let helper = await this.context.repo(Helpers).findId(h.id);
         helper.frozenTill = h.frozenTill;
         helper.internalComment = h.internalComment;
         await helper.save();

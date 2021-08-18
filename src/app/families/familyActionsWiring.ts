@@ -92,8 +92,8 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                         },
                         ok: async () => {
-                            let groupName = this.context.for(this.entity).metadata.caption;
-                            let count = await this.context.for(this.entity).count(this.composeWhere(component.userWhere))
+                            let groupName = this.context.repo(this.entity).metadata.caption;
+                            let count = await this.context.repo(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                                 let r = await this.internalForTestingCallTheServer({
                                     count,
@@ -125,7 +125,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: await Filter.packWhere(this.context.for(this.entity).metadata, info.where),
+            packedWhere: await Filter.packWhere(this.context.repo(this.entity).metadata, info.where),
         }, p);
 
         return r;
@@ -138,15 +138,15 @@ export abstract class ActionOnRows<T extends IdEntity>  {
     @BackendMethod<ActionOnRows<any>>({ allowed: (context, self) => context.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
         await this.serialHelper?.deserializeOnServer();
-        let where = this.composeWhere(x => Filter.unpackWhere(this.context.for(this.entity).metadata, info.packedWhere));
+        let where = this.composeWhere(x => Filter.unpackWhere(this.context.repo(this.entity).metadata, info.packedWhere));
 
-        let count = await this.context.for(this.entity).count(where);
+        let count = await this.context.repo(this.entity).count(where);
         if (count != info.count) {
-            console.log({ count, packCount: info.count, name: this.context.for(this.entity).metadata.caption });
+            console.log({ count, packCount: info.count, name: this.context.repo(this.entity).metadata.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;
-        let r = await pagedRowsIterator<T>(this.context.for(this.entity), {
+        let r = await pagedRowsIterator<T>(this.context.repo(this.entity), {
             where,
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
@@ -158,7 +158,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + this.context.for(this.entity).metadata.caption + " " + getLang(this.context).updated;
+        let message = this.args.title + ": " + r + " " + this.context.repo(this.entity).metadata.caption + " " + getLang(this.context).updated;
 
         await Families.SendMessageToBrowsers(message, this.context, '');
         return r;

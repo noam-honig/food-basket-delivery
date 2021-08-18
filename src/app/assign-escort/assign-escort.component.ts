@@ -32,13 +32,13 @@ export class AssignEscortComponent implements OnInit {
     this.clearHelperInfo(false);
 
     if (this.phone.length == 10) {
-      let h = await this.context.for(HelpersAndStats).findFirst(h => h.phone.isEqualTo(new Phone(this.phone)));
+      let h = await this.context.repo(HelpersAndStats).findFirst(h => h.phone.isEqualTo(new Phone(this.phone)));
       if (h) {
 
         this.initHelper(h);
       }
       else {
-        let h = this.context.for(Helpers).create();
+        let h = this.context.repo(Helpers).create();
         h.phone = new Phone(this.phone);
         this.initHelper(h);
       }
@@ -50,7 +50,7 @@ export class AssignEscortComponent implements OnInit {
       await this.helper.save();
     }
 
-    let h = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(driver.id));
+    let h = await this.context.repo(Helpers).findFirst(h => h.id.isEqualTo(driver.id));
     h.escort = await this.helper.getHelper();
     await h.save();
     if (await openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name }, x => x.yes)) {
@@ -72,7 +72,7 @@ export class AssignEscortComponent implements OnInit {
   async clearEscort() {
     this.alreadyEscortingDriver.escort = null;
     await this.alreadyEscortingDriver.save();
-    let h = await this.context.for(HelpersAndStats).findFirst(h => h.id.isEqualTo(this.helper.id));
+    let h = await this.context.repo(HelpersAndStats).findFirst(h => h.id.isEqualTo(this.helper.id));
     this.clearHelperInfo();
     this.initHelper(h);
 
@@ -85,7 +85,7 @@ export class AssignEscortComponent implements OnInit {
       if (h instanceof HelpersAndStats)
         assignedFamilies = h.deliveriesInProgress;
       else
-        assignedFamilies = await (await this.context.for(HelpersAndStats).findFirst(x => x.id.isEqualTo(h.id))).deliveriesInProgress
+        assignedFamilies = await (await this.context.repo(HelpersAndStats).findFirst(x => x.id.isEqualTo(h.id))).deliveriesInProgress
       if (assignedFamilies > 0) {
         await openDialog(YesNoQuestionComponent, x =>
           x.args = {
@@ -117,7 +117,7 @@ export class AssignEscortComponent implements OnInit {
     if (this.helper.theHelperIAmEscorting) {
       this.alreadyEscortingDriver = this.helper.theHelperIAmEscorting;
     } else {
-      this.optionalDrivers = await this.context.for(HelpersAndStats).find({
+      this.optionalDrivers = await this.context.repo(HelpersAndStats).find({
         where: h =>
           h.needEscort.isEqualTo(true)
             .and(h.escort.isEqualTo(null)

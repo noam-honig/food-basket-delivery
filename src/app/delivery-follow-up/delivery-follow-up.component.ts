@@ -35,7 +35,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard]
   }
   async deliveryDetails(c: helperFollowupInfo) {
-    let h = await this.context.for(Helpers).findId(c.id);
+    let h = await this.context.repo(Helpers).findId(c.id);
     await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
     this.refresh();
   }
@@ -44,7 +44,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
-    let h = await this.context.for(Helpers).findId(c.id);
+    let h = await this.context.repo(Helpers).findId(c.id);
     if (!h) {//if there is a row with an invalid helper id - I want it to at least work
       h.id = c.id;
     }
@@ -104,7 +104,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
         for (const h of this.helpers) {
           if (!h.smsWasSent) {
-            await SendSmsAction.SendSms(await this.context.for(Helpers).findId(h.id), false);
+            await SendSmsAction.SendSms(await this.context.repo(Helpers).findId(h.id), false);
           }
         }
       });
@@ -167,9 +167,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async helpersStatus(distCenter: DistributionCenters, context?: Context, db?: SqlDatabase) {
-    let fd = SqlFor(context.for(FamilyDeliveries));
+    let fd = SqlFor(context.repo(FamilyDeliveries));
 
-    let h = SqlFor(context.for(Helpers));
+    let h = SqlFor(context.repo(Helpers));
     var sql = new SqlBuilder(context);
     sql.addEntity(fd, 'fd');
     let r = await db.execute(log(await sql.build((await sql.query({

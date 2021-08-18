@@ -10,7 +10,7 @@ import { HelperGifts } from "./HelperGifts";
 })
 export class HelperGiftsComponent implements OnInit {
   constructor(private context: Context) { }
-  gifts = new GridSettings(this.context.for(HelperGifts),{
+  gifts = new GridSettings(this.context.repo(HelperGifts),{
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 7,

@@ -49,7 +49,7 @@ export class MyFamiliesComponent implements OnInit {
       if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
         id = this.user.theHelperIAmEscortingId;
       done += '2';
-      let helper = await this.context.for(Helpers).findFirst(h => h.id.isEqualTo(id));
+      let helper = await this.context.repo(Helpers).findFirst(h => h.id.isEqualTo(id));
       if (helper)
         done += 'helper id:' + helper.id;
       else done += "3";
@@ -86,7 +86,7 @@ export class MyFamiliesComponent implements OnInit {
 
     }
     this.busy.donotWait(async () => {
-      this.hasEvents = (await this.context.for(Event).count())>0;
+      this.hasEvents = (await this.context.repo(Event).count())>0;
     });
   }
 

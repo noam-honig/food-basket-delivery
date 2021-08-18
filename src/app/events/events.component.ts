@@ -34,7 +34,7 @@ export class EventsComponent implements OnInit {
   constructor(private context: Context, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events: GridSettings<Event> = new GridSettings<Event>(this.context.for(Event), {
+  events: GridSettings<Event> = new GridSettings<Event>(this.context.repo(Event), {
     allowUpdate: this.context.isAllowed(Roles.admin),
     allowInsert: this.context.isAllowed(Roles.admin),
 

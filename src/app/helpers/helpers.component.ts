@@ -51,7 +51,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   showDeleted = false;
   searchString: string = '';
   numOfColsInGrid = 4;
-  helpers = new GridSettings(this.context.for(Helpers), {
+  helpers = new GridSettings(this.context.repo(Helpers), {
     showFilter: true,
     allowDelete: false,
     allowInsert: true,
@@ -64,7 +64,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.context.for(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
+          await saveToExcel(this.settings, this.context.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
             async (h, addColumn) => {
               addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation().getCity(), 's');
               addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation().getCity(), 's');
@@ -255,7 +255,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.admin })
   static async resetPassword(helperId: string, context?: Context) {
 
-    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+    await context.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.realStoredPassword = '';
       await h.save();
     });
@@ -263,7 +263,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.admin })
   static async invalidatePassword(helperId: string, context?: Context) {
 
-    await context.for(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+    await context.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
       h.passwordChangeDate = new Date(1901, 1, 1);
       await h.save();
     });
@@ -271,7 +271,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async sendInvite(helperId: string, context?: Context) {
-    let h = await context.for(Helpers).findFirst(x => x.id.isEqualTo(helperId));
+    let h = await context.repo(Helpers).findFirst(x => x.id.isEqualTo(helperId));
     if (!h)
       return getLang(context).unfitForInvite;
     if (!(h.admin || h.distCenterAdmin))
@@ -287,7 +287,7 @@ ${url}
     if (!hasPassword) {
       message += getLang(context).enterFirstTime
     }
-    let from = await context.for(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
+    let from = await context.repo(Helpers).findFirst(h => h.id.isEqualTo(context.user.id));
     await new SendSmsUtils().sendSms(h.phone.thePhone, from.phone.thePhone, message, context.getOrigin(), Sites.getOrganizationFromContext(context), await ApplicationSettings.getAsync(context));
     return getLang(context).inviteSentSuccesfully
 
@@ -311,7 +311,7 @@ ${url}
 
   @BackendMethod({ allowed: Roles.admin })
   static async clearCommentsOnServer(context?: Context) {
-    for await (const h of context.for(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
+    for await (const h of context.repo(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
       h.eventComment = '';
       await h.save();
     }
@@ -319,7 +319,7 @@ ${url}
 
   @BackendMethod({ allowed: Roles.admin })
   static async clearEscortsOnServer(context?: Context) {
-    for await (const h of context.for(Helpers).iterate()) {
+    for await (const h of context.repo(Helpers).iterate()) {
       h.escort = null;
       h.needEscort = false;
       h.theHelperIAmEscorting = null;

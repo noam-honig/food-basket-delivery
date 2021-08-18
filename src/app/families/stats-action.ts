@@ -57,7 +57,7 @@ export class Stats {
             }
         }
 
-        await context.for(Groups).find({
+        await context.repo(Groups).find({
             limit: 1000,
             orderBy: f =>  f.name 
         }).then(groups => {
@@ -67,7 +67,7 @@ export class Stats {
                     total: 0
                 };
                 result.groups.push(x);
-                pendingStats.push(context.for(Families).count(f => f.groups.contains(x.name).and(
+                pendingStats.push(context.repo(Families).count(f => f.groups.contains(x.name).and(
                     f.status.isEqualTo(FamilyStatus.Active))).then(r => x.total = r));
             }
         });
@@ -89,7 +89,7 @@ export class FaimilyStatistics {
     value = 0;
     async saveTo(distCenter: string, data: any, context: Context) {
 
-        data[this.name] = await context.for(Families).count(f => this.rule(f)).then(c => this.value = c);
+        data[this.name] = await context.repo(Families).count(f => this.rule(f)).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

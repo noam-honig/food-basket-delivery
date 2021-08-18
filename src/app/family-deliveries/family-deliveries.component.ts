@@ -66,7 +66,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     await this.deliveries.reloadData();
   }
   async newFamily() {
-    let f = this.context.for(Families).create();
+    let f = this.context.repo(Families).create();
     f.name = this.searchString;
     f.showFamilyDialog({
       onSave: async () => {
@@ -452,7 +452,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
 
-  deliveries: GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.context.for(ActiveFamilyDeliveries), {
+  deliveries: GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.context.repo(ActiveFamilyDeliveries), {
     showFilter: true,
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
@@ -657,7 +657,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async () => {
 
           let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-          await saveToExcel(this.settings, this.context.for(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+          await saveToExcel(this.settings, this.context.repo(ActiveFamilyDeliveries), this.deliveries, getLang(this.context).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
             async (fd, addColumn) => {
               await fd.basketType?.addBasketTypes(fd.quantity, addColumn);
               fd.addStatusExcelColumn(addColumn);
@@ -710,7 +710,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static async getGroups(dist: DistributionCenters, readyOnly = false, context?: Context) {
     let pendingStats = [];
     let result: groupStats[] = [];
-    await context.for(Groups).find({
+    await context.repo(Groups).find({
       limit: 1000,
       orderBy: f => f.name
     }).then(groups => {
@@ -720,7 +720,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           totalReady: 0
         };
         result.push(x);
-        pendingStats.push(context.for(ActiveFamilyDeliveries).count(f => {
+        pendingStats.push(context.repo(ActiveFamilyDeliveries).count(f => {
           let r = f.groups.contains(x.name).and(
             context.filterDistCenter(f.distributionCenter, dist));
           if (readyOnly)
@@ -738,9 +738,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder(context);
 
-    let fd = SqlFor(context.for(FamilyDeliveries));
+    let fd = SqlFor(context.repo(FamilyDeliveries));
     let result: string[] = [];
-    let courier = await (await context.for(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
+    let courier = await (await context.repo(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
 
     for (const d of (await db.execute(await sql1.query({
       from: fd,
@@ -760,7 +760,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await (await context.for(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiJson());
+    return await (await context.repo(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiJson());
   }
 
 
@@ -798,7 +798,7 @@ export interface deliveryButtonsHelper {
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
-    let f = await args.context.for(Families).findId(d.family);
+    let f = await args.context.repo(Families).findId(d.family);
 
     if (args.showAllBeforeNew) {
       f.showDeliveryHistoryDialog({
@@ -813,8 +813,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
         if (args.settings.isSytemForMlt()) {
           if (d.deliverStatus.isProblem) {
-            let newDelivery = await args.context.for(ActiveFamilyDeliveries).findId(newDeliveryId);
-            for (const otherFailedDelivery of await args.context.for(ActiveFamilyDeliveries).find({
+            let newDelivery = await args.context.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
+            for (const otherFailedDelivery of await args.context.repo(ActiveFamilyDeliveries).find({
               where: fd => fd.family.isEqualTo(newDelivery.family).and(DeliveryStatus.isProblem(fd.deliverStatus))
             })) {
               await Families.addDelivery(otherFailedDelivery.family, otherFailedDelivery.basketType, otherFailedDelivery.distributionCenter, otherFailedDelivery.courier, {
@@ -864,7 +864,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
           onSelect: async selectedHelper => {
             d.courier = selectedHelper;
             await d.save();
-            var fd = await args.context.for(ActiveFamilyDeliveries).find({
+            var fd = await args.context.repo(ActiveFamilyDeliveries).find({
               where: fd => {
                 let f = fd.id.isDifferentFrom(d.id).and(
                   FamilyDeliveries.readyFilter()).and(
@@ -934,7 +934,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
     {
       name: getLang(args.context).familyDeliveries,
       click: async fd => {
-        let f = await args.context.for(Families).findId(fd.family);
+        let f = await args.context.repo(Families).findId(fd.family);
         f.showDeliveryHistoryDialog({
           settings: args.settings,
           dialog: args.dialog,
@@ -970,7 +970,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.context).shouldDeleteDeliveryFor + d.name)) {
           {
-            let fd = await args.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            let fd = await args.context.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
             await fd.delete();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
@@ -985,7 +985,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.context).shouldArchiveDelivery)) {
           {
-            let fd = await args.context.for(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            let fd = await args.context.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
             fd.archive = true;
             await fd.save();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);

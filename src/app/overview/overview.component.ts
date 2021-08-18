@@ -125,8 +125,8 @@ export class OverviewComponent implements OnInit {
     };
 
     var builder = new SqlBuilder(context);
-    let f = SqlFor(context.for(ActiveFamilyDeliveries));
-    let fd = SqlFor(context.for(FamilyDeliveries));
+    let f = SqlFor(context.repo(ActiveFamilyDeliveries));
+    let fd = SqlFor(context.repo(FamilyDeliveries));
 
 
 
@@ -135,8 +135,8 @@ export class OverviewComponent implements OnInit {
       progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
-      var as = await SqlFor(context.for(ApplicationSettings));
-      var h = await SqlFor(context.for(Helpers));
+      var as = await SqlFor(context.repo(ApplicationSettings));
+      var h = await SqlFor(context.repo(Helpers));
 
       let cols: any[] = [as.organisationName, as.logoUrl, builder.build("(", builder.query({
         from: h,
@@ -245,7 +245,7 @@ export class OverviewComponent implements OnInit {
     try {
       if (!name || name.length == 0)
         name = id;
-      let oh = await context.for(Helpers).findId(context.user.id);
+      let oh = await context.repo(Helpers).findId(context.user.id);
       let db = await OverviewComponent.createDbSchema(id);
       let otherContext = new Context();
       otherContext.setDataProvider(db);
@@ -253,7 +253,7 @@ export class OverviewComponent implements OnInit {
       Sites.setSiteToContext(otherContext, id, context);
       await InitContext(otherContext);
       {
-        let h = await otherContext.for(Helpers).create();
+        let h = await otherContext.repo(Helpers).create();
         h.name = oh.name;
         h.realStoredPassword = oh.realStoredPassword;
         h.phone = oh.phone;
@@ -261,7 +261,7 @@ export class OverviewComponent implements OnInit {
         await h.save();
       }
       if (manager && phone) {
-        let h2 = await otherContext.for(Helpers).create();
+        let h2 = await otherContext.repo(Helpers).create();
         h2.name = manager;
         h2.phone = new Phone(phone);
         h2.admin = true;
@@ -273,7 +273,7 @@ export class OverviewComponent implements OnInit {
       settings.address = address;
       await settings.save();
 
-      let s = context.for(SitesEntity).create();
+      let s = context.repo(SitesEntity).create();
       s.id = id;
       await s.save();
 
@@ -292,7 +292,7 @@ export class OverviewComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.overview })
   static async validateNewSchema(id: string, context?: Context) {
-    let x = await context.for(SitesEntity).findId(id);
+    let x = await context.repo(SitesEntity).findId(id);
     if (x) {
       return "מזהה כבר קיים";
     }

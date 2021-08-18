@@ -121,7 +121,7 @@ export class Event extends IdEntity {
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
         if (!helper)
             return false;
-        return !!(await this.context.for(volunteersInEvent).findFirst(v =>
+        return !!(await this.context.repo(volunteersInEvent).findFirst(v =>
             v.helper.isEqualTo(helper).and(
                 v.eventId.isEqualTo(this.id)).and(
                     v.canceled.isEqualTo(false)
@@ -143,7 +143,7 @@ export class Event extends IdEntity {
                 click: () => openDialog(SelectHelperComponent, y => y.args = {
                     onSelect: async h => {
 
-                        let eh = await this.context.for(volunteersInEvent).findFirst({
+                        let eh = await this.context.repo(volunteersInEvent).findFirst({
                             where: v => v.helper.isEqualTo(h).and(v.eventId.isEqualTo(this.id)),
                             useCache: false,
                             createIfNotFound: true
@@ -155,7 +155,7 @@ export class Event extends IdEntity {
                 })
 
             }],
-            settings: new GridSettings(this.context.for(volunteersInEvent), {
+            settings: new GridSettings(this.context.repo(volunteersInEvent), {
 
                 rowsInPage: 50,
                 where: ve => ve.eventId.isEqualTo(this.id),
@@ -210,7 +210,7 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.context).exportToExcel,
                         click: async () => {
-                            saveToExcel(getSettings(this.context), this.context.for(volunteersInEvent), x.args.settings, "מתנדבים שנרשמו ל" + this.name, busy)
+                            saveToExcel(getSettings(this.context), this.context.repo(volunteersInEvent), x.args.settings, "מתנדבים שנרשמו ל" + this.name, busy)
                         }
                     }
                 ],
@@ -296,7 +296,7 @@ export class Event extends IdEntity {
     },
         (options, context) =>
             options.sqlExpression = async (selfDefs) => {
-                var vie = SqlFor(context.for(volunteersInEvent));
+                var vie = SqlFor(context.repo(volunteersInEvent));
                 let self = SqlFor(selfDefs);
                 var sql = new SqlBuilder(context);
                 return sql.columnCount(self, {
@@ -375,7 +375,7 @@ export class Event extends IdEntity {
                 await busy.doWhileShowingBusy(async () => {
                     let r: Event[] = [];
                     for (const current of events) {
-                        let e = context.for(Event).create({
+                        let e = context.repo(Event).create({
                             name: current.name,
                             type: current.type,
                             description: current.description,
@@ -392,10 +392,10 @@ export class Event extends IdEntity {
 
 
                         await e.save();
-                        for (const c of await context.for(volunteersInEvent).find({
+                        for (const c of await context.repo(volunteersInEvent).find({
                             where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
                         })) {
-                            let v = context.for(volunteersInEvent).create();
+                            let v = context.repo(volunteersInEvent).create();
                             v.eventId = e.id;
                             v.helper = c.helper;
                             v.duplicateToNextEvent = true;
@@ -521,7 +521,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor(context.for(Helpers));
+                let h = SqlFor(context.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.name],
@@ -537,7 +537,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor(context.for(Helpers));
+                let h = SqlFor(context.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.phone],
@@ -553,7 +553,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let d = SqlFor(context.for(ActiveFamilyDeliveries));
+                let d = SqlFor(context.repo(ActiveFamilyDeliveries));
                 return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
             }
     )
@@ -565,7 +565,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let d = SqlFor(context.for(FamilyDeliveries));
+                let d = SqlFor(context.repo(FamilyDeliveries));
                 return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
             }
     )
@@ -577,7 +577,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor(context.for(Helpers));
+                let h = SqlFor(context.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.email],
@@ -591,7 +591,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor(context.for(Helpers));
+                let h = SqlFor(context.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.smsDate],
@@ -605,7 +605,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(context);
                 let self = SqlFor(selfDefs);
-                let d = SqlFor(context.for(FamilyDeliveries));
+                let d = SqlFor(context.repo(FamilyDeliveries));
                 return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
             }
     )

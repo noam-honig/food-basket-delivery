@@ -25,7 +25,7 @@ export class PrintVolunteersComponent implements OnInit {
   static async volunteersForPrint(context?: Context) {
     let total = 0;
     let volunteers: volunteer[] = [];
-    for await (const d of context.for(ActiveFamilyDeliveries).iterate()) {
+    for await (const d of context.repo(ActiveFamilyDeliveries).iterate()) {
       let v = volunteers.find(v => d.courier && v.id == d.courier.id);
       if (!v) {
         v = {

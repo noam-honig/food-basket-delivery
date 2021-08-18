@@ -107,7 +107,7 @@ export class DistributionCenters extends IdEntity {
     return (await ApplicationSettings.getAsync(this.context)).addressHelper.getGeocodeInformation();
   }
   static async getValueList(context: Context, showAllOptions = false) {
-    let r = await getValueList<DistributionCenters>(context.for(DistributionCenters), {
+    let r = await getValueList<DistributionCenters>(context.repo(DistributionCenters), {
       where: c => c.archive.isEqualTo(false)
     })
     if (showAllOptions) {

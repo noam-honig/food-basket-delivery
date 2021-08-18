@@ -34,7 +34,7 @@ export class UpdateGroupDialogComponent implements OnInit {
 
   availableGroups: Groups[] = [];
   async ngOnInit() {
-    this.availableGroups = await this.context.for(Groups).find({ limit: 1000 });
+    this.availableGroups = await this.context.repo(Groups).find({ limit: 1000 });
   }
 
   groups = new InputField<GroupsValue>({valueType:GroupsValue});

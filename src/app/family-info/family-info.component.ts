@@ -56,12 +56,12 @@ export class FamilyInfoComponent implements OnInit {
     let s = await ApplicationSettings.getAsync(context);
     if (!s.showTzToVolunteer)
       return "";
-    var d = await context.for(ActiveFamilyDeliveries).findId(deliveryId);
+    var d = await context.repo(ActiveFamilyDeliveries).findId(deliveryId);
     if (!d)
       return;
     if (!d.courier.isCurrentUser() && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
       return "";
-    var f = await context.for(Families).findId(d.family);
+    var f = await context.repo(Families).findId(d.family);
     if (!f)
       return "";
     return f.name + ":" + f.tz;
@@ -147,7 +147,7 @@ export class FamilyInfoComponent implements OnInit {
       let settings = await ApplicationSettings.getAsync(context);
       if (!settings.usePhoneProxy)
         throw "פרוקסי לא מופעל לסביבה זו";
-      let fd = await context.for(ActiveFamilyDeliveries).findId(deliveryId);
+      let fd = await context.repo(ActiveFamilyDeliveries).findId(deliveryId);
       if (!fd) throw "משלוח לא נמצא";
       if (!fd.courier.isCurrentUser() && !context.isAllowed([Roles.admin, Roles.distCenterAdmin]))
         throw "אינך רשאי לחייג למשפחה זו";
@@ -157,7 +157,7 @@ export class FamilyInfoComponent implements OnInit {
       if (cleanPhone.startsWith('0'))
         cleanPhone = cleanPhone.substring(1);
       cleanPhone = "+972" + cleanPhone;
-      let h = await context.for(Helpers).findId(context.user.id);
+      let h = await context.repo(Helpers).findId(context.user.id);
       if (!h)
         throw "מתנדב לא נמצא";
       let vPhone = h.phone.thePhone;

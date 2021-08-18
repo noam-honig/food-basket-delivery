@@ -116,7 +116,7 @@ export class UserFamiliesList {
     }
     async initForFamilies(helper: HelpersBase, familiesPocoArray: any[]) {
         this.initHelper(helper);
-        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.context.for(ActiveFamilyDeliveries).fromJson(x)));
+        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.context.repo(ActiveFamilyDeliveries).fromJson(x)));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
@@ -131,7 +131,7 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
-            this.allFamilies = await this.context.for(ActiveFamilyDeliveries).find({
+            this.allFamilies = await this.context.repo(ActiveFamilyDeliveries).find({
                 where: f => {
                     let r = f.courier.isEqualTo(this.helper);
                     if (this.settings.isSytemForMlt())

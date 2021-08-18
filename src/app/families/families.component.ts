@@ -56,7 +56,7 @@ export class FamiliesComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
     static async getCities(context?: Context, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder(context);
-        let f = SqlFor(context.for(Families));
+        let f = SqlFor(context.repo(Families));
         let r = await db.execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
@@ -104,7 +104,7 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        let family = this.context.for(Families).create();
+        let family = this.context.repo(Families).create();
         family.name = this.searchString;
         family.showFamilyDialog({
             focusOnAddress: true,
@@ -199,7 +199,7 @@ export class FamiliesComponent implements OnInit {
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
 
-    families: GridSettings<Families> = new GridSettings(this.context.for(Families), {
+    families: GridSettings<Families> = new GridSettings(this.context.repo(Families), {
         showFilter: true,
         allowUpdate: true,
         allowInsert: this.isAdmin,
@@ -720,7 +720,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(context: Context, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.for(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>(getSettings(context), context.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation();
         let street = f.address;
         let house = '';

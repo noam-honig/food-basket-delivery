@@ -92,7 +92,7 @@ declare type factoryFor<T> = {
 
 
         if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.wasChanged())) {
-          for await (const fd of await self.context.for(FamilyDeliveries).find({
+          for await (const fd of await self.context.repo(FamilyDeliveries).find({
             where: fd =>
               fd.family.isEqualTo(self.id).and(
                 fd.archive.isEqualTo(false).and(
@@ -122,7 +122,7 @@ declare type factoryFor<T> = {
       else if (!isBackend()) {
         let statusChangedOutOfActive = self.$.status.wasChanged() && self.status != FamilyStatus.Active;
         if (statusChangedOutOfActive) {
-          let activeDeliveries = self.context.for(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
+          let activeDeliveries = self.context.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
           if (await activeDeliveries.count() > 0) {
             if (await openDialog(YesNoQuestionComponent, async x => x.args = {
               question: getLang(self.context).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.context).deliveries_ShouldWeDeleteThem
@@ -150,7 +150,7 @@ export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   static async getDefaultVolunteers(context?: Context, db?: SqlDatabase) {
     var sql = new SqlBuilder(context);
-    let f = SqlFor(context.for(Families));
+    let f = SqlFor(context.repo(Families));
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
@@ -165,7 +165,7 @@ export class Families extends IdEntity {
       count: x.count
     }));
     for (const r of result) {
-      let h = await context.for(Helpers).findId(r.id);
+      let h = await context.repo(Helpers).findId(r.id);
       if (h)
         r.name = h.name;
     }
@@ -195,7 +195,7 @@ export class Families extends IdEntity {
     });
   }
   public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
-    let result = new GridSettings(this.context.for(FamilyDeliveries), {
+    let result = new GridSettings(this.context.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
       rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -254,7 +254,7 @@ export class Families extends IdEntity {
     if (!args)
       args = {};
     if (!args.doNotCheckIfHasExistingDeliveries) {
-      let hasExisting = await this.context.for(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(DeliveryStatus.isNotAResultStatus(d.deliverStatus)));
+      let hasExisting = await this.context.repo(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(DeliveryStatus.isNotAResultStatus(d.deliverStatus)));
       if (hasExisting > 0) {
         if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
           this.showDeliveryHistoryDialog({ dialog, settings, busy });
@@ -343,7 +343,7 @@ export class Families extends IdEntity {
     deliverStatus?: DeliveryStatus,
     archive?: boolean
   }, context?: Context) {
-    let f = await context.for(Families).findId(familyId);
+    let f = await context.repo(Families).findId(familyId);
     if (f) {
 
       if (!distCenter)
@@ -366,7 +366,7 @@ export class Families extends IdEntity {
 
   }
   createDelivery(distCenter: DistributionCenters) {
-    let fd = this.context.for(FamilyDeliveries).create();
+    let fd = this.context.repo(FamilyDeliveries).create();
     fd.family = this.id;
     fd.distributionCenter = distCenter;
     fd.special = this.special;
@@ -698,7 +698,7 @@ export class Families extends IdEntity {
     (options, context) =>
       options.sqlExpression = async (selfDefs) => {
         let self = SqlFor(selfDefs);
-        let fd = SqlFor(context.for(FamilyDeliveries));
+        let fd = SqlFor(context.repo(FamilyDeliveries));
         let sql = new SqlBuilder(context);
         return sql.columnCount(self, {
           from: fd,
@@ -833,7 +833,7 @@ export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   static async getAreas(context?: Context, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
     var sql = new SqlBuilder(context);
-    let f = SqlFor(context.for(Families));
+    let f = SqlFor(context.repo(Families));
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.area, 'count (*) as count'],
@@ -893,7 +893,7 @@ export class Families extends IdEntity {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder(context);
-    var f = SqlFor(context.for(Families));
+    var f = SqlFor(context.repo(Families));
 
     let compareAsNumber = (col: FieldMetadata<any>, value: string) => {
       return sql.and(sql.eq(sql.extractNumber(col), sql.extractNumber(sql.str(value))), sql.build(sql.extractNumber(sql.str(value)), ' <> ', 0));
@@ -1166,7 +1166,7 @@ export interface familyLikeEntity {
 
 async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, context: Context, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
   let self = SqlFor(selfDefs);
-  let fd = SqlFor(context.for(FamilyDeliveries));
+  let fd = SqlFor(context.repo(FamilyDeliveries));
   let sql = new SqlBuilder(context);
   return sql.columnInnerSelect(self, {
     select: () => [sql.columnWithAlias(col(fd), alias)],

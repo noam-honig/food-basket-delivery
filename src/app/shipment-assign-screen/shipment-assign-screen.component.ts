@@ -54,15 +54,15 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   async showAssignment(rh: relevantHelper) {
-    let h = await this.context.for(Helpers).findId(rh.helper.id);
+    let h = await this.context.repo(Helpers).findId(rh.helper.id);
     openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
+      for (const fd of await this.context.repo(ActiveFamilyDeliveries).find({
         where: fd => FamilyDeliveries.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
-        fd.courier = await this.context.for(Helpers).findId(h.id);
+        fd.courier = await this.context.repo(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -72,9 +72,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this.context.for(Helpers).findId(f.assignedHelper.id);
+    let helper = await this.context.repo(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.context.for(ActiveFamilyDeliveries).find({
+      for (const fd of await this.context.repo(ActiveFamilyDeliveries).find({
         where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
       })) {
         fd.courier = null;
@@ -93,7 +93,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       onSelect: async selectedHelper => {
         let h = this.data.helpers[selectedHelper.id];
         if (!h) {
-          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this.context.for(Helpers).findId(selectedHelper.id));;
+          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this.context.repo(Helpers).findId(selectedHelper.id));;
           this.data[h.id] = h;
         }
         this.assignHelper(h, f);
@@ -178,14 +178,14 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     let i = 0;
     //collect helpers
-    for (let h of await context.for(Helpers).find({ where: h => Helpers.active(h).and(h.preferredDistributionAreaAddress.isDifferentFrom('')), limit: 1000 })) {
+    for (let h of await context.repo(Helpers).find({ where: h => Helpers.active(h).and(h.preferredDistributionAreaAddress.isDifferentFrom('')), limit: 1000 })) {
       result.helpers[h.id] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
       i++;
     }
 
     //remove busy helpers
     {
-      let fd = SqlFor(context.for(FamilyDeliveries));
+      let fd = SqlFor(context.repo(FamilyDeliveries));
       let sql = new SqlBuilder(context);
       let busyLimitdate = new Date();
       busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(context).BusyHelperAllowedFreq_denom);
@@ -205,7 +205,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     {
       let sql = new SqlBuilder(context);
 
-      let fd = SqlFor(context.for(FamilyDeliveries));
+      let fd = SqlFor(context.repo(FamilyDeliveries));
       for (let r of (await db.execute(await sql.query({
         select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
@@ -223,8 +223,8 @@ export class ShipmentAssignScreenComponent implements OnInit {
     //highlight new Helpers
     {
       let sql = new SqlBuilder(context);
-      let h = SqlFor(context.for(Helpers));
-      let fd = SqlFor(context.for(FamilyDeliveries));
+      let h = SqlFor(context.repo(Helpers));
+      let fd = SqlFor(context.repo(FamilyDeliveries));
       for (let helper of (await db.execute(await sql.query({
         select: () => [h.id],
         from: h,
@@ -243,7 +243,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     }
     {
       let sql = new SqlBuilder(context);
-      let fd =await  SqlFor(context.for(ActiveFamilyDeliveries));
+      let fd =await  SqlFor(context.repo(ActiveFamilyDeliveries));
 
       let sqlResult = await db.execute(
         await sql.query({
@@ -279,7 +279,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
           deliveries: [{
             basketTypeId: await getValueFromResult(r, fd.basketType),
             quantity: await getValueFromResult(r, fd.quantity),
-            basketTypeName: (await context.for(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
+            basketTypeName: (await context.repo(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
             id: await getValueFromResult(r, fd.id)
 
           }],
