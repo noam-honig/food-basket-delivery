@@ -78,7 +78,6 @@ export class ManageComponent implements OnInit {
   constructor(private dialog: DialogService, private remult: Remult, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
 
   basketType = new GridSettings(this. remult.repo(BasketType), {
-    showFilter: true,
     columnSettings: x => [
       x.name,
       {
@@ -205,7 +204,6 @@ export class ManageComponent implements OnInit {
     }, 1000);
   }
   sources = new GridSettings(this. remult.repo(FamilySources), {
-    showFilter: true,
     columnSettings: s => [
       s.name,
       s.phone,
@@ -220,7 +218,6 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
   groups = new GridSettings(this. remult.repo(Groups), {
-    showFilter: true,
     saving: () => this.refreshEnvironmentAfterSave(),
 
     columnSettings: s => [
@@ -401,7 +398,6 @@ export class ManageComponent implements OnInit {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, 'ישראל ישראלי');
   }
   images = new GridSettings(this. remult.repo(ApplicationImages), {
-    showFilter: true,
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: i => [
@@ -588,7 +584,7 @@ export class ManageComponent implements OnInit {
   key: 'GroupsStatsPerDistributionCenter'
 },
   (options, remult) =>
-    options.dbName = async (self) => {
+    options.sqlExpression = async (self) => {
       let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
       let g = SqlFor( remult.repo(Groups));
       let d = SqlFor( remult.repo(DistributionCenters));
@@ -630,7 +626,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   defaultOrderBy: self => self.name,
 },
   (options, remult) => {
-    options.dbName = async (self) => {
+    options.sqlExpression = async (self) => {
       let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
       let g = SqlFor( remult.repo(Groups));
 

@@ -73,9 +73,7 @@ export class DeliveryHistoryComponent implements OnInit {
     let stam = new Remult();
     stam.setDataProvider(this.helperStorage);
     this.helperInfo = new GridSettings(stam.repo(helperHistoryInfo), {
-      showFilter: true,
       allowSelection: true,
-
       numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 10 : 7),
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
@@ -206,7 +204,6 @@ export class DeliveryHistoryComponent implements OnInit {
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
   deliveries = new GridSettings(this. remult.repo(FamilyDeliveries), {
-    showFilter: true,
     rowCssClass: d => d.deliverStatus.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,

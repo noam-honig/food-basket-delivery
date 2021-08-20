@@ -162,7 +162,6 @@ export class Event extends IdEntity {
                 orderBy: ve => ve.registerStatusDate.descending(),
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
-                showFilter: true,
                 columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
                     { width: '100', field: ev.helperName },
                     {

@@ -23,12 +23,11 @@ export class Groups extends IdEntity {
   translation: l => l.familyGroup,
 })
 @DataControl<any, GroupsValue>({
-  forceEqualFilter: false,
   width: '300',
   click: async (row, col) => {
     openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
       s.init({
-        groups: col.value.value,
+        groups: col.value?.value,
         ok: x => col.value = new GroupsValue(x)
       })
     });

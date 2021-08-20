@@ -1,18 +1,5 @@
 <div class="full-page">
     <div>
-        <div style="display:flex;justify-content: space-between">
-            <div>
-                <button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
-                    <mat-icon>refresh</mat-icon>
-                </button>
-                <button mat-mini-fab style="margin-bottom:5px" (click)="showChart = !showChart" color="primary">
-                    <mat-icon *ngIf="showChart">unfold_less</mat-icon>
-                    <mat-icon *ngIf="!showChart">unfold_more</mat-icon>
-                </button>
-            </div>
-
-        </div>
-
         <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" [class.hidden]="!showChart">
             <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>
 
@@ -24,8 +11,8 @@
                     [options]="options" [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
             </div>
         </div>
-        <a [class.hidden]="!showChart" *ngFor="let s of currentTabStats.moreStats"
-            (click)="setCurrentStat(s)">{{s.name }} - {{s.value}}, </a>
+        <a [class.hidden]="!showChart" *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name
+            }} - {{s.value}}, </a>
         <div *ngIf="showTotalBoxes()" [class.hidden]="!showChart">{{showTotalBoxes()}}</div>
 
         <strong>{{deliveries.totalRows}} {{settings.lang.deliveries}} </strong> <strong *ngIf="currentStatFilter"> -

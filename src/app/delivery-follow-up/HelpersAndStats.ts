@@ -22,11 +22,11 @@ function log(s: string) {
     allowApiRead: Roles.distCenterAdmin
 },
     (options, remult) =>
-        options.dbName = async (self) => {
+        options.sqlExpression = async (self) => {
 
-            let f = SqlFor( remult.repo(ActiveFamilyDeliveries).metadata);
+            let f = SqlFor(remult.repo(ActiveFamilyDeliveries).metadata);
 
-            let h = SqlFor( remult.repo(Helpers).metadata);
+            let h = SqlFor(remult.repo(Helpers).metadata);
             var sql = new SqlBuilder(remult);
 
             let helperFamilies = (where: () => any[]) => {

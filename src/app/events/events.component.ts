@@ -51,8 +51,6 @@ export class EventsComponent implements OnInit {
     orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
     newRow: async e =>
       e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),
-
-    showFilter: true,
     allowSelection: true,
     gridButtons: [
 

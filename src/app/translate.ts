@@ -1146,6 +1146,9 @@ export class Language {
   delveriesSuccessfulEver = "נמסרו אי פעם";
   moveToArchive = "העבר לארכיון";
   showPast = "הצג עבר";
+  refresh = "רענן נתונים";
+  showPie = "הצג פאי";
+  hidePie = "הסתר פאי";
 }
 
 const defaultLang = new Language();

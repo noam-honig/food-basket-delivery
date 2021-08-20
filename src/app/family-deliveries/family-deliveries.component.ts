@@ -66,7 +66,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     await this.deliveries.reloadData();
   }
   async newFamily() {
-    let f = this. remult.repo(Families).create();
+    let f = this.remult.repo(Families).create();
     f.name = this.searchString;
     f.showFamilyDialog({
       onSave: async () => {
@@ -452,8 +452,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.destroyHelper.destroy();
   }
 
-  deliveries: GridSettings<ActiveFamilyDeliveries> = new GridSettings(this. remult.repo(ActiveFamilyDeliveries), {
-    showFilter: true,
+  deliveries: GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.remult.repo(ActiveFamilyDeliveries), {
     allowUpdate: true,
     rowCssClass: f => f.deliverStatus.getCss(),
     numOfColumnsInGrid: 5,
@@ -626,6 +625,16 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     },
     allowSelection: true,
     gridButtons: [
+      {
+        textInMenu: () => use.language.refresh,
+        icon: 'refresh',
+        click: () => this.refresh()
+      },
+      {
+        textInMenu: () => this.showChart ? use.language.hidePie : use.language.showPie,
+        icon: 'unfold_less',
+        click: () => this.showChart = !this.showChart
+      },
       ...[
         new NewDelivery(this.remult),
         new ArchiveDeliveries(this.remult),
@@ -657,7 +666,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async () => {
 
           let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-          await saveToExcel(this.settings, this. remult.repo(ActiveFamilyDeliveries), this.deliveries, getLang(this.remult).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+          await saveToExcel(this.settings, this.remult.repo(ActiveFamilyDeliveries), this.deliveries, getLang(this.remult).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
             async (fd, addColumn) => {
               await fd.basketType?.addBasketTypes(fd.quantity, addColumn);
               fd.addStatusExcelColumn(addColumn);
@@ -710,7 +719,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   static async getGroups(dist: DistributionCenters, readyOnly = false, remult?: Remult) {
     let pendingStats = [];
     let result: groupStats[] = [];
-    await  remult.repo(Groups).find({
+    await remult.repo(Groups).find({
       limit: 1000,
       orderBy: f => f.name
     }).then(groups => {
@@ -720,7 +729,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           totalReady: 0
         };
         result.push(x);
-        pendingStats.push( remult.repo(ActiveFamilyDeliveries).count(f => {
+        pendingStats.push(remult.repo(ActiveFamilyDeliveries).count(f => {
           let r = f.groups.contains(x.name).and(
             remult.filterDistCenter(f.distributionCenter, dist));
           if (readyOnly)
@@ -738,9 +747,9 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     let phoneNum = new Phone(phoneNumIn);
     let sql1 = new SqlBuilder(remult);
 
-    let fd = SqlFor( remult.repo(FamilyDeliveries));
+    let fd = SqlFor(remult.repo(FamilyDeliveries));
     let result: string[] = [];
-    let courier = await (await  remult.repo(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
+    let courier = await (await remult.repo(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
 
     for (const d of (await db.execute(await sql1.query({
       from: fd,
@@ -760,7 +769,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await (await  remult.repo(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiJson());
+    return await (await remult.repo(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiJson());
   }
 
 
@@ -798,7 +807,7 @@ export interface deliveryButtonsHelper {
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
-    let f = await args. remult.repo(Families).findId(d.family);
+    let f = await args.remult.repo(Families).findId(d.family);
 
     if (args.showAllBeforeNew) {
       f.showDeliveryHistoryDialog({
@@ -813,8 +822,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
         if (args.settings.isSytemForMlt()) {
           if (d.deliverStatus.isProblem) {
-            let newDelivery = await args. remult.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
-            for (const otherFailedDelivery of await args. remult.repo(ActiveFamilyDeliveries).find({
+            let newDelivery = await args.remult.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
+            for (const otherFailedDelivery of await args.remult.repo(ActiveFamilyDeliveries).find({
               where: fd => fd.family.isEqualTo(newDelivery.family).and(DeliveryStatus.isProblem(fd.deliverStatus))
             })) {
               await Families.addDelivery(otherFailedDelivery.family, otherFailedDelivery.basketType, otherFailedDelivery.distributionCenter, otherFailedDelivery.courier, {
@@ -864,7 +873,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
           onSelect: async selectedHelper => {
             d.courier = selectedHelper;
             await d.save();
-            var fd = await args. remult.repo(ActiveFamilyDeliveries).find({
+            var fd = await args.remult.repo(ActiveFamilyDeliveries).find({
               where: fd => {
                 let f = fd.id.isDifferentFrom(d.id).and(
                   FamilyDeliveries.readyFilter()).and(
@@ -934,7 +943,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
     {
       name: getLang(args.remult).familyDeliveries,
       click: async fd => {
-        let f = await args. remult.repo(Families).findId(fd.family);
+        let f = await args.remult.repo(Families).findId(fd.family);
         f.showDeliveryHistoryDialog({
           settings: args.settings,
           dialog: args.dialog,
@@ -970,7 +979,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.remult).shouldDeleteDeliveryFor + d.name)) {
           {
-            let fd = await args. remult.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            let fd = await args.remult.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
             await fd.delete();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
@@ -985,7 +994,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.remult).shouldArchiveDelivery)) {
           {
-            let fd = await args. remult.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            let fd = await args.remult.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
             fd.archive = true;
             await fd.save();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);

@@ -56,7 +56,7 @@ export class FamiliesComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
     static async getCities(remult?: Remult, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder(remult);
-        let f = SqlFor( remult.repo(Families));
+        let f = SqlFor(remult.repo(Families));
         let r = await db.execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
@@ -104,7 +104,7 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        let family = this. remult.repo(Families).create();
+        let family = this.remult.repo(Families).create();
         family.name = this.searchString;
         family.showFamilyDialog({
             focusOnAddress: true,
@@ -199,8 +199,7 @@ export class FamiliesComponent implements OnInit {
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
 
-    families: GridSettings<Families> = new GridSettings(this. remult.repo(Families), {
-        showFilter: true,
+    families: GridSettings<Families> = new GridSettings(this.remult.repo(Families), {
         allowUpdate: true,
         allowInsert: this.isAdmin,
 
@@ -287,7 +286,7 @@ export class FamiliesComponent implements OnInit {
                 families.tz2,
                 families.iDinExcel,
 
-                
+
                 families.createUser,
                 families.createDate,
                 families.lastUpdateDate,
@@ -370,6 +369,16 @@ export class FamiliesComponent implements OnInit {
             return r;
         },
         gridButtons: ([
+            {
+                textInMenu: () => use.language.refresh,
+                icon: 'refresh',
+                click: () => this.refresh()
+            },
+            {
+                textInMenu: () => this.showChart ? use.language.hidePie : use.language.showPie,
+                icon: 'unfold_less',
+                click: () => this.showChart = !this.showChart
+            },
             ...[
                 new NewDelivery(this.remult),
                 new updateGroup(this.remult),
@@ -384,7 +393,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    userWhere: f => Filter.toItem( this.families.getFilterWithSelectedRows().where)(f),
+                    userWhere: f => Filter.toItem(this.families.getFilterWithSelectedRows().where)(f),
                     settings: this.settings
                 }))
             , {
@@ -720,7 +729,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(getSettings(remult),  remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>(getSettings(remult), remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation();
         let street = f.address;
         let house = '';

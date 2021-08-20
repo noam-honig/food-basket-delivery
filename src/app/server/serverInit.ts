@@ -25,12 +25,13 @@ import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { ClassType } from 'remult/classType';
 import { iterateConfig } from 'remult/src/context';
+import { InitContext as InitRemult } from '../helpers/init-context';
 
 declare const lang = '';
 export const initSettings = {
     disableSchemaInit: false
 }
-iterateConfig.pageSize=100;
+iterateConfig.pageSize = 100;
 
 export async function serverInit() {
     try {
@@ -118,8 +119,8 @@ export async function serverInit() {
             let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
             let remult = new Remult();
             let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
-
             remult.setDataProvider(dp)
+            await InitRemult(remult);
 
             let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
             if (!initSettings.disableSchemaInit) {
@@ -131,13 +132,13 @@ export async function serverInit() {
                     DistributionCenters
                 ]) {
 
-                    await builder.createIfNotExist( remult.repo(entity).metadata);
-                    await builder.verifyAllColumns( remult.repo(entity).metadata);
+                    await builder.createIfNotExist(remult.repo(entity).metadata);
+                    await builder.verifyAllColumns(remult.repo(entity).metadata);
                 }
 
             }
             await SitesEntity.completeInit(remult);
-            let settings = await  remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
+            let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
             if (settings.isNew()) {
                 settings.organisationName = "מערכת חלוקה";
                 settings.id = 1;
@@ -145,7 +146,7 @@ export async function serverInit() {
             } else {
 
                 if (settings.organisationName == "מערכת חלוקה") {
-                        settings.organisationName = "חגי - אפליקציה לחלוקת מזון"
+                    settings.organisationName = "חגי - אפליקציה לחלוקת מזון"
                 }
                 settings.logoUrl = '/assets/apple-touch-icon.png';
                 if (settings._.wasChanged())
@@ -162,9 +163,13 @@ export async function serverInit() {
             };
         }
         else {
-            await new PostgresSchemaBuilder(new SqlDatabase(new PostgresDataProvider(pool))).verifyStructureOfAllEntities();
+            let db = new SqlDatabase(new PostgresDataProvider(pool));
+            let remult = new Remult();
+            remult.setDataProvider(db);
+            await InitRemult(remult);
+            await new PostgresSchemaBuilder(db).verifyStructureOfAllEntities(remult);
             await initSchema(pool, '');
-            return y => new SqlDatabase(new PostgresDataProvider(pool));
+            return y => db;
         }
 
 
@@ -191,7 +196,7 @@ export async function serverInit() {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let remult = new Remult();
-                    let h = await SqlFor( remult.repo(Helpers));
+                    let h = await SqlFor(remult.repo(Helpers));
                     var sql = new SqlBuilder(remult);
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];
@@ -237,8 +242,11 @@ async function InitSpecificSchema(pool: Pool, s: any) {
     await verifySchemaExistance(pool, s);
     let schemaPool = new PostgresSchemaWrapper(pool, s);
     let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
+    let remult = new Remult();
+    remult.setDataProvider(db);
+    await InitRemult(remult);
     if (!initSettings.disableSchemaInit) {
-        await new PostgresSchemaBuilder(db, s).verifyStructureOfAllEntities();
+        await new PostgresSchemaBuilder(db, s).verifyStructureOfAllEntities(remult);
         await initSchema(schemaPool, s);
     }
     return db;

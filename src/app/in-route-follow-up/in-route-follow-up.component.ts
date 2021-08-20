@@ -31,13 +31,9 @@ export class InRouteFollowUpComponent implements OnInit {
   }
 
   helpers = new GridSettings(this. remult.repo(InRouteHelpers), {
-
-
     where: [h => h.name.contains(this.searchString), x => Filter.toItem(this.currentOption.where)(x)],
-
     rowsInPage: 25,
     knowTotalRows: true,
-    showFilter: true,
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,

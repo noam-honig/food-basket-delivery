@@ -174,7 +174,7 @@ export interface groupStats {
 @Entity<CitiesStats>({
     key: 'citiesStats'
 }, (options, remult) =>
-    options.dbName = async (self) => {
+    options.sqlExpression = async (self) => {
         let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(remult);
 
@@ -197,7 +197,7 @@ export class CitiesStats {
     allowApiRead: false,
     key: 'citiesStatsPerDistCenter'
 }, (options, remult) =>
-    options.dbName = async (self) => {
+    options.sqlExpression = async (self) => {
         let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(remult);
 

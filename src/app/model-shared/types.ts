@@ -30,7 +30,6 @@ import { SqlBuilder } from './SqlBuilder';
   clickIcon: 'email',
   inputType: InputTypes.email,
   width: '250',
-  forceEqualFilter: false
 })
 export class Email {
   async Send(subject: string, message: string, remult: Remult) {

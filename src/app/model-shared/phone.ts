@@ -18,7 +18,6 @@ import { FieldType } from "../translate";
   allowClick: (e, x) => !!x.displayValue,
   clickIcon: 'phone',
   inputType: InputTypes.tel,
-  forceEqualFilter: false
 })
 export class Phone {
 

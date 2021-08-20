@@ -19,7 +19,7 @@ import { DateOnlyField } from "remult/src/remult3";
     allowApiRead: Roles.admin,
     defaultOrderBy: (self) => self.minAssignDate
 },
-    (options, remult) => options.dbName = async (self) => {
+    (options, remult) => options.sqlExpression = async (self) => {
         let sql = new SqlBuilder(remult);
 
         let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
