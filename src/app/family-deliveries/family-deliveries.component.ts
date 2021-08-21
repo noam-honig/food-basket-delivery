@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Remult, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from 'remult';
-import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
+import { BusyService, DataAreaFieldsSetting, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
@@ -35,6 +35,7 @@ import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.c
 import { DistributionCenters } from '../manage/distribution-centers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { DeliveryImagesComponent } from '../delivery-images/delivery-images.component';
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -702,6 +703,28 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
         , textInMenu: () => getLang(this.remult).photos_taken_by_volunteer,
         visible: fd => fd.numOfPhotos > 0
+      },
+      {
+        icon: 'info',
+        textInMenu: () => use.language.infoAboutUpdates,
+        click: async (fd) => {
+
+          openDialog(InputAreaComponent, x => x.args = {
+            title: use.language.infoAboutUpdates + " " + use.language.for + " " + fd.name,
+            ok: () => { },
+            settings: {
+              fields: () => [
+
+                [fd.$.deliveryStatusUser,
+                fd.$.deliveryStatusDate],
+                [fd.$.courierAssignUser,
+                fd.$.courierAssingTime],
+                [fd.$.createUser,
+                fd.$.createDate],
+              ]
+            }
+          });
+        }
       },
       ...getDeliveryGridButtons({
         remult: this.remult,

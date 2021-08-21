@@ -143,9 +143,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         fields: () => {
           let r: DataAreaFieldsSetting<any>[] =
             [
-              f.$.createDate, f.$.createUser,
-              f.$.lastUpdateDate, f.$.lastUpdateUser,
-              f.$.statusDate, f.$.statusUser
+              [f.$.createUser,
+              f.$.createDate],
+              [f.$.lastUpdateUser,
+              f.$.lastUpdateDate],
+              [f.$.statusUser,
+              f.$.statusDate]
             ];
           if (this.args.familyDelivery) {
             let fd = this.args.familyDelivery;
@@ -153,12 +156,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
               {
                 getValue: () => 'עדכונים למשלוח'
               },
-              fd.$.deliveryStatusDate,
-              fd.$.deliveryStatusUser,
-              fd.$.courierAssingTime,
-              fd.$.courierAssignUser,
-              fd.$.createDate,
-              fd.$.createUser
+              [fd.$.deliveryStatusUser,
+              fd.$.deliveryStatusDate],
+              [fd.$.courierAssignUser,
+              fd.$.courierAssingTime],
+              [fd.$.createUser,
+              fd.$.createDate]
             )
           }
           return r;

@@ -66,7 +66,7 @@ export class MessageStatus {
         if (self.quantity < 1)
             self.quantity = 1;
         if (self.distributionCenter == null)
-            self.distributionCenter = await self. remult.repo(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
+            self.distributionCenter = await self.remult.repo(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
         if (self.$.courier.valueChanged())
             self.routeOrder = 0;
 
@@ -94,7 +94,7 @@ export class MessageStatus {
             }
             if (!self.deliverStatus.IsAResultStatus()
                 && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
-                let f = await self. remult.repo(Families).findId(self.family);
+                let f = await self.remult.repo(Families).findId(self.family);
                 if (f)
                     f.updateDelivery(self);
 
@@ -112,15 +112,15 @@ export class FamilyDeliveries extends IdEntity {
     })
     static async getFamilyImages(family: string, delivery: string, remult?: Remult): Promise<ImageInfo[]> {
         if (!Roles.admin) {
-            let d = await  remult.repo(FamilyDeliveries).findId(delivery);
+            let d = await remult.repo(FamilyDeliveries).findId(delivery);
             if (d.courier != remult.currentUser)
                 return [];
         }
-        let r = (await  remult.repo(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
+        let r = (await remult.repo(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
         return r;
     }
     async loadVolunteerImages(): Promise<import("../images/images.component").ImageInfo[]> {
-        return (await this. remult.repo(DeliveryImage).find({ where: i => i.deliveryId.isEqualTo(this.id) })).map(i => ({
+        return (await this.remult.repo(DeliveryImage).find({ where: i => i.deliveryId.isEqualTo(this.id) })).map(i => ({
             image: i.image,
             entity: i
         } as ImageInfo));
@@ -170,7 +170,7 @@ export class FamilyDeliveries extends IdEntity {
         this.deliveryComments = originalDelivery.deliveryComments;
     }
     async duplicateCount() {
-        return await this. remult.repo(ActiveFamilyDeliveries).count(
+        return await this.remult.repo(ActiveFamilyDeliveries).count(
             fd => fd.family.isEqualTo(this.family).and(
                 DeliveryStatus.isNotAResultStatus(fd.deliverStatus)).and(
                     fd.basketType.isEqualTo(this.basketType).and(
@@ -253,7 +253,7 @@ export class FamilyDeliveries extends IdEntity {
     courierAssignUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
-    @Field({ translation: l => l.statusChangeUser })
+    @Field({ translation: l => l.statusChangeUser, allowApiUpdate: false, includeInApi: Roles.admin })
     deliveryStatusUser: HelpersBase;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.deliveryCreateDate })
     createDate: Date;
@@ -396,7 +396,7 @@ export class FamilyDeliveries extends IdEntity {
         options.sqlExpression = async (self) => {
             var sql = new SqlBuilder(remult);
 
-            var fd = SqlFor( remult.repo(FamilyDeliveries));
+            var fd = SqlFor(remult.repo(FamilyDeliveries));
             let f = SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(fd, 'fd');
@@ -427,7 +427,7 @@ export class FamilyDeliveries extends IdEntity {
         sqlExpression = async (self) => {
             var sql = new SqlBuilder(remult);
 
-            var helper = SqlFor( remult.repo(Helpers));
+            var helper = SqlFor(remult.repo(Helpers));
             let f = SqlFor(self);
             sql.addEntity(f, "FamilyDeliveries");
             sql.addEntity(helper, 'h');
@@ -461,7 +461,7 @@ export class FamilyDeliveries extends IdEntity {
     },
         (options, remult) => options.sqlExpression = async (selfDefs) => {
             let self = SqlFor(selfDefs);
-            let images = SqlFor( remult.repo(DeliveryImage));
+            let images = SqlFor(remult.repo(DeliveryImage));
             let sql = new SqlBuilder(remult);
             return sql.columnCount(self, {
                 from: images,
@@ -501,7 +501,7 @@ export class FamilyDeliveries extends IdEntity {
         }
         if (c.ready) {
             let { city, group, area } = c.ready;
-            let basket = await  remult.repo(BasketType).findId(c.ready.basketId);
+            let basket = await remult.repo(BasketType).findId(c.ready.basketId);
             let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
                 self.courier.isEqualTo(null)).and(remult.filterCenterAllowedForUser(self.distributionCenter));
             if (group)
@@ -545,7 +545,7 @@ export class FamilyDeliveries extends IdEntity {
     }
 
     async addFamilyInfoToExcelFile(addColumn) {
-        var f = await this. remult.repo(Families).findId(this.family);
+        var f = await this.remult.repo(Families).findId(this.family);
         let settings = await ApplicationSettings.getAsync(this.remult);
         if (f) {
             let x = f.addressHelper.getGeocodeInformation();
@@ -731,7 +731,7 @@ export class FamilyDeliveries extends IdEntity {
 
         let showFamilyDetails = this.remult.isAllowed(Roles.admin);
         if (showFamilyDetails) {
-            let f = await this. remult.repo(Families).findId(this.family);
+            let f = await this.remult.repo(Families).findId(this.family);
             if (f) {
 
                 openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
@@ -809,7 +809,7 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
     translate: async (remult, f) => {
-        return Filter.translateCustomWhere<FamilyDeliveries>( remult.repo(FamilyDeliveries).metadata, Filter.createFilterFactories( remult.repo(FamilyDeliveries).metadata), f, remult);
+        return Filter.translateCustomWhere<FamilyDeliveries>(remult.repo(FamilyDeliveries).metadata, Filter.createFilterFactories(remult.repo(FamilyDeliveries).metadata), f, remult);
     }
 });
 

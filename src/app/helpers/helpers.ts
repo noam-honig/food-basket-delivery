@@ -63,7 +63,6 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
     hideDataOnInput: true,
-    width: '200',
     click: async (e, col) => HelpersBase.showSelectDialog(col, {})
 })
 @Entity<HelpersBase>({
