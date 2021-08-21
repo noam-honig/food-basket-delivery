@@ -78,7 +78,7 @@ justify-content: space-between;">
                 (click)="reg.removeFromEvent(e,dialog)">{{settings.lang.iCantMakeIt}}</a>
         </span>
     </div>
-    <div style="margin-left:5px;margin-right: 5px;">
+    <div style="margin-left:5px;margin-right: 5px;" *ngIf="!noClose">
         <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
     </div>
 </mat-dialog-actions>

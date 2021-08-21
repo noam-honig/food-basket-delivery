@@ -1094,7 +1094,7 @@ export class Language {
   familyHistory = "היסטורית משפחה";
   includeFamilyInfoInExcelFile = "האם לכלול מידע נוסף מפרטי המשפחה כגון מספר זהות ונתונים נוספים ביצוא לאקסל? (אם כן זה יקח יותר זמן:)";
   latestAssigned = "שיוך אחרון";
-  duplicateForNextEvent = "העתק להזדמנות התנדבות הבאה";
+  duplicateForNextEvent = "מתנדב קבוע";
   assignRepeatFamily = 'שייך משפחה שהמתנדב היה אצלה';
   done = 'טופל';
   copyLinkForVolunteer = "העתק קישור לרישום עצמי של מתנדבים";
@@ -1139,7 +1139,7 @@ export class Language {
   cancelUser = "משתמש ביטול השתתפות";
   cancelDate = "מועד ביטול השתתפות";
   lastUpdate = "מועד עדכון";
-  fromGeneralList = "נרשם דרך הרשימה הכלללית";
+  fromGeneralList = "נרשם דרך הרשימה הכללית";
   donotShowEventsInGeneralList = "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים";
   wantToVolnteerMore = "רוצה להתנדב עוד?";
   registerStatusDate = "תאריך סטטוס רישום";
@@ -1149,6 +1149,8 @@ export class Language {
   refresh = "רענן נתונים";
   showPie = "הצג פאי";
   hidePie = "הסתר פאי";
+  markAsFixed  ="סמן כמתנדב קבוע";
+  unmarkAsFixed = "הסר סימון מתנדב קבוע";
 }
 
 const defaultLang = new Language();

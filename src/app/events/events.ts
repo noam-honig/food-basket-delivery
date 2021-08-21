@@ -121,7 +121,7 @@ export class Event extends IdEntity {
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
         if (!helper)
             return false;
-        return !!(await this. remult.repo(volunteersInEvent).findFirst(v =>
+        return !!(await this.remult.repo(volunteersInEvent).findFirst(v =>
             v.helper.isEqualTo(helper).and(
                 v.eventId.isEqualTo(this.id)).and(
                     v.canceled.isEqualTo(false)
@@ -143,7 +143,7 @@ export class Event extends IdEntity {
                 click: () => openDialog(SelectHelperComponent, y => y.args = {
                     onSelect: async h => {
 
-                        let eh = await this. remult.repo(volunteersInEvent).findFirst({
+                        let eh = await this.remult.repo(volunteersInEvent).findFirst({
                             where: v => v.helper.isEqualTo(h).and(v.eventId.isEqualTo(this.id)),
                             useCache: false,
                             createIfNotFound: true
@@ -155,7 +155,7 @@ export class Event extends IdEntity {
                 })
 
             }],
-            settings: new GridSettings(this. remult.repo(volunteersInEvent), {
+            settings: new GridSettings(this.remult.repo(volunteersInEvent), {
 
                 rowsInPage: 50,
                 where: ve => ve.eventId.isEqualTo(this.id),
@@ -209,7 +209,7 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.remult).exportToExcel,
                         click: async () => {
-                            saveToExcel(getSettings(this.remult), this. remult.repo(volunteersInEvent), x.args.settings, "מתנדבים שנרשמו ל" + this.name, busy)
+                            saveToExcel(getSettings(this.remult), this.remult.repo(volunteersInEvent), x.args.settings, "מתנדבים שנרשמו ל" + this.name, busy)
                         }
                     }
                 ],
@@ -229,6 +229,14 @@ export class Event extends IdEntity {
                         click: async (ev) => {
                             let h = await ev.helper.getHelper();
                             await h.displayEditDialog(dialog, busy)
+                        }
+                    },
+                    {
+                        textInMenu: x => x.duplicateToNextEvent ? getLang(this.remult).unmarkAsFixed : getLang(this.remult).markAsFixed,
+                        icon: 'person',
+                        click: async (ev) => {
+                            ev.duplicateToNextEvent = !ev.duplicateToNextEvent;
+                            await ev.save();
                         }
                     },
                     {
@@ -295,7 +303,7 @@ export class Event extends IdEntity {
     },
         (options, remult) =>
             options.sqlExpression = async (selfDefs) => {
-                var vie = SqlFor( remult.repo(volunteersInEvent));
+                var vie = SqlFor(remult.repo(volunteersInEvent));
                 let self = SqlFor(selfDefs);
                 var sql = new SqlBuilder(remult);
                 return sql.columnCount(self, {
@@ -374,7 +382,7 @@ export class Event extends IdEntity {
                 await busy.doWhileShowingBusy(async () => {
                     let r: Event[] = [];
                     for (const current of events) {
-                        let e =  remult.repo(Event).create({
+                        let e = remult.repo(Event).create({
                             name: current.name,
                             type: current.type,
                             description: current.description,
@@ -391,10 +399,10 @@ export class Event extends IdEntity {
 
 
                         await e.save();
-                        for (const c of await  remult.repo(volunteersInEvent).find({
+                        for (const c of await remult.repo(volunteersInEvent).find({
                             where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
                         })) {
-                            let v =  remult.repo(volunteersInEvent).create();
+                            let v = remult.repo(volunteersInEvent).create();
                             v.eventId = e.id;
                             v.helper = c.helper;
                             v.duplicateToNextEvent = true;
@@ -520,7 +528,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor( remult.repo(Helpers));
+                let h = SqlFor(remult.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.name],
@@ -536,7 +544,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor( remult.repo(Helpers));
+                let h = SqlFor(remult.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.phone],
@@ -552,7 +560,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let d = SqlFor( remult.repo(ActiveFamilyDeliveries));
+                let d = SqlFor(remult.repo(ActiveFamilyDeliveries));
                 return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
             }
     )
@@ -564,7 +572,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let d = SqlFor( remult.repo(FamilyDeliveries));
+                let d = SqlFor(remult.repo(FamilyDeliveries));
                 return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
             }
     )
@@ -576,7 +584,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor( remult.repo(Helpers));
+                let h = SqlFor(remult.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.email],
@@ -590,7 +598,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let h = SqlFor( remult.repo(Helpers));
+                let h = SqlFor(remult.repo(Helpers));
                 return sql.columnInnerSelect(self, {
                     from: h,
                     select: () => [h.smsDate],
@@ -604,7 +612,7 @@ export class volunteersInEvent extends IdEntity {
             options.sqlExpression = async (selfDefs) => {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
-                let d = SqlFor( remult.repo(FamilyDeliveries));
+                let d = SqlFor(remult.repo(FamilyDeliveries));
                 return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
             }
     )

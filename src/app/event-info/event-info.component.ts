@@ -24,6 +24,7 @@ export class EventInfoComponent implements OnInit {
   @Output() phoneChanged = new EventEmitter();
   @Input()
   e: EventInList;
+  @Input() noClose = false;
   displayDate() {
     return eventDisplayDate(this.e);
   }
@@ -34,7 +35,7 @@ export class EventInfoComponent implements OnInit {
     window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.remult).languageCode, '_blank');
   }
   reg = new RegisterToEvent(this.remult);
-  isAdmin(){
+  isAdmin() {
     return this.remult.isAllowed(Roles.admin);
   }
 

@@ -1,7 +1,7 @@
 import { DataControl, openDialog } from '@remult/angular';
 import { BackendMethod, Remult, Controller, getFields, Validators, EventSource } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
-import { EventInList, volunteersInEvent, Event } from '../events/events';
+import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { InitContext } from '../helpers/init-context';
 import { getSettings } from '../manage/ApplicationSettings';
@@ -60,18 +60,26 @@ export class RegisterToEvent {
         if (!this.remult.authenticated())
             await openDialog(InputAreaComponent, x => x.args = {
                 title: getSettings(this.remult).lang.register,
+                helpText: 'תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)',
                 settings: {
-                    fields: () => [this.$.phone, this.$.name, this.$.rememberMeOnThisDevice]
+                    fields: () => [this.$.name, this.$.phone, this.$.rememberMeOnThisDevice]
                 },
                 cancel: () => { },
                 ok: async () => {
 
                     this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
+                    let refresh = false;
+                    if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
+                        refresh = true;
                     RegisterToEvent.volunteerInfo = { phone: this.phone.thePhone, name: this.name };
                     if (this.rememberMeOnThisDevice)
                         localStorage.setItem(infoKeyInStorage, JSON.stringify(RegisterToEvent.volunteerInfo));
-                    if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
+                    if (refresh)
                         RegisterToEvent.volunteerInfoChanged.fire();
+                    let message = "נרשמתם ל" + e.name + ", " + eventDisplayDate(e) + ". תודה על ההתנדבות והנכונות לעזור!";
+                    dialog.messageDialog(message).then(() => {
+                        dialog.Info(message);
+                    });
 
                 }
             });
@@ -107,7 +115,7 @@ export class RegisterToEvent {
             helper = this.remult.currentUser;
         }
         else {
-            helper = await this. remult.repo(Helpers).findFirst({
+            helper = await this.remult.repo(Helpers).findFirst({
                 where: h => h.phone.isEqualTo(this.phone),
                 createIfNotFound: register
             });
@@ -117,7 +125,7 @@ export class RegisterToEvent {
             }
             this.remult.currentUser = helper as Helpers;
         }
-        let helperInEvent = await this. remult.repo(volunteersInEvent).findFirst({
+        let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({
             where: v => v.eventId.isEqualTo(id).and(v.helper.isEqualTo(helper)),
             createIfNotFound: register
         });
@@ -130,7 +138,7 @@ export class RegisterToEvent {
             helperInEvent.canceled = true;
             await helperInEvent.save();
         }
-        return (await this. remult.repo(Event).findId(id)).toEventInList(helper);
+        return (await this.remult.repo(Event).findId(id)).toEventInList(helper);
     }
 }
 const infoKeyInStorage = "myVolunteerInfo";
