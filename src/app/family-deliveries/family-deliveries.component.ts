@@ -893,7 +893,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
                 args.refresh();
               }
             }
-          }
+          }, location: d.getDrivingLocation()
         });
       },
       visible: d => !d.deliverStatus.IsAResultStatus() && args.remult.isAllowed(Roles.distCenterAdmin)

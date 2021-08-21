@@ -112,7 +112,6 @@ export async function serverInit() {
         }
         Sites.initOnServer();
         if (Sites.multipleSites) {
-
             if (!initSettings.disableSchemaInit) {
                 await verifySchemaExistance(pool, Sites.guestSchema);
             }

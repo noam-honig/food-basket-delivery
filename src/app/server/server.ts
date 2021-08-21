@@ -1,5 +1,5 @@
-import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
-let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
+//import { CustomModuleLoader } from '../../../../radweb/src/app/server/CustomModuleLoader';
+//let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
 import { ExpressBridge, registerEntitiesOnServer, registerActionsOnServer, initExpress } from 'remult/server';
@@ -25,7 +25,6 @@ import { AuthService } from '../auth/auth-service';
 import { InitContext } from "../helpers/init-context";
 
 serverInit().then(async (dataSource) => {
-
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));

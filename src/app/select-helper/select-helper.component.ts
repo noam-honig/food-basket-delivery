@@ -117,7 +117,7 @@ export class SelectHelperComponent implements OnInit {
 
       for (const d of (await db.execute(await sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom(null).and(DeliveryStatus.isAResultStatus(afd.deliverStatus))],
+        where: () => [afd.courier.isDifferentFrom(null).and(DeliveryStatus.isNotAResultStatus(afd.deliverStatus))],
         select: async () => [
           sql.columnWithAlias("distinct " + await sql.getItemSql(afd.family), 'fam'),
           sql.columnWithAlias(afd.courier, "courier"),
