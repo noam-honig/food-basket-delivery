@@ -22,6 +22,7 @@ import { isGpsAddress, Location } from '../shared/googleApiHelpers';
 import { AddressInputComponent } from '../address-input/address-input.component';
 import { ImageInfo } from '../images/images.component';
 import { FamilyImage } from '../families/DeiveryImages';
+import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -190,7 +191,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this. remult.repo(FamilyImage).create({
+        await this.remult.repo(FamilyImage).create({
           familyId: this.args.family.id, image: image.image
         }).save();
       }
@@ -210,7 +211,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       aDeliveryWasAdded: async (id) => {
         if (this.delivery)
           this.refreshDeliveryStatistics = true;
-        this.delivery = await this. remult.repo(ActiveFamilyDeliveries).findId(id);
+        this.delivery = await this.remult.repo(ActiveFamilyDeliveries).findId(id);
       }
     });
   }
@@ -220,12 +221,12 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
 
-  families = new GridSettings(this. remult.repo(Families), { allowUpdate: true });
+  families = new GridSettings(this.remult.repo(Families), { allowUpdate: true });
 
   delivery: ActiveFamilyDeliveries;
 
   async showDuplicate(dup: duplicateFamilyInfo) {
-    let f = await this. remult.repo(Families).findId(dup.id);
+    let f = await this.remult.repo(Families).findId(dup.id);
     openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
@@ -261,7 +262,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
-        this.args.familyDelivery = await this. remult.repo(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
+        this.args.familyDelivery = await this.remult.repo(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
         this.args.familyId = this.args.familyDelivery.family;
       }
 
@@ -271,7 +272,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         this.args.familyId = this.args.familyDelivery.family;
       }
       if (this.args.familyId)
-        this.args.family = await this. remult.repo(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
+        this.args.family = await this.remult.repo(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
     }
     if (this.args.familyDelivery)
       this.delivery = this.args.familyDelivery;
@@ -280,7 +281,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     this.families.currentRow = this.args.family;
-    this.images = await (await this. remult.repo(FamilyImage).find({ where: i => i.familyId.isEqualTo(this.args.family.id) })).map(i => ({
+    this.images = await (await this.remult.repo(FamilyImage).find({ where: i => i.familyId.isEqualTo(this.args.family.id) })).map(i => ({
       image: i.image,
       entity: i
     } as ImageInfo));
@@ -385,6 +386,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         dialog: this.dialog,
         busy: this.busy
       });
+    new columnOrderAndWidthSaver(this.familyDeliveries).load('familyDeliveriesInUpdateFamily');
 
   }
 

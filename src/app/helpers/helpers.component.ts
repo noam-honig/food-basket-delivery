@@ -17,6 +17,7 @@ import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { use, TranslationOptions } from '../translate';
 import { getLang } from '../sites/sites';
+import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 
 @Component({
   selector: 'app-helpers',
@@ -301,6 +302,7 @@ ${url}
   async ngOnInit() {
     let s = await ApplicationSettings.getAsync(this.remult);
     this.helpers.columns.numOfColumnsInGrid = this.numOfColsInGrid;
+    new columnOrderAndWidthSaver(this.helpers).load('helpers');
 
 
 
