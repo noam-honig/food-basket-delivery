@@ -18,6 +18,7 @@ import { relativeDateName } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { getLang } from '../sites/sites';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-select-helper',
@@ -48,7 +49,7 @@ export class SelectHelperComponent implements OnInit {
   filteredHelpers: helperInList[] = [];
   constructor(
     private dialogRef: MatDialogRef<any>,
-
+    private dialog: DialogService,
     public remult: Remult,
     private busy: BusyService,
     public settings: ApplicationSettings
@@ -56,8 +57,22 @@ export class SelectHelperComponent implements OnInit {
   ) {
 
   }
+  async addHelper() {
+    let h = this.remult.repo(Helpers).create({ name: this.searchString });;
+    await h.displayEditDialog(this.dialog, this.busy);
+    if (!h.isNew()) {
+      this.select({
+        helperId: h.id,
+        name: h.name,
+        phone: h.phone?.displayValue
+      });
+    }
+  }
   clearHelper() {
     this.select(undefined);
+  }
+  isMlt() {
+    return getSettings(this.remult).isSytemForMlt();
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, remult?: Remult, db?: SqlDatabase) {
@@ -74,7 +89,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of  remult.repo(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
+    for await (const h of remult.repo(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,
@@ -95,7 +110,7 @@ export class SelectHelperComponent implements OnInit {
     if (!selectDefaultVolunteer) {
 
       /* ----    calculate active deliveries and distances    ----*/
-      let afd = SqlFor( remult.repo(ActiveFamilyDeliveries));
+      let afd = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
 
 
@@ -124,7 +139,7 @@ export class SelectHelperComponent implements OnInit {
       /*  ---------- calculate completed deliveries and "busy" status -------------*/
       let sql1 = new SqlBuilder(remult);
 
-      let fd = SqlFor( remult.repo(FamilyDeliveries));
+      let fd = SqlFor(remult.repo(FamilyDeliveries));
 
       let limitDate = new Date();
       limitDate.setDate(limitDate.getDate() - getSettings(remult).BusyHelperAllowedFreq_denom);
@@ -136,10 +151,10 @@ export class SelectHelperComponent implements OnInit {
             .and(DeliveryStatus.isAResultStatus(fd.deliverStatus))
             .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
         ],
-        select:async () => [
+        select: async () => [
           sql1.columnWithAlias(fd.courier, "courier"),
           sql1.columnWithAlias(sql.max(fd.deliveryStatusDate), "delivery_date"),
-          sql1.columnWithAlias("count(distinct " + await  sql1.getItemSql(fd.family) + ")", "count")
+          sql1.columnWithAlias("count(distinct " + await sql1.getItemSql(fd.family) + ")", "count")
         ],
         groupBy: () => [fd.courier]
       }))).rows) {
@@ -152,7 +167,7 @@ export class SelectHelperComponent implements OnInit {
       }
     } else {
 
-      let afd = SqlFor( remult.repo(Families));
+      let afd = SqlFor(remult.repo(Families));
       for (const d of (await db.execute(await sql.query({
         from: afd,
         where: () => [afd.fixedCourier.isDifferentFrom(null).and(afd.status.isEqualTo(FamilyStatus.Active))],
@@ -174,7 +189,7 @@ export class SelectHelperComponent implements OnInit {
       }
     }
     if (familyId) {
-      for (const fd of await  remult.repo(FamilyDeliveries).find({
+      for (const fd of await remult.repo(FamilyDeliveries).find({
         where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
       })) {
         if (fd.courier) {
@@ -247,7 +262,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this. remult.repo(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
+      this.filteredHelpers = mapHelpers(await this.remult.repo(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
       this.showingRecentHelpers = false;
     });
 
@@ -270,7 +285,7 @@ export class SelectHelperComponent implements OnInit {
     let helper: HelpersBase;
     if (h) {
       if (!h.helper)
-        h.helper = await this. remult.repo(Helpers).findId(h.helperId);
+        h.helper = await this.remult.repo(Helpers).findId(h.helperId);
       helper = h.helper;
     }
     this.args.onSelect(helper);

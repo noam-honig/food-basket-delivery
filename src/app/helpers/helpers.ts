@@ -106,7 +106,7 @@ export abstract class HelpersBase extends IdEntity {
             })
     }
     getHelper(): Promise<Helpers> {
-        return this. remult.repo(Helpers).findId(this.id);
+        return this.remult.repo(Helpers).findId(this.id);
     }
     isCurrentUser(): boolean {
         return this.id == this.remult.user.id;
@@ -300,11 +300,11 @@ export abstract class HelpersBase extends IdEntity {
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if ((await self. remult.repo(Helpers).count()) == 0) {
+            if ((await self.remult.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
-            self.phone = new Phone(Phone.fixPhoneInput(self.phone.thePhone, self.remult));
+            self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone, self.remult));
             if (!self._disableDuplicateCheck)
                 await Validators.unique(self, self.$.phone, use.language.alreadyExist);
             if (self.isNew())
@@ -375,6 +375,16 @@ export class Helpers extends HelpersBase {
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
             ok: async () => {
                 await this.save();
+            },
+            validate: async () => {
+                if (!this.phone) {
+                    this.phone = new Phone('');
+                }
+                this.$.phone.error = '';
+                this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone, this.remult))
+                Phone.validatePhone(this.$.phone, this.remult, true);
+                if (this.$.phone.error)
+                    throw this.$.phone.error;
             },
             cancel: () => {
                 this._.undoChanges();
@@ -495,7 +505,7 @@ export class Helpers extends HelpersBase {
         return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent;
     }
     async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
-        let ctx = this. remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
+        let ctx = this.remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         openDialog(GridDialogComponent, x => x.args = {
             title: use.language.deliveriesFor + ' ' + this.name,
             stateName: 'deliveries-for-volunteer',
@@ -604,13 +614,13 @@ export class Helpers extends HelpersBase {
                     continue;
                 ids.push(fd.family);
                 i++;
-                let f = await this. remult.repo((await import('../families/families')).Families).findId(fd.family);
+                let f = await this.remult.repo((await import('../families/families')).Families).findId(fd.family);
                 f.fixedCourier = fd.courier;
                 await f.save();
             }
         });
 
-        let otherFamilies = await this. remult.repo((await import('../families/families')).Families).find({
+        let otherFamilies = await this.remult.repo((await import('../families/families')).Families).find({
             where: f => f.fixedCourier.isEqualTo(this)
                 .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
         });

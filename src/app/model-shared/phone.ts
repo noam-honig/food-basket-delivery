@@ -88,7 +88,7 @@ export class Phone {
         col.error = getLang(remult).invalidPhoneNumber;
       return;
     }
-    if (getLang(remult).languageCode != 'iw')
+    if (getLang(remult).languageCode != 'iw' || col.value?.thePhone.startsWith('+'))
       if (col.value.thePhone.length < 10)
         col.error = getLang(remult).invalidPhoneNumber;
       else

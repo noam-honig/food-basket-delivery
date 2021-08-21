@@ -1151,6 +1151,7 @@ export class Language {
   hidePie = "הסתר פאי";
   markAsFixed  ="סמן כמתנדב קבוע";
   unmarkAsFixed = "הסר סימון מתנדב קבוע";
+  new = "חדש";
 }
 
 const defaultLang = new Language();

@@ -1,14 +1,20 @@
 <div mat-dialog-content style="height:65vh">
-  <button mat-raised-button color="warning" (click)="close()">
-    {{settings.lang.close}}
-  </button>
-  <button mat-raised-button style="color:red" (click)="clearHelper()">
-    {{settings.lang.clear}}
-  </button>
-  <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args&&args.location">
-    {{settings.lang.byLocation}}
-  </button>
-  <mat-checkbox [(ngModel)]="args.includeFrozen" (change)="getHelpers()" style="margin-right:10px" >{{settings.lang.showFreezed}}</mat-checkbox>
+  <div style="display:Flex">
+    <button mat-raised-button color="warning" (click)="close()">
+      {{settings.lang.close}}
+    </button>
+    <button mat-raised-button style="color:red" (click)="clearHelper()">
+      {{settings.lang.clear}}
+    </button>
+    <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args&&args.location">
+      {{settings.lang.byLocation}}
+    </button>
+    <button mat-raised-button color="primary" (click)="addHelper()">
+      {{settings.lang.new}}
+    </button>
+  </div>
+  <mat-checkbox [(ngModel)]="args.includeFrozen" (change)="getHelpers()" style="margin-right:10px" *ngIf="isMlt()">
+    {{settings.lang.showFreezed}}</mat-checkbox>
   <form (submit)="selectFirst()">
 
 
@@ -24,10 +30,10 @@
     <div *ngFor="let h of filteredHelpers" (click)="select(h)" style="display:flex;flex-direction: column;">
 
       <div style="display:flex;justify-content: space-between;">
-        {{h.name}} 
+        {{h.name}}
         <div style="text-align: end;" class="secondary-text">
           <div *ngIf="h.assignedDeliveries>0"> {{h.assignedDeliveries}} {{settings.lang.ActiveDeliveries}}</div>
-          <div *ngIf="h.lastCompletedDeliveryString" class="{{h.isBusyVolunteer}}"> 
+          <div *ngIf="h.lastCompletedDeliveryString" class="{{h.isBusyVolunteer}}">
             {{h.totalRecentDeliveries}} {{settings.lang.deliveriesCompleted}} ({{h.lastCompletedDeliveryString}})
           </div>
           <div *ngIf="h.fixedFamilies>0"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
