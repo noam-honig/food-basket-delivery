@@ -110,7 +110,6 @@ s.parentNode.insertBefore(b, s);})();
             if (settings.forWho.args.leftToRight) {
                 result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
             }
-            console.log({ langCode: settings.forWho.args.languageCode });
             if (settings.forWho.args.languageCode) {
                 let lang = settings.forWho.args.languageCode;
                 result = result.replace(/&language=iw&/, `&language=${lang}&`)
