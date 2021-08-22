@@ -285,12 +285,12 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       s.what();
     }
 
-    f.phone = new Phone(Phone.fixPhoneInput(f.phone.thePhone, this.remult));
+    f.phone = new Phone(Phone.fixPhoneInput(f.phone?.thePhone, this.remult));
 
 
     let info: excelRowInfo = {
       name: f.name,
-      phone: f.phone.thePhone,
+      phone: f.phone?.thePhone,
 
       valid: true,
       rowInExcel: row,
