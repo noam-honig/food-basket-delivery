@@ -96,7 +96,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   @BackendMethod({ allowed: Roles.admin })
   static async insertHelperRows(rowsToInsert: excelRowInfo[], remult?: Remult) {
     for (const r of rowsToInsert) {
-      let f =  remult.repo(Helpers).create();
+      let f = remult.repo(Helpers).create();
       for (const val in r.values) {
         f[val] = r.values[val].newValue;
       }
@@ -155,7 +155,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let c = ExcelHelper.actualGetColInfo(i, colMemberName);
     if (c.existingDisplayValue == c.newDisplayValue)
       return;
-    let f = await  remult.repo(Helpers).findFirst(f => f.id.isEqualTo(i.duplicateHelperInfo[0].id));
+    let f = await remult.repo(Helpers).findFirst(f => f.id.isEqualTo(i.duplicateHelperInfo[0].id));
     let val = c.newValue;
     if (val === null)
       val = '';
@@ -266,7 +266,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
 
   async readLine(row: number): Promise<excelRowInfo> {
-    let f = this. remult.repo(Helpers).create();
+    let f = this.remult.repo(Helpers).create();
 
 
     let helper = new columnUpdateHelper();
@@ -336,12 +336,12 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
     let updateCol = (col: FieldRef<any>, val: string, seperator: string = ' ') => {
 
-      if (col.value) {
-        col.value = (col.value + seperator + val).trim();
+      if (col.inputValue) {
+        col.inputValue = (col.inputValue + seperator + val).trim();
       } else
-        col.value = val;
+        col.inputValue = val;
     }
-    this.helper = this. remult.repo(Helpers).metadata.fields;
+    this.helper = this.remult.repo(Helpers).metadata.fields;
     if (false) {
       try {
         this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));
@@ -553,7 +553,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     } as serverCheckResults;
     for (const info of excelRowInfo) {
 
-      info.duplicateHelperInfo = (await  remult.repo(Helpers).find({ where: h => h.phone.isEqualTo(new Phone(info.phone)) })).map(x => {
+      info.duplicateHelperInfo = (await remult.repo(Helpers).find({ where: h => h.phone.isEqualTo(new Phone(info.phone)) })).map(x => {
         return {
           id: x.id,
           name: x.name
@@ -566,7 +566,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         info.error = 'מתנדב קיים יותר מפעם אחת בבסיס הנתונים';
         result.errorRows.push(info);
       } else {
-        let ef = await  remult.repo(Helpers).findFirst(f => f.id.isEqualTo(info.duplicateHelperInfo[0].id));
+        let ef = await remult.repo(Helpers).findFirst(f => f.id.isEqualTo(info.duplicateHelperInfo[0].id));
         let hasDifference = false;
         for (const columnMemberName of columnsInCompareMemeberName) {
 
