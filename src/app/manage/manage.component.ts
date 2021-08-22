@@ -77,7 +77,7 @@ export class ManageComponent implements OnInit {
   }
   constructor(private dialog: DialogService, private remult: Remult, private sanitization: DomSanitizer, public settings: ApplicationSettings, private busy: BusyService, private settingService: SettingsService) { }
 
-  basketType = new GridSettings(this. remult.repo(BasketType), {
+  basketType = new GridSettings(this.remult.repo(BasketType), {
     columnSettings: x => [
       x.name,
       {
@@ -101,7 +101,7 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
   showArchivedDistributionCenters = false;
-  distributionCenters = new GridSettings(this. remult.repo(DistributionCenters), {
+  distributionCenters = new GridSettings(this.remult.repo(DistributionCenters), {
     gridButtons: [
       {
         name: this.settings.lang.showDeletedDistributionCenters,
@@ -114,7 +114,7 @@ export class ManageComponent implements OnInit {
       {
         name: this.settings.lang.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this. remult.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
+          await saveToExcel(this.settings, this.remult.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
         }
         , visible: () => this.remult.isAllowed(Roles.admin)
       },
@@ -148,7 +148,7 @@ export class ManageComponent implements OnInit {
       textInMenu: c => c.archive ? this.settings.lang.unDeleteDistributionCenter : this.settings.lang.deleteDistributionCenter,
       icon: 'delete',
       click: async c => {
-        if (!c.archive && (await this. remult.repo(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
+        if (!c.archive && (await this.remult.repo(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
           this.dialog.Error(this.settings.lang.mustHaveAtLeastOneActiveDistributionList);
           return;
         }
@@ -203,7 +203,7 @@ export class ManageComponent implements OnInit {
       this.dialog.refreshFamiliesAndDistributionCenters();
     }, 1000);
   }
-  sources = new GridSettings(this. remult.repo(FamilySources), {
+  sources = new GridSettings(this.remult.repo(FamilySources), {
     columnSettings: s => [
       s.name,
       s.phone,
@@ -217,7 +217,7 @@ export class ManageComponent implements OnInit {
     ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
-  groups = new GridSettings(this. remult.repo(Groups), {
+  groups = new GridSettings(this.remult.repo(Groups), {
     saving: () => this.refreshEnvironmentAfterSave(),
 
     columnSettings: s => [
@@ -260,7 +260,7 @@ export class ManageComponent implements OnInit {
   });
   async saveAndPreview() {
     await this.save();
-    let f = this. remult.repo(ActiveFamilyDeliveries).create();
+    let f = this.remult.repo(ActiveFamilyDeliveries).create();
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments,
@@ -397,7 +397,7 @@ export class ManageComponent implements OnInit {
   testSuccessSms() {
     return SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, 'ישראל ישראלי');
   }
-  images = new GridSettings(this. remult.repo(ApplicationImages), {
+  images = new GridSettings(this.remult.repo(ApplicationImages), {
     numOfColumnsInGrid: 0,
     allowUpdate: true,
     columnSettings: i => [
@@ -486,6 +486,7 @@ export class ManageComponent implements OnInit {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64PhoneHomeImage);
   }
+
   onFileChange(id: string, column: FieldRef<any, string>) {
     const inputNode: any = document.querySelector('#' + id);
 
@@ -501,6 +502,66 @@ export class ManageComponent implements OnInit {
       reader.readAsDataURL(inputNode.files[0]);
     }
   }
+
+  private async loadFiles(files: any) {
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      let f: File = file;
+      await new Promise((res) => {
+        var fileReader = new FileReader();
+
+        fileReader.onload = async (e: any) => {
+          var img = new Image();
+
+          var canvas = document.createElement("canvas");
+          if (true) {
+            img.onload = async () => {
+              var ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0);
+
+              var MAX_WIDTH = 120;
+              var MAX_HEIGHT = 120;
+              var width = img.width;
+              var height = img.height;
+
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height;
+                  height = MAX_HEIGHT;
+                }
+              }
+              canvas.width = width;
+              canvas.height = height;
+              var ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, width, height);
+
+              var x = canvas.toDataURL("image/png");
+
+              let y = x.indexOf(',');
+              this.images.currentRow.base64PhoneHomeImage = x.substring(y + 1).trim();
+            }
+            img.src = e.target.result.toString();
+          }
+          //   this.image.image.value = e.target.result.toString();
+          //   this.image.fileName.value = f.name;
+          res({});
+
+        };
+        fileReader.readAsDataURL(f);
+      });
+    }
+  }
+
+  onFileInput(e: any) {
+    this.loadFiles(e.target.files);
+  }
+
+
   getIcon() {
     return this.sanitization.bypassSecurityTrustResourceUrl(
       'data:image;base64,' + this.images.currentRow.base64Icon);
@@ -514,7 +575,7 @@ export class ManageComponent implements OnInit {
     }
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this. remult.repo(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
+    let count = await this.remult.repo(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
     if (!await this.dialog.YesNoPromise(this.settings.lang.areYouSureYouWantToDelete + " " + count + this.settings.lang.families + "?"))
       return;
     await openDialog(InputAreaComponent, x => {
@@ -545,13 +606,13 @@ export class ManageComponent implements OnInit {
     this.settings.boxes1Name = this.settings.lang.boxes1Name;
     this.settings.boxes2Name = this.settings.lang.boxes2Name;
     this.settings.questionForVolunteerWhenUploadingPhoto = this.settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
-    var b = await this. remult.repo(BasketType).findFirst();
+    var b = await this.remult.repo(BasketType).findFirst();
     if (b) {
       b.name = this.settings.lang.foodParcel;
       await b.save();
       this.basketType.reloadData();
     }
-    let d = await this. remult.repo(DistributionCenters).findFirst();
+    let d = await this.remult.repo(DistributionCenters).findFirst();
     if (d) {
       d.name = this.settings.lang.defaultDistributionListName;
       await d.save();
@@ -563,7 +624,7 @@ export class ManageComponent implements OnInit {
 
 
     let i = 0;
-    for await (const f of  remult.repo(Families).iterate({
+    for await (const f of remult.repo(Families).iterate({
       where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
       orderBy: f => f.createDate.descending(),
       progress
@@ -585,9 +646,9 @@ export class ManageComponent implements OnInit {
 },
   (options, remult) =>
     options.sqlExpression = async (self) => {
-      let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
-      let g = SqlFor( remult.repo(Groups));
-      let d = SqlFor( remult.repo(DistributionCenters));
+      let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
+      let g = SqlFor(remult.repo(Groups));
+      let d = SqlFor(remult.repo(DistributionCenters));
       let sql = new SqlBuilder(remult);
       sql.addEntity(f, 'Families');
       sql.addEntity(g, 'groups');
@@ -627,8 +688,8 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
 },
   (options, remult) => {
     options.sqlExpression = async (self) => {
-      let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
-      let g = SqlFor( remult.repo(Groups));
+      let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
+      let g = SqlFor(remult.repo(Groups));
 
       let sql = new SqlBuilder(remult);
       sql.addEntity(f, 'Families');
