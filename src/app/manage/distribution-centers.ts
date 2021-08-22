@@ -111,7 +111,7 @@ export class DistributionCenters extends IdEntity {
       where: c => c.archive.isEqualTo(false)
     })
     if (showAllOptions) {
-      r.splice(0, 0, { caption: 'כל הרשימות', id: null })
+      r.splice(0, 0, { caption: use.language.allDistributionLists, id: null })
     }
     return r;
 

@@ -28,12 +28,12 @@ import { DateOnlyValueConverter } from "remult/valueConverters";
 
 
 @ValueListFieldType(EventType, {
-    caption: 'סוג התנדבות'
+    caption: use.language.eventType
 })
 export class EventType {
-    static foodDelivery = new EventType("חלוקת מזון", "");
-    static packaging = new EventType("אריזת חבילות");
-    static other = new EventType("אחר");
+    static foodDelivery = new EventType(use.language.foodDelivery, "");
+    static packaging = new EventType(use.language.parcelPackaging);
+    static other = new EventType(use.language.other);
     constructor(public caption: string, public id: string = undefined) {
 
     }
@@ -168,7 +168,7 @@ export class Event extends IdEntity {
                         caption: getLang(this.remult).volunteerStatus,
                         getValue: v => {
                             if (v.canceled)
-                                return "ביטל השתתפות";
+                                return use.language.canceledParticipation;
                             if (v.assignedDeliveries > 0)
                                 if (v.lastAssignTime < v.lastSmsTime)
                                     return getLang(this.remult).smsSent;

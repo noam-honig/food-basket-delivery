@@ -859,4 +859,17 @@ export class italy {
   wantToVolnteerMore = 'Vuoi fare più volontariato?';
   registerStatusDate = 'Data stato registrazione';
   delveriesSuccessfulEver = 'mai consegnato';
+  moveToArchive = 'Sposta in archivio';
+  showPast = 'Mostra passato';
+  refresh = 'Aggiorna dati';
+  showPie = 'Mostra torta';
+  hidePie = 'Nascondi torta';
+  markAsFixed = 'Segna come un volontario regolare';
+  unmarkAsFixed = "Rimuovere l'assegno volontario permanente";
+  new = 'Nuovo';
+  allDistributionLists = 'Tutte le liste';
+  foodDelivery = 'Distribuzione di cibo';
+  parcelPackaging = 'Pacchetti di imballaggio';
+  other = 'Altro';
+  eventType = 'Tipo di volontariato';
 }

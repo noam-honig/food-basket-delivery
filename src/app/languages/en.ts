@@ -859,4 +859,17 @@ export class en {
   wantToVolnteerMore = 'Want to volunteer more?';
   registerStatusDate = 'Registration status date';
   delveriesSuccessfulEver = 'Ever delivered';
+  moveToArchive = 'Move to archive';
+  showPast = 'Show past';
+  refresh = 'Refresh data';
+  showPie = 'Show pie';
+  hidePie = 'Hide pie';
+  markAsFixed = 'Mark as a regular volunteer';
+  unmarkAsFixed = 'Remove permanent volunteer check';
+  new = 'New';
+  allDistributionLists = 'All lists';
+  foodDelivery = 'Food Distribution';
+  parcelPackaging = 'Packing packages';
+  other = 'Other';
+  eventType = 'Type of volunteering';
 }

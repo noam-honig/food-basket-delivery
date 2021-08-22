@@ -131,6 +131,10 @@
     "google": "כל הערים",
     "valueInCode": "כל הערים"
   },
+  "allDistributionLists": {
+    "google": "כל הרשימות",
+    "valueInCode": "כל הרשימות"
+  },
   "allFamilies": {
     "google": "כל התורמים",
     "valueInCode": "כל המשפחות"
@@ -1063,7 +1067,7 @@
   },
   "duplicateForNextEvent": {
     "google": "העתק לאירוע הבא",
-    "valueInCode": "העתק להזדמנות התנדבות הבאה"
+    "valueInCode": "מתנדב קבוע"
   },
   "editComment": {
     "google": "ערוך הערה",
@@ -1169,6 +1173,10 @@
   "eventTime": {
     "google": "שעה",
     "valueInCode": "שעה"
+  },
+  "eventType": {
+    "google": "סוג התנדבות",
+    "valueInCode": "סוג התנדבות"
   },
   "excelColumnIgnore": {
     "google": "לא לקלוט",
@@ -1438,6 +1446,10 @@
     "google": "קומה",
     "valueInCode": "קומה"
   },
+  "foodDelivery": {
+    "google": "חלוקת מזון",
+    "valueInCode": "חלוקת מזון"
+  },
   "foodParcel": {
     "google": "סל מזון",
     "valueInCode": "סל מזון"
@@ -1500,7 +1512,7 @@
   },
   "fromGeneralList": {
     "google": "נרשם דרך הרשימה הכלללית",
-    "valueInCode": "נרשם דרך הרשימה הכלללית"
+    "valueInCode": "נרשם דרך הרשימה הכללית"
   },
   "frozen": {
     "google": "מוקפא",
@@ -1577,6 +1589,10 @@
   "hideHelperCompany": {
     "google": "הסתר ארגון למתנדב",
     "valueInCode": "הסתר ארגון למתנדב"
+  },
+  "hidePie": {
+    "google": "הסתר פאי",
+    "valueInCode": "הסתר פאי"
   },
   "hours": {
     "google": "שעות",
@@ -1830,6 +1846,10 @@
     "google": "סמן תרומה נאספה ל",
     "valueInCode": "סמן נמסר בהצלחה ל"
   },
+  "markAsFixed": {
+    "google": "סמן כמתנדב קבוע",
+    "valueInCode": "סמן כמתנדב קבוע"
+  },
   "markAsSelfPickupFor": {
     "google": "סמן הפריטים נקלטו ל",
     "valueInCode": "סמן אספו את החבילה ל"
@@ -1926,6 +1946,10 @@
     "google": "להעביר את משפחת",
     "valueInCode": "להעביר את משפחת"
   },
+  "moveToArchive": {
+    "google": "העבר לארכיון",
+    "valueInCode": "העבר לארכיון"
+  },
   "moveToNewFamilies": {
     "google": "העבר לתורמים חדשות",
     "valueInCode": "העבר למשפחות חדשות"
@@ -1969,6 +1993,10 @@
   "needEscort": {
     "google": "צריך מלווה",
     "valueInCode": "צריך מלווה"
+  },
+  "new": {
+    "google": "חדש",
+    "valueInCode": "חדש"
   },
   "newDeliveriesQM": {
     "google": "משלוחים חדשים?",
@@ -2158,6 +2186,10 @@
     "google": "כתובת מקורית",
     "valueInCode": "כתובת מקורית"
   },
+  "other": {
+    "google": "אחר",
+    "valueInCode": "אחר"
+  },
   "otherPhone": {
     "google": "טלפון אחר",
     "valueInCode": "טלפון אחר"
@@ -2169,6 +2201,10 @@
   "packageWasPickedUp": {
     "google": "הפריטים נקלטו",
     "valueInCode": "אספו את החבילה"
+  },
+  "parcelPackaging": {
+    "google": "אריזת חבילות",
+    "valueInCode": "אריזת חבילות"
   },
   "parcelSummary": {
     "google": "הצג סיכום סוגי סלים",
@@ -2395,6 +2431,10 @@
   "redTitleBar": {
     "google": "כותרת דף בצבע אדום",
     "valueInCode": "כותרת דף בצבע אדום"
+  },
+  "refresh": {
+    "google": "רענן נתונים",
+    "valueInCode": "רענן נתונים"
   },
   "region": {
     "google": "אזור",
@@ -2888,6 +2928,14 @@
     "google": "הצג רק מילה אחרונה למתנדב בשם התורם",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
   },
+  "showPast": {
+    "google": "הצג עבר",
+    "valueInCode": "הצג עבר"
+  },
+  "showPie": {
+    "google": "הצג פאי",
+    "valueInCode": "הצג פאי"
+  },
   "showQRCode": {
     "google": "הצג לקליטה",
     "valueInCode": "הצג לקליטה"
@@ -3155,6 +3203,10 @@
   "unFreezeDelivery": {
     "google": "הפשר משלוח",
     "valueInCode": "הפשר משלוח"
+  },
+  "unmarkAsFixed": {
+    "google": "הסר סימון מתנדב קבוע",
+    "valueInCode": "הסר סימון מתנדב קבוע"
   },
   "unnamed": {
     "google": "ללא שם",

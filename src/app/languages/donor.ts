@@ -859,4 +859,17 @@ export class donor {
   wantToVolnteerMore = 'רוצה להתנדב עוד?';
   registerStatusDate = 'תאריך סטטוס רישום';
   delveriesSuccessfulEver = 'נמסרו אי פעם';
+  moveToArchive = 'העבר לארכיון';
+  showPast = 'הצג עבר';
+  refresh = 'רענן נתונים';
+  showPie = 'הצג פאי';
+  hidePie = 'הסתר פאי';
+  markAsFixed = 'סמן כמתנדב קבוע';
+  unmarkAsFixed = 'הסר סימון מתנדב קבוע';
+  new = 'חדש';
+  allDistributionLists = 'כל הרשימות';
+  foodDelivery = 'חלוקת מזון';
+  parcelPackaging = 'אריזת חבילות';
+  other = 'אחר';
+  eventType = 'סוג התנדבות';
 }

@@ -1149,9 +1149,17 @@ export class Language {
   refresh = "רענן נתונים";
   showPie = "הצג פאי";
   hidePie = "הסתר פאי";
-  markAsFixed  ="סמן כמתנדב קבוע";
+  markAsFixed = "סמן כמתנדב קבוע";
   unmarkAsFixed = "הסר סימון מתנדב קבוע";
   new = "חדש";
+  allDistributionLists = "כל הרשימות";
+  foodDelivery = "חלוקת מזון";
+  parcelPackaging = "אריזת חבילות";
+  other = "אחר";
+  eventType = "סוג התנדבות";
+  forDetailsAndRegistration = "לפרטים והרשמה לחצו כאן";
+  eventIsFullShort = 'הארוע מלא';
+  canceledParticipation = "ביטל השתתפות";
 }
 
 const defaultLang = new Language();

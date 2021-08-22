@@ -164,6 +164,11 @@
     "valueInCode": "כל הערים",
     "valueInEnglish": "All cities"
   },
+  "allDistributionLists": {
+    "google": "Todas las listas",
+    "valueInCode": "כל הרשימות",
+    "valueInEnglish": "All lists"
+  },
   "allFamilies": {
     "google": "Todas las familias",
     "valueInCode": "כל המשפחות",
@@ -1327,7 +1332,7 @@
   },
   "duplicateForNextEvent": {
     "google": "Una copia para el próximo evento",
-    "valueInCode": "העתק להזדמנות התנדבות הבאה",
+    "valueInCode": "מתנדב קבוע",
     "valueInEnglish": "A copy for the next event"
   },
   "editComment": {
@@ -1459,6 +1464,11 @@
     "google": "hora",
     "valueInCode": "שעה",
     "valueInEnglish": "hour"
+  },
+  "eventType": {
+    "google": "Tipo de voluntariado",
+    "valueInCode": "סוג התנדבות",
+    "valueInEnglish": "Type of volunteering"
   },
   "excelColumnIgnore": {
     "google": "No importar",
@@ -1795,6 +1805,11 @@
     "valueInCode": "קומה",
     "valueInEnglish": "Floor"
   },
+  "foodDelivery": {
+    "google": "Distribucion de comida",
+    "valueInCode": "חלוקת מזון",
+    "valueInEnglish": "Food Distribution"
+  },
   "foodParcel": {
     "google": "Paquete de comida",
     "valueInCode": "סל מזון",
@@ -1872,7 +1887,7 @@
   },
   "fromGeneralList": {
     "google": "Registrado a través de la lista general",
-    "valueInCode": "נרשם דרך הרשימה הכלללית",
+    "valueInCode": "נרשם דרך הרשימה הכללית",
     "valueInEnglish": "Registered through the general list"
   },
   "frozen": {
@@ -1969,6 +1984,11 @@
     "google": "Ocultar una empresa voluntaria",
     "valueInCode": "הסתר ארגון למתנדב",
     "valueInEnglish": "Hide a volunteer company"
+  },
+  "hidePie": {
+    "google": "Ocultar pastel",
+    "valueInCode": "הסתר פאי",
+    "valueInEnglish": "Hide pie"
   },
   "hours": {
     "google": "Horas",
@@ -2285,6 +2305,11 @@
     "valueInCode": "סמן נמסר בהצלחה ל",
     "valueInEnglish": "Mark Successful Delivery for"
   },
+  "markAsFixed": {
+    "google": "Marcar como voluntario habitual",
+    "valueInCode": "סמן כמתנדב קבוע",
+    "valueInEnglish": "Mark as a regular volunteer"
+  },
   "markAsSelfPickupFor": {
     "google": "marca",
     "valueInCode": "סמן אספו את החבילה ל",
@@ -2405,6 +2430,11 @@
     "valueInCode": "להעביר את משפחת",
     "valueInEnglish": "To move the family"
   },
+  "moveToArchive": {
+    "google": "Mover a archivo",
+    "valueInCode": "העבר לארכיון",
+    "valueInEnglish": "Move to archive"
+  },
   "moveToNewFamilies": {
     "google": "Mudarse a nuevas familias",
     "valueInCode": "העבר למשפחות חדשות",
@@ -2459,6 +2489,11 @@
     "google": "Necesito un compañero",
     "valueInCode": "צריך מלווה",
     "valueInEnglish": "Need a companion"
+  },
+  "new": {
+    "google": "Nuevo",
+    "valueInCode": "חדש",
+    "valueInEnglish": "New"
   },
   "newDeliveriesQM": {
     "google": "¿Nuevas entregas?",
@@ -2690,6 +2725,11 @@
     "valueInCode": "כתובת מקורית",
     "valueInEnglish": "Original address"
   },
+  "other": {
+    "google": "Otro",
+    "valueInCode": "אחר",
+    "valueInEnglish": "Other"
+  },
   "otherPhone": {
     "google": "otro telefono",
     "valueInCode": "טלפון אחר",
@@ -2704,6 +2744,11 @@
     "google": "Recogido",
     "valueInCode": "אספו את החבילה",
     "valueInEnglish": "Collected"
+  },
+  "parcelPackaging": {
+    "google": "Embalaje de paquetes",
+    "valueInCode": "אריזת חבילות",
+    "valueInEnglish": "Packing packages"
   },
   "parcelSummary": {
     "google": "Mostrar resumen de parcela",
@@ -2984,6 +3029,11 @@
     "google": "Título de la página roja",
     "valueInCode": "כותרת דף בצבע אדום",
     "valueInEnglish": "Red page title"
+  },
+  "refresh": {
+    "google": "Actualizar datos",
+    "valueInCode": "רענן נתונים",
+    "valueInEnglish": "Refresh data"
   },
   "region": {
     "google": "Zona",
@@ -3601,6 +3651,16 @@
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
     "valueInEnglish": "Show just one last word to the volunteer on behalf of the family"
   },
+  "showPast": {
+    "google": "Mostrar pasado",
+    "valueInCode": "הצג עבר",
+    "valueInEnglish": "Show past"
+  },
+  "showPie": {
+    "google": "Mostrar pastel",
+    "valueInCode": "הצג פאי",
+    "valueInEnglish": "Show pie"
+  },
   "showQRCode": {
     "google": "Mostrar por absorción",
     "valueInCode": "הצג לקליטה",
@@ -3935,6 +3995,11 @@
     "google": "Descongelar entrega",
     "valueInCode": "הפשר משלוח",
     "valueInEnglish": "Unfreeze Delivery"
+  },
+  "unmarkAsFixed": {
+    "google": "Quitar cheque voluntario permanente",
+    "valueInCode": "הסר סימון מתנדב קבוע",
+    "valueInEnglish": "Remove permanent volunteer check"
   },
   "unnamed": {
     "google": "sin nombre",

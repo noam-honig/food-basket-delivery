@@ -859,4 +859,17 @@ export class es {
   wantToVolnteerMore = '¿Quiere ser voluntario más?';
   registerStatusDate = 'Fecha de estado de registro';
   delveriesSuccessfulEver = 'Alguna vez entregado';
+  moveToArchive = 'Mover a archivo';
+  showPast = 'Mostrar pasado';
+  refresh = 'Actualizar datos';
+  showPie = 'Mostrar pastel';
+  hidePie = 'Ocultar pastel';
+  markAsFixed = 'Marcar como voluntario habitual';
+  unmarkAsFixed = 'Quitar cheque voluntario permanente';
+  new = 'Nuevo';
+  allDistributionLists = 'Todas las listas';
+  foodDelivery = 'Distribucion de comida';
+  parcelPackaging = 'Embalaje de paquetes';
+  other = 'Otro';
+  eventType = 'Tipo de voluntariado';
 }

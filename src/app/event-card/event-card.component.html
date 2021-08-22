@@ -48,8 +48,9 @@
                                         {{e.endTime}}</span>
 
                                 </div>
-                                <span *ngIf="isFull(e)">{{'הארוע מלא'}}</span>
-                                <a (click)="eventDetails(e)" *ngIf="!isFull(e)">לפרטים והרשמה לחצו כאן</a>
+                                <span *ngIf="isFull(e)">{{settings.lang.eventIsFullShort}}</span>
+                                <a (click)="eventDetails(e)"
+                                    *ngIf="!isFull(e)">{{settings.lang.forDetailsAndRegistration}}</a>
                                 <a (click)="showVolunteers(e)">{{adminVolunteers(e)}}</a>
                             </div>
                         </div>
