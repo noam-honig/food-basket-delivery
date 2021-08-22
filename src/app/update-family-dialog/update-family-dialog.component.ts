@@ -383,13 +383,14 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     }
-    if (!this.families.currentRow.isNew())
+    if (!this.families.currentRow.isNew()) {
       this.familyDeliveries = await this.args.family.deliveriesGridSettings({
         settings: this.settings,
         dialog: this.dialog,
         busy: this.busy
       });
-    new columnOrderAndWidthSaver(this.familyDeliveries).load('familyDeliveriesInUpdateFamily');
+      new columnOrderAndWidthSaver(this.familyDeliveries).load('familyDeliveriesInUpdateFamily');
+    }
 
   }
 
