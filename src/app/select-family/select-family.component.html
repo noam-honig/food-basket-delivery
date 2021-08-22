@@ -36,7 +36,7 @@
         <div *ngIf="showStatus(f)" class="red">
           <h5>{{showStatus(f)}}</h5>
         </div>
-        <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType.name}}
+        <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType?.name}}
 
         <div *ngIf="f.deliveryComments">
           <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments}}
