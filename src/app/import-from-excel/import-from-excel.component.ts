@@ -157,10 +157,13 @@ export class ImportFromExcelComponent implements OnInit {
     static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, remult?: Remult) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
-            let f =  remult.repo(Families).create();
-            let fd =  remult.repo(ActiveFamilyDeliveries).create();
+            let f = remult.repo(Families).create();
+            let fd = remult.repo(ActiveFamilyDeliveries).create();
             for (const val in r.values) {
-                columnFromKey(f, fd, val).inputValue = r.values[val].newValue;
+                let col = columnFromKey(f, fd, val);
+                col.inputValue = r.values[val].newValue;
+                await col.load();
+
             }
             if (!f.name)
                 f.name = 'ללא שם';
@@ -236,10 +239,10 @@ export class ImportFromExcelComponent implements OnInit {
         let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
-        let basket = await  remult.repo(BasketType).findId(i.basketType);
-        let distCenter = await  remult.repo(DistributionCenters).findId(i.distCenter);
-        let f = await  remult.repo(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
-        let fd = await  remult.repo(ActiveFamilyDeliveries).findFirst(fd => {
+        let basket = await remult.repo(BasketType).findId(i.basketType);
+        let distCenter = await remult.repo(DistributionCenters).findId(i.distCenter);
+        let f = await remult.repo(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
+        let fd = await remult.repo(ActiveFamilyDeliveries).findFirst(fd => {
             let r = fd.family.isEqualTo(i.duplicateFamilyInfo[0].id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
             if (compareBasketType)
                 return r.and(fd.basketType.isEqualTo(basket));
@@ -420,8 +423,8 @@ export class ImportFromExcelComponent implements OnInit {
 
     async readLine(row: number, updatedFields: Map<FieldMetadata<any>, boolean>): Promise<excelRowInfo> {
 
-        let f = this. remult.repo(Families).create();
-        let fd = this. remult.repo(ActiveFamilyDeliveries).create();
+        let f = this.remult.repo(Families).create();
+        let fd = this.remult.repo(ActiveFamilyDeliveries).create();
         fd.basketType = this.defaultBasketType;
         fd.distributionCenter = this.distributionCenter;
         f.status = FamilyStatus.Active;
@@ -543,9 +546,9 @@ export class ImportFromExcelComponent implements OnInit {
             } else
                 col.value = val;
         }
-        this.fDefs = this. remult.repo(Families).metadata;
+        this.fDefs = this.remult.repo(Families).metadata;
         this.f = this.fDefs.fields;
-        this.fdDefs = this. remult.repo(ActiveFamilyDeliveries).metadata;
+        this.fdDefs = this.remult.repo(ActiveFamilyDeliveries).metadata;
         this.fd = this.fdDefs.fields;
         if (false) {
             try {
@@ -596,7 +599,13 @@ export class ImportFromExcelComponent implements OnInit {
 
             this.f.postalCode
         ]);
-        addColumn(this.f.id);
+        this.columns.push({
+            key: 'id',
+            name: this.f.id.caption,
+            updateFamily: async (v, f, h) => { f.id = v },
+            columns: [this.f.id],
+            searchNames: [this.f.id.caption]
+        });
         this.columns.push({
             key: 'address',
             name: use.language.address,
@@ -787,11 +796,11 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.groups.caption,
             updateFamily: async (v, f, h) => {
                 if (v && v.trim().length > 0) {
-                    let g = await this. remult.repo(Groups).findFirst({ createIfNotFound: true, where: g => g.name.isEqualTo(v.trim()) });
+                    let g = await this.remult.repo(Groups).findFirst({ createIfNotFound: true, where: g => g.name.isEqualTo(v.trim()) });
                     if (g.isNew())
                         await g.save();
                 }
-                f.groups =  f.groups.addGroup(v);
+                f.groups = f.groups.addGroup(v);
             }, columns: [this.f.groups]
         });
         this.columns.push({
@@ -1098,7 +1107,7 @@ export class ImportFromExcelComponent implements OnInit {
             info.duplicateFamilyInfo = [];
             let findDuplicate = async (w: (f: FilterFactories<Families>) => Filter) => {
                 if (info.duplicateFamilyInfo.length == 0)
-                    info.duplicateFamilyInfo = (await  remult.repo(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
+                    info.duplicateFamilyInfo = (await remult.repo(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
                         .map(f => (<duplicateFamilyInfo>{
                             id: f.id,
                             address: f.address,
@@ -1238,12 +1247,12 @@ export class ImportFromExcelComponent implements OnInit {
     }
     stopAskingQuestions = false;
     async openFamilyInfo(r: excelRowInfo) {
-        let f = await this. remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
+        let f = await this.remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
         await f.showFamilyDialog();
     }
     async familyHistory(r: excelRowInfo) {
-        let f = await this. remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
-        let result = new GridSettings(this. remult.repo(FamilyDeliveries), {
+        let f = await this.remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
+        let result = new GridSettings(this.remult.repo(FamilyDeliveries), {
             numOfColumnsInGrid: 7,
 
             rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -1390,7 +1399,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async updateFamily(i: duplicateFamilyInfo) {
-        let f = await this. remult.repo(Families).findFirst(f => f.id.isEqualTo(i.id));
+        let f = await this.remult.repo(Families).findFirst(f => f.id.isEqualTo(i.id));
         f.showFamilyDialog();
 
     }
@@ -1449,7 +1458,7 @@ class columnUpdateHelper {
         getResult: (entity: T) => Y,
         updateResultTo: FieldRef<any, Y>,
         additionalUpdates?: ((entity: T) => void)) {
-        let x = await this. remult.repo(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
+        let x = await this.remult.repo(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
         if (x.isNew()) {
             let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
@@ -1514,10 +1523,10 @@ function onlyNameMatch(f: duplicateFamilyInfo) {
 
 async function compareValuesWithRow(remult: Remult, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
-    let basketType = await  remult.repo(BasketType).findId(info.basketType);
-    let distCenter = await  remult.repo(DistributionCenters).findId(info.distCenter);
-    let ef = await  remult.repo(Families).findId(withFamily);
-    let fd = await  remult.repo(ActiveFamilyDeliveries).findFirst({
+    let basketType = await remult.repo(BasketType).findId(info.basketType);
+    let distCenter = await remult.repo(DistributionCenters).findId(info.distCenter);
+    let ef = await remult.repo(Families).findId(withFamily);
+    let fd = await remult.repo(ActiveFamilyDeliveries).findFirst({
         createIfNotFound: true,
         where: fd => {
             let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
@@ -1564,7 +1573,7 @@ async function compareValuesWithRow(remult: Remult, info: excelRowInfo, withFami
 }
 
 async function getColumnDisplayValue(c: FieldRef<any>) {
-    
+
     let v = c.displayValue;
 
     return v?.trim();
