@@ -39,15 +39,21 @@ export class RegisterToEvent {
         translation: l => l.phone,
         valueType: Phone,
         validate: (e, c) => {
-            c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone, e.remult))
-            Phone.validatePhone(c, e.remult, true);
+            if (!e.remult.authenticated()) {
+                c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone, e.remult))
+                Phone.validatePhone(c, e.remult, true);
+            }
 
         }
     })
     phone: Phone;
     @Field<RegisterToEvent>({
         caption: "שם",
-        validate: (e, name) => Validators.required(e, name, e.remult.lang.nameIsTooShort)
+        validate: (e, name) => {
+            if (!e.remult.authenticated()) {
+                Validators.required(e, name, e.remult.lang.nameIsTooShort)
+            }
+        }
     })
 
     name: string;
@@ -99,7 +105,7 @@ export class RegisterToEvent {
         this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false));
     }
     @BackendMethod({ allowed: true })
-    async registerVolunteerToEvent(id: string, site: string, register) {
+    async registerVolunteerToEvent(id: string, site: string, register:boolean) {
 
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
