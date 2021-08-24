@@ -11,7 +11,9 @@ import { use, FieldType, Field } from "../translate";
 
 
 @FieldType<DistributionCenters>({
- 
+  valueConverter: {
+    toDb: x => x == null ? '' : x
+  },
   displayValue: (e, v) => v ? v.name : '',
   translation: l => l.distributionList
 
@@ -104,7 +106,7 @@ export class DistributionCenters extends IdEntity {
     return (await ApplicationSettings.getAsync(this.remult)).addressHelper.getGeocodeInformation();
   }
   static async getValueList(remult: Remult, showAllOptions = false) {
-    let r = await getValueList<DistributionCenters>( remult.repo(DistributionCenters), {
+    let r = await getValueList<DistributionCenters>(remult.repo(DistributionCenters), {
       where: c => c.archive.isEqualTo(false)
     })
     if (showAllOptions) {
