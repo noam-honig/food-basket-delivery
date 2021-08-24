@@ -56,11 +56,12 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
                 { field: this.$.status, visible: () => this.updateFamilyStatus }
             ],
             title: getLang(remult).deleteDeliveries,
+            icon: 'delete',
             help: () => getLang(this.remult).deleteDeliveriesHelp,
             forEach: async fd => {
                 await fd.delete();
                 if (this.updateFamilyStatus) {
-                    let f = await this. remult.repo(Families).findId(fd.family);
+                    let f = await this.remult.repo(Families).findId(fd.family);
                     f.status = this.status;
                     await f.save();
                 }
@@ -75,6 +76,8 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     byCurrentCourier: boolean;
     @Field({ translation: l => l.defaultBasketType })
     basketType: boolean;
+    @Field({ translation: l => l.defaultDistributionCenter })
+    defaultDistributionCenter: boolean;
     @Field({ translation: l => l.defaultQuantity })
     quantity: boolean;
     @Field({ translation: l => l.commentForVolunteer })
@@ -88,16 +91,15 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
         super(remult, ActiveFamilyDeliveries, {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
-                this.$.basketType, this.$.quantity, this.$.byCurrentCourier, this.$.comment, {
-                    field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule
-                }
+                this.$.basketType, this.$.quantity, this.$.byCurrentCourier, this.$.comment, { field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule },
+                { field: this.$.defaultDistributionCenter, visible: () => c.dialog.hasManyCenters }
             ],
 
             title: getLang(remult).updateFamilyDefaults,
             forEach: async fd => {
 
 
-                let f = await this. remult.repo(Families).findId(fd.family);
+                let f = await this.remult.repo(Families).findId(fd.family);
                 if (f) {
                     if (this.byCurrentCourier) {
                         if (fd.courier)
@@ -111,6 +113,8 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                         f.deliveryComments = fd.deliveryComments;
                     if (this.selfPickup)
                         f.defaultSelfPickup = fd.deliverStatus == DeliveryStatus.SelfPickup || fd.deliverStatus == DeliveryStatus.SuccessPickedUp
+                    if (this.defaultDistributionCenter)
+                        f.defaultDistributionCenter = fd.distributionCenter;
 
 
                     if (f.wasChanged()) {
@@ -149,7 +153,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
                 else {
                     fd.courier = this.courier;
                     if (this.updateAlsoAsFixed) {
-                        let f = await this. remult.repo(Families).findId(fd.family);
+                        let f = await this.remult.repo(Families).findId(fd.family);
                         if (f) {
                             f.fixedCourier = this.courier;
                             if (f.wasChanged()) {
@@ -186,7 +190,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
             },
             validateInComponent: async c => {
-                let deliveriesWithResultStatus = await this. remult.repo(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.toItem(c.userWhere), this.args.additionalWhere])
+                let deliveriesWithResultStatus = await this.remult.repo(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.toItem(c.userWhere), this.args.additionalWhere])
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
                         getLang(this.remult).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.remult).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
@@ -232,7 +236,7 @@ export class ArchiveHelper {
     get $() { return getFields(this) }
     async initArchiveHelperBasedOnCurrentDeliveryInfo(remult: Remult, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result: DataAreaFieldsSetting<any>[] = [];
-        let repo =  remult.repo(ActiveFamilyDeliveries);
+        let repo = remult.repo(ActiveFamilyDeliveries);
 
         let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(), Filter.toItem(where)]);
 
@@ -276,7 +280,7 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
             dialogColumns: async c => {
                 return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
             },
-
+            icon: 'archive',
             title: getLang(remult).archiveDeliveries,
             help: () => getLang(this.remult).archiveDeliveriesHelp,
             forEach: async f => {
@@ -426,7 +430,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 if (existingDelivery.wasChanged())
                     await existingDelivery.save();
 
-                let f = await this. remult.repo(Families).findId(existingDelivery.family);
+                let f = await this.remult.repo(Families).findId(existingDelivery.family);
                 if (!f || f.status != FamilyStatus.Active)
                     return;
                 let newDelivery = f.createDelivery(existingDelivery.distributionCenter);

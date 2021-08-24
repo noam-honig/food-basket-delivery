@@ -776,6 +776,7 @@ export class Language {
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';
+  useFamilyDistributionList = "רשימת חלוקה לפי המשפחה";
   mustSelectDistributionList = 'חובה לבחור רשימת חלוקה';
   assignAFamilyGroup = 'שיוך לקבוצת משפחות';
   action = 'פעולה';
@@ -1160,6 +1161,7 @@ export class Language {
   forDetailsAndRegistration = "לפרטים והרשמה לחצו כאן";
   eventIsFullShort = 'הארוע מלא';
   canceledParticipation = "ביטל השתתפות";
+  defaultDistributionCenter="רשימת חלוקה ברירת מחדל";
 }
 
 const defaultLang = new Language();

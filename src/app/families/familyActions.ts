@@ -59,6 +59,8 @@ export class NewDelivery extends ActionOnRows<Families> {
     useFamilyMembersAsQuantity: boolean;
     @QuantityColumn()
     quantity: number;
+    @Field({ translation: l => l.useFamilyDistributionList })
+    useFamilyDistributionList: boolean = true;
     @Field()
     distributionCenter: DistributionCenters;
     @Field({ translation: l => l.defaultVolunteer })
@@ -77,7 +79,7 @@ export class NewDelivery extends ActionOnRows<Families> {
         super(remult, Families, {
             validate: async () => {
 
-                if (!this.distributionCenter) {
+                if (!this.useFamilyDistributionList && !this.distributionCenter) {
                     this.$.distributionCenter.error = getLang(this.remult).mustSelectDistributionList;
                     throw this.$.distributionCenter.error;
                 }
@@ -94,7 +96,8 @@ export class NewDelivery extends ActionOnRows<Families> {
                     this.$.useFamilyQuantity,
                     { field: this.$.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity },
                     { field: this.$.quantity, visible: () => !this.useFamilyQuantity && !this.useFamilyMembersAsQuantity },
-                    { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters },
+                    { field: this.$.useFamilyDistributionList, visible: () => component.dialog.hasManyCenters },
+                    { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useFamilyDistributionList },
                     this.$.useDefaultVolunteer,
                     { field: this.$.courier, visible: () => !this.useDefaultVolunteer },
                     {
@@ -118,7 +121,7 @@ export class NewDelivery extends ActionOnRows<Families> {
 
                 }
 
-                let fd = f.createDelivery(this.distributionCenter);
+                let fd = f.createDelivery(this.useFamilyDistributionList ? null : this.distributionCenter);
                 fd._disableMessageToUsers = true;
                 if (!this.useFamilyBasket) {
                     fd.basketType = this.basketType;
@@ -171,7 +174,7 @@ export class updateGroup extends ActionOnRows<Families> {
         translation: l => l.familyGroup
     })
     @DataControl({
-        valueList: async remult => (await getValueList<Groups>( remult.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
+        valueList: async remult => (await getValueList<Groups>(remult.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
     })
     group: string;
     @Field()
@@ -233,7 +236,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment += this.comment;
                 }
                 if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
-                    for await (const fd of this. remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
+                    for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
                         if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive = true;
@@ -280,7 +283,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                 {
                     f.defaultSelfPickup = this.selfPickup;
                     if (this.updateExistingDeliveries) {
-                        for await (const fd of this. remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
+                        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
                             if (this.selfPickup) {
                                 if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
                                     fd.deliverStatus = DeliveryStatus.SelfPickup;
@@ -362,6 +365,31 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
         this.courier = null;
     }
 }
+@Controller('UpdateDefaultDistributionList')
+export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
+    @Field({ translation: l => l.defaultDistributionCenter })
+    distributionCenter: DistributionCenters;
+    constructor(remult: Remult) {
+        super(remult, Families, {
+            dialogColumns: async (x) => {
+                if (x.dialog.distCenter)
+                    this.distributionCenter = x.dialog.distCenter;
+                return [
+                    { field: this.$.distributionCenter }
+                ]
+            },
+
+            title: getLang(remult).updateDefaultVolunteer,
+            forEach: async fd => {
+
+                fd.defaultDistributionCenter = this.distributionCenter;
+
+            },
+
+        });
+    }
+}
+
 
 
 
@@ -377,7 +405,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
                 if (this.processedFamilies.get(fd.family))
                     return;
                 this.processedFamilies.set(fd.family, true);
-                let f = await  remult.repo(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
+                let f = await remult.repo(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
                 if (f) {
                     await orig.args.forEach(f);
                     await f.save();

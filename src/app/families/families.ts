@@ -74,6 +74,7 @@ declare type factoryFor<T> = {
         if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
           await self.reloadGeoCoding();
         }
+        
         let currentUser = self.remult.currentUser;
         if (self.isNew()) {
           self.createDate = new Date();
@@ -368,7 +369,7 @@ export class Families extends IdEntity {
   createDelivery(distCenter: DistributionCenters) {
     let fd = this.remult.repo(FamilyDeliveries).create();
     fd.family = this.id;
-    fd.distributionCenter = distCenter;
+    fd.distributionCenter = distCenter ? distCenter : this.defaultDistributionCenter;
     fd.special = this.special;
     fd.basketType = this.basketType;
     fd.quantity = this.quantity;
@@ -589,6 +590,11 @@ export class Families extends IdEntity {
     }
   })
   fixedCourier: HelpersBase;
+  @Field({
+    allowApiUpdate: Roles.admin,
+    translation: l => l.defaultDistributionCenter
+  })
+  defaultDistributionCenter: DistributionCenters;
   @CustomColumn(() => customColumnInfo[1], Roles.admin)
   custom1: string;
   @CustomColumn(() => customColumnInfo[2], Roles.admin)

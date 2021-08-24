@@ -34,7 +34,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { ApplicationSettings, getCustomColumnVisible, getSettings } from '../manage/ApplicationSettings';
 
 import { FamilyStatus } from './FamilyStatus';
-import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
+import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultDistributionList, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
 
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { sortColumns } from '../shared/utils';
@@ -331,6 +331,7 @@ export class FamiliesComponent implements OnInit {
                 families.quantity,
                 families.deliveryComments,
                 families.fixedCourier,
+                families.defaultDistributionCenter,
                 families.special,
                 families.numOfActiveReadyDeliveries
 
@@ -386,6 +387,7 @@ export class FamiliesComponent implements OnInit {
                 new UpdateStatus(this.remult),
                 new UpdateSelfPickup(this.remult),
                 new UpdateDefaultVolunteer(this.remult),
+                new UpdateDefaultDistributionList(this.remult),
                 new UpdateBasketType(this.remult),
                 new UpdateQuantity(this.remult),
                 new UpdateFamilySource(this.remult)

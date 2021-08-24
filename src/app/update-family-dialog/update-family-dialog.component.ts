@@ -177,6 +177,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   confirmed = false;
   async confirm() {
+    if (!this.families.currentRow.defaultDistributionCenter&&this.onMapLocation)
+      this.families.currentRow.defaultDistributionCenter = await this.remult.findClosestDistCenter(this.onMapLocation);
     if (this.delivery) {
       let d = this.delivery;
       if (d.changeRequireStatsRefresh())
@@ -375,6 +377,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
           f.deliveryComments,
           f.defaultSelfPickup,
           f.fixedCourier,
+          { field: f.defaultDistributionCenter, visible: () => this.dialog.hasManyCenters },
           f.special
         ].filter(x => this.settings.usingSelfPickupModule ? true : x != f.defaultSelfPickup)
     });
