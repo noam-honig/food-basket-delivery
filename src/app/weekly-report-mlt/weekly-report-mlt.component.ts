@@ -21,7 +21,7 @@ import { RegisterURL, urlDbOperator } from '../resgister-url/regsiter-url';
   styleUrls: ['./weekly-report-mlt.component.scss']
 })
 export class WeeklyReportMltComponent implements OnInit {
-  @ViewChild(DateRangeComponent, { static: true }) dateRange;
+  @ViewChild(DateRangeComponent, { static: true }) dateRange:DateRangeComponent;
 
 
 
@@ -46,7 +46,7 @@ export class WeeklyReportMltComponent implements OnInit {
 
   async refresh() {
     RegisterURL.loadUrlsFromTables();
-    this.totalPerBasket = await WeeklyReportMltComponent.getEquipmentStatusTotals(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
+    this.totalPerBasket = await WeeklyReportMltComponent.getEquipmentStatusTotals(this.dateRange.$.fromDate.inputValue, this.dateRange.$.toDate.inputValue);
     this.allBaskets.clear();
     this.totalPerBasket.forEach(item => {
       if (!this.allBaskets.has(item.baskettype) && (item.baskettype) && (item.baskettype != '')) {
@@ -54,8 +54,8 @@ export class WeeklyReportMltComponent implements OnInit {
       }
     });
 
-    this.volData = await WeeklyReportMltComponent.getVolunteersData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
-    this.donorsData = await WeeklyReportMltComponent.getDonorsData(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
+    this.volData = await WeeklyReportMltComponent.getVolunteersData(this.dateRange.$.fromDate.inputValue, this.dateRange.$.toDate.inputValue);
+    this.donorsData = await WeeklyReportMltComponent.getDonorsData(this.dateRange.$.fromDate.inputValue, this.dateRange.$.toDate.inputValue);
 
     let mergedArray = [...this.volData, ...this.donorsData, ...this.totalPerBasket]
 
@@ -65,7 +65,7 @@ export class WeeklyReportMltComponent implements OnInit {
       }
     });
 
-    this.avgFamiliesPerVolunteer = await WeeklyReportMltComponent.getVolunteerAverage(this.dateRange.fromDate.rawValue, this.dateRange.toDate.rawValue);
+    this.avgFamiliesPerVolunteer = await WeeklyReportMltComponent.getVolunteerAverage(this.dateRange.$.fromDate.inputValue, this.dateRange.$.toDate.inputValue);
 
   }
 
