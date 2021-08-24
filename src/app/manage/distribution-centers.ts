@@ -11,10 +11,7 @@ import { use, FieldType, Field } from "../translate";
 
 
 @FieldType<DistributionCenters>({
-  valueConverter: {
-    toJson: x => x != undefined ? x : '',
-    fromJson: x => x || x == '' ? x : null
-  },
+ 
   displayValue: (e, v) => v ? v.name : '',
   translation: l => l.distributionList
 

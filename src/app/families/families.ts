@@ -74,7 +74,8 @@ declare type factoryFor<T> = {
         if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
           await self.reloadGeoCoding();
         }
-        
+        if (!self.defaultDistributionCenter)
+          self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location());
         let currentUser = self.remult.currentUser;
         if (self.isNew()) {
           self.createDate = new Date();
@@ -264,7 +265,7 @@ export class Families extends IdEntity {
       }
     }
 
-    let newDelivery = this.createDelivery(await dialog.getDistCenter(this.addressHelper.location()));
+    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await dialog.getDistCenter(this.addressHelper.location()));
     let arciveCurrentDelivery = new InputField<boolean>({
       valueType: Boolean,
       caption: getLang(this.remult).archiveCurrentDelivery,
