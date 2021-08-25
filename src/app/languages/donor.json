@@ -103,6 +103,10 @@
     "google": "כתובת תקינה",
     "valueInCode": "כתובת תקינה"
   },
+  "AddressProblemStatusText": {
+    "google": "מלל סטטוס בעיה בכתובת",
+    "valueInCode": "מלל סטטוס בעיה בכתובת"
+  },
   "addVolunteer": {
     "google": "הוסף מתנדב/מנהל",
     "valueInCode": "הוסף מתנדב"
@@ -484,6 +488,10 @@
     "google": "ביטל השתתפות",
     "valueInCode": "ביטל השתתפות"
   },
+  "canceledParticipation": {
+    "google": "ביטל השתתפות",
+    "valueInCode": "ביטל השתתפות"
+  },
   "cancelUser": {
     "google": "משתמש ביטול השתתפות",
     "valueInCode": "משתמש ביטול השתתפות"
@@ -727,6 +735,10 @@
   "defaultDeliveryComment": {
     "google": "הערה ברירת מחדל למתנדב",
     "valueInCode": "הערה ברירת מחדל למתנדב"
+  },
+  "defaultDistributionCenter": {
+    "google": "רשימת חלוקה ברירת מחדל",
+    "valueInCode": "רשימת חלוקה ברירת מחדל"
   },
   "defaultDistributionListName": {
     "google": "חלוקת מזון",
@@ -1053,6 +1065,10 @@
     "google": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
     "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים"
   },
+  "DoNotWantProblemStatusText": {
+    "google": "מלל סטטוס לא מעוניינים",
+    "valueInCode": "מלל סטטוס לא מעוניינים"
+  },
   "drawingHelpText": {
     "google": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
@@ -1153,6 +1169,10 @@
   "eventIsFull": {
     "google": "ארוע זה מלא, נשמח אם תרשמו לאחר",
     "valueInCode": "ארוע זה מלא, נשמח אם תרשמו לאחר"
+  },
+  "eventIsFullShort": {
+    "google": "הארוע מלא",
+    "valueInCode": "הארוע מלא"
   },
   "eventName": {
     "google": "שם ארוע",
@@ -1457,6 +1477,10 @@
   "for": {
     "google": "ל",
     "valueInCode": "ל"
+  },
+  "forDetailsAndRegistration": {
+    "google": "לפרטים והרשמה לחצו כאן",
+    "valueInCode": "לפרטים והרשמה לחצו כאן"
   },
   "forFamilies": {
     "google": "לתורמים",
@@ -2117,6 +2141,10 @@
     "google": "משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?",
     "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון."
   },
+  "NotHomeProblemStatusText": {
+    "google": "מלל סטטוס לא היו בבית",
+    "valueInCode": "מלל סטטוס לא היו בבית"
+  },
   "notice": {
     "google": "שים לב!",
     "valueInCode": "שים לב!"
@@ -2193,6 +2221,10 @@
   "otherPhone": {
     "google": "טלפון אחר",
     "valueInCode": "טלפון אחר"
+  },
+  "OtherProblemStatusText": {
+    "google": "מלל סטטוס בעיה אחר",
+    "valueInCode": "מלל סטטוס בעיה אחר"
   },
   "OverviewComponent": {
     "google": "Overview",
@@ -2362,6 +2394,10 @@
   "problem": {
     "google": "בעייה",
     "valueInCode": "בעייה"
+  },
+  "problemButtonSettingName": {
+    "google": "מלל כפתור נתקלתי בבעיה",
+    "valueInCode": "מלל כפתור נתקלתי בבעיה"
   },
   "problemCommentColumnName": {
     "google": "הודעה למתנדב כאשר יש בעיה",
@@ -3347,6 +3383,10 @@
   "useFamilyDefaultBasketType": {
     "google": "סל ברירת מחדל",
     "valueInCode": "סל ברירת מחדל"
+  },
+  "useFamilyDistributionList": {
+    "google": "רשימת חלוקה לפי התורם",
+    "valueInCode": "רשימת חלוקה לפי המשפחה"
   },
   "useFamilyMembersAsQuantity": {
     "google": "השתמש במספר נפשות גם כמספר מנות",

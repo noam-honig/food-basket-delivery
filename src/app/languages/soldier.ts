@@ -163,6 +163,7 @@ export class soldier {
   helpName = 'שם חלופי';
   helpPhone = 'טלפון חלופי';
   successButtonSettingName = 'מלל כפתור נמסר בהצלחה';
+  problemButtonSettingName = 'מלל כפתור נתקלתי בבעיה';
   freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
   urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
   showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים';
@@ -501,6 +502,7 @@ export class soldier {
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'השתמש בסוג הסל המוגדר לחייל';
+  useFamilyDistributionList = 'רשימת חלוקה לפי החייל';
   mustSelectDistributionList = 'חובה לבחור רשימת חלוקה';
   assignAFamilyGroup = 'שיוך לקבוצת חיילים';
   action = 'פעולה';
@@ -872,4 +874,12 @@ export class soldier {
   parcelPackaging = 'אריזת חבילות';
   other = 'אחר';
   eventType = 'סוג התנדבות';
+  forDetailsAndRegistration = 'לפרטים והרשמה לחצו כאן';
+  eventIsFullShort = 'הארוע מלא';
+  canceledParticipation = 'ביטל השתתפות';
+  defaultDistributionCenter = 'רשימת חלוקה ברירת מחדל';
+  AddressProblemStatusText = 'מלל סטטוס בעיה בכתובת';
+  NotHomeProblemStatusText = 'מלל סטטוס לא היו בבית';
+  DoNotWantProblemStatusText = 'מלל סטטוס לא מעוניינים';
+  OtherProblemStatusText = 'מלל סטטוס בעיה אחר';
 }

@@ -163,6 +163,7 @@ export class italy {
   helpName = 'Nome alternativo';
   helpPhone = 'Telefono alternativo';
   successButtonSettingName = 'Testo del pulsante consegnato correttamente';
+  problemButtonSettingName = 'Testo del pulsante Ho riscontrato un problema';
   freeText1ForVolunteer = 'Testo libero 1 per volontari';
   urlFreeText1 = 'Indirizzo web volontario gratuito 1 per volontario';
   showText1OnlyWhenDone = 'Visualizza il testo libero 1 solo quando il volontario ha completato tutti i pacchi';
@@ -501,6 +502,7 @@ export class italy {
   notDeliveredOther = 'Non consegnato, altro';
   deliveryStatus = 'stato della consegna';
   useFamilyDefaultBasketType = 'Tipo di pacco predefinito';
+  useFamilyDistributionList = 'Elenco per famiglia';
   mustSelectDistributionList = 'È necessario selezionare un elenco di distribuzione';
   assignAFamilyGroup = 'Assegnazione a un gruppo familiare';
   action = 'azione';
@@ -872,4 +874,12 @@ export class italy {
   parcelPackaging = 'Pacchetti di imballaggio';
   other = 'Altro';
   eventType = 'Tipo di volontariato';
+  forDetailsAndRegistration = 'Per dettagli e iscrizioni clicca qui';
+  eventIsFullShort = "L'evento è al completo";
+  canceledParticipation = 'Partecipazione annullata';
+  defaultDistributionCenter = 'Lista di distribuzione predefinita';
+  AddressProblemStatusText = "Problema di stato del testo all'indirizzo";
+  NotHomeProblemStatusText = 'Il testo di stato non era in casa';
+  DoNotWantProblemStatusText = 'Testo di stato non interessato';
+  OtherProblemStatusText = 'Invia un messaggio a un altro stato di problema';
 }

@@ -163,6 +163,7 @@ export class es {
   helpName = 'nombre alternativo';
   helpPhone = 'Teléfono alternativo';
   successButtonSettingName = 'Texto del botón entregado con éxito';
+  problemButtonSettingName = 'Texto del botón Encontré un problema';
   freeText1ForVolunteer = 'Texto libre 1 para voluntario';
   urlFreeText1 = 'Voluntario gratuito 1 dirección web para voluntario';
   showText1OnlyWhenDone = 'Mostrar texto libre 1 solo cuando el voluntario haya terminado todos los paquetes';
@@ -501,6 +502,7 @@ export class es {
   notDeliveredOther = 'No entregado, otro';
   deliveryStatus = 'estado de entrega';
   useFamilyDefaultBasketType = 'Tipo de parcela predeterminado';
+  useFamilyDistributionList = 'Lista por familia';
   mustSelectDistributionList = 'Debe seleccionar una lista de distribución.';
   assignAFamilyGroup = 'Asignación a un grupo familiar';
   action = 'acción';
@@ -872,4 +874,12 @@ export class es {
   parcelPackaging = 'Embalaje de paquetes';
   other = 'Otro';
   eventType = 'Tipo de voluntariado';
+  forDetailsAndRegistration = 'Para detalles e inscripción haga clic aquí';
+  eventIsFullShort = 'El evento esta lleno';
+  canceledParticipation = 'Participación cancelada';
+  defaultDistributionCenter = 'Lista de distribución predeterminada';
+  AddressProblemStatusText = 'Problema de estado del mensaje de texto en la dirección';
+  NotHomeProblemStatusText = 'El texto de estado no estaba en casa';
+  DoNotWantProblemStatusText = 'Texto de estado no interesado';
+  OtherProblemStatusText = 'Envía un mensaje de texto con el estado de otro problema';
 }

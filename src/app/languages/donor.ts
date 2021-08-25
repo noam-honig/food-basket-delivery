@@ -163,6 +163,7 @@ export class donor {
   helpName = 'שם חלופי';
   helpPhone = 'טלפון חלופי';
   successButtonSettingName = 'מלל כפתור תרומה נאספה';
+  problemButtonSettingName = 'מלל כפתור נתקלתי בבעיה';
   freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
   urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
   showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים';
@@ -501,6 +502,7 @@ export class donor {
   notDeliveredOther = 'לא נמסר, אחר';
   deliveryStatus = 'סטטוס משלוח';
   useFamilyDefaultBasketType = 'סל ברירת מחדל';
+  useFamilyDistributionList = 'רשימת חלוקה לפי התורם';
   mustSelectDistributionList = 'חובה לבחור מעבדה';
   assignAFamilyGroup = 'שיוך לקבוצת תורמים';
   action = 'פעולה';
@@ -872,4 +874,12 @@ export class donor {
   parcelPackaging = 'אריזת חבילות';
   other = 'אחר';
   eventType = 'סוג התנדבות';
+  forDetailsAndRegistration = 'לפרטים והרשמה לחצו כאן';
+  eventIsFullShort = 'הארוע מלא';
+  canceledParticipation = 'ביטל השתתפות';
+  defaultDistributionCenter = 'רשימת חלוקה ברירת מחדל';
+  AddressProblemStatusText = 'מלל סטטוס בעיה בכתובת';
+  NotHomeProblemStatusText = 'מלל סטטוס לא היו בבית';
+  DoNotWantProblemStatusText = 'מלל סטטוס לא מעוניינים';
+  OtherProblemStatusText = 'מלל סטטוס בעיה אחר';
 }

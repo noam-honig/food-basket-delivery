@@ -129,6 +129,11 @@
     "valueInCode": "כתובת תקינה",
     "valueInEnglish": "Correct Address"
   },
+  "AddressProblemStatusText": {
+    "google": "Problema di stato del testo all'indirizzo",
+    "valueInCode": "מלל סטטוס בעיה בכתובת",
+    "valueInEnglish": "Text status problem at address"
+  },
   "addVolunteer": {
     "google": "Aggiungi un volontario / manager",
     "valueInCode": "הוסף מתנדב",
@@ -604,6 +609,11 @@
     "valueInCode": "ביטל השתתפות",
     "valueInEnglish": "Canceled participation"
   },
+  "canceledParticipation": {
+    "google": "Partecipazione annullata",
+    "valueInCode": "ביטל השתתפות",
+    "valueInEnglish": "Canceled participation"
+  },
   "cancelUser": {
     "google": "Disattivazione dell'utente",
     "valueInCode": "משתמש ביטול השתתפות",
@@ -908,6 +918,11 @@
     "google": "Commento predefinito per il volontario",
     "valueInCode": "הערה ברירת מחדל למתנדב",
     "valueInEnglish": "Default Comment for Volunteer"
+  },
+  "defaultDistributionCenter": {
+    "google": "Lista di distribuzione predefinita",
+    "valueInCode": "רשימת חלוקה ברירת מחדל",
+    "valueInEnglish": "Default distribution list"
   },
   "defaultDistributionListName": {
     "google": "Elenco di distribuzione alimentare",
@@ -1315,6 +1330,11 @@
     "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
     "valueInEnglish": "Do not present volunteering opportunities in the list of all organizations"
   },
+  "DoNotWantProblemStatusText": {
+    "google": "Testo di stato non interessato",
+    "valueInCode": "מלל סטטוס לא מעוניינים",
+    "valueInEnglish": "Status text not interested"
+  },
   "drawingHelpText": {
     "google": "Fare clic sulla mappa in diversi punti per evidenziare l'area desiderata e fare doppio clic per terminare",
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
@@ -1439,6 +1459,11 @@
     "google": "Questo evento è pieno, saremo felici se ti iscrivi dopo",
     "valueInCode": "ארוע זה מלא, נשמח אם תרשמו לאחר",
     "valueInEnglish": "This event is full, we'll be happy if you sign up after"
+  },
+  "eventIsFullShort": {
+    "google": "L'evento è al completo",
+    "valueInCode": "הארוע מלא",
+    "valueInEnglish": "The event is full"
   },
   "eventName": {
     "google": "Titolo evento",
@@ -1819,6 +1844,11 @@
     "google": "Per",
     "valueInCode": "ל",
     "valueInEnglish": "To"
+  },
+  "forDetailsAndRegistration": {
+    "google": "Per dettagli e iscrizioni clicca qui",
+    "valueInCode": "לפרטים והרשמה לחצו כאן",
+    "valueInEnglish": "For details and registration click here"
   },
   "forFamilies": {
     "google": "Per le famiglie",
@@ -2640,6 +2670,11 @@
     "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון.",
     "valueInEnglish": "Unassigned deliveries, proceed with creating a new event?"
   },
+  "NotHomeProblemStatusText": {
+    "google": "Il testo di stato non era in casa",
+    "valueInCode": "מלל סטטוס לא היו בבית",
+    "valueInEnglish": "Status text were not at home"
+  },
   "notice": {
     "google": "Nota!",
     "valueInCode": "שים לב!",
@@ -2734,6 +2769,11 @@
     "google": "un altro telefono",
     "valueInCode": "טלפון אחר",
     "valueInEnglish": "another phone"
+  },
+  "OtherProblemStatusText": {
+    "google": "Invia un messaggio a un altro stato di problema",
+    "valueInCode": "מלל סטטוס בעיה אחר",
+    "valueInEnglish": "Text another problem status"
   },
   "OverviewComponent": {
     "google": "Panoramica",
@@ -2944,6 +2984,11 @@
     "google": "problema",
     "valueInCode": "בעייה",
     "valueInEnglish": "problem"
+  },
+  "problemButtonSettingName": {
+    "google": "Testo del pulsante Ho riscontrato un problema",
+    "valueInCode": "מלל כפתור נתקלתי בבעיה",
+    "valueInEnglish": "Button text I encountered a problem"
   },
   "problemCommentColumnName": {
     "google": "Avvisare il volontario in caso di problemi",
@@ -4175,6 +4220,11 @@
     "google": "Tipo di pacco predefinito",
     "valueInCode": "סל ברירת מחדל",
     "valueInEnglish": "Default Parcel Type"
+  },
+  "useFamilyDistributionList": {
+    "google": "Elenco per famiglia",
+    "valueInCode": "רשימת חלוקה לפי המשפחה",
+    "valueInEnglish": "List by family"
   },
   "useFamilyMembersAsQuantity": {
     "google": "Determinare la quantità per i membri della famiglia",

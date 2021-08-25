@@ -163,6 +163,7 @@ export class en {
   helpName = 'alternative name';
   helpPhone = 'Alternate Phone';
   successButtonSettingName = 'Button text delivered successfully';
+  problemButtonSettingName = 'Button text I encountered a problem';
   freeText1ForVolunteer = 'Free text 1 for volunteer';
   urlFreeText1 = 'Free volunteer 1 web address for volunteer';
   showText1OnlyWhenDone = 'Display free text 1 only when the volunteer has finished all parcels';
@@ -501,6 +502,7 @@ export class en {
   notDeliveredOther = 'Not delivered, other';
   deliveryStatus = 'delivery status';
   useFamilyDefaultBasketType = 'Default Parcel Type';
+  useFamilyDistributionList = 'List by family';
   mustSelectDistributionList = 'Must select a distribution list';
   assignAFamilyGroup = 'Assignment to a family group';
   action = 'action';
@@ -872,4 +874,12 @@ export class en {
   parcelPackaging = 'Packing packages';
   other = 'Other';
   eventType = 'Type of volunteering';
+  forDetailsAndRegistration = 'For details and registration click here';
+  eventIsFullShort = 'The event is full';
+  canceledParticipation = 'Canceled participation';
+  defaultDistributionCenter = 'Default distribution list';
+  AddressProblemStatusText = 'Text status problem at address';
+  NotHomeProblemStatusText = 'Status text were not at home';
+  DoNotWantProblemStatusText = 'Status text not interested';
+  OtherProblemStatusText = 'Text another problem status';
 }
