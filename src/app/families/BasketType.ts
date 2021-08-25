@@ -20,7 +20,7 @@ import { DataControl, getValueList } from '@remult/angular';
   translation: l => l.basketType
 })
 @DataControl({
-  valueList: remult => getValueList( remult.repo(BasketType)),
+  valueList: remult => getValueList(remult.repo(BasketType)),
   width: '100'
 })
 @Entity<BasketType>({
@@ -36,9 +36,9 @@ import { DataControl, getValueList } from '@remult/angular';
 export class BasketType extends IdEntity {
   @Field({ translation: l => l.basketTypeName })
   name: string;
-  @IntegerField({ caption: BasketType.boxes1Name })
+  @IntegerField({}, (options) => options.caption = BasketType.boxes1Name)
   boxes: number = 1;
-  @IntegerField({ caption: BasketType.boxes2Name })
+  @IntegerField({}, (options) => options.caption = BasketType.boxes2Name)
   boxes2: number = 0;
 
   static boxes1Name = !use ? '' : use.language.boxes1Name;

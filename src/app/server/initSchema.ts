@@ -462,6 +462,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             await settings.save();
         }
     });
+    await version(40, async () => {
+        settings.setDefaultsForProblemStatuses();
+        await settings.save();
+    });
 
 
 

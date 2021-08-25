@@ -67,9 +67,21 @@ export class RemovedFromListExcelImportStrategy {
       setSettingsForSite(Sites.getValidSchemaFromContext(self.remult), self);
       logChanges(self._, self.remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest] });
     }
+  },
+  saved:(self)=>{
+    if (!isBackend())
+      self.updateStaticTexts();
   }
 })
 export class ApplicationSettings extends EntityBase {
+   updateStaticTexts() {
+    BasketType.boxes1Name = this.boxes1Name;
+    BasketType.boxes2Name = this.boxes2Name;
+    DeliveryStatus.FailedBadAddress.caption = this.AddressProblemStatusText;
+    DeliveryStatus.FailedNotHome.caption = this.NotHomeProblemStatusText;
+    DeliveryStatus.FailedDoNotWant.caption = this.DoNotWantProblemStatusText;
+    DeliveryStatus.FailedOther.caption = this.OtherProblemStatusText;
+  }
 
   getInternationalPhonePrefix() {
     let r = this.forWho.args.internationalPrefixForSmsAndAws;
@@ -195,6 +207,17 @@ export class ApplicationSettings extends EntityBase {
   dataStructureVersion: number;
   @Field({ translation: l => l.successButtonSettingName })
   deliveredButtonText: string;
+  @Field({ translation: l => l.problemButtonSettingName })
+  problemButtonText: string;
+  @Field()
+  AddressProblemStatusText: string;
+  @Field()
+  NotHomeProblemStatusText: string;
+  @Field()
+  DoNotWantProblemStatusText: string;
+  @Field()
+  OtherProblemStatusText: string;
+
   @Field({ translation: l => l.freeText1ForVolunteer })
   message1Text: string;
   @Field({ translation: l => l.urlFreeText1 })
@@ -376,7 +399,13 @@ export class ApplicationSettings extends EntityBase {
   static async getAsync(remult: Remult): Promise<ApplicationSettings> {
     return (await  remult.repo(ApplicationSettings).findFirst());
   }
-
+  setDefaultsForProblemStatuses() {
+    this.problemButtonText = this.lang.ranIntoAProblem;
+    this.AddressProblemStatusText = this.lang.notDeliveredBadAddress;
+    this.NotHomeProblemStatusText = this.lang.notDeliveredNotHome;
+    this.DoNotWantProblemStatusText = this.lang.notDeliveredDontWant;
+    this.OtherProblemStatusText = this.lang.notDeliveredOther;
+  }
 }
 export class PhoneOption {
 
@@ -478,9 +507,8 @@ export class SettingsService {
     RemovedFromListExcelImportStrategy.showInUpdate.caption = this.instance.lang.RemovedFromListExcelImportStrategy_showInUpdate;
     RemovedFromListExcelImportStrategy.ignore.caption = this.instance.lang.RemovedFromListExcelImportStrategy_ignore;
 
-
-    BasketType.boxes1Name = this.instance.boxes1Name;
-    BasketType.boxes2Name = this.instance.boxes2Name;
+    this.instance.updateStaticTexts();
+    
     setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
     setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
     setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values);

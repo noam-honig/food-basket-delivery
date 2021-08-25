@@ -282,7 +282,12 @@ export class ManageComponent implements OnInit {
       this.settings.$.deliveredButtonText,
       this.settings.$.commentForSuccessDelivery,
       this.settings.$.commentForSuccessLeft,
+      this.settings.$.problemButtonText,
       this.settings.$.commentForProblem,
+      this.settings.$.AddressProblemStatusText,
+      this.settings.$.NotHomeProblemStatusText,
+      this.settings.$.DoNotWantProblemStatusText,
+      this.settings.$.OtherProblemStatusText,
       [this.settings.$.questionForVolunteer1Caption, this.settings.$.questionForVolunteer1Values],
       [this.settings.$.questionForVolunteer2Caption, this.settings.$.questionForVolunteer2Values],
       [this.settings.$.questionForVolunteer3Caption, this.settings.$.questionForVolunteer3Values],
@@ -290,6 +295,7 @@ export class ManageComponent implements OnInit {
       this.settings.$.askVolunteerForLocationOnDelivery,
       this.settings.$.askVolunteerForAPhotoToHelp,
       this.settings.$.questionForVolunteerWhenUploadingPhoto
+
 
 
 
@@ -350,13 +356,13 @@ export class ManageComponent implements OnInit {
         this.settings.$.hideFamilyPhoneFromVolunteer,
         this.settings.$.showOnlyLastNamePartToVolunteer,
         this.settings.$.showTzToVolunteer,
-        this.settings.$.boxes1Name,
         this.settings.$.donotShowEventsInGeneralList,
         this.settings.$.defaultStatusType,
         this.settings.$.usingSelfPickupModule,
         this.settings.$.showLeftThereButton,
         this.settings.$.volunteerCanUpdateDeliveryComment,
         this.settings.$.showDeliverySummaryToVolunteerOnFirstSignIn,
+        this.settings.$.boxes1Name,
         this.settings.$.boxes2Name,
         this.settings.$.showCompanies,
         this.settings.$.showHelperComment,
@@ -603,6 +609,7 @@ export class ManageComponent implements OnInit {
     this.settings.commentForProblem = this.settings.lang.commentForProblem;
     this.settings.messageForDoneDelivery = this.settings.lang.messageForDoneDelivery;
     this.settings.deliveredButtonText = this.settings.lang.deliveredButtonText;
+    this.settings.setDefaultsForProblemStatuses();
     this.settings.boxes1Name = this.settings.lang.boxes1Name;
     this.settings.boxes2Name = this.settings.lang.boxes2Name;
     this.settings.questionForVolunteerWhenUploadingPhoto = this.settings.lang.defaultQuestionForVolunteerWhenUploadingPhoto;
@@ -619,6 +626,8 @@ export class ManageComponent implements OnInit {
       this.distributionCenters.reloadData();
     }
   }
+
+
   @BackendMethod({ allowed: Roles.admin, queue: true })
   static async deleteFamiliesOnServer(remult?: Remult, progress?: ProgressListener) {
 

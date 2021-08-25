@@ -438,6 +438,7 @@ export class Language {
   helpName = 'שם לעזרה';
   helpPhone = 'טלפון לעזרה';
   successButtonSettingName = "מלל כפתור נמסר בהצלחה";
+  problemButtonSettingName = "מלל כפתור נתקלתי בבעיה";
   freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
   urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
   showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים';
@@ -1161,7 +1162,11 @@ export class Language {
   forDetailsAndRegistration = "לפרטים והרשמה לחצו כאן";
   eventIsFullShort = 'הארוע מלא';
   canceledParticipation = "ביטל השתתפות";
-  defaultDistributionCenter="רשימת חלוקה ברירת מחדל";
+  defaultDistributionCenter = "רשימת חלוקה ברירת מחדל";
+  AddressProblemStatusText = "מלל סטטוס בעיה בכתובת";
+  NotHomeProblemStatusText = "מלל סטטוס לא היו בבית";
+  DoNotWantProblemStatusText = "מלל סטטוס לא מעוניינים";
+  OtherProblemStatusText = "מלל סטטוס בעיה אחר";
 }
 
 const defaultLang = new Language();

@@ -19,7 +19,7 @@
   <textarea class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
   <a (click)="addLocationToComment()" style="display:block"
     *ngIf="!args.hideLocation&&settings.askVolunteerForLocationOnDelivery">{{settings.lang.addCurrentLocationToNote}}</a>
-  <app-images [images]="images"></app-images>
+  <app-images [images]="images" *ngIf="settings.askVolunteerForAPhotoToHelp"></app-images>
 </mat-dialog-content>
 
 <mat-dialog-actions>
