@@ -26,11 +26,12 @@ export class PrintVolunteersComponent implements OnInit {
     let total = 0;
     let volunteers: volunteer[] = [];
     for await (const d of  remult.repo(ActiveFamilyDeliveries).iterate()) {
-      let v = volunteers.find(v => d.courier && v.id == d.courier.id);
+      
+      let v = volunteers.find(v => v.id == d.courier?.id);
       if (!v) {
         v = {
-          id: d.courier.id,
-          name: d.courier.name,
+          id: d.courier?.id,
+          name: d.courier?.name,
           quantity: 0
         }
         volunteers.push(v);
@@ -38,7 +39,7 @@ export class PrintVolunteersComponent implements OnInit {
       v.quantity += d.quantity;
       total++;
     }
-    volunteers.sort((a, b) => a.name.localeCompare(b.name));
+    volunteers.sort((a, b) => a.name?.localeCompare(b.name));
 
     return { total, volunteers };
   }
