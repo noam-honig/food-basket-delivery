@@ -1001,6 +1001,7 @@ export class Language {
   assignedButNotOutBaskets = "שוייכו וטרם יצאו לפי סלים";
   selfPickupByBaskets = "באים לקחת לפי סלים";
   routeOptimization = "תכנון מסלול";
+  routeStrategy = "תכנון מסלול";
   assignVolunteer = "שייך מתנדב";
   group = "קבוצה";
   showOnlyCompletedDeliveries = "הצג רק משלוחים שהסתיימו";
@@ -1169,6 +1170,7 @@ export class Language {
   OtherProblemStatusText = "מלל סטטוס בעיה אחר";
   updateDefaultDistributionCenter = "עדכן רשימת חלוקה ברירת מחדל";
   loadImages = "טען תמונות";
+  dido = 'כנ"ל';
 }
 
 const defaultLang = new Language();

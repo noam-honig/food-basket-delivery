@@ -154,6 +154,9 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
     for (const f of addresses) {
         if (f.families.length > 0)
             f.families.sort((a, b) => {
+                let ent = a.entrance.localeCompare(b.entrance);
+                if (ent != 0)
+                    return ent;
                 if (a.floor == b.floor) {
                     return (+b.appartment - +a.appartment);
                 }

@@ -987,6 +987,10 @@
     "google": "חייג ל",
     "valueInCode": "חייג ל"
   },
+  "dido": {
+    "google": "כנ\"ל",
+    "valueInCode": "כנ\"ל"
+  },
   "displayFamiliesOf": {
     "google": "האם להציג את החיילים של",
     "valueInCode": "האם להציג את המשפחות של"
@@ -1819,6 +1823,10 @@
     "google": "טען הגדרות",
     "valueInCode": "טען הגדרות"
   },
+  "loadImages": {
+    "google": "טען תמונות",
+    "valueInCode": "טען תמונות"
+  },
   "LoginComponent": {
     "google": "כניסה",
     "valueInCode": "כניסה"
@@ -2648,6 +2656,10 @@
     "valueInCode": "החזר מארכיון"
   },
   "routeOptimization": {
+    "google": "תכנון מסלול",
+    "valueInCode": "תכנון מסלול"
+  },
+  "routeStrategy": {
     "google": "תכנון מסלול",
     "valueInCode": "תכנון מסלול"
   },

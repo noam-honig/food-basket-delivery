@@ -720,6 +720,7 @@ export class en {
   assignedButNotOutBaskets = 'Assigned but not out by Parcels';
   selfPickupByBaskets = 'Self Pickup by Parcels';
   routeOptimization = 'Route planning';
+  routeStrategy = 'Route planning';
   assignVolunteer = 'Assign Volunteer';
   group = 'Group';
   showOnlyCompletedDeliveries = 'Show only completed deliveries';
@@ -883,4 +884,6 @@ export class en {
   DoNotWantProblemStatusText = 'Status text not interested';
   OtherProblemStatusText = 'Text another problem status';
   updateDefaultDistributionCenter = 'Update default distribution list';
+  loadImages = 'Upload photos';
+  dido = 'same as above';
 }

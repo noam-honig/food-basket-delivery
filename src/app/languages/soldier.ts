@@ -720,6 +720,7 @@ export class soldier {
   assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי סלים';
   selfPickupByBaskets = 'באים לקחת לפי סלים';
   routeOptimization = 'תכנון מסלול';
+  routeStrategy = 'תכנון מסלול';
   assignVolunteer = 'שייך למתנדב';
   group = 'קבוצה';
   showOnlyCompletedDeliveries = 'הצג רק משלוחים שהסתיימו';
@@ -883,4 +884,6 @@ export class soldier {
   DoNotWantProblemStatusText = 'מלל סטטוס לא מעוניינים';
   OtherProblemStatusText = 'מלל סטטוס בעיה אחר';
   updateDefaultDistributionCenter = 'עדכן רשימת חלוקה ברירת מחדל';
+  loadImages = 'טען תמונות';
+  dido = 'כנ"ל';
 }

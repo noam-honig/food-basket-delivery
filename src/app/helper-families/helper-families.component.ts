@@ -96,7 +96,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   async refreshRoute() {
     var useCurrentLocation = new InputField<boolean>({ caption: use.language.useCurrentLocationForStart, valueType: Boolean });
-    var strategy = new InputField<routeStrategy>({ valueType: routeStrategy });
+    var strategy = new InputField<routeStrategy>({ valueType: routeStrategy,caption:use.language.routeOptimization });
     strategy.value = this.settings.routeStrategy;
 
     await openDialog(InputAreaComponent, x => x.args = {

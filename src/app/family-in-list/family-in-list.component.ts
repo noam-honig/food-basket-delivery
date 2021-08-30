@@ -40,13 +40,15 @@ export class FamilyInListComponent implements OnInit {
     let r = this.f.getAddressDescription();
     if (this.distanceFromPreviousLocation === 0) {
       let x = "";
+      if (this.f.entrance)
+        x += this.settings.lang.entrance + " " + this.f.entrance;
       if (this.f.floor)
-        x += this.settings.lang.floor + " " + this.f.floor;
+        x += " " + this.settings.lang.floor + " " + this.f.floor;
       if (this.f.appartment) {
         x += " " + this.settings.lang.appartment + " " + this.f.appartment;
       }
       if (x != "") {
-        r = '* כנ"ל ' + x;
+        r = '* ' + this.settings.lang.dido + ' ' + x;
       } else
         r = "* " + r;
     }

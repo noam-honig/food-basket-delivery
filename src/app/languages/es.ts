@@ -720,6 +720,7 @@ export class es {
   assignedButNotOutBaskets = 'Asignado pero no fuera por Parcels';
   selfPickupByBaskets = 'Self Pickup by Parcels';
   routeOptimization = 'Planificacion de la ruta';
+  routeStrategy = 'Planificacion de la ruta';
   assignVolunteer = 'Asignar voluntario';
   group = 'Grupo';
   showOnlyCompletedDeliveries = 'Mostrar solo entregas completadas';
@@ -883,4 +884,6 @@ export class es {
   DoNotWantProblemStatusText = 'Texto de estado no interesado';
   OtherProblemStatusText = 'Envía un mensaje de texto con el estado de otro problema';
   updateDefaultDistributionCenter = 'Actualizar la lista de distribución predeterminada';
+  loadImages = 'Subir fotos';
+  dido = 'lo mismo que arriba';
 }

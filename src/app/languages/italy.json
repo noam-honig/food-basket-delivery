@@ -1235,6 +1235,11 @@
     "valueInCode": "חייג ל",
     "valueInEnglish": "Dial"
   },
+  "dido": {
+    "google": "come sopra",
+    "valueInCode": "כנ\"ל",
+    "valueInEnglish": "same as above"
+  },
   "displayFamiliesOf": {
     "google": "Mostrerà le famiglie di",
     "valueInCode": "האם להציג את המשפחות של",
@@ -2275,6 +2280,11 @@
     "valueInCode": "טען הגדרות",
     "valueInEnglish": "Load settings"
   },
+  "loadImages": {
+    "google": "Caricare foto",
+    "valueInCode": "טען תמונות",
+    "valueInEnglish": "Upload photos"
+  },
   "LoginComponent": {
     "google": "registrati",
     "valueInCode": "כניסה",
@@ -3312,6 +3322,11 @@
     "valueInEnglish": "Return from archive"
   },
   "routeOptimization": {
+    "google": "Pianificazione del percorso",
+    "valueInCode": "תכנון מסלול",
+    "valueInEnglish": "Route planning"
+  },
+  "routeStrategy": {
     "google": "Pianificazione del percorso",
     "valueInCode": "תכנון מסלול",
     "valueInEnglish": "Route planning"

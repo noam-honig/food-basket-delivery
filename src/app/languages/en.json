@@ -1126,6 +1126,10 @@
     "valueInCode": "חייג ל",
     "custom": "Dial"
   },
+  "dido": {
+    "google": "same as above",
+    "valueInCode": "כנ\"ל"
+  },
   "displayFamiliesOf": {
     "google": "Will showcase the families of",
     "valueInCode": "האם להציג את המשפחות של"
@@ -2005,6 +2009,10 @@
     "google": "Load settings",
     "valueInCode": "טען הגדרות"
   },
+  "loadImages": {
+    "google": "Upload photos",
+    "valueInCode": "טען תמונות"
+  },
   "LoginComponent": {
     "google": "Entrance",
     "valueInCode": "כניסה",
@@ -2881,6 +2889,10 @@
     "valueInCode": "החזר מארכיון"
   },
   "routeOptimization": {
+    "google": "Route planning",
+    "valueInCode": "תכנון מסלול"
+  },
+  "routeStrategy": {
     "google": "Route planning",
     "valueInCode": "תכנון מסלול"
   },

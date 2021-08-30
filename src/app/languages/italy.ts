@@ -720,6 +720,7 @@ export class italy {
   assignedButNotOutBaskets = 'Assegnato ma non escluso da Parcels';
   selfPickupByBaskets = 'Self Pickup di Parcels';
   routeOptimization = 'Pianificazione del percorso';
+  routeStrategy = 'Pianificazione del percorso';
   assignVolunteer = 'Assegna volontario';
   group = 'Gruppo';
   showOnlyCompletedDeliveries = 'Mostra solo consegne completate';
@@ -883,4 +884,6 @@ export class italy {
   DoNotWantProblemStatusText = 'Testo di stato non interessato';
   OtherProblemStatusText = 'Invia un messaggio a un altro stato di problema';
   updateDefaultDistributionCenter = 'Aggiorna la lista di distribuzione predefinita';
+  loadImages = 'Caricare foto';
+  dido = 'come sopra';
 }
