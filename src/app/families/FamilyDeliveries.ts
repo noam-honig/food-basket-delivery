@@ -111,12 +111,24 @@ export class FamilyDeliveries extends IdEntity {
         allowed: Allow.authenticated
     })
     static async getFamilyImages(family: string, delivery: string, remult?: Remult): Promise<ImageInfo[]> {
-        if (!Roles.admin) {
+        if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
             if (d.courier != remult.currentUser)
                 return [];
         }
         let r = (await remult.repo(FamilyImage).find({ where: f => f.familyId.isEqualTo(family) })).map(({ image }) => ({ image } as ImageInfo));
+        return r;
+    }
+    @BackendMethod<FamilyDeliveries>({
+        allowed: Allow.authenticated
+    })
+    static async hasFamilyImages(family: string, delivery: string, remult?: Remult): Promise<boolean> {
+        if (!Roles.distCenterAdmin) {
+            let d = await remult.repo(FamilyDeliveries).findId(delivery);
+            if (d.courier != remult.currentUser)
+                return false;
+        }
+        let r = (await remult.repo(FamilyImage).count( f => f.familyId.isEqualTo(family) )) > 0;
         return r;
     }
     async loadVolunteerImages(): Promise<import("../images/images.component").ImageInfo[]> {

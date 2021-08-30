@@ -1168,6 +1168,7 @@ export class Language {
   DoNotWantProblemStatusText = "מלל סטטוס לא מעוניינים";
   OtherProblemStatusText = "מלל סטטוס בעיה אחר";
   updateDefaultDistributionCenter = "עדכן רשימת חלוקה ברירת מחדל";
+  loadImages = "טען תמונות";
 }
 
 const defaultLang = new Language();

@@ -102,6 +102,7 @@
     </div>
 
   </div>
+  <button mat-raised-button *ngIf="hasImages&&!images" color="primary" (click)="loadImages()">{{settings.lang.loadImages}}</button>
   <app-images [readonly]="true" [images]="images"></app-images>
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer">
     <h4 *ngIf="f.phone1 || f.phone2||f.phone3||f.phone4">{{settings.lang.phones}}:</h4>

@@ -36,11 +36,15 @@ export class FamilyInfoComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   @Input() hideSal = false;
-  images:ImageInfo[];
+  hasImages = false;
+  images: ImageInfo[];
   async ngOnInit() {
-    if (this.f){
-        this.images = await FamilyDeliveries.getFamilyImages(this.f.family,this.f.id);
+    if (this.f) {
+      this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family,this.f.id);
     }
+  }
+  async loadImages() {
+    this.images = await FamilyDeliveries.getFamilyImages(this.f.family, this.f.id);
   }
   actuallyShowHelp() {
     return this.showHelp && this.f.deliverStatus != DeliveryStatus.ReadyForDelivery;
@@ -56,12 +60,12 @@ export class FamilyInfoComponent implements OnInit {
     let s = await ApplicationSettings.getAsync(remult);
     if (!s.showTzToVolunteer)
       return "";
-    var d = await  remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
+    var d = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
     if (!d)
       return;
     if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
       return "";
-    var f = await  remult.repo(Families).findId(d.family);
+    var f = await remult.repo(Families).findId(d.family);
     if (!f)
       return "";
     return f.name + ":" + f.tz;
@@ -129,7 +133,7 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   callPhone(col: Phone) {
-    
+
     window.location.href = "tel:" + col.thePhone;
   }
   async sendWhatsapp(phone: Phone) {
@@ -147,7 +151,7 @@ export class FamilyInfoComponent implements OnInit {
       let settings = await ApplicationSettings.getAsync(remult);
       if (!settings.usePhoneProxy)
         throw "פרוקסי לא מופעל לסביבה זו";
-      let fd = await  remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
+      let fd = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
       if (!fd) throw "משלוח לא נמצא";
       if (!fd.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
         throw "אינך רשאי לחייג למשפחה זו";
@@ -157,7 +161,7 @@ export class FamilyInfoComponent implements OnInit {
       if (cleanPhone.startsWith('0'))
         cleanPhone = cleanPhone.substring(1);
       cleanPhone = "+972" + cleanPhone;
-      let h = await  remult.repo(Helpers).findId(remult.user.id);
+      let h = await remult.repo(Helpers).findId(remult.user.id);
       if (!h)
         throw "מתנדב לא נמצא";
       let vPhone = h.phone.thePhone;
