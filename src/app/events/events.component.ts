@@ -34,7 +34,7 @@ export class EventsComponent implements OnInit {
   constructor(private remult: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events: GridSettings<Event> = new GridSettings<Event>(this. remult.repo(Event), {
+  events: GridSettings<Event> = new GridSettings<Event>(this.remult.repo(Event), {
     allowUpdate: this.remult.isAllowed(Roles.admin),
     allowInsert: this.remult.isAllowed(Roles.admin),
 
@@ -57,7 +57,10 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          await Event.duplicateEvent(this.remult, this.busy, this.events.selectedRows, () => this.events.reloadData());
+          await Event.duplicateEvent(this.remult, this.busy, this.events.selectedRows, () => {
+            this.events.reloadData();
+            this.events.selectedRows.splice(0);
+          });
         }
         , visible: () => this.events.selectedRows.length > 0
 
