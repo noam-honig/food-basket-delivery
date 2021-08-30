@@ -379,7 +379,7 @@ export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
                 ]
             },
 
-            title: getLang(remult).updateDefaultVolunteer,
+            title: getLang(remult).updateDefaultDistributionCenter,
             forEach: async fd => {
 
                 fd.defaultDistributionCenter = this.distributionCenter;

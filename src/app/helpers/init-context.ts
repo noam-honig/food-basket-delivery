@@ -14,6 +14,9 @@ export const initConfig = {
     disableForTesting: false
 }
 const helpersCache = new Map<string, Helpers>();
+export function setHelperInCache(h:Helpers){
+    helpersCache.set(h.id, h);
+}
 export async function InitContext(remult: Remult, user?: UserInfo) {
     let h: Helpers;
     let gotUser = !!user;
@@ -24,7 +27,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         h = helpersCache.get(user.id);
         if (!h) {
             h = await  remult.repo(Helpers).findId(user.id);
-            helpersCache.set(user.id, h);
+            setHelperInCache(h);
         }
     }
     let defaultBasketType: BasketType;

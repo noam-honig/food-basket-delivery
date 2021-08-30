@@ -882,4 +882,5 @@ export class en {
   NotHomeProblemStatusText = 'Status text were not at home';
   DoNotWantProblemStatusText = 'Status text not interested';
   OtherProblemStatusText = 'Text another problem status';
+  updateDefaultDistributionCenter = 'Update default distribution list';
 }

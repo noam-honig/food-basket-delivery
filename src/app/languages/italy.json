@@ -4096,6 +4096,11 @@
     "valueInCode": "עדכן סוג סל ברירת מחדל",
     "valueInEnglish": "Update default parcel type"
   },
+  "updateDefaultDistributionCenter": {
+    "google": "Aggiorna la lista di distribuzione predefinita",
+    "valueInCode": "עדכן רשימת חלוקה ברירת מחדל",
+    "valueInEnglish": "Update default distribution list"
+  },
   "updateDefaultQuantity": {
     "google": "Aggiorna la quantità predefinita",
     "valueInCode": "עדכן כמות סלים ברירת מחדל",

@@ -32,6 +32,7 @@ import { use, Field, FieldType, IntegerField } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
+import { setHelperInCache } from './init-context';
 
 
 
@@ -238,6 +239,7 @@ export abstract class HelpersBase extends IdEntity {
     allowApiDelete: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: true,
+    saved: self => setHelperInCache(self),
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
         if (self.escort) {

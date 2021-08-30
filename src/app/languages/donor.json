@@ -3284,6 +3284,10 @@
     "google": "עדכן סוג סל ברירת מחדל",
     "valueInCode": "עדכן סוג סל ברירת מחדל"
   },
+  "updateDefaultDistributionCenter": {
+    "google": "עדכן רשימת חלוקה ברירת מחדל",
+    "valueInCode": "עדכן רשימת חלוקה ברירת מחדל"
+  },
   "updateDefaultQuantity": {
     "google": "עדכן כמות סלים ברירת מחדל",
     "valueInCode": "עדכן כמות סלים ברירת מחדל"

@@ -1167,6 +1167,7 @@ export class Language {
   NotHomeProblemStatusText = "מלל סטטוס לא היו בבית";
   DoNotWantProblemStatusText = "מלל סטטוס לא מעוניינים";
   OtherProblemStatusText = "מלל סטטוס בעיה אחר";
+  updateDefaultDistributionCenter = "עדכן רשימת חלוקה ברירת מחדל";
 }
 
 const defaultLang = new Language();

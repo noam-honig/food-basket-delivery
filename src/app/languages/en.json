@@ -3553,6 +3553,10 @@
     "valueInCode": "עדכן סוג סל ברירת מחדל",
     "custom": "Update default parcel type"
   },
+  "updateDefaultDistributionCenter": {
+    "google": "Update default distribution list",
+    "valueInCode": "עדכן רשימת חלוקה ברירת מחדל"
+  },
   "updateDefaultQuantity": {
     "google": "Update default basket amount",
     "valueInCode": "עדכן כמות סלים ברירת מחדל",

@@ -882,4 +882,5 @@ export class es {
   NotHomeProblemStatusText = 'El texto de estado no estaba en casa';
   DoNotWantProblemStatusText = 'Texto de estado no interesado';
   OtherProblemStatusText = 'Envía un mensaje de texto con el estado de otro problema';
+  updateDefaultDistributionCenter = 'Actualizar la lista de distribución predeterminada';
 }
