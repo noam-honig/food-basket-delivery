@@ -14,8 +14,9 @@ export const initConfig = {
     disableForTesting: false
 }
 const helpersCache = new Map<string, Helpers>();
-export function setHelperInCache(h:Helpers){
+export function setHelperInCache(h: Helpers) {
     helpersCache.set(h.id, h);
+    console.log("HelpersCache:" + helpersCache.size);
 }
 export async function InitContext(remult: Remult, user?: UserInfo) {
     let h: Helpers;
@@ -26,7 +27,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     if (remult.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
         if (!h) {
-            h = await  remult.repo(Helpers).findId(user.id);
+            h = await remult.repo(Helpers).findId(user.id);
             setHelperInCache(h);
         }
     }
@@ -34,21 +35,21 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     remult.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
-        await  remult.repo(BasketType).find({ orderBy: x => x.id }).then(y => {
+        await remult.repo(BasketType).find({ orderBy: x => x.id }).then(y => {
             if (y.length > 0)
                 defaultBasketType = y[0];
         });
         return defaultBasketType;
     }
     remult.defaultDistributionCenter = async () =>
-        (await  remult.repo(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
+        (await remult.repo(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
     remult.currentUser = h;
 
     remult.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
         let result: DistributionCenters;
         let dist: number;
         if (!centers)
-            centers = await  remult.repo(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
+            centers = await remult.repo(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
         for (const c of centers) {
             let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
             if (result === undefined || myDist < dist) {
@@ -92,6 +93,6 @@ declare module 'remult' {
         filterDistCenter(distCenterColumn: FilterFactory<DistributionCenters>, distCenter: DistributionCenters): Filter
         lang: Language;
         getSite(): string;
-        getOrigin():string;
+        getOrigin(): string;
     }
 }
