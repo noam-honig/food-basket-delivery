@@ -886,4 +886,5 @@ export class italy {
   updateDefaultDistributionCenter = 'Aggiorna la lista di distribuzione predefinita';
   loadImages = 'Caricare foto';
   dido = 'come sopra';
+  organisationName = "Il nome dell'organizzazione";
 }

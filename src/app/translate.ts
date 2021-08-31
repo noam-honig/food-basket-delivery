@@ -1171,6 +1171,7 @@ export class Language {
   updateDefaultDistributionCenter = "עדכן רשימת חלוקה ברירת מחדל";
   loadImages = "טען תמונות";
   dido = 'כנ"ל';
+  organisationName = "שם הארגון";
 }
 
 const defaultLang = new Language();

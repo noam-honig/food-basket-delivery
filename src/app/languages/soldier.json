@@ -2203,6 +2203,10 @@
     "google": "ערכים אפשריים מופרד בפסיקים",
     "valueInCode": "ערכים אפשריים מופרד בפסיקים"
   },
+  "organisationName": {
+    "google": "שם הארגון",
+    "valueInCode": "שם הארגון"
+  },
   "organizationInfo": {
     "google": "פרטי הארגון",
     "valueInCode": "פרטי הארגון"

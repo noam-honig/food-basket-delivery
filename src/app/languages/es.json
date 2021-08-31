@@ -2755,6 +2755,11 @@
     "valueInCode": "ערכים אפשריים מופרד בפסיקים",
     "valueInEnglish": "Possible comma-separated values"
   },
+  "organisationName": {
+    "google": "El nombre de la organización",
+    "valueInCode": "שם הארגון",
+    "valueInEnglish": "The organization name"
+  },
   "organizationInfo": {
     "google": "Detalles de la organización",
     "valueInCode": "פרטי הארגון",

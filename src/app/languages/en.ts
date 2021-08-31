@@ -886,4 +886,5 @@ export class en {
   updateDefaultDistributionCenter = 'Update default distribution list';
   loadImages = 'Upload photos';
   dido = 'same as above';
+  organisationName = 'The organization name';
 }

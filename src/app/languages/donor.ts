@@ -886,4 +886,5 @@ export class donor {
   updateDefaultDistributionCenter = 'עדכן רשימת חלוקה ברירת מחדל';
   loadImages = 'טען תמונות';
   dido = 'כנ"ל';
+  organisationName = 'שם הארגון';
 }

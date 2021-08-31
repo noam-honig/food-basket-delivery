@@ -886,4 +886,5 @@ export class es {
   updateDefaultDistributionCenter = 'Actualizar la lista de distribución predeterminada';
   loadImages = 'Subir fotos';
   dido = 'lo mismo que arriba';
+  organisationName = 'El nombre de la organización';
 }

@@ -27,7 +27,7 @@ export class UpdateGroupDialogComponent implements OnInit {
     groups: string,
     ok: (s: string) => void
   }) {
-    this.groups.value = new GroupsValue( args.groups&&"");
+    this.groups.value = new GroupsValue( args.groups||"");
     this.ok = args.ok;
   }
   ok: (s: string) => void;
