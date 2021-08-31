@@ -15,7 +15,10 @@ export const initConfig = {
 }
 const helpersCache = new Map<string, Helpers>();
 export function setHelperInCache(h: Helpers) {
+    if (helpersCache.size>100)
+        helpersCache.clear();
     helpersCache.set(h.id, h);
+
     console.log("HelpersCache:" + helpersCache.size);
 }
 export async function InitContext(remult: Remult, user?: UserInfo) {
