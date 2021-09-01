@@ -161,8 +161,10 @@ export class ImportFromExcelComponent implements OnInit {
             let fd = remult.repo(ActiveFamilyDeliveries).create();
             for (const val in r.values) {
                 let col = columnFromKey(f, fd, val);
-                col.inputValue = r.values[val].newValue;
-                await col.load();
+                if (col != f.$.id && col != fd.$.id) {
+                    col.inputValue = r.values[val].newValue;
+                    await col.load();
+                }
 
             }
             if (!f.name)
