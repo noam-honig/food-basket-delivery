@@ -19,7 +19,7 @@ export function setHelperInCache(h: Helpers) {
         helpersCache.clear();
     helpersCache.set(h.id, h);
 
-    console.log("HelpersCache:" + helpersCache.size);
+ //   console.log("HelpersCache:" + helpersCache.size);
 }
 export async function InitContext(remult: Remult, user?: UserInfo) {
     let h: Helpers;
