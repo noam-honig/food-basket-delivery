@@ -542,9 +542,9 @@ export class ImportFromExcelComponent implements OnInit {
         let updateCol = (col: FieldRef<any>, val: string, seperator: string = ' ') => {
 
             if (col.value) {
-                col.value = (col.value + seperator + val).trim();
+                col.inputValue = (col.inputValue + seperator + val).trim();
             } else
-                col.value = val;
+                col.inputValue = val;
         }
         this.fDefs = this.remult.repo(Families).metadata;
         this.f = this.fDefs.fields;
