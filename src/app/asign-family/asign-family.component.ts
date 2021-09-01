@@ -105,8 +105,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let cleanPhone = Phone.fixPhoneInput(this.phone, this.remult);
 
         if (this.isValidPhone()) {
-            let thisPhone = new Phone(this.phone);
             this.phone = cleanPhone;
+            let thisPhone = new Phone(this.phone);
             let helper = await this. remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(thisPhone));
             if (helper) {
 
