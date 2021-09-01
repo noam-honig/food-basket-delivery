@@ -399,7 +399,7 @@ export class Helpers extends HelpersBase {
                             field: this.$.find(map.field ? map.field as any : map)
                         })
                     });
-                    console.log(r);
+                    
                     return r;
                 }
             },
