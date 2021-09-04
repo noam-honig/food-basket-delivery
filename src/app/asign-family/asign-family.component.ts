@@ -109,10 +109,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             let thisPhone = new Phone(this.phone);
             await this.busy.donotWait(async () => {
 
-                let helper = await this.remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(thisPhone));
+                let helper = await this.remult.repo(Helpers).findFirst({ where: h => h.phone.isEqualTo(thisPhone), useCache: false });
                 if (helper) {
                     this.initHelper(helper);
-                } else if (this.phone == cleanPhone){
+                } else if (this.phone == cleanPhone) {
                     helper = this.remult.repo(Helpers).create();
                     helper.phone = thisPhone;
                     this.initHelper(helper);
@@ -433,8 +433,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     async assignItem(allRepeat?: boolean) {
         this.assigning = true;
 
-        await this.verifyHelperExistance();
         try {
+            await this.verifyHelperExistance();
             let x = await AsignFamilyComponent.AddBox(this.helper, this.basketType.basket, this.dialog.distCenter, {
                 group: this.filterGroup,
                 city: this.filterCity,
