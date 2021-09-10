@@ -1,8 +1,7 @@
 
 import { Entity, Remult, EntityBase, Field, IntegerField } from 'remult';
 import { Roles } from '../auth/roles';
-@Entity({
-  key: 'ApplicationImages',
+@Entity('ApplicationImages', {
   allowApiRead: Roles.admin,
   allowApiUpdate: Roles.admin
 })
@@ -16,6 +15,6 @@ export class ApplicationImages extends EntityBase {
 
 
   static async getAsync(remult: Remult): Promise<ApplicationImages> {
-    return  remult.repo(ApplicationImages).findFirst(undefined);
+    return remult.repo(ApplicationImages).findFirst(undefined);
   }
 }

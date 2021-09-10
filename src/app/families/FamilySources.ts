@@ -8,7 +8,7 @@ import { DataControl, getValueList } from "@remult/angular";
 import { use, Field, FieldType } from "../translate";
 
 @DataControl({
-  valueList: remult => getValueList( remult.repo(FamilySources))
+  valueList: remult => getValueList(remult.repo(FamilySources))
 })
 @FieldType<FamilySources>({
   valueConverter: {
@@ -17,8 +17,7 @@ import { use, Field, FieldType } from "../translate";
   },
   displayValue: (e, val) => val ? val.name : ''
 })
-@Entity<FamilySources>({
-  key: "FamilySources",
+@Entity<FamilySources>("FamilySources", {
   allowApiRead: Allow.authenticated,
   allowApiCrud: Roles.admin,
   defaultOrderBy: self => self.name

@@ -69,7 +69,7 @@ export class SelectHelperComponent implements OnInit {
     }
   }
   clearHelper() {
-    this.select(undefined);
+    this.select(null);
   }
   isMlt() {
     return getSettings(this.remult).isSytemForMlt();

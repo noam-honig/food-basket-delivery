@@ -145,7 +145,7 @@ export function FieldType<valueType = any>(settings?: FieldOptions<any, valueTyp
 export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(type: ClassType<valueType>, settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, valueType>>) {
   return origValueListFieldType<valueType>(type, ...adjustSettings(settings, options));
 }
-export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption, ...options: OptionsFactory<EntityOptions<T>>) {
+export function Entity<T>(key: string, settings: EntityOptions<T> & TranslatedCaption, ...options: OptionsFactory<EntityOptions<T>>) {
   let opts: OptionsFactory<EntityOptions<T>> = [settings];
   if (settings.translation) {
     opts.push((o, remult) => {
@@ -153,7 +153,7 @@ export function Entity<T>(settings: EntityOptions<T> & TranslatedCaption, ...opt
     });
   }
   opts.push(...options);
-  return origEntity<T>(...opts);
+  return origEntity<T>(key, ...opts);
 }
 
 

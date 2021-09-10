@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendMethod, Remult, SqlDatabase, FieldMetadata, EntityWhere, getFields, Filter } from 'remult';
+import { BackendMethod, Remult, SqlDatabase, FieldMetadata, getFields, Filter } from 'remult';
 import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
@@ -81,7 +81,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
       }],
-      settings: new GridSettings(this. remult.repo(Families), {
+      settings: new GridSettings(this.remult.repo(Families), {
         columnSettings: f => {
           let r = [
             f.name,
@@ -112,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere: (e) => Filter.toItem(x.args.settings.getFilterWithSelectedRows().where)(e),
+              userWhere: (e) => Filter.fromEntityFilter(e, x.args.settings.getFilterWithSelectedRows().where),
               settings: this.settings
             }))
           , {
@@ -177,8 +177,8 @@ export class DuplicateFamiliesComponent implements OnInit {
     if (!compare.address && !compare.name && !compare.phone && !compare.tz)
       throw "some column needs to be selected for compare";
     let sql = new SqlBuilder(remult);
-    let f = SqlFor( remult.repo(Families));
-    let fd = SqlFor( remult.repo(ActiveFamilyDeliveries));
+    let f = SqlFor(remult.repo(Families));
+    let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
     let q = '';
     for (const tz of [f.tz, f.tz2]) {
       for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {

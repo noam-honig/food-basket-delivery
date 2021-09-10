@@ -9,13 +9,12 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
 import { Field, use } from "../translate";
 
-@Entity<HelperGifts>({
-    key: "HelperGifts",
+@Entity<HelperGifts>("HelperGifts", {
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: Roles.admin
 }, (options, remult) => {
-    options.apiDataFilter = (self) => {
+    options.apiPrefilter = (self) => {
         if (remult.isAllowed(Roles.admin))
             return undefined;
         return self.assignedToHelper.isEqualTo(remult.currentUser);
@@ -74,9 +73,9 @@ export class HelperGifts extends IdEntity {
 
     @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string, remult?: Remult) {
-        let helper = await  remult.repo(Helpers).findId(helperId);
-        if (await  remult.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(remult.currentUser)) > 0) {
-            let g = await  remult.repo(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(remult.currentUser));
+        let helper = await remult.repo(Helpers).findId(helperId);
+        if (await remult.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(remult.currentUser)) > 0) {
+            let g = await remult.repo(HelperGifts).findFirst(g => g.assignedToHelper.isEqualTo(remult.currentUser));
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;
@@ -91,9 +90,9 @@ export class HelperGifts extends IdEntity {
     @BackendMethod({ allowed: Roles.admin })
     static async importUrls(urls: string[], remult?: Remult) {
         for (const url of urls) {
-            let g = await  remult.repo(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
+            let g = await remult.repo(HelperGifts).findFirst(g => g.giftURL.contains(url.trim()));
             if (!g) {
-                g =  remult.repo(HelperGifts).create();
+                g = remult.repo(HelperGifts).create();
                 g.giftURL = url;
                 await g.save();
             }
@@ -101,13 +100,13 @@ export class HelperGifts extends IdEntity {
     }
     @BackendMethod({ allowed: true })
     static async getMyPendingGiftsCount(h: Helpers, remult?: Remult) {
-        let gifts = await  remult.repo(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
+        let gifts = await remult.repo(HelperGifts).find({ where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)) });
         return gifts.length;
     }
 
     @BackendMethod({ allowed: true })
     static async getMyFirstGiftURL(h: HelpersBase, remult?: Remult) {
-        let gifts = await  remult.repo(HelperGifts).find({
+        let gifts = await remult.repo(HelperGifts).find({
             where: hg => hg.assignedToHelper.isEqualTo(h).and(hg.wasConsumed.isEqualTo(false)),
             limit: 100
         });
@@ -142,7 +141,7 @@ export async function showHelperGifts(hid: Helpers, remult: Remult, settings: Ap
                 //this.refresh();
             },
         }],
-        settings: new GridSettings( remult.repo(HelperGifts), {
+        settings: new GridSettings(remult.repo(HelperGifts), {
             allowUpdate: true,
 
             rowsInPage: 50,

@@ -1,4 +1,4 @@
-import { Remult, Allowed, AndFilter, IdEntity, Filter, EntityWhere, EntityOrderBy, BackendMethod, ProgressListener, FilterFactories, EntityBase, getFields, Repository, IterateOptions } from "remult";
+import { Remult, Allowed, AndFilter, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, FilterFactories, EntityBase, getFields, Repository, IterateOptions } from "remult";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -21,7 +21,7 @@ export interface packetServerUpdateInfo {
     count: number;
 }
 export interface DoWorkOnServerHelper<T extends IdEntity> {
-    actionWhere: EntityWhere<T>;
+    actionWhere: EntityFilter<T>;
     forEach: (f: T) => Promise<void>;
     orderBy?: EntityOrderBy<T>
 }
@@ -92,8 +92,8 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                         },
                         ok: async () => {
-                            let groupName = this. remult.repo(this.entity).metadata.caption;
-                            let count = await this. remult.repo(this.entity).count(this.composeWhere(component.userWhere))
+                            let groupName = this.remult.repo(this.entity).metadata.caption;
+                            let count = await this.remult.repo(this.entity).count(this.composeWhere(component.userWhere))
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                                 let r = await this.internalForTestingCallTheServer({
                                     count,
@@ -115,7 +115,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
     }
 
     async internalForTestingCallTheServer(info: {
-        where: EntityWhere<T>,
+        where: EntityFilter<T>,
         count: number
     }) {
         if (this.serialHelper)
@@ -125,28 +125,28 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: await Filter.packWhere(this. remult.repo(this.entity).metadata, info.where),
+            packedWhere: await (await Filter.fromEntityFilter(Filter.createFilterFactories(this.remult.repo(this.entity).metadata), info.where)).toJson(),
         }, p);
 
         return r;
     }
 
-    composeWhere(where: EntityWhere<T>) {
-        return Filter.toItem(where, this.args.additionalWhere);
+    composeWhere(where: EntityFilter<T>) {
+        return e => Filter.fromEntityFilter(e, where, this.args.additionalWhere);
     }
 
     @BackendMethod<ActionOnRows<any>>({ allowed: (remult, self) => remult.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
         await this.serialHelper?.deserializeOnServer();
-        let where = this.composeWhere(x => Filter.unpackWhere(this. remult.repo(this.entity).metadata, info.packedWhere));
+        let where = this.composeWhere(x => Filter.fromJson(this.remult.repo(this.entity).metadata, info.packedWhere));
 
-        let count = await this. remult.repo(this.entity).count(where);
+        let count = await this.remult.repo(this.entity).count(where);
         if (count != info.count) {
-            console.log({ count, packCount: info.count, name: this. remult.repo(this.entity).metadata.caption });
+            console.log({ count, packCount: info.count, name: this.remult.repo(this.entity).metadata.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;
-        let r = await pagedRowsIterator<T>(this. remult.repo(this.entity), {
+        let r = await pagedRowsIterator<T>(this.remult.repo(this.entity), {
             where,
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
@@ -158,7 +158,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + this. remult.repo(this.entity).metadata.caption + " " + getLang(this.remult).updated;
+        let message = this.args.title + ": " + r + " " + this.remult.repo(this.entity).metadata.caption + " " + getLang(this.remult).updated;
 
         await Families.SendMessageToBrowsers(message, this.remult, '');
         return r;
@@ -170,7 +170,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     settings: ApplicationSettings,
     afterAction: () => {},
-    userWhere: EntityWhere<T>
+    userWhere: EntityFilter<T>
 
 }
 

@@ -1,5 +1,5 @@
 
-import { Filter, AndFilter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories, ExcludeEntityFromApi } from "remult";
+import { Filter, AndFilter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -43,7 +43,7 @@ export class FamilyDeliveryStats {
             }
         }
         await Promise.all(r.baskets.map(async b => {
-            b.basket = await this. remult.repo(BasketType).findId(b.id);
+            b.basket = await this.remult.repo(BasketType).findId(b.id);
         }))
         return r;
     }
@@ -73,7 +73,7 @@ export class FamilyDeliveryStats {
             }
         }
 
-        let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+        let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
         let sql = new SqlBuilder(remult);
         sql.addEntity(f, "FamilyDeliveries")
@@ -91,7 +91,7 @@ export class FamilyDeliveryStats {
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
-            let b = await  remult.repo(BasketType).findId(basketId, { createIfNotFound: true });
+            let b = await remult.repo(BasketType).findId(basketId, { createIfNotFound: true });
             result.baskets.push({
                 id: basketId,
                 name: b.name,
@@ -111,7 +111,7 @@ export class FamilyDeliveryStats {
 
         if (distCenter == null)
             pendingStats.push(
-                 remult.repo(CitiesStats).find({
+                remult.repo(CitiesStats).find({
                     orderBy: f => f.deliveries.descending()
                 }).then(cities => {
                     result.cities = cities.map(x => {
@@ -124,7 +124,7 @@ export class FamilyDeliveryStats {
             );
         else
             pendingStats.push(
-                 remult.repo(CitiesStatsPerDistCenter).find({
+                remult.repo(CitiesStatsPerDistCenter).find({
                     orderBy: f => f.families.descending(),
                     where: f => remult.filterDistCenter(f.distributionCenter, distCenter)
 
@@ -155,7 +155,7 @@ export class FamilyDeliveresStatistics {
     async saveTo(distCenter: DistributionCenters, data: any, remult: Remult) {
         try {
 
-            data[this.name] = await  remult.repo(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), remult.filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);
+            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), remult.filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);
         }
         catch (err) {
             console.error(this.name, err);
@@ -170,12 +170,10 @@ export interface groupStats {
     totalReady: number
 
 }
-@ExcludeEntityFromApi()
-@Entity<CitiesStats>({
-    key: 'citiesStats'
-}, (options, remult) =>
+
+@Entity<CitiesStats>(undefined, {}, (options, remult) =>
     options.sqlExpression = async (self) => {
-        let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+        let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(remult);
 
         return sql.build('(', (await sql.query({
@@ -193,12 +191,11 @@ export class CitiesStats {
     @Field()
     deliveries: number;
 }
-@Entity<CitiesStatsPerDistCenter>({
-    allowApiRead: false,
-    key: 'citiesStatsPerDistCenter'
+@Entity<CitiesStatsPerDistCenter>('citiesStatsPerDistCenter', {
+    allowApiRead: false
 }, (options, remult) =>
     options.sqlExpression = async (self) => {
-        let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
+        let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(remult);
 
         return sql.build('(', (await sql.query({

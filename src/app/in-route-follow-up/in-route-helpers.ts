@@ -14,19 +14,18 @@ import { use, Field } from "../translate";
 import { DataControl, GridSettings, openDialog } from "@remult/angular";
 import { DateOnlyField } from "remult/src/remult3";
 
-@Entity<InRouteHelpers>({
-    key: 'in-route-helpers',
+@Entity<InRouteHelpers>('in-route-helpers', {
     allowApiRead: Roles.admin,
     defaultOrderBy: (self) => self.minAssignDate
 },
     (options, remult) => options.sqlExpression = async (self) => {
         let sql = new SqlBuilder(remult);
 
-        let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
-        let history = SqlFor( remult.repo(FamilyDeliveries));
-        let com = SqlFor( remult.repo(HelperCommunicationHistory));
-        let h = SqlFor( remult.repo(Helpers));
-        let h2 = SqlFor( remult.repo(Helpers));
+        let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
+        let history = SqlFor(remult.repo(FamilyDeliveries));
+        let com = SqlFor(remult.repo(HelperCommunicationHistory));
+        let h = SqlFor(remult.repo(Helpers));
+        let h2 = SqlFor(remult.repo(Helpers));
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
@@ -78,7 +77,7 @@ import { DateOnlyField } from "remult/src/remult3";
 )
 export class InRouteHelpers extends IdEntity {
     async helper() {
-        return this. remult.repo(Helpers).findId(this.id);
+        return this.remult.repo(Helpers).findId(this.id);
     }
     async showHistory() {
         let h = await this.helper();
@@ -91,7 +90,7 @@ export class InRouteHelpers extends IdEntity {
                     await this.addCommunication(() => gridDialog.args.settings.reloadData());
                 }
             }],
-            settings: new GridSettings(this. remult.repo(HelperCommunicationHistory), {
+            settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
                 numOfColumnsInGrid: 6,
                 knowTotalRows: true,
                 rowButtons: [
@@ -130,7 +129,7 @@ export class InRouteHelpers extends IdEntity {
             title: 'הוסף תכתובת',
 
             save: async (comment) => {
-                let hist = this. remult.repo(HelperCommunicationHistory).create();
+                let hist = this.remult.repo(HelperCommunicationHistory).create();
                 hist.volunteer = await this.helper();
                 hist.comment = comment;
                 await hist.save();
@@ -142,7 +141,7 @@ export class InRouteHelpers extends IdEntity {
     }
 
     async showAssignment() {
-        let h = await this. remult.repo(Helpers).findId(this.id);
+        let h = await this.remult.repo(Helpers).findId(this.id);
         await openDialog(
             HelperAssignmentComponent, s => s.argsHelper = h);
         this._.reload();
@@ -205,8 +204,7 @@ export class InRouteHelpers extends IdEntity {
 }
 
 
-@Entity<HelperCommunicationHistory>({
-    key: 'HelperCommunicationHistory',
+@Entity<HelperCommunicationHistory>('HelperCommunicationHistory', {
     allowApiInsert: Roles.distCenterAdmin,
     allowApiRead: Roles.distCenterAdmin,
     allowApiUpdate: Roles.distCenterAdmin,

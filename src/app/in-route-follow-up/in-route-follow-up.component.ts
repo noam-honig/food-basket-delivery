@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
-import { Remult, EntityWhere, Filter } from 'remult';
+import { Remult, EntityFilter, Filter } from 'remult';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';
@@ -30,14 +30,14 @@ export class InRouteFollowUpComponent implements OnInit {
     this.helpers.reloadData();
   }
 
-  helpers = new GridSettings(this. remult.repo(InRouteHelpers), {
-    where: [h => h.name.contains(this.searchString), x => Filter.toItem(this.currentOption.where)(x)],
+  helpers = new GridSettings(this.remult.repo(InRouteHelpers), {
+    where: h => [h.name.contains(this.searchString), Filter.fromEntityFilter(h, this.currentOption.where)],
     rowsInPage: 25,
     knowTotalRows: true,
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,
-      click: () => saveToExcel(this.settings, this. remult.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
+      click: () => saveToExcel(this.settings, this.remult.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
     }],
     rowCssClass: x => {
       if ((!x.seenFirstAssign) && (!x.lastCommunicationDate || x.lastCommunicationDate < daysAgo(3)))
@@ -72,7 +72,7 @@ export class InRouteFollowUpComponent implements OnInit {
               click: () => h.showAssignment()
             }
           ],
-          settings: new GridSettings(this. remult.repo(ActiveFamilyDeliveries), {
+          settings: new GridSettings(this.remult.repo(ActiveFamilyDeliveries), {
             numOfColumnsInGrid: 7,
             knowTotalRows: true,
             rowCssClass: fd => fd.deliverStatus.getCss(),
@@ -119,7 +119,7 @@ export class InRouteFollowUpComponent implements OnInit {
     {
       name: use.language.volunteerInfo,
       click: async s => {
-        let h = await this. remult.repo(Helpers).findId(s.id);
+        let h = await this.remult.repo(Helpers).findId(s.id);
         h.displayEditDialog(this.dialog, this.busy);
       }
     },
@@ -174,7 +174,7 @@ export class InRouteFollowUpComponent implements OnInit {
     openDialog(InputAreaComponent, x => x.args = {
       title: use.language.freezeHelper,
       ok: async () => {
-        let helper = await this. remult.repo(Helpers).findId(h.id);
+        let helper = await this.remult.repo(Helpers).findId(h.id);
         helper.frozenTill = h.frozenTill;
         helper.internalComment = h.internalComment;
         await helper.save();
@@ -191,7 +191,7 @@ export class InRouteFollowUpComponent implements OnInit {
 
 interface FilterFactory {
   text: string,
-  where: EntityWhere<InRouteHelpers>
+  where: EntityFilter<InRouteHelpers>
 }
 function daysAgo(num: number) {
   let d = new Date();

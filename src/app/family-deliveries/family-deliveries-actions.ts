@@ -1,4 +1,4 @@
-import { Remult, AndFilter, EntityWhere, Filter } from "remult";
+import { Remult, AndFilter, EntityFilter, Filter } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelpersBase } from "../helpers/helpers";
@@ -190,7 +190,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
             },
             validateInComponent: async c => {
-                let deliveriesWithResultStatus = await this.remult.repo(ActiveFamilyDeliveries).count([x => DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.toItem(c.userWhere), this.args.additionalWhere])
+                let deliveriesWithResultStatus = await this.remult.repo(ActiveFamilyDeliveries).count(x => [DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.fromEntityFilter(x, c.userWhere, this.args.additionalWhere)])
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
                         getLang(this.remult).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.remult).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
@@ -234,11 +234,11 @@ export class ArchiveHelper {
 
 
     get $() { return getFields(this) }
-    async initArchiveHelperBasedOnCurrentDeliveryInfo(remult: Remult, where: EntityWhere<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
+    async initArchiveHelperBasedOnCurrentDeliveryInfo(remult: Remult, where: EntityFilter<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = remult.repo(ActiveFamilyDeliveries);
 
-        let onTheWay = await repo.count([d => FamilyDeliveries.onTheWayFilter(), Filter.toItem(where)]);
+        let onTheWay = await repo.count(d => [FamilyDeliveries.onTheWayFilter(), Filter.fromEntityFilter(d, where)]);
 
         if (onTheWay > 0) {
             this.markOnTheWayAsDelivered = true;
@@ -249,7 +249,7 @@ export class ArchiveHelper {
         }
 
         if (usingSelfPickupModule) {
-            let selfPickup = await repo.count([d => d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), Filter.toItem(where)]);
+            let selfPickup = await repo.count(d => [d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), Filter.fromEntityFilter(d, where)]);
 
             if (selfPickup > 0) {
                 this.markSelfPickupAsDelivered = true;

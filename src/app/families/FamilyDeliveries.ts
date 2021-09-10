@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Remult, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, CustomFilterBuilder, isBackend } from 'remult';
+import { Remult, IdEntity, Filter, AndFilter, FilterFactories, FieldRef, Allow, BackendMethod, isBackend } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -40,16 +40,15 @@ export class MessageStatus {
 
     }
 }
-@Entity<FamilyDeliveries>({
-    key: 'FamilyDeliveries',
+@Entity<FamilyDeliveries>('FamilyDeliveries', {
     dbName: 'FamilyDeliveries',
     translation: l => l.deliveries,
     allowApiRead: Allow.authenticated,
     allowApiInsert: false,
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
-    customFilterBuilder: () => FamilyDeliveries.customFilter,
-    apiDataFilter: (self) => {
+
+    apiPrefilter: (self) => {
 
         return FamilyDeliveries.isAllowedForUser();
 
@@ -128,7 +127,7 @@ export class FamilyDeliveries extends IdEntity {
             if (d.courier != remult.currentUser)
                 return false;
         }
-        let r = (await remult.repo(FamilyImage).count( f => f.familyId.isEqualTo(family) )) > 0;
+        let r = (await remult.repo(FamilyImage).count(f => f.familyId.isEqualTo(family))) > 0;
         return r;
     }
     async loadVolunteerImages(): Promise<import("../images/images.component").ImageInfo[]> {
@@ -420,7 +419,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     )
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.authenticated() && getSettings(c).isSytemForMlt() })
+    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt() || c.isAllowed(Roles.admin)) })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
@@ -483,64 +482,56 @@ export class FamilyDeliveries extends IdEntity {
         }
     )
     numOfPhotos: number;
-    static customFilter = new CustomFilterBuilder<FamilyDeliveries, {
-        allowedForUser?: boolean,
-        ready?: {
-            city: string,
-            group: string,
-            area: string,
-            basketId: string
-        },
-        onTheWayFilter?: boolean
-    }>(async (self, c, remult) => {
+    static customFilter = Filter.createCustom<FamilyDeliveries, {
+        city: string,
+        group: string,
+        area: string,
+        basketId: string
+    }>(async (self, remult, c) => {
         let result: Filter[] = [];
-        if (c.allowedForUser) {
-            if (!remult.authenticated())
-                return self.id.isEqualTo('no rows');
-            let user = remult.currentUser;
-            user.theHelperIAmEscorting;
-            if (!remult.isAllowed([Roles.admin, Roles.lab])) {
-                result.push(FamilyDeliveries.active(self));
-                if (remult.isAllowed(Roles.distCenterAdmin))
-                    result.push(remult.filterCenterAllowedForUser(self.distributionCenter));
-                else {
-                    if (user.theHelperIAmEscorting)
-                        result.push(self.courier.isEqualTo(user.theHelperIAmEscorting).and(self.visibleToCourier.isEqualTo(true)));
-                    else
-                        result.push(self.courier.isEqualTo(user).and(self.visibleToCourier.isEqualTo(true)));
-                }
-            }
-        }
-        if (c.ready) {
-            let { city, group, area } = c.ready;
-            let basket = await remult.repo(BasketType).findId(c.ready.basketId);
-            let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-                self.courier.isEqualTo(null)).and(remult.filterCenterAllowedForUser(self.distributionCenter));
-            if (group)
-                where = where.and(self.groups.contains(group));
-            if (city) {
-                where = where.and(self.city.isEqualTo(city));
-            }
-            if (area !== undefined && area != remult.lang.allRegions)
-                where = where.and(self.area.isEqualTo(area));
-            if (basket != null)
-                where = where.and(self.basketType.isEqualTo(basket))
 
-            result.push(where);
+
+        let { city, group, area } = c;
+        let basket = await remult.repo(BasketType).findId(c.basketId);
+        let where = self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
+            self.courier.isEqualTo(null)).and(remult.filterCenterAllowedForUser(self.distributionCenter));
+        if (group)
+            where = where.and(self.groups.contains(group));
+        if (city) {
+            where = where.and(self.city.isEqualTo(city));
         }
-        if (c.onTheWayFilter)
-            result.push(self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null)));
+        if (area !== undefined && area != remult.lang.allRegions)
+            where = where.and(self.area.isEqualTo(area));
+        if (basket != null)
+            where = where.and(self.basketType.isEqualTo(basket))
+
+        result.push(where);
+
+
         return new AndFilter(...result);
     });
-    static isAllowedForUser() {
-        return this.customFilter.build({ allowedForUser: true });
-    }
+    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>((self, remult) => {
+        if (!remult.authenticated())
+            return self.id.isEqualTo('no rows');
+        let result = new Filter();
+        let user = remult.currentUser;
+        if (!remult.isAllowed([Roles.admin, Roles.lab])) {
+            result = result.and(FamilyDeliveries.active(self));
+            if (remult.isAllowed(Roles.distCenterAdmin))
+                result = result.and(remult.filterCenterAllowedForUser(self.distributionCenter));
+            else {
+                if (user.theHelperIAmEscorting)
+                    result = result.and(self.courier.isEqualTo(user.theHelperIAmEscorting).and(self.visibleToCourier.isEqualTo(true)));
+                else
+                    result = result.and(self.courier.isEqualTo(user).and(self.visibleToCourier.isEqualTo(true)));
+            }
+        }
+        return result;
+    });
     static readyFilter(city?: string, group?: string, area?: string, basket?: BasketType) {
-        return this.customFilter.build({ ready: { city, group, area, basketId: basket?.id } })
+        return this.customFilter({ city, group, area, basketId: basket?.id })
     }
-    static onTheWayFilter() {
-        return this.customFilter.build({ onTheWayFilter: true });
-    }
+    static onTheWayFilter = Filter.createCustom<FamilyDeliveries>((self) => self.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(self.courier.isDifferentFrom(null)));
 
 
 
@@ -821,13 +812,12 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
     translate: async (remult, f) => {
-        return Filter.translateCustomWhere<FamilyDeliveries>(remult.repo(FamilyDeliveries).metadata, Filter.createFilterFactories(remult.repo(FamilyDeliveries).metadata), f, remult);
+        return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, Filter.createFilterFactories(remult.repo(FamilyDeliveries).metadata), remult);
     }
 });
 
-@Entity<FamilyDeliveries>({
-    key: 'ActiveFamilyDeliveries',
-    fixedFilter: self => FamilyDeliveries.active(self)
+@Entity<FamilyDeliveries>('ActiveFamilyDeliveries', {
+    backendPrefilter: self => FamilyDeliveries.active(self)
 
 })
 export class ActiveFamilyDeliveries extends FamilyDeliveries {

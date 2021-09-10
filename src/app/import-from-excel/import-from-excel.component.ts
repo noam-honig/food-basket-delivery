@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity, BackendMethod, SqlDatabase, EntityWhere, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from 'remult';
+import { Entity, BackendMethod, SqlDatabase, EntityFilter, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from 'remult';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Remult } from 'remult';

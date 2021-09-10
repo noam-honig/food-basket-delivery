@@ -44,8 +44,7 @@ export class RemovedFromListExcelImportStrategy {
 
 
 
-@Entity<ApplicationSettings>({
-  key: 'ApplicationSettings',
+@Entity<ApplicationSettings>('ApplicationSettings', {
   allowApiRead: true,
   allowApiUpdate: Roles.admin,
   saving: async (self) => {
@@ -68,13 +67,13 @@ export class RemovedFromListExcelImportStrategy {
       logChanges(self._, self.remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest] });
     }
   },
-  saved:(self)=>{
+  saved: (self) => {
     if (!isBackend())
       self.updateStaticTexts();
   }
 })
 export class ApplicationSettings extends EntityBase {
-   updateStaticTexts() {
+  updateStaticTexts() {
     BasketType.boxes1Name = this.boxes1Name;
     BasketType.boxes2Name = this.boxes2Name;
     DeliveryStatus.FailedBadAddress.caption = this.AddressProblemStatusText;
@@ -100,11 +99,11 @@ export class ApplicationSettings extends EntityBase {
   @BackendMethod({ allowed: Allow.authenticated })
   static async getPhoneOptions(deliveryId: string, remult?: Remult) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await  remult.repo(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
+    let d = await remult.repo(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
-    let family = await  remult.repo(Families).findFirst(f => f.id.isEqualTo(d.family));
+    let family = await remult.repo(Families).findFirst(f => f.id.isEqualTo(d.family));
     let r: phoneOption[] = [];
     let settings = await ApplicationSettings.getAsync(remult);
     for (const x of settings.getPhoneStrategy()) {
@@ -392,12 +391,12 @@ export class ApplicationSettings extends EntityBase {
   }
 
   static get(remult: Remult) {
-    
+
     return getSettings(remult);
 
   }
   static async getAsync(remult: Remult): Promise<ApplicationSettings> {
-    return (await  remult.repo(ApplicationSettings).findFirst());
+    return (await remult.repo(ApplicationSettings).findFirst());
   }
   setDefaultsForProblemStatuses() {
     this.problemButtonText = this.lang.ranIntoAProblem;
@@ -508,7 +507,7 @@ export class SettingsService {
     RemovedFromListExcelImportStrategy.ignore.caption = this.instance.lang.RemovedFromListExcelImportStrategy_ignore;
 
     this.instance.updateStaticTexts();
-    
+
     setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
     setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
     setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values);

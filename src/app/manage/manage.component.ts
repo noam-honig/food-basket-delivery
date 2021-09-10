@@ -648,10 +648,9 @@ export class ManageComponent implements OnInit {
 
 }
 
-@Entity<GroupsStatsPerDistributionCenter>({
+@Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
   allowApiRead: Roles.distCenterAdmin,
-  defaultOrderBy: (self) => self.name,
-  key: 'GroupsStatsPerDistributionCenter'
+  defaultOrderBy: (self) => self.name
 },
   (options, remult) =>
     options.sqlExpression = async (self) => {
@@ -690,9 +689,8 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   }
 
 }
-@Entity<GroupsStatsForAllDeliveryCenters>({
+@Entity<GroupsStatsForAllDeliveryCenters>('GroupsStatsForAllDeliveryCenters', {
   allowApiRead: Roles.distCenterAdmin,
-  key: 'GroupsStatsForAllDeliveryCenters',
   defaultOrderBy: self => self.name,
 },
   (options, remult) => {

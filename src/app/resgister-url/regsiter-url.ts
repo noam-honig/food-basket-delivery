@@ -5,8 +5,7 @@ import { Helpers } from "../helpers/helpers";
 import { Families } from "../families/families";
 import { Field } from '../translate';
 
-@Entity({
-    key: "RegisterURL",
+@Entity("RegisterURL", {
     allowApiCrud: Roles.admin,
 })
 export class RegisterURL extends IdEntity {
@@ -22,21 +21,21 @@ export class RegisterURL extends IdEntity {
 
     urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
-        return this. remult.repo(RegisterURL).findFirst(g => g.URL.contains(s));
+        return this.remult.repo(RegisterURL).findFirst(g => g.URL.contains(s));
     }
 
     @BackendMethod({ allowed: Roles.admin })
     static async loadUrlsFromTables(remult?: Remult, db?: SqlDatabase) {
 
-        let h = SqlFor( remult.repo(Helpers));
-        let f = SqlFor( remult.repo(Families));
-        let u = SqlFor( remult.repo(RegisterURL));
+        let h = SqlFor(remult.repo(Helpers));
+        let f = SqlFor(remult.repo(Families));
+        let u = SqlFor(remult.repo(RegisterURL));
         let sql = new SqlBuilder(remult);
         let urls = [];
 
         async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldMetadata) {
-            let q =await sql.query({
-                select:async () => [sql.build('distinct ', urlDbOperator(await field.getDbName()), ' as url')],
+            let q = await sql.query({
+                select: async () => [sql.build('distinct ', urlDbOperator(await field.getDbName()), ' as url')],
                 from: table,
                 outerJoin: () => [{ to: u, on: () => [sql.build(field, ' like textcat(textcat(\'%\',', u.URL, '),\'%\')')] }],
                 where: () => [sql.build(u.URL, ' is null')]
@@ -50,10 +49,10 @@ export class RegisterURL extends IdEntity {
 
         for (const url of urls) {
             if ((url != undefined) && (url != '')) {
-                let g = await  remult.repo(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
+                let g = await remult.repo(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
                 if (!g) {
                     console.log("adding entry for: ", url);
-                    g =  remult.repo(RegisterURL).create();
+                    g = remult.repo(RegisterURL).create();
                     g.URL = url;
                     g.prettyName = url;
                     await g.save();

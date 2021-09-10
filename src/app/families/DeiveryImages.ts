@@ -3,13 +3,12 @@ import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
 
 
-@Entity<DeliveryImage>({
-    key: 'delivery_images',
+@Entity<DeliveryImage>('delivery_images', {
     allowApiCrud: Allow.authenticated,
     allowApiUpdate: false
 },
     (options, remult) => {
-        options.apiDataFilter = (self) => {
+        options.apiPrefilter = (self) => {
             if (!remult.isAllowed([Roles.admin]))
                 return self.uploadingVolunteer.isEqualTo(remult.currentUser)
         };
@@ -28,8 +27,7 @@ export class DeliveryImage extends IdEntity {
     image: string;
 
 }
-@Entity({
-    key: 'family_images',
+@Entity('family_images', {
     allowApiCrud: Roles.admin
 
 })

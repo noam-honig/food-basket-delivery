@@ -66,13 +66,12 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     hideDataOnInput: true,
     click: async (e, col) => HelpersBase.showSelectDialog(col, {})
 })
-@Entity<HelpersBase>({
-    key: "HelpersBase",
+@Entity<HelpersBase>("HelpersBase", {
     dbName: "Helpers",
     allowApiCrud: false,
     allowApiRead: Allow.authenticated
 },
-    (options, remult) => options.apiDataFilter = (self) => {
+    (options, remult) => options.apiPrefilter = (self) => {
         if (!remult.authenticated())
             return self.id.isEqualTo("No User");
         else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
@@ -233,8 +232,7 @@ export abstract class HelpersBase extends IdEntity {
 }
 
 
-@Entity<Helpers>({
-    key: "Helpers",
+@Entity<Helpers>("Helpers", {
     allowApiRead: Allow.authenticated,
     allowApiDelete: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
@@ -349,7 +347,7 @@ export abstract class HelpersBase extends IdEntity {
 
     }
 }, (options, remult) =>
-    options.apiDataFilter = (self) => {
+    options.apiPrefilter = (self) => {
         if (!remult.authenticated())
             return self.id.isEqualTo("No User");
         else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
@@ -399,7 +397,7 @@ export class Helpers extends HelpersBase {
                             field: this.$.find(map.field ? map.field as any : map)
                         })
                     });
-                    
+
                     return r;
                 }
             },

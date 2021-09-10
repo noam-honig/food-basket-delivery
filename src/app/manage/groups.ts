@@ -3,8 +3,7 @@ import { IdEntity, Remult, Entity } from "remult";
 import { Roles } from "../auth/roles";
 import { Field, FieldType, use } from "../translate";
 
-@Entity({
-  key: "groups",
+@Entity("groups", {
   allowApiRead: Roles.admin,
   allowApiCrud: Roles.admin,
 })
@@ -38,7 +37,7 @@ export class GroupsValue {
   hasAny() {
     return this.value != '';
   }
-  
+
   constructor(private readonly value: string) {
 
   }
@@ -51,7 +50,7 @@ export class GroupsValue {
     return this.value.split(',');
   }
   removeGroup(group: string) {
-    
+
     let groups = this.value.split(",").map(x => x.trim());
     let index = groups.indexOf(group);
     let result = '';

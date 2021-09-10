@@ -23,8 +23,7 @@ import { DataControl, getValueList } from '@remult/angular';
   valueList: remult => getValueList(remult.repo(BasketType)),
   width: '100'
 })
-@Entity<BasketType>({
-  key: "BasketType",
+@Entity<BasketType>("BasketType", {
   allowApiRead: Allow.authenticated,
   allowApiCrud: Roles.admin,
   saving: async (self) => {

@@ -26,8 +26,7 @@ import { use, FieldType, Field } from "../translate";
   width: '150',
 })
 
-@Entity<DistributionCenters>({
-  key: "DistributionCenters",
+@Entity<DistributionCenters>("DistributionCenters", {
   allowApiRead: Allow.authenticated,
   allowApiInsert: Roles.admin,
   allowApiUpdate: Roles.admin,

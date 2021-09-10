@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Remult, FieldRef, EntityBase, ExcludeEntityFromApi } from 'remult';
+import { UrlBuilder, Entity, Remult, FieldRef, EntityBase } from 'remult';
 import { Field } from '../translate';
 
 
@@ -24,7 +24,7 @@ export async function GetGeoInformation(address: string, remult: Remult) {
         return new GeocodeInformation();
     }
     address = address.trim();
-    let cacheEntry = await  remult.repo(GeocodeCache).findId(address, { createIfNotFound: true });
+    let cacheEntry = await remult.repo(GeocodeCache).findId(address, { createIfNotFound: true });
     if (!cacheEntry.isNew()) {
         //console.log('cache:' + address);
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);
@@ -91,9 +91,9 @@ export async function GetGeoInformation(address: string, remult: Remult) {
 }
 
 
-@ExcludeEntityFromApi()
-@Entity({
-    key: "GeocodeCache",
+
+@Entity(undefined, {
+    dbName: "GeocodeCache",
     allowApiRead: false,
     allowApiCrud: false
 })

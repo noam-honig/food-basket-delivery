@@ -51,96 +51,94 @@ declare type factoryFor<T> = {
 }
 
 
-@Entity<Families>(
-  {
-    key: "Families",
-    translation: l => l.families,
-    allowApiRead: Roles.admin,
-    allowApiUpdate: Roles.admin,
-    allowApiDelete: false,
-    allowApiInsert: Roles.admin,
+@Entity<Families>("Families", {
+  translation: l => l.families,
+  allowApiRead: Roles.admin,
+  allowApiUpdate: Roles.admin,
+  allowApiDelete: false,
+  allowApiInsert: Roles.admin,
 
-    saving: async (self) => {
-      if (self.disableOnSavingRow)
-        return;
-      if (isBackend()) {
-        if (!self.quantity || self.quantity < 1)
-          self.quantity = 1;
-        if (self.$.area.valueChanged() && self.area)
-          self.area = self.area.trim();
+  saving: async (self) => {
+    if (self.disableOnSavingRow)
+      return;
+    if (isBackend()) {
+      if (!self.quantity || self.quantity < 1)
+        self.quantity = 1;
+      if (self.$.area.valueChanged() && self.area)
+        self.area = self.area.trim();
 
 
 
-        if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
-          await self.reloadGeoCoding();
-        }
-        if (!self.defaultDistributionCenter)
-          self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location());
-        let currentUser = self.remult.currentUser;
-        if (self.isNew()) {
-          self.createDate = new Date();
-          self.createUser = currentUser;
-        }
-        if (self.$.status.valueChanged()) {
-          self.statusDate = new Date();
-          self.statusUser = currentUser;
-        }
-
-        if (!self._suppressLastUpdateDuringSchemaInit) {
-          self.lastUpdateDate = new Date();
-          self.lastUpdateUser = currentUser;
-        }
-
-
-
-        if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.valueChanged())) {
-          for await (const fd of await self.remult.repo(FamilyDeliveries).find({
-            where: fd =>
-              fd.family.isEqualTo(self.id).and(
-                fd.archive.isEqualTo(false).and(
-                  DeliveryStatus.isNotAResultStatus(fd.deliverStatus)
-                ))
-          })) {
-            self.updateDelivery(fd);
-            if (self.$.basketType.valueChanged() && fd.basketType == self.$.basketType.originalValue)
-              fd.basketType = self.basketType;
-            if (self.$.quantity.valueChanged() && fd.quantity == self.$.quantity.originalValue)
-              fd.quantity = self.quantity;
-            if (self.$.deliveryComments.valueChanged() && fd.deliveryComments == self.$.deliveryComments.originalValue)
-              fd.deliveryComments = self.deliveryComments;
-            if (self.$.fixedCourier.valueChanged() && fd.courier == self.$.fixedCourier.originalValue)
-              fd.courier = self.fixedCourier;
-            if (self.$.defaultSelfPickup.valueChanged())
-              if (self.defaultSelfPickup)
-                if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
-                  fd.deliverStatus = DeliveryStatus.SelfPickup;
-                else if (fd.deliverStatus == DeliveryStatus.SelfPickup)
-                  fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
-            await fd.save();
-          }
-        }
-
+      if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
+        await self.reloadGeoCoding();
       }
-      else if (!isBackend()) {
-        let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
-        if (statusChangedOutOfActive) {
-          let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
-          if (await activeDeliveries.count() > 0) {
-            if (await openDialog(YesNoQuestionComponent, async x => x.args = {
-              question: getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
-            }, y => y.yes)) {
-              for await (const d of activeDeliveries) {
-                await d.delete();
+      if (!self.defaultDistributionCenter)
+        self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location());
+      let currentUser = self.remult.currentUser;
+      if (self.isNew()) {
+        self.createDate = new Date();
+        self.createUser = currentUser;
+      }
+      if (self.$.status.valueChanged()) {
+        self.statusDate = new Date();
+        self.statusUser = currentUser;
+      }
 
-              }
+      if (!self._suppressLastUpdateDuringSchemaInit) {
+        self.lastUpdateDate = new Date();
+        self.lastUpdateUser = currentUser;
+      }
+
+
+
+      if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.valueChanged())) {
+        for await (const fd of await self.remult.repo(FamilyDeliveries).find({
+          where: fd =>
+            fd.family.isEqualTo(self.id).and(
+              fd.archive.isEqualTo(false).and(
+                DeliveryStatus.isNotAResultStatus(fd.deliverStatus)
+              ))
+        })) {
+          self.updateDelivery(fd);
+          if (self.$.basketType.valueChanged() && fd.basketType == self.$.basketType.originalValue)
+            fd.basketType = self.basketType;
+          if (self.$.quantity.valueChanged() && fd.quantity == self.$.quantity.originalValue)
+            fd.quantity = self.quantity;
+          if (self.$.deliveryComments.valueChanged() && fd.deliveryComments == self.$.deliveryComments.originalValue)
+            fd.deliveryComments = self.deliveryComments;
+          if (self.$.fixedCourier.valueChanged() && fd.courier == self.$.fixedCourier.originalValue)
+            fd.courier = self.fixedCourier;
+          if (self.$.defaultSelfPickup.valueChanged())
+            if (self.defaultSelfPickup)
+              if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
+                fd.deliverStatus = DeliveryStatus.SelfPickup;
+              else if (fd.deliverStatus == DeliveryStatus.SelfPickup)
+                fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
+          await fd.save();
+        }
+      }
+
+    }
+    else if (!isBackend()) {
+      let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
+      if (statusChangedOutOfActive) {
+        let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
+        if (await activeDeliveries.count() > 0) {
+          if (await openDialog(YesNoQuestionComponent, async x => x.args = {
+            question: getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
+          }, y => y.yes)) {
+            for await (const d of activeDeliveries) {
+              await d.delete();
+
             }
           }
         }
       }
     }
-  },
+  }
+},
   (options, remult) =>
-    options.apiDataFilter = (self) => {
+    options.apiPrefilter = (self) => {
       if (!remult.isAllowed(Roles.admin)) {
         if (remult.isAllowed(Roles.admin))
           return undefined;

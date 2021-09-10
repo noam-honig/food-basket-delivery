@@ -3,8 +3,7 @@ import { Field } from '../translate';
 import { Roles } from "../auth/roles";
 import { Sites } from "./sites";
 
-@Entity<SitesEntity>({
-    key: 'Sites',
+@Entity<SitesEntity>('Sites', {
     allowApiRead: Roles.overview,
     saving: (self) => {
         self.id = self.id.toLowerCase().trim();
@@ -31,10 +30,10 @@ export class SitesEntity extends EntityBase {
         super();
     }
     static async completeInit(remult: Remult) {
-        let sites = await  remult.repo(SitesEntity).find();
+        let sites = await remult.repo(SitesEntity).find();
         let missingInDb = Sites.schemas.filter(siteFromEnv => !sites.find(y => y.id == siteFromEnv));
         for (const s of missingInDb) {
-            let r = await  remult.repo(SitesEntity).create();
+            let r = await remult.repo(SitesEntity).create();
             r.id = s;
             await r.save();
         }

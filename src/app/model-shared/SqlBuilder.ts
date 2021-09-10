@@ -1,4 +1,4 @@
-import { CustomFilterBuilder, Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Remult } from 'remult';
+import {  Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Remult } from 'remult';
 import { filterHelper } from 'remult/src/filter/filter-interfaces';
 import { InitContext } from '../helpers/init-context';
 
@@ -316,8 +316,8 @@ export class SqlBuilder {
         if (query.where) {
             where.push(...await query.where());
         }
-        if (query.from.metadata.options.fixedFilter) {
-            where.push(await Filter.translateCustomWhere(query.from.metadata, query.from as FilterFactories<any>, await Filter.translateWhereToFilter(query.from as FilterFactories<any>, query.from.metadata.options.fixedFilter), this.remult));
+        if (query.from.metadata.options.backendPrefilter) {
+            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from as FilterFactories<any>, query.from.metadata.options.backendPrefilter), query.from.metadata, query.from as FilterFactories<any>, this.remult));
         }
         if (where.length > 0)
             result.push(' where ', this.and(...where));

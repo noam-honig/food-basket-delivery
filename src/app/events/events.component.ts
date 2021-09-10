@@ -40,14 +40,18 @@ export class EventsComponent implements OnInit {
 
 
     rowsInPage: 25,
-    where: [e => [this.dialog.filterDistCenter(e.distributionCenter), this.showArchive ? undefined : e.eventStatus.isDifferentFrom(eventStatus.archive)],
-    e => {
+    where: e => {
+      let result = this.dialog.filterDistCenter(e.distributionCenter);
       if (!this.showPast) {
         let d = new Date();
         d.setDate(d.getDate() - 7);
-        return e.eventDate.isGreaterOrEqualTo(d)
-      }
-    }],
+        result = result.and(e.eventDate.isGreaterOrEqualTo(d));
+      };
+
+      if (!this.showArchive)
+        result = result.and(e.eventStatus.isDifferentFrom(eventStatus.archive))
+      return result;
+    },
     orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
     newRow: async e =>
       e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),

@@ -54,8 +54,7 @@ export class eventStatus {
 
     }
 }
-@Entity<Event>({
-    key: 'events',
+@Entity<Event>('events', {
     allowApiCrud: Roles.admin,
     allowApiRead: Allow.authenticated,
     saving: async (self) => {
@@ -67,7 +66,7 @@ export class eventStatus {
     }
 },
     (options, remult) =>
-        options.apiDataFilter = (self) => {
+        options.apiPrefilter = (self) => {
             if (remult.isAllowed(Roles.admin))
                 return undefined;
             return self.eventStatus.isEqualTo(eventStatus.active);
@@ -491,13 +490,12 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
     }
     return e.fields.find(y as FieldMetadata);
 }
-@Entity<volunteersInEvent>({
-    key: 'volunteersInEvent',
+@Entity<volunteersInEvent>('volunteersInEvent', {
     allowApiCrud: Allow.authenticated,
     allowApiDelete: false
 },
     (options, remult) => {
-        options.apiDataFilter = (self) => {
+        options.apiPrefilter = (self) => {
             if (remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 return undefined;
             return self.helper.isEqualTo(remult.currentUser);

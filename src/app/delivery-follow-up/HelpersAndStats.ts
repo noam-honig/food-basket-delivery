@@ -16,9 +16,7 @@ function log(s: string) {
     console.log(s);
     return s;
 }
-@Entity<HelpersAndStats>({
-
-    key: "helpersAndStats",
+@Entity<HelpersAndStats>("helpersAndStats", {
     allowApiRead: Roles.distCenterAdmin
 },
     (options, remult) =>
