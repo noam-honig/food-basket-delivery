@@ -211,7 +211,7 @@ export class DeliveryHistoryComponent implements OnInit {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
         await saveToExcel(this.settings, this. remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
-            await f.basketType.addBasketTypes(f.quantity, addColumn);
+            await f.basketType?.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
             if (includeFamilyInfo)
               await f.addFamilyInfoToExcelFile(addColumn);
