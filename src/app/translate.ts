@@ -559,7 +559,7 @@ export class Language {
   identicalPhone = ' מספר טלפון זהה';
   similarName = " שם דומה";
   statusSummary = "סיכום סטטוס";
-  onTheWay = "בדרך";
+  onTheWay = "שוייכו";
   unAsigned = "טרם שוייכו";
   specialUnasigned = 'מיוחדים שטרם שוייכו';
   delivered = "נמסר";
@@ -814,7 +814,7 @@ export class Language {
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל למשפחה';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
-  updateVolunteerHelp = 'בכדי לעדכן מתנדב מ"בדרך" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו';
+  updateVolunteerHelp = 'בכדי לעדכן מתנדב מ"שוייכו" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו';
   updateVolunteer = 'עדכן מתנדב למשלוחים';
   updateDeliveriesStatus = 'עדכן סטטוס למשלוחים';
   updateDeliveriesStatusHelp = `סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. `;
@@ -993,7 +993,7 @@ export class Language {
   familyHasExistingDeliveriesDoYouWantToViewThem = "למשפחה זו יש משלוחים פעילים, האם להציג אותם?";
   and = "ו";
   markAsDeliveredFor = "סמן נמסר בהצלחה ל";
-  onTheWayDeliveries = "משלוחים שבדרך";
+  onTheWayDeliveries = "משלוחים ששוייכו";
   markAsSelfPickupFor = "סמן אספו את החבילה ל";
   selfPickupDeliveries = "משלוחים שמוגדרים כבאים לקחת";
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = "משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?";
@@ -1060,7 +1060,7 @@ export class Language {
   deliveriesCreated = "משלוחים נוצרו";
   doneDotGotoDeliveries = "התהליך הסתיים בהצלחה, לעבור למסך משלוחים?";
   notDoneDeliveriesShouldArchiveThem = "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון.";
-  deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
+  deliveresOnTheWayAssignedInTheLast3Hours = "משלוחים ששוייכו, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?";
   leadHelper = "מתנדב מוביל";
   movedFrom = "הועברו מ";
   to = "ל";

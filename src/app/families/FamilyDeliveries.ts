@@ -106,6 +106,9 @@ export class MessageStatus {
     }
 })
 export class FamilyDeliveries extends IdEntity {
+    getCss(): string {
+      return this.deliverStatus.getCss(this.courier);
+    }
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })

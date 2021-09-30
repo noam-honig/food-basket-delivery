@@ -204,7 +204,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
   deliveries = new GridSettings(this. remult.repo(FamilyDeliveries), {
-    rowCssClass: d => d.deliverStatus.getCss(),
+    rowCssClass: d => d.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {

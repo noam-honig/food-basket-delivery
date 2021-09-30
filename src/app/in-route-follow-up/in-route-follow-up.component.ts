@@ -75,7 +75,7 @@ export class InRouteFollowUpComponent implements OnInit {
           settings: new GridSettings(this.remult.repo(ActiveFamilyDeliveries), {
             numOfColumnsInGrid: 7,
             knowTotalRows: true,
-            rowCssClass: fd => fd.deliverStatus.getCss(),
+            rowCssClass: fd => fd.getCss(),
 
             columnSettings: fd => {
               let r: DataControlInfo<ActiveFamilyDeliveries>[] = [

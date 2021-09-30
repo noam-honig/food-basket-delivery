@@ -535,7 +535,7 @@ export class Helpers extends HelpersBase {
                         await this.setAsDefaultVolunteerToDeliveries(busy, deliveries, dialog);
                     }
                 }],
-                rowCssClass: fd => fd.deliverStatus.getCss(),
+                rowCssClass: fd => fd.getCss(),
                 columnSettings: fd => {
                     let r: FieldMetadata[] = [
                         fd.deliverStatus,

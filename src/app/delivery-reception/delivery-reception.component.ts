@@ -28,7 +28,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   deliveries = new GridSettings(this. remult.repo(FamilyDeliveries), {
     allowUpdate: false,
     numOfColumnsInGrid: 3,
-    rowCssClass: f => f.deliverStatus.getCss(),
+    rowCssClass: f => f.getCss(),
 
     knowTotalRows: true,
 

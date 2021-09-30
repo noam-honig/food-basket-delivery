@@ -1257,7 +1257,7 @@ export class ImportFromExcelComponent implements OnInit {
         let result = new GridSettings(this.remult.repo(FamilyDeliveries), {
             numOfColumnsInGrid: 7,
 
-            rowCssClass: fd => fd.deliverStatus.getCss(),
+            rowCssClass: fd => fd.getCss(),
 
 
             columnSettings: fd => {

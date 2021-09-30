@@ -51,7 +51,7 @@ export class DeliveryStatus {
 
   constructor(public id: number, public caption: string, public isProblem = false) {
   }
-  getCss() {
+  getCss(courier:import ('../helpers/helpers').HelpersBase) {
     switch (this) {
       case DeliveryStatus.Success:
       case DeliveryStatus.SuccessLeftThere:
@@ -67,6 +67,8 @@ export class DeliveryStatus {
       case DeliveryStatus.Frozen:
         return 'forzen';
       default:
+        if (this==DeliveryStatus.ReadyForDelivery&&courier)
+          return 'on-the-way';
         return '';
     }
   }

@@ -198,7 +198,7 @@ export class Families extends IdEntity {
     let result = new GridSettings(this.remult.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
-      rowCssClass: fd => fd.deliverStatus.getCss(),
+      rowCssClass: fd => fd.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
         icon: 'add_shopping_cart',
@@ -750,7 +750,7 @@ export class Families extends IdEntity {
         }
         return r;
       },
-      cssClass: f => f.previousDeliveryStatus.getCss()
+      cssClass: f => f.previousDeliveryStatus.getCss(null)
 
 
     } as DataControlSettings<Families>;

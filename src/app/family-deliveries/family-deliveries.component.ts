@@ -455,7 +455,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
   deliveries: GridSettings<ActiveFamilyDeliveries> = new GridSettings(this.remult.repo(ActiveFamilyDeliveries), {
     allowUpdate: true,
-    rowCssClass: f => f.deliverStatus.getCss(),
+    rowCssClass: f => f.getCss(),
     numOfColumnsInGrid: 5,
 
     knowTotalRows: true,
