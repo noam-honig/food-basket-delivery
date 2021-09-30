@@ -108,7 +108,7 @@
     "valueInCode": "מלל סטטוס בעיה בכתובת"
   },
   "addVolunteer": {
-    "google": "הוסף מתנדב/מנהל",
+    "google": "הוסף מתנדב",
     "valueInCode": "הוסף מתנדב"
   },
   "admin": {
@@ -116,7 +116,7 @@
     "valueInCode": "מנהל כלל המערכת"
   },
   "adminRequireToSetPassword": {
-    "google": " אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה. הנך מועבר למסך עדכון פרטים לעדכון סיסמה.",
+    "google": "אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.",
     "valueInCode": "אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה."
   },
   "age": {
@@ -212,23 +212,23 @@
     "valueInCode": "דירה"
   },
   "archiveCurrentDelivery": {
-    "google": "העבר משלוח נוכחי לארכיב?",
+    "google": "העבר משלוח נוכחי לארכיון?",
     "valueInCode": "העבר משלוח נוכחי לארכיון?"
   },
   "archiveCurrentEvent": {
-    "google": "הערב ארוע קיים לארכיב?",
+    "google": "העבר הזדמנות התנדבות לארכיון?",
     "valueInCode": "העבר הזדמנות התנדבות לארכיון?"
   },
   "archiveDate": {
-    "google": "ארכיב: מועד עדכון",
+    "google": "ארכיון: מועד עדכון",
     "valueInCode": "ארכיון: מועד עדכון"
   },
   "archiveDeliveries": {
-    "google": "העברה לארכיב",
+    "google": "העברה לארכיון",
     "valueInCode": "העברה לארכיון"
   },
   "archiveDeliveriesHelp": {
-    "google": "העברה לארכיב תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיב בכל עת במסך היסטורית משלוחים",
+    "google": "העברה לארכיון תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיון בכל עת במסך היסטורית משלוחים",
     "valueInCode": "העברה לארכיון תעשה רק למשלוחים שנמסרו או נתקלו בבעיה. ניתן לראות את הארכיון בכל עת במסך היסטורית משלוחים"
   },
   "archiveDelivery": {
@@ -248,7 +248,7 @@
     "valueInCode": "מחק מתנדב"
   },
   "archiveUser": {
-    "google": "ארכיב: משתמש מעדכן",
+    "google": "ארכיון: משתמש מעדכן",
     "valueInCode": "ארכיון: משתמש מעדכן"
   },
   "areYouSureYouWantToCancelAssignmentTo": {
@@ -288,7 +288,7 @@
     "valueInCode": "בקש מהמתנדב לעדכן מיקום בעת מסירת הסל"
   },
   "assign": {
-    "google": "שייכי",
+    "google": "שייך",
     "valueInCode": "שייך"
   },
   "assignAFamilyGroup": {
@@ -300,7 +300,7 @@
     "valueInCode": "בחירת בניינים"
   },
   "assignCloseDeliveries": {
-    "google": "הצג תרומות בסביבתי",
+    "google": "מצאו לי עוד תורמים בסביבתי",
     "valueInCode": "מצאו לי עוד תורמים בסביבתי"
   },
   "assignDeliveryMenu": {
@@ -324,7 +324,7 @@
     "valueInCode": "משוייך למתנדב"
   },
   "assignerOrOrg": {
-    "google": "הטלפון ממנו יצא הSMS",
+    "google": "טלפון עזרה ברירת מחדל",
     "valueInCode": "טלפון עזרה ברירת מחדל"
   },
   "AssignEscortComponent": {
@@ -352,7 +352,7 @@
     "valueInCode": "משתמש משייך"
   },
   "assignVolunteer": {
-    "google": "שייך למתנדב",
+    "google": "שייך מתנדב",
     "valueInCode": "שייך מתנדב"
   },
   "atAddress": {
@@ -688,11 +688,11 @@
     "valueInCode": "צור משלוח חדש למשפחות"
   },
   "createNewEvent": {
-    "google": "פתיחת ארוע חדש",
+    "google": "פתיחת חלוקה חדש",
     "valueInCode": "פתיחת חלוקה חדשה"
   },
   "createNewEventHelp": {
-    "google": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשר פתיחת משלוח חדש לחיילים",
+    "google": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש לחיילים",
     "valueInCode": "פעולה זו מעבירה את המשלוחים הפעילים לארכיון, ומאפשרת יצירת משלוח חדש למשפחות"
   },
   "createUser": {
@@ -744,7 +744,7 @@
     "valueInCode": "חלוקת מזון"
   },
   "defaultHelpPhone": {
-    "google": "הטלפון ממנו יצא הSMS",
+    "google": "טלפון לעזרה למתנדב",
     "valueInCode": "טלפון לעזרה למתנדב"
   },
   "defaultOrgName": {
@@ -756,7 +756,7 @@
     "valueInCode": "קידומת טלפון ברירת מחדל בקליטה מאקסל"
   },
   "defaultQuantity": {
-    "google": "מספר סלים ברירת מחדל",
+    "google": "כמות ברירת מחדל",
     "valueInCode": "כמות ברירת מחדל"
   },
   "defaultQuestionForVolunteerWhenUploadingPhoto": {
@@ -780,7 +780,7 @@
     "valueInCode": "מתנדב ברירת מחדל"
   },
   "defaulyHelpPhoneExplanation": {
-    "google": "כאשר נשלחת הודעת SMS למתנדב, היא מוצגת כאילו היא יצאה מהטלפון של מי ששייך לו את החיילים ולחץ על הכפתור שלח SMS. ניתן להגדיר כאן שם חלופי וטלפון חלופי",
+    "google": "כאשר המתנדב נתקל בבעיה, מוצגת לו האפשרות להתקשר לעזרה. כברירת מחדל הטלפון לעזרה הוא זה של המשתמש ששייך למתנדב את החייל. ניתן להגדיר שם וטלפון חלופיים לעזרה:",
     "valueInCode": "כאשר המתנדב נתקל בבעיה, מוצגת לו האפשרות להתקשר לעזרה. כברירת מחדל הטלפון לעזרה הוא זה של המשתמש ששייך למתנדב את המשפחה. ניתן להגדיר שם וטלפון חלופיים לעזרה:"
   },
   "defineDeliveriesForFamiliesInExcel": {
@@ -788,7 +788,7 @@
     "valueInCode": "הגדר משלוחים לכל המשפחות מהאקסל"
   },
   "deleted": {
-    "google": "נמחוק",
+    "google": "נמחק",
     "valueInCode": "נמחק"
   },
   "deleteDeliveries": {
@@ -804,7 +804,7 @@
     "valueInCode": "מחק משלוח"
   },
   "deleteDistributionCenter": {
-    "google": "מחק רשימת חלויקה",
+    "google": "מחק רשימת חלוקה",
     "valueInCode": "מחק רשימת חלוקה"
   },
   "deleteExcelSettings": {
@@ -852,8 +852,8 @@
     "valueInCode": "נמסר בהצלחה"
   },
   "deliveresOnTheWayAssignedInTheLast3Hours": {
-    "google": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?",
-    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?"
+    "google": "משלוחים ששוייכו, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInCode": "משלוחים ששוייכו, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?"
   },
   "deliveries": {
     "google": "משלוחים",
@@ -932,7 +932,7 @@
     "valueInCode": "ברירות מחדל למשלוח"
   },
   "deliveryDetails": {
-    "google": "כרטיס משלוח",
+    "google": "פרטי משלוח",
     "valueInCode": "פרטי משלוח"
   },
   "deliveryDetailsAsDisplayedToVolunteer": {
@@ -960,7 +960,7 @@
     "valueInCode": "סטטוס משלוח"
   },
   "deliveryStatusDate": {
-    "google": "מתי",
+    "google": "סטטוס משלוח: מועד עדכון",
     "valueInCode": "סטטוס משלוח: מועד עדכון"
   },
   "deliverySummary": {
@@ -996,7 +996,7 @@
     "valueInCode": "האם להציג את המשפחות של"
   },
   "displayFamilyAsVolunteerWillSeeIt": {
-    "google": "הצג חייל כפי שתנדב יראה אותה",
+    "google": "הצג חייל כפי שמתנדב יראה אותה",
     "valueInCode": "הצג משפחה כפי שמתנדב יראה אותה"
   },
   "distributionCenterComment": {
@@ -1076,7 +1076,7 @@
     "valueInCode": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום"
   },
   "duplicateEvents": {
-    "google": "שכפל ארוע",
+    "google": "שכפל התנדבות",
     "valueInCode": "שכפל התנדבות"
   },
   "DuplicateFamiliesComponent": {
@@ -1084,7 +1084,7 @@
     "valueInCode": "חיפוש משפחות כפולות"
   },
   "duplicateForNextEvent": {
-    "google": "העתק לאירוע הבא",
+    "google": "מתנדב קבוע",
     "valueInCode": "מתנדב קבוע"
   },
   "editComment": {
@@ -1092,15 +1092,15 @@
     "valueInCode": "ערוך הערה"
   },
   "email": {
-    "google": "eMail",
+    "google": "דואל",
     "valueInCode": "דואל"
   },
   "emailDonorContentCaption": {
-    "google": "תוכן אימייל מתנדב",
+    "google": "תוכן אימייל תורם",
     "valueInCode": "תוכן אימייל תורם"
   },
   "emailHelperContentCaption": {
-    "google": "תוכן אימייל תורם",
+    "google": "תוכן אימייל מתנדב",
     "valueInCode": "תוכן אימייל מתנדב"
   },
   "empty": {
@@ -1164,7 +1164,7 @@
     "valueInCode": "עד שעה"
   },
   "eventInfo": {
-    "google": "פרטי ארוע",
+    "google": "פרטי התנדבות",
     "valueInCode": "פרטי התנדבות"
   },
   "eventIsFull": {
@@ -1176,7 +1176,7 @@
     "valueInCode": "הארוע מלא"
   },
   "eventName": {
-    "google": "שם ארוע",
+    "google": "כותרת",
     "valueInCode": "כותרת"
   },
   "eventPreparation": {
@@ -1184,7 +1184,7 @@
     "valueInCode": "טיוטא"
   },
   "eventsComponent": {
-    "google": "ארועים",
+    "google": "הזדמנויות התנדבות",
     "valueInCode": "הזדמנויות התנדבות"
   },
   "eventStatus": {
@@ -1348,7 +1348,7 @@
     "valueInCode": "משלוחים למשפחה"
   },
   "FamilyDeliveriesComponent": {
-    "google": "משלוחים",
+    "google": "משלוחים פעילים",
     "valueInCode": "משלוחים פעילים"
   },
   "familyDetails": {
@@ -1364,7 +1364,7 @@
     "valueInCode": "קבוצות שיוך משפחה"
   },
   "familyHasExistingDeliveriesDoYouWantToViewThem": {
-    "google": "לחייל זו יש משלוחים פעילים, האם אתה להציג אותם?",
+    "google": "לחייל זו יש משלוחים פעילים, האם להציג אותם?",
     "valueInCode": "למשפחה זו יש משלוחים פעילים, האם להציג אותם?"
   },
   "familyHelpContact": {
@@ -1524,7 +1524,7 @@
     "valueInCode": "הקפא רשימת חלוקה"
   },
   "freezeHelper": {
-    "google": "הקפא מתנדב",
+    "google": "עדכן נתוני הקפאת מתנדב",
     "valueInCode": "עדכן נתוני הקפאת מתנדב"
   },
   "from": {
@@ -1536,7 +1536,7 @@
     "valueInCode": "מתאריך"
   },
   "fromGeneralList": {
-    "google": "נרשם דרך הרשימה הכלללית",
+    "google": "נרשם דרך הרשימה הכללית",
     "valueInCode": "נרשם דרך הרשימה הכללית"
   },
   "frozen": {
@@ -1548,7 +1548,7 @@
     "valueInCode": "קפואים"
   },
   "frozenTill": {
-    "google": "תאריך סיום הקפאה",
+    "google": "מוקפא עד לתאריך",
     "valueInCode": "מוקפא עד לתאריך"
   },
   "GeocodeComponent": {
@@ -1600,11 +1600,11 @@
     "valueInCode": "מתנדבים"
   },
   "helpName": {
-    "google": "שם חלופי",
+    "google": "שם לעזרה",
     "valueInCode": "שם לעזרה"
   },
   "helpPhone": {
-    "google": "טלפון חלופי",
+    "google": "טלפון לעזרה",
     "valueInCode": "טלפון לעזרה"
   },
   "hideFamilyPhoneFromVolunteer": {
@@ -1628,7 +1628,7 @@
     "valueInCode": "מספר בית"
   },
   "iCantMakeIt": {
-    "google": "לא אוכל להגיע לארוע",
+    "google": "לא אוכל להגיע להתנדבות",
     "valueInCode": "לא אוכל להגיע להתנדבות"
   },
   "IConfirmEula": {
@@ -1656,7 +1656,7 @@
     "valueInCode": "לעזרה התקשר ל"
   },
   "illBeThere": {
-    "google": "רשום אותי לארוע זה",
+    "google": "רשום אותי להתנדבות זו",
     "valueInCode": "רשום אותי להתנדבות זו"
   },
   "importFamily": {
@@ -1696,7 +1696,7 @@
     "valueInCode": "פרטי עדכונים"
   },
   "infoIsConfidential": {
-    "google": "להציג גם למתנדב וגם למנהל הודעה על סודיות המידע\\n  \"המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\\n  יש לשמור את המידע במקום מוגן שלא תתאפשר גישה לא מורשית למידע.\\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\"\\n  ",
+    "google": "המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\\n  יש לשמור את המידע במקום מוגן שלא יאפשר גישה לא מורשית למידע.\\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\\n  ",
     "valueInCode": "המידע המופק מתוך המערכת מכיל מידע המוגן על פי חוק הגנת הפרטיות.\n  יש לשמור את המידע במקום מוגן שלא יאפשר גישה לא מורשית למידע.\n  אין להעתיק, להפיץ, להציג או למסור לצד שלישי את המידע או חלק ממנו. המוסר את המידע שלא כדין עובר עבירה.\n  "
   },
   "inProgress": {
@@ -1736,7 +1736,7 @@
     "valueInCode": "מוגדר כמלווה של"
   },
   "isDefinedAsLeadVolunteerOf": {
-    "google": "מוגדר המתנדב מוביל של",
+    "google": "מוגדר המתנדב מוביל",
     "valueInCode": "מוגדר המתנדב מוביל"
   },
   "km": {
@@ -1776,7 +1776,7 @@
     "valueInCode": "מאוחר יותר"
   },
   "latestAssigned": {
-    "google": "שוייך אחרון",
+    "google": "שיוך אחרון",
     "valueInCode": "שיוך אחרון"
   },
   "leadHelper": {
@@ -1896,7 +1896,7 @@
     "valueInCode": "מספר משלוחים להגדרת מתנדב עסוק"
   },
   "MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself": {
-    "google": "כמות מוצרים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ",
+    "google": "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו ",
     "valueInCode": "כמות משלוחים מקסימלית שמתנדב עצמאי יכול לשייך לעצמו "
   },
   "MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee": {
@@ -1948,7 +1948,7 @@
     "valueInCode": "עוד חדשות"
   },
   "moreOptions": {
-    "google": "אפשרויות נוספות",
+    "google": "אפשרויות מתקדמות למשלוחים החדשים",
     "valueInCode": "אפשרויות מתקדמות למשלוחים החדשים"
   },
   "moreThanOneRowInDbMatchesExcel": {
@@ -1996,7 +1996,7 @@
     "valueInCode": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש"
   },
   "mustHaveAtLeastOneActiveDistributionList": {
-    "google": "חובה שתהייה רשימת חלוקה אחת לפחות",
+    "google": "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה.",
     "valueInCode": "חובה שתהייה רשימת חלוקה אחת לפחות. לא ניתן להשלים את המחיקה."
   },
   "mustIncludeUrlKeyError": {
@@ -2128,7 +2128,7 @@
     "valueInCode": "לא נמסר, בעיה בכתובת"
   },
   "notDeliveredDontWant": {
-    "google": "לא נמסר, לא צריכים חבילה",
+    "google": "לא נמסר, לא מעוניינים בחבילה",
     "valueInCode": "לא נמסר, לא מעוניינים בחבילה"
   },
   "notDeliveredNotHome": {
@@ -2140,7 +2140,7 @@
     "valueInCode": "לא נמסר, אחר"
   },
   "notDoneDeliveriesShouldArchiveThem": {
-    "google": "משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?",
+    "google": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדש כדי שלא ישמרו סתם בארכיון.",
     "valueInCode": "משלוחים פעילים שטרם שוייכו, יש למחוק אותם לפני פתיחת חלוקה חדשה כדי שלא ישמרו סתם בארכיון."
   },
   "NotHomeProblemStatusText": {
@@ -2188,12 +2188,12 @@
     "valueInCode": "בסטטוס"
   },
   "onTheWay": {
-    "google": "בדרך",
-    "valueInCode": "בדרך"
+    "google": "שוייכו",
+    "valueInCode": "שוייכו"
   },
   "onTheWayDeliveries": {
-    "google": "משלוחים שבדרך",
-    "valueInCode": "משלוחים שבדרך"
+    "google": "משלוחים ששוייכו",
+    "valueInCode": "משלוחים ששוייכו"
   },
   "openWaze": {
     "google": "פתח WAZE",
@@ -2340,7 +2340,7 @@
     "valueInCode": "אם אינך רשומה, אנא הרשמי כאן"
   },
   "pleaseRegisterToTheFollowingEvents": {
-    "google": "אנא הרשמו לאירועים הקרובים",
+    "google": "אנא הרשמו להתנדבויות הבאות",
     "valueInCode": "אנא הרשמו להתנדבויות הבאות"
   },
   "pleaseSelectDistributionList": {
@@ -2360,7 +2360,7 @@
     "valueInCode": "העדפות"
   },
   "preferredDistributionArea": {
-    "google": "כתובת אזור חלוקה מועדף",
+    "google": "כתובת לאזור חלוקה",
     "valueInCode": "כתובת לאזור חלוקה"
   },
   "preferredFinishAddress": {
@@ -2392,7 +2392,7 @@
     "valueInCode": "הדפס מתנדבים"
   },
   "prioritizeRepeatFamilies": {
-    "google": "עדיפות לחיילים חוזרים",
+    "google": "עדיפות לחיילים שהמתנדב היה אצלהן",
     "valueInCode": "עדיפות למשפחות שהמתנדב היה אצלהן"
   },
   "problem": {
@@ -2416,7 +2416,7 @@
     "valueInCode": "בעיות המצריכות טיפול"
   },
   "quantity": {
-    "google": "מספר סלים",
+    "google": "כמות",
     "valueInCode": "כמות"
   },
   "question": {
@@ -2456,7 +2456,7 @@
     "valueInCode": "מוכן למשלוח"
   },
   "recentlyAssigned": {
-    "google": "שוייכו עכשיו",
+    "google": "שיוך חדש",
     "valueInCode": "שיוך חדש"
   },
   "recentVolunteers": {
@@ -2488,7 +2488,7 @@
     "valueInCode": "הרשמה"
   },
   "registeredToEvent": {
-    "google": "הנך רשום לארוע זה",
+    "google": "הנך רשום להתנדבות זו",
     "valueInCode": "הנך רשום להתנדבות זו"
   },
   "registerFamilyReplyEmailText": {
@@ -2508,15 +2508,15 @@
     "valueInCode": "ניהול אתרי רישום"
   },
   "remainingByBaskets": {
-    "google": "נותרו לפי סלים",
+    "google": "טרם שוייכו לפי סלים",
     "valueInCode": "טרם שוייכו לפי סלים"
   },
   "remainingByCities": {
-    "google": "נותרו לפי ערים",
+    "google": "טרם שוייכו לפי ערים",
     "valueInCode": "טרם שוייכו לפי ערים"
   },
   "remainingByGroups": {
-    "google": "נותרו לפי קבוצות",
+    "google": "טרם שוייכו לפי קבוצות",
     "valueInCode": "טרם שוייכו לפי קבוצות"
   },
   "rememberMeOnThisDevice": {
@@ -2656,7 +2656,7 @@
     "valueInCode": "משייך מתנדבים לרשימת חלוקה"
   },
   "revertArchive": {
-    "google": "החזר מארכיב",
+    "google": "החזר מארכיון",
     "valueInCode": "החזר מארכיון"
   },
   "routeOptimization": {
@@ -2744,7 +2744,7 @@
     "valueInCode": "בחירת משפחה על המפה"
   },
   "selectedDeliveries": {
-    "google": "משלוחים סומנו",
+    "google": "סומנו",
     "valueInCode": "סומנו"
   },
   "selectExcelFile": {
@@ -2824,7 +2824,7 @@
     "valueInCode": "שלח הודעה למתנדב"
   },
   "sendReminderSms": {
-    "google": "שלחי SMS לתזכורת",
+    "google": "שלח SMS לתזכורת",
     "valueInCode": "שלח SMS לתזכורת"
   },
   "sendSmsFromDevice": {
@@ -2852,7 +2852,7 @@
     "valueInCode": "שלח ווטסאפ למשפחה"
   },
   "sessionExpiredPleaseRelogin": {
-    "google": "פג תוקף החיבור לשרת, יש לבצע כניסה מחדש",
+    "google": "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש",
     "valueInCode": "לצורך הגנה על פרטיות הנתונים, יש לבצע כניסה מחדש"
   },
   "setAsDefaultVolunteer": {
@@ -2908,7 +2908,7 @@
     "valueInCode": "הצג את כל המשפחות"
   },
   "showArchive": {
-    "google": "הצג ארכיב",
+    "google": "הצג ארכיון",
     "valueInCode": "הצג ארכיון"
   },
   "showAsignDeliveryFor": {
@@ -2928,7 +2928,7 @@
     "valueInCode": "הצג סיכום משלוח למתנדב בכניסה ראשונה"
   },
   "showDistCenterAsEndAddressForVolunteer": {
-    "google": "הצג כתובות רשימת חלוקה כנקודת סיום למתנדב",
+    "google": "הצג את כתובת רשימת החלוקה כנקודת האיסוף",
     "valueInCode": "הצג את כתובת רשימת החלוקה כנקודת האיסוף"
   },
   "showFamilies": {
@@ -3140,7 +3140,7 @@
     "valueInCode": "ישנן עוד "
   },
   "thisFamilyHas": {
-    "google": "לחייל זה יש",
+    "google": "לחייל זו יש",
     "valueInCode": "למשפחה זו יש"
   },
   "thisIsTheDestination": {
@@ -3368,8 +3368,8 @@
     "valueInCode": "עדכן מתנדב למשלוחים"
   },
   "updateVolunteerHelp": {
-    "google": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
-    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו"
+    "google": "בכדי לעדכן מתנדב מ\"שוייכו\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
+    "valueInCode": "בכדי לעדכן מתנדב מ\"שוייכו\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו"
   },
   "updateVolunteers": {
     "google": "מתנדבים לעדכון",
@@ -3392,7 +3392,7 @@
     "valueInCode": "חשב מסלול ממיקום נוכחי"
   },
   "useFamilyDefaultBasketType": {
-    "google": "השתמש בסוג הסל המוגדר לחייל",
+    "google": "סל ברירת מחדל",
     "valueInCode": "סל ברירת מחדל"
   },
   "useFamilyDistributionList": {
@@ -3400,7 +3400,7 @@
     "valueInCode": "רשימת חלוקה לפי המשפחה"
   },
   "useFamilyMembersAsQuantity": {
-    "google": "השתמש במספר נפשות גם ככמות מנות",
+    "google": "השתמש במספר נפשות גם כמספר מנות",
     "valueInCode": "השתמש במספר נפשות גם כמספר מנות"
   },
   "useFamilyQuantity": {
@@ -3408,7 +3408,7 @@
     "valueInCode": "מספר סלים ברירת מחדל"
   },
   "userNotFoundOrWrongPassword": {
-    "google": "משתמשת לא נמצאה או סיסמה שגויה",
+    "google": "משתמש לא נמצא או סיסמה שגויה",
     "valueInCode": "משתמש לא נמצא או סיסמה שגויה"
   },
   "valueAlreadyExistsFor": {

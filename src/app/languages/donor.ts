@@ -284,7 +284,7 @@ export class donor {
   identicalPhone = ' מספר טלפון זהה';
   similarName = ' שם דומה';
   statusSummary = 'סיכום סטטוס';
-  onTheWay = 'בדרך';
+  onTheWay = 'שוייכו';
   unAsigned = 'טרם שוייכו';
   specialUnasigned = 'מיוחדים שטרם שוייכו';
   delivered = 'נמסר';
@@ -537,7 +537,7 @@ export class donor {
   updateDefaultVolunteer = 'עדכן מתנדב ברירת מחדל לתורם';
   clearVolunteer = 'בטל שיוך למתנדב';
   setAsDefaultVolunteer = 'עדכן גם כמתנדב ברירת מחדל';
-  updateVolunteerHelp = 'בכדי לעדכן מתנדב מ"בדרך" ל"מוכן לאיסוף" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו';
+  updateVolunteerHelp = 'בכדי לעדכן מתנדב מ"שוייכו" ל"מוכן למשלוח" יש לסמן את "בטל שיוך למתנדב". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו';
   updateVolunteer = 'עדכן מתנדב למשלוחים';
   updateDeliveriesStatus = 'עדכן סטטוס למשלוחים';
   updateDeliveriesStatusHelp = 'סטטוס "מוקפא" הינו הינו משלוח אשר לא ישוייך לאף מתנדב עד שאותו המשלוח "יופשר". הקפאה משמשת לעצירה זמנית של משלוחים מסויימים עד לשלב בו אפשר להפשיר אותם ולשלוח.             ההקפאה תתבצע רק למשלוחים שהם מוכנים למשלוח. ';
@@ -712,7 +712,7 @@ export class donor {
   familyHasExistingDeliveriesDoYouWantToViewThem = 'לתורם זו יש משלוחים פעילים, האם להציג אותם?';
   and = 'ו';
   markAsDeliveredFor = 'סמן תרומה נאספה ל';
-  onTheWayDeliveries = 'משלוחים שבדרך';
+  onTheWayDeliveries = 'משלוחים ששוייכו';
   markAsSelfPickupFor = 'סמן הפריטים נקלטו ל';
   selfPickupDeliveries = 'משלוחים שמוגדרים כבאים לקחת';
   deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort = 'משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?';
@@ -776,7 +776,7 @@ export class donor {
   deliveriesCreated = 'משלוחים נוצרו';
   doneDotGotoDeliveries = 'התהליך הסתיים בהצלחה, לעבור למסך משלוחים?';
   notDoneDeliveriesShouldArchiveThem = 'משלוחים שטרם שוייכו, האם להעביר אותם לארכיב?';
-  deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך ביצירת משלוח חדש?';
+  deliveresOnTheWayAssignedInTheLast3Hours = 'משלוחים ששוייכו, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?';
   leadHelper = 'מתנדב מוביל';
   movedFrom = 'הועברו מ';
   to = 'ל';

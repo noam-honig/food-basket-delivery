@@ -1067,7 +1067,7 @@
   },
   "deliveresOnTheWayAssignedInTheLast3Hours": {
     "google": "Consegne che sono state assegnate nelle ultime 3 ore e non sono state ancora consegnate, procedere con l'apertura di un nuovo evento?",
-    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInCode": "משלוחים ששוייכו, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
     "valueInEnglish": "Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?"
   },
   "deliveries": {
@@ -2737,12 +2737,12 @@
   },
   "onTheWay": {
     "google": "Assegnato",
-    "valueInCode": "בדרך",
+    "valueInCode": "שוייכו",
     "valueInEnglish": "Assigned"
   },
   "onTheWayDeliveries": {
     "google": "Consegne in movimento",
-    "valueInCode": "משלוחים שבדרך",
+    "valueInCode": "משלוחים ששוייכו",
     "valueInEnglish": "On-the-go deliveries"
   },
   "openWaze": {
@@ -4213,7 +4213,7 @@
   },
   "updateVolunteerHelp": {
     "google": "Per aggiornare un volontario sulla strada per \"pronto per la spedizione\", selezionare \"Annulla iscrizione a un volontario\". In ogni caso, un aggiornamento volontario verrà effettuato solo per consegne non pubblicate",
-    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
+    "valueInCode": "בכדי לעדכן מתנדב מ\"שוייכו\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
     "valueInEnglish": "To update a volunteer on the way to \"ready to ship\", select \"Unsubscribe from a volunteer\". In any case, a volunteer update will only be made to unpublished deliveries"
   },
   "updateVolunteers": {

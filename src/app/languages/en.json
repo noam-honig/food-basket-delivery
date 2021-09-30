@@ -969,7 +969,7 @@
   },
   "deliveresOnTheWayAssignedInTheLast3Hours": {
     "google": "Shipments on the way, which have been associated with the last three hours, should you continue to create a new shipment?",
-    "valueInCode": "משלוחים בדרך, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
+    "valueInCode": "משלוחים ששוייכו, ששוייכו בשלש השעות האחרונות, האם להמשיך בפתיחת ארוע חדש?",
     "custom": "Deliveries that were assigned in the last 3 hours and were not delivered yet, proceed with opening a new event?"
   },
   "deliveries": {
@@ -2393,12 +2393,12 @@
   },
   "onTheWay": {
     "google": "through",
-    "valueInCode": "בדרך",
+    "valueInCode": "שוייכו",
     "custom": "Assigned"
   },
   "onTheWayDeliveries": {
     "google": "On-the-go deliveries",
-    "valueInCode": "משלוחים שבדרך"
+    "valueInCode": "משלוחים ששוייכו"
   },
   "openWaze": {
     "google": "Open WAZE",
@@ -3654,7 +3654,7 @@
   },
   "updateVolunteerHelp": {
     "google": "To update a volunteer on the way to \"ready to ship\", select \"Unsubscribe from a volunteer\". In any case, a volunteer update will only be made to unpublished shipments",
-    "valueInCode": "בכדי לעדכן מתנדב מ\"בדרך\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
+    "valueInCode": "בכדי לעדכן מתנדב מ\"שוייכו\" ל\"מוכן למשלוח\" יש לסמן את \"בטל שיוך למתנדב\". בכל מקרה עדכון מתנדב יעשה רק למשלוחים שאינם נמסרו",
     "custom": "To update a volunteer on the way to \"ready to ship\", select \"Unsubscribe from a volunteer\". In any case, a volunteer update will only be made to unpublished deliveries"
   },
   "updateVolunteers": {
