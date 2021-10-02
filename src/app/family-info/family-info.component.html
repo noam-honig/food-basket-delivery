@@ -53,8 +53,11 @@
 
 
         <span style="display:block"> {{f.getAddressDescription()}} </span>
-        <ng-container *ngIf="f.floor||f.appartment">
+        <ng-container *ngIf="f.floor||f.appartment||f.entrance">
 
+        </ng-container>
+        <ng-container *ngIf="f.entrance">
+          {{f.$.entrance.metadata.caption}} {{f.entrance}}
         </ng-container>
         <ng-container *ngIf="f.floor">
           {{f.$.floor.metadata.caption}} {{f.floor}}
@@ -62,17 +65,14 @@
         <ng-container *ngIf="f.appartment">
           {{f.$.appartment.metadata.caption}} {{f.appartment}}
         </ng-container>
-        <ng-container *ngIf="f.entrance">
-          {{f.$.entrance.metadata.caption}} {{f.entrance}}
-        </ng-container>
 
 
 
 
       </a>
       <ng-container *ngIf="f.buildingCode">
-        <div >
-          {{settings.lang.buildingCode}}:  <strong class="emphesize-comment"> {{f.buildingCode}}</strong>
+        <div>
+          {{settings.lang.buildingCode}}: <strong class="emphesize-comment"> {{f.buildingCode}}</strong>
         </div>
       </ng-container>
       <ng-container *ngIf="f.addressComment">
@@ -87,7 +87,7 @@
         <button mat-menu-item (click)="f.openGoogleMaps()" *ngIf="useWaze()">google map</button>
 
         <button mat-menu-item (click)="f.showOnGovMap()" *ngIf="useWaze()">govmap</button>
-  
+
         <button mat-menu-item (click)="copyAddress(f)">{{settings.lang.copyAddress}}</button>
 
 
@@ -98,11 +98,12 @@
         <mat-icon style="color:lightblue">explore</mat-icon>
       </button>
 
-   
+
     </div>
 
   </div>
-  <button mat-raised-button *ngIf="hasImages&&!images" color="primary" (click)="loadImages()">{{settings.lang.loadImages}}</button>
+  <button mat-raised-button *ngIf="hasImages&&!images" color="primary"
+    (click)="loadImages()">{{settings.lang.loadImages}}</button>
   <app-images [readonly]="true" [images]="images"></app-images>
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer">
     <h4 *ngIf="f.phone1 || f.phone2||f.phone3||f.phone4">{{settings.lang.phones}}:</h4>

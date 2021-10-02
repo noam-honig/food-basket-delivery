@@ -36,6 +36,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { DeliveryImagesComponent } from '../delivery-images/delivery-images.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { PrintStickersComponent } from '../print-stickers/print-stickers.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -660,6 +661,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: () => this.remult.isAllowed(Roles.admin),
         click: async () => {
           this.route.navigateToComponent(PrintVolunteersComponent)
+        }
+      },
+      {
+        name: getLang(this.remult).printStickers,
+        visible: () => this.remult.isAllowed(Roles.admin),
+        click: async () => {
+          this.route.navigateToComponent(PrintStickersComponent)
         }
       },
       {

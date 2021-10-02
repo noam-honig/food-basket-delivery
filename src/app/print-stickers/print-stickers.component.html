@@ -1,18 +1,17 @@
-<div style="position: relative;" [style]="getStyle(pageProps.props,report.page)" *ngIf="report">
-    <div style="display:flex;flex-flow: wrap;">
-        <div *ngFor="let r of data" style="width:200px;flex-shrink: 0;"
-            [ngStyle]="getStyle(stickerProps.props,report.sticker)">
-            <ng-container *ngFor="let f of report.controls">
 
-                <div *ngIf="r[f.fieldKey]" [ngStyle]="getStyle(fieldProps.props,f.propertyValues)"
-                    (click)="editControl(f)">
-                    {{f.propertyValues&& f.propertyValues[textBeforeKey]}} {{r[f.fieldKey]}}
-                </div>
-            </ng-container>
-        </div>
+<div class="container" *ngIf="report" [style]="getStyle(pageProps.props,report.page)">
+    <div *ngFor="let r of data" style="flex-shrink: 0;" [ngStyle]="getStyle(stickerProps.props,report.sticker)"
+        class="item">
+        <ng-container *ngFor="let f of report.controls">
 
+            <div *ngIf="r[f.fieldKey]" [ngStyle]="getStyle(fieldProps.props,f.propertyValues)" (click)="editControl(f)">
+                {{f.propertyValues&& f.propertyValues[textBeforeKey]}} {{r[f.fieldKey]}}
+            </div>
+        </ng-container>
     </div>
-    <div class="no-print" style="border: solid;
+</div>
+
+    <div class="no-print" *ngIf="report" style="border: solid;
     border-width: 1px;
     border-radius: 4px;
     left:0;
@@ -42,7 +41,7 @@
             <button (click)="removeControl(currentProps.control)">הסר שדה</button>
         </ng-container>
         <br>
+        <button (click)="selectControl()">תכונות שדה</button>
         <button (click)="currentProps = stickerProps">תכונות מדבקה</button>
         <button (click)="currentProps = pageProps">תכונות דף</button>
     </div>
-</div>

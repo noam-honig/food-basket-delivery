@@ -115,9 +115,9 @@ export const routes: Routes = [
 
 
   DeliveryHistoryComponent.route,
-  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
-  { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true } },
-  { path: 'print-stickers', component: PrintStickersComponent, canActivate: [AdminGuard], data: { hide: true } },
+  { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true } },
+  { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true } },
+  { path: 'print-stickers', component: PrintStickersComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true, noConfHeaderAndBorders: true } },
 
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'register-donor', component: RegisterDonorComponent, canActivate: [MltOnlyGuard], data: { hide: true } },

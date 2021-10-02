@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { stringify } from 'querystring';
 import { BackendMethod, EntityRef, Field, FieldMetadata, FieldsMetadata, IdEntity, Remult } from 'remult';
 import { ClassType } from 'remult/classType';
 import { InputTypes } from 'remult/inputTypes';
 import { Roles } from '../auth/roles';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectListComponent } from '../select-list/select-list.component';
@@ -38,16 +40,33 @@ export class PrintStickersComponent implements OnInit {
   fieldProps: ElementProps = {
     caption: 'תכונות שדה',
     props: [
+      new SizeProperty("font-size", "גודל גופן", "px"),
       new Property("bold", "הדגשה", InputTypes.checkbox, (v, s) => {
         if (v)
           s["font-weight"] = "bold";
       }),
-      new SizeProperty("font-size", "גודל גופן", "px"),
+      new Property("align-center", "יישר למרכז", InputTypes.checkbox, (v, s) => {
+        if (v)
+          s["text-align"] = "center";
+      }),
+      new Property('color', "צבע", 'color'),
       new Property(this.textBeforeKey, "תאור", '', () => { }),
-      new Property('color', "צבע", 'color')
+      new Property("inline", "באותה שורה", InputTypes.checkbox, (v, s) => {
+        if (v)
+          s["display"] = "inline";
+      })
+
     ],
     values: {}
   };
+  selectControl() {
+    openDialog(SelectValueDialogComponent, x => x.args({
+      values: this.report.controls.map(c => ({ item: c, caption: this.defs.fields.find(y => y.key == c.fieldKey)?.caption })),
+      onSelect: x => this.editControl(x.item)
+    }))
+
+  }
+
   editControl(c: Control) {
     this.currentProps = this.fieldProps;
     if (!c.propertyValues)
@@ -62,11 +81,13 @@ export class PrintStickersComponent implements OnInit {
     if (to >= this.report.controls.length || to < 0)
       return;
     this.report.controls.splice(to, 0, ...this.report.controls.splice(from, 1));
+    this.save();
 
   }
 
   removeControl(c: Control) {
     this.report.controls.splice(this.report.controls.indexOf(c), 1);
+    this.save();
   }
   addControl() {
     openDialog(SelectValueDialogComponent, x => x.args({
@@ -77,6 +98,7 @@ export class PrintStickersComponent implements OnInit {
           propertyValues: {}
         };
         this.report.controls.push(c);
+        this.save();
         this.editControl(c);
       }
     }))
@@ -89,11 +111,22 @@ export class PrintStickersComponent implements OnInit {
     this.data = await PrintStickersComponent.getStickerData();
     this.row = await this.remult.repo(StickerInfo).findFirst({ where: s => s.key.isEqualTo("stickers"), useCache: false, createIfNotFound: true });
     this.report = this.row.info;
-    if (!this.report) {
+    if (!this.report ) {
       this.report = {
-        controls: this.defs.getDefault(),
+        controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }, {
+          fieldKey: 'basketType', propertyValues: {
+            [this.textBeforeKey]: this.remult.lang.basketType + ": "
+          }
+        }, { fieldKey: 'deliveryComments', propertyValues: { 'bold': 'true' } }],
         page: {},
-        sticker: {}
+        sticker: {
+          width: '105',
+          height: '70',
+          "padding-right": '5',
+          "padding-left": '5',
+          "padding-top": '5',
+          "padding-bottom": '5'
+        }
       }
     }
     this.pageProps.values = this.report.page;
@@ -119,11 +152,26 @@ export class PrintStickersComponent implements OnInit {
   @BackendMethod({ allowed: Roles.admin })
   static async getStickerData(remult?: Remult) {
     let d = new defs(remult);
+    let lastCourier = null;
+    for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
+      where: fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup])
+        .and(fd.routeOrder.isEqualTo(0)),
+      orderBy: fd => fd.courier
+    })) {
+      if (fd.courier != lastCourier) {
+        lastCourier = fd.courier;
+        (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(fd.courier, {});
+      }
+    }
+
 
     let r: any[] = [];
-    for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({ orderBy: d => [d.courier, d.routeOrder] })) {
-
-      r.push(d.buildObject(fd._));;
+    for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
+      where: fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]),
+      orderBy: d => [d.deliverStatus, d.courier.descending(), d.routeOrder]
+    })) {
+      let f = await remult.repo(Families).findId(fd.family);
+      r.push(d.buildObject({ fd, f }));;
 
     }
     return r;
@@ -132,68 +180,96 @@ export class PrintStickersComponent implements OnInit {
 }
 
 class genericDefs<dataArgs> {
-  getDefault(): Control[] {
-    let fd = this.remult.repo(ActiveFamilyDeliveries).metadata;
-    return [fd.fields.name, fd.fields.address].map(x => ({ fieldKey: fd.key + "_" + x.key, propertyValues: {} }));
-  }
-  fields: FieldDefs[] = [];
+
+  fields: {
+    key: string,
+    caption: string,
+    build: (args: dataArgs) => string
+  }[] = [];
   constructor(private remult: Remult) {
 
   }
-  addFields<entityType>(entity: ClassType<entityType>, getFields: (entity: FieldsMetadata<entityType>) => FieldMetadata[]) {
+  addFields<entityType extends IdEntity>(entity: ClassType<entityType>, extractFromArgs: (x: dataArgs) => entityType, getFields: (entity: FieldsMetadata<entityType>) => FieldMetadata[]) {
     let repo = this.remult.repo(entity);
     let meta = repo.metadata;
     for (const field of getFields(meta.fields)) {
-      this.fields.push(new FieldDefs(meta.key + "_" + field.key, field.key, meta.key, field.caption))
+      let key = meta.key + "_" + field.key;
+      this.fields.push({
+        key,
+        caption: field.caption,
+        build: (args) => extractFromArgs(args).$.find(field).displayValue
+      })
     }
   }
-  buildObject(...entities: EntityRef<any>[]) {
+  buildObject(args: dataArgs) {
     let r = {};
     for (const field of this.fields) {
-      field.buildDataObject(r, entities);
+      r[field.key] = field.build(args);
     }
     return r;
   }
 }
 class defs extends genericDefs<{
-  d: ActiveFamilyDeliveries,
+  fd: ActiveFamilyDeliveries,
   f: Families
 }> {
+
   constructor(remult: Remult) {
     super(remult);
-    this.addFields(ActiveFamilyDeliveries, f => [
-      f.name,
+    this.fields.push({
+      key: 'name',
+      caption: 'שם',
+      build: ({ fd }) => (fd.courier ? fd.routeOrder + ". " : "") + fd.name
+    });
+    this.fields.push({
+      key: 'helperPhone',
+      caption: 'טלפון מתנדב',
+      build: ({ fd }) => (fd.courier ? fd.courier.phone.displayValue : "")
+    });
+    this.fields.push({
+      key: 'address',
+      caption: 'כתובת מלאה',
+      build: ({ fd }) => fd.getAddressDescription() +
+        (fd.entrance ? ", " + fd.$.entrance.metadata.caption + ": " + fd.entrance : '') +
+        (fd.floor ? ", " + fd.$.floor.metadata.caption + ": " + fd.floor : '') +
+        (fd.appartment ? ", " + fd.$.appartment.metadata.caption + ": " + fd.appartment : '') +
+        (fd.buildingCode ? ", " + fd.$.buildingCode.metadata.caption + ": " + fd.buildingCode : '') +
+        (fd.addressComment ? ", שים לב: " + fd.addressComment : '')
+
+    })
+    this.fields.push({
+      key: 'basketType',
+      caption: remult.lang.basketType,
+      build: ({ fd }) => fd.$.basketType.displayValue
+    });
+    this.fields.push({
+      key: 'deliveryComments',
+      caption: remult.lang.commentForVolunteer,
+      build: ({ fd }) => fd.$.deliveryComments.displayValue
+    });
+
+    this.addFields(ActiveFamilyDeliveries, a => a.fd, f => [
+
       f.address,
       f.phone1,
       f.phone1Description,
       f.phone2,
       f.phone2Description,
-      f.deliveryComments,
+
       f.addressComment,
       f.basketType,
-      f.quantity
+      f.quantity,
+      f.courier
     ]);
-    this.addFields(Families, f => [
+    this.addFields(Families, a => a.f, f => [
       f.familyMembers,
       f.socialWorker
     ]);
+    this.fields.sort((a, b) => a.caption.localeCompare(b.caption));
   }
 
 }
-class FieldDefs {
-  constructor(public key: string, public fieldKey: string, public entityKey: string, public caption: string) {
 
-  }
-  buildDataObject(r: any, entities: EntityRef<any>[]) {
-
-    for (const e of entities) {
-      if (e.metadata.key == this.entityKey) {
-        r[this.key] = e.fields.find(this.fieldKey).displayValue;
-      }
-    }
-  }
-
-}
 
 
 
@@ -205,18 +281,18 @@ interface ElementProps {
 }
 interface Control {
   fieldKey: string,
-  propertyValues: any
+  propertyValues?: any
 }
 function getMarginsH() {
   return [
-    new SizeProperty('margin-left', 'שוליים שמאליים'),
-    new SizeProperty('margin-right', 'שוליים ימניים')
+    new SizeProperty('padding-left', 'שוליים שמאליים'),
+    new SizeProperty('padding-right', 'שוליים ימניים')
   ]
 }
 function getMarginsV() {
   return [
-    new SizeProperty('margin-top', 'שוליים עליונים'),
-    new SizeProperty('margin-bottom', 'שוליים תחתונים')
+    new SizeProperty('padding-top', 'שוליים עליונים'),
+    new SizeProperty('padding-bottom', 'שוליים תחתונים')
   ]
 }
 
@@ -251,11 +327,3 @@ interface ReportInfo {
   controls: Control[];
 }
 
-
-/**
- * [] add number in list
- * [] add all needed fields,
- * [] add custom field - like in excel import.
- * [] add full address
- * [] add address without city
- */

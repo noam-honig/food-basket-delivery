@@ -100,10 +100,20 @@ export class AppComponent {
     return ApplicationSettings.get(this.remult).organisationName;
   }
   toolbarColor = 'primary';
+  showConfidentialityApproveInPrint() {
+
+    if (this.noConfHeaderAndBorders())
+      return false;
+    return this.settings.requireConfidentialityApprove;
+
+  }
+  noConfHeaderAndBorders() {
+    return this.activeRoute?.firstChild?.snapshot?.routeConfig?.data?.noConfHeaderAndBorders
+  }
   showSideBar() {
     if (!this.remult.authenticated())
       return false;
-    if (this.activeRoute&&this.activeRoute.firstChild&&this.activeRoute.firstChild.snapshot&&this.activeRoute.firstChild.snapshot.routeConfig&&this.activeRoute.firstChild.snapshot.routeConfig.path=="playback") {
+    if (this.activeRoute?.firstChild?.snapshot?.routeConfig?.data?.noBar) {
       return false;
 
     }

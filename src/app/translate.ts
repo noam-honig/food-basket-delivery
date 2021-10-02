@@ -1172,6 +1172,7 @@ export class Language {
   loadImages = "טען תמונות";
   dido = 'כנ"ל';
   organisationName = "שם הארגון";
+  printStickers="הדפסת מדבקות";
 }
 
 const defaultLang = new Language();

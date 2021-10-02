@@ -1,4 +1,4 @@
-<div *ngIf="settings.requireConfidentialityApprove" class="print-only">
+<div *ngIf="showConfidentialityApproveInPrint()" class="print-only">
   {{settings.lang.infoIsConfidential}}
 </div>
 <mat-sidenav-container class="app-sidenav-container">
@@ -71,7 +71,7 @@
       </div>
 
     </div>
-    <footer style="text-align:center;font-size:70%;padding-bottom: 5px;">
+    <footer style="text-align:center;font-size:70%;padding-bottom: 5px;" *ngIf="!noConfHeaderAndBorders()">
       <hr style="padding:0px">
       <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
       <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html"
