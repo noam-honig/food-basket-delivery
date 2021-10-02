@@ -1,0 +1,48 @@
+<div style="position: relative;" [style]="getStyle(pageProps.props,report.page)" *ngIf="report">
+    <div style="display:flex;flex-flow: wrap;">
+        <div *ngFor="let r of data" style="width:200px;flex-shrink: 0;"
+            [ngStyle]="getStyle(stickerProps.props,report.sticker)">
+            <ng-container *ngFor="let f of report.controls">
+
+                <div *ngIf="r[f.fieldKey]" [ngStyle]="getStyle(fieldProps.props,f.propertyValues)"
+                    (click)="editControl(f)">
+                    {{f.propertyValues&& f.propertyValues[textBeforeKey]}} {{r[f.fieldKey]}}
+                </div>
+            </ng-container>
+        </div>
+
+    </div>
+    <div class="no-print" style="border: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    left:0;
+    top:0;
+    background-color: white;
+    position: absolute;
+    padding: 10px;">
+        <strong>{{currentProps.caption}}</strong>
+        <table>
+            <tr *ngFor="let p of currentProps.props">
+                <td>
+                    <input *ngIf="p.inputType!='checkbox'" [(ngModel)]="currentProps.values[p.key]" [type]="p.inputType"
+                        (change)="save()">
+                    <input *ngIf="p.inputType=='checkbox'" [(ngModel)]="currentProps.values[p.key]" type="checkbox"
+                        (change)="save()">
+
+                </td>
+                <td>
+                    {{p.caption}}
+                </td>
+            </tr>
+        </table>
+        <button (click)="addControl()">הוסף שדה</button>
+        <ng-container *ngIf="currentProps.control">
+            <button (click)="moveControl(-1)">הזז למעלה</button>
+            <button (click)="moveControl(1)">הזז למטה</button>
+            <button (click)="removeControl(currentProps.control)">הסר שדה</button>
+        </ng-container>
+        <br>
+        <button (click)="currentProps = stickerProps">תכונות מדבקה</button>
+        <button (click)="currentProps = pageProps">תכונות דף</button>
+    </div>
+</div>

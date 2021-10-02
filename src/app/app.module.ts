@@ -106,6 +106,7 @@ import { EventInfoComponent } from './event-info/event-info.component';
 import { EventCardComponent } from './event-card/event-card.component';
 import { OrgEventsComponent } from './org-events/org-events.component';
 import { DotsMenuComponent } from './dots-menu/dots-menu.component';
+import { PrintStickersComponent } from './print-stickers/print-stickers.component';
 
 
 
@@ -207,7 +208,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     EventInfoComponent,
     EventCardComponent,
     OrgEventsComponent,
-    DotsMenuComponent
+    DotsMenuComponent,
+    PrintStickersComponent
 
 
   ],

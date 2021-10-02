@@ -25,7 +25,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles,SignedInAndNotOverviewGuard, EventListGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles, SignedInAndNotOverviewGuard, EventListGuard } from './auth/roles';
 import { AuthenticatedInGuard } from '@remult/angular';
 import { Remult } from 'remult';
 
@@ -53,35 +53,36 @@ import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
 import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
 import { OrgEventsComponent } from './org-events/org-events.component';
+import { PrintStickersComponent } from './print-stickers/print-stickers.component';
 
 
 @Injectable()
 export class MltOnlyGuard implements CanActivate {
-    constructor(private remult: Remult) {
+  constructor(private remult: Remult) {
 
-    }
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-        let site = Sites.getOrganizationFromContext(this.remult);
-        
-        if (site == 'mlt')
-            return true;
-        return false;
-    }
+  }
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
+    let site = Sites.getOrganizationFromContext(this.remult);
+
+    if (site == 'mlt')
+      return true;
+    return false;
+  }
 
 
 }
 @Injectable()
 export class MltAdminGuard implements CanActivate {
-    constructor(private remult: Remult) {
+  constructor(private remult: Remult) {
 
-    }
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-        let site = Sites.getOrganizationFromContext(this.remult);
-        
-        if (site == 'mlt')
-            return this.remult.isAllowed(Roles.admin);
-        return false;
-    }
+  }
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
+    let site = Sites.getOrganizationFromContext(this.remult);
+
+    if (site == 'mlt')
+      return this.remult.isAllowed(Roles.admin);
+    return false;
+  }
 
 
 }
@@ -96,12 +97,12 @@ export const routes: Routes = [
   },
   SelfPickupComponent.route,
   FamilyDeliveriesComponent.route,
-  { path: 'in-route-helpers', component: InRouteFollowUpComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים בדרך' } },
-  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard],data: { name: 'תורמים שטרם שויכו' } },
-  { path: 'volunteer-cross-assign', component: VolunteerCrossAssignComponent, canActivate: [MltAdminGuard],data: { name: 'מתנדבים שטרם שויכו' } },
+  { path: 'in-route-helpers', component: InRouteFollowUpComponent, canActivate: [MltAdminGuard], data: { name: 'מתנדבים בדרך' } },
+  { path: 'cross-assign', component: ShipmentAssignScreenComponent, canActivate: [MltAdminGuard], data: { name: 'תורמים שטרם שויכו' } },
+  { path: 'volunteer-cross-assign', component: VolunteerCrossAssignComponent, canActivate: [MltAdminGuard], data: { name: 'מתנדבים שטרם שויכו' } },
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
-  
+
   NewsComponent.needsWorkRoute,
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
@@ -109,25 +110,26 @@ export const routes: Routes = [
   HelpersComponent.route,
   { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { hide: true } },
 
-  {path: 'reception', component: DeliveryReceptionComponent, canActivate: [LabGuard], data: { name: 'קליטת משלוח' }},
+  { path: 'reception', component: DeliveryReceptionComponent, canActivate: [LabGuard], data: { name: 'קליטת משלוח' } },
 
-  
-  
+
+
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true } },
-  
+  { path: 'print-stickers', component: PrintStickersComponent, canActivate: [AdminGuard], data: { hide: true } },
+
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
-  { path: 'register-donor', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
-  { path: 'register-donor-cc', component: RegisterDonorComponent,canActivate:[MltOnlyGuard] , data: { hide: true, isCC: true } },
-  { path: 'register-helper', component: RegisterHelperComponent,canActivate:[MltOnlyGuard] , data: { hide: true } },
-  
-  
+  { path: 'register-donor', component: RegisterDonorComponent, canActivate: [MltOnlyGuard], data: { hide: true } },
+  { path: 'register-donor-cc', component: RegisterDonorComponent, canActivate: [MltOnlyGuard], data: { hide: true, isCC: true } },
+  { path: 'register-helper', component: RegisterHelperComponent, canActivate: [MltOnlyGuard], data: { hide: true } },
+
+
   { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard] },
   { path: 'helper-gifts', component: HelperGiftsComponent, canActivate: [MltAdminGuard] },
   { path: 'register-url', component: RegisterURLComponent, canActivate: [MltAdminGuard] },
-  
+
   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
   LoginFromSmsComponent.route,
@@ -137,8 +139,8 @@ export const routes: Routes = [
   { path: 'events', component: OrgEventsComponent },
   UpdateInfoComponent.route,
   LoginComponent.route,
-  {path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard]},
-  
+  { path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard] },
+
 
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }
@@ -148,13 +150,13 @@ export const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule, RouterModule.forRoot(routes
-            //,{enableTracing:true}
+      //,{enableTracing:true}
     )
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard,LabGuard,distCenterOrLabGuard,MltOnlyGuard,
-    MltAdminGuard,SignedInAndNotOverviewGuard,EventListGuard]
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
+    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard]
 
 })
 
