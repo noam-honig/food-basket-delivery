@@ -56,5 +56,6 @@
 <mat-dialog-actions>
   
   <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
+  <button mat-raised-button (click)="doSelection()" color="accent" *ngIf="args.allowSelectAll">{{settings.lang.selectAll}}</button>
   <mat-checkbox [(ngModel)]="showAll" *ngIf="args.allowShowAll" (change)="doFilter()" style="margin-right:10px" >{{settings.lang.showAll}}</mat-checkbox>
 </mat-dialog-actions>

@@ -192,7 +192,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 onSelect: async h => {
                     if (h) {
                         await this.verifyHelperExistance();
-                        new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false)
+                        new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false,'',true)
                     }
                 }
             });

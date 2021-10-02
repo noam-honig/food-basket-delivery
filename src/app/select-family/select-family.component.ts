@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { BusyService, GridSettings } from '@remult/angular';
-import { AndFilter, FilterFactories } from 'remult';
+import { AndFilter, EntityOrderBy, FilterFactories } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Filter } from 'remult';
 import { Remult } from 'remult';
@@ -20,16 +20,18 @@ export class SelectFamilyComponent implements OnInit {
 
   public args: {
     where: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter,
+    orderBy?: EntityOrderBy<ActiveFamilyDeliveries>,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
     distCenter: DistributionCenters,
-    allowShowAll?: boolean
+    allowShowAll?: boolean,
+    allowSelectAll?:boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private remult: Remult, public settings: ApplicationSettings) { }
   searchString: string = '';
-  families = new GridSettings(this. remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
-  pageSize = 7;
+  families = new GridSettings(this.remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
+  pageSize = 30;
   showAll = false;
   selectFirst() {
 
@@ -81,7 +83,7 @@ export class SelectFamilyComponent implements OnInit {
         }
         return result;
       },
-      orderBy: f => f.name,
+      orderBy: this.args.orderBy || (f => f.name),
       limit: this.pageSize
     });
 
@@ -97,7 +99,7 @@ export class SelectFamilyComponent implements OnInit {
     if (this.selected.length > 0) {
       this.args.onSelect(this.selected);
     }
-    else if (this.searchString && this.searchString.length > 0) {
+    else if (this.searchString && this.searchString.length > 0||this.args.allowSelectAll) {
 
       this.pageSize = 200;
       await this.getRows();
@@ -108,6 +110,7 @@ export class SelectFamilyComponent implements OnInit {
     this.dialogRef.close();
 
   }
+  
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
       if (f.courier) {

@@ -96,7 +96,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   async refreshRoute() {
     var useCurrentLocation = new InputField<boolean>({ caption: use.language.useCurrentLocationForStart, valueType: Boolean });
-    var strategy = new InputField<routeStrategy>({ valueType: routeStrategy,caption:use.language.routeOptimization });
+    var strategy = new InputField<routeStrategy>({ valueType: routeStrategy, caption: use.language.routeOptimization });
     strategy.value = this.settings.routeStrategy;
 
     await openDialog(InputAreaComponent, x => x.args = {
@@ -132,11 +132,11 @@ export class HelperFamiliesComponent implements OnInit {
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd = SqlFor( remult.repo(ActiveFamilyDeliveries));
+    let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
     let sql = new SqlBuilder(remult);
     let settings = await ApplicationSettings.getAsync(remult);
-    let privateDonation = selfAssign ? (await  remult.repo(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
+    let privateDonation = selfAssign ? (await remult.repo(FamilySources).findFirst(x => x.name.isEqualTo('תרומה פרטית'))) : null;
 
     for (const r of (await db.execute(await sql.query({
       select: () => [
@@ -158,7 +158,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
     }))).rows) {
       let existing = result.find(async x => x.item.familyId == await getValueFromResult(r, fd.family));
-      let basketName = (await  remult.repo(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
+      let basketName = (await remult.repo(BasketType).findFirst(async x => x.id.isEqualTo(await getValueFromResult(r, fd.basketType)))).name;
       if (existing) {
         existing.name += ", " + await getValueFromResult(r, fd.quantity) + " X " + basketName;
         existing.item.totalItems += await getValueFromResult(r, fd.quantity);
@@ -304,7 +304,7 @@ export class HelperFamiliesComponent implements OnInit {
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
     let dist: DistributionCenters = null;
-    await pagedRowsIterator( remult.repo(ActiveFamilyDeliveries), {
+    await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         fd.courier = null;
@@ -328,7 +328,7 @@ export class HelperFamiliesComponent implements OnInit {
   static async okAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
     let dist: DistributionCenters = null;
 
-    await pagedRowsIterator( remult.repo(ActiveFamilyDeliveries), {
+    await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
       where: fd => FamilyDeliveries.onTheWayFilter().and(fd.courier.isEqualTo(helper)),
       forEachRow: async fd => {
         dist = fd.distributionCenter;
@@ -357,7 +357,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    await new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true);
+    await new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true, '', true);
 
   }
 
@@ -381,7 +381,7 @@ export class HelperFamiliesComponent implements OnInit {
       if (this.familyLists.helper.leadHelper) {
         this.otherDependentVolunteers.push(this.familyLists.helper.leadHelper);
       }
-      this.otherDependentVolunteers.push(...await this. remult.repo(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
+      this.otherDependentVolunteers.push(...await this.remult.repo(Helpers).find({ where: h => h.leadHelper.isEqualTo(this.familyLists.helper) }));
     });
   }
   otherDependentVolunteers: HelpersBase[] = [];
@@ -400,7 +400,7 @@ export class HelperFamiliesComponent implements OnInit {
       return;
     if (!settings.sendSuccessMessageToFamily)
       return;
-    let fd = await  remult.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
+    let fd = await remult.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(deliveryId).and(f.visibleToCourier.isEqualTo(true)).and(f.deliverStatus.isIn([DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere])));
     if (!fd)
       console.log("did not send sms to " + deliveryId + " failed to find delivery");
     if (!fd.phone1)
@@ -568,7 +568,7 @@ export class HelperFamiliesComponent implements OnInit {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
         save: async (comment) => {
-          let hist = this. remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+          let hist = this.remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
           hist.volunteer = this.familyLists.helper;
           hist.comment = comment;
           await hist.save();

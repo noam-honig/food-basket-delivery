@@ -388,7 +388,7 @@ export class Language {
   selectDeliveryByName = 'בחירת משפחה לפי שם';
   selectDeliveryOnMap = 'בחירת משפחה על המפה';
   selectDeliveryByStreet = 'בחירת משפחה לפי רחוב';
-  transferDeliveriesFromOtherVolunteer = 'העבר משפחות ממתנדב אחר';
+  transferDeliveriesFromOtherVolunteer = 'העבר משלוחים ממתנדב אחר';
   replanRoute = 'חשב מסלול מחדש';
   isDefinedAsEscortOf = 'מוגדר כמלווה של';
   displayFamiliesOf = 'האם להציג את המשפחות של';
@@ -1173,6 +1173,7 @@ export class Language {
   dido = 'כנ"ל';
   organisationName = "שם הארגון";
   printStickers="הדפסת מדבקות";
+  selectAll = "בחר הכל";
 }
 
 const defaultLang = new Language();
