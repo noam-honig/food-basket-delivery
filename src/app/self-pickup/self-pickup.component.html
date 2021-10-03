@@ -7,7 +7,7 @@
 </mat-checkbox>
 <mat-accordion class="no-print">
   <mat-expansion-panel #myPanel *ngFor="let f of families.items;let i=index">
-    <mat-expansion-panel-header class="mat-expansion-panel-header {{f.deliverStatus.getCss()}}">
+    <mat-expansion-panel-header class="mat-expansion-panel-header {{f.getCss()}}">
       <app-family-in-list [f]="f" [i]="i+1" style="width:100%"></app-family-in-list>
 
     </mat-expansion-panel-header>
