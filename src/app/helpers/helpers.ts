@@ -351,7 +351,7 @@ export abstract class HelpersBase extends IdEntity {
         if (!remult.authenticated())
             return self.id.isEqualTo("No User");
         else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
-            return self.allowedIds.contains(remult.user.id);
+            return self.allowedIds.contains(remult.user.id); 
     }
 )
 

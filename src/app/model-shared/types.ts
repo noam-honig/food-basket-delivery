@@ -1,5 +1,5 @@
 
-import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Remult, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity, OptionsFactory } from 'remult';
+import { Entity, Filter, SortSegment, SqlCommand, SqlResult, AndFilter, Remult, ValueConverter, FieldRef, FieldOptions, FieldMetadata, EntityMetadata, EntityRef, Repository, FieldsMetadata, FilterFactories, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, IdEntity } from 'remult';
 import { TranslationOptions, use, Field, FieldType, TranslatedCaption } from '../translate';
 import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
@@ -40,13 +40,13 @@ export class Email {
   }
 }
 
-export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, Date>>) {
+export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
   return Field<entityType, Date>({
     ...{ displayValue: (e, x) => x ? x.toLocaleString("he-il") : '' },
     ...settings
   }, ...options)
 }
-export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: OptionsFactory<FieldOptions<entityType, Date>>) {
+export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
   return (a, b) => {
     DataControl({ readonly: true })(a, b)
     return DateTimeColumn<entityType>({
