@@ -160,7 +160,7 @@ export class PrintStickersComponent implements OnInit {
     })) {
       if (fd.courier != lastCourier) {
         lastCourier = fd.courier;
-        (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(fd.courier, {});
+        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(fd.courier, {},undefined,remult);
       }
     }
 
