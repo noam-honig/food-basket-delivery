@@ -51,10 +51,10 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
 
     constructor(remult: Remult) {
         super(remult, {
-            dialogColumns: async c => [
-                this.$.updateFamilyStatus,
-                { field: this.$.status, visible: () => this.updateFamilyStatus }
-            ],
+             dialogColumns: async c => [],
+            //     this.$.updateFamilyStatus,
+            //     { field: this.$.status, visible: () => this.updateFamilyStatus }
+            // ],
             title: getLang(remult).deleteDeliveries,
             icon: 'delete',
             help: () => getLang(this.remult).deleteDeliveriesHelp,
