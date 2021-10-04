@@ -1,6 +1,6 @@
 
 <div class="container" *ngIf="report" [style]="getStyle(pageProps.props,report.page)">
-    <div *ngFor="let r of data" style="flex-shrink: 0;" [ngStyle]="getStyle(stickerProps.props,report.sticker)"
+    <div *ngFor="let r of data" style="flex-shrink: 0;position: relative;" [ngStyle]="getStyle(stickerProps.props,report.sticker)"
         class="item">
         <ng-container *ngFor="let f of report.controls">
 
@@ -8,6 +8,9 @@
                 {{f.propertyValues&& f.propertyValues[textBeforeKey]}} {{r[f.fieldKey]}}
             </div>
         </ng-container>
+        <button mat-icon-button class="edit-button" (click)="editSticker(r)">
+            <mat-icon>edit</mat-icon>
+        </button>
     </div>
 </div>
 

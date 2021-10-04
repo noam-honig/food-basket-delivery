@@ -10,13 +10,14 @@ import { Families } from '../families/families';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { Entity } from '../translate';
+import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
 
 
 @Component({
   selector: 'app-print-stickers',
   templateUrl: './print-stickers.component.html',
-  styleUrls: ['./print-stickers.component.css']
+  styleUrls: ['./print-stickers.component.scss']
 })
 export class PrintStickersComponent implements OnInit {
   textBeforeKey = "@textBefore";
@@ -66,6 +67,20 @@ export class PrintStickersComponent implements OnInit {
     }))
 
   }
+  async editSticker(d: any) {
+
+    let [familyDelivery, family] = await this.busy.doWhileShowingBusy(() => this.remult.repo(ActiveFamilyDeliveries).findId(d.id).then(async fd => [fd, await this.remult.repo(Families).findId(fd.family)]));
+
+    openDialog(UpdateFamilyDialogComponent, x => x.args = {
+      family, familyDelivery, onSave: async () => {
+        await familyDelivery._.reload();
+        let i = this.data.indexOf(d);
+        this.data[i] = this.defs.buildObject(familyDelivery.id, {
+          fd: familyDelivery, f: family
+        })
+      }
+    })
+  }
 
   editControl(c: Control) {
     this.currentProps = this.fieldProps;
@@ -111,7 +126,7 @@ export class PrintStickersComponent implements OnInit {
     this.data = await PrintStickersComponent.getStickerData();
     this.row = await this.remult.repo(StickerInfo).findFirst({ where: s => s.key.isEqualTo("stickers"), useCache: false, createIfNotFound: true });
     this.report = this.row.info;
-    if (!this.report ) {
+    if (!this.report) {
       this.report = {
         controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }, {
           fieldKey: 'basketType', propertyValues: {
@@ -160,7 +175,7 @@ export class PrintStickersComponent implements OnInit {
     })) {
       if (fd.courier != lastCourier) {
         lastCourier = fd.courier;
-        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(fd.courier, {},undefined,remult);
+        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(fd.courier, {}, undefined, remult);
       }
     }
 
@@ -171,7 +186,8 @@ export class PrintStickersComponent implements OnInit {
       orderBy: d => [d.deliverStatus, d.courier.descending(), d.routeOrder]
     })) {
       let f = await remult.repo(Families).findId(fd.family);
-      r.push(d.buildObject({ fd, f }));;
+      let o = d.buildObject(fd.id, { fd, f });
+      r.push(o);
 
     }
     return r;
@@ -201,8 +217,8 @@ class genericDefs<dataArgs> {
       })
     }
   }
-  buildObject(args: dataArgs) {
-    let r = {};
+  buildObject(id: string, args: dataArgs) {
+    let r = { id };
     for (const field of this.fields) {
       r[field.key] = field.build(args);
     }
@@ -240,7 +256,7 @@ class defs extends genericDefs<{
     this.fields.push({
       key: 'basketType',
       caption: remult.lang.basketType,
-      build: ({ fd }) => fd.$.basketType.displayValue
+      build: ({ fd }) => (fd.quantity > 1 ? fd.quantity + " X " : "") + fd.$.basketType.displayValue
     });
     this.fields.push({
       key: 'deliveryComments',
@@ -255,10 +271,6 @@ class defs extends genericDefs<{
       f.phone1Description,
       f.phone2,
       f.phone2Description,
-
-      f.addressComment,
-      f.basketType,
-      f.quantity,
       f.courier
     ]);
     this.addFields(Families, a => a.f, f => [
