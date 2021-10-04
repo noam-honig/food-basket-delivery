@@ -162,7 +162,7 @@ export class CreateNewEvent {
             [this.$.excludeGroups, settings.$.excludeGroupsInCreateEvent]]) {
             x[0].value = x[1].value;
         }
-        if (this.includeGroups) {
+        if (this.includeGroups.evilGet() != '') {
             this.moreOptions = true;
         }
         this._selectedDistributionList = dialog.distCenter;
