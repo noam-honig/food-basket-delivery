@@ -1,0 +1,28 @@
+.container {
+    /* background-color: red; */
+}
+.item {
+    /* background-color: yellow; */
+    /* border: solid; */
+    display: inline-table;
+    box-sizing: border-box;
+    
+
+}
+.edit-button {
+    display:none;
+    top:0;
+    right:0;
+    position: absolute;
+}
+.item:hover{
+    .edit-button{
+        display: block;
+    }
+}
+
+.edit-button:hover {
+    background-color: #2196f3;
+    color:white;
+    
+}
