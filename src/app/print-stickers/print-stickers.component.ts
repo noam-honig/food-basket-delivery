@@ -16,7 +16,7 @@ import { VolunteerReportDefs } from './VolunteerReportDefs';
 export class PrintStickersComponent implements OnInit {
 
   constructor(private remult: Remult, private busy: BusyService) { }
-  defs = new VolunteerReportDefs(this.remult);
+  defs = new VolunteerReportDefs(this.remult,this.busy);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;

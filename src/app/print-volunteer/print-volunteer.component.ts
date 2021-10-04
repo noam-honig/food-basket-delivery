@@ -15,7 +15,7 @@ export class PrintVolunteerComponent implements OnInit {
 
 
   constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
-  defs = new VolunteerReportDefs(this.remult);
+  defs = new VolunteerReportDefs(this.remult,this.busy);
   report: ReportInfo;
   row: VolunteerReportInfo;
 

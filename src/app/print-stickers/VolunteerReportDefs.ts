@@ -13,7 +13,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   f: Families;
 }> {
 
-  constructor(remult: Remult, private busy?: BusyService) {
+  constructor(remult: Remult, private busy: BusyService) {
     super(remult);
     this.fields.push({
       key: 'name',
@@ -86,7 +86,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   }
   @BackendMethod({ allowed: Roles.admin })
   static async getStickerData(remult?: Remult) {
-    let d = new VolunteerReportDefs(remult);
+    let d = new VolunteerReportDefs(remult, undefined);
     let lastCourier = null;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
       where: fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup])
@@ -113,7 +113,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     return r;
   }
   textBeforeKey = "@textBefore";
-  helperPhoneKey="helperPhone";
+  helperPhoneKey = "helperPhone";
   fieldProps: ElementProps = {
     caption: 'תכונות שדה',
     props: [
