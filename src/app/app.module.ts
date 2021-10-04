@@ -90,6 +90,7 @@ import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
 import { PlatformModule } from '@angular/cdk/platform';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component';
 import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 
@@ -220,6 +221,7 @@ export class MyHammerConfig extends HammerGestureConfig {
   imports: [
     BrowserModule,
     FormsModule,
+    DragDropModule,
     NgxPaginationModule,
     MaterialModule,
     BrowserAnimationsModule,

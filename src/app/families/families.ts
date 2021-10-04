@@ -75,6 +75,8 @@ declare type factoryFor<T> = {
       if (!self.defaultDistributionCenter)
         self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location());
       let currentUser = self.remult.currentUser;
+      if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
+        self.routeOrder = 0;
       if (self.isNew()) {
         self.createDate = new Date();
         self.createUser = currentUser;
@@ -390,6 +392,7 @@ export class Families extends IdEntity {
       this.$.buildingCode,
       this.$.city,
       this.$.area,
+      this.$.routeOrder,
       this.$.addressComment,//
       this.$.addressLongitude,
       this.$.addressLatitude,
@@ -589,6 +592,10 @@ export class Families extends IdEntity {
     }
   })
   fixedCourier: HelpersBase;
+  @IntegerField({
+    allowApiUpdate: true
+  })
+  routeOrder: number;
   @Field({
     allowApiUpdate: Roles.admin,
     translation: l => l.defaultDistributionCenter

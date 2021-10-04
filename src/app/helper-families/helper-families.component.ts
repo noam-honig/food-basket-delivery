@@ -24,7 +24,7 @@ import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { relativeDateName } from '../model-shared/types';
+import { myThrottle, relativeDateName } from '../model-shared/types';
 import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Sites, getLang } from '../sites/sites';
@@ -39,6 +39,8 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { FamilySources } from '../families/FamilySources';
 import { routeStrategy } from '../asign-family/route-strategy';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { PromiseThrottle } from '../shared/utils';
 
 
 @Component({
@@ -72,6 +74,19 @@ export class HelperFamiliesComponent implements OnInit {
     setTimeout(() => {
       this.visibleSigns.pop();
     }, 1000);
+  }
+  async drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.familyLists.toDeliver, event.previousIndex, event.currentIndex);
+    this.busy.doWhileShowingBusy(async () => {
+      let t = new PromiseThrottle(15);
+      let i = 1;
+      for (const d of this.familyLists.toDeliver) {
+        d.routeOrder = i++;
+        await t.push(d.save());
+      }
+      await t.done();
+      this.map.test(this.familyLists.toDeliver, this.familyLists.helper);
+    });
   }
 
   constructor(public auth: AuthService, private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings) { }

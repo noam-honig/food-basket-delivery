@@ -51,9 +51,9 @@
         <mat-icon class="example-tab-icon">toc</mat-icon>
         {{settings.lang.list}}
       </ng-template>
-      <mat-accordion class="no-print">
+      <mat-accordion class="no-print" cdkDropList (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy">
-          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)">
+          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" cdkDrag>
             <mat-expansion-panel-header>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"

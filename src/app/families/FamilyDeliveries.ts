@@ -66,7 +66,7 @@ export class MessageStatus {
             self.quantity = 1;
         if (self.distributionCenter == null)
             self.distributionCenter = await self.remult.repo(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
-        if (self.$.courier.valueChanged())
+        if (self.$.courier.valueChanged() && !self.courier)
             self.routeOrder = 0;
 
         if (isBackend()) {
@@ -107,7 +107,7 @@ export class MessageStatus {
 })
 export class FamilyDeliveries extends IdEntity {
     getCss(): string {
-      return this.deliverStatus.getCss(this.courier);
+        return this.deliverStatus.getCss(this.courier);
     }
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
@@ -253,7 +253,7 @@ export class FamilyDeliveries extends IdEntity {
     @Field({ includeInApi: Roles.admin })
     internalDeliveryComment: string;
     @IntegerField({
-        allowApiUpdate: Roles.distCenterAdmin
+        allowApiUpdate: true
     })
     routeOrder: number;
     @Field({ includeInApi: Roles.admin, translation: l => l.specialAsignment })

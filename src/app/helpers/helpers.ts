@@ -615,6 +615,7 @@ export class Helpers extends HelpersBase {
                 i++;
                 let f = await this.remult.repo((await import('../families/families')).Families).findId(fd.family);
                 f.fixedCourier = fd.courier;
+                f.routeOrder = fd.routeOrder;
                 await f.save();
             }
         });
