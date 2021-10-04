@@ -1,10 +1,12 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
-import { BusyService } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Entity, Field, IdEntity, Remult } from 'remult';
+import { InputTypes } from 'remult/inputTypes';
 import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
-import { Control, ElementProps, getMarginsH } from '../properties-editor/properties-editor.component';
+import { Control, ElementProps, getMarginsH, Property } from '../properties-editor/properties-editor.component';
 
 @Component({
   selector: 'app-print-volunteer',
@@ -15,7 +17,7 @@ export class PrintVolunteerComponent implements OnInit {
 
 
   constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
-  defs = new VolunteerReportDefs(this.remult,this.busy);
+  defs = new VolunteerReportDefs(this.remult, this.busy);
   report: ReportInfo;
   row: VolunteerReportInfo;
 
@@ -24,13 +26,67 @@ export class PrintVolunteerComponent implements OnInit {
       ...getMarginsH()]
 
   };
+  columnCaptionKey = "@columnCaption";
+  columnProps: ElementProps = {
+    caption: 'תכונות עמודה', props: [
+      new Property(this.columnCaptionKey, "כותרת עמודה", undefined)
+    ]
+
+  };
+  async dropControl(event: CdkDragDrop<string[]>, controls: Control[]) {
+    if (event.container == event.previousContainer) {
+      moveItemInArray(controls, event.previousIndex, event.currentIndex);
+    }
+  }
+  addColumn() {
+    this.report.columns.push({
+      controls: [],
+      propertyValues: { [this.columnCaptionKey]: 'עמודה חדשה' }
+    })
+    this.editColumn(this.report.columns[this.report.columns.length - 1]);
+
+    this.save();
+  }
+  currentColumn: ReportColumn;
+  editColumn(c: ReportColumn) {
+    this.currentProps = this.columnProps;
+    this.currentProps.values = c.propertyValues;
+    this.currentProps.caption = 'תכונות עמודה ' + c.propertyValues[this.columnCaptionKey];
+    this.currentColumn = c;
+
+  }
   data: {
     firstRow: {},
     deliveries: any[]
   }[] = [];
   currentProps = this.pageProps;
-  editControl(x) {
-
+  currentControlList: Control[];
+  editControl(c: Control, controls: Control[]) {
+    this.defs.editControl(c);
+    this.currentProps = this.defs.fieldProps;
+    this.currentControlList = controls;
+  }
+  addControl() {
+    openDialog(SelectValueDialogComponent, x => x.args({
+      values: this.defs.fields.filter(f => !this.report.controls.find(c => c.fieldKey == f.key)),
+      onSelect: f => {
+        let c: Control = {
+          fieldKey: f.key,
+          propertyValues: {}
+        };
+        this.currentControlList.push(c);
+        this.save();
+        this.editControl(c, this.currentControlList);
+      }
+    }))
+  }
+  removeControl(c: Control) {
+    this.currentControlList.splice(this.report.controls.indexOf(c), 1);
+    this.save();
+  }
+  removeColumn() {
+    this.currentControlList.splice(this.report.columns.indexOf(this.currentColumn), 1);
+    this.save();
   }
   async ngOnInit() {
     let data = await VolunteerReportDefs.getStickerData();
@@ -72,7 +128,7 @@ export class PrintVolunteerComponent implements OnInit {
     this.pageProps.values = this.report.page;
 
   }
-  columnCaptionKey = "@columnCaption";
+
 
   save() {
     this.row.info = JSON.parse(JSON.stringify(this.report));
