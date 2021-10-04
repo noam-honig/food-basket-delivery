@@ -1172,8 +1172,10 @@ export class Language {
   loadImages = "טען תמונות";
   dido = 'כנ"ל';
   organisationName = "שם הארגון";
-  printStickers="הדפסת מדבקות";
+  printStickers = "הדפסת מדבקות";
   selectAll = "בחר הכל";
+  changeRouteOrder = "שנה סדר מסלול";
+  dragDeliveriesToChangeTheirOrder = "כעת ניתן לגרור את המשלוחים כדי לשנות את הסדר שלהם";
 }
 
 const defaultLang = new Language();

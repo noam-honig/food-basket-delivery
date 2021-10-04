@@ -629,6 +629,11 @@
     "valueInCode": "תאור",
     "valueInEnglish": "description"
   },
+  "changeRouteOrder": {
+    "google": "Modifica l'ordine del percorso",
+    "valueInCode": "שנה סדר מסלול",
+    "valueInEnglish": "Change route order"
+  },
   "checkAddress": {
     "google": "Controlla l'indirizzo",
     "valueInCode": "בדוק כתובת",
@@ -1339,6 +1344,11 @@
     "google": "Testo di stato non interessato",
     "valueInCode": "מלל סטטוס לא מעוניינים",
     "valueInEnglish": "Status text not interested"
+  },
+  "dragDeliveriesToChangeTheirOrder": {
+    "google": "Ora puoi trascinare le spedizioni per modificarne l'ordine",
+    "valueInCode": "כעת ניתן לגרור את המשלוחים כדי לשנות את הסדר שלהם",
+    "valueInEnglish": "You can now drag the shipments to change their order"
   },
   "drawingHelpText": {
     "google": "Fare clic sulla mappa in diversi punti per evidenziare l'area desiderata e fare doppio clic per terminare",
@@ -2985,6 +2995,11 @@
     "valueInCode": "סיכום משלוח קודם",
     "valueInEnglish": "Previous delivery summary"
   },
+  "printStickers": {
+    "google": "Stampa di adesivi",
+    "valueInCode": "הדפסת מדבקות",
+    "valueInEnglish": "Sticker printing"
+  },
   "printVolunteers": {
     "google": "Stampa volontari",
     "valueInCode": "הדפס מתנדבים",
@@ -3411,6 +3426,11 @@
     "valueInCode": "חיפוש מתנדב",
     "valueInEnglish": "Volunteer search"
   },
+  "selectAll": {
+    "google": "seleziona tutto",
+    "valueInCode": "בחר הכל",
+    "valueInEnglish": "select all"
+  },
   "selectDeliveriesOnMap": {
     "google": "Seleziona le famiglie sulla mappa",
     "valueInCode": "בחר משפחות על המפה",
@@ -3578,7 +3598,7 @@
   },
   "setAsDefaultVolunteerForTheseFamilies": {
     "google": "Salva come volontario predefinito per queste famiglie",
-    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו",
+    "valueInCode": "שמור כמסלול קבוע למתנדב",
     "valueInEnglish": "Save as a default volunteer for these families"
   },
   "shouldAdd": {
@@ -4008,7 +4028,7 @@
   },
   "transferDeliveriesFromOtherVolunteer": {
     "google": "Trasferisci le famiglie da un altro volontario",
-    "valueInCode": "העבר משפחות ממתנדב אחר",
+    "valueInCode": "העבר משלוחים ממתנדב אחר",
     "valueInEnglish": "Transfer families from another volunteer"
   },
   "twoDaysAgo": {

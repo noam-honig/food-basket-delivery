@@ -887,4 +887,8 @@ export class en {
   loadImages = 'Upload photos';
   dido = 'same as above';
   organisationName = 'The organization name';
+  printStickers = 'Sticker printing';
+  selectAll = 'select all';
+  changeRouteOrder = 'Change route order';
+  dragDeliveriesToChangeTheirOrder = 'You can now drag the shipments to change their order';
 }

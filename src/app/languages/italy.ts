@@ -887,4 +887,8 @@ export class italy {
   loadImages = 'Caricare foto';
   dido = 'come sopra';
   organisationName = "Il nome dell'organizzazione";
+  printStickers = 'Stampa di adesivi';
+  selectAll = 'seleziona tutto';
+  changeRouteOrder = "Modifica l'ordine del percorso";
+  dragDeliveriesToChangeTheirOrder = "Ora puoi trascinare le spedizioni per modificarne l'ordine";
 }

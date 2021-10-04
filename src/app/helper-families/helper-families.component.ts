@@ -75,6 +75,13 @@ export class HelperFamiliesComponent implements OnInit {
       this.visibleSigns.pop();
     }, 1000);
   }
+  disableDrag = true;
+  toggleReorder() {
+    this.disableDrag = !this.disableDrag;
+    if (!this.disableDrag){
+      this.dialog.Info(this.settings.lang.dragDeliveriesToChangeTheirOrder)
+    }
+  }
   async drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.familyLists.toDeliver, event.previousIndex, event.currentIndex);
     this.busy.doWhileShowingBusy(async () => {

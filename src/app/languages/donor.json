@@ -504,6 +504,10 @@
     "google": "תאור",
     "valueInCode": "תאור"
   },
+  "changeRouteOrder": {
+    "google": "שנה סדר מסלול",
+    "valueInCode": "שנה סדר מסלול"
+  },
   "checkAddress": {
     "google": "בדוק כתובת",
     "valueInCode": "בדוק כתובת"
@@ -1072,6 +1076,10 @@
   "DoNotWantProblemStatusText": {
     "google": "מלל סטטוס לא מעוניינים",
     "valueInCode": "מלל סטטוס לא מעוניינים"
+  },
+  "dragDeliveriesToChangeTheirOrder": {
+    "google": "כעת ניתן לגרור את המשלוחים כדי לשנות את הסדר שלהם",
+    "valueInCode": "כעת ניתן לגרור את המשלוחים כדי לשנות את הסדר שלהם"
   },
   "drawingHelpText": {
     "google": "אנא לחץ על המפה במספר נקודות כדי לסמן את האזור הרצוי, ולחץ לחיצה כפולה לסיום",
@@ -2395,6 +2403,10 @@
     "google": "סיכום משלוח קודם",
     "valueInCode": "סיכום משלוח קודם"
   },
+  "printStickers": {
+    "google": "הדפסת מדבקות",
+    "valueInCode": "הדפסת מדבקות"
+  },
   "printVolunteers": {
     "google": "הדפס מתנדבים",
     "valueInCode": "הדפס מתנדבים"
@@ -2736,6 +2748,10 @@
     "google": "חיפוש מתנדב",
     "valueInCode": "חיפוש מתנדב"
   },
+  "selectAll": {
+    "google": "בחר הכל",
+    "valueInCode": "בחר הכל"
+  },
   "selectDeliveriesOnMap": {
     "google": "בחר תורמים על המפה",
     "valueInCode": "בחר משפחות על המפה"
@@ -2870,7 +2886,7 @@
   },
   "setAsDefaultVolunteerForTheseFamilies": {
     "google": "שמור כמתנדב ברירת מחדל לתורמים אלו",
-    "valueInCode": "שמור כמתנדב ברירת מחדל למשפחות אלו"
+    "valueInCode": "שמור כמסלול קבוע למתנדב"
   },
   "shouldAdd": {
     "google": "האם להוסיף",
@@ -3214,7 +3230,7 @@
   },
   "transferDeliveriesFromOtherVolunteer": {
     "google": "העבר תורמים ממתנדב אחר",
-    "valueInCode": "העבר משפחות ממתנדב אחר"
+    "valueInCode": "העבר משלוחים ממתנדב אחר"
   },
   "twoDaysAgo": {
     "google": "שלשום",

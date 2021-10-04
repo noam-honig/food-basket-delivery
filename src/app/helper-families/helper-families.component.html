@@ -20,6 +20,7 @@
 
         <button mat-menu-item (click)="familyLists.showBasketSummary()"
           *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
+          <button mat-menu-item (click)="toggleReorder()">{{settings.lang.changeRouteOrder}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
@@ -53,7 +54,7 @@
       </ng-template>
       <mat-accordion class="no-print" cdkDropList (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy">
-          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" cdkDrag>
+          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" cdkDrag [cdkDragDisabled]="disableDrag">
             <mat-expansion-panel-header>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"

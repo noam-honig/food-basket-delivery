@@ -887,4 +887,8 @@ export class es {
   loadImages = 'Subir fotos';
   dido = 'lo mismo que arriba';
   organisationName = 'El nombre de la organización';
+  printStickers = 'Impresión de pegatinas';
+  selectAll = 'seleccionar todo';
+  changeRouteOrder = 'Cambiar el orden de la ruta';
+  dragDeliveriesToChangeTheirOrder = 'Ahora puedes arrastrar los envíos para cambiar su orden.';
 }
