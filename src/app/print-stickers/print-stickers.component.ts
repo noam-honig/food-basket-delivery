@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Field, IdEntity, Remult } from 'remult';
 import { Roles } from '../auth/roles';
-import { Control, ElementProps, getMarginsH, getMarginsV, SizeProperty } from '../properties-editor/properties-editor.component';
+import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../properties-editor/properties-editor.component';
 import { Entity } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
+import { set } from 'remult/set';
 
 
 
@@ -16,7 +17,7 @@ import { VolunteerReportDefs } from './VolunteerReportDefs';
 export class PrintStickersComponent implements OnInit {
 
   constructor(private remult: Remult, private busy: BusyService) { }
-  defs = new VolunteerReportDefs(this.remult,this.busy);
+  defs = new VolunteerReportDefs(this.remult, this.busy);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;
@@ -27,7 +28,10 @@ export class PrintStickersComponent implements OnInit {
   };
   stickerProps: ElementProps = {
     caption: 'תכונות מדבקה', props: [
-      new SizeProperty('height', 'גובה'),
+      new Property('height', 'גובה', 'number', (val, s) => set(s, {
+        'height': val + 'mm',
+        'max-height': val + 'mm'
+      })),
       new SizeProperty('width', 'רוחב'),
       ...getMarginsH(), ...getMarginsV()],
 
