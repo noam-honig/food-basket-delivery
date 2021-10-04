@@ -289,12 +289,12 @@ textarea {
   border-collapse: collapse;
 }
 
-.table-bordered > tr > th,
-.table-bordered > tr > td {
+.table-bordered * tr > th,
+.table-bordered * tr > td {
   border: 1px solid #ddd;
   padding: 6px;
 }
-.table-bordered > tr > th {
+.table-bordered * tr > th {
   border-bottom-width: 2px;
 }
 .map-cluster {

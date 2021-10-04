@@ -1,0 +1,45 @@
+<ng-container *ngIf="report">
+    <table class="table-bordered" *ngFor="let v of data" style="width:100%;page-break-before: always;">
+        <thead>
+            <tr>
+                <td [colSpan]="report.columns.length" >
+                    <ng-container *ngFor="let f of report.controls">
+
+                        <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
+                            (click)="editControl(f)">
+                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}
+                        </div>
+                    </ng-container>
+                </td>
+            </tr>
+            <tr>
+                <td [colSpan]="report.columns.length" *ngIf="settings.requireConfidentialityApprove">
+                    {{settings.lang.infoIsConfidential}}
+                </td>
+            </tr>
+            <tr>
+                <td *ngFor="let c of report.columns">
+                    {{c.propertyValues[columnCaptionKey]}}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let r of v.deliveries">
+                <td *ngFor="let c of report.columns">
+                    <ng-container *ngFor="let f of c.controls">
+
+                        <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
+                            (click)="editControl(f)">
+                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}
+                        </div>
+                    </ng-container>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</ng-container>
+
+<app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps">
+
+    <button (click)="currentProps = pageProps">תכונות דף</button>
+</app-properties-editor>

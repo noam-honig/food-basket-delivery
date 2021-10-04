@@ -1,0 +1,26 @@
+<div class="no-print" style="border: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    left:0;
+    top:0;
+    background-color: white;
+    position: absolute;
+    padding: 10px;">
+    <strong>{{props.caption}}</strong>
+    <table>
+        <tr *ngFor="let p of props.props">
+            <td>
+                <input *ngIf="p.inputType!='checkbox'" [(ngModel)]="props.values[p.key]" [type]="p.inputType"
+                    (change)="save()">
+                <input *ngIf="p.inputType=='checkbox'" [(ngModel)]="props.values[p.key]" type="checkbox"
+                    (change)="save()">
+
+            </td>
+            <td>
+                {{p.caption}}
+            </td>
+        </tr>
+    </table>
+    <ng-content></ng-content>
+
+</div>

@@ -54,6 +54,7 @@ import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
 import { OrgEventsComponent } from './org-events/org-events.component';
 import { PrintStickersComponent } from './print-stickers/print-stickers.component';
+import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component';
 
 
 @Injectable()
@@ -118,6 +119,7 @@ export const routes: Routes = [
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true } },
   { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true } },
   { path: 'print-stickers', component: PrintStickersComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true, noConfHeaderAndBorders: true } },
+  { path: 'print-volunteer', component: PrintVolunteerComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true, noConfHeaderAndBorders: true } },
 
   { path: 'testmap', component: TestMapComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'register-donor', component: RegisterDonorComponent, canActivate: [MltOnlyGuard], data: { hide: true } },
