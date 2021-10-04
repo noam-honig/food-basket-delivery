@@ -690,9 +690,9 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
         let d = edd.valueOf();
         if (d > t - day) {
             if (d < t + day)
-                return use.language.today;
+                return use.language.today + ' (' + moment(d).locale(use.language.languageCodeHe).format('DD/MM') + ')';
             if (d < t + day * 2)
-                return use.language.tomorrow;
+                return use.language.tomorrow + ' (' + moment(d).locale(use.language.languageCodeHe).format('DD/MM') + ')';
             if (group) {
                 let endOfWeek = t - today.getDay() * day + day * 7;
                 if (d < endOfWeek)
