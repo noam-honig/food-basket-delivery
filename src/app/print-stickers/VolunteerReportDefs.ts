@@ -47,12 +47,12 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     });
 
     this.addFields(ActiveFamilyDeliveries, a => a.fd, f => [
-      f.address,
       f.phone1,
       f.phone1Description,
       f.phone2,
       f.phone2Description,
-      f.courier
+      f.courier,
+      f.deliveryComments
     ]);
     this.addFields(Families, a => a.f, f => [
       f.familyMembers,
