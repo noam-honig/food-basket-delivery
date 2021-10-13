@@ -799,7 +799,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     if (i < info.numOfBaskets) {
                         family.courier = helper;
                         family._disableMessageToUsers = true;
-                        family.routeOrder = existingFamilies.length + 1;
                         distCenter = family.distributionCenter;
                         await family.save();
                         result.addedBoxes++;
