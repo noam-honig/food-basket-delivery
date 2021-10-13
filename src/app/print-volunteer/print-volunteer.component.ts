@@ -8,6 +8,19 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
 import { Control, ElementProps, getMarginsH, Property } from '../properties-editor/properties-editor.component';
 
+/*
+[] Add field to page crashes
+[] select column
+[] remove column - removes the field - it should remove the column
+[] click on column to edit it
+[] select field is missing
+[] remove column should only appear when parked on column
+[] after remove field - clear editing of that field.
+[] reorder columns
+
+
+
+*/
 @Component({
   selector: 'app-print-volunteer',
   templateUrl: './print-volunteer.component.html',
@@ -26,10 +39,10 @@ export class PrintVolunteerComponent implements OnInit {
       ...getMarginsH()]
 
   };
-  columnCaptionKey = "@columnCaption";
+
   columnProps: ElementProps = {
     caption: 'תכונות עמודה', props: [
-      new Property(this.columnCaptionKey, "כותרת עמודה", undefined)
+      ...this.defs.fieldProps.props
     ]
 
   };
@@ -41,7 +54,7 @@ export class PrintVolunteerComponent implements OnInit {
   addColumn() {
     this.report.columns.push({
       controls: [],
-      propertyValues: { [this.columnCaptionKey]: 'עמודה חדשה' }
+      propertyValues: { [this.defs.textBeforeKey]: 'עמודה חדשה' }
     })
     this.editColumn(this.report.columns[this.report.columns.length - 1]);
 
@@ -51,8 +64,9 @@ export class PrintVolunteerComponent implements OnInit {
   editColumn(c: ReportColumn) {
     this.currentProps = this.columnProps;
     this.currentProps.values = c.propertyValues;
-    this.currentProps.caption = 'תכונות עמודה ' + c.propertyValues[this.columnCaptionKey];
+    this.currentProps.caption = 'תכונות עמודה ' + c.propertyValues[this.defs.textBeforeKey];
     this.currentColumn = c;
+    this.currentControlList = c.controls;
 
   }
   data: {
@@ -82,10 +96,11 @@ export class PrintVolunteerComponent implements OnInit {
   }
   removeControl(c: Control) {
     this.currentControlList.splice(this.report.controls.indexOf(c), 1);
+    
     this.save();
   }
   removeColumn() {
-    this.currentControlList.splice(this.report.columns.indexOf(this.currentColumn), 1);
+    this.report.columns.splice(this.report.columns.indexOf(this.currentColumn), 1);
     this.save();
   }
   async ngOnInit() {
@@ -115,7 +130,7 @@ export class PrintVolunteerComponent implements OnInit {
         columns: [
           {
             propertyValues: {
-              [this.columnCaptionKey]: this.remult.lang.familyName
+              [this.defs.textBeforeKey]: this.remult.lang.familyName
             },
             controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }]
           }

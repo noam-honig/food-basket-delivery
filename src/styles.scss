@@ -154,7 +154,7 @@ body {
   }
 }
 .on-the-way {
-  background-color:#d4effa !important;
+  background-color: #d4effa !important;
 }
 .deliveredProblem {
   background-color: #f2dede !important;
@@ -170,7 +170,7 @@ body {
 }
 
 .largeDelivery {
-  background-color:#d4effa !important;
+  background-color: #d4effa !important;
 }
 
 .busyVolunteer {
@@ -289,11 +289,14 @@ textarea {
   border-collapse: collapse;
 }
 
+.table-bordered > tr > th,
+.table-bordered > tr > td,
 .table-bordered * tr > th,
 .table-bordered * tr > td {
   border: 1px solid #ddd;
   padding: 6px;
 }
+.table-bordered > tr > th,
 .table-bordered * tr > th {
   border-bottom-width: 2px;
 }
@@ -405,7 +408,7 @@ textarea {
 }
 
 .hidden {
-  display: none!important;
+  display: none !important;
   * {
     display: none !important;
   }
@@ -414,7 +417,6 @@ textarea {
 .image-container {
   display: flex;
   flex-wrap: wrap;
-
 }
 .image {
   max-width: 400px;
@@ -423,6 +425,6 @@ textarea {
   border-radius: 5px;
   border-width: thin;
 }
-.mat-tab-body-wrapper{
+.mat-tab-body-wrapper {
   flex-grow: 1;
 }

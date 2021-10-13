@@ -20,8 +20,9 @@
                 </td>
             </tr>
             <tr>
-                <td *ngFor="let c of report.columns">
-                    {{c.propertyValues[columnCaptionKey]}}
+                <td *ngFor="let c of report.columns" (click)="editColumn(c)"
+                    [ngStyle]="defs.getStyle(columnProps.props,c.propertyValues)">
+                    {{c.propertyValues[defs.textBeforeKey]}}
                 </td>
             </tr>
         </thead>
@@ -48,7 +49,7 @@
     <ng-container *ngIf="currentProps.control">
         <button (click)="removeControl(currentProps.control)">הסר שדה</button>
     </ng-container>
-    <ng-container *ngIf="currentProps.control">
+    <ng-container *ngIf="currentColumn&&currentProps == columnProps">
         <button (click)="removeColumn()">הסר עמודה</button>
     </ng-container>
     <br>
