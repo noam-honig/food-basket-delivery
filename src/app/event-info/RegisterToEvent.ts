@@ -1,11 +1,12 @@
 import { DataControl, openDialog } from '@remult/angular';
-import { BackendMethod, Remult, Controller, getFields, Validators, EventSource } from 'remult';
+import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { InitContext } from '../helpers/init-context';
-import { getSettings } from '../manage/ApplicationSettings';
+import { CustomColumn, getSettings, registerQuestionForVolunteers } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
+import { Email } from '../model-shared/types';
 import { DialogService } from '../select-popup/dialog';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { Sites } from '../sites/sites';
@@ -25,12 +26,39 @@ function storedInfo(): VolunteerInfo {
 
 @Controller('event-Info')
 export class RegisterToEvent {
+    questions: {
+        field: FieldRef,
+        show: () => boolean,
+        helperField?: FieldMetadata,
+        getFieldToUpdate: (h: Fields<Helpers>, e: Fields<volunteersInEvent>) => FieldRef
+    }[] = [];
     constructor(private remult: Remult) {
-        if (!actionInfo.runningOnServer) {
 
+
+        if (!actionInfo.runningOnServer) {
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
+            if (remult.currentUser) {
+                let h = remult.currentUser
+                this.socialSecurityNumber = h.socialSecurityNumber;
+                this.email = h.email;
+                this.preferredDistributionAreaAddress = h.preferredDistributionAreaAddress;
+                this.preferredFinishAddress = h.preferredFinishAddress;
+            }
         }
+
+
+    }
+    init() {
+        let s = getSettings(this.remult);
+        this.questions.push({ field: this.$.socialSecurityNumber, show: () => s.registerAskTz, getFieldToUpdate: h => h.socialSecurityNumber })
+        this.questions.push({ field: this.$.email, show: () => s.registerAskEmail, getFieldToUpdate: h => h.email })
+        this.questions.push({ field: this.$.preferredDistributionAreaAddress, show: () => s.registerAskPreferredDistributionAreaAddress, getFieldToUpdate: h => h.preferredDistributionAreaAddress })
+        this.questions.push({ field: this.$.preferredFinishAddress, show: () => s.registerAskPreferredFinishAddress, getFieldToUpdate: h => h.preferredFinishAddress })
+        this.questions.push({ field: this.$.a1, show: () => !!s.questionForRegistration1Caption, getFieldToUpdate: (h, e) => e.a1 });
+        this.questions.push({ field: this.$.a2, show: () => !!s.questionForRegistration2Caption, getFieldToUpdate: (h, e) => e.a2 });
+        this.questions.push({ field: this.$.a3, show: () => !!s.questionForRegistration3Caption, getFieldToUpdate: (h, e) => e.a3 });
+        this.questions.push({ field: this.$.a4, show: () => !!s.questionForRegistration4Caption, getFieldToUpdate: (h, e) => e.a4 });
     }
     static volunteerInfo: VolunteerInfo;
     static volunteerInfoChanged = new EventSource();
@@ -55,25 +83,48 @@ export class RegisterToEvent {
             }
         }
     })
-
     name: string;
     @Field({ translation: l => l.rememberMeOnThisDevice })
     rememberMeOnThisDevice: boolean;
+
+    @CustomColumn(() => registerQuestionForVolunteers[1])
+    a1: string;
+    @CustomColumn(() => registerQuestionForVolunteers[2])
+    a2: string;
+    @CustomColumn(() => registerQuestionForVolunteers[3])
+    a3: string;
+    @CustomColumn(() => registerQuestionForVolunteers[4])
+    a4: string;
+    @Field({ translation: l => l.socialSecurityNumber })
+    socialSecurityNumber: string;
+    @Field()
+    email: Email;
+    @Field({ translation: l => l.preferredDistributionArea })
+    preferredDistributionAreaAddress: string;
+    @Field({
+
+        dbName: 'preferredDistributionAreaAddress2'
+    })
+    preferredFinishAddress: string;
+
     get $() { return getFields(this); }
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
+        this.init();
         this.rememberMeOnThisDevice = storedInfo().name != '';
-        if (!this.remult.authenticated())
+        if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await openDialog(InputAreaComponent, x => x.args = {
                 title: getSettings(this.remult).lang.register,
                 helpText: 'תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)',
                 settings: {
-                    fields: () => [this.$.name, this.$.phone, this.$.rememberMeOnThisDevice]
+                    fields: () => [this.$.name, this.$.phone, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
                 },
                 cancel: () => { },
                 ok: async () => {
 
                     this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
+                    if (this.remult.currentUser)
+                        await this.remult.currentUser._.reload();
                     let refresh = false;
                     if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
                         refresh = true;
@@ -105,7 +156,7 @@ export class RegisterToEvent {
         this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false));
     }
     @BackendMethod({ allowed: true })
-    async registerVolunteerToEvent(id: string, site: string, register:boolean) {
+    async registerVolunteerToEvent(id: string, site: string, register: boolean) {
 
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
@@ -116,7 +167,7 @@ export class RegisterToEvent {
             Sites.setSiteToContext(this.remult, site, orig);
             await InitContext(this.remult);
         }
-        let helper: HelpersBase;
+        let helper: Helpers;
         if (this.remult.authenticated()) {
             helper = this.remult.currentUser;
         }
@@ -138,6 +189,15 @@ export class RegisterToEvent {
         if (register) {
             helperInEvent.canceled = false;
             helperInEvent.fromGeneralList = !!site;
+            for (const q of this.questions.filter(q => q.show())) {
+                if (q.field.displayValue || this.remult.authenticated()) {
+                    let target = q.getFieldToUpdate(helper.$, helperInEvent.$);
+                    if (target)
+                        target.value = q.field.value;
+                }
+            }
+            if (helper.wasChanged())
+                await helper.save();
             await helperInEvent.save();
         }
         else {

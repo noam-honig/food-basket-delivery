@@ -80,6 +80,19 @@ export class ApplicationSettings extends EntityBase {
     DeliveryStatus.FailedNotHome.caption = this.NotHomeProblemStatusText;
     DeliveryStatus.FailedDoNotWant.caption = this.DoNotWantProblemStatusText;
     DeliveryStatus.FailedOther.caption = this.OtherProblemStatusText;
+    
+    setCustomColumnInfo(customColumnInfo[1], this.familyCustom1Caption, this.familyCustom1Values);
+    setCustomColumnInfo(customColumnInfo[2], this.familyCustom2Caption, this.familyCustom2Values);
+    setCustomColumnInfo(customColumnInfo[3], this.familyCustom3Caption, this.familyCustom3Values);
+    setCustomColumnInfo(customColumnInfo[4], this.familyCustom4Caption, this.familyCustom4Values);
+    setCustomColumnInfo(questionForVolunteers[1], this.questionForVolunteer1Caption, this.questionForVolunteer1Values);
+    setCustomColumnInfo(questionForVolunteers[2], this.questionForVolunteer2Caption, this.questionForVolunteer2Values);
+    setCustomColumnInfo(questionForVolunteers[3], this.questionForVolunteer3Caption, this.questionForVolunteer3Values);
+    setCustomColumnInfo(questionForVolunteers[4], this.questionForVolunteer4Caption, this.questionForVolunteer4Values);
+    setCustomColumnInfo(registerQuestionForVolunteers[1], this.questionForRegistration1Caption, this.questionForRegistration1Values);
+    setCustomColumnInfo(registerQuestionForVolunteers[2], this.questionForRegistration2Caption, this.questionForRegistration2Values);
+    setCustomColumnInfo(registerQuestionForVolunteers[3], this.questionForRegistration3Caption, this.questionForRegistration3Values);
+    setCustomColumnInfo(registerQuestionForVolunteers[4], this.questionForRegistration4Caption, this.questionForRegistration4Values);
   }
 
   getInternationalPhonePrefix() {
@@ -369,6 +382,32 @@ export class ApplicationSettings extends EntityBase {
   questionForVolunteer4Caption: string;
   @Field({ translation: l => l.questionForVolunteer + " 4 " + l.optionalValues })
   questionForVolunteer4Values: string;
+
+  @Field({ translation: l => l.questionForRegistration + " 1 " + l.caption })
+  questionForRegistration1Caption: string;
+  @Field({ translation: l => l.questionForRegistration + " 1 " + l.optionalValues })
+  questionForRegistration1Values: string;
+  @Field({ translation: l => l.questionForRegistration + " 2 " + l.caption })
+  questionForRegistration2Caption: string;
+  @Field({ translation: l => l.questionForRegistration + " 2 " + l.optionalValues })
+  questionForRegistration2Values: string;
+  @Field({ translation: l => l.questionForRegistration + " 3 " + l.caption })
+  questionForRegistration3Caption: string;
+  @Field({ translation: l => l.questionForRegistration + " 3 " + l.optionalValues })
+  questionForRegistration3Values: string;
+  @Field({ translation: l => l.questionForRegistration + " 4 " + l.caption })
+  questionForRegistration4Caption: string;
+  @Field({ translation: l => l.questionForRegistration + " 4 " + l.optionalValues })
+  questionForRegistration4Values: string;
+
+  @Field()
+  registerAskTz: boolean ;
+  @Field()
+  registerAskEmail: boolean ;
+  @Field()
+  registerAskPreferredDistributionAreaAddress: boolean;
+  @Field()
+  registerAskPreferredFinishAddress: boolean;
   @Field()
   askVolunteerForLocationOnDelivery: boolean;
   @Field()
@@ -508,14 +547,6 @@ export class SettingsService {
 
     this.instance.updateStaticTexts();
 
-    setCustomColumnInfo(customColumnInfo[1], this.instance.familyCustom1Caption, this.instance.familyCustom1Values);
-    setCustomColumnInfo(customColumnInfo[2], this.instance.familyCustom2Caption, this.instance.familyCustom2Values);
-    setCustomColumnInfo(customColumnInfo[3], this.instance.familyCustom3Caption, this.instance.familyCustom3Values);
-    setCustomColumnInfo(customColumnInfo[4], this.instance.familyCustom4Caption, this.instance.familyCustom4Values);
-    setCustomColumnInfo(questionForVolunteers[1], this.instance.questionForVolunteer1Caption, this.instance.questionForVolunteer1Values);
-    setCustomColumnInfo(questionForVolunteers[2], this.instance.questionForVolunteer2Caption, this.instance.questionForVolunteer2Values);
-    setCustomColumnInfo(questionForVolunteers[3], this.instance.questionForVolunteer3Caption, this.instance.questionForVolunteer3Values);
-    setCustomColumnInfo(questionForVolunteers[4], this.instance.questionForVolunteer4Caption, this.instance.questionForVolunteer4Values);
 
 
   }
@@ -525,6 +556,7 @@ export class SettingsService {
 
 export const customColumnInfo: customColumnInfo[] = [{}, {}, {}, {}, {}];
 export const questionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
+export const registerQuestionForVolunteers: customColumnInfo[] = [{}, {}, {}, {}, {}];
 
 export function getCustomColumnVisible(defs: FieldMetadata) {
   return defs.caption != undefined;

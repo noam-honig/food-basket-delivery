@@ -1016,6 +1016,11 @@ export class Language {
   ifYouNeedAnyHelpPleaseCall = "לעזרה התקשר ל";
   customColumn = "שדה נוסף למשפחה";
   questionForVolunteer = "שאלה למתנדב";
+  questionForRegistration = "שאלה בעת הרישום";
+  registerAskTz = "בקש תז ממתנדב בעת רישום";
+  registerAskEmail = "בקש מייל ממתנדב בעת רישום";
+  registerAskPreferredDistributionAreaAddress = "בקש כתובת אזור חלוקה בעת רישום";
+  registerAskPreferredFinishAddress = "בקש כתובת סיום מסלול";
   caption = "תאור";
   receptionDone = "נקלט במעבדה";
   optionalValues = "ערכים אפשריים מופרד בפסיקים";

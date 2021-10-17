@@ -14,7 +14,7 @@ import { settings } from "cluster";
 import { SelectHelperComponent } from "../select-helper/select-helper.component";
 import { DialogService } from "../select-popup/dialog";
 import { saveToExcel } from '../shared/saveToExcel';
-import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings, CustomColumn, getSettings, registerQuestionForVolunteers } from "../manage/ApplicationSettings";
 
 import { DistributionCenters } from "../manage/distribution-centers";
 import { AddressHelper, Location } from "../shared/googleApiHelpers";
@@ -189,7 +189,8 @@ export class Event extends IdEntity {
                     ev.createDate,
                     ev.createUser,
                     ev.canceled,
-                    ev.cancelUser
+                    ev.cancelUser,
+                    ev.a1, ev.a2, ev.a3, ev.a4
 
                 ],
                 rowCssClass: v => {
@@ -633,6 +634,15 @@ export class volunteersInEvent extends IdEntity {
     canceled: boolean;
     @Field({ allowApiUpdate: false })
     fromGeneralList: boolean;
+
+    @CustomColumn(() => registerQuestionForVolunteers[1])
+    a1: string;
+    @CustomColumn(() => registerQuestionForVolunteers[2])
+    a2: string;
+    @CustomColumn(() => registerQuestionForVolunteers[3])
+    a3: string;
+    @CustomColumn(() => registerQuestionForVolunteers[4])
+    a4: string;
 
 }
 
