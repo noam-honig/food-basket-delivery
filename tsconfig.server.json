@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist-server/",
+    "outDir": "./dist/server",
     "module": "commonjs",
     "target": "es2015",
     "skipLibCheck": true

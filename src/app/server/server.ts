@@ -50,7 +50,7 @@ serverInit().then(async (dataSource) => {
             res.redirect('/' + Sites.guestSchema + '/');
             return;
         }
-        const index = 'dist/index.html';
+        const index = 'hagai/index.html';
 
 
         if (fs.existsSync(index)) {
@@ -241,7 +241,7 @@ s.parentNode.insertBefore(b, s);})();
 
         sendIndex(res, req);
     });
-    app.use(express.static('dist'));
+    app.use(express.static('hagai'));
 
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
@@ -275,7 +275,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         catch (err) {
         }
         try {
-            res.send(fs.readFileSync('dist/assets/apple-touch-icon.png'));
+            res.send(fs.readFileSync('hagai/assets/apple-touch-icon.png'));
         }
         catch (err) {
             res.statusCode = 404;
@@ -284,7 +284,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
     });
     app.use('/guest/favicon.ico', async (req, res) => {
         try {
-            res.send(fs.readFileSync('dist/favicon.ico'));
+            res.send(fs.readFileSync('hagai/favicon.ico'));
         }
         catch {
             res.send(fs.readFileSync('assets/favicon.ico'));
@@ -302,7 +302,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         }
         catch (err) { }
         try {
-            res.send(fs.readFileSync('dist/favicon.ico'));
+            res.send(fs.readFileSync('hagai/favicon.ico'));
         }
         catch (err) {
             res.statusCode = 404;
