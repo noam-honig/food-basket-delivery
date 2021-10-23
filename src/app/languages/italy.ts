@@ -905,4 +905,6 @@ export class italy {
   entireRegion = 'Intera Regione';
   settings = 'Impostazioni';
   volunteerRegistrationSettings = 'Impostazioni di registrazione dei volontari';
+  invalidValue = 'valore non valido';
+  printVolunteerPage = 'Stampa una pagina di volontariato';
 }

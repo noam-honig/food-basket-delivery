@@ -1918,6 +1918,10 @@
     "google": "Phone number is incorrect",
     "valueInCode": "מספר טלפון אינו תקין"
   },
+  "invalidValue": {
+    "google": "Invalid value",
+    "valueInCode": "ערך לא תקין"
+  },
   "inviteSentSuccesfully": {
     "google": "Invitation sent successfully",
     "valueInCode": "הזמנה נשלחה בהצלחה"
@@ -2613,6 +2617,10 @@
   "printStickers": {
     "google": "Sticker printing",
     "valueInCode": "הדפסת מדבקות"
+  },
+  "printVolunteerPage": {
+    "google": "Print a volunteer page",
+    "valueInCode": "הדפס דף למתנדב"
   },
   "printVolunteers": {
     "google": "Print volunteers",

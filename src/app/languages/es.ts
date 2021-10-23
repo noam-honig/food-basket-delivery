@@ -905,4 +905,6 @@ export class es {
   entireRegion = 'Toda la región';
   settings = 'Ajustes';
   volunteerRegistrationSettings = 'Configuración de registro de voluntarios';
+  invalidValue = 'valor no válido';
+  printVolunteerPage = 'Imprime una página de voluntariado';
 }

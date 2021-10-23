@@ -905,4 +905,6 @@ export class en {
   entireRegion = 'Entire Region';
   settings = 'Settings';
   volunteerRegistrationSettings = 'Volunteer registration settings';
+  invalidValue = 'Invalid value';
+  printVolunteerPage = 'Print a volunteer page';
 }

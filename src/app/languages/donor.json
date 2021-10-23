@@ -1738,6 +1738,10 @@
     "google": "מספר טלפון אינו תקין",
     "valueInCode": "מספר טלפון אינו תקין"
   },
+  "invalidValue": {
+    "google": "ערך לא תקין",
+    "valueInCode": "ערך לא תקין"
+  },
   "inviteSentSuccesfully": {
     "google": "הזמנה נשלחה בהצלחה",
     "valueInCode": "הזמנה נשלחה בהצלחה"
@@ -2410,6 +2414,10 @@
   "printStickers": {
     "google": "הדפסת מדבקות",
     "valueInCode": "הדפסת מדבקות"
+  },
+  "printVolunteerPage": {
+    "google": "הדפס דף למתנדב",
+    "valueInCode": "הדפס דף למתנדב"
   },
   "printVolunteers": {
     "google": "הדפס מתנדבים",

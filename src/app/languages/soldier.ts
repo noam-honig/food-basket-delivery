@@ -905,4 +905,6 @@ export class soldier {
   entireRegion = 'כל הארץ';
   settings = 'הגדרות';
   volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
+  invalidValue = 'ערך לא תקין';
+  printVolunteerPage = 'הדפס דף למתנדב';
 }

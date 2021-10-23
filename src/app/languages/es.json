@@ -2170,6 +2170,11 @@
     "valueInCode": "מספר טלפון אינו תקין",
     "valueInEnglish": "Phone number is incorrect"
   },
+  "invalidValue": {
+    "google": "valor no válido",
+    "valueInCode": "ערך לא תקין",
+    "valueInEnglish": "Invalid value"
+  },
   "inviteSentSuccesfully": {
     "google": "Invitación enviada con éxito",
     "valueInCode": "הזמנה נשלחה בהצלחה",
@@ -3004,6 +3009,11 @@
     "google": "Impresión de pegatinas",
     "valueInCode": "הדפסת מדבקות",
     "valueInEnglish": "Sticker printing"
+  },
+  "printVolunteerPage": {
+    "google": "Imprime una página de voluntariado",
+    "valueInCode": "הדפס דף למתנדב",
+    "valueInEnglish": "Print a volunteer page"
   },
   "printVolunteers": {
     "google": "Imprimir voluntarios",

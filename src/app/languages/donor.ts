@@ -905,4 +905,6 @@ export class donor {
   entireRegion = 'כל הארץ';
   settings = 'הגדרות';
   volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
+  invalidValue = 'ערך לא תקין';
+  printVolunteerPage = 'הדפס דף למתנדב';
 }
