@@ -1420,6 +1420,11 @@
     "valueInCode": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\n  בהצלחה",
     "valueInEnglish": "Because you do not have a password set yet - please enter for the first time, by typing in your phone number without a password and clicking the \"Login\" button. The system will ask you to set a password and that will be your password.\\n  Successfully"
   },
+  "entireRegion": {
+    "google": "Toda la región",
+    "valueInCode": "כל הארץ",
+    "valueInEnglish": "Entire Region"
+  },
   "entrance": {
     "google": "Entrada",
     "valueInCode": "כניסה",
@@ -3050,6 +3055,11 @@
     "valueInCode": "האם להוסיף",
     "valueInEnglish": "Do add"
   },
+  "questionForRegistration": {
+    "google": "Pregunta en el registro",
+    "valueInCode": "שאלה בעת הרישום",
+    "valueInEnglish": "Question at registration"
+  },
   "questionForVolunteer": {
     "google": "Pregunta para ser voluntario",
     "valueInCode": "שאלה למתנדב",
@@ -3120,6 +3130,26 @@
     "valueInCode": "הרשמה",
     "valueInEnglish": "Register"
   },
+  "registerAskEmail": {
+    "google": "Solicite un correo electrónico de un voluntario al registrarse",
+    "valueInCode": "בקש מייל ממתנדב בעת רישום",
+    "valueInEnglish": "Request an email from a volunteer when registering"
+  },
+  "registerAskPreferredDistributionAreaAddress": {
+    "google": "Solicite una dirección de área de distribución al registrarse",
+    "valueInCode": "בקש כתובת אזור חלוקה בעת רישום",
+    "valueInEnglish": "Request a distribution area address when registering"
+  },
+  "registerAskPreferredFinishAddress": {
+    "google": "Solicitar una dirección final de ruta",
+    "valueInCode": "בקש כתובת סיום מסלול",
+    "valueInEnglish": "Request a route end address"
+  },
+  "registerAskTz": {
+    "google": "Solicitar identificación de voluntario al registrarse",
+    "valueInCode": "בקש תז ממתנדב בעת רישום",
+    "valueInEnglish": "Request id from Volunteer when registering"
+  },
   "RegisterComponent": {
     "google": "Registrarse",
     "valueInCode": "הרשמה",
@@ -3139,6 +3169,11 @@
     "google": "Este mensaje se enviará al voluntario después de registrarse en el sistema.",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
     "valueInEnglish": "This message will be sent to the volunteer after registering for the system"
+  },
+  "registerHelpText": {
+    "google": "¡¡¡Gracias por el espíritu voluntario !!! Escriba su nombre y número de teléfono y esto es todo: está registrado para ser voluntario :)",
+    "valueInCode": "תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)",
+    "valueInEnglish": "Thanks for the volunteer spirit !!! Type in your name and phone number and this is it - you are registered to volunteer :)"
   },
   "registerStatusDate": {
     "google": "Fecha de estado de registro",
@@ -3601,6 +3636,11 @@
     "valueInCode": "שמור כמסלול קבוע למתנדב",
     "valueInEnglish": "Save as a default volunteer for these families"
   },
+  "settings": {
+    "google": "Ajustes",
+    "valueInCode": "הגדרות",
+    "valueInEnglish": "Settings"
+  },
   "shouldAdd": {
     "google": "Agregar",
     "valueInCode": "האם להוסיף",
@@ -3665,6 +3705,16 @@
     "google": "Mostrar entregas para",
     "valueInCode": "הצג שיוך משלוחים ל",
     "valueInEnglish": "Show deliveries for"
+  },
+  "showByDate": {
+    "google": "Por fecha",
+    "valueInCode": "הצג לפי תאריך",
+    "valueInEnglish": "By Date"
+  },
+  "showByDistanceFromMe": {
+    "google": "A distancia",
+    "valueInCode": "הצג לפי מרחק ממני",
+    "valueInEnglish": "By Distance"
   },
   "showDeletedDistributionCenters": {
     "google": "Ver listas de distribución eliminadas",
@@ -3915,6 +3965,11 @@
     "google": "Entrega de mensaje SMS a la familia",
     "valueInCode": "תוכן הודעת הצלחה למשפחה",
     "valueInEnglish": "Delivery SMS Message to Family"
+  },
+  "thanksForVolunteering": {
+    "google": ". ¡Gracias por ser voluntario y estar dispuesto a ayudar!",
+    "valueInCode": ". תודה על ההתנדבות והנכונות לעזור!",
+    "valueInEnglish": ". Thank you for volunteering and willingness to help!"
   },
   "thankYou": {
     "google": "Gracias",
@@ -4381,10 +4436,20 @@
     "valueInCode": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה",
     "valueInEnglish": "When the volunteer presses the \"I have a problem\" button, a screen appears with this list of FAQs for help"
   },
+  "volunteerRegistrationSettings": {
+    "google": "Configuración de registro de voluntarios",
+    "valueInCode": "הגדרות רישום מתנדב",
+    "valueInEnglish": "Volunteer registration settings"
+  },
   "volunteers": {
     "google": "Voluntarios",
     "valueInCode": "מתנדבים",
     "valueInEnglish": "Volunteers"
+  },
+  "volunteersRegisteredTo": {
+    "google": "Voluntarios inscritos en",
+    "valueInCode": "מתנדבים שנרשמו ל",
+    "valueInEnglish": "Volunteers enrolled in"
   },
   "volunteerStatus": {
     "google": "Estado de voluntario",
@@ -4455,5 +4520,10 @@
     "google": "Ayer",
     "valueInCode": "אתמול",
     "valueInEnglish": "Yesterday"
+  },
+  "youVeRegisteredTo": {
+    "google": "Te registraste para",
+    "valueInCode": "נרשמתם ל",
+    "valueInEnglish": "You signed up for"
   }
 }

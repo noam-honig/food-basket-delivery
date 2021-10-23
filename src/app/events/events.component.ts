@@ -18,6 +18,7 @@ import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { DateOnlyValueConverter } from 'remult/valueConverters';
 import { EventInfoComponent } from '../event-info/event-info.component';
 import { EventCardComponent } from '../event-card/event-card.component';
+import { use } from '../translate';
 
 @Component({
   selector: 'app-events',
@@ -105,12 +106,12 @@ export class EventsComponent implements OnInit {
     },
 
     {
-      name: 'הגדרות',
+      name: use.language.settings,
       icon: 'settings',
       click: async () => {
         let s = this.settings;
         openDialog(InputAreaComponent, x => x.args = {
-          title: 'הגדרות רישום מתנדב',
+          title: use.language.volunteerRegistrationSettings,
           ok: async () => await s.save(),
           settings: {
             fields: () => [

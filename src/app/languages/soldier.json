@@ -1135,6 +1135,10 @@
     "google": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\\n  בהצלחה",
     "valueInCode": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\n  בהצלחה"
   },
+  "entireRegion": {
+    "google": "כל הארץ",
+    "valueInCode": "כל הארץ"
+  },
   "entrance": {
     "google": "כניסה",
     "valueInCode": "כניסה"
@@ -2439,6 +2443,10 @@
     "google": "האם להוסיף",
     "valueInCode": "האם להוסיף"
   },
+  "questionForRegistration": {
+    "google": "שאלה בעת הרישום",
+    "valueInCode": "שאלה בעת הרישום"
+  },
   "questionForVolunteer": {
     "google": "שאלה למתנדב",
     "valueInCode": "שאלה למתנדב"
@@ -2495,6 +2503,22 @@
     "google": "הרשמה",
     "valueInCode": "הרשמה"
   },
+  "registerAskEmail": {
+    "google": "בקש מייל ממתנדב בעת רישום",
+    "valueInCode": "בקש מייל ממתנדב בעת רישום"
+  },
+  "registerAskPreferredDistributionAreaAddress": {
+    "google": "בקש כתובת אזור חלוקה בעת רישום",
+    "valueInCode": "בקש כתובת אזור חלוקה בעת רישום"
+  },
+  "registerAskPreferredFinishAddress": {
+    "google": "בקש כתובת סיום מסלול",
+    "valueInCode": "בקש כתובת סיום מסלול"
+  },
+  "registerAskTz": {
+    "google": "בקש תז ממתנדב בעת רישום",
+    "valueInCode": "בקש תז ממתנדב בעת רישום"
+  },
   "RegisterComponent": {
     "google": "הרשמה",
     "valueInCode": "הרשמה"
@@ -2510,6 +2534,10 @@
   "registerHelperReplyEmailText": {
     "google": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת",
     "valueInCode": "הודעה זו תשלח למתנדב אחרי שנרשם למערכת"
+  },
+  "registerHelpText": {
+    "google": "תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)",
+    "valueInCode": "תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)"
   },
   "registerStatusDate": {
     "google": "תאריך סטטוס רישום",
@@ -2879,6 +2907,10 @@
     "google": "שמור כמתנדב ברירת מחדל לחיילים אלו",
     "valueInCode": "שמור כמסלול קבוע למתנדב"
   },
+  "settings": {
+    "google": "הגדרות",
+    "valueInCode": "הגדרות"
+  },
   "shouldAdd": {
     "google": "האם להוסיף",
     "valueInCode": "האם להוסיף"
@@ -2930,6 +2962,14 @@
   "showAsignDeliveryFor": {
     "google": "הצג שיוך משלוחים ל",
     "valueInCode": "הצג שיוך משלוחים ל"
+  },
+  "showByDate": {
+    "google": "הצג לפי תאריך",
+    "valueInCode": "הצג לפי תאריך"
+  },
+  "showByDistanceFromMe": {
+    "google": "הצג לפי מרחק ממני",
+    "valueInCode": "הצג לפי מרחק ממני"
   },
   "showDeletedDistributionCenters": {
     "google": "הצג רשימות חלוקה מחוקות",
@@ -3130,6 +3170,10 @@
   "successMessageText": {
     "google": "תוכן הודעת הצלחה לחייל",
     "valueInCode": "תוכן הודעת הצלחה למשפחה"
+  },
+  "thanksForVolunteering": {
+    "google": ". תודה על ההתנדבות והנכונות לעזור!",
+    "valueInCode": ". תודה על ההתנדבות והנכונות לעזור!"
   },
   "thankYou": {
     "google": "תודה",
@@ -3503,9 +3547,17 @@
     "google": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה",
     "valueInCode": "כאשר המתנדב לוחץ על הכפתור \"נתקלתי בבעיה\" מופע לו מסך עם רשימה זו של שאלות ותשובות לעזרה"
   },
+  "volunteerRegistrationSettings": {
+    "google": "הגדרות רישום מתנדב",
+    "valueInCode": "הגדרות רישום מתנדב"
+  },
   "volunteers": {
     "google": "מתנדבים",
     "valueInCode": "מתנדבים"
+  },
+  "volunteersRegisteredTo": {
+    "google": "מתנדבים שנרשמו ל",
+    "valueInCode": "מתנדבים שנרשמו ל"
   },
   "volunteerStatus": {
     "google": "מצב מתנדב",
@@ -3562,5 +3614,9 @@
   "yesterday": {
     "google": "אתמול",
     "valueInCode": "אתמול"
+  },
+  "youVeRegisteredTo": {
+    "google": "נרשמתם ל",
+    "valueInCode": "נרשמתם ל"
   }
 }

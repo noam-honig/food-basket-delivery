@@ -209,7 +209,7 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.remult).exportToExcel,
                         click: async () => {
-                            saveToExcel(getSettings(this.remult), this.remult.repo(volunteersInEvent), x.args.settings, "מתנדבים שנרשמו ל" + this.name, busy)
+                            saveToExcel(getSettings(this.remult), this.remult.repo(volunteersInEvent), x.args.settings, use.language.volunteersRegisteredTo + " " + this.name, busy)
                         }
                     }
                 ],
@@ -672,21 +672,7 @@ export interface EventInList {
 
 
 }
-const month = [
-    "ינואר",
-    "פברואר",
-    "מרץ",
-    "אפריל",
-    "מאי",
-    "יוני",
-    "יולי",
-    "אוגוסט",
-    "ספטמבר",
-    "אוקטובר",
-    "נובמבר",
-    "דצמבר"
 
-]
 export const day = 86400000;
 export function eventDisplayDate(e: EventInList, group = false, today: Date = undefined) {
 
@@ -709,15 +695,11 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
                     return use.language.thisWeek;
                 if (d < endOfWeek + day * 7)
                     return use.language.nextWeek;
-                if (d < new Date(2021, 8, 8).valueOf())
-                    return "ראש השנה";
-                if (d < new Date(2021, 7, 22).valueOf())
-                    return "אוגוסט";
                 if (edd.getFullYear() == today.getFullYear())
-                    return month[edd.getMonth()]
+                    return edd.toLocaleString('he', { month: 'long' })
 
                 if (group)
-                    return month[edd.getMonth()] + " " + today.getFullYear().toString();
+                    return edd.toLocaleString('he', { month: 'long', year: '2-digit' })
             }
 
         }

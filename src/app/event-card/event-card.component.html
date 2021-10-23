@@ -5,7 +5,7 @@
         <app-dots-menu [buttons]="listOptions" *ngIf="isAdmin()"></app-dots-menu>
         <div>
             <button mat-raised-button color="primary" (click)="sortByDistance()" *ngIf="showLocation">
-                {{!volunteerLocation? 'הצג לפי מרחק ממני':'הצג לפי תאריך'}}
+                {{!volunteerLocation?settings.lang.showByDistanceFromMe:settings.lang.showByDate}}
             </button>
         </div>
     </div>

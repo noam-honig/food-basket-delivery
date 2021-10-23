@@ -105,7 +105,7 @@ export class EventCardComponent implements OnInit {
     }
     this.cities.sort((b, a) => a.count - b.count);
     this.cities.forEach(c => c.caption = c.id + " - " + c.count);
-    this.cities.splice(0, 0, { id: '', count: this._events.length, caption: 'כל הארץ - ' + this._events.length });
+    this.cities.splice(0, 0, { id: '', count: this._events.length, caption: use.language.entireRegion + ' - ' + this._events.length });
 
     this.types.sort((b, a) => a.count - b.count);
     this.types.forEach(c => c.caption = c.caption + " - " + c.count);
@@ -135,7 +135,7 @@ export class EventCardComponent implements OnInit {
       (this.type == undefined || this.type == AllTypes || e.type.id == this.type.id);
   }
   hasEvents(d: dateEvents) {
-    return !!d.events.find(x=>this.filter(x));
+    return !!d.events.find(x => this.filter(x));
   }
   get events() {
     return this._events;
@@ -211,4 +211,4 @@ function compareEventDate(a: EventInList, b: EventInList) {
   return a.startTime?.localeCompare(b.startTime);
 }
 
-interface dateEvents{ date: string, events: EventInList[] }
+interface dateEvents { date: string, events: EventInList[] }

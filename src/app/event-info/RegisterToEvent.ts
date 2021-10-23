@@ -111,11 +111,12 @@ export class RegisterToEvent {
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
         this.init();
+        let lang = getSettings(this.remult).lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await openDialog(InputAreaComponent, x => x.args = {
-                title: getSettings(this.remult).lang.register,
-                helpText: 'תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)',
+                title: lang.register,
+                helpText: lang.registerHelpText,
                 settings: {
                     fields: () => [this.$.name, this.$.phone, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
                 },
@@ -133,7 +134,7 @@ export class RegisterToEvent {
                         localStorage.setItem(infoKeyInStorage, JSON.stringify(RegisterToEvent.volunteerInfo));
                     if (refresh)
                         RegisterToEvent.volunteerInfoChanged.fire();
-                    let message = "נרשמתם ל" + e.name + ", " + eventDisplayDate(e) + ". תודה על ההתנדבות והנכונות לעזור!";
+                    let message = lang.youVeRegisteredTo +" "+ e.name + ", " + eventDisplayDate(e) + lang.thanksForVolunteering;
                     dialog.messageDialog(message).then(() => {
                         dialog.Info(message);
                     });

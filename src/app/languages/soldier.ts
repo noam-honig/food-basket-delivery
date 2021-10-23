@@ -735,6 +735,11 @@ export class soldier {
   ifYouNeedAnyHelpPleaseCall = 'לעזרה התקשר ל';
   customColumn = 'שדה נוסף לחייל';
   questionForVolunteer = 'שאלה למתנדב';
+  questionForRegistration = 'שאלה בעת הרישום';
+  registerAskTz = 'בקש תז ממתנדב בעת רישום';
+  registerAskEmail = 'בקש מייל ממתנדב בעת רישום';
+  registerAskPreferredDistributionAreaAddress = 'בקש כתובת אזור חלוקה בעת רישום';
+  registerAskPreferredFinishAddress = 'בקש כתובת סיום מסלול';
   caption = 'תאור';
   receptionDone = 'נקלט במעבדה';
   optionalValues = 'ערכים אפשריים מופרד בפסיקים';
@@ -891,4 +896,13 @@ export class soldier {
   selectAll = 'בחר הכל';
   changeRouteOrder = 'שנה סדר מסלול';
   dragDeliveriesToChangeTheirOrder = 'כעת ניתן לגרור את המשלוחים כדי לשנות את הסדר שלהם';
+  youVeRegisteredTo = 'נרשמתם ל';
+  thanksForVolunteering = '. תודה על ההתנדבות והנכונות לעזור!';
+  registerHelpText = 'תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)';
+  showByDistanceFromMe = 'הצג לפי מרחק ממני';
+  showByDate = 'הצג לפי תאריך';
+  volunteersRegisteredTo = 'מתנדבים שנרשמו ל';
+  entireRegion = 'כל הארץ';
+  settings = 'הגדרות';
+  volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
 }

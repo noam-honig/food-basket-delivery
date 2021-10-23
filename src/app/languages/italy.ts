@@ -735,6 +735,11 @@ export class italy {
   ifYouNeedAnyHelpPleaseCall = 'Per aiuto chiama';
   customColumn = 'Un altro campo per la famiglia';
   questionForVolunteer = 'Domanda al volontariato';
+  questionForRegistration = 'Domanda al momento della registrazione';
+  registerAskTz = "Richiedi l'ID dal volontario al momento della registrazione";
+  registerAskEmail = "Richiedi un'e-mail a un volontario al momento della registrazione";
+  registerAskPreferredDistributionAreaAddress = "Richiedi un indirizzo dell'area di distribuzione al momento della registrazione";
+  registerAskPreferredFinishAddress = 'Richiedi un indirizzo di fine percorso';
   caption = 'descrizione';
   receptionDone = 'Assorbito in laboratorio';
   optionalValues = 'Possibili valori separati da virgola';
@@ -891,4 +896,13 @@ export class italy {
   selectAll = 'seleziona tutto';
   changeRouteOrder = "Modifica l'ordine del percorso";
   dragDeliveriesToChangeTheirOrder = "Ora puoi trascinare le spedizioni per modificarne l'ordine";
+  youVeRegisteredTo = 'Ti sei iscritto a';
+  thanksForVolunteering = '. Grazie per il volontariato e la disponibilità ad aiutare!';
+  registerHelpText = 'Grazie per lo spirito di volontariato!!! Digita il tuo nome e numero di telefono e questo è tutto - sei registrato per fare volontariato :)';
+  showByDistanceFromMe = 'Per distanza';
+  showByDate = 'Per data';
+  volunteersRegisteredTo = 'Volontari iscritti a';
+  entireRegion = 'Intera Regione';
+  settings = 'Impostazioni';
+  volunteerRegistrationSettings = 'Impostazioni di registrazione dei volontari';
 }

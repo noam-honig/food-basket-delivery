@@ -735,6 +735,11 @@ export class en {
   ifYouNeedAnyHelpPleaseCall = 'For help call';
   customColumn = 'Another field for the family';
   questionForVolunteer = 'Question to volunteer';
+  questionForRegistration = 'Question at registration';
+  registerAskTz = 'Request id from Volunteer when registering';
+  registerAskEmail = 'Request an email from a volunteer when registering';
+  registerAskPreferredDistributionAreaAddress = 'Request a distribution area address when registering';
+  registerAskPreferredFinishAddress = 'Request a route end address';
   caption = 'description';
   receptionDone = 'Absorbed in the laboratory';
   optionalValues = 'Possible comma-separated values';
@@ -891,4 +896,13 @@ export class en {
   selectAll = 'select all';
   changeRouteOrder = 'Change route order';
   dragDeliveriesToChangeTheirOrder = 'You can now drag the shipments to change their order';
+  youVeRegisteredTo = 'You signed up for';
+  thanksForVolunteering = '. Thank you for volunteering and willingness to help!';
+  registerHelpText = 'Thanks for the volunteer spirit !!! Type in your name and phone number and this is it - you are registered to volunteer :)';
+  showByDistanceFromMe = 'By Distance';
+  showByDate = 'By Date';
+  volunteersRegisteredTo = 'Volunteers enrolled in';
+  entireRegion = 'Entire Region';
+  settings = 'Settings';
+  volunteerRegistrationSettings = 'Volunteer registration settings';
 }

@@ -1181,6 +1181,15 @@ export class Language {
   selectAll = "בחר הכל";
   changeRouteOrder = "שנה סדר מסלול";
   dragDeliveriesToChangeTheirOrder = "כעת ניתן לגרור את המשלוחים כדי לשנות את הסדר שלהם";
+  youVeRegisteredTo = "נרשמתם ל";
+  thanksForVolunteering = ". תודה על ההתנדבות והנכונות לעזור!";
+  registerHelpText = 'תודה על רוח ההתנדבות!!! הקלידו את שמכם ומספר הטלפון וזהו - אתם רשומם להתנדבות :)'
+  showByDistanceFromMe = 'הצג לפי מרחק ממני';
+  showByDate = 'הצג לפי תאריך';
+  volunteersRegisteredTo = "מתנדבים שנרשמו ל";
+  entireRegion = "כל הארץ";
+  settings = 'הגדרות';
+  volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
 }
 
 const defaultLang = new Language();

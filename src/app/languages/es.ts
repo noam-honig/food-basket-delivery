@@ -735,6 +735,11 @@ export class es {
   ifYouNeedAnyHelpPleaseCall = 'Para ayuda llame';
   customColumn = 'Otro campo para la familia';
   questionForVolunteer = 'Pregunta para ser voluntario';
+  questionForRegistration = 'Pregunta en el registro';
+  registerAskTz = 'Solicitar identificación de voluntario al registrarse';
+  registerAskEmail = 'Solicite un correo electrónico de un voluntario al registrarse';
+  registerAskPreferredDistributionAreaAddress = 'Solicite una dirección de área de distribución al registrarse';
+  registerAskPreferredFinishAddress = 'Solicitar una dirección final de ruta';
   caption = 'descripción';
   receptionDone = 'Absorbido en el laboratorio.';
   optionalValues = 'Posibles valores separados por comas';
@@ -891,4 +896,13 @@ export class es {
   selectAll = 'seleccionar todo';
   changeRouteOrder = 'Cambiar el orden de la ruta';
   dragDeliveriesToChangeTheirOrder = 'Ahora puedes arrastrar los envíos para cambiar su orden.';
+  youVeRegisteredTo = 'Te registraste para';
+  thanksForVolunteering = '. ¡Gracias por ser voluntario y estar dispuesto a ayudar!';
+  registerHelpText = '¡¡¡Gracias por el espíritu voluntario !!! Escriba su nombre y número de teléfono y esto es todo: está registrado para ser voluntario :)';
+  showByDistanceFromMe = 'A distancia';
+  showByDate = 'Por fecha';
+  volunteersRegisteredTo = 'Voluntarios inscritos en';
+  entireRegion = 'Toda la región';
+  settings = 'Ajustes';
+  volunteerRegistrationSettings = 'Configuración de registro de voluntarios';
 }
