@@ -5,6 +5,7 @@ import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Control, ElementProps, OptionalFieldsDefinition, Property, SizeProperty } from '../properties-editor/properties-editor.component';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
@@ -85,12 +86,15 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getStickerData(remult?: Remult) {
+  static async getStickerData(filterVolunteer?: string, remult?: Remult) {
     let d = new VolunteerReportDefs(remult, undefined);
     let lastCourier = null;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
-      where: fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup])
-        .and(fd.routeOrder.isEqualTo(0)),
+      where: async fd =>
+        [fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]),
+        fd.routeOrder.isEqualTo(0)
+
+        ],
       orderBy: fd => fd.courier
     })) {
       if (fd.courier != lastCourier) {
@@ -102,7 +106,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
 
     let r: any[] = [];
     for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
-      where: fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]),
+      where: async fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]).and(
+        filterVolunteer ? fd.courier.isEqualTo(await remult.repo(Helpers).findId(filterVolunteer)) : undefined),
       orderBy: d => [d.deliverStatus, d.courier.descending(), d.routeOrder]
     })) {
       let f = await remult.repo(Families).findId(fd.family);

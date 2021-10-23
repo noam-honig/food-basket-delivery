@@ -42,7 +42,7 @@
     </table>
 </ng-container>
 
-<app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps">
+<app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps" [(editing)]="editing">
 
     <button (click)="addControl()">הוסף שדה</button>
     <button (click)="addColumn()">הוסף עמודה</button>

@@ -37,6 +37,7 @@ import { SelectHelperComponent } from '../select-helper/select-helper.component'
 import { DeliveryImagesComponent } from '../delivery-images/delivery-images.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PrintStickersComponent } from '../print-stickers/print-stickers.component';
+import { PrintVolunteerComponent } from '../print-volunteer/print-volunteer.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -653,7 +654,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ].map(a => a.gridButton({
         afterAction: async () => await this.refresh(),
         dialog: this.dialog,
-        userWhere: (x) => Filter.fromEntityFilter(x,this.deliveries.getFilterWithSelectedRows().where),
+        userWhere: (x) => Filter.fromEntityFilter(x, this.deliveries.getFilterWithSelectedRows().where),
         settings: this.settings
       })),
       {
@@ -668,6 +669,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         visible: () => this.remult.isAllowed(Roles.admin),
         click: async () => {
           this.route.navigateToComponent(PrintStickersComponent)
+        }
+      },
+      {
+        name: getLang(this.remult).printVolunteerPage,
+        visible: () => this.remult.isAllowed(Roles.admin),
+        click: async () => {
+          this.route.navigateToComponent(PrintVolunteerComponent)
         }
       },
       {

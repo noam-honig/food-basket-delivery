@@ -5,9 +5,23 @@
     top:0;
     background-color: white;
     position: absolute;
-    padding: 10px;">
-    <strong>{{props.caption}}</strong>
-    <table>
+    padding: 10px;
+    ">
+    <div style="display: flex;
+    justify-content: space-between;
+    align-items: center;">
+        <strong *ngIf="editing">{{props.caption}}</strong>
+        <div>
+            <button mat-icon-button (click)="print()">
+                <mat-icon>print</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleEditing()">
+                <mat-icon *ngIf="editing"> close</mat-icon>
+                <mat-icon *ngIf="!editing"> settings</mat-icon>
+            </button>
+        </div>
+    </div>
+    <table *ngIf="editing">
         <tr *ngFor="let p of props.props">
             <td>
                 <input *ngIf="p.inputType!='checkbox'" [(ngModel)]="props.values[p.key]" [type]="p.inputType"
@@ -21,6 +35,6 @@
             </td>
         </tr>
     </table>
-    <ng-content></ng-content>
+    <ng-content *ngIf="editing"></ng-content>
 
 </div>

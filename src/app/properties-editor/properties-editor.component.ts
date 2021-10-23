@@ -15,15 +15,28 @@ export class PropertiesEditorComponent implements OnInit {
   ngOnInit(): void {
 
   }
+  toggleEditing() {
+    this.editing = !this.editing;
+    this.editingChange.emit(this.editing);
+  }
+  print() {
+    window.print();
+  }
+
+  @Input()
+  editing: boolean;
+  @Output()
+  editingChange = new EventEmitter<boolean>();
+
   @Input()
   props: ElementProps;
-  
+
   @Output()
   change = new EventEmitter();
   save() {
     this.change.emit();
   }
-  
+
 
 
 }

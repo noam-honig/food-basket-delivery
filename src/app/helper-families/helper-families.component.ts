@@ -78,7 +78,7 @@ export class HelperFamiliesComponent implements OnInit {
   disableDrag = true;
   toggleReorder() {
     this.disableDrag = !this.disableDrag;
-    if (!this.disableDrag){
+    if (!this.disableDrag) {
       this.dialog.Info(this.settings.lang.dragDeliveriesToChangeTheirOrder)
     }
   }
@@ -541,6 +541,10 @@ export class HelperFamiliesComponent implements OnInit {
   async sendWhatsapp() {
     Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, this.remult);
     await this.updateMessageSent("Whatsapp");
+  }
+  print() {
+    let p = window.location.pathname.split('/');
+    window.open("/" + p[1] + "/print-volunteer?volunteer=" + this.familyLists.helper.id, "_blank");
   }
   async customSms() {
     let h = this.familyLists.helper;

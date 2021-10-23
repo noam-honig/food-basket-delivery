@@ -1,5 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Entity, Field, IdEntity, Remult } from 'remult';
 import { InputTypes } from 'remult/inputTypes';
@@ -29,7 +30,7 @@ import { Control, ElementProps, getMarginsH, Property } from '../properties-edit
 export class PrintVolunteerComponent implements OnInit {
 
 
-  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
+  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
   defs = new VolunteerReportDefs(this.remult, this.busy);
   report: ReportInfo;
   row: VolunteerReportInfo;
@@ -46,10 +47,12 @@ export class PrintVolunteerComponent implements OnInit {
     ]
 
   };
+  editing = false;
   async dropControl(event: CdkDragDrop<string[]>, controls: Control[]) {
-    if (event.container == event.previousContainer) {
-      moveItemInArray(controls, event.previousIndex, event.currentIndex);
-    }
+    if (this.editing)
+      if (event.container == event.previousContainer) {
+        moveItemInArray(controls, event.previousIndex, event.currentIndex);
+      }
   }
   addColumn() {
     this.report.columns.push({
@@ -96,7 +99,7 @@ export class PrintVolunteerComponent implements OnInit {
   }
   removeControl(c: Control) {
     this.currentControlList.splice(this.report.controls.indexOf(c), 1);
-    
+
     this.save();
   }
   removeColumn() {
@@ -104,7 +107,9 @@ export class PrintVolunteerComponent implements OnInit {
     this.save();
   }
   async ngOnInit() {
-    let data = await VolunteerReportDefs.getStickerData();
+    let filterVolunteer = this.route.snapshot.queryParams['volunteer'];
+    console.log(filterVolunteer);
+    let data = await VolunteerReportDefs.getStickerData(filterVolunteer);
     let volunteer;
     let deliveries: any[];
     for (const d of data) {
@@ -122,22 +127,101 @@ export class PrintVolunteerComponent implements OnInit {
     this.report = this.row.info;
     if (!this.report) {
       this.report = {
-        controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }, {
-          fieldKey: 'basketType', propertyValues: {
-            [this.defs.textBeforeKey]: this.remult.lang.basketType + ": "
-          }
-        }, { fieldKey: 'deliveryComments', propertyValues: { 'bold': 'true' } }],
-        columns: [
+        "controls": [
           {
-            propertyValues: {
-              [this.defs.textBeforeKey]: this.remult.lang.familyName
-            },
-            controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }]
+            "fieldKey": "deliveryComments",
+            "propertyValues": {
+              "bold": "true"
+            }
+          },
+          {
+            "fieldKey": "ActiveFamilyDeliveries_courier",
+            "propertyValues": {
+              "inline": true,
+              "@textBefore": "שלום",
+              "align-center": true,
+              "bold": true
+            }
+          },
+          {
+            "fieldKey": "helperPhone",
+            "propertyValues": {
+              "inline": true,
+              "align-center": true,
+              "bold": true,
+              "font-size": "",
+              "@textBefore": ", טלפון: "
+            }
           }
         ],
-        page: {}
-
-
+        "columns": [
+          {
+            "propertyValues": {
+              "@columnCaption": "שם",
+              "@textBefore": "שם ",
+              "bold": true,
+              "font-size": ""
+            },
+            "controls": [
+              {
+                "fieldKey": "name",
+                "propertyValues": {
+                  "bold": true,
+                  "font-size": "",
+                  "color": "#000000"
+                }
+              },
+              {
+                "fieldKey": "ActiveFamilyDeliveries_deliveryComments",
+                "propertyValues": {}
+              }
+            ]
+          },
+          {
+            "controls": [
+              {
+                "fieldKey": "address",
+                "propertyValues": {}
+              }
+            ],
+            "propertyValues": {
+              "@columnCaption": "עמודה חדשה 123",
+              "@textBefore": "כתובת",
+              "bold": true
+            }
+          },
+          {
+            "controls": [
+              {
+                "fieldKey": "ActiveFamilyDeliveries_phone1",
+                "propertyValues": {}
+              },
+              {
+                "fieldKey": "ActiveFamilyDeliveries_phone2",
+                "propertyValues": {}
+              }
+            ],
+            "propertyValues": {
+              "@textBefore": "טלפונים",
+              "bold": true
+            }
+          },
+          {
+            "controls": [
+              {
+                "fieldKey": "basketType",
+                "propertyValues": {}
+              }
+            ],
+            "propertyValues": {
+              "@textBefore": "סל",
+              "bold": true
+            }
+          }
+        ],
+        "page": {
+          "padding-left": "0"
+        }
       }
     }
     this.pageProps.values = this.report.page;
@@ -152,7 +236,7 @@ export class PrintVolunteerComponent implements OnInit {
 }
 
 
-@Entity("stickerInfo", {
+@Entity("stickerInfo", {//don't change name - it's wrong, but data needs to be migrated for it to work again
   allowApiCrud: Roles.admin
 })
 class VolunteerReportInfo extends IdEntity {

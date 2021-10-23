@@ -1191,6 +1191,7 @@ export class Language {
   settings = 'הגדרות';
   volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
   invalidValue = "ערך לא תקין";
+  printVolunteerPage = "הדפס דף למתנדב";
 }
 
 const defaultLang = new Language();
