@@ -286,6 +286,19 @@ export abstract class HelpersBase extends IdEntity {
 
                 }
             }
+            console.log({
+                id:self.id,
+                leadId:self.leadHelper?.id,
+                leadLeadId:self.leadHelper?.leadHelper?.id,
+                changed:self.$.leadHelper.valueChanged()
+                
+            });
+            if (self.$.leadHelper.valueChanged() && self.leadHelper) {
+                if (self.leadHelper.id == self.id || self.leadHelper.leadHelper?.id == self.id) {
+                    self.$.leadHelper.error = getLang(self.remult).invalidValue;
+                    return;
+                }
+            }
 
             if (!canUpdate)
                 throw "Not Allowed";
@@ -351,7 +364,7 @@ export abstract class HelpersBase extends IdEntity {
         if (!remult.authenticated())
             return self.id.isEqualTo("No User");
         else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
-            return self.allowedIds.contains(remult.user.id); 
+            return self.allowedIds.contains(remult.user.id);
     }
 )
 
