@@ -3,12 +3,12 @@ import { ApplicationImages } from "./ApplicationImages";
 import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 
-import { SendSmsAction } from '../asign-family/send-sms-action';
+import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } from './ApplicationSettings';
 
 
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata } from 'remult';
+import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -24,7 +24,8 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { Groups } from './groups';
 import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
-import { Field } from '../translate';
+import { Field, use } from '../translate';
+import { Sites } from '../sites/sites';
 
 @Component({
   selector: 'app-manage',
@@ -377,6 +378,10 @@ export class ManageComponent implements OnInit {
         [this.settings.$.familyCustom3Caption, this.settings.$.familyCustom3Values],
         [this.settings.$.familyCustom4Caption, this.settings.$.familyCustom4Values],
         this.settings.$.forWho,
+        this.settings.$.smsClientNumber,
+        this.settings.$.smsUsername,
+        this.settings.$.smsPasswordInput,
+        this.settings.$.smsVirtualPhoneNumber
       ];
 
       if (this.settings.isSytemForMlt())
@@ -384,7 +389,23 @@ export class ManageComponent implements OnInit {
       return r;
     }
   });
+  sendTestSms() {
+    var message = new SendTestSms(this.remult);
+    message.phone = this.remult.currentUser.phone.thePhone;
+    message.message = this.testSms();
+    openDialog(InputAreaComponent, x => x.args = {
+      settings: {
+        fields: () => [...getFields(message)]
+      },
+      title: use.language.testSmsMessage,
+      ok: async () => {
+        let result = await message.sendTestMessage();
+        this.dialog.Error(result);
+      }
 
+    })
+
+  }
 
   testSms() {
     return SendSmsAction.getMessage(this.settings.smsText, this.settings.organisationName, 'משפחת ישראלי', 'ישראל ישראלי', this.remult.user.name, window.location.origin + '/x/zxcvdf');
@@ -726,4 +747,25 @@ export class GroupsStatsForAllDeliveryCenters extends EntityBase implements Grou
 export interface GroupsStats {
   name: string;
   familiesCount: number;
+
+}
+
+@Controller("sendTestSms")
+export class SendTestSms {
+  constructor(private remult: Remult) {
+
+
+  }
+  @Field({ translation: l => l.phone })
+  phone: string;
+  @Field({ translation: l => l.customSmsMessage })
+  message: string;
+  @BackendMethod({ allowed: Roles.admin })
+  async sendTestMessage() {
+    let settings = await ApplicationSettings.getAsync(this.remult);
+    // if (!settings.bulkSmsEnabled)
+    //   throw "can only use this with bulk sms enabled";
+    return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult.getSite(), settings);
+  }
+
 }

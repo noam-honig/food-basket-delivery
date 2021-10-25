@@ -102,7 +102,7 @@ export async function serverInit() {
 
                 let twilio = await import('twilio');
                 let client = twilio(accountSID, authToken);
-                return await client.messages.create({
+                await client.messages.create({
                     to: to,
                     from: twilio_sms_from_number,
                     body: text

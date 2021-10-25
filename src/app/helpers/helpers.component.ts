@@ -299,7 +299,7 @@ ${url}
       message += getLang(remult).enterFirstTime
     }
     let from = await remult.repo(Helpers).findFirst(h => h.id.isEqualTo(remult.user.id));
-    await new SendSmsUtils().sendSms(h.phone.thePhone, from.phone.thePhone, message, remult.getOrigin(), Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+    await new SendSmsUtils().sendSms(h.phone.thePhone,  message,  Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
     return getLang(remult).inviteSentSuccesfully
 
 

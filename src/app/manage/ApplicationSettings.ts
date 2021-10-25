@@ -21,7 +21,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { translationConfig, Language, use, TranslationOptions, Field, FieldType, IntegerField, langByCode } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
-import { Injectable } from '@angular/core';
+import { Injectable, Self } from '@angular/core';
 
 import { BasketType } from '../families/BasketType';
 import { HttpClient } from '@angular/common/http';
@@ -30,6 +30,7 @@ import { routeStrategy } from '../asign-family/route-strategy';
 
 import { ValueListFieldType } from 'remult/src/remult3';
 import { GroupsValue } from './groups';
+import { InputTypes } from 'remult/inputTypes';
 
 
 
@@ -50,7 +51,18 @@ export class RemovedFromListExcelImportStrategy {
   saving: async (self) => {
 
     if (isBackend()) {
+      if (self.$.smsPasswordInput.valueChanged()) {
+        if (self.smsPasswordInput)
+          self.smsCredentials = {
+            password: self.smsPasswordInput
+          }
+        else {
 
+          self.smsCredentials = {
+            password: ""
+          };
+        }
+      }
       await self.addressHelper.updateApiResultIfChanged();
 
       for (const l of [self.$.message1Link, self.$.message2Link]) {
@@ -64,7 +76,7 @@ export class RemovedFromListExcelImportStrategy {
       if (self.forWho)
         setLangForSite(Sites.getValidSchemaFromContext(self.remult), self.forWho);
       setSettingsForSite(Sites.getValidSchemaFromContext(self.remult), self);
-      logChanges(self._, self.remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest] });
+      logChanges(self._, self.remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest, self.$.smsCredentials, self.$.smsPasswordInput] });
     }
   },
   saved: (self) => {
@@ -80,7 +92,7 @@ export class ApplicationSettings extends EntityBase {
     DeliveryStatus.FailedNotHome.caption = this.NotHomeProblemStatusText;
     DeliveryStatus.FailedDoNotWant.caption = this.DoNotWantProblemStatusText;
     DeliveryStatus.FailedOther.caption = this.OtherProblemStatusText;
-    
+
     setCustomColumnInfo(customColumnInfo[1], this.familyCustom1Caption, this.familyCustom1Values);
     setCustomColumnInfo(customColumnInfo[2], this.familyCustom2Caption, this.familyCustom2Values);
     setCustomColumnInfo(customColumnInfo[3], this.familyCustom3Caption, this.familyCustom3Values);
@@ -94,6 +106,13 @@ export class ApplicationSettings extends EntityBase {
     setCustomColumnInfo(registerQuestionForVolunteers[3], this.questionForRegistration3Caption, this.questionForRegistration3Values);
     setCustomColumnInfo(registerQuestionForVolunteers[4], this.questionForRegistration4Caption, this.questionForRegistration4Values);
   }
+  @Field<ApplicationSettings>({
+    serverExpression:
+      self => self.smsCredentials?.password && self.smsUsername && self.smsClientNumber
+  })
+  bulkSmsEnabled: boolean;
+
+
 
   getInternationalPhonePrefix() {
     let r = this.forWho.args.internationalPrefixForSmsAndAws;
@@ -401,9 +420,9 @@ export class ApplicationSettings extends EntityBase {
   questionForRegistration4Values: string;
 
   @Field()
-  registerAskTz: boolean ;
+  registerAskTz: boolean;
   @Field()
-  registerAskEmail: boolean ;
+  registerAskEmail: boolean;
   @Field()
   registerAskPreferredDistributionAreaAddress: boolean;
   @Field()
@@ -421,7 +440,18 @@ export class ApplicationSettings extends EntityBase {
   @Field({ includeInApi: Roles.admin })
   excludeGroupsInCreateEvent: GroupsValue;
 
-
+  @Field({ includeInApi: false, allowNull: true })
+  smsCredentials?: {
+    password: string
+  }
+  @Field({ includeInApi: Roles.admin })
+  smsClientNumber: string;
+  @Field({ includeInApi: Roles.admin })
+  smsUsername: string;
+  @Field<ApplicationSettings>({ includeInApi: Roles.admin, inputType: InputTypes.password, serverExpression: (self) => self.smsCredentials?.password ? "****" : '' })
+  smsPasswordInput: string;
+  @Field({ includeInApi: Roles.admin })
+  smsVirtualPhoneNumber: string;
 
 
 

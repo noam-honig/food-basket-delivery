@@ -1192,6 +1192,13 @@ export class Language {
   volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
   invalidValue = "ערך לא תקין";
   printVolunteerPage = "הדפס דף למתנדב";
+  willBeReplacedBy = "יוחלף על ידי";
+  smsClientNumber = "מספר לקוח בגולבל SMS";
+  smsUsername = "שם משתמש בגלובל SMS";
+  smsPasswordInput = "סיסמה בגלובל SMS";
+  smsVirtualPhoneNumber = "מספר קו וירטואלי בגולבל SMS";
+  testSmsMessage = "בדיקת שליחת SMS";
+
 }
 
 const defaultLang = new Language();

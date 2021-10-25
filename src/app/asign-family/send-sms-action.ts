@@ -19,7 +19,7 @@ export class SendSmsAction {
         try {
             await SendSmsAction.generateMessage(remult, h, remult.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, sender, message, remult.getOrigin(), Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+                new SendSmsUtils().sendSms(phone, message, Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
                 await SendSmsAction.documentHelperMessage(reminder, h, remult, "SMS");
             });
         }
@@ -38,7 +38,7 @@ export class SendSmsAction {
         else
             h.smsDate = new Date();
         await h.save();
-        let hist =  remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
+        let hist = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
         hist.volunteer = h;
         if (reminder) {
             hist.comment = 'Reminder ' + type;
@@ -114,13 +114,23 @@ export interface SendSmsResponse {
 }
 
 export class SendSmsUtils {
-    un = process.env.SMS_UN;
-    pw = process.env.SMS_PW;
-    accid = process.env.SMS_ACCID;
+
 
     static twilioSendSms: (to: string, body: string, forWho: TranslationOptions) => Promise<any>;
 
-    async sendSms(phone: string, from: string, text: string, org: string, schema: string, settings: ApplicationSettings) {
+    async sendSms(phone: string, text: string, schema: string, settings: ApplicationSettings) {
+        let un = process.env.SMS_UN;
+        let pw = process.env.SMS_PW;
+        let accid = process.env.SMS_ACCID;
+        var from = settings.isSytemForMlt() ? 'Mitchashvim' : 'Hagai';
+        if (settings.bulkSmsEnabled) {
+            if (settings.smsVirtualPhoneNumber)
+                from = settings.smsVirtualPhoneNumber;
+            un = settings.smsUsername;
+            pw = settings.smsCredentials.password;
+            accid = settings.smsClientNumber;
+        }
+        console.log({un,pw,accid})
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
@@ -130,12 +140,12 @@ export class SendSmsUtils {
             '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">' +
             '<soap12:Body>' +
             '<sendSmsToRecipients xmlns="apiItnewsletter">' +
-            '<un>' + this.un + '</un>' +
-            '<pw>' + this.pw + '</pw>' +
-            '<accid>' + this.accid + '</accid>' +
+            '<un>' + un + '</un>' +
+            '<pw>' + pw + '</pw>' +
+            '<accid>' + accid + '</accid>' +
             '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
             '<t>' + date + '</t>' +
-            '<txtUserCellular>' + (settings.isSytemForMlt() ? 'Mitchashvim' : 'Hagai') + '</txtUserCellular>' +
+            '<txtUserCellular>' + from + '</txtUserCellular>' +
             '<destination>' + phone + '</destination>' +
             '<txtSMSmessage>' + text + '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
@@ -194,6 +204,7 @@ export class SendSmsUtils {
                     res = res.substring(0, res.indexOf('<'));
                 }
                 console.log('sms response for:' + schema + ' - ' + res);
+                return res;
             }
 
         }
@@ -204,3 +215,11 @@ export class SendSmsUtils {
 
     }
 }
+
+/*
+[] test send sms with twilio and aws to see that we didn't break anything
+[] block send test sms to only work for  bulk enabled 
+    if (!settings.bulkSmsEnabled)
+        throw "can only use this with bulk sms enabled";
+[] remember to return this all to only work with bulk enabled
+*/

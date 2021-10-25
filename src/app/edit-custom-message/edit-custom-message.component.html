@@ -1,0 +1,10 @@
+<ul>
+    <li *ngFor="let token of args.message.tokens">
+        {{token.token}} - {{settings.lang.willBeReplacedBy}} {{token.caption}} ({{token.value}})
+    </li>
+
+</ul>
+
+<textarea [(ngModel)]="args.templateText" class="form-control"></textarea>
+<H4>{{settings.lang.sampleMessage}}</H4>
+<pre>{{testSms()}}</pre>

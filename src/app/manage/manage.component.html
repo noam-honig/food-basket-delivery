@@ -250,6 +250,7 @@
             </mat-expansion-panel-header>
             <data-area [settings]="prefereces"></data-area>
             <button mat-raised-button (click)="resetToDefault()">{{settings.lang.resetTextsToLanguageDefaults}}</button>
+            <button mat-raised-button (click)="sendTestSms()">{{settings.lang.testSmsMessage}}</button>
 
 
         </mat-expansion-panel>

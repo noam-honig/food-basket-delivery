@@ -124,7 +124,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   @BackendMethod({ allowed: Roles.admin })
   static async SendCustomMessageToCourier(h: HelpersBase, message: string, remult?: Remult) {
-    await new SendSmsUtils().sendSms(h.phone.thePhone, await SendSmsAction.getSenderPhone(remult), message, remult.getOrigin(), Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+    await new SendSmsUtils().sendSms(h.phone.thePhone, message, Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
 
   }
   preview() {
@@ -177,7 +177,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   confirmed = false;
   async confirm() {
-    if (!this.families.currentRow.defaultDistributionCenter&&this.onMapLocation)
+    if (!this.families.currentRow.defaultDistributionCenter && this.onMapLocation)
       this.families.currentRow.defaultDistributionCenter = await this.remult.findClosestDistCenter(this.onMapLocation);
     if (this.delivery) {
       let d = this.delivery;

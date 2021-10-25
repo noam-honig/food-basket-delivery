@@ -436,7 +436,7 @@ export class HelperFamiliesComponent implements OnInit {
     }
 
 
-    await new SendSmsUtils().sendSms(phone, settings.helpPhone.thePhone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), remult.getOrigin(), Sites.getOrganizationFromContext(remult), settings);
+    await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), Sites.getOrganizationFromContext(remult), settings);
   }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
     openDialog(GetVolunteerFeedback, x => x.args = {

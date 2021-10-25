@@ -3,6 +3,7 @@ import { openDialog } from '@remult/angular';
 import { Remult, IdEntity } from 'remult';
 import { CreateNewEvent } from '../create-new-event/create-new-event';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
+import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
@@ -19,17 +20,12 @@ import { MergeFamiliesComponent } from '../merge-families/merge-families.compone
 export class TestMapComponent implements OnInit {
 
   constructor(private remult: Remult) { }
-  filterGroup: string='';
-  groups: { familiesCount: number, name: string }[];
-  refreshBaskets() {
-    this.groups = [
-      { name: '', familiesCount: 1 },
-      { name: 'a', familiesCount: 1 },
-      { name: 'b', familiesCount: 1 }
-    ]
-  }
-  async ngOnInit() {
-    this.refreshBaskets();
+  a:string='asdf';
+   ngOnInit() {
+     setTimeout(() => {
+       
+       openDialog(EditCustomMessageComponent);
+     }, 100);
   }
 
 

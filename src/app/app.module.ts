@@ -110,6 +110,7 @@ import { DotsMenuComponent } from './dots-menu/dots-menu.component';
 import { PrintStickersComponent } from './print-stickers/print-stickers.component';
 import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component';
 import { PropertiesEditorComponent } from './properties-editor/properties-editor.component';
+import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-message.component';
 
 
 
@@ -214,7 +215,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     DotsMenuComponent,
     PrintStickersComponent,
     PrintVolunteerComponent,
-    PropertiesEditorComponent
+    PropertiesEditorComponent,
+    EditCustomMessageComponent
 
 
   ],
