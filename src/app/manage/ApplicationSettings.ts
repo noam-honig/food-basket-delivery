@@ -266,7 +266,7 @@ export class ApplicationSettings extends EntityBase {
   @Field({ translation: l => l.showText2OnlyWhenDone })
   message2OnlyWhenDone: boolean;
   @Field()
-  forWho: TranslationOptions;
+  forWho: TranslationOptions = TranslationOptions.Families;
   get lang() { return langByCode(this.forWho.args.languageFile); }
   @Field({ dbName: 'forSoldiers' })
   _old_for_soliders: boolean;

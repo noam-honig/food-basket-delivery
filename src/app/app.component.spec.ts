@@ -460,13 +460,11 @@ describe('AppComponent', () => {
       let today = new Date("2021-08-03T08:38:19.237Z");
       let x={} as EventInList;
       expect (eventDisplayDate({...x,eventDateJson:"2021-08-02"},true,today)).toBe("עבר")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-03"},true,today)).toBe("היום")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-04"},true,today)).toBe("מחר")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-03"},true,today)).toBe("היום (03/08)")
+      expect (eventDisplayDate({...x,eventDateJson:"2021-08-04"},true,today)).toBe("מחר (04/08)")
       expect (eventDisplayDate({...x,eventDateJson:"2021-08-05"},true,today)).toBe("השבוע")
       expect (eventDisplayDate({...x,eventDateJson:"2021-08-10"},true,today)).toBe("שבוע הבא")
       expect (eventDisplayDate({...x,eventDateJson:"2021-08-15"},true,today)).toBe("אוגוסט")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-25"},true,today)).toBe("ראש השנה")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-09-03"},true,today)).toBe("ראש השנה")
       expect (eventDisplayDate({...x,eventDateJson:"2021-09-13"},true,today)).toBe("ספטמבר")
   });
 

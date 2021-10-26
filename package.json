@@ -23,6 +23,7 @@
     "docs": "vuepress dev docs",
     "build-docs": "vuepress build docs",
     "release-docs": "deploy-docs.sh",
+    "test": "ng test",
     "release": "npm run ng-build && npm run server:build && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
   },
   "private": true,
