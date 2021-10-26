@@ -6,6 +6,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers, HelpersBase } from '../helpers/helpers';
+import { getSettings } from '../manage/ApplicationSettings';
 import { Control, ElementProps, OptionalFieldsDefinition, Property, SizeProperty } from '../properties-editor/properties-editor.component';
 import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
 
@@ -46,6 +47,16 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       caption: remult.lang.commentForVolunteer,
       build: ({ fd }) => fd.$.deliveryComments.displayValue
     });
+    this.fields.push({
+      key: 'boxes1',
+      caption: getSettings(remult).boxes1Name,
+      build: ({ fd }) => (fd.quantity & fd.basketType?.boxes)?.toString()
+    })
+    this.fields.push({
+      key: 'boxes2',
+      caption: getSettings(remult).boxes2Name,
+      build: ({ fd }) => (fd.quantity & fd.basketType?.boxes2)?.toString()
+    })
 
     this.addFields(ActiveFamilyDeliveries, a => a.fd, f => [
       f.phone1,
