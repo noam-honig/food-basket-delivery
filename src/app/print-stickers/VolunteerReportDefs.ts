@@ -50,12 +50,12 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     this.fields.push({
       key: 'boxes1',
       caption: getSettings(remult).boxes1Name,
-      build: ({ fd }) => (fd.quantity & fd.basketType?.boxes)?.toString()
+      build: ({ fd }) => (fd.quantity * fd.basketType?.boxes)?.toString()
     })
     this.fields.push({
       key: 'boxes2',
       caption: getSettings(remult).boxes2Name,
-      build: ({ fd }) => (fd.quantity & fd.basketType?.boxes2)?.toString()
+      build: ({ fd }) => (fd.quantity * fd.basketType?.boxes2)?.toString()
     })
 
     this.addFields(ActiveFamilyDeliveries, a => a.fd, f => [
