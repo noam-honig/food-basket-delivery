@@ -247,6 +247,7 @@ s.parentNode.insertBefore(b, s);})();
                 
             });
             try {
+                com.message = unescape(com.message);
                 com.volunteer = await remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(com.phone)));
                 if (!com.volunteer) {
                     let p = '+972' + com.phone.substring(1);
