@@ -111,6 +111,7 @@ import { PrintStickersComponent } from './print-stickers/print-stickers.componen
 import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component';
 import { PropertiesEditorComponent } from './properties-editor/properties-editor.component';
 import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-message.component';
+import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
 
 
 
@@ -216,7 +217,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     PrintStickersComponent,
     PrintVolunteerComponent,
     PropertiesEditorComponent,
-    EditCustomMessageComponent
+    EditCustomMessageComponent,
+    IncomingMessagesComponent
 
 
   ],
@@ -350,6 +352,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
       routeMap.set(RegisterURLComponent, l.RegisterURLComponent);
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities);
+      routeMap.set(IncomingMessagesComponent, l.incomingMessages);
 
 
 

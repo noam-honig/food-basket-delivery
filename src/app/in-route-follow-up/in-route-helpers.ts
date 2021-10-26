@@ -36,7 +36,7 @@ import { DateOnlyField } from "remult/src/remult3";
             return sql.innerSelect({
                 select: () => [col],
                 from: com,
-                where: () => [sql.eq(com.volunteer, h.id), sql.build(com.comment, ' not like \'%Link%\'')],
+                where: () => [sql.eq(com.volunteer, h.id), sql.build(com.message, ' not like \'%Link%\'')],
                 orderBy: [{ field: com.createDate, isDescending: true }]
             }, toCol)
         }
@@ -45,7 +45,7 @@ import { DateOnlyField } from "remult/src/remult3";
                 select: () => [h2.name],
                 from: com,
                 innerJoin: () => [{ to: h2, on: () => [sql.eq(com.createUser, h2.id)] }],
-                where: () => [sql.eq(com.volunteer, h.id), sql.build(com.comment, ' not like \'%Link%\'')],
+                where: () => [sql.eq(com.volunteer, h.id), sql.build(com.message, ' not like \'%Link%\'')],
                 orderBy: [{ field: com.createDate, isDescending: true }]
             }, toCol)
         }
@@ -61,7 +61,7 @@ import { DateOnlyField } from "remult/src/remult3";
                     , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.maxAssignDate)
                     , sql.maxInnerSelect(f.deliveryStatusDate, helperFamilies(() => [DeliveryStatus.isSuccess(f.deliverStatus)]), self.lastCompletedDelivery)
                     , comInnerSelect(com.createDate, self.lastCommunicationDate)
-                    , comInnerSelect(com.comment, self.lastComment)
+                    , comInnerSelect(com.message, self.lastComment)
                     , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), DeliveryStatus.isSuccess(history.deliverStatus)] }, self.completedDeliveries)
                     , comHelperInnerSelect(self.lastCommunicationUser)
                 ],
@@ -101,10 +101,10 @@ export class InRouteHelpers extends IdEntity {
                                 title: 'הוסף הערה',
 
                                 save: async (comment) => {
-                                    r.comment = comment;
+                                    r.message = comment;
                                     await r.save();
                                 },
-                                comment: r.comment
+                                comment: r.message
 
 
                             });
@@ -113,7 +113,7 @@ export class InRouteHelpers extends IdEntity {
                     }
                 ],
 
-                columnSettings: hist => [hist.createDate, hist.comment, hist.createUser],
+                columnSettings: hist => [hist.createDate, hist.message, hist.createUser],
 
                 where: hist => hist.volunteer.isEqualTo(h),
                 orderBy: fd => fd.createDate.descending(),
@@ -131,7 +131,7 @@ export class InRouteHelpers extends IdEntity {
             save: async (comment) => {
                 let hist = this.remult.repo(HelperCommunicationHistory).create();
                 hist.volunteer = await this.helper();
-                hist.comment = comment;
+                hist.message = comment;
                 await hist.save();
                 this._.reload();
                 reload();
@@ -208,6 +208,8 @@ export class InRouteHelpers extends IdEntity {
     allowApiInsert: Roles.distCenterAdmin,
     allowApiRead: Roles.distCenterAdmin,
     allowApiUpdate: Roles.distCenterAdmin,
+    defaultOrderBy: c => c.createDate.descending(),
+
     saving: (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
@@ -216,17 +218,37 @@ export class InRouteHelpers extends IdEntity {
     }
 })
 export class HelperCommunicationHistory extends IdEntity {
-    @ChangeDateColumn({ translation: l => l.createDate })
+    @ChangeDateColumn({ translation: l => l.when })
     createDate: Date;
     @Field({ translation: l => l.createUser })
+    @DataControl({ width: '150' })
     createUser: HelpersBase;
+    @DataControl({ width: '100' })
     @Field({ translation: l => l.volunteer })
     volunteer: HelpersBase;
+    @Field()
+    family: string;
+    @Field({ allowApiUpdate: false })
+    eventId: string;
     @Field({
-        caption: "הערה",
+        translation: l => l.message
     })
-    @DataControl({ width: '400' })
-    comment: string;
+    @DataControl({ width: '200' })
+    message: string;
+    @Field({ allowApiUpdate: false })
+    apiResponse: any;
+
+    @Field()
+    @DataControl({ width: '100' })
+    phone: string;
+    @Field({ allowApiUpdate: false })
+    incoming: boolean = false;
+    @Field({ allowApiUpdate: false })
+    automaticAction: string;
+
+    @Field({ translation: l => l.done })
+    handled: boolean = false;
+
 
     constructor(private remult: Remult) {
         super()

@@ -177,10 +177,11 @@ export class EventCardComponent implements OnInit {
 
   adminVolunteers(e: EventInList) {
     if (this.remult.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
+
       if (e.requiredVolunteers)
-        return e.registeredVolunteers + '/' + e.requiredVolunteers + ' מתנדבים';
+        return e.registeredVolunteers + '/' + e.requiredVolunteers + ' ' + this.settings.lang.volunteers;
       else
-        return e.registeredVolunteers + " מתנדבים";
+        return e.registeredVolunteers + " " + this.settings.lang.volunteers;
   }
   distance(e: EventInList) {
     if (!this.volunteerLocation)

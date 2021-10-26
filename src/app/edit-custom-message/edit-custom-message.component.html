@@ -1,10 +1,26 @@
-<ul>
-    <li *ngFor="let token of args.message.tokens">
-        {{token.token}} - {{settings.lang.willBeReplacedBy}} {{token.caption}} ({{token.value}})
-    </li>
+<h3 matDialogHeader>{{args.title}}</h3>
+<mat-dialog-content>
+    <div class="help-text" *ngIf="args.helpText">
+        {{args.helpText}}
+    </div>
+    <ul>
+        <li *ngFor="let token of args.message.tokens">
+            {{token.token}} - {{settings.lang.willBeReplacedBy}} {{token.caption}} ({{token.value}})
+        </li>
 
-</ul>
+    </ul>
 
-<textarea [(ngModel)]="args.templateText" class="form-control"></textarea>
-<H4>{{settings.lang.sampleMessage}}</H4>
-<pre>{{testSms()}}</pre>
+    <textarea [(ngModel)]="args.templateText" class="form-control"></textarea>
+    <H4>{{settings.lang.sampleMessage}} ({{testSms().length}} תוים)</H4>
+    <pre>{{testSms()}}</pre>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button *ngFor="let b of args.buttons" (click)="b.click()">
+        {{b.name}}
+    </button>
+    <button type="button" mat-raised-button color="warning" [mat-dialog-close]>
+        {{settings.lang.cancel}}
+    </button>
+
+
+</mat-dialog-actions>

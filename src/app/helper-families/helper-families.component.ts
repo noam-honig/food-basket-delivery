@@ -436,7 +436,7 @@ export class HelperFamiliesComponent implements OnInit {
     }
 
 
-    await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), Sites.getOrganizationFromContext(remult), settings);
+    await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), remult, undefined, { familyId: fd.family });
   }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
     openDialog(GetVolunteerFeedback, x => x.args = {
@@ -596,7 +596,7 @@ export class HelperFamiliesComponent implements OnInit {
         save: async (comment) => {
           let hist = this.remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
           hist.volunteer = this.familyLists.helper;
-          hist.comment = comment;
+          hist.message = comment;
           await hist.save();
         },
         comment: 'התקשרתי'

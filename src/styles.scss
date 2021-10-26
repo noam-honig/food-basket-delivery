@@ -428,3 +428,13 @@ textarea {
 .mat-tab-body-wrapper {
   flex-grow: 1;
 }
+
+.help-text {
+  background-color: lightyellow;
+  padding: 12px;
+  border-width: thin;
+  border-style: solid;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border-color: lightgray;
+}

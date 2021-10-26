@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend } from "remult";
+import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod } from "remult";
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
 import { getLang } from '../sites/sites';
@@ -24,6 +24,8 @@ import { InputTypes } from "remult/inputTypes";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import * as moment from "moment";
 import { DateOnlyValueConverter } from "remult/valueConverters";
+import { EditCustomMessageComponent, messageMerger } from "../edit-custom-message/edit-custom-message.component";
+import { SendSmsUtils } from "../asign-family/send-sms-action";
 
 
 
@@ -130,6 +132,19 @@ export class Event extends IdEntity {
         serverExpression: self => self.volunteeredIsRegisteredToEvent(self.remult.currentUser)
     })
     registeredToEvent: boolean;
+
+    createMessage(volunteer: volunteersInEvent) {
+        return new messageMerger([
+            { token: "מתנדב", caption: "שם המתנדב", value: volunteer.helper.name },
+            { token: "ארוע", caption: "שם הארוע", value: this.name },
+            { token: "כתובת", value: this.address },
+            { token: "תאריך", caption: "מועד הארוע", value: eventDisplayDate(this) },
+            { token: "משעה", value: this.startTime },
+            { token: "עד שעה", value: this.endTime },
+            { token: "ארגון", value: getSettings(this.remult).organisationName },
+        ]);
+    }
+
     async showVolunteers(dialog: DialogService, busy: BusyService) {
         if (this.wasChanged())
             await this.save();
@@ -154,35 +169,40 @@ export class Event extends IdEntity {
                 })
 
             }],
-            settings: new GridSettings(this.remult.repo(volunteersInEvent), {
+            settings: new GridSettings<volunteersInEvent>(this.remult.repo(volunteersInEvent), {
 
                 rowsInPage: 50,
+                allowUpdate: true,
                 where: ve => ve.eventId.isEqualTo(this.id),
                 orderBy: ve => ve.registerStatusDate.descending(),
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
                 columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
-                    { width: '100', field: ev.helperName },
+                    { width: '100', field: ev.helperName, readonly: true },
                     {
                         caption: getLang(this.remult).volunteerStatus,
                         getValue: v => {
                             if (v.canceled)
                                 return use.language.canceledParticipation;
+                            let additionalText = '';
+                            if (v.confirmed)
+                                additionalText = ", " + v.$.confirmed.metadata.caption;
                             if (v.assignedDeliveries > 0)
                                 if (v.lastAssignTime < v.lastSmsTime)
-                                    return getLang(this.remult).smsSent;
+                                    return getLang(this.remult).smsSent + additionalText;
                                 else
-                                    return getLang(this.remult).assigned;
+                                    return getLang(this.remult).assigned + additionalText;
                             else if (v.succesfulDeliveries == 0)
-                                return getLang(this.remult).newVolunteer
-                            else getLang(this.remult).unAsigned
+                                return getLang(this.remult).newVolunteer + additionalText
+                            else return getLang(this.remult).unAsigned + additionalText
+
                         },
                         width: '100'
                     },
-                    { width: '100', field: ev.assignedDeliveries },
-                    { width: '100', field: ev.succesfulDeliveries },
-                    { width: '150', field: ev.helperPhone },
-                    ev.helperEmail,
+                    { width: '100', field: ev.assignedDeliveries, readonly: true },
+                    { width: '100', field: ev.succesfulDeliveries, readonly: true },
+                    { width: '150', field: ev.helperPhone, readonly: true },
+                    { readonly: true, field: ev.helperEmail },
                     { width: '100', field: ev.duplicateToNextEvent },
                     ev.registerStatusDate,
                     ev.fromGeneralList,
@@ -190,7 +210,8 @@ export class Event extends IdEntity {
                     ev.createUser,
                     ev.canceled,
                     ev.cancelUser,
-                    ev.a1, ev.a2, ev.a3, ev.a4
+                    ev.a1, ev.a2, ev.a3, ev.a4,
+                    ev.confirmed
 
                 ],
                 rowCssClass: v => {
@@ -206,6 +227,40 @@ export class Event extends IdEntity {
                     return '';
                 },
                 gridButtons: [
+                    {
+                        name: getLang(this.remult).sendRequestConfirmSms,
+                        visible: () => getSettings(this.remult).bulkSmsEnabled && x.args.settings.currentRow,
+                        click: async () => {
+                            openDialog(EditCustomMessageComponent, edit => edit.args = {
+                                helpText: 'פעולה זו תשלח הודעה לכל מתנדבי הארוע ותבקש מהם לאשר הגעה.  אם המתנדב ישיב "כן", ירשם שהוא אישור הגעה, אם השיב "לא" ירשם שביטל השתתפות ואם השיב "הסר" יוסר מרשימות התפוצה',
+                                title: getLang(this.remult).sendRequestConfirmSms,
+                                message: this.createMessage(x.args.settings.currentRow),
+                                templateText: edit.settings.confirmEventParticipationMessage,
+                                buttons: [
+                                    {
+                                        name: 'שמור הודעה',
+                                        click: async () => {
+                                            edit.settings.confirmEventParticipationMessage = edit.args.templateText;
+                                            await edit.settings.save();
+                                            dialog.Info("העדכון נשמר")
+                                        }
+                                    }, {
+                                        name: "שלח הודעה",
+                                        click: async () => {
+                                            let count = x.args.settings.totalRows;
+                                            if (await dialog.YesNoPromise("לשלוח הודעה לכל המתנדבים שנרשמו?")) {
+                                                edit.settings.confirmEventParticipationMessage = edit.args.templateText;
+                                                await edit.settings.save();
+                                                let result = await this.sendParticipationConfirmMessage();
+                                                dialog.Info(result);
+                                                edit.ref.close();
+                                            }
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    },
                     {
                         name: getLang(this.remult).exportToExcel,
                         click: async () => {
@@ -257,6 +312,32 @@ export class Event extends IdEntity {
         });
         await this._.reload();
     }
+
+    @BackendMethod({ allowed: Roles.admin })
+    async sendParticipationConfirmMessage(remult?: Remult) {
+        let settings = await ApplicationSettings.getAsync(remult);
+        if (!settings.bulkSmsEnabled)
+            throw "אינך רשאי לשלוח הודעות לקבוצה";
+        let i = 0;
+        for await (const v of remult.repo(volunteersInEvent).iterate(
+            {
+                where: v => v.eventId.isEqualTo(this.id).and(v.canceled.isEqualTo(false))
+            }
+        )) {
+            if (v.helper)
+                if (!v.helper.doNotSendSms) {
+                    await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
+                        this.createMessage(v).merge(settings.confirmEventParticipationMessage),
+                        remult, v.helper, {
+                        eventId: this.id
+                    });
+                    i++;
+
+                }
+        }
+        return "נשלחו " + i + " הודעות";
+    }
+
     @Field<Event>({
         translation: l => l.eventName,
         validate: (s, c) => Validators.required(s, c, s.remult.lang.nameIsTooShort)
@@ -313,6 +394,21 @@ export class Event extends IdEntity {
             }
     )
     registeredVolunteers: number;
+    @Field({
+        translation: l => l.confirmedVolunteers
+    },
+        (options, remult) =>
+            options.sqlExpression = async (selfDefs) => {
+                var vie = SqlFor(remult.repo(volunteersInEvent));
+                let self = SqlFor(selfDefs);
+                var sql = new SqlBuilder(remult);
+                return sql.columnCountWithAs(self, {
+                    from: vie,
+                    where: () => [sql.eq(vie.eventId, self.id), vie.canceled.isEqualTo(false), vie.confirmed.isEqualTo(true)]
+                }, "confirmed")
+            }
+    )
+    confirmedVolunteers: number;
 
     get eventLogo() {
         return getSettings(this.remult).logoUrl;
@@ -430,6 +526,7 @@ export class Event extends IdEntity {
             e.endTime,
             { width: '100', field: e.requiredVolunteers },
             { width: '100', field: e.registeredVolunteers },
+            { width: '100', field: e.confirmedVolunteers },
             { width: '150', field: e.eventStatus },
             { field: e.distributionCenter, visible: () => dialog.hasManyCenters },
             e.address,
@@ -643,6 +740,9 @@ export class volunteersInEvent extends IdEntity {
     a3: string;
     @CustomColumn(() => registerQuestionForVolunteers[4])
     a4: string;
+
+    @Field({ allowApiUpdate: Roles.distCenterAdmin, translation: l => l.confirmed })
+    confirmed: boolean;
 
 }
 

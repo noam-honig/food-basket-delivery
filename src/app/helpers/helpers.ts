@@ -129,7 +129,8 @@ export abstract class HelpersBase extends IdEntity {
     @DateTimeColumn({ translation: l => l.smsDate })
     smsDate: Date;
 
-
+    @Field()
+    doNotSendSms: boolean = false;
     @CompanyColumn()
     company: string;
     @IntegerField({ allowApiUpdate: Roles.distCenterAdmin })
@@ -286,13 +287,6 @@ export abstract class HelpersBase extends IdEntity {
 
                 }
             }
-            console.log({
-                id:self.id,
-                leadId:self.leadHelper?.id,
-                leadLeadId:self.leadHelper?.leadHelper?.id,
-                changed:self.$.leadHelper.valueChanged()
-                
-            });
             if (self.$.leadHelper.valueChanged() && self.leadHelper) {
                 if (self.leadHelper.id == self.id || self.leadHelper.leadHelper?.id == self.id) {
                     self.$.leadHelper.error = getLang(self.remult).invalidValue;
@@ -509,6 +503,8 @@ export class Helpers extends HelpersBase {
             field: self.socialSecurityNumber, width: '80'
         });
         r.push(self.leadHelper);
+        if (settings.bulkSmsEnabled)
+            r.push(self.doNotSendSms);
 
         return r;
     }
@@ -700,7 +696,7 @@ export class Helpers extends HelpersBase {
     preferredFinishAddress: string;
     preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);
 
-
+    
 
 
 
@@ -797,6 +793,23 @@ export class Helpers extends HelpersBase {
             Helpers.recentHelpers.splice(index, 1);
         Helpers.recentHelpers.splice(0, 0, h);
     }
+    async getActiveEventsRegistered() {
+        let events = (await import('../events/events'));
+        let result: import('../events/events').volunteersInEvent[] = [];
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        for (const event of await this.remult.repo(events.Event).find({
+            where: e => e.eventStatus.isEqualTo(events.eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(yesterday))
+        })) {
+            for (const v of await this.remult.repo(events.volunteersInEvent).find({
+                where: v => v.helper.isEqualTo(this).and(v.eventId.isEqualTo(event.id))
+            })) {
+                result.push(v);
+            }
+        }
+        return result;
+    }
+
 
 }
 

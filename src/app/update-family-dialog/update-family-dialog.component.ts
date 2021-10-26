@@ -124,7 +124,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   @BackendMethod({ allowed: Roles.admin })
   static async SendCustomMessageToCourier(h: HelpersBase, message: string, remult?: Remult) {
-    await new SendSmsUtils().sendSms(h.phone.thePhone, message, Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+    await new SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
 
   }
   preview() {

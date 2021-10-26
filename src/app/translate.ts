@@ -1198,6 +1198,12 @@ export class Language {
   smsPasswordInput = "סיסמה בגלובל SMS";
   smsVirtualPhoneNumber = "מספר קו וירטואלי בגולבל SMS";
   testSmsMessage = "בדיקת שליחת SMS";
+  message = "הודעה";
+  confirmed = "אישר הגעה";
+  confirmedVolunteers = "מתנדבים שאישרו הגעה";
+  incomingMessages = "הודעות נכנסות";
+  when = "מתי";
+  sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
 
 }
 

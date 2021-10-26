@@ -55,6 +55,8 @@ import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.co
 import { OrgEventsComponent } from './org-events/org-events.component';
 import { PrintStickersComponent } from './print-stickers/print-stickers.component';
 import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component';
+import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
+import { ApplicationSettings, getSettings } from '../app/manage/ApplicationSettings';
 
 
 @Injectable()
@@ -71,6 +73,15 @@ export class MltOnlyGuard implements CanActivate {
   }
 
 
+}
+@Injectable()
+export class BulkMessageEnabledGuard implements CanActivate {
+  constructor(private remult: Remult) {
+
+  }
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    return getSettings(this.remult).bulkSmsEnabled
+  }
 }
 @Injectable()
 export class MltAdminGuard implements CanActivate {
@@ -139,6 +150,7 @@ export const routes: Routes = [
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
   { path: 'events', component: OrgEventsComponent },
+  { path: 'incoming-messages', component: IncomingMessagesComponent, canActivate: [BulkMessageEnabledGuard] },
   UpdateInfoComponent.route,
   LoginComponent.route,
   { path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard] },
@@ -158,7 +170,7 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
-    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard]
+    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard,BulkMessageEnabledGuard]
 
 })
 

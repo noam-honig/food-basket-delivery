@@ -763,9 +763,9 @@ export class SendTestSms {
   @BackendMethod({ allowed: Roles.admin })
   async sendTestMessage() {
     let settings = await ApplicationSettings.getAsync(this.remult);
-    // if (!settings.bulkSmsEnabled)
-    //   throw "can only use this with bulk sms enabled";
-    return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult.getSite(), settings);
+     if (!settings.bulkSmsEnabled)
+       throw "can only use this with bulk sms enabled";
+    return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult,undefined);
   }
 
 }

@@ -23,6 +23,11 @@ import * as jwt from 'express-jwt';
 import * as compression from 'compression';
 import { AuthService } from '../auth/auth-service';
 import { InitContext } from "../helpers/init-context";
+import { Helpers, HelpersBase } from "../helpers/helpers";
+import { Phone } from "../model-shared/phone";
+
+import { volunteersInEvent, Event, eventStatus } from "../events/events";
+
 
 serverInit().then(async (dataSource) => {
 
@@ -124,7 +129,7 @@ s.parentNode.insertBefore(b, s);})();
 /></noscript>
 <!-- End Facebook Pixel Code -->
 `
-);
+                );
             }
             result = result.replace(/GOOGLE_PIXEL_TAG_ID/g, tagid);
 
@@ -229,6 +234,83 @@ s.parentNode.insertBefore(b, s);})();
     else {
         registerImageUrls(app, eb.getValidContext, '');
     }
+    app.use('/*/api/incoming-sms', async (req, res) => {
+        try {
+            let remult = await eb.getValidContext(req);
+            let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
+
+            let com = comRepo.create({
+                apiResponse: req.query,
+                message: req.query.message,
+                phone: req.query.cell,
+                incoming: true,
+                
+            });
+            try {
+                com.volunteer = await remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(com.phone)));
+                if (!com.volunteer) {
+                    let p = '+972' + com.phone.substring(1);
+                    com.volunteer = await remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(p)));
+                }
+                
+                if (com.message == "כן" || com.message == "לא")
+                    if (com.volunteer) {
+                        remult.currentUser = await com.volunteer.getHelper();
+                        remult.setUser({
+                            id: com.volunteer.id,
+                            name: com.volunteer.name,
+                            roles: []
+                        });
+                        let previousMessage = await comRepo.findFirst({
+                            where: previousCom => previousCom.volunteer.isEqualTo(com.volunteer),
+                            orderBy: com => com.createDate.descending()
+                        })
+                        if (previousMessage && previousMessage.eventId) {
+                            let e = await remult.repo(Event).findId(previousMessage.eventId);
+                            if (e?.eventStatus == eventStatus.active) {
+                                let v = await remult.repo(volunteersInEvent).findFirst(v => v.eventId.isEqualTo(previousMessage.eventId).and(v.helper.isEqualTo(com.volunteer)));
+                                if (v) {
+
+                                    switch (com.message) {
+                                        case "כן":
+                                            v.confirmed = true;
+                                            v.canceled = false;
+                                            com.automaticAction = "אישר הגעה לאירוע"
+                                            await v.save();
+                                            break;
+                                        case "לא":
+                                            v.canceled = true;
+                                            com.automaticAction += "ביטל הגעה לאירוע"
+                                            await v.save();
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                if (com.message == "הסר") {
+                    await com.volunteer.getHelper().then(async h=>{
+                        h.doNotSendSms = true;
+                        await h.save();
+                    })
+                    com.automaticAction = "הוסר מרשימת הSMS";
+                }
+
+            } catch (err) {
+                com.apiResponse = { ...com.apiResponse, err };
+            }
+
+            await com.save();
+            res.send("thanks");
+
+
+        }
+        catch (err) {
+            res.statusCode = 404;
+            res.send(err);
+        }
+    });
 
 
 

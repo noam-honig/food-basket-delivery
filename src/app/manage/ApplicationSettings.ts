@@ -108,7 +108,7 @@ export class ApplicationSettings extends EntityBase {
   }
   @Field<ApplicationSettings>({
     serverExpression:
-      self => self.smsCredentials?.password && self.smsUsername && self.smsClientNumber
+      self => (!!self.smsCredentials?.password) && !!self.smsUsername && !!self.smsClientNumber
   })
   bulkSmsEnabled: boolean;
 
@@ -172,6 +172,10 @@ export class ApplicationSettings extends EntityBase {
     validate: validateSmsContent
   })
   reminderSmsText: string;
+
+  @Field({ includeInApi: Roles.admin })
+  confirmEventParticipationMessage:string = '';
+
   @Field({
     translation: l => l.emailDonorContentCaption,
     validate: validateSmsContent

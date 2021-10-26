@@ -19,7 +19,7 @@ export class SendSmsAction {
         try {
             await SendSmsAction.generateMessage(remult, h, remult.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, message, Sites.getOrganizationFromContext(remult), await ApplicationSettings.getAsync(remult));
+                new SendSmsUtils().sendSms(phone, message, remult, h);
                 await SendSmsAction.documentHelperMessage(reminder, h, remult, "SMS");
             });
         }
@@ -38,14 +38,6 @@ export class SendSmsAction {
         else
             h.smsDate = new Date();
         await h.save();
-        let hist = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-        hist.volunteer = h;
-        if (reminder) {
-            hist.comment = 'Reminder ' + type;
-        }
-        else
-            hist.comment = 'Link ' + type;
-        await hist.save();
     }
 
     static async generateMessage(ds: Remult, helperIn: HelpersBase, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
@@ -118,7 +110,12 @@ export class SendSmsUtils {
 
     static twilioSendSms: (to: string, body: string, forWho: TranslationOptions) => Promise<any>;
 
-    async sendSms(phone: string, text: string, schema: string, settings: ApplicationSettings) {
+    async sendSms(phone: string, message: string, remult: Remult, helper: HelpersBase, info?: {
+        familyId?: string,
+        eventId?: string
+    }) {
+        var schema = Sites.getOrganizationFromContext(remult);
+        var settings = await ApplicationSettings.getAsync(remult)
         let un = process.env.SMS_UN;
         let pw = process.env.SMS_PW;
         let accid = process.env.SMS_ACCID;
@@ -130,7 +127,7 @@ export class SendSmsUtils {
             pw = settings.smsCredentials.password;
             accid = settings.smsClientNumber;
         }
-        console.log({un,pw,accid})
+        console.log({ un, pw, accid })
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
@@ -147,7 +144,7 @@ export class SendSmsUtils {
             '<t>' + date + '</t>' +
             '<txtUserCellular>' + from + '</txtUserCellular>' +
             '<destination>' + phone + '</destination>' +
-            '<txtSMSmessage>' + text + '</txtSMSmessage>' +
+            '<txtSMSmessage>' + message + '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
             '<txtAddInf>jsnodetest</txtAddInf>' +
             '</sendSmsToRecipients>' +
@@ -155,71 +152,90 @@ export class SendSmsUtils {
             '</soap12:Envelope>';
 
 
+        const send = async () => {
+            try {
+                let prefix = settings.forWho.args.internationalPrefixForSmsAndAws;
+                if (!prefix)
+                    prefix = "+972";
+                let internationalPhone = phone;
+                if (internationalPhone.startsWith('0'))
+                    internationalPhone = internationalPhone.substring(1, 1000);
+                if (!internationalPhone.startsWith('+'))
+                    internationalPhone = prefix + internationalPhone;
+                if (settings.forWho.args.internationalPrefixForSmsAndAws) {
+                    if (SendSmsUtils.twilioSendSms) {
+                        let r = await SendSmsUtils.twilioSendSms(internationalPhone, message, settings.forWho);
 
-        try {
-            let prefix = settings.forWho.args.internationalPrefixForSmsAndAws;
-            if (!prefix)
-                prefix = "+972";
-            let internationalPhone = phone;
-            if (internationalPhone.startsWith('0'))
-                internationalPhone = internationalPhone.substring(1, 1000);
-            if (!internationalPhone.startsWith('+'))
-                internationalPhone = prefix + internationalPhone;
-            if (settings.forWho.args.internationalPrefixForSmsAndAws) {
-                if (SendSmsUtils.twilioSendSms) {
-                    let r = await SendSmsUtils.twilioSendSms(internationalPhone, text, settings.forWho);
-
-                    console.log(r);
-                }
-                else {
-                    let AWS = await import('aws-sdk');
-                    let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
-                        Message: text,
-                        PhoneNumber: internationalPhone,
-                        MessageAttributes: {
-                            'AWS.SNS.SMS.SenderID': {
-                                'DataType': 'String',
-                                'StringValue': 'HAGAI'
+                        console.log(r);
+                        return r;
+                    }
+                    else {
+                        let AWS = await import('aws-sdk');
+                        let r = await new AWS.SNS({ apiVersion: '2010-03-31' }).publish({
+                            Message: message,
+                            PhoneNumber: internationalPhone,
+                            MessageAttributes: {
+                                'AWS.SNS.SMS.SenderID': {
+                                    'DataType': 'String',
+                                    'StringValue': 'HAGAI'
+                                }
                             }
-                        }
-                    }).promise();
-                    console.log(phone, r);
-                }
-            } else {
-                let h = new fetch.Headers();
-                h.append('Content-Type', 'text/xml; charset=utf-8');
-                h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients');
-                let r = await fetch.default('https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx', {
-                    method: 'POST',
-                    headers: h,
-                    body: data
-                });
+                        }).promise();
+                        console.log(phone, r);
+                        return r;
+                    }
+                } else {
+                    let h = new fetch.Headers();
+                    h.append('Content-Type', 'text/xml; charset=utf-8');
+                    h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients');
+                    let r = await fetch.default('https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx', {
+                        method: 'POST',
+                        headers: h,
+                        body: data
+                    });
 
-                let res = await r.text();
-                let orig = res;
-                let t = '<sendSmsToRecipientsResult>';
-                let i = res.indexOf(t);
-                if (i >= 0) {
-                    res = res.substring(i + t.length);
-                    res = res.substring(0, res.indexOf('<'));
+                    let res = await r.text();
+                    let orig = res;
+                    let t = '<sendSmsToRecipientsResult>';
+                    let i = res.indexOf(t);
+                    if (i >= 0) {
+                        res = res.substring(i + t.length);
+                        res = res.substring(0, res.indexOf('<'));
+                    }
+                    console.log('sms response for:' + schema + ' - ' + res);
+                    return res;
                 }
-                console.log('sms response for:' + schema + ' - ' + res);
-                return res;
+
             }
-
+            catch (err) {
+                console.error('sms error ', err);
+                return err;
+            }
         }
-        catch (err) {
-            console.error('sms error ', err);
-        }
+        let apiResponse = await send();
+
+        await remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create({
+            volunteer: helper,
+            apiResponse,
+            message,
+            phone,
+            family: info?.familyId,
+            eventId: info?.eventId
 
 
+        }).save();
+        if (apiResponse && typeof apiResponse !== "string")
+            apiResponse = JSON.stringify(apiResponse);
+        return apiResponse;
     }
 }
 
 /*
 [] test send sms with twilio and aws to see that we didn't break anything
-[] block send test sms to only work for  bulk enabled 
+[] block send test sms to only work for  bulk enabled
     if (!settings.bulkSmsEnabled)
         throw "can only use this with bulk sms enabled";
 [] remember to return this all to only work with bulk enabled
+/test?cell=0507330590&message=Test&date=26%2f10%2f2021+06%3a06%3a27&destination=055-9793527
+[] Make sure to add remove me.
 */
