@@ -244,7 +244,7 @@ s.parentNode.insertBefore(b, s);})();
                 message: req.query.message,
                 phone: req.query.cell,
                 incoming: true,
-                
+
             });
             try {
                 com.message = unescape(com.message).trim();
@@ -253,15 +253,16 @@ s.parentNode.insertBefore(b, s);})();
                     let p = '+972' + com.phone.substring(1);
                     com.volunteer = await remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(p)));
                 }
-                
-                if (com.message == "כן" || com.message == "לא")
-                    if (com.volunteer) {
-                        remult.currentUser = await com.volunteer.getHelper();
-                        remult.setUser({
-                            id: com.volunteer.id,
-                            name: com.volunteer.name,
-                            roles: []
-                        });
+
+                if (com.volunteer) {
+                    remult.currentUser = await com.volunteer.getHelper();
+                    remult.setUser({
+                        id: com.volunteer.id,
+                        name: com.volunteer.name,
+                        roles: []
+                    });
+                    if (com.message == "כן" || com.message == "לא") {
+
                         let previousMessage = await comRepo.findFirst({
                             where: previousCom => previousCom.volunteer.isEqualTo(com.volunteer),
                             orderBy: com => com.createDate.descending()
@@ -290,15 +291,17 @@ s.parentNode.insertBefore(b, s);})();
                         }
                     }
 
-                if (com.message == "הסר") {
-                    await com.volunteer.getHelper().then(async h=>{
-                        h.doNotSendSms = true;
-                        await h.save();
-                    })
-                    com.automaticAction = "הוסר מרשימת הSMS";
+                    if (com.message == "הסר") {
+                        await com.volunteer.getHelper().then(async h => {
+                            h.doNotSendSms = true;
+                            await h.save();
+                        })
+                        com.automaticAction = "הוסר מרשימת הSMS";
+                    }
                 }
 
             } catch (err) {
+                console.error(err);
                 com.apiResponse = { ...com.apiResponse, err };
             }
 
