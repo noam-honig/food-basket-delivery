@@ -137,7 +137,7 @@ export class Event extends IdEntity {
         return new messageMerger([
             { token: "מתנדב", caption: "שם המתנדב", value: volunteer.helper.name },
             { token: "ארוע", caption: "שם הארוע", value: this.name },
-            { token: "כתובת", value: this.address },
+            { token: "כתובת", value: this.theAddress },
             { token: "תאריך", caption: "מועד הארוע", value: eventDisplayDate(this) },
             { token: "משעה", value: this.startTime },
             { token: "עד שעה", value: this.endTime },
