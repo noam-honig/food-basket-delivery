@@ -196,31 +196,9 @@ export class HelpersComponent implements OnInit, OnDestroy {
         click: async h => {
           await h.showDeliveryHistory(this.dialog, this.busy);
         }
-      },
-      {
-        name: 'sms history',
-        click: async (self) => {
-
-
-          await openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
-            title: 'היסטוריה עבור ' + self.name,
-
-            settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
-              numOfColumnsInGrid: 6,
-              knowTotalRows: true,
-              
-
-              columnSettings: hist => [hist.createDate, hist.message, hist.createUser],
-
-              where: hist => hist.volunteer.isEqualTo(self),
-              orderBy: fd => fd.createDate.descending(),
-              rowsInPage: 25
-
-            })
-          });
-          
-        }
       }
+     
+          
 
     ],
 
