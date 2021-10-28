@@ -21,7 +21,7 @@ export class FamilySelfOrderComponent implements OnInit {
 
   }
   @Field()
-  familyId: string = 'dcf37b47-603b-44a1-ae15-d021f3003537';
+  familyUrl: string = 'dcf37b47-603b-44a1-ae15-d021f3003537';
 
   @Field()
   familyName: string = '';
@@ -66,7 +66,7 @@ export class FamilySelfOrderComponent implements OnInit {
     ]
   })
   ngOnInit(): void {
-    this.familyId = this.route.snapshot.params['id'];
+    this.familyUrl = this.route.snapshot.params['id'];
     this.load();
 
 
@@ -101,12 +101,12 @@ export class FamilySelfOrderComponent implements OnInit {
   }
 
   async loadFamily() {
-    let f = await this.remult.repo(Families).findFirst(f => f.shortUrlKey.isEqualTo(this.familyId).and(f.status.isEqualTo(FamilyStatus.Active)));;
+    let f = await this.remult.repo(Families).findFirst(f => f.shortUrlKey.isEqualTo(this.familyUrl).and(f.status.isEqualTo(FamilyStatus.Active)));;
     if (!f) {
       this.message = "לא נמצא";
       return;
     }
-    if (await this.remult.repo(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(this.familyId))) {
+    if (await this.remult.repo(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(f.id))) {
       this.message = "המשלוח כבר מעודכן במערכת, לשינוי נא ליצור קשר טלפוני";
       return;
     }
