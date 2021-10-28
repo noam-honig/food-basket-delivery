@@ -9,6 +9,7 @@ import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
 import { getLang } from '../sites/sites';
 import { DataControl, getValueList } from '@remult/angular';
+import { getSettings } from '../manage/ApplicationSettings';
 
 
 @FieldType<BasketType>({
@@ -24,7 +25,7 @@ import { DataControl, getValueList } from '@remult/angular';
   width: '100'
 })
 @Entity<BasketType>("BasketType", {
-  allowApiRead: Allow.authenticated,
+  allowApiRead: remult => Allow.authenticated(remult) || getSettings(remult).familySelfOrderEnabled,
   allowApiCrud: Roles.admin,
   saving: async (self) => {
     if ((!self.boxes || self.boxes < 1) && (!self.boxes2 || self.boxes2 < 1))

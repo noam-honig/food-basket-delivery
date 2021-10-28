@@ -769,19 +769,12 @@ export class Helpers extends HelpersBase {
 
     veryUrlKeyAndReturnTrueIfSaveRequired() {
         if (!this.shortUrlKey || this.shortUrlKey.length < 10) {
-            this.shortUrlKey = this.makeid();
+            this.shortUrlKey = makeId();
             return true;
         }
         return false;
     }
-    makeid() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < 10; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        return text;
-    }
+    
     static recentHelpers: HelpersBase[] = [];
     static addToRecent(h: HelpersBase) {
         if (!h)
@@ -835,3 +828,11 @@ export function validatePasswordColumn(remult: Remult, password: FieldRef<any, s
 
 
 
+export function makeId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 10; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}

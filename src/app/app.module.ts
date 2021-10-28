@@ -112,6 +112,7 @@ import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.compo
 import { PropertiesEditorComponent } from './properties-editor/properties-editor.component';
 import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-message.component';
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
+import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 
 
 
@@ -218,7 +219,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     PrintVolunteerComponent,
     PropertiesEditorComponent,
     EditCustomMessageComponent,
-    IncomingMessagesComponent
+    IncomingMessagesComponent,
+    FamilySelfOrderComponent
 
 
   ],

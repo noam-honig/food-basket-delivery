@@ -1,0 +1,21 @@
+<div style="    display: flex;
+justify-content: center; ">
+    <mat-card style="max-width:400px">
+        <div style="width:100%;text-align: center">
+            <img src="{{settings.logoUrl}}" />
+        </div>
+        <p style="text-align: center">{{settings.organisationName}}</p>
+        <ng-container *ngIf="!message&&familyName">
+            <div style="font-size: larger;">
+                {{familyName}} היקרה!💖<br>
+שמחים להיות כאן בשבילך! מארז מפנק מחכה לתינוק שלך..<br/>
+אנחנו רוצים להעניק לך ולתינוקך את הטוב ביותר ועל כן נשמח שתמלאי טופס זה על מנת שנוכל להתאים את הסל במיוחד עבורכם.
+            </div>
+            <data-area [settings]="area"></data-area>
+            
+            <button mat-raised-button color="primary" (click)="update()">שלח הזמנה</button>
+        </ng-container>
+        <h2>{{message}}</h2>
+    </mat-card>
+
+</div>

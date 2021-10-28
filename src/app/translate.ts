@@ -1204,6 +1204,8 @@ export class Language {
   incomingMessages = "הודעות נכנסות";
   when = "מתי";
   sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
+  sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
+  whatToOrder = "מה להזמין?";
 
 }
 

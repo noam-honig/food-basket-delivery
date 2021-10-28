@@ -174,7 +174,7 @@ export class ApplicationSettings extends EntityBase {
   reminderSmsText: string;
 
   @Field({ includeInApi: Roles.admin })
-  confirmEventParticipationMessage:string = '';
+  confirmEventParticipationMessage: string = '';
 
   @Field({
     translation: l => l.emailDonorContentCaption,
@@ -456,6 +456,12 @@ export class ApplicationSettings extends EntityBase {
   smsPasswordInput: string;
   @Field({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string;
+
+  @Field({  })
+  familySelfOrderEnabled: boolean;
+  @Field()
+  familySelfOrderMessage: string;
+
 
 
 

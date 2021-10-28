@@ -43,6 +43,8 @@ import { BasketType } from './BasketType';
 import { use } from '../translate';
 import { ChartType } from 'chart.js';
 import { GroupsValue } from '../manage/groups';
+import { EditCustomMessageComponent, messageMerger } from '../edit-custom-message/edit-custom-message.component';
+import { makeId } from '../helpers/helpers';
 
 
 
@@ -395,7 +397,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    userWhere: f => Filter.fromEntityFilter(f,this.families.getFilterWithSelectedRows().where),
+                    userWhere: f => Filter.fromEntityFilter(f, this.families.getFilterWithSelectedRows().where),
                     settings: this.settings
                 }))
             , {
@@ -437,11 +439,44 @@ export class FamiliesComponent implements OnInit {
             ,
             {
                 name: this.settings.lang.sendWhatsAppToFamily,
-                click: f => sendWhatsappToFamily(f, this.remult),
+                click: f =>
+                    sendWhatsappToFamily(f, this.remult)
+                ,
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
             }
             ,
+            {
+                name: this.settings.lang.sendSelfOrderLink,
+                visible: () => this.settings.familySelfOrderEnabled,
+                click:async  (f) => {
+                    if (!f.shortUrlKey){
+                        f.shortUrlKey = makeId();
+                        await f.save();
+                    }
+                    let message = new messageMerger([
+                        { token: 'משפחה', value: f.name },
+                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: this.remult.getOrigin()+'/'+this.remult.getSite() + '/fso/' + f.shortUrlKey },
+                        { token: 'ארגון', value: this.settings.organisationName }
+                    ]);
+                    openDialog(EditCustomMessageComponent, edit => edit.args = {
+                        message,
+                        templateText: this.settings.familySelfOrderMessage||defaultSelfOrderMessage,
+                        helpText: '',
+                        title: this.settings.lang.sendSelfOrderLink,
+                        buttons: [{
+                            name: 'שלח הודעה',
+                            click: async () => {
+                                this.settings.familySelfOrderMessage = edit.args.templateText;
+                                await this.settings.save();
+                                sendWhatsappToFamily(f, this.remult, undefined, message.merge(edit.args.templateText))
+                            }
+                        }]
+
+
+                    })
+                }
+            },
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
@@ -785,3 +820,9 @@ function test(arr: any) {
     console.log(arr);
     return arr;
 }
+const defaultSelfOrderMessage = `שלום !משפחה!,
+אתם מוזמנים לבחור מה אתם רוצים במשלוח הבא, בלחיצה על הקישור:
+!קישור!
+בברכה
+!ארגון!
+`

@@ -775,7 +775,8 @@ export class Families extends IdEntity {
   lastUpdateDate: Date;
   @Field({ allowApiUpdate: false })
   lastUpdateUser: HelpersBase;
-
+  @Field({ includeInApi: Roles.distCenterAdmin })
+  shortUrlKey: string;
 
 
 
@@ -1148,7 +1149,7 @@ export interface autocompleteResult {
   result: GeocodeResult
 }
 
-export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string) {
+export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string,message?:string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
@@ -1157,8 +1158,11 @@ export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?
       }
     }
   }
+  if (!message){
+    message = use.language.hello + ' ' + f.name + ',';
+  }
   Phone.sendWhatsappToPhone(phone,
-    use.language.hello + ' ' + f.name + ',', remult);
+    message, remult);
 }
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {

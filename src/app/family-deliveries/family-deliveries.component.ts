@@ -38,6 +38,7 @@ import { DeliveryImagesComponent } from '../delivery-images/delivery-images.comp
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PrintStickersComponent } from '../print-stickers/print-stickers.component';
 import { PrintVolunteerComponent } from '../print-volunteer/print-volunteer.component';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -679,6 +680,40 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
       },
       {
+        name: getLang(this.remult).whatToOrder,
+        click: async () => {
+          let items: totalItem[] = [];
+          let parcels: totalItem[] = [];
+          let add = (to: totalItem[], key: string, quantity: number) => {
+            key = key.trim();
+            let x = to.find(w => w.name == key);
+            if (x)
+              x.quantity += quantity;
+            else
+              to.push({ name: key, quantity });
+          }
+          for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate()) {
+            add(parcels, fd.basketType?.name || '', fd.quantity);
+            for (let item of fd.deliveryComments.split(',')) {
+              item = item.trim();
+              let reg = /(^\d*)(.*)/.exec(item);
+              if (reg[1])
+                add(items, reg[2], +reg[1])
+              else add(items, reg[2], 1);
+            }
+          }
+
+          items.sort((a,b)=>b.quantity-a.quantity);
+          parcels.sort((a,b)=>b.quantity-a.quantity);
+
+
+          openDialog(EditCommentDialogComponent, edit => edit.args = {
+            title: getLang(this.remult).whatToOrder,
+            comment: items.map(x=>x.quantity+' X '+x.name).join("\n")+"\n---------------\n"+parcels.map(x=>x.quantity+' X '+x.name)
+          });
+        }
+      },
+      {
         name: getLang(this.remult).exportToExcel,
         click: async () => {
 
@@ -694,6 +729,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
         , visible: () => this.remult.isAllowed(Roles.admin)
       }
+
     ]
     ,
     rowButtons: [
@@ -1015,6 +1051,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
     },
     {
       name: getLang(args.remult).deleteDelivery,
+      icon: 'delete',
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.remult).shouldDeleteDeliveryFor + d.name)) {
           {
@@ -1050,4 +1087,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => d.phone1 && args.remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt()
     }
   ] as RowButton<FamilyDeliveries>[]
+}
+interface totalItem {
+  name: string,
+  quantity: number
 }

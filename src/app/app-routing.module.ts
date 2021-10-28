@@ -57,6 +57,7 @@ import { PrintStickersComponent } from './print-stickers/print-stickers.componen
 import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component';
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
 import { ApplicationSettings, getSettings } from '../app/manage/ApplicationSettings';
+import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 
 
 @Injectable()
@@ -119,6 +120,7 @@ export const routes: Routes = [
   { path: 'overview', component: OverviewComponent, canActivate: [OverviewGuard] },
   DistributionMap.route,
 
+  { path: 'fso/:id', component: FamilySelfOrderComponent },
   HelpersComponent.route,
   { path: 'tr', component: TokenReplacerComponent, canActivate: [OverviewGuard], data: { hide: true } },
 
@@ -170,7 +172,7 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
-    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard,BulkMessageEnabledGuard]
+    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard, BulkMessageEnabledGuard]
 
 })
 
