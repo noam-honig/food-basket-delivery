@@ -591,7 +591,8 @@ export class FamilyDeliveries extends IdEntity {
                     addColumn(x[0], x[1], 's');
                 }
             }
-
+            
+            addColumn(f.$.socialWorker.metadata.caption, f.socialWorker, 's');
             addColumn("X" + use.language.lastName, lastName, 's');
             addColumn("X" + use.language.firstName, firstName, 's');
             addColumn("X" + use.language.streetName, street, 's');
