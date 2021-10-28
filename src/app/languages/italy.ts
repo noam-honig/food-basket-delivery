@@ -907,4 +907,18 @@ export class italy {
   volunteerRegistrationSettings = 'Impostazioni di registrazione dei volontari';
   invalidValue = 'valore non valido';
   printVolunteerPage = 'Stampa una pagina di volontariato';
+  willBeReplacedBy = 'Sarà sostituito da';
+  smsClientNumber = 'Numero cliente SMS Golbel';
+  smsUsername = 'Nome utente SMS globale';
+  smsPasswordInput = 'Password SMS globale';
+  smsVirtualPhoneNumber = 'Numero di linea virtuale nel limite di SMS';
+  testSmsMessage = 'Controllo invio SMS';
+  message = 'Messaggio';
+  confirmed = 'Arrivo approvato';
+  confirmedVolunteers = "Volontari che hanno confermato l'arrivo";
+  incomingMessages = 'Messaggi in arrivo';
+  when = 'quando';
+  sendRequestConfirmSms = "Invio di un SMS per confermare l'arrivo";
+  sendSelfOrderLink = 'Invia un link per un auto-ordine';
+  whatToOrder = 'Cosa ordinare?';
 }

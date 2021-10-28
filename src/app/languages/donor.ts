@@ -907,4 +907,18 @@ export class donor {
   volunteerRegistrationSettings = 'הגדרות רישום מתנדב';
   invalidValue = 'ערך לא תקין';
   printVolunteerPage = 'הדפס דף למתנדב';
+  willBeReplacedBy = 'יוחלף על ידי';
+  smsClientNumber = 'מספר לקוח בגולבל SMS';
+  smsUsername = 'שם משתמש בגלובל SMS';
+  smsPasswordInput = 'סיסמה בגלובל SMS';
+  smsVirtualPhoneNumber = 'מספר קו וירטואלי בגולבל SMS';
+  testSmsMessage = 'בדיקת שליחת SMS';
+  message = 'הודעה';
+  confirmed = 'אישר הגעה';
+  confirmedVolunteers = 'מתנדבים שאישרו הגעה';
+  incomingMessages = 'הודעות נכנסות';
+  when = 'מתי';
+  sendRequestConfirmSms = 'שליחת הודעת SMS לאישור הגעה';
+  sendSelfOrderLink = 'שליחת קישור להזמנה עצמית';
+  whatToOrder = 'מה להזמין?';
 }

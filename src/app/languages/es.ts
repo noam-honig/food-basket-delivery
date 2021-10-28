@@ -907,4 +907,18 @@ export class es {
   volunteerRegistrationSettings = 'Configuración de registro de voluntarios';
   invalidValue = 'valor no válido';
   printVolunteerPage = 'Imprime una página de voluntariado';
+  willBeReplacedBy = 'Será reemplazado por';
+  smsClientNumber = 'Número de cliente de Golbel SMS';
+  smsUsername = 'Nombre de usuario de SMS global';
+  smsPasswordInput = 'Contraseña de SMS global';
+  smsVirtualPhoneNumber = 'Número de línea virtual en el límite de SMS';
+  testSmsMessage = 'Comprobación de envío de SMS';
+  message = 'mensaje';
+  confirmed = 'Llegada aprobada';
+  confirmedVolunteers = 'Voluntarios que confirmaron llegada';
+  incomingMessages = 'Mensajes entrantes';
+  when = 'Cuando';
+  sendRequestConfirmSms = 'Envío de un SMS para confirmar la llegada';
+  sendSelfOrderLink = 'Envíe un enlace para un auto pedido';
+  whatToOrder = '¿Qué pedir?';
 }

@@ -804,6 +804,16 @@
     "valueInCode": "אישור מחיקה עבור ",
     "valueInEnglish": "Deletion certificate for"
   },
+  "confirmed": {
+    "google": "Arrivo approvato",
+    "valueInCode": "אישר הגעה",
+    "valueInEnglish": "Arrival approved"
+  },
+  "confirmedVolunteers": {
+    "google": "Volontari che hanno confermato l'arrivo",
+    "valueInCode": "מתנדבים שאישרו הגעה",
+    "valueInEnglish": "Volunteers who confirmed arrival"
+  },
   "confirmPassword": {
     "google": "Conferma password",
     "valueInCode": "אישור סיסמה",
@@ -2120,6 +2130,11 @@
     "valueInCode": "רק עבור משפחות בקבוצות אלו",
     "valueInEnglish": "Only for families in these groups"
   },
+  "incomingMessages": {
+    "google": "Messaggi in arrivo",
+    "valueInCode": "הודעות נכנסות",
+    "valueInEnglish": "Incoming messages"
+  },
   "indie": {
     "google": "Volontario indipendente",
     "valueInCode": "מתנדב עצמאי",
@@ -2414,6 +2429,11 @@
     "google": "Aria condizionata per la famiglia",
     "valueInCode": "מיזוג למשפחת",
     "valueInEnglish": "Air conditioning for the family"
+  },
+  "message": {
+    "google": "Messaggio",
+    "valueInCode": "הודעה",
+    "valueInEnglish": "message"
   },
   "messageCopied": {
     "google": "Messaggio copiato",
@@ -3601,6 +3621,16 @@
     "valueInCode": "שלח SMS לתזכורת",
     "valueInEnglish": "SMS reminders"
   },
+  "sendRequestConfirmSms": {
+    "google": "Invio di un SMS per confermare l'arrivo",
+    "valueInCode": "שליחת הודעת SMS לאישור הגעה",
+    "valueInEnglish": "Sending an SMS to confirm arrival"
+  },
+  "sendSelfOrderLink": {
+    "google": "Invia un link per un auto-ordine",
+    "valueInCode": "שליחת קישור להזמנה עצמית",
+    "valueInEnglish": "Submit a link for a self-order"
+  },
   "sendSmsFromDevice": {
     "google": "Invia un collegamento SMS dal tuo telefono",
     "valueInCode": "שלח קישור בSMS מהטלפון",
@@ -3851,6 +3881,11 @@
     "valueInCode": " שם דומה",
     "valueInEnglish": " A similar name"
   },
+  "smsClientNumber": {
+    "google": "Numero cliente SMS Golbel",
+    "valueInCode": "מספר לקוח בגולבל SMS",
+    "valueInEnglish": "Golbel SMS customer number"
+  },
   "smsDate": {
     "google": "Data di consegna SMS",
     "valueInCode": "מועד משלוח SMS",
@@ -3886,6 +3921,11 @@
     "valueInCode": "SMS נפתח",
     "valueInEnglish": "SMS viewed"
   },
+  "smsPasswordInput": {
+    "google": "Password SMS globale",
+    "valueInCode": "סיסמה בגלובל SMS",
+    "valueInEnglish": "Global SMS password"
+  },
   "smsReminderMessageContentCaption": {
     "google": "Contenuto del promemoria via SMS",
     "valueInCode": "תוכן הודעת תזכורת SMS",
@@ -3900,6 +3940,16 @@
     "google": "Questo messaggio verrà inviato a un volontario dalla schermata Assegna volontario - con il collegamento alle famiglie che gli viene chiesto di condividere.",
     "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.",
     "valueInEnglish": "This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share."
+  },
+  "smsUsername": {
+    "google": "Nome utente SMS globale",
+    "valueInCode": "שם משתמש בגלובל SMS",
+    "valueInEnglish": "Global SMS username"
+  },
+  "smsVirtualPhoneNumber": {
+    "google": "Numero di linea virtuale nel limite di SMS",
+    "valueInCode": "מספר קו וירטואלי בגולבל SMS",
+    "valueInEnglish": "Virtual line number in SMS limit"
   },
   "socialSecurityNumber": {
     "google": "Numero identificativo",
@@ -3975,6 +4025,11 @@
     "google": "Consegna SMS alla famiglia",
     "valueInCode": "תוכן הודעת הצלחה למשפחה",
     "valueInEnglish": "Delivery SMS Message to Family"
+  },
+  "testSmsMessage": {
+    "google": "Controllo invio SMS",
+    "valueInCode": "בדיקת שליחת SMS",
+    "valueInEnglish": "SMS sending check"
   },
   "thanksForVolunteering": {
     "google": ". Grazie per il volontariato e la disponibilità ad aiutare!",
@@ -4506,10 +4561,25 @@
     "valueInCode": "ברוך הבא לסביבה של",
     "valueInEnglish": "Welcome to the environment of"
   },
+  "whatToOrder": {
+    "google": "Cosa ordinare?",
+    "valueInCode": "מה להזמין?",
+    "valueInEnglish": "What to order?"
+  },
   "whatWentWrong": {
     "google": "Cosa non ha funzionato?",
     "valueInCode": "מה לא הסתדר?",
     "valueInEnglish": "What didn't work out?"
+  },
+  "when": {
+    "google": "quando",
+    "valueInCode": "מתי",
+    "valueInEnglish": "When"
+  },
+  "willBeReplacedBy": {
+    "google": "Sarà sostituito da",
+    "valueInCode": "יוחלף על ידי",
+    "valueInEnglish": "Will be replaced by"
   },
   "within": {
     "google": "entro",

@@ -729,6 +729,14 @@
     "google": "Deletion certificate for",
     "valueInCode": "אישור מחיקה עבור "
   },
+  "confirmed": {
+    "google": "Arrival approved",
+    "valueInCode": "אישר הגעה"
+  },
+  "confirmedVolunteers": {
+    "google": "Volunteers who confirmed arrival",
+    "valueInCode": "מתנדבים שאישרו הגעה"
+  },
   "confirmPassword": {
     "google": "password verification",
     "valueInCode": "אישור סיסמה",
@@ -1877,6 +1885,10 @@
     "google": "Only for families in these groups",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"
   },
+  "incomingMessages": {
+    "google": "Incoming messages",
+    "valueInCode": "הודעות נכנסות"
+  },
   "indie": {
     "google": "Independent volunteer",
     "valueInCode": "מתנדב עצמאי"
@@ -2123,6 +2135,10 @@
   "mergeForFamily": {
     "google": "Air conditioning for the family",
     "valueInCode": "מיזוג למשפחת"
+  },
+  "message": {
+    "google": "message",
+    "valueInCode": "הודעה"
   },
   "messageCopied": {
     "google": "Message copied",
@@ -3131,6 +3147,14 @@
     "google": "SMS reminders",
     "valueInCode": "שלח SMS לתזכורת"
   },
+  "sendRequestConfirmSms": {
+    "google": "Sending an SMS to confirm arrival",
+    "valueInCode": "שליחת הודעת SMS לאישור הגעה"
+  },
+  "sendSelfOrderLink": {
+    "google": "Submit a link for a self-order",
+    "valueInCode": "שליחת קישור להזמנה עצמית"
+  },
   "sendSmsFromDevice": {
     "google": "Send an SMS link from your phone",
     "valueInCode": "שלח קישור בSMS מהטלפון"
@@ -3347,6 +3371,10 @@
     "google": " A similar name",
     "valueInCode": " שם דומה"
   },
+  "smsClientNumber": {
+    "google": "Golbel SMS customer number",
+    "valueInCode": "מספר לקוח בגולבל SMS"
+  },
   "smsDate": {
     "google": "SMS delivery date",
     "valueInCode": "מועד משלוח SMS"
@@ -3377,6 +3405,10 @@
     "valueInCode": "SMS נפתח",
     "custom": "SMS viewed"
   },
+  "smsPasswordInput": {
+    "google": "Global SMS password",
+    "valueInCode": "סיסמה בגלובל SMS"
+  },
   "smsReminderMessageContentCaption": {
     "google": "SMS reminder content",
     "valueInCode": "תוכן הודעת תזכורת SMS"
@@ -3389,6 +3421,14 @@
     "google": "This message will be sent to a volunteer from a shipping association screen - with the link to the families it is asked to share.",
     "valueInCode": "הודעה זו תשלח למתנדב ממסך שיוך משלוחים - עם הקישור למשפחות להן הוא מתבקש לחלק.",
     "custom": "This message will be sent to a volunteer from the Assign Volunteer screen - with the link to the families it is asked to share."
+  },
+  "smsUsername": {
+    "google": "Global SMS username",
+    "valueInCode": "שם משתמש בגלובל SMS"
+  },
+  "smsVirtualPhoneNumber": {
+    "google": "Virtual line number in SMS limit",
+    "valueInCode": "מספר קו וירטואלי בגולבל SMS"
   },
   "socialSecurityNumber": {
     "google": "ID number",
@@ -3452,6 +3492,10 @@
     "google": "Content Success Message for Family",
     "valueInCode": "תוכן הודעת הצלחה למשפחה",
     "custom": "Delivery SMS Message to Family"
+  },
+  "testSmsMessage": {
+    "google": "SMS sending check",
+    "valueInCode": "בדיקת שליחת SMS"
   },
   "thanksForVolunteering": {
     "google": ". Thank you for volunteering and willingness to help!",
@@ -3903,9 +3947,21 @@
     "google": "Welcome to the environment of",
     "valueInCode": "ברוך הבא לסביבה של"
   },
+  "whatToOrder": {
+    "google": "What to order?",
+    "valueInCode": "מה להזמין?"
+  },
   "whatWentWrong": {
     "google": "What didn't work out?",
     "valueInCode": "מה לא הסתדר?"
+  },
+  "when": {
+    "google": "When",
+    "valueInCode": "מתי"
+  },
+  "willBeReplacedBy": {
+    "google": "Will be replaced by",
+    "valueInCode": "יוחלף על ידי"
   },
   "within": {
     "google": "within",

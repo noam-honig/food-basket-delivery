@@ -907,4 +907,18 @@ export class en {
   volunteerRegistrationSettings = 'Volunteer registration settings';
   invalidValue = 'Invalid value';
   printVolunteerPage = 'Print a volunteer page';
+  willBeReplacedBy = 'Will be replaced by';
+  smsClientNumber = 'Golbel SMS customer number';
+  smsUsername = 'Global SMS username';
+  smsPasswordInput = 'Global SMS password';
+  smsVirtualPhoneNumber = 'Virtual line number in SMS limit';
+  testSmsMessage = 'SMS sending check';
+  message = 'message';
+  confirmed = 'Arrival approved';
+  confirmedVolunteers = 'Volunteers who confirmed arrival';
+  incomingMessages = 'Incoming messages';
+  when = 'When';
+  sendRequestConfirmSms = 'Sending an SMS to confirm arrival';
+  sendSelfOrderLink = 'Submit a link for a self-order';
+  whatToOrder = 'What to order?';
 }
