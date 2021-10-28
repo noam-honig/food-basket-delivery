@@ -19,7 +19,7 @@ export class SendSmsAction {
         try {
             await SendSmsAction.generateMessage(remult, h, remult.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
 
-                new SendSmsUtils().sendSms(phone, message, remult, h);
+                await new SendSmsUtils().sendSms(phone, message, remult, h);
                 await SendSmsAction.documentHelperMessage(reminder, h, remult, "SMS");
             });
         }
@@ -127,7 +127,7 @@ export class SendSmsUtils {
             pw = settings.smsCredentials.password;
             accid = settings.smsClientNumber;
         }
-        console.log({ un, pw, accid })
+        
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();

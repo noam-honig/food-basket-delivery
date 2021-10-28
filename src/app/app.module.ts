@@ -321,6 +321,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
         });
         console.error("Failed ti init existing user");
       }
+      remult.getOrigin = ()=>window.location.origin;
 
       await settings.init();
 

@@ -26,7 +26,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     let gotUser = !!user;
     if (user === undefined)
         user = remult.user;
-    remult.getOrigin = ()=>window.location.origin;
+    
 
     if (remult.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
