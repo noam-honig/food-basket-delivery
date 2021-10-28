@@ -66,7 +66,7 @@ export class MessageStatus {
             self.quantity = 1;
         if (self.distributionCenter == null)
             self.distributionCenter = await self.remult.repo(DistributionCenters).findFirst(x => x.archive.isEqualTo(false));
-        if (self.$.courier.valueChanged() && !self.courier)
+        if (self.$.courier.valueChanged() &&!self.disableRouteReCalc&&!self.isNew())
             self.routeOrder = 0;
 
         if (isBackend()) {
@@ -109,6 +109,7 @@ export class FamilyDeliveries extends IdEntity {
     getCss(): string {
         return this.deliverStatus.getCss(this.courier);
     }
+    disableRouteReCalc = false;
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })
