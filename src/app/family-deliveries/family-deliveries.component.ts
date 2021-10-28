@@ -703,8 +703,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             }
           }
 
-          items.sort((a,b)=>b.quantity-a.quantity);
-          parcels.sort((a,b)=>b.quantity-a.quantity);
+          items.sort((a,b)=>a.name.localeCompare(b.name));
+          parcels.sort((a,b)=>a.name.localeCompare(b.name));
 
 
           openDialog(EditCommentDialogComponent, edit => edit.args = {
