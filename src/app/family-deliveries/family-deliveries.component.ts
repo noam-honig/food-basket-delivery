@@ -709,7 +709,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
           openDialog(EditCommentDialogComponent, edit => edit.args = {
             title: getLang(this.remult).whatToOrder,
-            comment: items.map(x=>x.quantity+' X '+x.name).join("\n")+"\n---------------\n"+parcels.map(x=>x.quantity+' X '+x.name)
+            comment: items.map(x=>x.quantity+' X '+x.name).join("\n")+"\n---------------\n"+parcels.map(x=>x.quantity+' X '+x.name).join('\n')
           });
         }
       },
