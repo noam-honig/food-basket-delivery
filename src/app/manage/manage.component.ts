@@ -377,11 +377,7 @@ export class ManageComponent implements OnInit {
         [this.settings.$.familyCustom2Caption, this.settings.$.familyCustom2Values],
         [this.settings.$.familyCustom3Caption, this.settings.$.familyCustom3Values],
         [this.settings.$.familyCustom4Caption, this.settings.$.familyCustom4Values],
-        this.settings.$.forWho,
-        this.settings.$.smsClientNumber,
-        this.settings.$.smsUsername,
-        this.settings.$.smsPasswordInput,
-        this.settings.$.smsVirtualPhoneNumber
+        this.settings.$.forWho
       ];
 
       if (this.settings.isSytemForMlt())
@@ -389,22 +385,37 @@ export class ManageComponent implements OnInit {
       return r;
     }
   });
-  sendTestSms() {
-    var message = new SendTestSms(this.remult);
-    message.phone = this.remult.currentUser.phone.thePhone;
-    message.message = this.testSms();
-    openDialog(InputAreaComponent, x => x.args = {
+  configureSmsGlobal() {
+    openDialog(InputAreaComponent, a => a.args = {
+      title: use.language.smsProviderConfiguration,
       settings: {
-        fields: () => [...getFields(message)]
+        fields: () => [this.settings.$.smsClientNumber,
+        this.settings.$.smsUsername,
+        this.settings.$.smsPasswordInput,
+        this.settings.$.smsVirtualPhoneNumber]
       },
-      title: use.language.testSmsMessage,
-      ok: async () => {
-        let result = await message.sendTestMessage();
-        this.dialog.Error(result);
-      }
+      ok: () => this.settings.save()
+      , buttons: [{
+        text: use.language.testSmsMessage,
+        click: async () => {
+          await this.settings.save()
+          var message = new SendTestSms(this.remult);
+          message.phone = this.remult.currentUser.phone.thePhone;
+          message.message = this.testSms();
+          openDialog(InputAreaComponent, x => x.args = {
+            settings: {
+              fields: () => [...getFields(message)]
+            },
+            title: use.language.testSmsMessage,
+            ok: async () => {
+              let result = await message.sendTestMessage();
+              this.dialog.Error(result);
+            }
 
-    })
-
+          })
+        }
+      }]
+    }); ""
   }
 
   testSms() {
@@ -763,9 +774,9 @@ export class SendTestSms {
   @BackendMethod({ allowed: Roles.admin })
   async sendTestMessage() {
     let settings = await ApplicationSettings.getAsync(this.remult);
-     if (!settings.bulkSmsEnabled)
-       throw "can only use this with bulk sms enabled";
-    return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult,undefined);
+    if (!settings.bulkSmsEnabled)
+      throw "can only use this with bulk sms enabled";
+    return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult, undefined);
   }
 
 }

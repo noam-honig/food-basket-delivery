@@ -1206,6 +1206,7 @@ export class Language {
   sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
   sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
   whatToOrder = "מה להזמין?";
+  smsProviderConfiguration ="הגדרות ספק SMS";
 
 }
 

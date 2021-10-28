@@ -101,7 +101,7 @@ export class FamilySelfOrderComponent implements OnInit {
   }
 
   async loadFamily() {
-    let f = await this.remult.repo(Families).findFirst(f => f.id.isEqualTo(this.familyId).and(f.status.isEqualTo(FamilyStatus.Active)));;
+    let f = await this.remult.repo(Families).findFirst(f => f.shortUrlKey.isEqualTo(this.familyId).and(f.status.isEqualTo(FamilyStatus.Active)));;
     if (!f) {
       this.message = "לא נמצא";
       return;
