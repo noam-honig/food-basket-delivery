@@ -25,7 +25,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     this.fields.push({
       key: this.helperPhoneKey,
       caption: 'טלפון מתנדב',
-      build: ({ fd }) => (fd.courier ? fd.courier.phone.displayValue : "")
+      build: ({ fd }) => (fd.courier ? fd.courier?.phone?.displayValue : "")
     });
     this.fields.push({
       key: 'address',
