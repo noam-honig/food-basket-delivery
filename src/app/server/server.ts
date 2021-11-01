@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import * as ApplicationImages from "../manage/ApplicationImages";
 import * as express from 'express';
-import { ExpressBridge, registerEntitiesOnServer, registerActionsOnServer, initExpress } from 'remult/server';
+import { registerEntitiesOnServer, registerActionsOnServer } from 'remult/server';
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -27,6 +27,7 @@ import { Helpers, HelpersBase } from "../helpers/helpers";
 import { Phone } from "../model-shared/phone";
 
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
+import { remultExpress } from "remult/server/expressBridge";
 
 
 serverInit().then(async (dataSource) => {
@@ -45,7 +46,7 @@ serverInit().then(async (dataSource) => {
     }
 
     async function sendIndex(res: express.Response, req: express.Request) {
-        let remult = await eb.getValidContext(req);
+        let remult = await eb.getRemult(req);
         let org = Sites.getOrganizationFromContext(remult);
         if (redirect.includes(org)) {
             res.redirect(process.env.REDIRECT_TARGET + org);
@@ -182,9 +183,10 @@ s.parentNode.insertBefore(b, s);})();
     app.use(compression());
     //
 
-    let eb = initExpress(
-        app,
+    let eb = remultExpress(
+
         {
+            logApiEndPoints: process.env.logUrls == "true",
             initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
@@ -204,15 +206,15 @@ s.parentNode.insertBefore(b, s);})();
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
-    if (process.env.logUrls != "true")
-        eb.logApiEndPoints = false;
+
+
 
     if (Sites.multipleSites) {
 
         let area = eb.addArea('/*/api');
         registerActionsOnServer(area);
         registerEntitiesOnServer(area);
-        registerImageUrls(app, (req) => eb.getValidContext(req), '/*');
+        registerImageUrls(app, (req) => eb.getRemult(req), '/*');
 
 
         OverviewComponent.createSchemaApi = async schema => {
@@ -232,11 +234,11 @@ s.parentNode.insertBefore(b, s);})();
         }
     }
     else {
-        registerImageUrls(app, eb.getValidContext, '');
+        registerImageUrls(app, eb.getRemult, '');
     }
     app.use('/*/api/incoming-sms', async (req, res) => {
         try {
-            let remult = await eb.getValidContext(req);
+            let remult = await eb.getRemult(req);
             let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
 
             let com = comRepo.create({
@@ -316,7 +318,10 @@ s.parentNode.insertBefore(b, s);})();
         }
     });
 
-
+    app.use((req, res, next) => {
+        console.log(req.path);
+        eb(req, res, next);
+    });
 
     app.get('', (req, res) => {
 

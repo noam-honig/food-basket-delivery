@@ -5,7 +5,7 @@ import { Roles } from '../auth/roles';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../properties-editor/properties-editor.component';
 import { Entity } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
-import { set } from 'remult/set';
+import { assign } from 'remult/assign';
 
 
 
@@ -28,7 +28,7 @@ export class PrintStickersComponent implements OnInit {
   };
   stickerProps: ElementProps = {
     caption: 'תכונות מדבקה', props: [
-      new Property('height', 'גובה', 'number', (val, s) => set(s, {
+      new Property('height', 'גובה', 'number', (val, s) => assign(s, {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),

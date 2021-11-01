@@ -35,7 +35,10 @@ export class RegisterToEvent {
     constructor(private remult: Remult) {
 
 
+
         if (!actionInfo.runningOnServer) {
+            if (!RegisterToEvent.volunteerInfo)
+                RegisterToEvent.volunteerInfo = storedInfo();
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
             if (remult.currentUser) {
@@ -134,7 +137,7 @@ export class RegisterToEvent {
                         localStorage.setItem(infoKeyInStorage, JSON.stringify(RegisterToEvent.volunteerInfo));
                     if (refresh)
                         RegisterToEvent.volunteerInfoChanged.fire();
-                    let message = lang.youVeRegisteredTo +" "+ e.name + ", " + eventDisplayDate(e) + lang.thanksForVolunteering;
+                    let message = lang.youVeRegisteredTo + " " + e.name + ", " + eventDisplayDate(e) + lang.thanksForVolunteering;
                     dialog.messageDialog(message).then(() => {
                         dialog.Info(message);
                     });
@@ -214,6 +217,3 @@ interface VolunteerInfo {
     name: string;
 }
 
-if (!actionInfo.runningOnServer) {
-    RegisterToEvent.volunteerInfo = storedInfo();
-}

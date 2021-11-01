@@ -1,7 +1,7 @@
 import { Express, Response } from 'express';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { Remult } from 'remult';
-import { ExpressBridge } from 'remult/server';
+import { RemultExpressBridge } from 'remult/remult-express';
 import { Sites } from '../sites/sites';
 import { HelperUserInfo } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
@@ -44,10 +44,10 @@ class userInSite {
 export class ServerEvents {
     sites = new Map<string, userInSite[]>();
 
-    constructor(private app: Express, getBridge: () => ExpressBridge) {
+    constructor(private app: Express, getBridge: () => RemultExpressBridge) {
         this.app.get('/*/api/stream', async (req, res) => {
 
-            let remult = await getBridge().getValidContext(req);
+            let remult = await getBridge().getRemult(req);
             let org = Sites.getOrganizationFromContext(remult);
             res.writeHead(200, {
                 "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
