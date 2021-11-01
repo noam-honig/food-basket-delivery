@@ -113,6 +113,7 @@ import { PropertiesEditorComponent } from './properties-editor/properties-editor
 import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-message.component';
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
+import { RegisterToEvent } from './event-info/RegisterToEvent';
 
 
 
@@ -321,7 +322,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
         });
         console.error("Failed ti init existing user");
       }
-      remult.getOrigin = ()=>window.location.origin;
+      remult.getOrigin = () => window.location.origin;
 
       await settings.init();
 
@@ -357,7 +358,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities);
       routeMap.set(IncomingMessagesComponent, l.incomingMessages);
 
-
+      RegisterToEvent.init();
 
 
 

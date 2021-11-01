@@ -99,7 +99,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     let helper: HelpersBase = remult.currentUser;
     if (!helper && phone)
       helper = await  remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
-
+    SqlDatabase.LogToConsole = true;
     return Promise.all((await  remult.repo(Event).find({
       orderBy: e => [e.eventDate, e.startTime],
       where: e => e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))

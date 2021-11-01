@@ -26,6 +26,10 @@ function storedInfo(): VolunteerInfo {
 
 @Controller('event-Info')
 export class RegisterToEvent {
+    static init() {
+        if (!RegisterToEvent.volunteerInfo)
+            RegisterToEvent.volunteerInfo = storedInfo();
+    }
     questions: {
         field: FieldRef,
         show: () => boolean,
@@ -37,8 +41,7 @@ export class RegisterToEvent {
 
 
         if (!actionInfo.runningOnServer) {
-            if (!RegisterToEvent.volunteerInfo)
-                RegisterToEvent.volunteerInfo = storedInfo();
+
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
             if (remult.currentUser) {
