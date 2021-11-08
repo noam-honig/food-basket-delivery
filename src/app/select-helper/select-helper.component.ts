@@ -89,7 +89,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of remult.repo(Helpers).iterate({ where: HelpersBase.active as EntityFilter<Helpers> })) {
+    for await (const h of remult.repo(Helpers).iterate({ where: HelpersBase.active  })) {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,
@@ -258,7 +258,7 @@ export class SelectHelperComponent implements OnInit {
         where :  {
           name: { $contains: this.searchString },
           $and: [
-            !this.args.includeFrozen ? (HelpersBase.active as EntityFilter<HelpersAndStats>) : undefined,
+            !this.args.includeFrozen ? (HelpersBase.active ) : undefined,
             this.args.filter
           ]
         }

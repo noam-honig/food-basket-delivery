@@ -178,7 +178,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     let i = 0;
     //collect helpers
-    for (let h of await remult.repo(Helpers).find({ where: { ...Helpers.active as EntityFilter<Helpers>, preferredDistributionAreaAddress: { "!=": '' } }, limit: 1000 })) {
+    for (let h of await remult.repo(Helpers).find({ where: { ...Helpers.active , preferredDistributionAreaAddress: { "!=": '' } }, limit: 1000 })) {
       result.helpers[h.id] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
       i++;
     }
