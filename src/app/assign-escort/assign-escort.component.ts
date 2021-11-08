@@ -46,9 +46,7 @@ export class AssignEscortComponent implements OnInit {
     }
   }
   async assignForDriver(driver: HelpersAndStats) {
-    if (this.helper.wasChanged()) {
       await this.helper.save();
-    }
 
     let h = await this.remult.repo(Helpers).findFirst({ id: driver.id });
     h.escort = await this.helper.getHelper();
@@ -159,6 +157,6 @@ export class AssignEscortComponent implements OnInit {
       }, 200);
   }
   showSave() {
-    return this.helper && this.helper.wasChanged();
+    return this.helper && this.helper._.wasChanged();
   }
 }

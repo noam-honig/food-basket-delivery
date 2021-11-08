@@ -486,7 +486,7 @@ export class FamilyDeliveries extends IdEntity {
         group: string,
         area: string,
         basketId: string
-    }>(async (self, remult, { city, group, area, basketId }) => {
+    }>(async ( remult, { city, group, area, basketId }) => {
         let basket = await remult.repo(BasketType).findId(basketId);
         return {
             deliverStatus: DeliveryStatus.ReadyForDelivery,
@@ -498,7 +498,7 @@ export class FamilyDeliveries extends IdEntity {
             basketType: basket != null ? basket : undefined
         }
     });
-    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>((self, remult) => {
+    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>(( remult) => {
 
         if (!remult.authenticated())
             return { id: [] };

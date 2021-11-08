@@ -143,8 +143,7 @@ export class Event extends IdEntity {
     }
 
     async showVolunteers(dialog: DialogService, busy: BusyService) {
-        if (this.wasChanged())
-            await this.save();
+        await this.save();
         await openDialog(GridDialogComponent, x => x.args = {
             title: this.name,
             stateName: 'helpers-per-event',

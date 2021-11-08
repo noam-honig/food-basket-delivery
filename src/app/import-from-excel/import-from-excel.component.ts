@@ -718,8 +718,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 let help = h.fd.courier;
                                 if (!help.isNew()) {
                                     help.name = v;
-                                    if (help.wasChanged())
-                                        await help.save();
+                                    await help.save();
                                 }
                             }
                         }
@@ -1367,8 +1366,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async testImport() {
-        if (this.settings.wasChanged())
-            await this.settings.save();
+        await this.settings.save();
         await this.iterateExcelFile(false);
     }
 

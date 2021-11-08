@@ -201,8 +201,7 @@ export class RegisterToEvent {
                         target.value = q.field.value;
                 }
             }
-            if (helper.wasChanged())
-                await helper.save();
+            await helper.save();
             await helperInEvent.save();
         }
         else {

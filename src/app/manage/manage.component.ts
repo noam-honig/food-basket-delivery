@@ -44,8 +44,8 @@ export class ManageComponent implements OnInit {
   wasChange() {
     return this.settings &&
       this.images.currentRow &&
-      (this.settings.wasChanged() ||
-        this.images.currentRow.wasChanged() ||
+      (this.settings._.wasChanged() ||
+        this.images.currentRow._.wasChanged() ||
         this.settings.$.phoneStrategy.originalValue != this.serializePhones() ||
         this.settings.$.commonQuestions.originalValue != this.serializeQa()
       );

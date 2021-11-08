@@ -1053,7 +1053,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
     }
     showSave() {
-        return this.helper && this.helper.wasChanged();
+        return this.helper && this.helper._.wasChanged();
     }
     async saveHelper() {
         await this.verifyHelperExistance();

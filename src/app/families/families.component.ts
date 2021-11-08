@@ -123,7 +123,7 @@ export class FamiliesComponent implements OnInit {
     changedRowsCount() {
         let r = 0;
         this.families.items.forEach(f => {
-            if (f.wasChanged())
+            if (f._.wasChanged())
 
                 r++;
         });
@@ -132,7 +132,7 @@ export class FamiliesComponent implements OnInit {
     async saveAll() {
         let wait = [];
         this.families.items.forEach(f => {
-            if (f.wasChanged())
+            if (f._.wasChanged())
                 wait.push(f.save());
         });
         await Promise.all(wait);
@@ -174,7 +174,7 @@ export class FamiliesComponent implements OnInit {
     }
     searchString = '';
     async doSearch() {
-        if (this.families.currentRow && this.families.currentRow.wasChanged())
+        if (this.families.currentRow && this.families.currentRow._.wasChanged())
             return;
         this.busy.donotWait(async () =>
             await this.refreshFamilyGrid());

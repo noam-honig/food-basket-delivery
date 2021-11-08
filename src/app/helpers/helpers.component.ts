@@ -256,7 +256,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   async doSearch() {
-    if (this.helpers.currentRow && this.helpers.currentRow.wasChanged())
+    if (this.helpers.currentRow && this.helpers.currentRow._.wasChanged())
       return;
     this.busy.donotWait(async () =>
       await this.helpers.reloadData());

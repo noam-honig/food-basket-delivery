@@ -125,8 +125,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         for (const f of result.families) {
             i++;
             f.routeOrder = i;
-            if (f.wasChanged())
-                await f.save();
+            await f.save();
         }
         result.ok = true;
         return result;

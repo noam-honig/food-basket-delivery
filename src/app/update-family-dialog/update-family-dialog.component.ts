@@ -209,7 +209,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
   }
   async newDelivery() {
-    if (this.delivery && this.delivery.wasChanged())
+    if (this.delivery && this.delivery._.wasChanged())
       this.delivery.save();
     await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, this.busy, {
       copyFrom: this.delivery,

@@ -133,7 +133,7 @@ export class HelperFamiliesComponent implements OnInit {
       cancel: () => { },
       ok: async () => {
         await this.updateCurrentLocation(useCurrentLocation.value);
-        if (this.familyLists.helper.wasChanged())
+        if (this.familyLists.helper._.wasChanged())
           await this.familyLists.helper.save();
         await this.familyLists.refreshRoute({
           volunteerLocation: this.volunteerLocation

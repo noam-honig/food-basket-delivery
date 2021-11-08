@@ -24,7 +24,7 @@
     "build-docs": "vuepress build docs",
     "release-docs": "deploy-docs.sh",
     "test": "ng test",
-    "release": "npm run ng-build && npm run server:build && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
+    "release": "npm run ng-build && npm run server:build && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hugmomst.git master"
   },
   "private": true,
   "dependencies": {
@@ -40,7 +40,7 @@
     "@angular/router": "~11.2.10",
     "@auth0/angular-jwt": "^5.0.2",
     "@google/markerclustererplus": "^5.0.3",
-    "@remult/angular": "^0.7.6",
+    "@remult/angular": "^0.8.1",
     "angular2-qrcode": "^2.0.3",
     "aws-sdk": "^2.683.0",
     "body-parser": "^1.19.0",
@@ -67,7 +67,7 @@
     "path": "^0.12.7",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
-    "remult": "^0.7.7",
+    "remult": "^0.8.1",
     "rxjs": "~6.5.3",
     "spherical-geometry-js": "^2.0.0",
     "tsickle": "^0.35.0",

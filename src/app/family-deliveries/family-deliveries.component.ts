@@ -60,7 +60,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   currentStatFilter: FamilyDeliveresStatistics = undefined;
   searchString = '';
   async doSearch() {
-    if (this.deliveries.currentRow && this.deliveries.currentRow.wasChanged())
+    if (this.deliveries.currentRow && this.deliveries.currentRow._.wasChanged())
       return;
     this.busy.donotWait(async () =>
       await this.refreshFamilyGrid());

@@ -122,7 +122,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                         f.defaultDistributionCenter = fd.distributionCenter;
 
 
-                    if (f.wasChanged()) {
+                    if (f._.wasChanged()) {
                         await f.save();
                         f.updateDelivery(fd);
                     }
@@ -161,7 +161,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
                         let f = await this.remult.repo(Families).findId(fd.family);
                         if (f) {
                             f.fixedCourier = this.courier;
-                            if (f.wasChanged()) {
+                            if (f._.wasChanged()) {
                                 await f.save();
                                 f.updateDelivery(fd);
                             }
@@ -436,7 +436,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                     if (existingDelivery.deliverStatus.IsAResultStatus())
                         existingDelivery.archive = true;
                 }
-                if (existingDelivery.wasChanged())
+                if (existingDelivery._.wasChanged())
                     await existingDelivery.save();
 
                 let f = await this.remult.repo(Families).findId(existingDelivery.family);

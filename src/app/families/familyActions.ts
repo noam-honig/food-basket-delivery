@@ -297,7 +297,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                             else
                                 if (fd.deliverStatus == DeliveryStatus.SelfPickup)
                                     fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
-                            if (fd.wasChanged())
+                            if (fd._.wasChanged())
                                 await fd.save();
                         }
                     }

@@ -133,7 +133,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
     }
 
     async composeWhere(where: EntityFilter<T> | (() => EntityFilter<T> | Promise<EntityFilter<T>>)): Promise<EntityFilter<T>> {
-        return { $and: [await Filter.resolve(this.args.additionalWhere), await Filter.resolve(where)] }
+        return { $and: [await Filter.resolve(this.args.additionalWhere), await Filter.resolve(where)] } as EntityFilter<T>
     }
 
     @BackendMethod<ActionOnRows<any>>({ allowed: (remult, self) => remult.isAllowed(self.args.allowed), queue: true })
@@ -152,8 +152,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
                 await this.args.forEach(f);
-                if (f.wasChanged())
-                    await f.save();
+                await f.save();
                 progress.progress(++i / count);
             }
 
