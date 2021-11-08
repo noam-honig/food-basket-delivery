@@ -13,8 +13,8 @@ export class IncomingMessagesComponent implements OnInit {
   constructor(private remult: Remult) { }
   showAll = false;
   grid = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
-    where: com => !this.showAll ? com.incoming.isEqualTo(true) : undefined!,
-    knowTotalRows:true,
+    where: () => ({ incoming: !this.showAll ? true : undefined }),
+    knowTotalRows: true,
     columnSettings: com => [
       com.message,
       com.phone,

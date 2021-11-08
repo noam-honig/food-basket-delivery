@@ -125,8 +125,8 @@ export class OverviewComponent implements OnInit {
     };
 
     var builder = new SqlBuilder(remult);
-    let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
-    let fd = SqlFor( remult.repo(FamilyDeliveries));
+    let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
+    let fd = SqlFor(remult.repo(FamilyDeliveries));
 
 
 
@@ -135,13 +135,13 @@ export class OverviewComponent implements OnInit {
       progress.progress(++soFar / Sites.schemas.length);
       let dp = Sites.getDataProviderForOrg(org);
 
-      var as = await SqlFor( remult.repo(ApplicationSettings));
-      var h = await SqlFor( remult.repo(Helpers));
+      var as = await SqlFor(remult.repo(ApplicationSettings));
+      var h = await SqlFor(remult.repo(Helpers));
 
       let cols: any[] = [as.organisationName, as.logoUrl, builder.build("(", builder.query({
         from: h,
         select: () => [builder.max(h.lastSignInDate)],
-        where: () => [h.admin.isEqualTo(true)]
+        where: () => [h.where({ admin: true })]
       }), ")")];
 
       for (const dateRange of result.statistics) {
@@ -154,7 +154,7 @@ export class OverviewComponent implements OnInit {
           cols.push(builder.countInnerSelect({ from: f, where: () => [FamilyDeliveries.onTheWayFilter()] }, key));
         }
         else
-          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.deliveryStatusDate.isGreaterOrEqualTo(dateRange.from).and(fd.deliveryStatusDate.isLessThan(dateRange.to).and(DeliveryStatus.isAResultStatus(fd.deliverStatus)))), ') ', key));
+          cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.where({ deliveryStatusDate: { ">=": dateRange.from, "<": dateRange.to }, deliverStatus: DeliveryStatus.isAResultStatus() })), ') ', key));
 
       }
 
@@ -245,7 +245,7 @@ export class OverviewComponent implements OnInit {
     try {
       if (!name || name.length == 0)
         name = id;
-      let oh = await  remult.repo(Helpers).findId(remult.user.id);
+      let oh = await remult.repo(Helpers).findId(remult.user.id);
       let db = await OverviewComponent.createDbSchema(id);
       let otherContext = new Remult();
       otherContext.setDataProvider(db);
@@ -273,7 +273,7 @@ export class OverviewComponent implements OnInit {
       settings.address = address;
       await settings.save();
 
-      let s =  remult.repo(SitesEntity).create();
+      let s = remult.repo(SitesEntity).create();
       s.id = id;
       await s.save();
 
@@ -292,7 +292,7 @@ export class OverviewComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.overview })
   static async validateNewSchema(id: string, remult?: Remult) {
-    let x = await  remult.repo(SitesEntity).findId(id);
+    let x = await remult.repo(SitesEntity).findId(id);
     if (x) {
       return "מזהה כבר קיים";
     }

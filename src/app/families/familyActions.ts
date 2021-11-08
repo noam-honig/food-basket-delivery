@@ -1,4 +1,4 @@
-import { Remult, AndFilter, getFields, SqlDatabase } from "remult";
+import { Filter, Remult } from "remult";
 import { Families } from "./families";
 
 import { BasketType } from "./BasketType";
@@ -107,7 +107,7 @@ export class NewDelivery extends ActionOnRows<Families> {
                     this.$.excludeGroups
                 ]
             },
-            additionalWhere: f => f.status.isEqualTo(FamilyStatus.Active),
+            additionalWhere: { status: FamilyStatus.Active },
 
 
             title: getLang(remult).newDelivery,
@@ -236,7 +236,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment += this.comment;
                 }
                 if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
-                    for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id) })) {
+                    for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: { family: f.id } })) {
                         if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive = true;
@@ -283,7 +283,12 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                 {
                     f.defaultSelfPickup = this.selfPickup;
                     if (this.updateExistingDeliveries) {
-                        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(f.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) })) {
+                        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({
+                            where: {
+                                family: f.id,
+                                deliverStatus: DeliveryStatus.isNotAResultStatus()
+                            }
+                        })) {
                             if (this.selfPickup) {
                                 if (fd.deliverStatus == DeliveryStatus.ReadyForDelivery)
                                     fd.deliverStatus = DeliveryStatus.SelfPickup;
@@ -405,7 +410,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
                 if (this.processedFamilies.get(fd.family))
                     return;
                 this.processedFamilies.set(fd.family, true);
-                let f = await remult.repo(Families).findFirst(x => new AndFilter(orig.args.additionalWhere(x), x.id.isEqualTo(fd.family)))
+                let f = await remult.repo(Families).findFirst({ id: fd.family, $and: [await Filter.resolve(orig.args.additionalWhere)] })
                 if (f) {
                     await orig.args.forEach(f);
                     await f.save();

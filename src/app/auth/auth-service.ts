@@ -2,7 +2,7 @@ import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
-import {  Helpers, HelperUserInfo } from "../helpers/helpers";
+import { Helpers, HelperUserInfo } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { Allow, BackendMethod, Remult, UserInfo } from 'remult';
@@ -42,8 +42,8 @@ export class TokenService {
         staticToken = token;
         let user: UserInfo = undefined;
         if (token) {
-            user =await  AuthService.decodeJwt(token);
-            await InitContext(this.remult,user);
+            user = await AuthService.decodeJwt(token);
+            await InitContext(this.remult, user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -53,8 +53,8 @@ export class TokenService {
             sessionStorage.removeItem(this.keyInStorage);
             localStorage.removeItem(this.keyInStorage);
         }
-        
-        
+
+
         await this.remult.setUser(user);
 
     }
@@ -92,7 +92,7 @@ export class AuthService {
     static async loginFromSms(key: string, remult?: Remult) {
 
         let r: LoginResponse = { valid: false };
-        let h = await  remult.repo(Helpers).findFirst(h => h.shortUrlKey.isEqualTo(key));
+        let h = await remult.repo(Helpers).findFirst({ shortUrlKey: key });
 
         if (h) {
             r.phone = h.phone.thePhone;
@@ -211,7 +211,7 @@ export class AuthService {
 
         let r: loginResult = {};
         let settings = getSettings(remult);
-        let h = await  remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(args.phone)));
+        let h = await remult.repo(Helpers).findFirst({ phone: new Phone(args.phone) });
         if (!h) {
             r.newUser = true;
             return r;
@@ -345,7 +345,7 @@ export class AuthService {
     static async renewToken(remult?: Remult) {
         if (!remult.authenticated())
             return undefined;
-        let h = await  remult.repo(Helpers).findId(remult.user.id);
+        let h = await remult.repo(Helpers).findId(remult.user.id);
         if (!h)
             return undefined;
         let newInfo = await buildHelperUserInfo(h, remult);
@@ -359,7 +359,7 @@ export class AuthService {
         clearTimeout(this.userActivity);
         this.inactiveTimeout();
     }
-    static async decodeJwt(token: string):Promise<UserInfo> {
+    static async decodeJwt(token: string): Promise<UserInfo> {
         return <UserInfo>new JwtHelperService().decodeToken(token);
     }
     static async signJwt(result: any, timeToDisconnect: number) {

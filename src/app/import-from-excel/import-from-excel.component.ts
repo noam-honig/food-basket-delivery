@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity, BackendMethod, SqlDatabase, EntityFilter, AndFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, FilterFactory, FilterFactories, Filter, getFields } from 'remult';
+import { Entity, BackendMethod, SqlDatabase, EntityFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, Filter, getFields } from 'remult';
 import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Remult } from 'remult';
@@ -243,13 +243,12 @@ export class ImportFromExcelComponent implements OnInit {
             return;
         let basket = await remult.repo(BasketType).findId(i.basketType);
         let distCenter = await remult.repo(DistributionCenters).findId(i.distCenter);
-        let f = await remult.repo(Families).findFirst(f => f.id.isEqualTo(i.duplicateFamilyInfo[0].id));
-        let fd = await remult.repo(ActiveFamilyDeliveries).findFirst(fd => {
-            let r = fd.family.isEqualTo(i.duplicateFamilyInfo[0].id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
-            if (compareBasketType)
-                return r.and(fd.basketType.isEqualTo(basket));
-            return r;
-
+        let f = await remult.repo(Families).findId(i.duplicateFamilyInfo[0].id);
+        let fd = await remult.repo(ActiveFamilyDeliveries).findFirst({
+            family: i.duplicateFamilyInfo[0].id,
+            distributionCenter: distCenter,
+            deliverStatus: DeliveryStatus.isNotAResultStatus(),
+            basketType: compareBasketType ? basket : undefined
         });
         if (!fd) {
             fd = f.createDelivery(distCenter);
@@ -688,7 +687,7 @@ export class ImportFromExcelComponent implements OnInit {
             key: 'basketType',
             name: this.fd.basketType.caption,
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(BasketType, b => b.name, v, b => b, h.fd.$.basketType);
+                await h.lookupAndInsert(BasketType, val => ({ name: val }), v, b => b, h.fd.$.basketType);
             }, columns: [this.fd.basketType]
         });
 
@@ -697,14 +696,14 @@ export class ImportFromExcelComponent implements OnInit {
             key: 'distCenterName',
             name: this.fd.distributionCenter.caption,
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(DistributionCenters, b => b.name, v, b => b, h.fd.$.distributionCenter);
+                await h.lookupAndInsert(DistributionCenters, val => ({ name: val }), v, b => b, h.fd.$.distributionCenter);
             }, columns: [this.fd.distributionCenter]
         });
         this.columns.push({
             key: 'familySource',
             name: this.f.familySource.caption,
             updateFamily: async (v, f, h) => {
-                await h.lookupAndInsert(FamilySources, f => f.name, v, f => f, f.$.familySource);
+                await h.lookupAndInsert(FamilySources, val => ({ name: val }), v, f => f, f.$.familySource);
             }, columns: [this.f.familySource]
         });
 
@@ -726,7 +725,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                         else {
 
-                            await h.lookupAndInsert(Helpers, h => h.name, v, h => h, h.fd.$.courier, x => {
+                            await h.lookupAndInsert(Helpers, val => ({ name: val }), v, h => h, h.fd.$.courier, x => {
                                 x._disableDuplicateCheck = true;
                             });
                         }
@@ -741,7 +740,7 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => {
                 h.gotVolunteerPhone = true;
                 v = Phone.fixPhoneInput(v, this.remult);
-                await h.lookupAndInsert(Helpers, h => h.phone, new Phone(v), h => h, h.fd.$.courier, x => {
+                await h.lookupAndInsert(Helpers, h => ({ phone: h }), new Phone(v), h => h, h.fd.$.courier, x => {
                     x.name = 'מתנדב ' + v;
                 });
             }, columns: [this.fd.courier]
@@ -798,7 +797,7 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.groups.caption,
             updateFamily: async (v, f, h) => {
                 if (v && v.trim().length > 0) {
-                    let g = await this.remult.repo(Groups).findFirst({ createIfNotFound: true, where: g => g.name.isEqualTo(v.trim()) });
+                    let g = await this.remult.repo(Groups).findFirst({ name: v.trim() }, { createIfNotFound: true });
                     if (g.isNew())
                         await g.save();
                 }
@@ -1107,9 +1106,14 @@ export class ImportFromExcelComponent implements OnInit {
         let settings = await ApplicationSettings.getAsync(remult);
         for (const info of excelRowInfo) {
             info.duplicateFamilyInfo = [];
-            let findDuplicate = async (w: (f: FilterFactories<Families>) => Filter) => {
+            let findDuplicate = async (w: EntityFilter<Families>) => {
                 if (info.duplicateFamilyInfo.length == 0)
-                    info.duplicateFamilyInfo = (await remult.repo(Families).find({ where: f => new AndFilter(w(f), f.status.isDifferentFrom(FamilyStatus.ToDelete)) }))
+                    info.duplicateFamilyInfo = (await remult.repo(Families).find({
+                        where: {
+                            status: { "!=": FamilyStatus.ToDelete },
+                            $and: [w]
+                        }
+                    }))
                         .map(f => (<duplicateFamilyInfo>{
                             id: f.id,
                             address: f.address,
@@ -1120,12 +1124,12 @@ export class ImportFromExcelComponent implements OnInit {
                         }));
             }
             if (info.idInHagai)
-                await findDuplicate(f => f.id.isEqualTo(info.idInHagai));
+                await findDuplicate({ id: info.idInHagai });
             else {
                 if (info.iDinExcel && info.duplicateFamilyInfo.length == 0)
-                    await findDuplicate(f => f.iDinExcel.isEqualTo(info.iDinExcel));
+                    await findDuplicate({ iDinExcel: info.iDinExcel });
                 if (info.tz && info.duplicateFamilyInfo.length == 0)
-                    await findDuplicate(f => f.tz.isEqualTo(info.tz));
+                    await findDuplicate({ tz: info.tz });
 
                 if (info.duplicateFamilyInfo.length == 0) {
                     info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, remult, db);
@@ -1280,8 +1284,8 @@ export class ImportFromExcelComponent implements OnInit {
                 return r;
             },
 
-            where: fd => fd.family.isEqualTo(f.id),
-            orderBy: fd => fd.deliveryStatusDate.descending(),
+            where: { family: f.id },
+            orderBy: { deliveryStatusDate: "desc" },
             rowsInPage: 25
 
         });
@@ -1401,7 +1405,7 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async updateFamily(i: duplicateFamilyInfo) {
-        let f = await this.remult.repo(Families).findFirst(f => f.id.isEqualTo(i.id));
+        let f = await this.remult.repo(Families).findId(i.id);
         f.showFamilyDialog();
 
     }
@@ -1455,12 +1459,12 @@ class columnUpdateHelper {
 
     async lookupAndInsert<T extends EntityBase, dataType, Y>(
         c: { new(...args: any[]): T; },
-        getSearchField: ((entity: FilterFactories<T>) => FilterFactory<dataType>),
+        searchForExistingValueFilter: ((val: dataType) => EntityFilter<T>),
         val: dataType,
         getResult: (entity: T) => Y,
         updateResultTo: FieldRef<any, Y>,
         additionalUpdates?: ((entity: T) => void)) {
-        let x = await this.remult.repo(c).findFirst({ createIfNotFound: true, where: e => (getSearchField(e).isEqualTo(val)) });
+        let x = await this.remult.repo(c).findFirst(searchForExistingValueFilter(val), { createIfNotFound: true });
         if (x.isNew()) {
             let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
@@ -1529,14 +1533,11 @@ async function compareValuesWithRow(remult: Remult, info: excelRowInfo, withFami
     let distCenter = await remult.repo(DistributionCenters).findId(info.distCenter);
     let ef = await remult.repo(Families).findId(withFamily);
     let fd = await remult.repo(ActiveFamilyDeliveries).findFirst({
-        createIfNotFound: true,
-        where: fd => {
-            let r = fd.family.isEqualTo(ef.id).and(fd.distributionCenter.isEqualTo(distCenter).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)));
-            if (compareBasketType)
-                return r.and(fd.basketType.isEqualTo(basketType));
-            return r;
-        }
-    });
+        family: ef.id,
+        distributionCenter: distCenter,
+        deliverStatus: DeliveryStatus.isNotAResultStatus(),
+        basketType: compareBasketType ? basketType : undefined
+    }, { createIfNotFound: true });
     for (const columnMemberName of columnsInCompareMemeberName) {
         let upd = info.values[columnMemberName];
         if (!upd) {

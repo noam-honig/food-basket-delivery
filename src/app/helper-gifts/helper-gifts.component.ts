@@ -10,12 +10,12 @@ import { HelperGifts } from "./HelperGifts";
 })
 export class HelperGiftsComponent implements OnInit {
   constructor(private remult: Remult) { }
-  gifts = new GridSettings(this. remult.repo(HelperGifts),{
+  gifts = new GridSettings(this.remult.repo(HelperGifts), {
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 7,
 
-    orderBy: hg =>  hg.dateGranted,
+    orderBy: { dateGranted: "asc" },
     rowsInPage: 100
     ,
     gridButtons: [

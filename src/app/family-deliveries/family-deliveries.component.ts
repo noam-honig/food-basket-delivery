@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Remult, Filter, AndFilter, BackendMethod, SqlDatabase, FilterFactories } from 'remult';
+import { Remult, Filter, BackendMethod, SqlDatabase, EntityFilter } from 'remult';
 import { BusyService, DataAreaFieldsSetting, DataControlInfo, DataControlSettings, GridSettings, openDialog, RouteHelperService, RowButton } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -90,7 +90,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
   basketStats: statsOnTabBasket = {
     name: getLang(this.remult).remainingByBaskets,
-    rule: f => FamilyDeliveries.readyAndSelfPickup(f),
+    rule: FamilyDeliveries.readyAndSelfPickup(),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -100,7 +100,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   assignedButNotOutBaskets: statsOnTabBasket = {
     name: getLang(this.remult).assignedButNotOutBaskets,
-    rule: f => FamilyDeliveries.onTheWayFilter().and(f.messageStatus.isEqualTo(MessageStatus.notSent)),
+    rule: {
+      messageStatus: MessageStatus.notSent,
+      $and: [FamilyDeliveries.onTheWayFilter()]
+    },
     stats: [
       this.stats.ready,
       this.stats.special
@@ -110,7 +113,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   selfPickupBaskets: statsOnTabBasket = {
     name: getLang(this.remult).selfPickupByBaskets,
-    rule: f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup),
+    rule: { deliverStatus: DeliveryStatus.SelfPickup },
     stats: [
       this.stats.ready,
       this.stats.special
@@ -121,7 +124,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
   basketsInEvent: statsOnTabBasket = {
     name: getLang(this.remult).byBaskets,
-    rule: f => undefined,
+    rule: {},
     stats: [
       this.stats.ready,
       this.stats.special
@@ -131,7 +134,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
   basketsDelivered: statsOnTabBasket = {
     name: getLang(this.remult).deliveredByBaskets,
-    rule: f => DeliveryStatus.isSuccess(f.deliverStatus),
+    rule: { deliverStatus: DeliveryStatus.isSuccess() },
     stats: [
       this.stats.ready,
       this.stats.special
@@ -143,7 +146,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   cityStats: statsOnTab = {
     name: getLang(this.remult).remainingByCities,
     showTotal: true,
-    rule: f => FamilyDeliveries.readyFilter(),
+    rule: FamilyDeliveries.readyFilter(),
     stats: [
       this.stats.ready,
       this.stats.special
@@ -156,7 +159,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     {
       name: getLang(this.remult).deliveries,
       showTotal: true,
-      rule: f => undefined,
+      rule: {},
       stats: [
         this.stats.ready,
         this.stats.special,
@@ -178,7 +181,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.basketsDelivered,
     {
       name: getLang(this.remult).remainingByGroups,
-      rule: f => FamilyDeliveries.readyFilter(),
+      rule: FamilyDeliveries.readyFilter(),
       stats: [
         this.stats.ready,
         this.stats.special
@@ -189,13 +192,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter, true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
-          (f, g) => f.groups.contains(g).and(FamilyDeliveries.readyFilter()),
-          (f, g) => f.groups.isDifferentFrom(new GroupsValue(g)).and(f.groups.isDifferentFrom(new GroupsValue(''))).and(FamilyDeliveries.readyFilter()));
+          g => ({ groups: { $contains: g }, $and: [FamilyDeliveries.readyFilter()] }),
+          g => ({ groups: { "!=": [new GroupsValue(g), new GroupsValue('')] }, $and: [FamilyDeliveries.readyFilter()] }));
       }
     },
     {
       name: getLang(this.remult).byGroups,
-      rule: f => undefined,
+      rule: {},
       stats: [
         this.stats.ready,
         this.stats.special
@@ -206,15 +209,15 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
-          (f, g) => f.groups.contains(g),
-          (f, g) => f.groups.isDifferentFrom(new GroupsValue(g)).and(f.groups.isDifferentFrom(new GroupsValue(''))));
+          g => ({ groups: { $contains: g } }),
+          g => ({ groups: { "!=": [new GroupsValue(g), new GroupsValue('')] } }));
       }
     },
     this.cityStats,
     {
       name: getLang(this.remult).requireFollowUp,
       showTotal: true,
-      rule: f => f.needsWork.isEqualTo(true),
+      rule: { needsWork: true },
       stats: [
         this.stats.needWork
       ],
@@ -345,31 +348,43 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
 
-      this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedDeliveries, (f, id) =>
-        FamilyDeliveries.readyFilter().and(f.basketType.isEqualTo(id)));
-      this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, (f, id) =>
-        f.basketType.isEqualTo(id));
-      this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.smsNotSent, (f, id) =>
-        f.basketType.isEqualTo(id).and(this.assignedButNotOutBaskets.rule(f)));
-      this.basketStatsCalc(st.baskets, this.selfPickupBaskets, b => b.selfPickup, (f, id) =>
-        f.basketType.isEqualTo(id).and(this.selfPickupBaskets.rule(f)));
-      this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successDeliveries, (f, id) =>
-        DeliveryStatus.isSuccess(f.deliverStatus).and(f.basketType.isEqualTo(id)));
+      this.basketStatsCalc(st.baskets, this.basketStats, b => b.unassignedDeliveries,
+        id => ({
+          basketType: id, $and: [
+            FamilyDeliveries.readyFilter()
+          ]
+        }));
+      this.basketStatsCalc(st.baskets, this.basketsInEvent, b => b.inEventDeliveries, id => ({ basketType: id }));
+      this.basketStatsCalc(st.baskets, this.assignedButNotOutBaskets, b => b.smsNotSent,
+        id => ({
+          basketType: id,
+          $and: [this.assignedButNotOutBaskets.rule]
+        }));
+      this.basketStatsCalc(st.baskets, this.selfPickupBaskets, b => b.selfPickup,
+        id => ({
+          basketType: id,
+          $and: [this.selfPickupBaskets.rule]
+        }));
+      this.basketStatsCalc(st.baskets, this.basketsDelivered, b => b.successDeliveries,
+        id => ({
+          basketType: id,
+          deliverStatus: DeliveryStatus.isSuccess()
+        }));
       this.prepComplexStats(st.cities, this.cityStats,
-        (f, c) => FamilyDeliveries.readyFilter().and(f.city.isEqualTo(c)),
-        (f, c) => FamilyDeliveries.readyFilter().and(f.city.isDifferentFrom(c)));
+        c => ({ $and: [FamilyDeliveries.readyFilter()], city: c }),
+        c => ({ $and: [FamilyDeliveries.readyFilter()], city: { "!=": c } }));
 
       this.updateChart();
     }));
   }
-  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, basket: BasketType }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (f: FilterFactories<ActiveFamilyDeliveries>, id: BasketType) => Filter) {
+  private basketStatsCalc<T extends { boxes: number, boxes2: number, name: string, basket: BasketType }>(baskets: T[], stats: statsOnTabBasket, getCount: (x: T) => number, equalToFilter: (id: BasketType) => EntityFilter<FamilyDeliveries>) {
     stats.stats.splice(0);
     stats.totalBoxes1 = 0;
 
     stats.totalBoxes2 = 0;
 
     baskets.forEach(b => {
-      let fs = new FamilyDeliveresStatistics(b.name, f => equalToFilter(f, b.basket),
+      let fs = new FamilyDeliveresStatistics(b.name, equalToFilter(b.basket),
         undefined);
       fs.value = getCount(b);
       stats.stats.push(fs);
@@ -383,8 +398,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   private prepComplexStats<type extends { name: string, count: number }>(
     cities: type[],
     stats: statsOnTab,
-    equalToFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => Filter,
-    differentFromFilter: (f: FilterFactories<ActiveFamilyDeliveries>, item: string) => Filter
+    equalToFilter: (item: string) => EntityFilter<FamilyDeliveries>,
+    differentFromFilter: (item: string) => EntityFilter<FamilyDeliveries>
   ) {
     stats.stats.splice(0);
     stats.moreStats.splice(0);
@@ -395,7 +410,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     cities.forEach(b => {
       if (b.count == 0)
         return;
-      let fs = new FamilyDeliveresStatistics(b.name, f => equalToFilter(f, b.name), undefined);
+      let fs = new FamilyDeliveresStatistics(b.name, equalToFilter(b.name), undefined);
       fs.value = +b.count;
       i++;
       if (i <= 8) {
@@ -406,13 +421,12 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         if (!lastFs) {
           let x = stats.stats.pop();
           firstCities.pop();
-          lastFs = new FamilyDeliveresStatistics(getLang(this.remult).allOthers, f => {
-            let r = differentFromFilter(f, firstCities[0]);
-            for (let index = 1; index < firstCities.length; index++) {
-              r = r.and(differentFromFilter(f, firstCities[index]));
-            }
-            return r;
-          }, undefined);
+          let r: EntityFilter<FamilyDeliveries> = { $and: [differentFromFilter(firstCities[0])] };
+          for (let index = 1; index < firstCities.length; index++) {
+            r.$and.push(differentFromFilter(firstCities[index]));
+          }
+
+          lastFs = new FamilyDeliveresStatistics(getLang(this.remult).allOthers, r, undefined);
           stats.moreStats.push(x);
           lastFs.value = x.value;
           stats.stats.push(lastFs);
@@ -464,33 +478,25 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     knowTotalRows: true,
 
     rowsInPage: this.limit,
-    where: f => {
+    where: () => {
       let index = 0;
-      let result: Filter = undefined;
-      let addFilter = (filter: Filter) => {
-        if (result)
-          result = new AndFilter(result, filter);
-        else result = filter;
-      }
+      let result: EntityFilter<FamilyDeliveries>[] = [{
+        name: { $contains: this.searchString },
+        distributionCenter: this.dialog.filterDistCenter()
+      }];
 
       if (this.currentStatFilter) {
-        addFilter(this.currentStatFilter.rule(f));
+        result.push(this.currentStatFilter.rule);
       } else {
         if (this.myTab)
           index = this.myTab.selectedIndex;
         if (index < 0 || index == undefined)
           index = 0;
-
-        addFilter(this.statTabs[index].rule(f));
+        result.push(this.statTabs[index].rule);
       }
-      if (this.searchString) {
-        addFilter(f.name.contains(this.searchString));
-      }
-
-      addFilter(this.dialog.filterDistCenter(f.distributionCenter));
-      return result;
+      return { $and: result };
     }
-    , orderBy: f => f.name
+    , orderBy: { name: "asc" }
     ,
     columnSettings: deliveries => {
       let r: DataControlInfo<ActiveFamilyDeliveries>[] = [
@@ -655,7 +661,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       ].map(a => a.gridButton({
         afterAction: async () => await this.refresh(),
         dialog: this.dialog,
-        userWhere: (x) => Filter.fromEntityFilter(x, this.deliveries.getFilterWithSelectedRows().where),
+        userWhere: async () => (await this.deliveries.getFilterWithSelectedRows()).where,
         settings: this.settings
       })),
       {
@@ -703,14 +709,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             }
           }
 
-          items.sort((a,b)=>a.name.localeCompare(b.name));
-          parcels.sort((a,b)=>a.name.localeCompare(b.name));
+          items.sort((a, b) => a.name.localeCompare(b.name));
+          parcels.sort((a, b) => a.name.localeCompare(b.name));
 
 
           openDialog(EditCommentDialogComponent, edit => edit.args = {
             title: getLang(this.remult).whatToOrder,
-            save:()=>{},
-            comment: items.map(x=>x.quantity+' X '+x.name).join("\n")+"\n---------------\n"+parcels.map(x=>x.quantity+' X '+x.name).join('\n')
+            save: () => { },
+            comment: items.map(x => x.quantity + ' X ' + x.name).join("\n") + "\n---------------\n" + parcels.map(x => x.quantity + ' X ' + x.name).join('\n')
           });
         }
       },
@@ -797,7 +803,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     let result: groupStats[] = [];
     await remult.repo(Groups).find({
       limit: 1000,
-      orderBy: f => f.name
+      orderBy: { name: 'asc' }
     }).then(groups => {
       for (const g of groups) {
         let x: groupStats = {
@@ -805,12 +811,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           totalReady: 0
         };
         result.push(x);
-        pendingStats.push(remult.repo(ActiveFamilyDeliveries).count(f => {
-          let r = f.groups.contains(x.name).and(
-            remult.filterDistCenter(f.distributionCenter, dist));
-          if (readyOnly)
-            return r.and(FamilyDeliveries.readyFilter());
-          return r;
+        pendingStats.push(remult.repo(ActiveFamilyDeliveries).count({
+          groups: { $contains: x.name },
+          distributionCenter: remult.filterDistCenter(dist),
+          $and: [readyOnly ? FamilyDeliveries.readyFilter() : undefined]
         }).then(r => x.totalReady = r));
 
       }
@@ -825,17 +829,17 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
     let fd = SqlFor(remult.repo(FamilyDeliveries));
     let result: string[] = [];
-    let courier = await (await remult.repo(Helpers).findFirst(i => i.phone.isEqualTo(phoneNum)));
+    let courier = await (await remult.repo(Helpers).findFirst({ phone: phoneNum }));
 
     for (const d of (await db.execute(await sql1.query({
       from: fd,
       where: () => [
-        (courier != undefined ? fd.courier.isEqualTo(courier).and(FamilyDeliveries.active(fd)) :
+        (courier != undefined ? fd.where({ courier, $and: [FamilyDeliveries.active] }) :
           sql1.or(
-            fd.phone1.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
-            fd.phone2.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
-            fd.phone3.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)),
-            fd.phone4.isEqualTo(phoneNum).and(FamilyDeliveries.active(fd)))
+            fd.where({ phone1: phoneNum, $and: [FamilyDeliveries.active] }),
+            fd.where({ phone2: phoneNum, $and: [FamilyDeliveries.active] }),
+            fd.where({ phone3: phoneNum, $and: [FamilyDeliveries.active] }),
+            fd.where({ phone4: phoneNum, $and: [FamilyDeliveries.active] }))
         )
       ],
       select: () => [
@@ -845,7 +849,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       result.push(d.id)
     }
 
-    return await (await remult.repo(FamilyDeliveries).find({ where: fd => fd.id.isIn(result) })).map(x => x._.toApiJson());
+    return await (await remult.repo(FamilyDeliveries).find({ where: { id: result } })).map(x => x._.toApiJson());
   }
 
 
@@ -867,7 +871,7 @@ interface statsOnTab {
   stats: FamilyDeliveresStatistics[],
   moreStats: FamilyDeliveresStatistics[],
   showTotal?: boolean,
-  rule: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter,
+  rule: EntityFilter<ActiveFamilyDeliveries>,
   fourthColumn: () => DataControlSettings,
   refreshStats?: (stats: statsOnTab) => Promise<void>
 }
@@ -900,7 +904,10 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
           if (d.deliverStatus.isProblem) {
             let newDelivery = await args.remult.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
             for (const otherFailedDelivery of await args.remult.repo(ActiveFamilyDeliveries).find({
-              where: fd => fd.family.isEqualTo(newDelivery.family).and(DeliveryStatus.isProblem(fd.deliverStatus))
+              where: {
+                family: newDelivery.family,
+                deliverStatus: DeliveryStatus.isProblem()
+              }
             })) {
               await Families.addDelivery(otherFailedDelivery.family, otherFailedDelivery.basketType, otherFailedDelivery.distributionCenter, otherFailedDelivery.courier, {
                 quantity: otherFailedDelivery.quantity,
@@ -950,14 +957,18 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
             d.courier = selectedHelper;
             await d.save();
             var fd = await args.remult.repo(ActiveFamilyDeliveries).find({
-              where: fd => {
-                let f = fd.id.isDifferentFrom(d.id).and(
-                  FamilyDeliveries.readyFilter()).and(
-                    args.dialog.filterDistCenter(fd.distributionCenter));
-                if (d.addressOk)
-                  return f.and(fd.addressLongitude.isEqualTo(d.addressLongitude).and(fd.addressLatitude.isEqualTo(d.addressLatitude)));
-                else
-                  return f.and(fd.family.isEqualTo(d.family).and(f));
+              where: {
+                id: { "!=": d.id },
+                distributionCenter: args.dialog.filterDistCenter(),
+                $and: [
+                  FamilyDeliveries.readyFilter(),
+                  d.addressOk ?
+                    {
+                      addressLongitude: d.addressLongitude,
+                      addressLatitude: d.addressLatitude
+                    } :
+                    { family: d.family }
+                ]
               }
             });
             if (fd.length > 0) {
@@ -1056,7 +1067,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.remult).shouldDeleteDeliveryFor + d.name)) {
           {
-            let fd = await args.remult.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            let fd = await args.remult.repo(FamilyDeliveries).findId(d.id);
             await fd.delete();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
@@ -1071,7 +1082,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         if (await args.dialog.YesNoPromise(getLang(args.remult).shouldArchiveDelivery)) {
           {
-            let fd = await args.remult.repo(FamilyDeliveries).findFirst(fd => fd.id.isEqualTo(d.id));
+            let fd = await args.remult.repo(FamilyDeliveries).findId(d.id);
             fd.archive = true;
             await fd.save();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);

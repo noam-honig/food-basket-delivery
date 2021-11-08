@@ -31,10 +31,10 @@ describe('AppComponent', () => {
   var sql = new SqlBuilder(remult);
   beforeEach(async () => {
     sql = new SqlBuilder(remult);
-    f = SqlFor( remult.repo(Families));
-    afd = SqlFor( remult.repo(ActiveFamilyDeliveries));
-    fd = SqlFor( remult.repo(FamilyDeliveries));
-    bt = SqlFor( remult.repo(BasketType));
+    f = SqlFor(remult.repo(Families));
+    afd = SqlFor(remult.repo(ActiveFamilyDeliveries));
+    fd = SqlFor(remult.repo(FamilyDeliveries));
+    bt = SqlFor(remult.repo(BasketType));
     sql.addEntity(bt, 'p');
     sql.addEntity(afd, 'fd');
     sql.addEntity(fd, 'h');
@@ -42,20 +42,20 @@ describe('AppComponent', () => {
   });
 
 
-  var q = async (query: QueryBuilder, expectresult: String) => {
-    expect(await sql.query(query)).toBe(expectresult);
+  var q = async (query: QueryBuilder, expectedResult: String) => {
+    expect(await sql.query(query)).toBe(expectedResult);
   };
 
   it('test q', async () => {
     expect(
       await sql.query({
-        select: () => [f.id], from: f, where: async () => [f.status.isDifferentFrom(FamilyStatus.ToDelete),
+        select: () => [f.id], from: f, where: async () => [f.where({ status: { "!=": FamilyStatus.ToDelete } }),
         sql.build(f.id, ' in (', await sql.query({ select: () => [afd.family], from: afd }), ')')]
       })).toBe("select e1.id from Families e1 where status <> 98 and e1.id in (select fd.family from FamilyDeliveries fd where archive = false)");
 
   });
   it("test custom filter", async () => {
-    expect(await sql.build(FamilyDeliveries.onTheWayFilter())).toBe("deliverStatus = 0 and courier <> ''");
+    expect(await sql.build(fd.where(FamilyDeliveries.onTheWayFilter()))).toBe("deliverStatus = 0 and courier <> ''");
   });
   it("test build", async () => {
     expect(await sql.build("a", f.id)).toBe("aid");
@@ -67,8 +67,8 @@ describe('AppComponent', () => {
     expect(await sql.func('max', f.id)).toBe("max(id)");
   });
   it("test bla bla", async () => {
-    let h = SqlFor( remult.repo(Helpers));
-    let u = SqlFor( remult.repo(RegisterURL));
+    let h = SqlFor(remult.repo(Helpers));
+    let u = SqlFor(remult.repo(RegisterURL));
     let sql = new SqlBuilder(remult);
     let urls = [];
 
@@ -145,17 +145,17 @@ describe('AppComponent', () => {
     }, 'select p.id from BasketType p where p.boxes = 5');
   });
   it('Where', () => {
-    let b =  remult.repo(BasketType).create({ id: '11', name: 'basket' });
+    let b = remult.repo(BasketType).create({ id: '11', name: 'basket' });
 
-    q({
+    return q({
       select: () => [fd.id],
       from: fd,
-      where: () => [fd.basketType.isEqualTo(b)]
+      where: () => [fd.where({ basketType: b })]
     }, "select h.id from FamilyDeliveries h where basketType = '11'");
   });
   it('another where', async () => {
-    let b =  remult.repo(BasketType).create({ id: '11', name: 'basket' });
-    expect(await sql.build(fd.basketType.isEqualTo(b))).toBe("basketType = '11'")
+    let b = remult.repo(BasketType).create({ id: '11', name: 'basket' });
+    expect(await sql.build(fd.where({ basketType: b }))).toBe("basketType = '11'")
 
   });
   it('group By', () => {
@@ -212,7 +212,7 @@ describe('AppComponent', () => {
     ], 9)).toBe("case when 1=1 and 2=2 then 3 when 3=3 then 4 else 9 end");
   });
   it('delete 2', async () => {
-    let p = SqlFor( remult.repo(BasketType));
+    let p = SqlFor(remult.repo(BasketType));
     expect(await sql.delete(p, sql.eq(p.boxes, 5), sql.eq(p.boxes, 6))).toBe('delete from BasketType where boxes = 5 and boxes = 6');
   });
   it('update ', async () => {
@@ -223,7 +223,7 @@ describe('AppComponent', () => {
   });
   it('update 2 ', async () => {
     sql.getEntityAlias(f);
-    let pd = SqlFor( remult.repo(Families));
+    let pd = SqlFor(remult.repo(Families));
     expect(await sql.update(bt, {
       set: () => [[bt.id, pd.basketType], [bt.name, "'noam'"]],
       from: pd,
@@ -241,7 +241,7 @@ describe('AppComponent', () => {
     })).toBe("insert into BasketType (id, name) select e1.id, 'noam' from Families e1 where e1.familyMembers = 5");
   });
   it('filter ', async () => {
-    expect(await sql.build(bt.boxes.isEqualTo(3).and(bt.boxes.isEqualTo(5)))).toBe('boxes = 3 and boxes = 5');
+    expect(await sql.build(bt.where({ boxes: 3, $and: [{ boxes: 5 }] }))).toBe('boxes = 3 and boxes = 5');
   });
   it('parse address', () => {
     let r = parseAddress("שנהב 4 דירה 76 קומה 19 כניסה א'");
@@ -349,7 +349,7 @@ describe('AppComponent', () => {
   //testPhone("0507330590 / 1", [{ phone: '0507330590', comment: '' }, { phone: '0507330591', comment: '' }]);
   //testPhone("0507330590 / 81", [{ phone: '0507330590', comment: '' }, { phone: '0507330581', comment: '' }]);
   it("updatePhone", () => {
-    let f =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('04-8767772');
     expect(f.phone1Description).toBe(undefined);
@@ -359,7 +359,7 @@ describe('AppComponent', () => {
     expect(f.phone3Description).toBe(undefined);
   });
   it("updatePhone2", () => {
-    let f =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
     f.phone1 = new Phone('0507330590');
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('0507330590');
@@ -371,7 +371,7 @@ describe('AppComponent', () => {
     expect(f.phone4Description).toBe(undefined);
   });
   it("updatePhone3", () => {
-    let f =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
     f.phone2 = new Phone('0507330590');
     parseAndUpdatePhone("04-8767772 / 050-7467774 (לריסה)", f, '');
     expect(f.phone1.thePhone).toBe('04-8767772');
@@ -383,10 +383,10 @@ describe('AppComponent', () => {
     expect(f.phone4Description).toBe(undefined);
   });
   it("properMerge4", () => {
-    let f =  remult.repo(Families).create();
-    let f2 =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
+    let f2 = remult.repo(Families).create();
     let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
-    c.family =  remult.repo(Families).create();
+    c.family = remult.repo(Families).create();
     c.family.phone1 = new Phone('0507330590');
     c.families = [f, f2];
     f.phone1 = new Phone('0507330590');
@@ -402,10 +402,10 @@ describe('AppComponent', () => {
     expect(processPhone('-').length).toBe(1);
   });
   it("properMerge", () => {
-    let f =  remult.repo(Families).create();
-    let f2 =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
+    let f2 = remult.repo(Families).create();
     let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
-    c.family =  remult.repo(Families).create();
+    c.family = remult.repo(Families).create();
     c.families = [f, f2];
     f.tz = '1';
     f2.tz = '2';
@@ -414,10 +414,10 @@ describe('AppComponent', () => {
     expect(c.family.tz2).toBe('2');
   });
   it("properMerge1", () => {
-    let f =  remult.repo(Families).create();
-    let f2 =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
+    let f2 = remult.repo(Families).create();
     let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
-    c.family =  remult.repo(Families).create();
+    c.family = remult.repo(Families).create();
     c.families = [f, f2];
 
     f2.tz = '2';
@@ -425,10 +425,10 @@ describe('AppComponent', () => {
     expect(c.family.tz).toBe('2');
   });
   it("properMerge2", () => {
-    let f =  remult.repo(Families).create();
-    let f2 =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
+    let f2 = remult.repo(Families).create();
     let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
-    c.family =  remult.repo(Families).create();
+    c.family = remult.repo(Families).create();
     c.families = [f, f2];
     f.tz = '1';
     f2.tz = '01';
@@ -437,10 +437,10 @@ describe('AppComponent', () => {
 
   });
   it("properMerge3", () => {
-    let f =  remult.repo(Families).create();
-    let f2 =  remult.repo(Families).create();
+    let f = remult.repo(Families).create();
+    let f2 = remult.repo(Families).create();
     let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
-    c.family =  remult.repo(Families).create();
+    c.family = remult.repo(Families).create();
     c.families = [f, f2];
     f.phone1 = new Phone('1');
     f.phone1Description = 'd1';
@@ -457,15 +457,15 @@ describe('AppComponent', () => {
     test('039197373', true);
   });
   it("test event date", () => {
-      let today = new Date("2021-08-03T08:38:19.237Z");
-      let x={} as EventInList;
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-02"},true,today)).toBe("עבר")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-03"},true,today)).toBe("היום (03/08)")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-04"},true,today)).toBe("מחר (04/08)")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-05"},true,today)).toBe("השבוע")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-10"},true,today)).toBe("שבוע הבא")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-08-15"},true,today)).toBe("אוגוסט")
-      expect (eventDisplayDate({...x,eventDateJson:"2021-09-13"},true,today)).toBe("ספטמבר")
+    let today = new Date("2021-08-03T08:38:19.237Z");
+    let x = {} as EventInList;
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-08-02" }, true, today)).toBe("עבר")
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-08-03" }, true, today)).toBe("היום (03/08)")
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-08-04" }, true, today)).toBe("מחר (04/08)")
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-08-05" }, true, today)).toBe("השבוע")
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-08-10" }, true, today)).toBe("שבוע הבא")
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-08-15" }, true, today)).toBe("אוגוסט")
+    expect(eventDisplayDate({ ...x, eventDateJson: "2021-09-13" }, true, today)).toBe("ספטמבר")
   });
 
 

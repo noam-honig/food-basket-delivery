@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FilterFactories, Allow, isBackend } from "remult";
+import { IdEntity, Remult, Entity, Allow, isBackend, EntityFilter } from "remult";
 import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -30,7 +30,7 @@ import { use, FieldType, Field } from "../translate";
   allowApiRead: Allow.authenticated,
   allowApiInsert: Roles.admin,
   allowApiUpdate: Roles.admin,
-  defaultOrderBy: self => self.name,
+  defaultOrderBy: { name: "asc" },
 
 
   saving: async (self) => {
@@ -71,8 +71,10 @@ export class DistributionCenters extends IdEntity {
   archive: boolean;
   createUser: HelpersBase;
 
-  static isActive(e: FilterFactories<DistributionCenters>) {
-    return e.isFrozen.isEqualTo(false).and(e.archive.isEqualTo(false));
+
+  static isActive: EntityFilter<DistributionCenters> = {
+    isFrozen: false,
+    archive: false
   }
 
 
@@ -106,7 +108,7 @@ export class DistributionCenters extends IdEntity {
   }
   static async getValueList(remult: Remult, showAllOptions = false) {
     let r = await getValueList<DistributionCenters>(remult.repo(DistributionCenters), {
-      where: c => c.archive.isEqualTo(false)
+      where: { archive: false }
     })
     if (showAllOptions) {
       r.splice(0, 0, { caption: use.language.allDistributionLists, id: null })

@@ -31,7 +31,7 @@ import { getSettings } from '../manage/ApplicationSettings';
     if ((!self.boxes || self.boxes < 1) && (!self.boxes2 || self.boxes2 < 1))
       self.boxes = 1;
   },
-  defaultOrderBy: x => x.name
+  defaultOrderBy: { name: "asc" }
 })
 export class BasketType extends IdEntity {
   @Field({ translation: l => l.basketTypeName })

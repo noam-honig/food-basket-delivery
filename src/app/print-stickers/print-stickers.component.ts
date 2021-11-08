@@ -87,7 +87,7 @@ export class PrintStickersComponent implements OnInit {
 
   async ngOnInit() {
     this.data = await VolunteerReportDefs.getStickerData();
-    this.row = await this.remult.repo(StickerInfo).findFirst({ where: s => s.key.isEqualTo("stickers"), useCache: false, createIfNotFound: true });
+    this.row = await this.remult.repo(StickerInfo).findFirst({ key: "stickers" }, { useCache: false, createIfNotFound: true });
     this.report = this.row.info;
     if (!this.report) {
       this.report = {

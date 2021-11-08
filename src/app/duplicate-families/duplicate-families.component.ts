@@ -112,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
             {
               afterAction: async () => await x.args.settings.reloadData(),
               dialog: this.dialog,
-              userWhere: (e) => Filter.fromEntityFilter(e, x.args.settings.getFilterWithSelectedRows().where),
+              userWhere: async () => (await x.args.settings.getFilterWithSelectedRows()).where,
               settings: this.settings
             }))
           , {
@@ -142,8 +142,8 @@ export class DuplicateFamiliesComponent implements OnInit {
         ],
 
         rowsInPage: 25,
-        where: f => f.status.isDifferentFrom(FamilyStatus.ToDelete).and(f.id.isIn(d.ids.split(','))),
-        orderBy: f => f.name
+        where: { status: { "!=": FamilyStatus.ToDelete }, id: d.ids.split(',') },
+        orderBy: { name: "asc" }
 
 
       })
@@ -198,7 +198,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           ],
           from: f,
           where: () => {
-            let r: any[] = [f.status.isDifferentFrom(FamilyStatus.ToDelete)];
+            let r: any[] = [f.where({ status: { "!=": FamilyStatus.ToDelete } })];
             if (compare.onlyActive) {
               r.push(sql.build(f.id, ' in (', sql.query({ select: () => [fd.family], from: fd }), ')'));
             }

@@ -10,7 +10,6 @@ import { Phone } from "../model-shared/phone";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
-import { settings } from "cluster";
 import { SelectHelperComponent } from "../select-helper/select-helper.component";
 import { DialogService } from "../select-popup/dialog";
 import { saveToExcel } from '../shared/saveToExcel';
@@ -68,10 +67,8 @@ export class eventStatus {
     }
 },
     (options, remult) =>
-        options.apiPrefilter = (self) => {
-            if (remult.isAllowed(Roles.admin))
-                return undefined;
-            return self.eventStatus.isEqualTo(eventStatus.active);
+        options.apiPrefilter = {
+            eventStatus: !remult.isAllowed(Roles.admin) ? eventStatus.active : undefined
         }
 )
 export class Event extends IdEntity {
@@ -122,11 +119,11 @@ export class Event extends IdEntity {
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
         if (!helper)
             return false;
-        return !!(await this.remult.repo(volunteersInEvent).findFirst(v =>
-            v.helper.isEqualTo(helper).and(
-                v.eventId.isEqualTo(this.id)).and(
-                    v.canceled.isEqualTo(false)
-                )))
+        return !!(await this.remult.repo(volunteersInEvent).findFirst({
+            helper,
+            eventId: this.id,
+            canceled: false
+        }))
     }
     @Field<Event>({
         serverExpression: self => self.volunteeredIsRegisteredToEvent(self.remult.currentUser)
@@ -157,11 +154,9 @@ export class Event extends IdEntity {
                 click: () => openDialog(SelectHelperComponent, y => y.args = {
                     onSelect: async h => {
 
-                        let eh = await this.remult.repo(volunteersInEvent).findFirst({
-                            where: v => v.helper.isEqualTo(h).and(v.eventId.isEqualTo(this.id)),
-                            useCache: false,
-                            createIfNotFound: true
-                        });
+                        let eh = await this.remult.repo(volunteersInEvent).findFirst(
+                            { helper: h, eventId: this.id },
+                            { createIfNotFound: true });
                         eh.canceled = false;
                         await eh.save();
                         x.args.settings.reloadData()
@@ -173,8 +168,8 @@ export class Event extends IdEntity {
 
                 rowsInPage: 50,
                 allowUpdate: true,
-                where: ve => ve.eventId.isEqualTo(this.id),
-                orderBy: ve => ve.registerStatusDate.descending(),
+                where: { eventId: this.id },
+                orderBy: { registerStatusDate: "desc" },
                 knowTotalRows: true,
                 numOfColumnsInGrid: 10,
                 columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
@@ -319,10 +314,12 @@ export class Event extends IdEntity {
         if (!settings.bulkSmsEnabled)
             throw "אינך רשאי לשלוח הודעות לקבוצה";
         let i = 0;
-        for await (const v of remult.repo(volunteersInEvent).iterate(
-            {
-                where: v => v.eventId.isEqualTo(this.id).and(v.canceled.isEqualTo(false))
+        for await (const v of remult.repo(volunteersInEvent).iterate({
+            where: {
+                eventId: this.id,
+                canceled: false
             }
+        }
         )) {
             if (v.helper)
                 if (!v.helper.doNotSendSms) {
@@ -389,7 +386,7 @@ export class Event extends IdEntity {
                 var sql = new SqlBuilder(remult);
                 return sql.columnCount(self, {
                     from: vie,
-                    where: () => [sql.eq(vie.eventId, self.id), vie.canceled.isEqualTo(false)]
+                    where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false })]
                 })
             }
     )
@@ -404,7 +401,7 @@ export class Event extends IdEntity {
                 var sql = new SqlBuilder(remult);
                 return sql.columnCountWithAs(self, {
                     from: vie,
-                    where: () => [sql.eq(vie.eventId, self.id), vie.canceled.isEqualTo(false), vie.confirmed.isEqualTo(true)]
+                    where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false, confirmed: true })]
                 }, "confirmed")
             }
     )
@@ -496,7 +493,10 @@ export class Event extends IdEntity {
 
                         await e.save();
                         for (const c of await remult.repo(volunteersInEvent).find({
-                            where: x => x.duplicateToNextEvent.isEqualTo(true).and(x.eventId.isEqualTo(current.id))
+                            where: {
+                                duplicateToNextEvent: true,
+                                eventId: current.id
+                            }
                         })) {
                             let v = remult.repo(volunteersInEvent).create();
                             v.eventId = e.id;
@@ -593,10 +593,8 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
     allowApiDelete: false
 },
     (options, remult) => {
-        options.apiPrefilter = (self) => {
-            if (remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
-                return undefined;
-            return self.helper.isEqualTo(remult.currentUser);
+        options.apiPrefilter = {
+            helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? remult.currentUser : undefined
         };
         options.saving = (self) => {
             if (self.isNew() && isBackend()) {
@@ -669,7 +667,7 @@ export class volunteersInEvent extends IdEntity {
                 let sql = new SqlBuilder(remult);
                 let self = SqlFor(selfDefs);
                 let d = SqlFor(remult.repo(FamilyDeliveries));
-                return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), DeliveryStatus.isSuccess(d.deliverStatus)] }, 'succesfulDeliveries')
+                return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), d.where({ deliverStatus: DeliveryStatus.isSuccess() })] }, 'succesfulDeliveries')
             }
     )
     succesfulDeliveries: number;

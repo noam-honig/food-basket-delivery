@@ -155,7 +155,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     let c = ExcelHelper.actualGetColInfo(i, colMemberName);
     if (c.existingDisplayValue == c.newDisplayValue)
       return;
-    let f = await remult.repo(Helpers).findFirst(f => f.id.isEqualTo(i.duplicateHelperInfo[0].id));
+    let f = await remult.repo(Helpers).findId(i.duplicateHelperInfo[0].id);
     let val = c.newValue;
     if (val === null)
       val = '';
@@ -553,7 +553,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     } as serverCheckResults;
     for (const info of excelRowInfo) {
 
-      info.duplicateHelperInfo = (await remult.repo(Helpers).find({ where: h => h.phone.isEqualTo(new Phone(info.phone)) })).map(x => {
+      info.duplicateHelperInfo = (await remult.repo(Helpers).find({ where: { phone: new Phone(info.phone) } })).map(x => {
         return {
           id: x.id,
           name: x.name
@@ -566,7 +566,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         info.error = 'מתנדב קיים יותר מפעם אחת בבסיס הנתונים';
         result.errorRows.push(info);
       } else {
-        let ef = await remult.repo(Helpers).findFirst(f => f.id.isEqualTo(info.duplicateHelperInfo[0].id));
+        let ef = await remult.repo(Helpers).findId(info.duplicateHelperInfo[0].id);
         let hasDifference = false;
         for (const columnMemberName of columnsInCompareMemeberName) {
 

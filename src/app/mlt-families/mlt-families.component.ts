@@ -101,8 +101,8 @@ export class MltFamiliesComponent implements OnInit {
 
   async countFamilies() {
     let consumed: string[] = []
-    let list: FamilyDeliveries[] = await this. remult.repo(FamilyDeliveries).find(
-      { where: fd => fd.courier.isEqualTo(this.remult.currentUser).and(DeliveryStatus.isSuccess(fd.deliverStatus)) })
+    let list: FamilyDeliveries[] = await this.remult.repo(FamilyDeliveries).find(
+      { where: { courier: this.remult.currentUser, deliverStatus: DeliveryStatus.isSuccess() } })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -175,7 +175,7 @@ export class MltFamiliesComponent implements OnInit {
   static async assignFamilyDeliveryToIndie(deliveryIds: string[], remult?: Remult) {
     for (const id of deliveryIds) {
 
-      let fd = await  remult.repo(ActiveFamilyDeliveries).findId(id);
+      let fd = await remult.repo(ActiveFamilyDeliveries).findId(id);
       if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
         fd.courier = remult.currentUser;
         await fd.save();
@@ -215,7 +215,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async getClosestDistCenters() {
-    let distCenters = await this. remult.repo(DistributionCenters).find({ where: x => DistributionCenters.isActive(x) });
+    let distCenters = await this.remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
     distCenters = distCenters.filter(x => x.addressHelper.ok());
     let volunteerLocation: Location = undefined;
     try {
@@ -275,7 +275,7 @@ export class MltFamiliesComponent implements OnInit {
     let s = getSettings(remult);
     if (!s.isSytemForMlt())
       throw "not allowed";
-    for (const fd of await  remult.repo(ActiveFamilyDeliveries).find({ where: fd => fd.courier.isEqualTo(remult.currentUser) })) {
+    for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: remult.currentUser } })) {
       fd.distributionCenter = newDestinationId;
       await fd.save();
     }

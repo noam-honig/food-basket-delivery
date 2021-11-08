@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Remult, AndFilter, FilterFactories } from 'remult';
+import { Remult, EntityFilter } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';
@@ -29,7 +29,7 @@ import { DeliveryImagesComponent } from '../delivery-images/delivery-images.comp
     styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit, OnDestroy {
-    isAdmin(){
+    isAdmin() {
         return this.remult.isAllowed(Roles.admin);
     }
     static needsWorkRoute: Route = {
@@ -83,19 +83,21 @@ export class NewsComponent implements OnInit, OnDestroy {
             this.filters.setToNeedsWork();
         }
         this.refresh();
-        this.familySources.push(...(await this. remult.repo(FamilySources).find({ orderBy: x => [x.name] })).map(x => { return { id: x.id, name: x.name } as familySource }));
+        this.familySources.push(...(await this.remult.repo(FamilySources).find({ orderBy: { name: "asc" } })).map(x => { return { id: x.id, name: x.name } as familySource }));
 
     }
     newsRows = 50;
     async refresh() {
 
         this.busy.donotWait(async () => {
-            this.news = await this. remult.repo(FamilyDeliveries).find({
-                where: n => {
-                    return new AndFilter(this.filters.where(n), this.dialog.filterDistCenter(n.distributionCenter));
+            this.news = await this.remult.repo(FamilyDeliveries).find({
+                where:  {
+                    distributionCenter:this.dialog.filterDistCenter(),
+                    $and:[
+                        this.filters.where()
+                    ]
 
-
-                }, orderBy: n => n.deliveryStatusDate.descending(), limit: this.newsRows
+                }, orderBy: { deliveryStatusDate: "desc" }, limit: this.newsRows
             });
         });
     }
@@ -128,7 +130,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 }
 export interface NewsFilter {
     name: string;
-    where?: (rowType: FilterFactories<ActiveFamilyDeliveries>) => Filter;
+    where?: EntityFilter<ActiveFamilyDeliveries>;
 }
 interface familySource {
     name: string;

@@ -1,4 +1,4 @@
-import { Remult, Filter, FilterFactory } from 'remult';
+import { Remult, ValueFilter } from 'remult';
 
 import { use, ValueListFieldType } from '../translate';
 
@@ -51,7 +51,7 @@ export class DeliveryStatus {
 
   constructor(public id: number, public caption: string, public isProblem = false) {
   }
-  getCss(courier:import ('../helpers/helpers').HelpersBase) {
+  getCss(courier: import('../helpers/helpers').HelpersBase) {
     switch (this) {
       case DeliveryStatus.Success:
       case DeliveryStatus.SuccessLeftThere:
@@ -67,38 +67,38 @@ export class DeliveryStatus {
       case DeliveryStatus.Frozen:
         return 'forzen';
       default:
-        if (this==DeliveryStatus.ReadyForDelivery&&courier)
+        if (this == DeliveryStatus.ReadyForDelivery && courier)
           return 'on-the-way';
         return '';
     }
   }
-  private static resultStatuses() {
+  public static resultStatuses() {
     return new ValueListValueConverter(DeliveryStatus).getOptions().filter(x => x.IsAResultStatus());
   }
   private static problemStatuses() {
     return new ValueListValueConverter(DeliveryStatus).getOptions().filter(x => x.isProblem);
   }
 
-  static isNotAResultStatus(self: FilterFactory<DeliveryStatus>): Filter {
-    return self.isNotIn(this.resultStatuses());
+  static isNotAResultStatus(): ValueFilter<DeliveryStatus> {
+    return { "!=": DeliveryStatus.resultStatuses() }
   }
 
 
-  static isAResultStatus(self: FilterFactory<DeliveryStatus>) {
-    return self.isIn(this.resultStatuses());
+  static isAResultStatus() {
+    return this.resultStatuses();
   }
 
 
 
-  static isSuccess(self: FilterFactory<DeliveryStatus>) {
-    return self.isIn([this.Success, this.SuccessLeftThere, this.SuccessPickedUp]);
+  static isSuccess() {
+    return [this.Success, this.SuccessLeftThere, this.SuccessPickedUp];
   }
-  static isProblem(self: FilterFactory<DeliveryStatus>) {
-    return self.isIn(this.problemStatuses());
+  static isProblem() {
+    return this.problemStatuses();
 
   }
-  static isNotProblem(self: FilterFactory<DeliveryStatus>) {
-    return self.isNotIn(this.problemStatuses()).and(self.isDifferentFrom(DeliveryStatus.Frozen));
+  static isNotProblem() {
+    return [...this.problemStatuses(), DeliveryStatus.Frozen];
   }
   static getOptions(remult: Remult) {
     let op = new ValueListValueConverter(DeliveryStatus).getOptions();

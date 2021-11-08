@@ -131,11 +131,11 @@ export class ApplicationSettings extends EntityBase {
   @BackendMethod({ allowed: Allow.authenticated })
   static async getPhoneOptions(deliveryId: string, remult?: Remult) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
-    let d = await remult.repo(ActiveFamilyDeliveries).findFirst(fd => fd.id.isEqualTo(deliveryId).and(ActiveFamilyDeliveries.isAllowedForUser()));
+    let d = await remult.repo(ActiveFamilyDeliveries).findFirst({ id: deliveryId, $and: [ActiveFamilyDeliveries.isAllowedForUser()] });
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
-    let family = await remult.repo(Families).findFirst(f => f.id.isEqualTo(d.family));
+    let family = await remult.repo(Families).findId(d.family);
     let r: phoneOption[] = [];
     let settings = await ApplicationSettings.getAsync(remult);
     for (const x of settings.getPhoneStrategy()) {
@@ -457,7 +457,7 @@ export class ApplicationSettings extends EntityBase {
   @Field({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string;
 
-  @Field({  })
+  @Field({})
   familySelfOrderEnabled: boolean;
   @Field()
   familySelfOrderMessage: string;

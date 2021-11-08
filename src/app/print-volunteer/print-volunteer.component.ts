@@ -123,7 +123,7 @@ export class PrintVolunteerComponent implements OnInit {
       }
       deliveries.push(d);
     }
-    this.row = await this.remult.repo(VolunteerReportInfo).findFirst({ where: s => s.key.isEqualTo("volunteerReport"), useCache: false, createIfNotFound: true });
+    this.row = await this.remult.repo(VolunteerReportInfo).findFirst({ key: "volunteerReport" }, { useCache: false, createIfNotFound: true });
     this.report = this.row.info;
     if (!this.report) {
       this.report = {

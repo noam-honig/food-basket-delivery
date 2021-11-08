@@ -26,10 +26,11 @@ import { InitContext } from "./app/helpers/init-context";
 initSettings.disableSchemaInit = true;
 
 
-async function init() {
+
+function init() {
 
     let remult = new Remult();
-    await InitContext(remult);
+
     let helperWhoIsAdmin: Helpers;
 
     actionInfo.runningOnServer = true;
@@ -40,33 +41,35 @@ async function init() {
 
     beforeAll(
         done => {
-            serverInit().then(async x => {
-                if (initSettings.disableSchemaInit) {
-                    SqlDatabase.LogToConsole = true;
-                    
-                }
-                let dp = Sites.getDataProviderForOrg("test");
-                sql = <any>dp;
-                remult.setDataProvider(dp);
+            InitContext(remult).then(() => {
+                serverInit().then(async x => {
+                    if (initSettings.disableSchemaInit) {
+                        //SqlDatabase.LogToConsole = true;
 
-                done();
-            });
+                    }
+                    let dp = Sites.getDataProviderForOrg("test");
+                    sql = <any>dp;
+                    remult.setDataProvider(dp);
+
+                    done();
+                });
+            })
         });
 
     describe("helpers", () => {
         itAsync('helpers and stats work', async () => {
 
-            let h = await  remult.repo(HelpersAndStats).find();
+            let h = await remult.repo(HelpersAndStats).find();
         })
             ;
     });
     describe("the test", () => {
 
         beforeEach(async done => {
-            for (const d of await  remult.repo(FamilyDeliveries).find()) {
+            for (const d of await remult.repo(FamilyDeliveries).find()) {
                 await d.delete();
             }
-            for (const d of await  remult.repo(Helpers).find()) {
+            for (const d of await remult.repo(Helpers).find()) {
                 await d.delete();
             }
 
@@ -96,7 +99,7 @@ async function init() {
                 as.addressApiResult = g.saveToString();
                 await as.save();
             }
-            let h =  remult.repo(Helpers).create();
+            let h = remult.repo(Helpers).create();
             h.name = 'a';
             h._disableOnSavingRow = true;
             h.admin = true;
@@ -121,7 +124,7 @@ async function init() {
             }, remult, sql);
         }
         async function createDelivery(distanceFromRoot: number) {
-            let d =  remult.repo(ActiveFamilyDeliveries).create();
+            let d = remult.repo(ActiveFamilyDeliveries).create();
             d.internalDeliveryComment = distanceFromRoot.toString();
             d.addressLatitude = distanceFromRoot;
             d.family = distanceFromRoot.toString();
@@ -143,8 +146,10 @@ async function init() {
             let d = await createDelivery(6);
             d.courier = helperWhoIsAdmin;
             await d.save();
+            expect(await (remult.repo(ActiveFamilyDeliveries).count({ courier: null }))).toBe(2);
             let r = await callAddBox();
             expect(r.families.length).toBe(2);
+            
             expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
             expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
         });
@@ -236,24 +241,24 @@ async function init() {
     describe("test update family status", () => {
 
         beforeEach(async (done) => {
-            for (const d of await  remult.repo(FamilyDeliveries).find()) {
+            for (const d of await remult.repo(FamilyDeliveries).find()) {
                 await d.delete();
             }
-            for (const f of await  remult.repo(Families).find()) {
+            for (const f of await remult.repo(Families).find()) {
                 await f.delete();
             }
-            for (const f of await  remult.repo(Helpers).find()) {
+            for (const f of await remult.repo(Helpers).find()) {
                 await f.delete();
             }
-            for (const f of await  remult.repo(DistributionCenters).find()) {
+            for (const f of await remult.repo(DistributionCenters).find()) {
                 await f.delete();
             }
-            await  remult.repo(DistributionCenters).create({ id: '', name: 'stam' }).save();
+            await remult.repo(DistributionCenters).create({ id: '', name: 'stam' }).save();
             done();
         });
         itAsync("update status, updatesStatus and deletes delivery", async () => {
 
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
 
@@ -265,7 +270,7 @@ async function init() {
             fd2.deliverStatus = DeliveryStatus.FailedBadAddress;
             await fd2.save();
 
-            expect(+await  remult.repo(ActiveFamilyDeliveries).count(x => x.family.isEqualTo(f.id))).toBe(2);
+            expect(+await remult.repo(ActiveFamilyDeliveries).count({ family: f.id })).toBe(2);
 
             let b = new UpdateStatusForDeliveries(remult);
             let u = b.orig as UpdateStatus;
@@ -274,36 +279,36 @@ async function init() {
 
             await b.internalForTestingCallTheServer({
                 count: 1,
-                where: x => x.id.isEqualTo(fd.id)
+                where: { id: fd.id }
             });
 
-            let fd_after = await  remult.repo(FamilyDeliveries).findId(fd.id);
+            let fd_after = await remult.repo(FamilyDeliveries).findId(fd.id);
             expect(fd_after.archive).toBe(true, "fd");
-            let fd2_after = await  remult.repo(FamilyDeliveries).findId(fd2.id);
+            let fd2_after = await remult.repo(FamilyDeliveries).findId(fd2.id);
             expect(fd2_after.archive).toBe(true, "fd2");
         });
         itAsync("update status for delivery", async () => {
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
             let fd = f.createDelivery(null);
             await fd.save();
 
-            expect(+await  remult.repo(ActiveFamilyDeliveries).count(x => x.id.isEqualTo(fd.id))).toBe(1);
+            expect(+await remult.repo(ActiveFamilyDeliveries).count({ id: fd.id })).toBe(1);
             let u = new UpdateDeliveriesStatus(remult);
 
             u.status = DeliveryStatus.Frozen;
 
             await u.internalForTestingCallTheServer({
                 count: 1,
-                where: x => x.id.isEqualTo(fd.id)
+                where: { id: fd.id }
             });
-            let fd_after = await  remult.repo(ActiveFamilyDeliveries).findId(fd.id);
+            let fd_after = await remult.repo(ActiveFamilyDeliveries).findId(fd.id);
             expect(fd_after.deliverStatus).toBe(DeliveryStatus.Frozen, "fd");
 
         });
         itAsync("update area for family", async () => {
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
 
@@ -313,14 +318,14 @@ async function init() {
 
             await u.internalForTestingCallTheServer({
                 count: 1,
-                where: x => x.id.isEqualTo(f.id)
+                where: { id: f.id }
             });
-            let fd_after = await  remult.repo(Families).findId(f.id);
+            let fd_after = await remult.repo(Families).findId(f.id);
             expect(fd_after.area).toBe("north");
 
         });
         itAsync("update area", async () => {
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
             let fd = f.createDelivery(null);
@@ -333,16 +338,16 @@ async function init() {
 
             await b.internalForTestingCallTheServer({
                 count: 1,
-                where: x => x.id.isEqualTo(fd.id)
+                where: { id: fd.id }
             });
 
-            let fd_after = await  remult.repo(FamilyDeliveries).findId(fd.id);
+            let fd_after = await remult.repo(FamilyDeliveries).findId(fd.id);
             expect(fd_after.area).toBe("north", "fd");
 
         });
         itAsync("test Action Where", async () => {
 
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
             let fd = f.createDelivery(null);
@@ -351,23 +356,23 @@ async function init() {
             var u = new DeleteDeliveries(remult);
             await u.internalForTestingCallTheServer({
                 count: 0,
-                where: x => undefined
+                where: undefined
             });
-            expect(+(await  remult.repo(FamilyDeliveries).count())).toBe(1);
+            expect(+(await remult.repo(FamilyDeliveries).count())).toBe(1);
             fd.deliverStatus = DeliveryStatus.ReadyForDelivery;
             await fd.save();
             await u.internalForTestingCallTheServer({
                 count: 1,
-                where: x => undefined
+                where: undefined
             });
-            expect(+(await  remult.repo(FamilyDeliveries).count())).toBe(0);
+            expect(+(await remult.repo(FamilyDeliveries).count())).toBe(0);
 
         });
         itAsync("test delete only works for user dist center", async () => {
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
-            let a = await  remult.repo(DistributionCenters).create({
+            let a = await remult.repo(DistributionCenters).create({
                 id: 'a',
                 name: 'a'
             }).save();
@@ -376,14 +381,14 @@ async function init() {
             expect(d.distributionCenter.name).toBe('a');
         });
         itAsync("test delete only works for user dist center", async () => {
-            let f = await  remult.repo(Families).create();
+            let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
-            let a = await  remult.repo(DistributionCenters).create({
+            let a = await remult.repo(DistributionCenters).create({
                 id: 'a',
                 name: 'a'
             }).save();
-            let b = await  remult.repo(DistributionCenters).create({
+            let b = await remult.repo(DistributionCenters).create({
                 id: 'b',
                 name: 'b'
             }).save();
@@ -410,13 +415,13 @@ async function init() {
             } as HelperUserInfo);
             await InitContext(c2);
 
-            expect(+(await  remult.repo(ActiveFamilyDeliveries).count())).toBe(3);
+            expect(+(await remult.repo(ActiveFamilyDeliveries).count())).toBe(3);
             var u = new DeleteDeliveries(c2);
             await u.internalForTestingCallTheServer({
                 count: 1,
-                where: x => undefined
+                where: {}
             });
-            expect(+(await  remult.repo(ActiveFamilyDeliveries).count())).toBe(2);
+            expect(+(await remult.repo(ActiveFamilyDeliveries).count())).toBe(2);
         });
 
     });

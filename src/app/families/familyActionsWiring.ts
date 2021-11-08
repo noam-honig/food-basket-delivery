@@ -1,4 +1,4 @@
-import { Remult, Allowed, AndFilter, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, FilterFactories, EntityBase, getFields, Repository, IterateOptions } from "remult";
+import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, IterateOptions } from "remult";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -53,7 +53,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
-            args.additionalWhere = x => { return undefined; };
+            args.additionalWhere = {};
         }
 
 
@@ -93,11 +93,12 @@ export abstract class ActionOnRows<T extends IdEntity>  {
                         },
                         ok: async () => {
                             let groupName = this.remult.repo(this.entity).metadata.caption;
-                            let count = await this.remult.repo(this.entity).count(this.composeWhere(component.userWhere))
+                            let where = await this.composeWhere(component.userWhere);
+                            let count = await this.remult.repo(this.entity).count(where)
                             if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                                 let r = await this.internalForTestingCallTheServer({
                                     count,
-                                    where: component.userWhere
+                                    where
                                 });
 
 
@@ -125,20 +126,20 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: await (await Filter.fromEntityFilter(Filter.createFilterFactories(this.remult.repo(this.entity).metadata), info.where)).toJson(),
+            packedWhere: Filter.entityFilterToJson(this.remult.repo(this.entity).metadata, info.where),
         }, p);
 
         return r;
     }
 
-    composeWhere(where: EntityFilter<T>) {
-        return e => Filter.fromEntityFilter(e, where, this.args.additionalWhere);
+    async composeWhere(where: EntityFilter<T> | (() => EntityFilter<T> | Promise<EntityFilter<T>>)): Promise<EntityFilter<T>> {
+        return { $and: [await Filter.resolve(this.args.additionalWhere), await Filter.resolve(where)] }
     }
 
     @BackendMethod<ActionOnRows<any>>({ allowed: (remult, self) => remult.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
         await this.serialHelper?.deserializeOnServer();
-        let where = this.composeWhere(x => Filter.fromJson(this.remult.repo(this.entity).metadata, info.packedWhere));
+        let where: EntityFilter<T> = await this.composeWhere(Filter.entityFilterFromJson(this.remult.repo(this.entity).metadata, info.packedWhere));
 
         let count = await this.remult.repo(this.entity).count(where);
         if (count != info.count) {
@@ -170,7 +171,7 @@ export interface actionDialogNeeds<T extends IdEntity> {
     dialog: DialogService,
     settings: ApplicationSettings,
     afterAction: () => {},
-    userWhere: EntityFilter<T>
+    userWhere: EntityFilter<T> | (() => EntityFilter<T> | Promise<EntityFilter<T>>)
 
 }
 
@@ -187,7 +188,7 @@ export interface ActionOnRowsArgs<T extends IdEntity> {
     icon?: string,
     help?: () => string,
     confirmQuestion?: () => string,
-    additionalWhere?: (f: FilterFactories<T>) => Filter,
+    additionalWhere?: EntityFilter<T> | (() => EntityFilter<T> | Promise<EntityFilter<T>>),
     orderBy?: EntityOrderBy<T>
 }
 

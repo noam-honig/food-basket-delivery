@@ -39,7 +39,7 @@ export class FamilySelfOrderComponent implements OnInit {
     }))]
   })
   @Field({ caption: 'מידת טיטולים' })
-  titulim: string='';
+  titulim: string = '';
 
   @Field({ caption: 'גרבר' })
   gerber: boolean;
@@ -88,7 +88,7 @@ export class FamilySelfOrderComponent implements OnInit {
     fd.basketType = await this.remult.repo(BasketType).findId(this.basket);
     fd.deliveryComments = '';
 
-    for (const what of [this.titulim, this.gerber?"גרבר":"", this.daisa?"דיסה":"", this.comment]) {
+    for (const what of [this.titulim, this.gerber ? "גרבר" : "", this.daisa ? "דיסה" : "", this.comment]) {
       if (what) {
         if (fd.deliveryComments.length > 0)
           fd.deliveryComments += ", ";
@@ -101,12 +101,12 @@ export class FamilySelfOrderComponent implements OnInit {
   }
 
   async loadFamily() {
-    let f = await this.remult.repo(Families).findFirst(f => f.shortUrlKey.isEqualTo(this.familyUrl).and(f.status.isEqualTo(FamilyStatus.Active)));;
+    let f = await this.remult.repo(Families).findFirst({ shortUrlKey: this.familyUrl, status: FamilyStatus.Active });
     if (!f) {
       this.message = "לא נמצא";
       return;
     }
-    if (await this.remult.repo(ActiveFamilyDeliveries).count(fd => fd.family.isEqualTo(f.id))) {
+    if (await this.remult.repo(ActiveFamilyDeliveries).count({ family: f.id })) {
       this.message = "המשלוח כבר מעודכן במערכת, לשינוי נא ליצור קשר טלפוני";
       return;
     }

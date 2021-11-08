@@ -267,7 +267,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
-        this.args.familyDelivery = await this.remult.repo(FamilyDeliveries).findFirst(x => x.id.isEqualTo(this.args.deliveryId));
+        this.args.familyDelivery = await this.remult.repo(FamilyDeliveries).findFirst({ id: this.args.deliveryId });
         this.args.familyId = this.args.familyDelivery.family;
       }
 
@@ -277,7 +277,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         this.args.familyId = this.args.familyDelivery.family;
       }
       if (this.args.familyId)
-        this.args.family = await this.remult.repo(Families).findFirst(x => x.id.isEqualTo(this.args.familyId));
+        this.args.family = await this.remult.repo(Families).findFirst({ id: this.args.familyId });
     }
     if (this.args.familyDelivery)
       this.delivery = this.args.familyDelivery;
@@ -286,7 +286,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     this.families.currentRow = this.args.family;
-    this.images = await (await this.remult.repo(FamilyImage).find({ where: i => i.familyId.isEqualTo(this.args.family.id) })).map(i => ({
+    this.images = await (await this.remult.repo(FamilyImage).find({ where: { familyId: this.args.family.id } })).map(i => ({
       image: i.image,
       entity: i
     } as ImageInfo));

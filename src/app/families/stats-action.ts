@@ -1,4 +1,4 @@
-import { BackendMethod, FilterFactories } from 'remult';
+import { BackendMethod, EntityFilter } from 'remult';
 import { Filter } from 'remult';
 import { Families } from "./families";
 import { Remult } from 'remult';
@@ -29,11 +29,11 @@ export class Stats {
     constructor(private remult: Remult) {
 
     }
-    outOfList = new FaimilyStatistics(getLang(this.remult).removedFromList, f => f.status.isEqualTo(FamilyStatus.RemovedFromList), colors.gray);
-    frozen = new FaimilyStatistics(getLang(this.remult).frozen, f => f.status.isEqualTo(FamilyStatus.Frozen), colors.orange);
-    toDelete = new FaimilyStatistics(getLang(this.remult).toDelete, f => f.status.isEqualTo(FamilyStatus.ToDelete), colors.red);
-    active = new FaimilyStatistics(getLang(this.remult).active, f => f.status.isEqualTo(FamilyStatus.Active), colors.green);
-    problem = new FaimilyStatistics(getLang(this.remult).adderssProblems, f => f.status.isEqualTo(FamilyStatus.Active).and(f.addressOk.isEqualTo(false).and(f.defaultSelfPickup.isEqualTo(false))), colors.orange);
+    outOfList = new FaimilyStatistics(getLang(this.remult).removedFromList, { status: FamilyStatus.RemovedFromList }, colors.gray);
+    frozen = new FaimilyStatistics(getLang(this.remult).frozen, { status: FamilyStatus.Frozen }, colors.orange);
+    toDelete = new FaimilyStatistics(getLang(this.remult).toDelete, { status: FamilyStatus.ToDelete }, colors.red);
+    active = new FaimilyStatistics(getLang(this.remult).active, { status: FamilyStatus.Active }, colors.green);
+    problem = new FaimilyStatistics(getLang(this.remult).adderssProblems, { status: FamilyStatus.Active, addressOk: false, defaultSelfPickup: false }, colors.orange);
 
     async getData(distCenter: DistributionCenters) {
         let r = await Stats.getFamilyStats(distCenter?.id);
@@ -57,9 +57,9 @@ export class Stats {
             }
         }
 
-        await  remult.repo(Groups).find({
+        await remult.repo(Groups).find({
             limit: 1000,
-            orderBy: f =>  f.name 
+            orderBy: { name: "asc" }
         }).then(groups => {
             for (const g of groups) {
                 let x: groupStats = {
@@ -67,8 +67,10 @@ export class Stats {
                     total: 0
                 };
                 result.groups.push(x);
-                pendingStats.push( remult.repo(Families).count(f => f.groups.contains(x.name).and(
-                    f.status.isEqualTo(FamilyStatus.Active))).then(r => x.total = r));
+                pendingStats.push(remult.repo(Families).count({
+                    groups: { $contains: x.name },
+                    status: FamilyStatus.Active
+                }).then(r => x.total = r));
             }
         });
 
@@ -82,14 +84,14 @@ export class Stats {
 
 
 export class FaimilyStatistics {
-    constructor(public name: string, public rule: (f: FilterFactories<Families>) => Filter, public color?: string, value?: number) {
+    constructor(public name: string, public rule: EntityFilter<Families>, public color?: string, value?: number) {
         this.value = value;
     }
 
     value = 0;
     async saveTo(distCenter: string, data: any, remult: Remult) {
 
-        data[this.name] = await  remult.repo(Families).count(f => this.rule(f)).then(c => this.value = c);
+        data[this.name] = await remult.repo(Families).count(this.rule).then(c => this.value = c);
     }
     async loadFrom(data: any) {
         this.value = data[this.name];

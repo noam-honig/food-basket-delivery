@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
 import { BusyService, InputField, openDialog } from '@remult/angular';
-import { BackendMethod, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, EntityFilter, Remult, SqlDatabase } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -54,15 +54,15 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   async showAssignment(rh: relevantHelper) {
-    let h = await this. remult.repo(Helpers).findId(rh.helper.id);
+    let h = await this.remult.repo(Helpers).findId(rh.helper.id);
     openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this. remult.repo(ActiveFamilyDeliveries).find({
-        where: fd => FamilyDeliveries.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
+      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+        where: { $and: [FamilyDeliveries.readyFilter()], id: f.deliveries.map(x => x.id) }
       })) {
-        fd.courier = await this. remult.repo(Helpers).findId(h.id);
+        fd.courier = await this.remult.repo(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -72,10 +72,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this. remult.repo(Helpers).findId(f.assignedHelper.id);
+    let helper = await this.remult.repo(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this. remult.repo(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+        where: { courier: helper, id: f.deliveries.map(x => x.id) }
       })) {
         fd.courier = null;
         await fd.save();
@@ -93,7 +93,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       onSelect: async selectedHelper => {
         let h = this.data.helpers[selectedHelper.id];
         if (!h) {
-          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this. remult.repo(Helpers).findId(selectedHelper.id));;
+          h = ShipmentAssignScreenComponent.helperInfoFromHelper(await this.remult.repo(Helpers).findId(selectedHelper.id));;
           this.data[h.id] = h;
         }
         this.assignHelper(h, f);
@@ -178,14 +178,14 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     let i = 0;
     //collect helpers
-    for (let h of await  remult.repo(Helpers).find({ where: h => Helpers.active(h).and(h.preferredDistributionAreaAddress.isDifferentFrom('')), limit: 1000 })) {
+    for (let h of await remult.repo(Helpers).find({ where: { ...Helpers.active as EntityFilter<Helpers>, preferredDistributionAreaAddress: { "!=": '' } }, limit: 1000 })) {
       result.helpers[h.id] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
       i++;
     }
 
     //remove busy helpers
     {
-      let fd = SqlFor( remult.repo(FamilyDeliveries));
+      let fd = SqlFor(remult.repo(FamilyDeliveries));
       let sql = new SqlBuilder(remult);
       let busyLimitdate = new Date();
       busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(remult).BusyHelperAllowedFreq_denom);
@@ -194,7 +194,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       for (let busy of (await db.execute(await sql.query({
         select: () => [fd.courier],
         from: fd,
-        where: () => [DeliveryStatus.isAResultStatus(fd.deliverStatus).and(fd.deliveryStatusDate.isGreaterThan(busyLimitdate))],
+        where: () => [fd.where({ deliverStatus: DeliveryStatus.isAResultStatus(), deliveryStatusDate: { ">": busyLimitdate } })],
         groupBy: () => [fd.courier],
         having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(remult).BusyHelperAllowedFreq_nom)]
       }))).rows) {
@@ -205,11 +205,11 @@ export class ShipmentAssignScreenComponent implements OnInit {
     {
       let sql = new SqlBuilder(remult);
 
-      let fd = SqlFor( remult.repo(FamilyDeliveries));
+      let fd = SqlFor(remult.repo(FamilyDeliveries));
       for (let r of (await db.execute(await sql.query({
         select: () => [sql.build("distinct ", fd.courier), fd.family],
         from: fd,
-        where: () => [DeliveryStatus.isProblem(fd.deliverStatus).and(fd.courier.isDifferentFrom(null))]
+        where: () => [fd.where({ deliverStatus: DeliveryStatus.isProblem(), courier: { "!=": null } })]
 
       }))).rows) {
         let x = result.helpers[await getValueFromResult(r, fd.courier)];
@@ -223,15 +223,15 @@ export class ShipmentAssignScreenComponent implements OnInit {
     //highlight new Helpers
     {
       let sql = new SqlBuilder(remult);
-      let h = SqlFor( remult.repo(Helpers));
-      let fd = SqlFor( remult.repo(FamilyDeliveries));
+      let h = SqlFor(remult.repo(Helpers));
+      let fd = SqlFor(remult.repo(FamilyDeliveries));
       for (let helper of (await db.execute(await sql.query({
         select: () => [h.id],
         from: h,
         where: () => [sql.build(h.id, ' not in (', sql.query({
           select: () => [fd.courier],
           from: fd,
-          where: () => [DeliveryStatus.isSuccess(fd.deliverStatus)]
+          where: () => [fd.where({ deliverStatus: DeliveryStatus.isSuccess() })]
         }), ')')]
 
       }))).rows) {
@@ -243,7 +243,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
     }
     {
       let sql = new SqlBuilder(remult);
-      let fd =await  SqlFor( remult.repo(ActiveFamilyDeliveries));
+      let fd = await SqlFor(remult.repo(ActiveFamilyDeliveries));
 
       let sqlResult = await db.execute(
         await sql.query({
@@ -260,7 +260,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
             fd.courier
           ],
           from: fd,
-          where: () => [fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]
+          where: () => [fd.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]
         }));
 
       //collect ready deliveries
@@ -279,7 +279,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
           deliveries: [{
             basketTypeId: await getValueFromResult(r, fd.basketType),
             quantity: await getValueFromResult(r, fd.quantity),
-            basketTypeName: (await  remult.repo(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
+            basketTypeName: (await remult.repo(BasketType).findId(await getValueFromResult(r, fd.basketType), { createIfNotFound: true })).name,
             id: await getValueFromResult(r, fd.id)
 
           }],

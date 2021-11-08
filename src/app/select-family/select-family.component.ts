@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { BusyService, GridSettings } from '@remult/angular';
-import { AndFilter, EntityOrderBy, FilterFactories } from 'remult';
+import { EntityFilter, EntityOrderBy } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Filter } from 'remult';
 import { Remult } from 'remult';
@@ -19,13 +19,13 @@ import { DistributionCenters } from '../manage/distribution-centers';
 export class SelectFamilyComponent implements OnInit {
 
   public args: {
-    where: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter,
+    where: EntityFilter<ActiveFamilyDeliveries>,
     orderBy?: EntityOrderBy<ActiveFamilyDeliveries>,
     onSelect: (selectedValue: ActiveFamilyDeliveries[]) => void,
     selectStreet: boolean,
     distCenter: DistributionCenters,
     allowShowAll?: boolean,
-    allowSelectAll?:boolean
+    allowSelectAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
   constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private remult: Remult, public settings: ApplicationSettings) { }
@@ -68,22 +68,13 @@ export class SelectFamilyComponent implements OnInit {
   async getRows() {
 
     await this.families.get({
-      where: f => {
-        let result = this.remult.filterDistCenter(f.distributionCenter, this.args.distCenter);
-        {
-          let r = f.name.contains(this.searchString);
-          if (this.args.selectStreet)
-            r = f.address.contains(this.searchString);
-          result = new AndFilter(result, r);
-        }
-        if (this.args.where && !this.showAll) {
-          let x = this.args.where(f);
-          if (x)
-            return new AndFilter(result, x);
-        }
-        return result;
+      where: {
+        distributionCenter: this.remult.filterDistCenter(this.args.distCenter),
+        name: this.args.selectStreet ? undefined : { $contains: this.searchString },
+        address: this.args.selectStreet ? { $contains: this.searchString } : undefined,
+        $and: [!this.showAll ? this.args.where : undefined]
       },
-      orderBy: this.args.orderBy || (f => f.name),
+      orderBy: this.args.orderBy || { name: "asc" },
       limit: this.pageSize
     });
 
@@ -99,7 +90,7 @@ export class SelectFamilyComponent implements OnInit {
     if (this.selected.length > 0) {
       this.args.onSelect(this.selected);
     }
-    else if (this.searchString && this.searchString.length > 0||this.args.allowSelectAll) {
+    else if (this.searchString && this.searchString.length > 0 || this.args.allowSelectAll) {
 
       this.pageSize = 200;
       await this.getRows();
@@ -110,7 +101,7 @@ export class SelectFamilyComponent implements OnInit {
     this.dialogRef.close();
 
   }
-  
+
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
       if (f.courier) {

@@ -101,12 +101,11 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     let d = new VolunteerReportDefs(remult, undefined);
     let lastCourier = null;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
-      where: async fd =>
-        [fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]),
-        fd.routeOrder.isEqualTo(0)
-
-        ],
-      orderBy: fd => fd.courier
+      where: {
+        deliverStatus: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup],
+        routeOrder: 0
+      },
+      orderBy: { courier: "asc" }
     })) {
       if (fd.courier != lastCourier) {
         lastCourier = fd.courier;
@@ -117,9 +116,11 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
 
     let r: any[] = [];
     for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
-      where: async fd => fd.deliverStatus.isIn([DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup]).and(
-        filterVolunteer ? fd.courier.isEqualTo(await remult.repo(Helpers).findId(filterVolunteer)) : undefined),
-      orderBy: d => [d.deliverStatus, d.courier.descending(), d.routeOrder]
+      where: {
+        deliverStatus: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup],
+        courier: filterVolunteer ? await remult.repo(Helpers).findId(filterVolunteer) : undefined
+      },
+      orderBy: { deliverStatus: "asc", courier: "desc", routeOrder: "asc" }
     })) {
       let f = await remult.repo(Families).findId(fd.family);
       let o = d.buildObject(fd.id, { fd, f });

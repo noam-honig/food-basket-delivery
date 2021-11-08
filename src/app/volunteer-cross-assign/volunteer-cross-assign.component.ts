@@ -36,21 +36,21 @@ export class VolunteerCrossAssignComponent implements OnInit {
   }
 
   async showAssignment(rh: helperInfo) {
-    let h = await this. remult.repo(Helpers).findId(rh.id);
+    let h = await this.remult.repo(Helpers).findId(rh.id);
     openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async helperDetails(rh: helperInfo) {
-    let h = await this. remult.repo(Helpers).findId(rh.id);
+    let h = await this.remult.repo(Helpers).findId(rh.id);
     h.displayEditDialog(this.dialog, this.busy);
 
   }
 
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this. remult.repo(ActiveFamilyDeliveries).find({
-        where: fd => FamilyDeliveries.readyFilter().and(fd.id.isIn(f.deliveries.map(x => x.id)))
+      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+        where: { $and: [FamilyDeliveries.readyFilter()], id: f.deliveries.map(x => x.id) }
       })) {
-        fd.courier = await this. remult.repo(Helpers).findId(h.id);
+        fd.courier = await this.remult.repo(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -61,10 +61,10 @@ export class VolunteerCrossAssignComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this. remult.repo(Helpers).findId(f.assignedHelper.id);
+    let helper = await this.remult.repo(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this. remult.repo(ActiveFamilyDeliveries).find({
-        where: fd => fd.courier.isEqualTo(helper).and(fd.id.isIn(f.deliveries.map(x => x.id)))
+      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+        where: { courier: helper, id: f.deliveries.map(x => x.id) }
       })) {
         fd.courier = null;
         await fd.save();

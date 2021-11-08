@@ -179,8 +179,7 @@ export class RegisterToEvent {
             helper = this.remult.currentUser;
         }
         else {
-            helper = await this.remult.repo(Helpers).findFirst({
-                where: h => h.phone.isEqualTo(this.phone),
+            helper = await this.remult.repo(Helpers).findFirst({ phone: this.phone }, {
                 createIfNotFound: register
             });
             if (helper.isNew()) {
@@ -189,8 +188,7 @@ export class RegisterToEvent {
             }
             this.remult.currentUser = helper as Helpers;
         }
-        let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({
-            where: v => v.eventId.isEqualTo(id).and(v.helper.isEqualTo(helper)),
+        let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({ eventId: id, helper }, {
             createIfNotFound: register
         });
         if (register) {

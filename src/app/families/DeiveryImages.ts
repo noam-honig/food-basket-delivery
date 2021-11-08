@@ -8,9 +8,8 @@ import { HelpersBase } from "../helpers/helpers";
     allowApiUpdate: false
 },
     (options, remult) => {
-        options.apiPrefilter = (self) => {
-            if (!remult.isAllowed([Roles.admin]))
-                return self.uploadingVolunteer.isEqualTo(remult.currentUser)
+        options.apiPrefilter = {
+            uploadingVolunteer: !remult.isAllowed([Roles.admin]) ? remult.currentUser : undefined
         };
         options.saving = self => {
             if (self.isNew())

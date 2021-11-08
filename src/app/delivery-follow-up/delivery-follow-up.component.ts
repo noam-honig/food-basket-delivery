@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { AndFilter, BackendMethod, SqlDatabase } from 'remult';
+import { BackendMethod, SqlDatabase } from 'remult';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 
@@ -35,7 +35,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard]
   }
   async deliveryDetails(c: helperFollowupInfo) {
-    let h = await this. remult.repo(Helpers).findId(c.id);
+    let h = await this.remult.repo(Helpers).findId(c.id);
     await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
     this.refresh();
   }
@@ -44,7 +44,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
-    let h = await this. remult.repo(Helpers).findId(c.id);
+    let h = await this.remult.repo(Helpers).findId(c.id);
     if (!h) {//if there is a row with an invalid helper id - I want it to at least work
       h.id = c.id;
     }
@@ -104,7 +104,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
         for (const h of this.helpers) {
           if (!h.smsWasSent) {
-            await SendSmsAction.SendSms(await this. remult.repo(Helpers).findId(h.id), false);
+            await SendSmsAction.SendSms(await this.remult.repo(Helpers).findId(h.id), false);
           }
         }
       });
@@ -167,9 +167,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async helpersStatus(distCenter: DistributionCenters, remult?: Remult, db?: SqlDatabase) {
-    let fd = SqlFor( remult.repo(FamilyDeliveries));
+    let fd = SqlFor(remult.repo(FamilyDeliveries));
 
-    let h = SqlFor( remult.repo(Helpers));
+    let h = SqlFor(remult.repo(Helpers));
     var sql = new SqlBuilder(remult);
     sql.addEntity(fd, 'fd');
     let r = await db.execute(log(await sql.build((await sql.query({
@@ -183,12 +183,15 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         sql.columnWithAlias(h.lastSignInDate, 'signindate'),
         sql.columnWithAlias(h.eventComment, 'comment1'),
         sql.columnWithAlias(sql.func('max', fd.courierAssingTime), 'maxasign'),
-        sql.sumWithAlias(1, 'deliveries', fd.deliverStatus.isDifferentFrom(DeliveryStatus.SelfPickup).and(fd.deliverStatus.isDifferentFrom(DeliveryStatus.SuccessPickedUp))),
-        sql.sumWithAlias(1, 'inprogress', fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-        sql.sumWithAlias(1, 'problem', DeliveryStatus.isProblem(fd.deliverStatus))
+        sql.sumWithAlias(1, 'deliveries', fd.where({ deliverStatus: { "!=": [DeliveryStatus.SelfPickup, DeliveryStatus.SuccessPickedUp] } })),
+        sql.sumWithAlias(1, 'inprogress', fd.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })),
+        sql.sumWithAlias(1, 'problem', fd.where({ deliverStatus: DeliveryStatus.isProblem() }))
 
       ],
-      where: () => [sql.eq(fd.archive, false), fd.courier.isDifferentFrom(null).and(remult.filterDistCenter(fd.distributionCenter, distCenter))],
+      where: () => [sql.eq(fd.archive, false), fd.where({
+        courier: { "!=": null },
+        distributionCenter: remult.filterDistCenter(distCenter)
+      })],
 
     })).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by ', sql.func('max', fd.courierAssingTime), ' desc')));
     return r.rows.map(r => {

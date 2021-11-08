@@ -197,20 +197,18 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await h.showDeliveryHistory(this.dialog, this.busy);
         }
       }
-     
-          
+
+
 
     ],
 
 
-    orderBy: h => [h.name],
+    orderBy: { name: "asc" },
     rowsInPage: 25,
-    where: h => {
-      let r = h.name.contains(this.searchString);
-      if (this.showDeleted)
-        return r;
-      else return r.and(h.archive.isEqualTo(false));
-    }
+    where: () => ({
+      name: { $contains: this.searchString },
+      archive: !this.showDeleted ? false : undefined
+    })
     ,
     columnSettings: helpers => {
       this.numOfColsInGrid = 4;
@@ -271,7 +269,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.admin })
   static async resetPassword(helperId: string, remult?: Remult) {
 
-    await remult.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+    await remult.repo(Helpers).iterate({ where: { id: helperId } }).forEach(async h => {
       h.realStoredPassword = '';
       await h.save();
     });
@@ -279,7 +277,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.admin })
   static async invalidatePassword(helperId: string, remult?: Remult) {
 
-    await remult.repo(Helpers).iterate(h => h.id.isEqualTo(helperId)).forEach(async h => {
+    await remult.repo(Helpers).iterate({ where: { id: helperId } }).forEach(async h => {
       h.passwordChangeDate = new Date(1901, 1, 1);
       await h.save();
     });
@@ -287,7 +285,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async sendInvite(helperId: string, remult?: Remult) {
-    let h = await remult.repo(Helpers).findFirst(x => x.id.isEqualTo(helperId));
+    let h = await remult.repo(Helpers).findId(helperId);
     if (!h)
       return getLang(remult).unfitForInvite;
     if (!(h.admin || h.distCenterAdmin))
@@ -327,7 +325,7 @@ ${url}
 
   @BackendMethod({ allowed: Roles.admin })
   static async clearCommentsOnServer(remult?: Remult) {
-    for await (const h of remult.repo(Helpers).iterate({ where: h => h.eventComment.isDifferentFrom('') })) {
+    for await (const h of remult.repo(Helpers).iterate({ where: { eventComment: { "!=": "" } } })) {
       h.eventComment = '';
       await h.save();
     }

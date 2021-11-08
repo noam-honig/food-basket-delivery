@@ -1,13 +1,12 @@
-import { AndFilter, Remult, Filter, FilterFactory, UserInfo } from "remult";
+import { Remult, UserInfo, ValueFilter } from "remult";
 import { BasketType } from "../families/BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
 
 import { Helpers } from "./helpers";
 import { GetDistanceBetween, Location } from "../shared/googleApiHelpers";
 import { Roles } from "../auth/roles";
-import { getLang, getSiteFromUrl, Sites } from "../sites/sites";
+import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
-import { ApplicationSettings, settingsForSite } from "../manage/ApplicationSettings";
 
 
 export const initConfig = {
@@ -15,18 +14,18 @@ export const initConfig = {
 }
 const helpersCache = new Map<string, Helpers>();
 export function setHelperInCache(h: Helpers) {
-    if (helpersCache.size>100)
+    if (helpersCache.size > 100)
         helpersCache.clear();
     helpersCache.set(h.id, h);
 
- //   console.log("HelpersCache:" + helpersCache.size);
+    //   console.log("HelpersCache:" + helpersCache.size);
 }
 export async function InitContext(remult: Remult, user?: UserInfo) {
     let h: Helpers;
     let gotUser = !!user;
     if (user === undefined)
         user = remult.user;
-    
+
 
     if (remult.authenticated() || gotUser) {
         h = helpersCache.get(user.id);
@@ -39,21 +38,21 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     remult.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
-        await remult.repo(BasketType).find({ orderBy: x => x.id }).then(y => {
+        await remult.repo(BasketType).find({ orderBy: { id: 'asc' }, limit: 1 }).then(y => {
             if (y.length > 0)
                 defaultBasketType = y[0];
         });
         return defaultBasketType;
     }
     remult.defaultDistributionCenter = async () =>
-        (await remult.repo(DistributionCenters).findFirst(x => DistributionCenters.isActive(x)))
+        (await remult.repo(DistributionCenters).findFirst(DistributionCenters.isActive))
     remult.currentUser = h;
 
     remult.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
         let result: DistributionCenters;
         let dist: number;
         if (!centers)
-            centers = await remult.repo(DistributionCenters).find({ where: c => DistributionCenters.isActive(c) });
+            centers = await remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
         for (const c of centers) {
             let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
             if (result === undefined || myDist < dist) {
@@ -63,17 +62,22 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         }
         return result;
     }
-    remult.filterCenterAllowedForUser = (center) => {
-        if (remult.isAllowed(Roles.admin)) {
-            return new Filter();
-        } else if (remult.authenticated())
-            return center.isEqualTo(remult.currentUser.distributionCenter);
+    remult.filterCenterAllowedForUser = () => {
+        if (!remult.currentUser)
+            return [];
+        else if (remult.isAllowed(Roles.admin)) {
+            return undefined;
+        } else
+            return remult.currentUser.distributionCenter;
+
     }
-    remult.filterDistCenter = (distCenterColumn, distCenter): Filter => {
-        let allowed = remult.filterCenterAllowedForUser(distCenterColumn);
-        if (distCenter != null)
-            return new AndFilter(allowed, distCenterColumn.isEqualTo(distCenter));
-        return allowed;
+    remult.filterDistCenter = (distCenter): ValueFilter<DistributionCenters> => {
+        let allowed = remult.filterCenterAllowedForUser();
+        if (distCenter == null)
+            return allowed;
+        if (distCenter == allowed || allowed === undefined)
+            return distCenter;
+        return [];
     }
     remult.lang = getLang(remult);
 }
@@ -93,10 +97,11 @@ declare module 'remult' {
         defaultBasketType: () => Promise<BasketType>
         defaultDistributionCenter: () => Promise<DistributionCenters>;
         findClosestDistCenter(loc: Location, centers?: DistributionCenters[]): Promise<DistributionCenters>;
-        filterCenterAllowedForUser(center: FilterFactory<DistributionCenters>): Filter;
-        filterDistCenter(distCenterColumn: FilterFactory<DistributionCenters>, distCenter: DistributionCenters): Filter
+        filterCenterAllowedForUser(): ValueFilter<DistributionCenters>;
+        filterDistCenter(distCenter: DistributionCenters): ValueFilter<DistributionCenters>
         lang: Language;
         getSite(): string;
         getOrigin(): string;
     }
 }
+

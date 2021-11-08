@@ -48,7 +48,7 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
     let rowNum = titleRow + 1;
 
 
-    let rows = repo.iterate(grid.getFilterWithSelectedRows());
+    let rows = repo.iterate(await grid.getFilterWithSelectedRows());
 
     if (true)
 

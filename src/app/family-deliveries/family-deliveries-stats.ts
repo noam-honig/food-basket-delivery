@@ -1,5 +1,5 @@
 
-import { Filter, AndFilter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, FilterFactories } from "remult";
+import { Filter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -18,20 +18,26 @@ export class FamilyDeliveryStats {
     constructor(private remult: Remult) { }
 
     ready = new FamilyDeliveresStatistics(getLang(this.remult).unAsigned,
-        f => FamilyDeliveries.readyFilter().and(
-            f.special.isDifferentFrom(YesNo.Yes))
+        {
+            special: { "!=": YesNo.Yes },
+            $and: [
+                FamilyDeliveries.readyFilter()
+            ]
+        }
         , colors.yellow);
-    selfPickup = new FamilyDeliveresStatistics(getLang(this.remult).selfPickup, f => f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), colors.orange);
+    selfPickup = new FamilyDeliveresStatistics(getLang(this.remult).selfPickup, { deliverStatus: DeliveryStatus.SelfPickup }, colors.orange);
     special = new FamilyDeliveresStatistics(getLang(this.remult).specialUnasigned,
-        f => FamilyDeliveries.readyFilter().and(
-            f.special.isEqualTo(YesNo.Yes))
+        {
+            special: YesNo.Yes,
+            $and: [FamilyDeliveries.readyFilter()]
+        }
         , colors.orange);
 
-    onTheWay = new FamilyDeliveresStatistics(getLang(this.remult).onTheWay, f => FamilyDeliveries.onTheWayFilter(), colors.blue);
-    delivered = new FamilyDeliveresStatistics(getLang(this.remult).delveriesSuccesfull, f => DeliveryStatus.isSuccess(f.deliverStatus), colors.green);
-    problem = new FamilyDeliveresStatistics(getLang(this.remult).problems, f => DeliveryStatus.isProblem(f.deliverStatus), colors.red);
-    frozen = new FamilyDeliveresStatistics(getLang(this.remult).frozens, f => f.deliverStatus.isEqualTo(DeliveryStatus.Frozen), colors.gray);
-    needWork = new FamilyDeliveresStatistics(getLang(this.remult).requireFollowUp, f => f.needsWork.isEqualTo(true), colors.yellow);
+    onTheWay = new FamilyDeliveresStatistics(getLang(this.remult).onTheWay, FamilyDeliveries.onTheWayFilter(), colors.blue);
+    delivered = new FamilyDeliveresStatistics(getLang(this.remult).delveriesSuccesfull, { deliverStatus: DeliveryStatus.isSuccess() }, colors.green);
+    problem = new FamilyDeliveresStatistics(getLang(this.remult).problems, { deliverStatus: DeliveryStatus.isProblem() }, colors.red);
+    frozen = new FamilyDeliveresStatistics(getLang(this.remult).frozens, { deliverStatus: DeliveryStatus.Frozen }, colors.gray);
+    needWork = new FamilyDeliveresStatistics(getLang(this.remult).requireFollowUp, { needsWork: true }, colors.yellow);
 
 
     async getData(distCenter: DistributionCenters) {
@@ -79,15 +85,15 @@ export class FamilyDeliveryStats {
         sql.addEntity(f, "FamilyDeliveries")
         let baskets = await db.execute(await sql.build(sql.query({
             select: () => [f.basketType,
-            sql.build('sum (', sql.case([{ when: [FamilyDeliveries.readyAndSelfPickup(f)], then: f.quantity }], 0), ') a'),
+            sql.build('sum (', sql.case([{ when: [f.where(FamilyDeliveries.readyAndSelfPickup())], then: f.quantity }], 0), ') a'),
             sql.build('sum (', f.quantity, ') b'),
-            sql.build('sum (', sql.case([{ when: [DeliveryStatus.isSuccess(f.deliverStatus)], then: f.quantity }], 0), ') c'),
-            sql.build('sum (', sql.case([{ when: [f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup)], then: f.quantity }], 0), ') d'),
-            sql.build('sum (', sql.case([{ when: [FamilyDeliveries.onTheWayFilter().and(f.messageStatus.isEqualTo(MessageStatus.notSent))], then: f.quantity }], 0), ') e')
+            sql.build('sum (', sql.case([{ when: [f.where({ deliverStatus: DeliveryStatus.isSuccess() })], then: f.quantity }], 0), ') c'),
+            sql.build('sum (', sql.case([{ when: [f.where({ deliverStatus: DeliveryStatus.SelfPickup })], then: f.quantity }], 0), ') d'),
+            sql.build('sum (', sql.case([{ when: [f.where({ messageStatus: MessageStatus.notSent, $and: [FamilyDeliveries.onTheWayFilter()] })], then: f.quantity }], 0), ') e')
 
             ],
             from: f,
-            where: () => [remult.filterDistCenter(f.distributionCenter, distCenter)]
+            where: () => [f.where({ distributionCenter: remult.filterDistCenter(distCenter) })]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -112,7 +118,7 @@ export class FamilyDeliveryStats {
         if (distCenter == null)
             pendingStats.push(
                 remult.repo(CitiesStats).find({
-                    orderBy: f => f.deliveries.descending()
+                    orderBy: { deliveries: "desc" }
                 }).then(cities => {
                     result.cities = cities.map(x => {
                         return {
@@ -125,8 +131,8 @@ export class FamilyDeliveryStats {
         else
             pendingStats.push(
                 remult.repo(CitiesStatsPerDistCenter).find({
-                    orderBy: f => f.families.descending(),
-                    where: f => remult.filterDistCenter(f.distributionCenter, distCenter)
+                    orderBy: { families: "desc" },
+                    where: { distributionCenter: remult.filterDistCenter(distCenter) }
 
                 }).then(cities => {
                     result.cities = cities.map(x => {
@@ -147,7 +153,7 @@ export class FamilyDeliveryStats {
 }
 
 export class FamilyDeliveresStatistics {
-    constructor(public name: string, public rule: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter, public color?: string, value?: number) {
+    constructor(public name: string, public rule: EntityFilter<ActiveFamilyDeliveries>, public color?: string, value?: number) {
         this.value = value;
     }
 
@@ -155,7 +161,7 @@ export class FamilyDeliveresStatistics {
     async saveTo(distCenter: DistributionCenters, data: any, remult: Remult) {
         try {
 
-            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count(f => new AndFilter(this.rule(f), remult.filterDistCenter(f.distributionCenter, distCenter))).then(c => this.value = c);
+            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.filterDistCenter(distCenter), $and: [this.rule] }).then(c => this.value = c);
         }
         catch (err) {
             console.error(this.name, err);
@@ -179,9 +185,12 @@ export interface groupStats {
         return sql.build('(', (await sql.query({
             select: () => [f.city, sql.columnWithAlias("count(*)", self.deliveries)],
             from: f,
-            where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
-            remult.filterCenterAllowedForUser(f.distributionCenter),
-            sql.eq(f.courier, '\'\'')]
+            where: () => [
+                f.where({
+                    deliverStatus: DeliveryStatus.ReadyForDelivery,
+                    distributionCenter: remult.filterCenterAllowedForUser()
+                }),
+                sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', f.city, ') as result')
     }
 )
@@ -201,8 +210,10 @@ export class CitiesStats {
         return sql.build('(', (await sql.query({
             select: () => [f.city, f.distributionCenter, sql.columnWithAlias("count(*)", self.families)],
             from: f,
-            where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery),
-            remult.filterCenterAllowedForUser(f.distributionCenter),
+            where: () => [f.where({
+                deliverStatus: DeliveryStatus.ReadyForDelivery,
+                distributionCenter: remult.filterCenterAllowedForUser()
+            }),
             sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
     })

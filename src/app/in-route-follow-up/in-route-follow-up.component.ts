@@ -31,7 +31,7 @@ export class InRouteFollowUpComponent implements OnInit {
   }
 
   helpers = new GridSettings(this.remult.repo(InRouteHelpers), {
-    where: h => [h.name.contains(this.searchString), Filter.fromEntityFilter(h, this.currentOption.where)],
+    where: () => ({ name: { $contains: this.searchString }, $and: [this.currentOption.where] }),
     rowsInPage: 25,
     knowTotalRows: true,
     numOfColumnsInGrid: 99,
@@ -96,8 +96,8 @@ export class InRouteFollowUpComponent implements OnInit {
               return r;
             },
 
-            where: fd => fd.courier.isEqualTo(helper).and(fd.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-            orderBy: fd => fd.deliveryStatusDate.descending(),
+            where: { courier: helper, deliverStatus: DeliveryStatus.ReadyForDelivery },
+            orderBy: { deliveryStatusDate: "desc" },
             rowsInPage: 25
 
           })
@@ -136,15 +136,15 @@ export class InRouteFollowUpComponent implements OnInit {
   radioOption: FilterFactory[] = [
     {
       text: 'כולם',
-      where: () => undefined
+      where: undefined
     },
     {
       text: 'לא ראו אף שיוך',
-      where: s => s.seenFirstAssign.isEqualTo(false).and(s.minAssignDate.isLessOrEqualTo(daysAgo(2)))
+      where: { seenFirstAssign: false, minAssignDate: { "<=": daysAgo(2) } }
     },
     {
       text: 'שיוך ראשון לפני יותר מ 5 ימים',
-      where: s => s.minAssignDate.isLessOrEqualTo(daysAgo(5))
+      where: { minAssignDate: { "<=": daysAgo(5) } }
     }
   ]
   currentOption = this.radioOption[0];

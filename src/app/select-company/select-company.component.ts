@@ -54,11 +54,11 @@ export class SelectCompanyComponent implements OnInit {
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getCompanies(remult?: Remult, db?: SqlDatabase) {
     var sql = new SqlBuilder(remult);
-    let h = SqlFor( remult.repo(Helpers));
+    let h = SqlFor(remult.repo(Helpers));
     let r = await db.execute(await sql.query({
       from: h,
       select: () => [sql.build("distinct ", h.company)],
-      where: () => [h.company.isGreaterThan('')],
+      where: () => [h.where({ company: { ">": '' } })],
       orderBy: [{ field: h.company }]
 
     }));

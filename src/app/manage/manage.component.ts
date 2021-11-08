@@ -93,7 +93,7 @@ export class ManageComponent implements OnInit {
     saving: () => this.refreshEnvironmentAfterSave(),
 
     rowsInPage: 25,
-    orderBy: f => [f.name]
+    orderBy: { name: "asc" }
     ,
     newRow: b => b.boxes = 1,
     allowUpdate: true,
@@ -149,7 +149,7 @@ export class ManageComponent implements OnInit {
       textInMenu: c => c.archive ? this.settings.lang.unDeleteDistributionCenter : this.settings.lang.deleteDistributionCenter,
       icon: 'delete',
       click: async c => {
-        if (!c.archive && (await this.remult.repo(DistributionCenters).count(x => DistributionCenters.isActive(x).and(x.id.isDifferentFrom(c.id)))) == 0) {
+        if (!c.archive && (await this.remult.repo(DistributionCenters).count({ $and: [DistributionCenters.isActive], id: { "!=": c.id } })) == 0) {
           this.dialog.Error(this.settings.lang.mustHaveAtLeastOneActiveDistributionList);
           return;
         }
@@ -182,11 +182,10 @@ export class ManageComponent implements OnInit {
     ],
 
     rowsInPage: 25,
-    where: d => {
-      if (!this.showArchivedDistributionCenters)
-        return d.archive.isEqualTo(false);
+    where: {
+      archive: !this.showArchivedDistributionCenters ? false : undefined
     },
-    orderBy: f => [f.name],
+    orderBy: { name: "asc" },
 
     saving: f => {
       this.refreshEnvironmentAfterSave();
@@ -214,7 +213,7 @@ export class ManageComponent implements OnInit {
     allowDelete: true,
 
     rowsInPage: 25,
-    orderBy: f => [f.name]
+    orderBy: { name: "asc" }
     ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
@@ -228,7 +227,7 @@ export class ManageComponent implements OnInit {
     allowDelete: true,
 
     rowsInPage: 25,
-    orderBy: f => [f.name]
+    orderBy: { name: "asc" }
     ,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
@@ -613,7 +612,7 @@ export class ManageComponent implements OnInit {
     }
     let correctCodeWord = codeWords[Math.trunc(Math.random() * codeWords.length)];
     let doIt = false;
-    let count = await this.remult.repo(Families).count(f => f.status.isEqualTo(FamilyStatus.ToDelete));
+    let count = await this.remult.repo(Families).count({ status: FamilyStatus.ToDelete });
     if (!await this.dialog.YesNoPromise(this.settings.lang.areYouSureYouWantToDelete + " " + count + this.settings.lang.families + "?"))
       return;
     await openDialog(InputAreaComponent, x => {
@@ -666,8 +665,8 @@ export class ManageComponent implements OnInit {
 
     let i = 0;
     for await (const f of remult.repo(Families).iterate({
-      where: f => f.status.isEqualTo(FamilyStatus.ToDelete),
-      orderBy: f => f.createDate.descending(),
+      where: { status: FamilyStatus.ToDelete },
+      orderBy: { createDate: "desc" },
       progress
     })) {
       await f.delete();
@@ -682,7 +681,7 @@ export class ManageComponent implements OnInit {
 
 @Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
   allowApiRead: Roles.distCenterAdmin,
-  defaultOrderBy: (self) => self.name
+  defaultOrderBy: { name: "asc" }
 },
   (options, remult) =>
     options.sqlExpression = async (self) => {
@@ -699,7 +698,7 @@ export class ManageComponent implements OnInit {
 
             where: () => [
               sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-              FamilyDeliveries.readyFilter(),
+              f.where(FamilyDeliveries.readyFilter()),
               sql.eq(f.distributionCenter, d.id)]
 
           }, self.familiesCount)],
@@ -723,7 +722,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
 }
 @Entity<GroupsStatsForAllDeliveryCenters>('GroupsStatsForAllDeliveryCenters', {
   allowApiRead: Roles.distCenterAdmin,
-  defaultOrderBy: self => self.name,
+  defaultOrderBy: { name: "asc" },
 },
   (options, remult) => {
     options.sqlExpression = async (self) => {
@@ -739,7 +738,7 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
             from: f,
             where: () => [
               sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-              FamilyDeliveries.readyFilter()]
+              f.where(FamilyDeliveries.readyFilter())]
           }, self.familiesCount)],
           from: g
         })

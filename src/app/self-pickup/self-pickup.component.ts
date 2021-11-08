@@ -37,7 +37,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = '';
   showAllFamilies = false;
-  families = new GridSettings(this. remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(this.remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {
@@ -46,14 +46,12 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   async getRows() {
 
     await this.families.get({
-      where: f => {
-        let r = f.name.contains(this.searchString).and(this.remult.filterDistCenter(f.distributionCenter, this.dialog.distCenter));
-        if (!this.showAllFamilies) {
-          return r.and(f.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup));
-        }
-        return r;
+      where: {
+        name: { $contains: this.searchString },
+        distributionCenter: this.remult.filterDistCenter(this.dialog.distCenter),
+        deliverStatus: !this.showAllFamilies ? DeliveryStatus.SelfPickup : undefined
       },
-      orderBy: f => f.name,
+      orderBy: { name: "asc" },
       limit: this.pageSize
     });
 

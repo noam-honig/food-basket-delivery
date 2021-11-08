@@ -21,7 +21,7 @@ import { RegisterURL, urlDbOperator } from '../resgister-url/regsiter-url';
   styleUrls: ['./weekly-report-mlt.component.scss']
 })
 export class WeeklyReportMltComponent implements OnInit {
-  @ViewChild(DateRangeComponent, { static: true }) dateRange:DateRangeComponent;
+  @ViewChild(DateRangeComponent, { static: true }) dateRange: DateRangeComponent;
 
 
 
@@ -102,8 +102,8 @@ export class WeeklyReportMltComponent implements OnInit {
 
 
 
-    let fd = SqlFor( remult.repo(FamilyDeliveries));
-    let u = SqlFor( remult.repo(RegisterURL));
+    let fd = SqlFor(remult.repo(FamilyDeliveries));
+    let u = SqlFor(remult.repo(RegisterURL));
 
     let sql = new SqlBuilder(remult);
     sql.addEntity(fd, "fd")
@@ -114,10 +114,10 @@ export class WeeklyReportMltComponent implements OnInit {
         fd.basketType,
         sql.build('grouping(', u.prettyName, ') URLGroup'),
         u.prettyName,
-        sql.build('sum (', sql.case([{ when: [DeliveryStatus.isNotProblem(fd.deliverStatus)], then: fd.quantity }], 0), ') total'),
-        sql.build('sum (', sql.case([{ when: [DeliveryStatus.isNotProblem(fd.deliverStatus).and(fd.createDate.isLessOrEqualTo(toDateDate)).and(fd.createDate.isGreaterThan(fromDateDate))], then: fd.quantity }], 0), ') added'),
-        sql.build('sum (', sql.case([{ when: [DeliveryStatus.isSuccess(fd.deliverStatus).and(fd.createDate.isLessOrEqualTo(toDateDate)).and(fd.createDate.isGreaterThan(fromDateDate))], then: fd.quantity }], 0), ') collected'),
-        sql.build('sum (', sql.case([{ when: [FamilyDeliveries.notActive(fd).and(DeliveryStatus.isSuccess(fd.deliverStatus).and(fd.createDate.isLessOrEqualTo(toDateDate)).and(fd.createDate.isGreaterThan(fromDateDate)))], then: fd.quantity }], 0), ') received'),
+        sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isNotProblem() })], then: fd.quantity }], 0), ') total'),
+        sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isNotProblem(), createDate: { "<=": toDateDate, ">": fromDateDate } })], then: fd.quantity }], 0), ') added'),
+        sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isSuccess(), createDate: { "<=": toDateDate, ">": fromDateDate } })], then: fd.quantity }], 0), ') collected'),
+        sql.build('sum (', sql.case([{ when: [fd.where({ ...FamilyDeliveries.notActive, deliverStatus: DeliveryStatus.isSuccess(), createDate: { "<=": toDateDate, ">": fromDateDate } })], then: fd.quantity }], 0), ') received'),
       ],
       from: fd,
       innerJoin: () => [
@@ -136,9 +136,9 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let h = SqlFor( remult.repo(Helpers));
+    let h = SqlFor(remult.repo(Helpers));
 
-    let u = SqlFor( remult.repo(RegisterURL));
+    let u = SqlFor(remult.repo(RegisterURL));
 
     let sql = new SqlBuilder(remult);
 
@@ -147,11 +147,11 @@ export class WeeklyReportMltComponent implements OnInit {
         sql.build('grouping(', u.prettyName, ') URLGroup'),
         u.prettyName,
         sql.build('count (*) total'),
-        sql.build('sum (', sql.case([{ when: [h.createDate.isLessOrEqualTo(toDateDate).and(h.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
+        sql.build('sum (', sql.case([{ when: [h.where({ createDate: { "<=": toDateDate, ">": fromDateDate } })], then: 1 }], 0), ') added'),
       ],
       from: h,
-      innerJoin: () => [{ to: u, on:async () => [sql.build(urlDbOperator(await h.referredBy.getDbName()), ' like ', u.URL)] }],
-      where: () => [h.archive.isEqualTo(false)]
+      innerJoin: () => [{ to: u, on: async () => [sql.build(urlDbOperator(await h.referredBy.getDbName()), ' like ', u.URL)] }],
+      where: () => [h.where({ archive: false })]
     }), ' group by cube(', u.prettyName, ')'
     );
 
@@ -164,21 +164,21 @@ export class WeeklyReportMltComponent implements OnInit {
     var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
-    let u = SqlFor( remult.repo(RegisterURL));
-    let f = SqlFor( remult.repo(Families));
+    let u = SqlFor(remult.repo(RegisterURL));
+    let f = SqlFor(remult.repo(Families));
 
     let sql = new SqlBuilder(remult);
 
-    let q =await  sql.build(sql.query({
+    let q = await sql.build(sql.query({
       select: () => [
         sql.build('grouping(', u.prettyName, ') URLGroup'),
         u.prettyName,
         sql.build('count (*) total'),
-        sql.build('sum (', sql.case([{ when: [f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate))], then: 1 }], 0), ') added'),
+        sql.build('sum (', sql.case([{ when: [f.where({ createDate: { "<=": toDateDate, ">": fromDateDate } })], then: 1 }], 0), ') added'),
       ],
       from: f,
-      innerJoin:async  () => [{ to: u, on:async () => [sql.build(urlDbOperator(await f.custom1.getDbName()), ' like ', u.URL)] }],
-      where: () => [f.status.isEqualTo(FamilyStatus.Active)]
+      innerJoin: async () => [{ to: u, on: async () => [sql.build(urlDbOperator(await f.custom1.getDbName()), ' like ', u.URL)] }],
+      where: () => [f.where({ status: FamilyStatus.Active })]
     }), ' group by cube(', u.prettyName, ')'
     );
 
@@ -192,7 +192,7 @@ export class WeeklyReportMltComponent implements OnInit {
     var toDateDate = DateOnlyValueConverter.fromJson(toDate);
 
 
-    let f =await  SqlFor( remult.repo(FamilyDeliveries));
+    let f = await SqlFor(remult.repo(FamilyDeliveries));
 
     let sql = new SqlBuilder(remult);
     sql.addEntity(f, "FamilyDeliveries")
@@ -201,7 +201,7 @@ export class WeeklyReportMltComponent implements OnInit {
       sql.build('count (distinct ', f.family, ') total'),
       ],
       from: f,
-      where: () => [DeliveryStatus.isSuccess(f.deliverStatus).and(f.createDate.isLessOrEqualTo(toDateDate).and(f.createDate.isGreaterThan(fromDateDate)))]
+      where: () => [f.where({ deliverStatus: DeliveryStatus.isSuccess(), createDate: { "<=": toDateDate, ">": fromDateDate } })]
     }), ' group by ', f.courier));
 
     let couriers = 0;

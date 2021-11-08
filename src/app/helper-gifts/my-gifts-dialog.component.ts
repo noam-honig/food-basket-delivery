@@ -28,9 +28,9 @@ export class MyGiftsDialogComponent implements OnInit {
   async ngOnInit() {
     this.giftsUsed = 0;
     this.giftsAvailable = 0;
-    let helper = await this. remult.repo(Helpers).findId(this.args.helperId);
+    let helper = await this.remult.repo(Helpers).findId(this.args.helperId);
     this.theGifts =
-      await this. remult.repo(HelperGifts).find({ where: g => g.assignedToHelper.isEqualTo(helper) }).then(
+      await this.remult.repo(HelperGifts).find({ where: { assignedToHelper: helper } }).then(
         gifts => {
           return gifts.map(x => {
             if (x.wasConsumed)
@@ -50,7 +50,7 @@ export class MyGiftsDialogComponent implements OnInit {
   }
 
   async giftUsed(gitfID) {
-    await this. remult.repo(HelperGifts).findFirst({ where: g => g.id.isEqualTo(gitfID) }).then(
+    await this.remult.repo(HelperGifts).findId(gitfID).then(
       async gift => {
         gift.wasConsumed = true;
         await gift.save();
@@ -60,7 +60,7 @@ export class MyGiftsDialogComponent implements OnInit {
   }
 
   async useTheGift(gitfID) {
-    await this. remult.repo(HelperGifts).findFirst({ where: g => g.id.isEqualTo(gitfID) }).then(
+    await this.remult.repo(HelperGifts).findId(gitfID).then(
       async gift => {
         gift.wasClicked = true;
         await gift.save();

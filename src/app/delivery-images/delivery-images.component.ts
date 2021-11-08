@@ -20,7 +20,12 @@ export class DeliveryImagesComponent implements OnInit {
 
   async ngOnInit() {
     this.images = await this.args.loadVolunteerImages();
-    let familyImages = await this. remult.repo(FamilyImage).find({ where: f => f.familyId.isEqualTo(this.args.family).and(f.imageInDeliveryId.isIn(this.images.map(x => x.entity.id))) });
+    let familyImages = await this.remult.repo(FamilyImage).find({
+      where: {
+        familyId: this.args.family,
+        imageInDeliveryId: this.images.map(x => x.entity.id)
+      }
+    });
     for (const i of this.images) {
       i.imageInFamily = familyImages.find(f => f.imageInDeliveryId == i.entity.id);
     }
@@ -32,9 +37,9 @@ export class DeliveryImagesComponent implements OnInit {
       i.imageInFamily = undefined;
     }
     else {
-      i.imageInFamily = await this. remult.repo(FamilyImage).create({
+      i.imageInFamily = await this.remult.repo(FamilyImage).create({
         familyId: this.args.family,
-        imageInDeliveryId: i.entity.id, 
+        imageInDeliveryId: i.entity.id,
         image: i.image
       }).save();
     }

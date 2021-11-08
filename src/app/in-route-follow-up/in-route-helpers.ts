@@ -16,7 +16,7 @@ import { DateOnlyField } from "remult/src/remult3";
 
 @Entity<InRouteHelpers>('in-route-helpers', {
     allowApiRead: Roles.admin,
-    defaultOrderBy: (self) => self.minAssignDate
+    defaultOrderBy: { minAssignDate: "asc" }
 },
     (options, remult) => options.sqlExpression = async (self) => {
         let sql = new SqlBuilder(remult);
@@ -29,7 +29,7 @@ import { DateOnlyField } from "remult/src/remult3";
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [remult.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                where: () => [f.where({ distributionCenter: remult.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
             }
         }
         let comInnerSelect = (col: FieldMetadata, toCol: FieldMetadata) => {
@@ -56,21 +56,21 @@ import { DateOnlyField } from "remult/src/remult3";
 
             ' from (', sql.query({
                 select: () => [h.id, h.name, h.lastSignInDate, h.smsDate, h.internalComment, h.company, h.frozenTill,
-                sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.deliveriesInProgress)
-                    , sql.minInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.minAssignDate)
-                    , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.maxAssignDate)
-                    , sql.maxInnerSelect(f.deliveryStatusDate, helperFamilies(() => [DeliveryStatus.isSuccess(f.deliverStatus)]), self.lastCompletedDelivery)
+                sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]), self.deliveriesInProgress)
+                    , sql.minInnerSelect(f.courierAssingTime, helperFamilies(() => [f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]), self.minAssignDate)
+                    , sql.maxInnerSelect(f.courierAssingTime, helperFamilies(() => [f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]), self.maxAssignDate)
+                    , sql.maxInnerSelect(f.deliveryStatusDate, helperFamilies(() => [f.where({ deliverStatus: DeliveryStatus.isSuccess() })]), self.lastCompletedDelivery)
                     , comInnerSelect(com.createDate, self.lastCommunicationDate)
                     , comInnerSelect(com.message, self.lastComment)
-                    , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), DeliveryStatus.isSuccess(history.deliverStatus)] }, self.completedDeliveries)
+                    , sql.countDistinctInnerSelect(history.family, { from: history, where: () => [sql.eq(history.courier, h.id), f.where({ deliverStatus: DeliveryStatus.isSuccess() })] }, self.completedDeliveries)
                     , comHelperInnerSelect(self.lastCommunicationUser)
                 ],
 
                 from: h,
-                where: () => [h.archive.isEqualTo(false), sql.build(h.id, ' in (', sql.query({
+                where: () => [h.where({ archive: false }), sql.build(h.id, ' in (', sql.query({
                     select: () => [f.courier],
                     from: f,
-                    where: () => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]
+                    where: () => [f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]
                 }), ')')]
             }), ') result ) result');
     }
@@ -115,8 +115,8 @@ export class InRouteHelpers extends IdEntity {
 
                 columnSettings: hist => [hist.createDate, hist.message, hist.createUser],
 
-                where: hist => hist.volunteer.isEqualTo(h),
-                orderBy: fd => fd.createDate.descending(),
+                where: { volunteer: h },
+                orderBy: { createDate: "desc" },
                 rowsInPage: 25
 
             })
@@ -208,7 +208,7 @@ export class InRouteHelpers extends IdEntity {
     allowApiInsert: Roles.distCenterAdmin,
     allowApiRead: Roles.distCenterAdmin,
     allowApiUpdate: Roles.distCenterAdmin,
-    defaultOrderBy: c => c.createDate.descending(),
+    defaultOrderBy: { createDate: "desc" },
 
     saving: (self) => {
         if (self.isNew()) {

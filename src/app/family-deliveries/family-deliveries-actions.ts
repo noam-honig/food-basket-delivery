@@ -1,4 +1,4 @@
-import { Remult, AndFilter, EntityFilter, Filter } from "remult";
+import { Remult, EntityFilter, Filter } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelpersBase } from "../helpers/helpers";
@@ -27,17 +27,22 @@ export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamily
 function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, remult: Remult) {
     if (args.orderBy)
         throw "didn't expect order by";
-    args.orderBy = x => [x.createDate.descending(), x.id]//to handle the case where paging is used, and items are added with different ids
+    args.orderBy = {
+        createDate: "desc",
+        id: "asc"
+    }//to handle the case where paging is used, and items are added with different ids
     let originalForEach = args.forEach;
     args.forEach = async fd => {
         fd._disableMessageToUsers = true;
         await originalForEach(fd);
     };
     let originalWhere = args.additionalWhere;
-    if (originalWhere) {
-        args.additionalWhere = x => new AndFilter(originalWhere(x), FamilyDeliveries.isAllowedForUser());
-    }
-    else args.additionalWhere = x => FamilyDeliveries.isAllowedForUser();
+    args.additionalWhere = async () => ({
+        $and: [
+            FamilyDeliveries.isAllowedForUser(),
+            await Filter.resolve(originalWhere)
+        ]
+    });
     return args;
 }
 
@@ -51,7 +56,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
 
     constructor(remult: Remult) {
         super(remult, {
-             dialogColumns: async c => [],
+            dialogColumns: async c => [],
             //     this.$.updateFamilyStatus,
             //     { field: this.$.status, visible: () => this.updateFamilyStatus }
             // ],
@@ -66,7 +71,7 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
                     await f.save();
                 }
             },
-            additionalWhere: f => DeliveryStatus.isNotAResultStatus(f.deliverStatus)
+            additionalWhere: { deliverStatus: DeliveryStatus.isNotAResultStatus() }
         });
     }
 }
@@ -144,7 +149,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
                 { field: this.$.updateAlsoAsFixed, visible: () => !this.clearVoulenteer && this.remult.isAllowed(Roles.admin) }
 
             ],
-            additionalWhere: fd => DeliveryStatus.isNotAResultStatus(fd.deliverStatus),
+            additionalWhere: { deliverStatus: DeliveryStatus.isNotAResultStatus() },
             title: getLang(remult).updateVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer) {
@@ -190,7 +195,13 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
             },
             validateInComponent: async c => {
-                let deliveriesWithResultStatus = await this.remult.repo(ActiveFamilyDeliveries).count(x => [DeliveryStatus.isAResultStatus(x.deliverStatus), Filter.fromEntityFilter(x, c.userWhere, this.args.additionalWhere)])
+                let deliveriesWithResultStatus = await this.remult.repo(ActiveFamilyDeliveries).count({
+                    deliverStatus: DeliveryStatus.isAResultStatus(),
+                    $and: [
+                        await Filter.resolve(c.userWhere),
+                        await Filter.resolve(this.args.additionalWhere)
+                    ]
+                })
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
                     if (await c.dialog.YesNoPromise(
                         getLang(this.remult).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.remult).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
@@ -238,7 +249,7 @@ export class ArchiveHelper {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = remult.repo(ActiveFamilyDeliveries);
 
-        let onTheWay = await repo.count(d => [FamilyDeliveries.onTheWayFilter(), Filter.fromEntityFilter(d, where)]);
+        let onTheWay = await repo.count({ $and: [FamilyDeliveries.onTheWayFilter(), where] });
 
         if (onTheWay > 0) {
             this.markOnTheWayAsDelivered = true;
@@ -249,7 +260,7 @@ export class ArchiveHelper {
         }
 
         if (usingSelfPickupModule) {
-            let selfPickup = await repo.count(d => [d.deliverStatus.isEqualTo(DeliveryStatus.SelfPickup), Filter.fromEntityFilter(d, where)]);
+            let selfPickup = await repo.count({ deliverStatus: DeliveryStatus.SelfPickup, $and: [where] });
 
             if (selfPickup > 0) {
                 this.markSelfPickupAsDelivered = true;
@@ -278,7 +289,7 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     constructor(remult: Remult) {
         super(remult, {
             dialogColumns: async c => {
-                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
+                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, await this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
             },
             icon: 'archive',
             title: getLang(remult).archiveDeliveries,
@@ -400,7 +411,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                     { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
                     this.$.helperStrategy,
                     { field: this.$.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
-                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
+                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, await this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
                     this.$.autoArchive,
                     this.$.newDeliveryForAll,
                     { field: this.$.selfPickup, visible: () => component.settings.usingSelfPickupModule }
@@ -413,11 +424,9 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                         throw getLang(this.remult).pleaseSelectDistributionList;
                 }
             },
-            additionalWhere: f => {
-                if (this.newDeliveryForAll)
-                    return undefined;
-                DeliveryStatus.isAResultStatus(f.deliverStatus);
-            },
+            additionalWhere: () => ({
+                deliverStatus: !this.newDeliveryForAll ? DeliveryStatus.isAResultStatus() : undefined
+            }),
             title: getLang(remult).newDelivery,
             icon: 'add_shopping_cart',
             help: () => getLang(this.remult).newDeliveryForDeliveriesHelp + ' ' + this.$.newDeliveryForAll.metadata.caption,

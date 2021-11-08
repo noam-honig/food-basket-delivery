@@ -17,7 +17,7 @@ export class moveDeliveriesHelper {
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '', allowSelect = false) {
 
         let deliveries = await this.remult.repo(ActiveFamilyDeliveries).find({
-            where: f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
+            where: { courier: from, deliverStatus: DeliveryStatus.ReadyForDelivery },
             limit: 1000
         });
         if (deliveries.length > 0) {
@@ -30,13 +30,13 @@ export class moveDeliveriesHelper {
             else {
                 await openDialog(SelectFamilyComponent, x => x.args = {
                     distCenter: this.dialog.distCenter,
-                    orderBy: f => f.routeOrder,
+                    orderBy: { routeOrder: "asc" },
                     onSelect: selected => {
                         selectedDeliveries = selected;
                     },
                     selectStreet: false,
                     allowSelectAll: true,
-                    where: f => f.courier.isEqualTo(from).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
+                    where: { courier: from, deliverStatus: DeliveryStatus.ReadyForDelivery }
                 });
             }
             if (selectedDeliveries.length > 0) {
@@ -56,9 +56,9 @@ export class moveDeliveriesHelper {
         let t = new PromiseThrottle(10);
         let settings = getSettings(remult);
         let i = 0;
-        let toHasDeliveries = (await remult.repo(ActiveFamilyDeliveries).count(d => d.courier.isEqualTo(to))) > 0;
+        let toHasDeliveries = (await remult.repo(ActiveFamilyDeliveries).count({ courier: to })) > 0;
 
-        for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({ where: f => f.id.isIn(deliveries).and(f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)) })) {
+        for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({ where: { id: deliveries, deliverStatus: DeliveryStatus.ReadyForDelivery } })) {
             fd.courier = to;
             fd.disableRouteReCalc = !toHasDeliveries;
             fd._disableMessageToUsers = true;

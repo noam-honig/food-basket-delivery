@@ -20,7 +20,7 @@ import { use, Field, FieldType } from "../translate";
 @Entity<FamilySources>("FamilySources", {
   allowApiRead: Allow.authenticated,
   allowApiCrud: Roles.admin,
-  defaultOrderBy: self => self.name
+  defaultOrderBy: { name: "asc" }
 })
 export class FamilySources extends IdEntity {
   @Field({ translation: l => l.familySourceName })

@@ -21,7 +21,7 @@ export class RegisterURL extends IdEntity {
 
     urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
-        return this.remult.repo(RegisterURL).findFirst(g => g.URL.contains(s));
+        return this.remult.repo(RegisterURL).findFirst({ URL: { $contains: s } });
     }
 
     @BackendMethod({ allowed: Roles.admin })
@@ -49,7 +49,7 @@ export class RegisterURL extends IdEntity {
 
         for (const url of urls) {
             if ((url != undefined) && (url != '')) {
-                let g = await remult.repo(RegisterURL).findFirst(g => g.URL.contains(url.trim()));
+                let g = await remult.repo(RegisterURL).findFirst({ URL: { $contains: url.trim() } });
                 if (!g) {
                     console.log("adding entry for: ", url);
                     g = remult.repo(RegisterURL).create();

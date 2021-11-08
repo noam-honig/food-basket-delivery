@@ -95,11 +95,11 @@ declare type factoryFor<T> = {
 
       if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.valueChanged())) {
         for await (const fd of await self.remult.repo(FamilyDeliveries).find({
-          where: fd =>
-            fd.family.isEqualTo(self.id).and(
-              fd.archive.isEqualTo(false).and(
-                DeliveryStatus.isNotAResultStatus(fd.deliverStatus)
-              ))
+          where: {
+            family: self.id,
+            archive: false,
+            deliverStatus: DeliveryStatus.isNotAResultStatus()
+          }
         })) {
           self.updateDelivery(fd);
           if (self.$.basketType.valueChanged() && fd.basketType == self.$.basketType.originalValue)
@@ -124,7 +124,7 @@ declare type factoryFor<T> = {
     else if (!isBackend()) {
       let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
       if (statusChangedOutOfActive) {
-        let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).iterate({ where: fd => fd.family.isEqualTo(self.id).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus)) });
+        let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).iterate({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
         if (await activeDeliveries.count() > 0) {
           if (await openDialog(YesNoQuestionComponent, async x => x.args = {
             question: getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
@@ -156,7 +156,7 @@ export class Families extends IdEntity {
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
-      where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+      where: () => [f.where({ status: FamilyStatus.Active })],
       groupBy: () => [f.fixedCourier],
       orderBy: [{ field: f.fixedCourier, isDescending: false }]
 
@@ -240,8 +240,8 @@ export class Families extends IdEntity {
         return r;
       },
 
-      where: fd => fd.family.isEqualTo(this.id),
-      orderBy: fd => fd.deliveryStatusDate.descending(),
+      where: { family: this.id },
+      orderBy: { deliveryStatusDate: "desc" },
       rowsInPage: 25
 
     });
@@ -256,7 +256,7 @@ export class Families extends IdEntity {
     if (!args)
       args = {};
     if (!args.doNotCheckIfHasExistingDeliveries) {
-      let hasExisting = await this.remult.repo(ActiveFamilyDeliveries).count(d => d.family.isEqualTo(this.id).and(DeliveryStatus.isNotAResultStatus(d.deliverStatus)));
+      let hasExisting = await this.remult.repo(ActiveFamilyDeliveries).count({ family: this.id, deliverStatus: DeliveryStatus.isNotAResultStatus() });
       if (hasExisting > 0) {
         if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
           this.showDeliveryHistoryDialog({ dialog, settings, busy });
@@ -715,7 +715,7 @@ export class Families extends IdEntity {
         return sql.columnCount(self, {
           from: fd,
           where: () => [sql.eq(fd.family, self.id),
-          fd.archive.isEqualTo(false).and(DeliveryStatus.isNotAResultStatus(fd.deliverStatus))]
+          fd.where({ archive: false, deliverStatus: DeliveryStatus.isNotAResultStatus() })]
         });
 
       }
@@ -850,7 +850,7 @@ export class Families extends IdEntity {
     let r = await db.execute(await sql.query({
       from: f,
       select: () => [f.area, 'count (*) as count'],
-      where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+      where: () => [f.where({ status: FamilyStatus.Active })],
       groupBy: () => [f.area],
       orderBy: [{ field: f.area, isDescending: false }]
 
@@ -941,7 +941,7 @@ export class Families extends IdEntity {
       ],
 
       from: f,
-      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id)), f.status.isDifferentFrom(FamilyStatus.ToDelete)]
+      where: () => [sql.or(tzCol, tz2Col, phone1Col, phone2Col, phone3Col, phone4Col, nameCol), sql.ne(f.id, sql.str(id)), f.where({ status: { "!=": FamilyStatus.ToDelete } })]
     }));
     if (!sqlResult.rows || sqlResult.rows.length < 1)
       return [];
@@ -1149,7 +1149,7 @@ export interface autocompleteResult {
   result: GeocodeResult
 }
 
-export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string,message?:string) {
+export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string, message?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
@@ -1158,7 +1158,7 @@ export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?
       }
     }
   }
-  if (!message){
+  if (!message) {
     message = use.language.hello + ' ' + f.name + ',';
   }
   Phone.sendWhatsappToPhone(phone,

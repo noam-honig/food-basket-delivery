@@ -37,7 +37,7 @@ export class MyFamiliesComponent implements OnInit {
     this.user = remult.user as HelperUserInfo;
   }
   hasEvents = false;
-  moveToOpertunities(){
+  moveToOpertunities() {
     this.helper.navigateToComponent(OrgEventsComponent);
   }
   async ngOnInit() {
@@ -49,7 +49,7 @@ export class MyFamiliesComponent implements OnInit {
       if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
         id = this.user.theHelperIAmEscortingId;
       done += '2';
-      let helper = await this. remult.repo(Helpers).findFirst(h => h.id.isEqualTo(id));
+      let helper = await this.remult.repo(Helpers).findId(id, { useCache: false });
       if (helper)
         done += 'helper id:' + helper.id;
       else done += "3";
@@ -86,7 +86,7 @@ export class MyFamiliesComponent implements OnInit {
 
     }
     this.busy.donotWait(async () => {
-      this.hasEvents = (await this. remult.repo(Event).count())>0;
+      this.hasEvents = (await this.remult.repo(Event).count()) > 0;
     });
   }
 

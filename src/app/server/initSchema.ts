@@ -91,7 +91,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await settings.save();
 
 
-    let images = await remult.repo(ApplicationImages).findFirst(ap => ap.id.isEqualTo(1));
+    let images = await remult.repo(ApplicationImages).findId(1);
     if (!images) {
         images = remult.repo(ApplicationImages).create();
         images.id = 1;
@@ -237,7 +237,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
                 f.drivingLongitude = g.location().lng;
                 await f.save();
             },
-            where: x => undefined,
+            where: undefined,
 
         });
         settings.dataStructureVersion = 14;
@@ -349,7 +349,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await dataSource.execute(await sql.update(fd, { set: () => [[fd.quantity, 1]] }));
     });
     await version(20, async () => {
-        let dc = await remult.repo(DistributionCenters).find({ where: d => d.name.isEqualTo('נקודת חלוקה ראשונה') });
+        let dc = await remult.repo(DistributionCenters).find({ where: { name: 'נקודת חלוקה ראשונה' } });
         for await (const d of dc) {
             d.name = 'חלוקת מזון';
             await d.save();
@@ -365,7 +365,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     });
     await version(22, async () => {
         await pagedRowsIterator(remult.repo(Families), {
-            where: f => f.addressOk.isEqualTo(false),
+            where: { addressOk: false },
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
                 f.addressOk = !f.addressHelper.getGeocodeInformation().partialMatch();
@@ -379,7 +379,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             from: fd,
             select: () => [fd.id],
             innerJoin: () => [{ to: f, on: () => [sql.eq(f.id, fd.family)] }],
-            where: () => [FamilyDeliveries.active(fd), sql.or(sql.ne(fd.addressByGoogle, f.addressByGoogle), sql.ne(fd.addressOk, f.addressOk))]
+            where: () => [fd.where(FamilyDeliveries.active), sql.or(sql.ne(fd.addressByGoogle, f.addressByGoogle), sql.ne(fd.addressOk, f.addressOk))]
         }));
         console.log("fixing deliveries mismatch with family info ", r.rows.length);
         for (const id of r.rows.map(x => x.id)) {
@@ -410,7 +410,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     await version(28, async () => {
         await dataSource.execute(await sql.update(fd, {
             set: () => [[fd.needsWork, false]],
-            where: () => [fd.archive.isEqualTo(true).and(fd.needsWork.isEqualTo(true))]
+            where: () => [fd.where({ archive: true, needsWork: true })]
         }))
 
     });

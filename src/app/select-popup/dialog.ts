@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Remult, getFields, BackendMethod, ContainsFilterFactory } from 'remult';
+import { Remult, getFields, BackendMethod, ValueFilter } from 'remult';
 
 
 import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
@@ -22,8 +22,8 @@ declare var gtag;
 
 @Injectable()
 export class DialogService {
-    filterDistCenter(distributionCenter: ContainsFilterFactory<DistributionCenters>): import("remult").Filter {
-        return this.remult.filterDistCenter(distributionCenter, this.distCenter)
+    filterDistCenter(): ValueFilter<DistributionCenters> {
+        return this.remult.filterDistCenter(this.distCenter);
     }
     async exception(title: string, err: any): Promise<void> {
 
@@ -113,7 +113,7 @@ export class DialogService {
         if (this.distCenter != null)
             return this.distCenter;
         if (!this.allCenters)
-            this.allCenters = await this. remult.repo(DistributionCenters).find();
+            this.allCenters = await this.remult.repo(DistributionCenters).find();
         return this.remult.findClosestDistCenter(loc, this.allCenters);
 
     }
@@ -150,9 +150,9 @@ export class DialogService {
         this.dc = undefined;
 
         if (this.remult.isAllowed(Roles.distCenterAdmin) && !this.remult.isAllowed(Roles.admin))
-            this. remult.repo(DistributionCenters).findId((<HelperUserInfo>this.remult.user).distributionCenter).then(x => this.dc = x);
+            this.remult.repo(DistributionCenters).findId((<HelperUserInfo>this.remult.user).distributionCenter).then(x => this.dc = x);
         if (this.remult.isAllowed(Roles.admin)) {
-            this.hasManyCenters = await this. remult.repo(DistributionCenters).count(c => c.archive.isEqualTo(false)) > 1;
+            this.hasManyCenters = await this.remult.repo(DistributionCenters).count({ archive: false }) > 1;
             this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = null;
@@ -283,7 +283,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorString = error.toString();
         this.lastErrorTime = new Date().valueOf();
         try {
-            var s = await this. remult.repo((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
+            var s = await this.remult.repo((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
             if (s && this.remult.authenticated() && !s.currentUserIsValidForAppLoadTest) {
                 let AuthService = (await import("../auth/auth-service")).AuthService;
                 AuthService.doSignOut();

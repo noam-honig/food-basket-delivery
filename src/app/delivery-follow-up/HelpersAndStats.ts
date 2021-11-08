@@ -30,7 +30,7 @@ function log(s: string) {
             let helperFamilies = (where: () => any[]) => {
                 return {
                     from: f,
-                    where: () => [remult.filterCenterAllowedForUser(f.distributionCenter), sql.eq(f.courier, h.id), ...where()]
+                    where: () => [f.where({ distributionCenter: remult.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
                 }
             }
             return sql.entityDbName({
@@ -56,7 +56,7 @@ function log(s: string) {
                     h.myGiftsURL,
                     h.doNotSendSms,
 
-                    sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)]), self.deliveriesInProgress),
+                    sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]), self.deliveriesInProgress),
                     sql.countInnerSelect(helperFamilies(() => []), self.allDeliveires),
 
                 ],

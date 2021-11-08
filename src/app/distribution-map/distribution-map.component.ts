@@ -9,7 +9,7 @@ import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBound
 import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
-import { Remult, SqlDatabase } from 'remult';
+import { EntityFilter, Remult, SqlDatabase } from 'remult';
 import { BackendMethod } from 'remult';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -87,7 +87,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
       dialog: this.dialog,
-      userWhere: x => x.id.isIn(this.selectedDeliveries.map(x => x.id)),
+      userWhere: () => ({ id: this.selectedDeliveries.map(x => x.id) }),
       settings: this.settings
     })),
   ];
@@ -203,7 +203,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
     click: async () => HelpersBase.showSelectDialog(this.filterCourier, {
-      filter: h => h.allDeliveires.isGreaterThan(0)
+      filter: { allDeliveires: { ">": 0 } }
     })
 
   })
@@ -254,7 +254,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-            let fd = await this. remult.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
+            let fd = await this.remult.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
             await fd.showDetailsDialog({
               onSave: async () => {
                 familyOnMap.marker.setMap(null);
@@ -335,8 +335,8 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, remult?: Remult, db?: SqlDatabase) {
-    let f = SqlFor( remult.repo(ActiveFamilyDeliveries));
-    let h = SqlFor( remult.repo(Helpers));
+    let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
+    let h = SqlFor(remult.repo(Helpers));
     let sql = new SqlBuilder(remult);
     sql.addEntity(f, "FamilyDeliveries");
     let r = (await db.execute(await sql.query({
@@ -350,17 +350,19 @@ export class DistributionMap implements OnInit, OnDestroy {
       from: f,
 
       where: () => {
-        let where: any[] = [remult.filterCenterAllowedForUser(f.distributionCenter)];
-        if (distCenter !== undefined)
-          where.push(remult.filterDistCenter(f.distributionCenter, distCenter));
+
+        let where: EntityFilter<ActiveFamilyDeliveries>[] = [{ distributionCenter: remult.filterDistCenter(distCenter) }];
         if (area !== undefined && area !== null && area != getLang(remult).allRegions) {
-          where.push(f.area.isEqualTo(area));
+          where.push({ area: area });
         }
 
         if (onlyPotentialAsignment) {
-          where.push(FamilyDeliveries.readyFilter( city, group, area, basket).and(f.special.isEqualTo(YesNo.No)));
+          where.push({
+            ...FamilyDeliveries.readyFilter(city, group, area, basket),
+            special: YesNo.No
+          });
         }
-        return where;
+        return [f.where({ $and: where })];
       },
       orderBy: [f.addressLatitude, f.addressLongitude]
     })));
@@ -381,7 +383,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   static async GetLocationsForOverview(remult?: Remult) {
 
     let result: deliveryOnMap[] = []
-    let f = SqlFor( remult.repo(FamilyDeliveries));
+    let f = SqlFor(remult.repo(FamilyDeliveries));
 
     let sql = new SqlBuilder(remult);
     sql.addEntity(f, "fd");
@@ -393,7 +395,7 @@ export class DistributionMap implements OnInit, OnDestroy {
         select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus],
         from: f,
         where: () => {
-          let where = [DeliveryStatus.isSuccess(f.deliverStatus).and(f.deliveryStatusDate.isGreaterOrEqualTo(new Date(2020, 2, 18)))];
+          let where = [f.where({ deliverStatus: DeliveryStatus.isSuccess(), deliveryStatusDate: { ">=": new Date(2020, 2, 18) } })];
           return where;
         }
 

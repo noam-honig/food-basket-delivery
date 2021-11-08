@@ -1,5 +1,5 @@
-import {  Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, FilterFactories, Repository, EntityMetadata, FilterFactory, ComparisonFilterFactory, ContainsFilterFactory, SqlResult, Remult } from 'remult';
-import { filterHelper } from 'remult/src/filter/filter-interfaces';
+import { Filter, SortSegment, FilterConsumerBridgeToSqlRequest, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, Remult, EntityFilter } from 'remult';
+
 import { InitContext } from '../helpers/init-context';
 
 
@@ -317,7 +317,7 @@ export class SqlBuilder {
             where.push(...await query.where());
         }
         if (query.from.metadata.options.backendPrefilter) {
-            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from as FilterFactories<any>, query.from.metadata.options.backendPrefilter), query.from.metadata, query.from as FilterFactories<any>, this.remult));
+            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from.metadata, query.from.metadata.options.backendPrefilter), query.from.metadata, query.from.metadata, this.remult));
         }
         if (where.length > 0)
             result.push(' where ', this.and(...where));
@@ -387,7 +387,7 @@ export class myDummySQLCommand implements SqlCommand {
 }
 
 
-export type SqlDefs<T = unknown> = FieldsMetadata<T> & FilterFactories<T> & { metadata: EntityMetadata };
+export type SqlDefs<T = unknown> = FieldsMetadata<T> &  { metadata: EntityMetadata, where: (item: EntityFilter<T>) => Filter };
 export function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): SqlDefs<T> {
     let origDefs: EntityMetadata;
     let re = repo as Repository<T>;
@@ -399,51 +399,24 @@ export function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): SqlDefs<T> {
 
     let r = {
         metadata: Object.assign(origDefs),
+        where: item => Filter.fromEntityFilter(origDefs, item),
         [Symbol.iterator]: () => origDefs.fields[Symbol.iterator](),
         find: origDefs.fields.find
     };
-    let f = Filter.createFilterFactories(origDefs);
-
     for (const col of origDefs.fields) {
         r[col.key] = new fieldInSql(col)
     }
-    return r as unknown as SqlDefs<T>;
+
+    return r as SqlDefs<T>;
 }
-class fieldInSql implements FilterFactory<any>, ComparisonFilterFactory<any>, ContainsFilterFactory<any> {
+class fieldInSql  {
     constructor(public metadata: FieldMetadata) {
 
     }
     getDbName() {
         return this.metadata.getDbName();
     }
-    private filter = new filterHelper(this.metadata);;
-    isEqualTo(val: any): Filter {
-        return this.filter.isEqualTo(val);
-    }
-    isDifferentFrom(val: any) {
-        return this.filter.isDifferentFrom(val);
-    }
-    isIn(val: any[]): Filter {
-        return this.filter.isIn(val);
-    }
-    isNotIn(val: any[]): Filter {
-        return this.filter.isNotIn(val);
-    }
-    isLessOrEqualTo(val: any): Filter {
-        return this.filter.isLessOrEqualTo(val);
-    }
-    isLessThan(val: any): Filter {
-        return this.filter.isLessThan(val);
-    }
-    isGreaterThan(val: any): Filter {
-        return this.filter.isGreaterThan(val);
-    }
-    isGreaterOrEqualTo(val: any): Filter {
-        return this.filter.isGreaterOrEqualTo(val);
-    }
-    contains(val: string): Filter {
-        return this.filter.contains(val);
-    }
+    
 
     key = this.metadata.key;
     target = this.metadata.target;
@@ -458,7 +431,6 @@ class fieldInSql implements FilterFactory<any>, ComparisonFilterFactory<any>, Co
     options = this.metadata.options;
 
 }
-
 
 export interface QueryBuilder {
     select: () => any[] | Promise<any[]>;

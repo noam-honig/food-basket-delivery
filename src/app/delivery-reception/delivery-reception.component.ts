@@ -4,7 +4,7 @@ import { BusyService, DataControlInfo, GridSettings, InputField, openDialog } fr
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
-import {  Helpers } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -25,7 +25,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   urlParams = new URLSearchParams(window.location.search);
   deliveriesForPhone: string[] = [];
 
-  deliveries = new GridSettings(this. remult.repo(FamilyDeliveries), {
+  deliveries = new GridSettings(this.remult.repo(FamilyDeliveries), {
     allowUpdate: false,
     numOfColumnsInGrid: 3,
     rowCssClass: f => f.getCss(),
@@ -33,9 +33,8 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     knowTotalRows: true,
 
     rowsInPage: 100,
-    where: f =>
-      f.id.isIn(this.deliveriesForPhone)
-    , orderBy: f => f.name
+    where: { id: this.deliveriesForPhone }
+    , orderBy: { name: "asc" }
     ,
     columnSettings: deliveries => {
       let r = [

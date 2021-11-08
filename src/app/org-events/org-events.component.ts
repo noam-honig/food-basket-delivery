@@ -56,7 +56,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   static async getAllEvents(phone: string, sitesFilter: string, remult?: Remult, db?: SqlDatabase): Promise<EventInList[]> {
     let r: EventInList[] = [];
     let sql = new SqlBuilder(remult);
-    let e = SqlFor( remult.repo(Event));
+    let e = SqlFor(remult.repo(Event));
 
     let schemas = Sites.schemas;
     if (sitesFilter) {
@@ -69,7 +69,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
       if (query != '')
         query += ' union all ';
       query += await sql.build('select ', ["'" + org + "' site"], ' from ', org + '.' + await e.metadata.getDbName(),
-        " where ", [e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))]);
+        " where ", [e.where({ eventStatus: eventStatus.active, eventDate: { ">=": new Date() } })]);
     }
     let sites = (await db.execute(' select distinct site from (' + query + ') x')).rows.map(x => x.site);
 
@@ -98,10 +98,10 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
     let helper: HelpersBase = remult.currentUser;
     if (!helper && phone)
-      helper = await  remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(phone)));
-    return Promise.all((await  remult.repo(Event).find({
-      orderBy: e => [e.eventDate, e.startTime],
-      where: e => e.eventStatus.isEqualTo(eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(new Date()))
+      helper = await remult.repo(Helpers).findFirst({ phone: new Phone(phone) });
+    return Promise.all((await remult.repo(Event).find({
+      orderBy: { eventDate: "asc", startTime: "asc" },
+      where: { eventStatus: eventStatus.active, eventDate: { ">=": new Date() } }
     })).map(async e => await e.toEventInList(helper)));
   }
 

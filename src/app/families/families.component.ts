@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { AndFilter, Filter, FilterFactories, BackendMethod, SqlDatabase } from 'remult';
+import { Filter, BackendMethod, SqlDatabase, EntityFilter } from 'remult';
 
 import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
@@ -62,7 +62,7 @@ export class FamiliesComponent implements OnInit {
         let r = await db.execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
-            where: () => [f.status.isEqualTo(FamilyStatus.Active)],
+            where: () => [f.where({ status: FamilyStatus.Active })],
             groupBy: () => [f.city],
             orderBy: [{ field: f.city }]
 
@@ -87,7 +87,7 @@ export class FamiliesComponent implements OnInit {
         this.families.get({
             where: s.rule,
             limit: this.limit,
-            orderBy: f => [f.name]
+            orderBy: { name: "asc" }
 
 
         });
@@ -221,32 +221,27 @@ export class FamiliesComponent implements OnInit {
 
 
         rowsInPage: this.limit,
-        where: f => {
+        where: () => {
             let index = 0;
-            let result: Filter = undefined;
-            let addFilter = (filter: Filter) => {
-                if (result)
-                    result = new AndFilter(result, filter);
-                else result = filter;
-            }
+            let result: EntityFilter<Families>[] = [];
 
             if (this.currentStatFilter) {
-                addFilter(this.currentStatFilter.rule(f));
+                result.push(this.currentStatFilter.rule);
             } else {
                 if (this.myTab)
                     index = this.myTab.selectedIndex;
                 if (index < 0 || index == undefined)
                     index = 0;
 
-                addFilter(this.statTabs[index].rule(f));
+                result.push(this.statTabs[index].rule);
             }
             if (this.searchString) {
-                addFilter(f.name.contains(this.searchString));
+                result.push({ name: { $contains: this.searchString } });
             }
 
-            return result;
+            return { $and: result };
         }
-        , orderBy: f => f.name
+        , orderBy: { name: "asc" }
         ,
 
         knowTotalRows: true,
@@ -397,7 +392,7 @@ export class FamiliesComponent implements OnInit {
                 {
                     afterAction: async () => await this.refresh(),
                     dialog: this.dialog,
-                    userWhere: f => Filter.fromEntityFilter(f, this.families.getFilterWithSelectedRows().where),
+                    userWhere: async () => (await this.families.getFilterWithSelectedRows()).where,
                     settings: this.settings
                 }))
             , {
@@ -449,19 +444,19 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.sendSelfOrderLink,
                 visible: () => this.settings.familySelfOrderEnabled,
-                click:async  (f) => {
-                    if (!f.shortUrlKey){
+                click: async (f) => {
+                    if (!f.shortUrlKey) {
                         f.shortUrlKey = makeId();
                         await f.save();
                     }
                     let message = new messageMerger([
                         { token: 'משפחה', value: f.name },
-                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: this.remult.getOrigin()+'/'+this.remult.getSite() + '/fso/' + f.shortUrlKey },
+                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: this.remult.getOrigin() + '/' + this.remult.getSite() + '/fso/' + f.shortUrlKey },
                         { token: 'ארגון', value: this.settings.organisationName }
                     ]);
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
                         message,
-                        templateText: this.settings.familySelfOrderMessage||defaultSelfOrderMessage,
+                        templateText: this.settings.familySelfOrderMessage || defaultSelfOrderMessage,
                         helpText: '',
                         title: this.settings.lang.sendSelfOrderLink,
                         buttons: [{
@@ -497,13 +492,17 @@ export class FamiliesComponent implements OnInit {
 
     groupsTotals: statsOnTab = {
         name: this.settings.lang.byGroups,
-        rule: f => f.status.isEqualTo(FamilyStatus.Active),
+        rule: { status: FamilyStatus.Active },
         stats: [
         ],
         moreStats: []
     };
     addressProblem: statsOnTab = {
-        rule: f => f.addressOk.isEqualTo(false).and(f.status.isEqualTo(FamilyStatus.Active)).and(f.defaultSelfPickup.isEqualTo(false)),
+        rule: {
+            addressOk: false,
+            status: FamilyStatus.Active,
+            defaultSelfPickup: false
+        },
         moreStats: [],
         name: this.settings.lang.adderssProblems,
         stats: [
@@ -515,7 +514,7 @@ export class FamiliesComponent implements OnInit {
     statTabs: statsOnTab[] = [
 
         {
-            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            rule: { status: FamilyStatus.Active },
             showTotal: true,
             name: this.settings.lang.activeFamilies,
             stats: [
@@ -528,7 +527,7 @@ export class FamiliesComponent implements OnInit {
         this.groupsTotals,
         this.addressProblem,
         {
-            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            rule: { status: FamilyStatus.Active },
             showTotal: false,
             name: this.settings.lang.defaultVolunteer,
             stats: [],
@@ -537,12 +536,12 @@ export class FamiliesComponent implements OnInit {
                 let familiesByVolunteer = await Families.getDefaultVolunteers();
                 this.prepComplexStats(familiesByVolunteer.map(g => ({ name: g.name, count: g.count, id: g.id })),
                     x,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isEqualTo(g.id)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.fixedCourier.isDifferentFrom(g.id)));
+                    g => ({ status: FamilyStatus.Active, fixedCourier: g.id }),
+                    g => ({ status: FamilyStatus.Active, fixedCourier: { "!=": g.id } }));
             }
         },
         {
-            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            rule: { status: FamilyStatus.Active },
             showTotal: false,
             name: this.settings.lang.city,
             stats: [],
@@ -551,13 +550,13 @@ export class FamiliesComponent implements OnInit {
                 let areas = await FamiliesComponent.getCities();
                 this.prepComplexStats(areas.map(g => ({ name: g.city, count: g.count })),
                     x,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.city.isEqualTo(g.name)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.city.isDifferentFrom(g.name)));
+                    g => ({ status: FamilyStatus.Active, city: g.name }),
+                    g => ({ status: FamilyStatus.Active, city: { "!=": g.name } }));
             }
         },
 
         {
-            rule: f => f.status.isEqualTo(FamilyStatus.Active),
+            rule: { status: FamilyStatus.Active },
             showTotal: false,
             name: this.settings.lang.region,
             stats: [],
@@ -566,13 +565,13 @@ export class FamiliesComponent implements OnInit {
                 let areas = await Families.getAreas();
                 this.prepComplexStats(areas.map(g => ({ name: g.area, count: g.count })),
                     x,
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isEqualTo(g.name)),
-                    (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.area.isDifferentFrom(g.name)));
+                    g => ({ status: FamilyStatus.Active, area: g.name }),
+                    g => ({ status: FamilyStatus.Active, area: { "!=": g.name } }));
             }
         },
 
         {
-            rule: f => undefined,
+            rule: {},
             showTotal: true,
             name: this.settings.lang.allFamilies,
             stats: [
@@ -659,8 +658,8 @@ export class FamiliesComponent implements OnInit {
             this.groupsTotals.stats.splice(0);
             this.prepComplexStats(st.groups.map(g => ({ name: g.name, count: g.total })),
                 this.groupsTotals,
-                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.contains(g.name)),
-                (f, g) => f.status.isEqualTo(FamilyStatus.Active).and(f.groups.isDifferentFrom(new GroupsValue(g.name))));
+                g => ({ status: FamilyStatus.Active, groups: { $contains: g.name } }),
+                g => ({ status: FamilyStatus.Active, groups: { "!=": new GroupsValue(g.name) } }));
 
 
 
@@ -672,8 +671,8 @@ export class FamiliesComponent implements OnInit {
     private prepComplexStats<type extends { name: string, count: number }>(
         cities: type[],
         stats: statsOnTab,
-        equalToFilter: (f: FilterFactories<Families>, item: type) => Filter,
-        differentFromFilter: (f: FilterFactories<Families>, item: type) => Filter
+        equalToFilter: (item: type) => EntityFilter<Families>,
+        differentFromFilter: (item: type) => EntityFilter<Families>
     ) {
         stats.stats.splice(0);
         stats.moreStats.splice(0);
@@ -684,7 +683,7 @@ export class FamiliesComponent implements OnInit {
         cities.forEach(b => {
             if (b.count == 0)
                 return;
-            let fs = new FaimilyStatistics(b.name, f => equalToFilter(f, b), undefined);
+            let fs = new FaimilyStatistics(b.name, equalToFilter(b), undefined);
             fs.value = +b.count;
             i++;
             if (i <= 8) {
@@ -695,13 +694,11 @@ export class FamiliesComponent implements OnInit {
                 if (!lastFs) {
                     let x = stats.stats.pop();
                     firstCities.pop();
-                    lastFs = new FaimilyStatistics(this.settings.lang.allOthers, f => {
-                        let r = differentFromFilter(f, firstCities[0]);
-                        for (let index = 1; index < firstCities.length; index++) {
-                            r = r.and(differentFromFilter(f, firstCities[index]));
-                        }
-                        return r;
-                    }, undefined);
+                    let differentFilter: EntityFilter<Families> = { $and: [differentFromFilter(firstCities[0])] };
+                    for (let index = 1; index < firstCities.length; index++) {
+                        differentFilter.$and.push(differentFromFilter(firstCities[index]));
+                    }
+                    lastFs = new FaimilyStatistics(this.settings.lang.allOthers, differentFilter, undefined);
                     stats.moreStats.push(x);
                     lastFs.value = x.value;
                     stats.stats.push(lastFs);
@@ -761,7 +758,7 @@ interface statsOnTab {
     stats: FaimilyStatistics[],
     moreStats: FaimilyStatistics[],
     showTotal?: boolean,
-    rule: (f: FilterFactories<Families>) => Filter,
+    rule: EntityFilter<Families>,
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Remult, SqlDatabase, EntityBase, getFields } from 'remult';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import {  Helpers, CompanyColumn } from '../helpers/helpers';
+import { Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InMemoryDataProvider, Entity } from 'remult';
 import { sortColumns } from '../shared/utils';
@@ -96,7 +96,7 @@ export class DeliveryHistoryComponent implements OnInit {
           if (await openDialog(YesNoQuestionComponent, q => q.args = {
             question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
           }, q => q.yes)) {
-            if (await  remult.repo(HelperGifts).count(g => g.assignedToHelper.isEqualTo(null)) >= rows.length) {
+            if (await remult.repo(HelperGifts).count({ assignedToHelper: null }) >= rows.length) {
               for (const h of rows) {
                 await HelperGifts.assignGift(h.courier);
               }
@@ -112,7 +112,7 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           name: this.settings.lang.deliveries,
           click: async x => {
-            let h = await this. remult.repo(Helpers).findId(x.courier);
+            let h = await this.remult.repo(Helpers).findId(x.courier);
             h.showDeliveryHistory(this.dialog, this.busy);
           },
         },
@@ -176,7 +176,7 @@ export class DeliveryHistoryComponent implements OnInit {
       },
 
       rowsInPage: 100,
-      orderBy: h => h.deliveries.descending(),
+      orderBy: { deliveries: "desc" },
 
       knowTotalRows: true
     });
@@ -187,7 +187,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
 
-    let rows: any[] = this.helperStorage.rows[(await this. remult.repo(helperHistoryInfo).metadata.getDbName())];
+    let rows: any[] = this.helperStorage.rows[(await this.remult.repo(helperHistoryInfo).metadata.getDbName())];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -203,13 +203,13 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
-  deliveries = new GridSettings(this. remult.repo(FamilyDeliveries), {
+  deliveries = new GridSettings(this.remult.repo(FamilyDeliveries), {
     rowCssClass: d => d.getCss(),
     gridButtons: [{
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-        await saveToExcel(this.settings, this. remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+        await saveToExcel(this.settings, this.remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
             await f.basketType?.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -262,15 +262,14 @@ export class DeliveryHistoryComponent implements OnInit {
     knowTotalRows: true,
 
     rowsInPage: 50,
-    where: d => {
+    where: () => {
       var toDate = this.dateRange.toDate;
       toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-      let r = d.deliveryStatusDate.isGreaterOrEqualTo(this.dateRange.fromDate).and(d.deliveryStatusDate.isLessThan(toDate)).and(this.dialog.filterDistCenter(d.distributionCenter))
-      if (this.onlyDone)
-        r = r.and(DeliveryStatus.isAResultStatus(d.deliverStatus));
-      if (this.onlyArchived)
-        r = r.and(d.archive.isEqualTo(true));
-      return r;
+      return {
+        deliveryStatusDate: { ">=": this.dateRange.fromDate, "<": toDate }, distributionCenter: this.dialog.filterDistCenter(),
+        deliverStatus: this.onlyDone ? DeliveryStatus.isAResultStatus() : undefined,
+        archive: this.onlyDone ? true : undefined
+      }
     }
     ,
     rowButtons: [
@@ -313,19 +312,18 @@ export class DeliveryHistoryComponent implements OnInit {
 
     toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
     var sql = new SqlBuilder(remult);
-    var fd =await  SqlFor( remult.repo(FamilyDeliveries));
+    var fd = await SqlFor(remult.repo(FamilyDeliveries));
 
-    var h =await  SqlFor( remult.repo(Helpers));
-    var hg =await  SqlFor( remult.repo(HelperGifts));
+    var h = await SqlFor(remult.repo(Helpers));
+    var hg = await SqlFor(remult.repo(HelperGifts));
 
 
-    let r = fd.deliveryStatusDate.isGreaterOrEqualTo(fromDate).and(
-      fd.deliveryStatusDate.isLessThan(toDate)).and(remult.filterDistCenter(fd.distributionCenter, distCenter));
-    if (onlyDone)
-      r = r.and(DeliveryStatus.isAResultStatus(fd.deliverStatus));
-    if (onlyArchived)
-      r = r.and(fd.archive.isEqualTo(true));
-
+    let r = fd.where({
+      deliveryStatusDate: { ">=": fromDate, "<": toDate },
+      distributionCenter: remult.filterDistCenter(distCenter),
+      deliverStatus: onlyDone ? DeliveryStatus.isAResultStatus() : undefined,
+      archive: onlyArchived ? true : undefined
+    });
 
     let queryText =
       await sql.build("select ", [
@@ -361,12 +359,12 @@ export class DeliveryHistoryComponent implements OnInit {
           "count(*) deliveries",
           sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),
           sql.build("count (distinct ", fd.family, ") families"),
-          sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(DeliveryStatus.isSuccess(fd.deliverStatus)), ' then 1 else 0 end) selfassigned'),
-          sql.build('sum (', sql.case([{ when: [DeliveryStatus.isSuccess(fd.deliverStatus)], then: 1 }], 0), ') succesful')],
+          sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(fd.where({ deliverStatus: DeliveryStatus.isSuccess() })), ' then 1 else 0 end) selfassigned'),
+          sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isSuccess() })], then: 1 }], 0), ') succesful')],
           ' from ', fd,
           ' where ', sql.and(r))
 
-        +await  sql.build(' group by ', fd.courier), ") x");
+        + await sql.build(' group by ', fd.courier), ") x");
 
     return (await db.execute(queryText)).rows;
 
@@ -374,7 +372,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
 }
 
-@Entity( undefined)
+@Entity(undefined)
 export class helperHistoryInfo extends EntityBase {
 
   @Field()

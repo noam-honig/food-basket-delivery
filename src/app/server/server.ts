@@ -156,7 +156,7 @@ s.parentNode.insertBefore(b, s);})();
             res.send(result);
         }
         else {
-            res.send('No Result' + fs.realpathSync(index));
+            res.send('No Result: ' + req.originalUrl);
         }
     }
     if (process.env.DISABLE_GEOCODE) {
@@ -207,7 +207,7 @@ s.parentNode.insertBefore(b, s);})();
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
 
-
+    app.use(eb);
 
     if (Sites.multipleSites) {
 
@@ -243,17 +243,17 @@ s.parentNode.insertBefore(b, s);})();
 
             let com = comRepo.create({
                 apiResponse: req.query,
-                message: req.query.message,
-                phone: req.query.cell,
+                message: req.query.message as string,
+                phone: req.query.cell as string,
                 incoming: true,
 
             });
             try {
                 com.message = unescape(com.message).trim();
-                com.volunteer = await remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(com.phone)));
+                com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(com.phone) });
                 if (!com.volunteer) {
                     let p = '+972' + com.phone.substring(1);
-                    com.volunteer = await remult.repo(Helpers).findFirst(h => h.phone.isEqualTo(new Phone(p)));
+                    com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(p) });
                 }
 
                 if (com.volunteer) {
@@ -265,14 +265,13 @@ s.parentNode.insertBefore(b, s);})();
                     });
                     if (com.message == "כן" || com.message == "לא") {
 
-                        let previousMessage = await comRepo.findFirst({
-                            where: previousCom => previousCom.volunteer.isEqualTo(com.volunteer),
-                            orderBy: com => com.createDate.descending()
+                        let previousMessage = await comRepo.findFirst({ volunteer: com.volunteer }, {
+                            orderBy: { createDate: "desc" }
                         })
                         if (previousMessage && previousMessage.eventId) {
                             let e = await remult.repo(Event).findId(previousMessage.eventId);
                             if (e?.eventStatus == eventStatus.active) {
-                                let v = await remult.repo(volunteersInEvent).findFirst(v => v.eventId.isEqualTo(previousMessage.eventId).and(v.helper.isEqualTo(com.volunteer)));
+                                let v = await remult.repo(volunteersInEvent).findFirst({ eventId: previousMessage.eventId, helper: com.volunteer });
                                 if (v) {
 
                                     switch (com.message) {
@@ -318,10 +317,7 @@ s.parentNode.insertBefore(b, s);})();
         }
     });
 
-    app.use((req, res, next) => {
-        console.log(req.path);
-        eb(req, res, next);
-    });
+
 
     app.get('', (req, res) => {
 

@@ -116,7 +116,7 @@ export class UserFamiliesList {
     }
     async initForFamilies(helper: HelpersBase, familiesPocoArray: any[]) {
         this.initHelper(helper);
-        let newFamilies = await Promise.all(familiesPocoArray.map(x => this. remult.repo(ActiveFamilyDeliveries).fromJson(x)));
+        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.remult.repo(ActiveFamilyDeliveries).fromJson(x)));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
@@ -131,13 +131,17 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
-            this.allFamilies = await this. remult.repo(ActiveFamilyDeliveries).find({
-                where: f => {
-                    let r = f.courier.isEqualTo(this.helper);
-                    if (this.settings.isSytemForMlt())
-                        return r;
-                    return r.and(f.visibleToCourier.isEqualTo(true))
-                }, orderBy: f => [f.deliverStatus, f.routeOrder, f.address], limit: 1000
+            this.allFamilies = await this.remult.repo(ActiveFamilyDeliveries).find({
+                where: {
+                    courier: this.helper,
+                    visibleToCourier: !this.settings.isSytemForMlt() ? true : undefined
+
+                }, orderBy: {
+                    deliverStatus: "asc",
+                    routeOrder: "asc",
+                    address: "asc"
+                },
+                limit: 1000
             });
             if (this.lastHelperId != this.helper.id) {
                 this.lastHelperId = this.helper.id;

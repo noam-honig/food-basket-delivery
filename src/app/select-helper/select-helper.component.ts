@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Remult, FilterFactories, FindOptions, BackendMethod, SqlDatabase } from 'remult';
-import { Filter, AndFilter } from 'remult';
+import { Remult, FindOptions, BackendMethod, SqlDatabase, EntityFilter } from 'remult';
+import { Filter } from 'remult';
 
 import { BusyService, DialogConfig } from '@remult/angular';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -43,7 +43,7 @@ export class SelectHelperComponent implements OnInit {
     includeFrozen?: boolean,
     searchClosestDefaultFamily?: boolean,
     onSelect: (selectedValue: HelpersBase) => void,
-    filter?: (helper: FilterFactories<HelpersAndStats>) => Filter
+    filter?: EntityFilter<HelpersAndStats>
 
   };
   filteredHelpers: helperInList[] = [];
@@ -89,7 +89,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of remult.repo(Helpers).iterate({ where: h => HelpersBase.active(h) })) {
+    for await (const h of remult.repo(Helpers).iterate({ where: HelpersBase.active as EntityFilter<Helpers> })) {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,
@@ -117,7 +117,7 @@ export class SelectHelperComponent implements OnInit {
 
       for (const d of (await db.execute(await sql.query({
         from: afd,
-        where: () => [afd.courier.isDifferentFrom(null).and(DeliveryStatus.isNotAResultStatus(afd.deliverStatus))],
+        where: () => [afd.where({ courier: { "!=": null }, deliverStatus: DeliveryStatus.isNotAResultStatus() })],
         select: async () => [
           sql.columnWithAlias("distinct " + await sql.getItemSql(afd.family), 'fam'),
           sql.columnWithAlias(afd.courier, "courier"),
@@ -147,9 +147,11 @@ export class SelectHelperComponent implements OnInit {
       for (const d of (await db.execute(await sql1.query({
         from: fd,
         where: () => [
-          fd.courier.isDifferentFrom(null)
-            .and(DeliveryStatus.isAResultStatus(fd.deliverStatus))
-            .and(fd.deliveryStatusDate.isGreaterOrEqualTo(limitDate))
+          fd.where({
+            courier: { "!=": null },
+            deliverStatus: DeliveryStatus.isAResultStatus(),
+            deliveryStatusDate: { ">=": limitDate }
+          })
         ],
         select: async () => [
           sql1.columnWithAlias(fd.courier, "courier"),
@@ -170,7 +172,7 @@ export class SelectHelperComponent implements OnInit {
       let afd = SqlFor(remult.repo(Families));
       for (const d of (await db.execute(await sql.query({
         from: afd,
-        where: () => [afd.fixedCourier.isDifferentFrom(null).and(afd.status.isEqualTo(FamilyStatus.Active))],
+        where: () => [afd.where({ fixedCourier: { "!=": null }, status: FamilyStatus.Active })],
         select: () => [
           sql.columnWithAlias(afd.fixedCourier, "courier"),
           sql.columnWithAlias(afd.addressLongitude, "lng"),
@@ -190,7 +192,7 @@ export class SelectHelperComponent implements OnInit {
     }
     if (familyId) {
       for (const fd of await remult.repo(FamilyDeliveries).find({
-        where: fd => fd.family.isEqualTo(familyId).and(DeliveryStatus.isProblem(fd.deliverStatus))
+        where: { family: familyId, deliverStatus: DeliveryStatus.isProblem() }
       })) {
         if (fd.courier) {
           let h = helpers.get(fd.courier?.id);
@@ -219,23 +221,12 @@ export class SelectHelperComponent implements OnInit {
     this.filteredHelpers = await SelectHelperComponent.getHelpersByLocation(this.args.location, this.args.searchClosestDefaultFamily, this.args.familyId);
   }
 
-  findOptions = {
-    orderBy: h => [h.name], limit: 25
-  } as FindOptions<HelpersAndStats>;
+  limit: 25;
+
   async ngOnInit() {
 
 
-    this.findOptions.where = h => {
-      let r: Filter = h.name.contains(this.searchString);
-      if (!this.args.includeFrozen) {
-        r = new AndFilter(HelpersBase.active(h), r);
-      }
-      if (this.args.filter) {
-        return new AndFilter(this.args.filter(h), r);
-      }
 
-      return r;
-    };
     if (this.args.searchByDistance)
       this.byLocation();
     else
@@ -256,13 +247,23 @@ export class SelectHelperComponent implements OnInit {
   }
   showingRecentHelpers = false;
   moreHelpers() {
-    this.findOptions.limit *= 2;
+    this.limit *= 2;
     this.getHelpers();
   }
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this.remult.repo(HelpersAndStats).find(this.findOptions), x => x.deliveriesInProgress);
+      this.filteredHelpers = mapHelpers(await this.remult.repo(HelpersAndStats).find({
+        orderBy: { name: "asc" },
+        where :  {
+          name: { $contains: this.searchString },
+          $and: [
+            !this.args.includeFrozen ? (HelpersBase.active as EntityFilter<HelpersAndStats>) : undefined,
+            this.args.filter
+          ]
+        }
+
+      }), x => x.deliveriesInProgress);
       this.showingRecentHelpers = false;
     });
 

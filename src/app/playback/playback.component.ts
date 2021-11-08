@@ -243,7 +243,7 @@ export class PlaybackComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.admin })
   static async GetTimeline(fromDateDate: Date, toDateDate: Date, remult?: Remult, db?: SqlDatabase) {
-    let f = SqlFor( remult.repo(FamilyDeliveries));
+    let f = SqlFor(remult.repo(FamilyDeliveries));
 
 
 
@@ -255,7 +255,7 @@ export class PlaybackComponent implements OnInit {
       select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
       from: f,
       where: () => {
-        let where = [(DeliveryStatus.isAResultStatus(f.deliverStatus).and(f.deliveryStatusDate.isGreaterOrEqualTo(fromDateDate).and(f.deliveryStatusDate.isLessThan(toDateDate))))];
+        let where = [(f.where({ deliverStatus: DeliveryStatus.isAResultStatus(), deliveryStatusDate: { ">=": fromDateDate, "<": toDateDate } }))];
         return where;
       },
       orderBy: [f.addressLatitude, f.addressLongitude]

@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, BackendMethod, SqlDatabase, AndFilter, FieldRef, FilterFactories, Allow } from 'remult';
+import { UrlBuilder, Filter, BackendMethod, SqlDatabase, FieldRef, Allow, EntityFilter } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -48,6 +48,7 @@ import { use } from '../translate';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { getLang } from '../sites/sites';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+
 
 
 
@@ -109,7 +110,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             let thisPhone = new Phone(this.phone);
             await this.busy.donotWait(async () => {
 
-                let helper = await this.remult.repo(Helpers).findFirst({ where: h => h.phone.isEqualTo(thisPhone), useCache: false });
+                let helper = await this.remult.repo(Helpers).findFirst({ phone: thisPhone });
                 if (helper) {
                     this.initHelper(helper);
                 } else if (this.phone == cleanPhone) {
@@ -187,12 +188,15 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     moveBasktesFromOtherHelper() {
         openDialog(
             SelectHelperComponent, s => s.args = {
-                filter: h => h.deliveriesInProgress.isGreaterOrEqualTo(1).and(h.id.isDifferentFrom(this.helper.id)),
+                filter: {
+                    deliveriesInProgress: { ">=": 1 },
+                    id: { "!=": this.helper.id }
+                },
                 hideRecent: true,
                 onSelect: async h => {
                     if (h) {
                         await this.verifyHelperExistance();
-                        new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false,'',true)
+                        new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false, '', true)
                     }
                 }
             });
@@ -228,10 +232,15 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await this.busy.donotWait(async () => {
             let groups: Promise<GroupsStats[]>;
             if (!this.dialog.distCenter) {
-                groups = this.remult.repo(GroupsStatsForAllDeliveryCenters).find({ where: f => f.familiesCount.isGreaterThan(0), limit: 1000 });
+                groups = this.remult.repo(GroupsStatsForAllDeliveryCenters).find({ where: { familiesCount: { ">": 0 } }, limit: 1000 });
             }
             else
-                groups = this.remult.repo(GroupsStatsPerDistributionCenter).find({ where: f => f.familiesCount.isGreaterThan(0).and(this.dialog.filterDistCenter(f.distCenter)), limit: 1000 });
+                groups = this.remult.repo(GroupsStatsPerDistributionCenter).find({
+                    where: {
+                        familiesCount: { ">": 0 },
+                        distCenter: this.dialog.filterDistCenter()
+                    }, limit: 1000
+                });
             groups.then(g => {
                 this.groups = g;
                 if (this.filterGroup != '' && !this.groups.find(x => x.name == this.filterGroup)) {
@@ -452,7 +461,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
-                                let f = await this.remult.repo(ActiveFamilyDeliveries).findFirst(f => f.id.isEqualTo(id).and(FamilyDeliveries.readyFilter()));
+                                let f = await this.remult.repo(ActiveFamilyDeliveries).findFirst({ id, $and: [FamilyDeliveries.readyFilter()] });
                                 f.courier = this.helper;
                                 await f.save();
                             }
@@ -505,26 +514,32 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         };
 
 
-        let countFamilies = (additionalWhere?: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter) => {
-            return remult.repo(ActiveFamilyDeliveries).count(f => {
-                let where = FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket).and(remult.filterDistCenter(f.distributionCenter, distCenter));
-                if (additionalWhere) {
-                    where = where.and(additionalWhere(f));
-                }
-
-                return where;
+        let countFamilies = (additionalWhere?: EntityFilter<ActiveFamilyDeliveries>) => {
+            return remult.repo(ActiveFamilyDeliveries).count({
+                $and: [
+                    additionalWhere,
+                    FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket),
+                    { distributionCenter: remult.filterDistCenter(distCenter) }
+                ],
             });
         };
 
-        result.special = await countFamilies(f => f.special.isEqualTo(YesNo.Yes));
+        result.special = await countFamilies({ special: YesNo.Yes });
 
 
         let sql = new SqlBuilder(remult);
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let fd = SqlFor(remult.repo(FamilyDeliveries));
+
         if (helper) {
-            let r = await db.execute(await sql.build('select ', f.id, ' from ', f, ' where ', ActiveFamilyDeliveries.active(f).and(remult.filterDistCenter(f.distributionCenter, distCenter)).and(FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket).and(f.special.isEqualTo(YesNo.No))), ' and ',
-                filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
+            let r = await db.execute(await sql.build('select ', f.id, ' from ', f, ' where ', fd.where({
+                distributionCenter: remult.filterDistCenter(distCenter),
+                special: YesNo.No,
+                $and: [
+                    ActiveFamilyDeliveries.active,
+                    FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket)
+                ]
+            }), ' and ', filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
@@ -532,7 +547,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         if (!distCenter) {
             for await (let c of remult.repo(CitiesStats).iterate({
-                orderBy: ff => ff.city,
+                orderBy: { city: 'asc' },
             })) {
                 var ci = {
                     name: c.city,
@@ -542,15 +557,15 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     result.cities.push(ci);
                 }
                 else {
-                    ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city));
+                    ci.unassignedFamilies = await countFamilies({ city: c.city });
                     if (ci.unassignedFamilies > 0)
                         result.cities.push(ci);
                 }
             }
         } else {
             for await (let c of remult.repo(CitiesStatsPerDistCenter).iterate({
-                orderBy: ff => ff.city,
-                where: ff => remult.filterDistCenter(ff.distributionCenter, distCenter)
+                orderBy: { city: "asc" },
+                where: { distributionCenter: remult.filterDistCenter(distCenter) }
             })) {
                 var ci = {
                     name: c.city,
@@ -560,7 +575,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     result.cities.push(ci);
                 }
                 else {
-                    ci.unassignedFamilies = await countFamilies(f => f.city.isEqualTo(c.city));
+                    ci.unassignedFamilies = await countFamilies({ city: c.city });
                     if (ci.unassignedFamilies > 0)
                         result.cities.push(ci);
                 }
@@ -572,7 +587,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 sql.columnWithAlias(sql.func('count ', '*'), 'c')
             ],
             from: f,
-            where: () => [remult.filterDistCenter(f.distributionCenter, distCenter), FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, undefined, basket)]
+            where: () => [f.where({
+                distributionCenter: remult.filterDistCenter(distCenter),
+                $and: [FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, undefined, basket)]
+            })]
         }), ' group by ', f.area, ' order by ', f.area)));
         result.areas = groupBy.rows.map(x => {
             let r: CityInfo = {
@@ -589,7 +607,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             sql.build('count (', f.quantity, ') b'),
             ],
             from: f,
-            where: () => [remult.filterDistCenter(f.distributionCenter, distCenter), FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea)]
+            where: () => [f.where({
+                distributionCenter: remult.filterDistCenter(distCenter),
+                $and: [FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea)]
+            })]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -618,8 +639,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         if (!args)
             args = {};
         let existingFamilies = await remult.repo(ActiveFamilyDeliveries).find({
-            where: f => f.courier.isEqualTo(helper).and(
-                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery))
+            where: {
+                courier: helper,
+                deliverStatus: DeliveryStatus.ReadyForDelivery
+            },
         });
         if (!strategy)
             strategy = (await ApplicationSettings.getAsync(remult)).routeStrategy;
@@ -674,9 +697,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         if (!helper)
             throw "helper does not exist";
         let existingFamilies = await remult.repo(ActiveFamilyDeliveries).find({
-            where: f => f.courier.isEqualTo(helper).and(
-                f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery)),
-            orderBy: f => f.routeOrder.descending()
+            where: {
+                courier: helper,
+                deliverStatus: DeliveryStatus.ReadyForDelivery
+            },
+            orderBy: { routeOrder: "desc" }
         });
 
 
@@ -716,8 +741,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 let from = new Date();
                 from.setDate(from.getDate() - 1);
                 refFam = await remult.repo(ActiveFamilyDeliveries).find({
-                    where: f => f.courier.isEqualTo(helper).and(DeliveryStatus.isAResultStatus(f.deliverStatus)).and(f.deliveryStatusDate.isGreaterOrEqualTo(from)),
-                    orderBy: f => f.deliveryStatusDate.descending(),
+                    where: {
+                        courier: helper,
+                        deliveryStatusDate: { $gte: from },
+                        deliverStatus: DeliveryStatus.resultStatuses()
+                    },
+                    orderBy: { deliveryStatusDate: "desc" },
                     limit: 1
                 });
             }
@@ -731,14 +760,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
             }
         }
-        function buildWhere(f: FilterFactories<ActiveFamilyDeliveries>) {
-            let where = FamilyDeliveries.readyFilter(info.city, info.group, info.area).and(
-                f.special.isDifferentFrom(YesNo.Yes).and(remult.filterDistCenter(f.distributionCenter, distCenter))
-            );
-            if (basketType)
-                where = where.and(
-                    f.basketType.isEqualTo(basketType));
-            return where;
+        const buildWhere: EntityFilter<FamilyDeliveries> = {
+            special: { "!=": YesNo.Yes },
+            distributionCenter: remult.filterDistCenter(distCenter),
+            basketType: basketType ? basketType : undefined,
+            $and:[FamilyDeliveries.readyFilter(info.city,info.group,info.area)]
         }
 
         let getFamilies = async () => {
@@ -752,7 +778,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 select: () => [sql.build('distinct ', [f.addressLatitude, f.addressLongitude])],
                 from: f,
                 where: async () => {
-                    let where = buildWhere(f);
+                    let where = f.where(buildWhere);
                     let res = [];
                     res.push(where);
                     if (info.preferRepeatFamilies)
@@ -760,7 +786,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     return res;
                 }
             })));
-
             return r.rows.map(x => {
                 return {
 
@@ -793,8 +818,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 locationReferenceFamilies.push(fqr);
                 boundsExtend(fqr);
                 for (const family of await remult.repo(ActiveFamilyDeliveries).find({
-                    where: f => buildWhere(f).and(f.addressLongitude.isEqualTo(fqr.lng).and(f.addressLatitude.isEqualTo(fqr.lat)))
-                        .and(remult.filterDistCenter(f.distributionCenter, distCenter))
+                    where: {
+                        addressLongitude: fqr.lng,
+                        addressLatitude: fqr.lat,
+                        distributionCenter: remult.filterDistCenter(distCenter),
+                        $and: [
+                            buildWhere
+                        ]
+                    }
                 })) {
                     if (i < info.numOfBaskets) {
                         family.courier = helper;
@@ -930,18 +961,19 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
     addSpecial() {
-        this.addFamily(f => f.deliverStatus.isEqualTo(DeliveryStatus.ReadyForDelivery).and(
-            f.courier.isEqualTo(null).and(f.special.isEqualTo(YesNo.Yes))), 'special');
+        this.addFamily({
+            deliverStatus: DeliveryStatus.ReadyForDelivery,
+            courier: null,
+            special: YesNo.Yes
+        }, 'special');
     }
-    addFamily(filter: (f: FilterFactories<ActiveFamilyDeliveries>) => Filter, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
+    addFamily(filter: EntityFilter<ActiveFamilyDeliveries>, analyticsName: string, selectStreet?: boolean, allowShowAll?: boolean) {
         openDialog(SelectFamilyComponent, x => x.args = {
-            where: f => {
-                let where = filter(f);
-                if (this.filterCity)
-                    where = new AndFilter(f.city.isEqualTo(this.filterCity), where);
-                if (this.filterArea != use.language.allRegions)
-                    where = new AndFilter(f.area.isEqualTo(this.filterArea), where);
-                return where;
+            where: {
+                city: this.filterCity ? this.filterCity : undefined,
+                area: this.filterArea != use.language.allRegions ? this.filterArea : undefined,
+                $and: [filter]
+
             },
             allowShowAll,
             selectStreet,
@@ -999,8 +1031,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         quantity: number,
     }, remult?: Remult) {
         let familyDeliveries = await remult.repo(ActiveFamilyDeliveries).find({
-            where: fd =>
-                fd.id.isIn(args.ids).and(FamilyDeliveries.readyFilter())
+            where: { id: args.ids, ...FamilyDeliveries.readyFilter() }
         });
         if (args.quantity > 0) {
             familyDeliveries.sort((a, b) => {
@@ -1042,13 +1073,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         Helpers.addToRecent(this.helper);
     }
     addRepeat() {
-        this.addFamily(f => f.id.isIn(this.repeatFamilies), 'repeat-families')
+        this.addFamily({ id: this.repeatFamilies }, 'repeat-families')
     }
     addSpecific() {
-        this.addFamily(f => FamilyDeliveries.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'specific', false, true);
+        this.addFamily(FamilyDeliveries.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'specific', false, true);
     }
     addStreet() {
-        this.addFamily(f => FamilyDeliveries.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'street', true);
+        this.addFamily(FamilyDeliveries.readyFilter(this.filterCity, this.filterGroup, this.filterArea, this.basketType.basket), 'street', true);
     }
     async addBuilding() {
         let rows = await AsignFamilyComponent.selectBuildings(this.basketType.basket, this.dialog.distCenter, {
@@ -1102,8 +1133,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let result = await db.execute(await sql.query({
             from: fd,
             select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
-            where: () => [remult.filterDistCenter(fd.distributionCenter, distCenter),
-            FamilyDeliveries.readyFilter(args.filterCity, args.filterGroup, args.filterArea, basket)],
+            where: () => [fd.where({
+                distributionCenter: remult.filterDistCenter(distCenter),
+                ...FamilyDeliveries.readyFilter(args.filterCity, args.filterGroup, args.filterArea, basket)
+            })],
             groupBy: () => [fd.addressLatitude, fd.addressLongitude],
             having: () => [sql.build("sum(quantity)", '> 4')]
         }));
@@ -1178,7 +1211,7 @@ export interface BasketInfo {
 
 }
 function filterRepeatFamilies(sql: SqlBuilder, f: SqlDefs<ActiveFamilyDeliveries>, fd: SqlDefs<FamilyDeliveries>, helperId: HelpersBase) {
-    return sql.build(f.family, ' in (select ', fd.family, ' from ', fd, ' where ', fd.courier.isEqualTo(helperId), ')');
+    return sql.build(f.family, ' in (select ', fd.family, ' from ', fd, ' where ', fd.where({ courier: helperId }), ')');
 
 }
 export interface CityInfo {

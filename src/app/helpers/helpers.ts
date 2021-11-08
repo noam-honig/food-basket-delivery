@@ -1,5 +1,5 @@
 
-import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, FilterFactories, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend } from 'remult';
+import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -33,6 +33,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
 import { setHelperInCache } from './init-context';
+import { EntityFilter } from 'remult';
 
 
 
@@ -71,21 +72,18 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     allowApiCrud: false,
     allowApiRead: Allow.authenticated
 },
-    (options, remult) => options.apiPrefilter = (self) => {
-        if (!remult.authenticated())
-            return self.id.isEqualTo("No User");
-        else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab])) {
-
-            return self.id.isIn([remult.currentUser, remult.currentUser.theHelperIAmEscorting, remult.currentUser.escort].
-                filter(x => !!x).map(x => x.id));
-        }
+    (options, remult) => options.apiPrefilter = {
+        id: !remult.authenticated() ? [] :
+            remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? undefined :
+                [remult.currentUser, remult.currentUser.theHelperIAmEscorting, remult.currentUser.escort].
+                    filter(x => !!x).map(x => x.id)
 
     }
 )
 export abstract class HelpersBase extends IdEntity {
 
     static async showSelectDialog(col: FieldRef<any, HelpersBase>, args: {
-        filter?: (helper: FilterFactories<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>) => Filter,
+        filter?: EntityFilter<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>,
         location?: () => Location,
         familyId?: () => string,
         includeFrozen?: boolean,
@@ -204,15 +202,15 @@ export abstract class HelpersBase extends IdEntity {
         sqlExpression = async (selfDefs) => {
             let sql = new SqlBuilder(remult);
             let self = SqlFor(selfDefs);
-            return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.frozenTill.isLessOrEqualTo(new Date()))], then: false }], true);
+            return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
         }
     )
     isFrozen: boolean;
 
 
 
-    static active(e: FilterFactories<HelpersBase>) {
-        return e.archive.isEqualTo(false).and(e.isFrozen.isEqualTo(false));
+    static active: EntityFilter<HelpersBase> = {
+        archive: false, isFrozen: false
     }
     async deactivate() {
         this.archive = true;
@@ -354,11 +352,9 @@ export abstract class HelpersBase extends IdEntity {
 
     }
 }, (options, remult) =>
-    options.apiPrefilter = (self) => {
-        if (!remult.authenticated())
-            return self.id.isEqualTo("No User");
-        else if (!remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]))
-            return self.allowedIds.contains(remult.user.id);
+    options.apiPrefilter = {
+        id: !remult.authenticated() ? [] : undefined,
+        allowedIds: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? { $contains: remult.user.id } : undefined
     }
 )
 
@@ -560,8 +556,8 @@ export class Helpers extends HelpersBase {
                     return r;
                 },
 
-                where: fd => fd.courier.isEqualTo(this),
-                orderBy: fd => fd.deliveryStatusDate.descending(),
+                where: { courier: this },
+                orderBy: { deliveryStatusDate: "desc" },
                 rowsInPage: 25
 
             })
@@ -630,8 +626,11 @@ export class Helpers extends HelpersBase {
         });
 
         let otherFamilies = await this.remult.repo((await import('../families/families')).Families).find({
-            where: f => f.fixedCourier.isEqualTo(this)
-                .and(f.status.isEqualTo(FamilyStatus.Active)).and(f.id.isNotIn(ids))
+            where: {
+                fixedCourier: this,
+                status: FamilyStatus.Active,
+                id: { $ne: ids }
+            }
         });
         if (otherFamilies.length > 0) {
             if (await dialog.YesNoPromise(use.language.thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + use.language.familiesDotCancelTheseAssignments)) {
@@ -696,7 +695,7 @@ export class Helpers extends HelpersBase {
     preferredFinishAddress: string;
     preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);
 
-    
+
 
 
 
@@ -774,7 +773,7 @@ export class Helpers extends HelpersBase {
         }
         return false;
     }
-    
+
     static recentHelpers: HelpersBase[] = [];
     static addToRecent(h: HelpersBase) {
         if (!h)
@@ -792,10 +791,10 @@ export class Helpers extends HelpersBase {
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         for (const event of await this.remult.repo(events.Event).find({
-            where: e => e.eventStatus.isEqualTo(events.eventStatus.active).and(e.eventDate.isGreaterOrEqualTo(yesterday))
+            where: { eventStatus: events.eventStatus.active, eventDate: { ">=": yesterday } }
         })) {
             for (const v of await this.remult.repo(events.volunteersInEvent).find({
-                where: v => v.helper.isEqualTo(this).and(v.eventId.isEqualTo(event.id))
+                where: { helper: this, eventId: event.id }
             })) {
                 result.push(v);
             }

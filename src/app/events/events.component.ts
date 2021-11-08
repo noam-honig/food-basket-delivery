@@ -1,11 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Remult, AndFilter, FieldsMetadata } from 'remult';
-import { BusyService, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
-import { Event, volunteersInEvent, eventStatus } from './events';
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
-import { Helpers } from '../helpers/helpers';
+import { EntityFilter, Remult } from 'remult';
+import { BusyService, GridSettings, openDialog, RowButton } from '@remult/angular';
+import { Event, eventStatus } from './events';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 
@@ -41,19 +38,21 @@ export class EventsComponent implements OnInit {
 
 
     rowsInPage: 25,
-    where: e => {
-      let result = this.dialog.filterDistCenter(e.distributionCenter);
-      if (!this.showPast) {
-        let d = new Date();
-        d.setDate(d.getDate() - 7);
-        result = result.and(e.eventDate.isGreaterOrEqualTo(d));
+    where: () => {
+      let aWeekAgo = new Date();
+      aWeekAgo.setDate(aWeekAgo.getDate() - 7);
+      return {
+        distributionCenter: this.dialog.filterDistCenter(),
+        eventStatus: !this.showArchive ? { "!=": eventStatus.archive } : undefined,
+        eventDate: !this.showPast ? { ">=": aWeekAgo } : undefined
       };
 
-      if (!this.showArchive)
-        result = result.and(e.eventStatus.isDifferentFrom(eventStatus.archive))
-      return result;
     },
-    orderBy: e => [e.eventStatus, e.eventDate, e.startTime],
+    orderBy: {
+      eventStatus: "asc",
+      eventDate: "asc",
+      startTime: "asc"
+    },
     newRow: async e =>
       e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),
     allowSelection: true,
@@ -118,7 +117,7 @@ export class EventsComponent implements OnInit {
               [this.settings.$.questionForRegistration1Caption, this.settings.$.questionForRegistration1Values],
               [this.settings.$.questionForRegistration2Caption, this.settings.$.questionForRegistration2Values],
               [this.settings.$.questionForRegistration3Caption, this.settings.$.questionForRegistration3Values],
-              [this.settings.$.questionForRegistration4Caption, this.settings.$.questionForRegistration4Values], 
+              [this.settings.$.questionForRegistration4Caption, this.settings.$.questionForRegistration4Values],
               s.$.registerAskTz,
               s.$.registerAskEmail,
               s.$.registerAskPreferredDistributionAreaAddress,

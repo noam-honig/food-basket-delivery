@@ -14,12 +14,12 @@ import { RegisterURL } from './regsiter-url';
 export class RegisterURLComponent implements OnInit {
 
   constructor(private remult: Remult) { }
-  urls = new GridSettings(this. remult.repo(RegisterURL), {
+  urls = new GridSettings(this.remult.repo(RegisterURL), {
     allowUpdate: true,
     allowInsert: true,
     numOfColumnsInGrid: 2,
 
-    orderBy: su =>  su.prettyName,
+    orderBy: { prettyName: "asc" },
     rowsInPage: 100
     ,
     gridButtons: [{
