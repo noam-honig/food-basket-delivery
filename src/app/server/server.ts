@@ -317,7 +317,6 @@ s.parentNode.insertBefore(b, s);})();
             res.send(err);
         }
     });
-
     app.use((req, res, next) => {
         console.log(req.path);
         eb(req, res, next);

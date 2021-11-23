@@ -164,7 +164,7 @@ export class RegisterToEvent {
     }
     @BackendMethod({ allowed: true })
     async registerVolunteerToEvent(id: string, site: string, register: boolean) {
-
+        this.init();
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
 
@@ -187,6 +187,11 @@ export class RegisterToEvent {
                 helper.name = this.name;
                 await helper.save();
             }
+            this.remult.setUser({
+                id: helper.id,
+                name: helper.name,
+                roles: []
+            });
             this.remult.currentUser = helper as Helpers;
         }
         let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({
