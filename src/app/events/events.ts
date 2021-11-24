@@ -321,7 +321,7 @@ export class Event extends IdEntity {
         let i = 0;
         for await (const v of remult.repo(volunteersInEvent).iterate(
             {
-                where: v => v.eventId.isEqualTo(this.id).and(v.canceled.isEqualTo(false))
+                where: v => v.eventId.isEqualTo(this.id).and(v.canceled.isEqualTo(false).and(v.confirmed.isEqualTo(false)))
             }
         )) {
             if (v.helper)
