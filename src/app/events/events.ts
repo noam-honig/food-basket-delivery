@@ -316,7 +316,8 @@ export class Event extends IdEntity {
         for await (const v of remult.repo(volunteersInEvent).iterate({
             where: {
                 eventId: this.id,
-                canceled: false
+                canceled: false,
+                confirmed: false
             }
         }
         )) {

@@ -449,6 +449,7 @@ export class HelperFamiliesComponent implements OnInit {
     await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), remult, undefined, { familyId: fd.family });
   }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
+
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
       comment: f.courierComments,
@@ -456,7 +457,7 @@ export class HelperFamiliesComponent implements OnInit {
       questionsArea: new DataAreaSettings({
         fields: () => [
           f.$.a1, f.$.a2, f.$.a3, f.$.a4
-        ]
+        ].filter(f => !f.metadata.caption.startsWith("!"))
       }),
       ok: async (comment) => {
         if (!f.isNew()) {

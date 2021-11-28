@@ -318,7 +318,6 @@ s.parentNode.insertBefore(b, s);})();
     });
 
 
-
     app.get('', (req, res) => {
 
         sendIndex(res, req);
