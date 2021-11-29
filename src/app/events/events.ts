@@ -716,12 +716,12 @@ export class volunteersInEvent extends IdEntity {
     @ChangeDateColumn({ translation: l => l.createDate })
     createDate: Date;
     @Field({ translation: l => l.createUser, allowApiUpdate: false })
-    createUser: Helpers;
+    createUser: HelpersBase;
 
     @ChangeDateColumn()
     registerStatusDate: Date;
     @Field({ translation: l => l.cancelUser, allowApiUpdate: false })
-    cancelUser: Helpers;
+    cancelUser: HelpersBase;
 
 
 
