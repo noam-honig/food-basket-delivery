@@ -75,7 +75,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     (options, remult) => options.apiPrefilter = {
         id: !remult.authenticated() ? [] :
             remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? undefined :
-                [remult.currentUser, remult.currentUser.theHelperIAmEscorting, remult.currentUser.escort].
+                [remult.currentUser, remult.currentUser?.theHelperIAmEscorting, remult.currentUser?.escort].
                     filter(x => !!x).map(x => x.id)
 
     }
