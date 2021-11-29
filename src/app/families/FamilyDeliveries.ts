@@ -259,7 +259,7 @@ export class FamilyDeliveries extends IdEntity {
     relativeDeliveryStatusDate() {
         return relativeDateName(this.remult, { d: this.deliveryStatusDate });
     }
-    @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser })
+    @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser ,includeInApi:Roles.distCenterAdmin})
     courierAssignUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
@@ -274,7 +274,7 @@ export class FamilyDeliveries extends IdEntity {
     })
     needsWork: boolean;
 
-    @Field({ translation: l => l.requireFollowUpUpdateUser })
+    @Field({ translation: l => l.requireFollowUpUpdateUser ,includeInApi:Roles.distCenterAdmin})
     needsWorkUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.requireFollowUpUpdateDate })
     needsWorkDate: Date;
@@ -356,7 +356,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false
     })
     addressOk: boolean;
-    @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false })
+    @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false ,includeInApi:Roles.distCenterAdmin})
     fixedCourier: HelpersBase;
     @IntegerField({ allowApiUpdate: false })
     familyMembers: number;
