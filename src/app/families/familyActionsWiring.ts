@@ -152,7 +152,8 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
                 await this.args.forEach(f);
-                await f.save();
+                if (!f._.wasDeleted())
+                    await f.save();
                 progress.progress(++i / count);
             }
 

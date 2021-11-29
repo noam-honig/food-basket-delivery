@@ -413,7 +413,8 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
                 let f = await remult.repo(Families).findFirst({ id: fd.family, $and: [await Filter.resolve(orig.args.additionalWhere)] })
                 if (f) {
                     await orig.args.forEach(f);
-                    await f.save();
+                    if (!f._.wasDeleted())
+                        await f.save();
                 }
             },
             title: orig.args.title,
