@@ -269,7 +269,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.admin })
   static async resetPassword(helperId: string, remult?: Remult) {
 
-    await remult.repo(Helpers).iterate({ where: { id: helperId } }).forEach(async h => {
+    await remult.repo(Helpers).query({ where: { id: helperId } }).forEach(async h => {
       h.realStoredPassword = '';
       await h.save();
     });
@@ -277,7 +277,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @BackendMethod({ allowed: Roles.admin })
   static async invalidatePassword(helperId: string, remult?: Remult) {
 
-    await remult.repo(Helpers).iterate({ where: { id: helperId } }).forEach(async h => {
+    await remult.repo(Helpers).query({ where: { id: helperId } }).forEach(async h => {
       h.passwordChangeDate = new Date(1901, 1, 1);
       await h.save();
     });
@@ -325,7 +325,7 @@ ${url}
 
   @BackendMethod({ allowed: Roles.admin })
   static async clearCommentsOnServer(remult?: Remult) {
-    for await (const h of remult.repo(Helpers).iterate({ where: { eventComment: { "!=": "" } } })) {
+    for await (const h of remult.repo(Helpers).query({ where: { eventComment: { "!=": "" } } })) {
       h.eventComment = '';
       await h.save();
     }
@@ -333,7 +333,7 @@ ${url}
 
   @BackendMethod({ allowed: Roles.admin })
   static async clearEscortsOnServer(remult?: Remult) {
-    for await (const h of remult.repo(Helpers).iterate()) {
+    for await (const h of remult.repo(Helpers).query()) {
       h.escort = null;
       h.needEscort = false;
       h.theHelperIAmEscorting = null;

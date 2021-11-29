@@ -698,7 +698,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             else
               to.push({ name: key, quantity });
           }
-          for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate()) {
+          for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query()) {
             add(parcels, fd.basketType?.name || '', fd.quantity);
             for (let item of fd.deliveryComments.split(',')) {
               item = item.trim();

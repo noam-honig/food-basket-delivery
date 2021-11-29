@@ -92,7 +92,7 @@ export class CreateNewEvent {
         await settings.save();
 
         let pt = new PromiseThrottle(10);
-        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) } })) {
+        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query({ where: { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) } })) {
             this.archiveHelper.forEach(fd);
             fd.archive = true;
             await pt.push(fd.save());
@@ -120,7 +120,7 @@ export class CreateNewEvent {
         let i = 0;
 
 
-        for await (let f of this.remult.repo(Families).iterate({ where: { status: FamilyStatus.Active }, progress })) {
+        for await (let f of this.remult.repo(Families).query({ where: { status: FamilyStatus.Active }, progress })) {
             let match = true;
             if (this.moreOptions) {
                 if (this.includeGroups?.hasAny()) {

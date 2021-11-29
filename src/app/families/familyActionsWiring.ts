@@ -1,4 +1,4 @@
-import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, IterateOptions } from "remult";
+import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions } from "remult";
 import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
 import { DialogService, extractError } from "../select-popup/dialog";
 
@@ -197,10 +197,10 @@ export async function pagedRowsIterator<T extends EntityBase>(remult: Repository
 
     forEachRow: (f: T) => Promise<void>,
 
-} & IterateOptions<T>) {
+} & QueryOptions<T>) {
     let updated = 0;
     let pt = new PromiseThrottle(10);
-    for await (const f of remult.iterate({ where: args.where, orderBy: args.orderBy })) {
+    for await (const f of remult.query({ where: args.where, orderBy: args.orderBy })) {
 
         await pt.push(args.forEachRow(f));
         updated++;

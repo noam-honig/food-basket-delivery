@@ -89,7 +89,7 @@ export class SelectHelperComponent implements OnInit {
         h.distanceFrom = from;
       }
     }
-    for await (const h of remult.repo(Helpers).iterate({ where: HelpersBase.active  })) {
+    for await (const h of remult.repo(Helpers).query({ where: HelpersBase.active  })) {
       helpers.set(h.id, {
         helperId: h.id,
         name: h.name,

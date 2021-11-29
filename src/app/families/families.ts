@@ -124,7 +124,7 @@ declare type factoryFor<T> = {
     else if (!isBackend()) {
       let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
       if (statusChangedOutOfActive) {
-        let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).iterate({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
+        let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).query({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
         if (await activeDeliveries.count() > 0) {
           if (await openDialog(YesNoQuestionComponent, async x => x.args = {
             question: getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem

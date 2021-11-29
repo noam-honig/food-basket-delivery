@@ -664,7 +664,7 @@ export class ManageComponent implements OnInit {
 
 
     let i = 0;
-    for await (const f of remult.repo(Families).iterate({
+    for await (const f of remult.repo(Families).query({
       where: { status: FamilyStatus.ToDelete },
       orderBy: { createDate: "desc" },
       progress

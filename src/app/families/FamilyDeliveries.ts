@@ -520,7 +520,7 @@ export class FamilyDeliveries extends IdEntity {
     static readyFilter(city?: string, group?: string, area?: string, basket?: BasketType) {
         return this.customFilter({ city, group, area, basketId: basket?.id })
     }
-    static onTheWayFilter = Filter.createCustom<FamilyDeliveries>((self) => ({
+    static onTheWayFilter = Filter.createCustom<FamilyDeliveries>(() => ({
         deliverStatus: DeliveryStatus.ReadyForDelivery,
         courier: { "!=": null }
     }));

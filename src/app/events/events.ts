@@ -313,7 +313,7 @@ export class Event extends IdEntity {
         if (!settings.bulkSmsEnabled)
             throw "אינך רשאי לשלוח הודעות לקבוצה";
         let i = 0;
-        for await (const v of remult.repo(volunteersInEvent).iterate({
+        for await (const v of remult.repo(volunteersInEvent).query({
             where: {
                 eventId: this.id,
                 canceled: false,

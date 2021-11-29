@@ -236,7 +236,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment += this.comment;
                 }
                 if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
-                    for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({ where: { family: f.id } })) {
+                    for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query({ where: { family: f.id } })) {
                         if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive = true;
@@ -283,7 +283,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                 {
                     f.defaultSelfPickup = this.selfPickup;
                     if (this.updateExistingDeliveries) {
-                        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).iterate({
+                        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query({
                             where: {
                                 family: f.id,
                                 deliverStatus: DeliveryStatus.isNotAResultStatus()

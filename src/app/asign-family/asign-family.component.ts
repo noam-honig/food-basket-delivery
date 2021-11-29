@@ -395,16 +395,20 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
             async families => {
+                families = await (await this.remult.repo(ActiveFamilyDeliveries).find({ where: { id: families, $and: [FamilyDeliveries.readyFilter()] } })).map(x => x.id);
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
-                    this.dialog.YesNoQuestion(this.settings.lang.atThisLocationThereAre + " " + families.length + this.settings.lang.deliveriesAssignAllOfThem, async () => {
+                    if (await this.dialog.YesNoPromise(this.settings.lang.atThisLocationThereAre + " " + families.length + this.settings.lang.deliveriesAssignAllOfThem))
+
                         await this.busy.doWhileShowingBusy(async () => {
                             for (const iterator of families) {
                                 await this.assignFamilyBasedOnIdFromMap(iterator);
                             }
                         });
-                    });
+                    else
+                        await this.assignFamilyBasedOnIdFromMap(families[0]);
+
                 }
             };
 
@@ -422,7 +426,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.donotWait(async () => {
-            let f = await this.remult.repo(ActiveFamilyDeliveries).findId(familyId);
+            let f = await this.remult.repo(ActiveFamilyDeliveries).findId(familyId, { useCache: false });
             if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && !f.courier) {
                 this.performSpecificFamilyAssignment(f, 'assign based on map');
             }
@@ -546,7 +550,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
         if (!distCenter) {
-            for await (let c of remult.repo(CitiesStats).iterate({
+            for await (let c of remult.repo(CitiesStats).query({
                 orderBy: { city: 'asc' },
             })) {
                 var ci = {
@@ -563,7 +567,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 }
             }
         } else {
-            for await (let c of remult.repo(CitiesStatsPerDistCenter).iterate({
+            for await (let c of remult.repo(CitiesStatsPerDistCenter).query({
                 orderBy: { city: "asc" },
                 where: { distributionCenter: remult.filterDistCenter(distCenter) }
             })) {
@@ -764,7 +768,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             special: { "!=": YesNo.Yes },
             distributionCenter: remult.filterDistCenter(distCenter),
             basketType: basketType ? basketType : undefined,
-            $and:[FamilyDeliveries.readyFilter(info.city,info.group,info.area)]
+            $and: [FamilyDeliveries.readyFilter(info.city, info.group, info.area)]
         }
 
         let getFamilies = async () => {

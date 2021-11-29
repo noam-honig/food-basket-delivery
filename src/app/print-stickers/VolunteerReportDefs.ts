@@ -100,7 +100,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   static async getStickerData(filterVolunteer?: string, remult?: Remult) {
     let d = new VolunteerReportDefs(remult, undefined);
     let lastCourier = null;
-    for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
+    for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
       where: {
         deliverStatus: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup],
         routeOrder: 0
@@ -115,7 +115,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
 
 
     let r: any[] = [];
-    for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({
+    for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
       where: {
         deliverStatus: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup],
         courier: filterVolunteer ? await remult.repo(Helpers).findId(filterVolunteer) : undefined

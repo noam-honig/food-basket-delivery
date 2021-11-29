@@ -58,7 +58,7 @@ export class moveDeliveriesHelper {
         let i = 0;
         let toHasDeliveries = (await remult.repo(ActiveFamilyDeliveries).count({ courier: to })) > 0;
 
-        for await (const fd of remult.repo(ActiveFamilyDeliveries).iterate({ where: { id: deliveries, deliverStatus: DeliveryStatus.ReadyForDelivery } })) {
+        for await (const fd of remult.repo(ActiveFamilyDeliveries).query({ where: { id: deliveries, deliverStatus: DeliveryStatus.ReadyForDelivery } })) {
             fd.courier = to;
             fd.disableRouteReCalc = !toHasDeliveries;
             fd._disableMessageToUsers = true;

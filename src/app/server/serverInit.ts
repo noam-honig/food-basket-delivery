@@ -24,7 +24,7 @@ import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { ClassType } from 'remult/classType';
-import { iterateConfig } from 'remult/src/context';
+
 import { InitContext as InitRemult } from '../helpers/init-context';
 import { actionInfo } from 'remult/src/server-action';
 
@@ -32,7 +32,6 @@ declare const lang = '';
 export const initSettings = {
     disableSchemaInit: false
 }
-iterateConfig.pageSize = 100;
 actionInfo.runningOnServer = true;
 export async function serverInit() {
     

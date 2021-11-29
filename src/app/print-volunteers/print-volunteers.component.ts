@@ -25,7 +25,7 @@ export class PrintVolunteersComponent implements OnInit {
   static async volunteersForPrint(remult?: Remult) {
     let total = 0;
     let volunteers: volunteer[] = [];
-    for await (const d of  remult.repo(ActiveFamilyDeliveries).iterate()) {
+    for await (const d of  remult.repo(ActiveFamilyDeliveries).query()) {
       
       let v = volunteers.find(v => v.id == d.courier?.id);
       if (!v) {

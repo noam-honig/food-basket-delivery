@@ -186,7 +186,7 @@ export class MergeFamiliesComponent implements OnInit {
     let newFamily = await remult.repo(Families).findId(id);
 
     for (const oldId of ids) {
-      for await (const fd of remult.repo(FamilyDeliveries).iterate({ where: { family: oldId } })) {
+      for await (const fd of remult.repo(FamilyDeliveries).query({ where: { family: oldId } })) {
         fd.family = id;
         newFamily.updateDelivery(fd);
         await fd.save();
