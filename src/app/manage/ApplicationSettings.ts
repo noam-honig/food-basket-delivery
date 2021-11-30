@@ -457,10 +457,12 @@ export class ApplicationSettings extends EntityBase {
   @Field({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string;
 
-  @Field({})
+  @Field({ includeInApi: Roles.admin })
   familySelfOrderEnabled: boolean;
-  @Field()
+  @Field({ includeInApi: Roles.admin })
   familySelfOrderMessage: string;
+  @Field({ includeInApi: Roles.admin })
+  inviteVolunteersMessage: string;
 
 
 

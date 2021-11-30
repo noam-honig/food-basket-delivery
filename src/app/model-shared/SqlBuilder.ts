@@ -387,7 +387,7 @@ export class myDummySQLCommand implements SqlCommand {
 }
 
 
-export type SqlDefs<T = unknown> = FieldsMetadata<T> &  { metadata: EntityMetadata, where: (item: EntityFilter<T>) => Filter };
+export type SqlDefs<T = unknown> = FieldsMetadata<T> & { metadata: EntityMetadata, where: (item: EntityFilter<T>) => Filter };
 export function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): SqlDefs<T> {
     let origDefs: EntityMetadata;
     let re = repo as Repository<T>;
@@ -409,14 +409,14 @@ export function SqlFor<T>(repo: Repository<T> | EntityMetadata<T>): SqlDefs<T> {
 
     return r as SqlDefs<T>;
 }
-class fieldInSql  {
+class fieldInSql {
     constructor(public metadata: FieldMetadata) {
 
     }
     getDbName() {
         return this.metadata.getDbName();
     }
-    
+
 
     key = this.metadata.key;
     target = this.metadata.target;

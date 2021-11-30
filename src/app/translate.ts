@@ -1207,6 +1207,7 @@ export class Language {
   sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
   whatToOrder = "מה להזמין?";
   smsProviderConfiguration ="הגדרות ספק SMS";
+  sendMessageToInviteVolunteers = "שליחת הודעה לזימון מתנדבים";
 
 }
 
