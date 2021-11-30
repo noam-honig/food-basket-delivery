@@ -75,7 +75,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         let allowed = remult.filterCenterAllowedForUser();
         if (distCenter == null)
             return allowed;
-        if (distCenter == allowed || allowed === undefined)
+        if (distCenter.id == (allowed as any)?.id || allowed === undefined)
             return distCenter;
         return [];
     }
