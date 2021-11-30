@@ -76,7 +76,7 @@ export class SendBulkSms {
                 await sql.build(helpers.id, " not in (", sql.query({
                     select: () => [ve.helper],
                     from: ve,
-                    where: async () => [await sql.build(ve.id, " in (", sql.query({
+                    where: async () => [await sql.build(ve.eventId, " in (", sql.query({
                         select: () => [events.id],
                         from: events,
                         where: () => [events.where({
