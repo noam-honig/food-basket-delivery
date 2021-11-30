@@ -36,7 +36,7 @@ export class SendBulkSms {
     @Field({ caption: 'רק כאלו שהתנדבו בעבר בעיר' })
     city: string = '';
     @Field({ caption: "הגבלת מספר הודעות" })
-    limit: number = 1000;
+    limit: number = 100;
     get $() { return getFields(this) }
     async getVolunteers() {
         let db = this.remult._dataSource as SqlDatabase;
