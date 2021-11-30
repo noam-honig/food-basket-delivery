@@ -157,27 +157,31 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.doLogin();
   });
   updatePasswordAndEulaState = new loginState(async () => {
-
+    this.$.newPassword.error = '';
     if (this.loginResult.requiredToSetPassword) {
       if (this.newPassword == this.password) {
         this.$.newPassword.error = this.settings.lang.newPasswordMustBeNew;
+        this.resetPasswords();
         this.dialog.Error(this.settings.lang.newPasswordMustBeNew);
         return;
 
       }
       if (!this.newPassword || this.newPassword != this.confirmPassword) {
         this.$.newPassword.error = this.settings.lang.passwordDoesntMatchConfirmPassword;
+        this.resetPasswords();
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
         return;
       }
       validatePasswordColumn(this.remult, this.$.newPassword);
       if (this.$.newPassword.error) {
+        this.resetPasswords();
         this.dialog.Error(this.$.newPassword.error);
         return;
       }
     }
 
     if (this.loginResult.requiredToSignEULA && !this.confirmEula) {
+
       this.dialog.Error(this.settings.lang.mustConfirmEula);
       return;
     }
@@ -191,9 +195,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
     catch (err) {
       this.dialog.exception(this.settings.lang.register, err);
+      this.resetPasswords();
       this.loginState = this.phoneState;
     }
   });
+  private resetPasswords() {
+    this.newPassword = '';
+    this.confirmPassword = '';
+  }
+
   @BackendMethod({ allowed: true })
   static async registerNewUser(phone: string, name: string, remult?: Remult) {
     let h =  remult.repo(Helpers).create();
