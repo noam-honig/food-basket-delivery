@@ -18,6 +18,8 @@ export class SendBulkSms {
     async send() {
         let i = 0;
         let settings = await ApplicationSettings.getAsync(this.remult);
+        if (!settings.bulkSmsEnabled)
+            throw ("Forbidden");
         for (const v of await this.getVolunteers()) {
             let message = this.buildMessage(v.name, settings).merge(settings.inviteVolunteersMessage);
             if (true)
