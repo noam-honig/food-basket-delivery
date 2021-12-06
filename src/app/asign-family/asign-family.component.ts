@@ -543,7 +543,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                     ActiveFamilyDeliveries.active,
                     FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket)
                 ]
-            }), ' and ', filterRepeatFamilies(sql, f, fd, helper), ' limit 30'));
+            }), ' and ', filterRepeatFamilies(sql, f, fd, helper), ' limit 100'));
             result.repeatFamilies = r.rows.map(x => x[r.getColumnKeyInResultForIndexInSelect(0)]);
         }
 
