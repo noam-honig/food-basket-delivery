@@ -259,7 +259,8 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.remult).exportToExcel,
                         click: async () => {
-                            saveToExcel(getSettings(this.remult), this.remult.repo(volunteersInEvent), x.args.settings, use.language.volunteersRegisteredTo + " " + this.name, busy)
+                            saveToExcel(getSettings(this.remult), this.remult.repo(volunteersInEvent), x.args.settings, use.language.volunteersRegisteredTo + " " + this.name, busy,
+                                (e, c) => c == e.$.id || c == e.$.eventId || c == e.$.helperName || c == e.$.helperPhone)
                         }
                     }
                 ],
@@ -672,6 +673,13 @@ export class volunteersInEvent extends IdEntity {
             }
     )
     assignedDeliveries: number;
+
+    @Field({ allowApiUpdate: Roles.distCenterAdmin, translation: l => l.confirmed })
+    confirmed: boolean;
+
+    @Field({ allowApiUpdate: Roles.distCenterAdmin })
+    canceled: boolean;
+
     @Field({
         translation: l => l.delveriesSuccessfulEver
     },
@@ -683,6 +691,7 @@ export class volunteersInEvent extends IdEntity {
                 return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), d.where({ deliverStatus: DeliveryStatus.isSuccess() })] }, 'succesfulDeliveries')
             }
     )
+
     succesfulDeliveries: number;
     @Field({
         translation: l => l.email
@@ -737,11 +746,9 @@ export class volunteersInEvent extends IdEntity {
     cancelUser: HelpersBase;
 
 
-
-    @Field({ allowApiUpdate: Roles.distCenterAdmin })
-    canceled: boolean;
     @Field({ allowApiUpdate: false })
     fromGeneralList: boolean;
+
 
     @CustomColumn(() => registerQuestionForVolunteers[1])
     a1: string;
@@ -752,8 +759,7 @@ export class volunteersInEvent extends IdEntity {
     @CustomColumn(() => registerQuestionForVolunteers[4])
     a4: string;
 
-    @Field({ allowApiUpdate: Roles.distCenterAdmin, translation: l => l.confirmed })
-    confirmed: boolean;
+
 
 }
 
