@@ -112,39 +112,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
           let c = new SendBulkSms(this.remult);
           openDialog(InputAreaComponent, x => x.args = {
             title: use.language.sendMessageToInviteVolunteers,
-            helpText:"ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
+            helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
             settings: {
-              fields: () => [c.$.city,c.$.limit]
+              fields: () => [c.$.city, c.$.limit]
             },
             ok: async () => {
-              let defaultMessage =
-                `הי !מתנדב!
-אנו זקוקים למתנדבים לחלוקה לניצולי שואה ב!עיר! ביום חמישי, נשמח לעזרה והרשמה בלינק:
-!קישור!
-
-בתודה !ארגון!
-להסרה השב "הסר"`
-              let count = await c.count();
-              await openDialog(EditCustomMessageComponent, edit => edit.args = {
-                message: c.buildMessage(this.helpers.currentRow.name, this.settings),
-                templateText: this.settings.inviteVolunteersMessage || defaultMessage,
-                helpText: '',
-                title: this.settings.lang.sendMessageToInviteVolunteers + ' ' + this.settings.lang.to + ' ' + count + ' ' + this.settings.lang.volunteers,
-                buttons: [{
-                  name: 'שלח הודעה',
-                  click: async () => {
-                    if (await this.dialog.YesNoPromise(this.settings.lang.sendMessageToInviteVolunteers + ' ' + this.settings.lang.to + ' ' + count + ' ' + this.settings.lang.volunteers + "?")) {
-                      this.settings.inviteVolunteersMessage = edit.args.templateText;
-                      await this.settings.save();
-                      let r = await c.send();
-                      this.dialog.Info(r + " הודעות נשלחו");
-                      edit.ref.close();
-                    }
-                  }
-                }]
-
-
-              })
+              c.sendBulkDialog(this.dialog, this.helpers.currentRow);
             },
             cancel: () => { }
           });
@@ -243,10 +216,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
         click: async h => {
           await h.showDeliveryHistory(this.dialog, this.busy);
         }
-      }
-
-
-
+      },
+      new SendBulkSms(this.remult).sendSingleHelperButton(this.dialog)
     ],
 
 
@@ -270,6 +241,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   });
+
+
 
   private freezeDateEntry(h: Helpers) {
     let r: DataControlInfo<Helpers>[] = [

@@ -44,7 +44,7 @@ export class EventsComponent implements OnInit {
       return {
         distributionCenter: this.dialog.filterDistCenter(),
         eventStatus: !this.showArchive ? { "!=": eventStatus.archive } : undefined,
-        eventDate: !this.showPast ? { ">=": aWeekAgo } : undefined
+        eventDate: !this.showPast && !this.showArchive ? { ">=": aWeekAgo } : undefined
       };
 
     },

@@ -25,6 +25,7 @@ import * as moment from "moment";
 import { DateOnlyValueConverter } from "remult/valueConverters";
 import { EditCustomMessageComponent, messageMerger } from "../edit-custom-message/edit-custom-message.component";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
+import { SendBulkSms } from "../helpers/send-bulk-sms";
 
 
 
@@ -293,6 +294,18 @@ export class Event extends IdEntity {
                         click: h => h.helperPhone.sendWhatsapp(this.remult),
                         icon: 'textsms'
                     },
+                    (() => {
+                        let b = new SendBulkSms(this.remult).sendSingleHelperButton(dialog);
+                        return {
+                            ...b,
+                            click: async v => {
+                                b.click(await v.helper.getHelper());
+                            }
+
+                        } as RowButton<volunteersInEvent>
+
+                    })()
+                    ,
                     {
                         name: getLang(this.remult).remove,
                         click: async eh => {
