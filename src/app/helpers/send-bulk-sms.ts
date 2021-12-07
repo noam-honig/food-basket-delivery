@@ -1,4 +1,4 @@
-import { BackendMethod, Controller, Field, getFields, Remult, SqlDatabase } from "remult";
+import { BackendMethod, Controller, Field, Filter, getFields, Remult, SqlDatabase } from "remult";
 import { FamilyDeliveries } from "../families/FamilyDeliveries";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers, HelpersBase } from "./helpers";
@@ -132,15 +132,11 @@ export class SendBulkSms {
             from: helpers,
             select: () => [helpers.phone, helpers.name, helpers.id],
             where: async () => [
-                helpers.where({ archive: false, doNotSendSms: false }),
-                this.city && await sql.build(helpers.id, " in (", sql.query({
-                    select: () => [fd.courier],
-                    from: fd,
-                    where: () => [fd.where({
-                        archive: true,
-                        city: { $contains: this.city }
-                    })]
-                }), ")"),
+                await Filter.translateCustomWhere(helpers.where({
+                    archive: false, doNotSendSms: false,
+                    $and: [this.city && Helpers.deliveredPreviously({ city: this.city })]
+                }), helpers.metadata, helpers.metadata, this.remult),
+
                 await sql.build(helpers.id, " not in (", sql.query({
                     select: () => [fd.courier],
                     from: fd,

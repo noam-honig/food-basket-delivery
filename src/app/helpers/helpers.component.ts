@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Helpers } from './helpers';
 import { Route } from '@angular/router';
-import { BackendMethod } from 'remult';
+import { BackendMethod, Field, getFields } from 'remult';
 import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
@@ -35,6 +35,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       this.helpers.reloadData();
     }, this.destroyHelper);
   }
+  @Field()
+  city: string = '';
   quickAdd() {
     this.helpers.addNewRow();
 
@@ -65,65 +67,87 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
     rowCssClass: h => (h.archive ? 'deliveredProblem' : h.isFrozen ? 'forzen' : ''),
 
-    gridButtons: [
-      {
-        name: use.language.exportToExcel,
-        click: async () => {
-          await saveToExcel(this.settings, this.remult.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
-            async (h, addColumn) => {
-              addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation().getCity(), 's');
-              addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation().getCity(), 's');
+    gridButtons: [{
+      name: use.language.filterCity,
+      click: async () => {
+        let prev = this.city;
+        openDialog(InputAreaComponent, x => x.args = {
+          title: use.language.filterCity,
+          helpText: use.language.filterCityHelp,
+          settings: {
+            fields: () => [getFields(this).city]
+          },
+          ok: async () => {
+            this.helpers.reloadData();
+          },
+          cancel: () => {
+            this.city = '';
+            this.helpers.reloadData();
+          }
 
-            });
-        }
-        , visible: () => this.remult.isAllowed(Roles.admin)
-      },
-      {
-        name: use.language.showDeletedHelpers,
-        click: () => {
-          this.showDeleted = !this.showDeleted;
+        });
+      }
+    },
+    {
+      name: use.language.exportToExcel,
+      click: async () => {
+        await saveToExcel(this.settings, this.remult.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
+          async (h, addColumn) => {
+            addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation().getCity(), 's');
+            addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation().getCity(), 's');
+
+          });
+      }
+      , visible: () => this.remult.isAllowed(Roles.admin)
+    },
+
+    {
+      name: use.language.showDeletedHelpers,
+      click: () => {
+        this.showDeleted = !this.showDeleted;
+        this.helpers.reloadData();
+      }
+    },
+    {
+      name: use.language.clearAllVolunteerComments,
+      click: async () => {
+        if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
+          await HelpersComponent.clearCommentsOnServer();
           this.helpers.reloadData();
         }
       },
-      {
-        name: use.language.clearAllVolunteerComments,
-        click: async () => {
-          if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
-            await HelpersComponent.clearCommentsOnServer();
-            this.helpers.reloadData();
-          }
-        },
-        visible: () => this.settings.showHelperComment && this.remult.isAllowed(Roles.admin)
+      visible: () => this.settings.showHelperComment && this.remult.isAllowed(Roles.admin)
 
+    },
+    {
+      name: use.language.clearEscortInfo,
+      click: async () => {
+        if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
+          await HelpersComponent.clearEscortsOnServer();
+          this.helpers.reloadData();
+        }
       },
-      {
-        name: use.language.clearEscortInfo,
-        click: async () => {
-          if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
-            await HelpersComponent.clearEscortsOnServer();
-            this.helpers.reloadData();
-          }
-        },
-        visible: () => this.remult.isAllowed(Roles.admin)
+      visible: () => this.remult.isAllowed(Roles.admin)
+    },
+    {
+      name: use.language.sendMessageToInviteVolunteers,
+      click: async () => {
+        let c = new SendBulkSms(this.remult);
+        openDialog(InputAreaComponent, x => x.args = {
+          title: use.language.sendMessageToInviteVolunteers,
+          helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
+          settings: {
+            fields: () => [c.$.city, c.$.limit]
+          },
+          ok: async () => {
+            c.sendBulkDialog(this.dialog, this.helpers.currentRow);
+          },
+          cancel: () => { }
+        });
       },
-      {
-        name: use.language.sendMessageToInviteVolunteers,
-        click: async () => {
-          let c = new SendBulkSms(this.remult);
-          openDialog(InputAreaComponent, x => x.args = {
-            title: use.language.sendMessageToInviteVolunteers,
-            helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
-            settings: {
-              fields: () => [c.$.city, c.$.limit]
-            },
-            ok: async () => {
-              c.sendBulkDialog(this.dialog, this.helpers.currentRow);
-            },
-            cancel: () => { }
-          });
-        },
-        visible: () => this.remult.isAllowed(Roles.admin) && this.settings.bulkSmsEnabled
-      }
+      visible: () => this.remult.isAllowed(Roles.admin) && this.settings.bulkSmsEnabled
+    }
+
       // , {
       //   name: 'temp',
       //   click: async () => {
@@ -225,7 +249,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
     rowsInPage: 25,
     where: () => ({
       name: { $contains: this.searchString },
-      archive: !this.showDeleted ? false : undefined
+      archive: !this.showDeleted ? false : undefined,
+      $and: [this.city && Helpers.deliveredPreviously({ city: this.city })]
     })
     ,
     columnSettings: helpers => {

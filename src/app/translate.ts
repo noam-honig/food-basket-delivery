@@ -452,6 +452,7 @@ export class Language {
   showHelperComment = 'הצג הערה בשיוך למתנדב';
   filterFamilyGroups = 'סינון קבוצת משפחה';
   filterCity = 'סינון עיר';
+  filterCityHelp = 'הצג רק מתנדבים שחילקו בעיר';
   filterRegion = 'סינון אזור';
   filterBasketType = 'סינון סוג סל';
   selectNumberOfFamilies = 'בחירת מספר משפחות';

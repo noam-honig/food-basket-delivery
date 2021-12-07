@@ -1,5 +1,5 @@
 
-import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend } from 'remult';
+import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -759,7 +759,24 @@ export class Helpers extends HelpersBase {
     })
     distCenterAdmin: boolean;
 
+    static deliveredPreviously = Filter.createCustom<Helpers,
+        { city: string }>(((remult, { city }) => {
+            
+            return SqlDatabase.customFilter(async c => {
+                let fd = SqlFor(remult.repo((await (import('../families/FamilyDeliveries'))).FamilyDeliveries));
+                let helpers = SqlFor(remult.repo(Helpers));
+                let sql = new SqlBuilder(remult);
+                c.sql = await sql.build(helpers.id, " in (", sql.query({
+                    select: () => [fd.courier],
+                    from: fd,
+                    where: () => [fd.where({
+                        archive: true,
+                        city: { $contains: city }
+                    })]
+                }), ")")
 
+            });
+        }))
 
 
 
