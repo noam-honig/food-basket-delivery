@@ -110,7 +110,7 @@ export class SendBulkSms {
         if (!settings.bulkSmsEnabled)
             throw ("Forbidden");
         let message = this.buildMessage(helper.name, settings).merge(settings.inviteVolunteersMessage);
-        if (false)
+        if (true)
             await new SendSmsUtils().sendSms(helper.phone.thePhone, message, this.remult, helper);
 
         else
