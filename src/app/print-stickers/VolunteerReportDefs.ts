@@ -28,6 +28,11 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       build: ({ fd }) => (fd.courier ? fd.courier?.phone?.displayValue : "")
     });
     this.fields.push({
+      key: this.helperCommentKey,
+      caption: 'הערה למתנדב',
+      build: ({ fd }) => (fd.courier ? fd.courier?.eventComment : "")
+    });
+    this.fields.push({
       key: 'address',
       caption: 'כתובת מלאה',
       build: ({ fd }) => fd.getAddressDescription() +
@@ -68,7 +73,11 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     ]);
     this.addFields(Families, a => a.f, f => [
       f.familyMembers,
-      f.socialWorker
+      f.socialWorker,
+      f.custom1,
+      f.custom2,
+      f.custom3,
+      f.custom4
     ]);
     this.fields.sort((a, b) => a.caption.localeCompare(b.caption));
   }
@@ -131,6 +140,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   }
   textBeforeKey = "@textBefore";
   helperPhoneKey = "helperPhone";
+  helperCommentKey = "helperComment";
   fieldProps: ElementProps = {
     caption: 'תכונות שדה',
     props: [
