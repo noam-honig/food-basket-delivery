@@ -77,7 +77,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       f.custom1,
       f.custom2,
       f.custom3,
-      f.custom4
+      f.custom4,
+      f.birthDate
     ]);
     this.fields.sort((a, b) => a.caption.localeCompare(b.caption));
   }
