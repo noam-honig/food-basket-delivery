@@ -29,7 +29,9 @@ import { Phone } from "../model-shared/phone";
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
 
-
+let publicRoot = 'hagai';
+if (!fs.existsSync(publicRoot + '/index.html'))
+    publicRoot = 'dist/' + publicRoot;
 serverInit().then(async (dataSource) => {
 
     let app = express();
@@ -56,7 +58,7 @@ serverInit().then(async (dataSource) => {
             res.redirect('/' + Sites.guestSchema + '/');
             return;
         }
-        const index = 'hagai/index.html';
+        const index = publicRoot + '/index.html';
 
 
         if (fs.existsSync(index)) {
@@ -327,7 +329,7 @@ s.parentNode.insertBefore(b, s);})();
 
         sendIndex(res, req);
     });
-    app.use(express.static('hagai'));
+    app.use(express.static(publicRoot));
 
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
@@ -361,7 +363,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         catch (err) {
         }
         try {
-            res.send(fs.readFileSync('hagai/assets/apple-touch-icon.png'));
+            res.send(fs.readFileSync(publicRoot + '/assets/apple-touch-icon.png'));
         }
         catch (err) {
             res.statusCode = 404;
@@ -370,10 +372,10 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
     });
     app.use('/guest/favicon.ico', async (req, res) => {
         try {
-            res.send(fs.readFileSync('hagai/favicon.ico'));
+            res.send(fs.readFileSync(publicRoot + '/favicon.ico'));
         }
         catch {
-            res.send(fs.readFileSync('assets/favicon.ico'));
+            res.send(fs.readFileSync(publicRoot + '/assets/favicon.ico'));
         }
     })
     app.use(sitePrefix + '/favicon.ico', async (req, res) => {
@@ -388,7 +390,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         }
         catch (err) { }
         try {
-            res.send(fs.readFileSync('hagai/favicon.ico'));
+            res.send(fs.readFileSync(publicRoot + '/favicon.ico'));
         }
         catch (err) {
             res.statusCode = 404;

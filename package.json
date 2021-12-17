@@ -9,6 +9,7 @@
     "server-test": "./node_modules/.bin/tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
     "ng-serve-noam-ip-10.0.0.6": "ng serve --host 10.0.0.6",
     "start": "node server/app/server/server.js",
+    "t-start": "node dist/server/app/server/server.js",
     "server:dev-run": "node --inspect dist/server/app/server/server.js",
     "server:dev-run-direct-ref": "node  dist/hug-moms/src/app/server/server.js",
     "ng-build": "ng build --prod",
@@ -24,7 +25,8 @@
     "build-docs": "vuepress build docs",
     "release-docs": "deploy-docs.sh",
     "test": "ng test",
-    "release": "npm run ng-build && npm run server:build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
+    "t-build": "npm run ng-build && npm run server:build",
+    "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
   },
   "private": true,
   "dependencies": {
