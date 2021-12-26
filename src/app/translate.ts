@@ -1209,6 +1209,7 @@ export class Language {
   whatToOrder = "מה להזמין?";
   smsProviderConfiguration ="הגדרות ספק SMS";
   sendMessageToInviteVolunteers = "שליחת הודעה לזימון מתנדבים";
+  whatToTake = "להביא";
 
 }
 

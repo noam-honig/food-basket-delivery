@@ -26,6 +26,7 @@ import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Field, use } from '../translate';
 import { Sites } from '../sites/sites';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 
 @Component({
   selector: 'app-manage',
@@ -88,6 +89,17 @@ export class ManageComponent implements OnInit {
       {
         field: x.boxes2,
         width: '100px'
+      }, {
+        field: x.whatToTake,
+        click: b => {
+          openDialog(EditCommentDialogComponent, x => x.args = {
+            title: use.language.whatToTake,
+            comment: b.whatToTake.split(',').join("\n"),
+            save: (c) => {
+              b.whatToTake = c.split("\n").join(", ")
+            }
+          });
+        }
       }
     ],
     saving: () => this.refreshEnvironmentAfterSave(),

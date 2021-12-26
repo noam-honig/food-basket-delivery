@@ -1,6 +1,6 @@
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { BasketType } from "../families/BasketType";
+import { BasketType, quantityHelper } from "../families/BasketType";
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
 import { Remult } from 'remult';
@@ -135,7 +135,7 @@ export class UserFamiliesList {
             this.allFamilies = await this.remult.repo(ActiveFamilyDeliveries).find({
                 where: {
                     courier: this.helper,
-                    visibleToCourier: !this.settings.isSytemForMlt()&&!this.remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
+                    visibleToCourier: !this.settings.isSytemForMlt() && !this.remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
 
                 }, orderBy: {
                     deliverStatus: "asc",
@@ -174,6 +174,7 @@ export class UserFamiliesList {
             }
         });
     }
+    whatToTake: string = '';
 
     initFamilies() {
 
@@ -190,6 +191,9 @@ export class UserFamiliesList {
         if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {
             this.refreshRoute({});
         }
+        const q = new quantityHelper();
+        this.toDeliver.forEach(d => q.parseComment(d?.basketType?.whatToTake));
+        this.whatToTake = q.toString();
         if (this.toDeliver.length == 0)
             this.prevRouteStats = undefined;
         this.maxAssignTime = undefined;

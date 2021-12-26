@@ -10,7 +10,7 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent }
 
 import * as chart from 'chart.js';
 import { colors } from '../families/stats-action';
-import { BasketType } from '../families/BasketType';
+import { BasketType, quantityHelper } from '../families/BasketType';
 
 
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from '../families/FamilyDeliveries';
@@ -688,8 +688,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       {
         name: getLang(this.remult).whatToOrder,
         click: async () => {
-          let items: totalItem[] = [];
-          let parcels: totalItem[] = [];
+          let items = new quantityHelper();
+          let parcels = new quantityHelper();
           let add = (to: totalItem[], key: string, quantity: number) => {
             key = key.trim();
             let x = to.find(w => w.name == key);
@@ -699,24 +699,23 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
               to.push({ name: key, quantity });
           }
           for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query()) {
-            add(parcels, fd.basketType?.name || '', fd.quantity);
+            parcels.add(fd.basketType?.name || '', fd.quantity);
             for (let item of fd.deliveryComments.split(',')) {
               item = item.trim();
               let reg = /(^\d*)(.*)/.exec(item);
               if (reg[1])
-                add(items, reg[2], +reg[1])
-              else add(items, reg[2], 1);
+                items.add(reg[2], +reg[1])
+              else items.add(reg[2], 1);
             }
           }
 
-          items.sort((a, b) => a.name.localeCompare(b.name));
-          parcels.sort((a, b) => a.name.localeCompare(b.name));
+      
 
 
           openDialog(EditCommentDialogComponent, edit => edit.args = {
             title: getLang(this.remult).whatToOrder,
             save: () => { },
-            comment: items.map(x => x.quantity + ' X ' + x.name).join("\n") + "\n---------------\n" + parcels.map(x => x.quantity + ' X ' + x.name).join('\n')
+            comment: items.toString() + "\n---------------\n" + parcels.toString()
           });
         }
       },
