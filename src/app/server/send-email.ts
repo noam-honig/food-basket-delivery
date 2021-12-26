@@ -5,7 +5,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 
 EmailSvc.sendMail = async (subject: string, message: string, email: string, remult: Remult) => {
     let settings = await ApplicationSettings.getAsync(remult);
-    if (!settings.isSytemForMlt())
+    if (!settings.isSytemForMlt() && !settings.familySelfOrderEnabled)
         return;
     if (!email || !email.includes('@'))
         return;
@@ -27,16 +27,22 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string, remu
         subject: subject,
         html: message
     };
-    new Promise((res, rej) => {
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                rej(error);
-            } else {
-                res(true);
-                console.log('Email sent: ' + info.response);
-            }
+    try {
+        await new Promise((res, rej) => {
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    rej(error);
+                } else {
+                    res(true);
+                    console.log('Email sent: ' + info.response);
+                }
+            });
         });
-    });
-    return true;
+        return true;
+    }
+    catch (err){
+        console.log(err);
+        return false;
+    }
 
 }

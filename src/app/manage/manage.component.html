@@ -129,7 +129,7 @@
                 <h4>{{settings.lang.sampleMessage}}</h4>
                 <pre [innerHTML]="testEmailHelper()"></pre>
             </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt()">
+            <mat-card *ngIf="settings.isSytemForMlt()||settings.familySelfOrderEnabled">
                 <mat-card-title>
                     הגדרות מייל
                 </mat-card-title>
