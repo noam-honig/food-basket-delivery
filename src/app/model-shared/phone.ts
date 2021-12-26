@@ -27,6 +27,9 @@ export class Phone {
   constructor(public thePhone: string) {
 
   }
+  toString(){
+    return this.thePhone;
+  }
   get displayValue() {
     return Phone.formatPhone(this.thePhone);
   }
