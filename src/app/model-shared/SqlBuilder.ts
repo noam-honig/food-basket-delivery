@@ -317,7 +317,7 @@ export class SqlBuilder {
             where.push(...await query.where());
         }
         if (query.from.metadata.options.backendPrefilter) {
-            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from.metadata, query.from.metadata.options.backendPrefilter), query.from.metadata, query.from.metadata, this.remult));
+            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from.metadata, query.from.metadata.options.backendPrefilter), query.from.metadata, this.remult));
         }
         if (where.length > 0)
             result.push(' where ', this.and(...where));

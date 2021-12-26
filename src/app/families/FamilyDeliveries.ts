@@ -806,7 +806,7 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
     translate: async (remult, f) => {
-        return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, remult.repo(FamilyDeliveries).metadata, remult);
+        return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, remult);
     }
 });
 

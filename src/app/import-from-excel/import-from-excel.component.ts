@@ -557,7 +557,7 @@ export class ImportFromExcelComponent implements OnInit {
                 this.newRows = JSON.parse(sessionStorage.getItem("newRows"));
                 this.updateRows = JSON.parse(sessionStorage.getItem("updateRows"));
                 this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRows"));
-                this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f.$[x]);
+                this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f[x]);
                 if (this.columnsInCompare.length > 0) {
                     setTimeout(() => {
                         this.stepper.next();

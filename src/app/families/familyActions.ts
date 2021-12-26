@@ -19,7 +19,7 @@ import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 import { ValueListValueConverter } from "remult/valueConverters";
 
-import { getControllerRef } from "remult/src/remult3";
+import { controllerRefImpl, getControllerRef } from "remult/src/remult3";
 
 @ValueListFieldType(SelfPickupStrategy, {
     translation: l => l.selfPickupStrategy
@@ -436,8 +436,8 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
                 settings: x.settings
             })
         }, {
-            serializeOnClient: async () => this.familyActionInfo = getControllerRef(orig).toApiJson(),
-            deserializeOnServer: async () => await getControllerRef(orig)._updateEntityBasedOnApi(this.familyActionInfo)
+            serializeOnClient: async () => this.familyActionInfo = (getControllerRef(orig) as unknown as controllerRefImpl).toApiJson(),
+            deserializeOnServer: async () => await (getControllerRef(orig)as unknown as controllerRefImpl)._updateEntityBasedOnApi(this.familyActionInfo)
         });
     }
 }

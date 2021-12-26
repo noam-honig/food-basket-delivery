@@ -135,7 +135,7 @@ export class SendBulkSms {
                 await Filter.translateCustomWhere(helpers.where({
                     archive: false, doNotSendSms: false,
                     $and: [this.city && Helpers.deliveredPreviously({ city: this.city })]
-                }), helpers.metadata, helpers.metadata, this.remult),
+                }), helpers.metadata, this.remult),
 
                 await sql.build(helpers.id, " not in (", sql.query({
                     select: () => [fd.courier],
