@@ -304,7 +304,7 @@ export abstract class HelpersBase extends IdEntity {
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if ((await self.remult.repo(Helpers).count()) == 0) {
+            if (self.isNew()&& (await self.remult.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
