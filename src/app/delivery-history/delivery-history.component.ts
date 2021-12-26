@@ -268,7 +268,7 @@ export class DeliveryHistoryComponent implements OnInit {
       return {
         deliveryStatusDate: { ">=": this.dateRange.fromDate, "<": toDate }, distributionCenter: this.dialog.filterDistCenter(),
         deliverStatus: this.onlyDone ? DeliveryStatus.isAResultStatus() : undefined,
-        archive: this.onlyDone ? true : undefined
+        archive: this.onlyArchived ? true : undefined
       }
     }
     ,
