@@ -144,7 +144,7 @@ export class Event extends IdEntity {
     }
 
     async showVolunteers(dialog: DialogService, busy: BusyService) {
-        if (this.remult.isAllowed("admin"))
+        if (this.remult.isAllowed(Roles.admin))
             await this.save();
         await openDialog(GridDialogComponent, x => x.args = {
             title: this.name,
