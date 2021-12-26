@@ -176,7 +176,7 @@ export class RegisterToEvent {
         }
         let helper: Helpers;
         if (this.remult.authenticated()) {
-            helper = this.remult.currentUser;
+            helper = await this.remult.repo(Helpers).findId(this.remult.user.id);
         }
         else {
             helper = await this.remult.repo(Helpers).findFirst({ phone: this.phone }, {
