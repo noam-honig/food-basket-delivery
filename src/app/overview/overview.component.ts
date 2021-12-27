@@ -41,14 +41,15 @@ export class OverviewComponent implements OnInit {
       return OverviewComponent.getOverview(true).then(x => { this.overview = x; this.spinner = false; this.sort(); }).finally(() => actionInfo.startBusyWithProgress = z);
     });
 
-    for (const s of this.overview.sites) {
-      s.lastSignIn = new Date(s.lastSignIn);
-    }
+
     this.sort();
 
   }
   searchString = '';
   private sort() {
+    for (const s of this.overview.sites) {
+      s.lastSignIn = new Date(s.lastSignIn);
+    }
     this.overview.sites.sort((a, b) => b.lastSignIn?.valueOf() - a.lastSignIn?.valueOf());
   }
 
