@@ -64,15 +64,15 @@ export class quantityHelper {
     else
       this.items.push({ name: key, quantity });
   }
-  parseComment(comment: string) {
+  parseComment(comment: string, quantity = 1) {
     if (!comment)
       return;
     for (let item of comment.split(',')) {
       item = item.trim();
       let reg = /(^\d*)(.*)/.exec(item);
       if (reg[1])
-        this.add(reg[2], +reg[1])
-      else this.add(reg[2], 1);
+        this.add(reg[2], +reg[1] * quantity)
+      else this.add(reg[2], 1 * quantity);
     }
   }
   toString(seperator = "\n") {

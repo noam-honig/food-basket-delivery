@@ -382,6 +382,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     stats.totalBoxes1 = 0;
 
     stats.totalBoxes2 = 0;
+    let toTake = new quantityHelper();
 
     baskets.forEach(b => {
       let fs = new FamilyDeliveresStatistics(b.name, equalToFilter(b.basket),
@@ -390,8 +391,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       stats.stats.push(fs);
       stats.totalBoxes1 += +b.boxes * +fs.value;
       stats.totalBoxes2 += +b.boxes2 * +fs.value;
+      if (fs.value > 0)
+        toTake.parseComment(b?.basket?.whatToTake, fs.value);
 
     });
+    stats.toBrind = toTake.toString(", ");
     stats.stats.sort((a, b) => b.value - a.value);
   }
 
@@ -439,7 +443,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     });
     stats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
   }
-
+  getToTake() {
+    let x: statsOnTabBasket = this.currentTabStats;
+    return x.toBrind;
+  }
   showTotalBoxes() {
     let x: statsOnTabBasket = this.currentTabStats;
     if (x && (x.totalBoxes1 + x.totalBoxes2)) {
@@ -709,7 +716,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             }
           }
 
-      
+
 
 
           openDialog(EditCommentDialogComponent, edit => edit.args = {
@@ -864,6 +871,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 interface statsOnTabBasket extends statsOnTab {
   totalBoxes1?: number;
   totalBoxes2?: number;
+  toBrind?: string;
 }
 interface statsOnTab {
   name: string,
