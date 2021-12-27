@@ -38,16 +38,20 @@ export class OverviewComponent implements OnInit {
         progress: x => this.progress = x * 100,
         close: () => { }
       })
-      return OverviewComponent.getOverview(true).then(x => { this.overview = x; this.spinner = false }).finally(() => actionInfo.startBusyWithProgress = z);
+      return OverviewComponent.getOverview(true).then(x => { this.overview = x; this.spinner = false; this.sort(); }).finally(() => actionInfo.startBusyWithProgress = z);
     });
 
     for (const s of this.overview.sites) {
       s.lastSignIn = new Date(s.lastSignIn);
     }
-    this.overview.sites.sort((a, b) => b.lastSignIn?.valueOf() - a.lastSignIn?.valueOf());
+    this.sort();
 
   }
   searchString = '';
+  private sort() {
+    this.overview.sites.sort((a, b) => b.lastSignIn?.valueOf() - a.lastSignIn?.valueOf());
+  }
+
   showSite(s: siteItem) {
     return !this.searchString || s.name.includes(this.searchString);
   }
