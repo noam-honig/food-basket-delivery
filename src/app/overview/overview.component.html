@@ -23,7 +23,7 @@
     </div>
 
     <div class="site-container" [transition-group]="'flip-list'">
-        <ng-container *ngFor="let site of overview.sites">
+        <ng-container *ngFor="let site of overview.sites; trackBy:trackBy">
             <mat-card *ngIf="showSite(site)" class="site" transition-group-item>
                 <span *ngIf="sortBy">{{site.stats[sortBy]}}</span>
                 <a (click)="showSiteInfo(site)"><img src="{{site.logo}}"></a>

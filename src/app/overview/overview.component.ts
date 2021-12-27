@@ -207,6 +207,9 @@ export class OverviewComponent implements OnInit {
     return result;
 
   }
+  trackBy(s:siteItem){
+    return s.site;
+  }
   async createNewSchema() {
     let id = new InputField<string>({ caption: 'id' });
     let name = new InputField<string>({ caption: 'שם הארגון' });
