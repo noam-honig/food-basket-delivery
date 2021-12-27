@@ -35,7 +35,7 @@ export class OverviewComponent implements OnInit {
     this.busy.donotWait(() => {
       const z = actionInfo.startBusyWithProgress;
       actionInfo.startBusyWithProgress = () => ({
-        progress: x => this.progress = x*100,
+        progress: x => this.progress = x * 100,
         close: () => { }
       })
       return OverviewComponent.getOverview(true).then(x => { this.overview = x; this.spinner = false }).finally(() => actionInfo.startBusyWithProgress = z);
@@ -138,7 +138,7 @@ export class OverviewComponent implements OnInit {
     if (!full)
       result.statistics = [];
     else {
-      
+
     }
 
     var builder = new SqlBuilder(remult);
@@ -207,7 +207,7 @@ export class OverviewComponent implements OnInit {
     return result;
 
   }
-  trackBy(s:siteItem){
+  trackBy(index: number, s: siteItem) {
     return s.site;
   }
   async createNewSchema() {
