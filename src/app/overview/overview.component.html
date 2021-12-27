@@ -1,4 +1,5 @@
 <ng-container *ngIf="overview">
+    <mat-spinner diameter="30" *ngIf="spinner" [value]="progress" [mode]="'determinate'"></mat-spinner>
     <ul>
         <li *ngFor="let i of overview.statistics" (click)="doSort(i)" [class.sorted]="sortBy==i.caption">
             {{i.caption}} - {{i.value}}
@@ -11,15 +12,16 @@
                     [ngModelOptions]="{standalone: true}">
                 <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
             </mat-form-field>
-            <br>
 
 
+            
         </div>
         <div>
-            <button mat-raised-button color="primary"
-                (click)="createNewSchema()">{{'הוסף סביבה חדשה'}}</button>
+
+            <button mat-raised-button color="primary" (click)="createNewSchema()">{{'הוסף סביבה חדשה'}}</button>
         </div>
     </div>
+
     <div class="site-container" [transition-group]="'flip-list'">
         <ng-container *ngFor="let site of overview.sites">
             <mat-card *ngIf="showSite(site)" class="site" transition-group-item>

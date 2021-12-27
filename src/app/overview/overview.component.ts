@@ -12,10 +12,11 @@ import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
 import { SitesEntity } from '../sites/sites.entity';
-import { InputField, openDialog } from '@remult/angular';
+import { BusyService, InputField, openDialog } from '@remult/angular';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InitContext } from '../helpers/init-context';
 import { Phone } from '../model-shared/phone';
+import { actionInfo } from 'remult/src/server-action';
 
 @Component({
   selector: 'app-overview',
@@ -24,11 +25,22 @@ import { Phone } from '../model-shared/phone';
 })
 export class OverviewComponent implements OnInit {
 
-  constructor(private remult: Remult, private dialog: DialogService) { }
+  constructor(private remult: Remult, private dialog: DialogService, private busy: BusyService) { }
   overview: overviewResult;
   sortBy: string;
+  progress = 0;
+  spinner = true;
   async ngOnInit() {
-    this.overview = await OverviewComponent.getOverview();
+    this.overview = await OverviewComponent.getOverview(false);
+    this.busy.donotWait(() => {
+      const z = actionInfo.startBusyWithProgress;
+      actionInfo.startBusyWithProgress = () => ({
+        progress: x => this.progress = x*100,
+        close: () => { }
+      })
+      return OverviewComponent.getOverview(true).then(x => { this.overview = x; this.spinner = false }).finally(() => actionInfo.startBusyWithProgress = z);
+    });
+
     for (const s of this.overview.sites) {
       s.lastSignIn = new Date(s.lastSignIn);
     }
@@ -47,7 +59,7 @@ export class OverviewComponent implements OnInit {
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption]);
   }
   @BackendMethod({ allowed: Roles.overview, queue: true })
-  static async getOverview(remult?: Remult, progress?: ProgressListener) {
+  static async getOverview(full: boolean, remult?: Remult, progress?: ProgressListener) {
     let today = new Date();
     let onTheWay = "בדרך";
     let inEvent = "באירוע";
@@ -123,6 +135,11 @@ export class OverviewComponent implements OnInit {
       ],
       sites: []
     };
+    if (!full)
+      result.statistics = [];
+    else {
+      
+    }
 
     var builder = new SqlBuilder(remult);
     let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
@@ -151,7 +168,7 @@ export class OverviewComponent implements OnInit {
 
 
         } else if (dateRange.caption == onTheWay) {
-          cols.push(builder.countInnerSelect({ from: f, where: () =>[f.where(FamilyDeliveries.onTheWayFilter())] }, key));
+          cols.push(builder.countInnerSelect({ from: f, where: () => [f.where(FamilyDeliveries.onTheWayFilter())] }, key));
         }
         else
           cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.where({ deliveryStatusDate: { ">=": dateRange.from, "<": dateRange.to }, deliverStatus: DeliveryStatus.isAResultStatus() })), ') ', key));
