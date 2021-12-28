@@ -346,7 +346,7 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
 }
 
 
-@ValueListFieldType(HelperStrategy, {
+@ValueListFieldType( {
     defaultValue: () => HelperStrategy.familyDefault,
     translation: l => l.volunteer
 })

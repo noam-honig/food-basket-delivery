@@ -28,7 +28,7 @@ import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 
 
-@ValueListFieldType(MessageStatus, {
+@ValueListFieldType( {
     translation: l => l.messageStatus
 })
 export class MessageStatus {

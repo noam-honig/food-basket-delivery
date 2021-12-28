@@ -126,7 +126,7 @@ export class RegisterDonorComponent implements OnInit {
 
 }
 
-@ValueListFieldType(EquipmentAge)
+@ValueListFieldType()
 @DataControl({
   width: '100'
 })

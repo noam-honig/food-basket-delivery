@@ -34,7 +34,7 @@ import { InputTypes } from 'remult/inputTypes';
 
 
 
-@ValueListFieldType(RemovedFromListExcelImportStrategy)
+@ValueListFieldType()
 export class RemovedFromListExcelImportStrategy {
   static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
   static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');

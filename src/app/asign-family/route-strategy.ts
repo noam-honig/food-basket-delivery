@@ -11,7 +11,7 @@ import { getLang } from "../sites/sites";
 
 
 
-@ValueListFieldType(routeStrategy)
+@ValueListFieldType()
 export class routeStrategy {
     static endOnIsolated = new routeStrategy(0, !use ? "" : use.language.startAtDistributionCenterAndEndOnRemoteFamily, {
         getRouteEnd: (start, addresses) => addresses[addresses.length - 1].location

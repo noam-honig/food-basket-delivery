@@ -13,7 +13,7 @@ import { ValueListValueConverter } from 'remult/valueConverters';
   , width: '150'
 
 })
-@ValueListFieldType(DeliveryStatus, {
+@ValueListFieldType( {
   displayValue: (e, val) => val.caption,
   translation: l => l.deliveryStatus
 })

@@ -29,7 +29,7 @@ import { SendBulkSms } from "../helpers/send-bulk-sms";
 
 
 
-@ValueListFieldType(EventType, {
+@ValueListFieldType( {
     caption: use.language.eventType
 })
 export class EventType {
@@ -42,7 +42,7 @@ export class EventType {
 }
 
 
-@ValueListFieldType(eventStatus, {
+@ValueListFieldType( {
     translation: l => l.eventStatus,
     defaultValue: () => eventStatus.active
 })

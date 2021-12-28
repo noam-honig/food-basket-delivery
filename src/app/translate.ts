@@ -142,8 +142,8 @@ export function DateOnlyField<entityType = any>(settings?: FieldOptions<entityTy
 export function FieldType<valueType = any>(settings?: FieldOptions<any, valueType> & TranslatedCaption, ...options: (FieldOptions<any, valueType> | ((options: FieldOptions<any, valueType>, remult: Remult) => void))[]) {
   return origFieldType<valueType>(...adjustSettings(settings, options));
 }
-export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(type: ClassType<valueType>, settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: (FieldOptions<entityType, valueType> | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void))[]) {
-  return origValueListFieldType<valueType>(type, ...adjustSettings(settings, options));
+export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: (FieldOptions<entityType, valueType> | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void))[]) {
+  return origValueListFieldType<valueType>(...adjustSettings(settings, options));
 }
 export function Entity<T>(key: string, settings: EntityOptions<T> & TranslatedCaption, ...options: (EntityOptions | ((options: EntityOptions, remult: Remult) => void))[]) {
   let opts: (EntityOptions | ((options: EntityOptions, remult: Remult) => void))[] = [settings];
@@ -159,7 +159,7 @@ export function Entity<T>(key: string, settings: EntityOptions<T> & TranslatedCa
 
 //https://gist.github.com/graydon/11198540
 const israel = new myBounds(34.2654333839, 29.5013261988, 35.8363969256, 33.2774264593);
-@ValueListFieldType(TranslationOptions)
+@ValueListFieldType()
 export class TranslationOptions {
 
 
@@ -1207,7 +1207,7 @@ export class Language {
   sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
   sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
   whatToOrder = "מה להזמין?";
-  smsProviderConfiguration ="הגדרות ספק SMS";
+  smsProviderConfiguration = "הגדרות ספק SMS";
   sendMessageToInviteVolunteers = "שליחת הודעה לזימון מתנדבים";
   whatToTake = "להביא";
 

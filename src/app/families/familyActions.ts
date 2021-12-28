@@ -21,7 +21,7 @@ import { ValueListValueConverter } from "remult/valueConverters";
 
 import { controllerRefImpl, getControllerRef } from "remult/src/remult3";
 
-@ValueListFieldType(SelfPickupStrategy, {
+@ValueListFieldType( {
     translation: l => l.selfPickupStrategy
 })
 export class SelfPickupStrategy {
@@ -146,7 +146,7 @@ export class NewDelivery extends ActionOnRows<Families> {
         });
     }
 }
-@ValueListFieldType(UpdateGroupStrategy, {
+@ValueListFieldType( {
     translation: l => l.action
 })
 export class UpdateGroupStrategy {
