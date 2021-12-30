@@ -12,7 +12,7 @@ import { UpdateArea, UpdateAreaForDeliveries, UpdateStatus, UpdateStatusForDeliv
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./app/families/FamilyDeliveries";
 import { FamilyStatus } from "./app/families/FamilyStatus";
 import { DeleteDeliveries, UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
-import { Helpers, HelperUserInfo } from "./app/helpers/helpers";
+import { Helpers } from "./app/helpers/helpers";
 import { ApplicationSettings } from "./app/manage/ApplicationSettings";
 import { initSettings, serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
@@ -149,7 +149,7 @@ function init() {
             expect(await (remult.repo(ActiveFamilyDeliveries).count({ courier: null }))).toBe(2);
             let r = await callAddBox();
             expect(r.families.length).toBe(2);
-            
+
             expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
             expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
         });
@@ -412,7 +412,7 @@ function init() {
                 escortedHelperName: undefined,
                 theHelperIAmEscortingId: undefined,
                 roles: [Roles.distCenterAdmin]
-            } as HelperUserInfo);
+            });
             await InitContext(c2);
 
             expect(+(await remult.repo(ActiveFamilyDeliveries).count())).toBe(3);

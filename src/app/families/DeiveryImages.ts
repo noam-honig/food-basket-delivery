@@ -9,11 +9,11 @@ import { HelpersBase } from "../helpers/helpers";
 },
     (options, remult) => {
         options.apiPrefilter = {
-            uploadingVolunteer: !remult.isAllowed([Roles.admin]) ? remult.currentUser : undefined
+            uploadingVolunteer: !remult.isAllowed([Roles.admin]) ? { $id: [remult.user.id] } : undefined
         };
-        options.saving = self => {
+        options.saving = async self => {
             if (self.isNew())
-                self.uploadingVolunteer = remult.currentUser
+                self.uploadingVolunteer = (await remult.getCurrentUser())
         }
 
     })

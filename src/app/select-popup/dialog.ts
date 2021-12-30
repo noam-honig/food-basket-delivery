@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Remult, getFields, BackendMethod, ValueFilter } from 'remult';
+import { Remult, getFields, BackendMethod, ValueFilter, IdFilter } from 'remult';
 
 
 import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
@@ -9,12 +9,13 @@ import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { Roles } from "../auth/roles";
-import { HelperUserInfo } from "../helpers/helpers";
 import { RouteReuseStrategy } from "@angular/router";
 import { CustomReuseStrategy } from "../custom-reuse-controller-router-strategy";
 import { use, Field } from "../translate";
 import { Location } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
+import "../helpers/init-context";
+
 
 
 
@@ -22,7 +23,7 @@ declare var gtag;
 
 @Injectable()
 export class DialogService {
-    filterDistCenter(): ValueFilter<DistributionCenters> {
+    filterDistCenter(): IdFilter<DistributionCenters> {
         return this.remult.filterDistCenter(this.distCenter);
     }
     async exception(title: string, err: any): Promise<void> {
@@ -136,10 +137,7 @@ export class DialogService {
     canSeeCenter() {
         var dist = '';
         if (this.remult.user)
-            dist = (<HelperUserInfo>this.remult.user).distributionCenter;
-        if (!this.remult.isAllowed(Roles.admin) && (!this.distCenter || !this.distCenter.matchesCurrentUser())) {
-            this.distCenter = this.remult.currentUser.distributionCenter;
-        }
+            dist = (this.remult.user).distributionCenter;
         return this.remult.isAllowed(Roles.admin) && this.hasManyCenters;
     }
     dc: DistributionCenters;
@@ -150,7 +148,7 @@ export class DialogService {
         this.dc = undefined;
 
         if (this.remult.isAllowed(Roles.distCenterAdmin) && !this.remult.isAllowed(Roles.admin))
-            this.remult.repo(DistributionCenters).findId((<HelperUserInfo>this.remult.user).distributionCenter).then(x => this.dc = x);
+            this.remult.repo(DistributionCenters).findId((this.remult.user).distributionCenter).then(x => this.dc = x);
         if (this.remult.isAllowed(Roles.admin)) {
             this.hasManyCenters = await this.remult.repo(DistributionCenters).count({ archive: false }) > 1;
             this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });

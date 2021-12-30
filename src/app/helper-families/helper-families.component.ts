@@ -105,8 +105,9 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
-  ngOnInit() {
-
+  currentUser: Helpers;
+  async ngOnInit() {
+    this.currentUser = await this.remult.getCurrentUser();
 
   }
   volunteerLocation: Location = undefined;
@@ -279,8 +280,9 @@ export class HelperFamiliesComponent implements OnInit {
     if (this.settings.helpText && this.settings.helpPhone)
       return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
-      var h = this.remult.currentUser;
-      return r + h.name + ", " + h.phone.displayValue;
+      var h = this.currentUser;
+      if (h)
+        return r + h.name + ", " + h.phone.displayValue;
     }
   }
 

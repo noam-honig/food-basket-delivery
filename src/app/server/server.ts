@@ -259,7 +259,6 @@ s.parentNode.insertBefore(b, s);})();
                 }
 
                 if (com.volunteer) {
-                    remult.currentUser = await com.volunteer.getHelper();
                     remult.setUser({
                         id: com.volunteer.id,
                         name: com.volunteer.name,

@@ -3,7 +3,6 @@ import { ServerEventAuthorizeAction } from './server-event-authorize-action';
 import { Remult } from 'remult';
 import { RemultExpressBridge } from 'remult/remult-express';
 import { Sites } from '../sites/sites';
-import { HelperUserInfo } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
 
 
@@ -64,7 +63,7 @@ export class ServerEvents {
                     x = [];
                     this.sites.set(org, x);
                 }
-                x.push(new userInSite((<HelperUserInfo>remult.user).distributionCenter, res, remult.isAllowed(Roles.admin)));
+                x.push(new userInSite((remult.user).distributionCenter, res, remult.isAllowed(Roles.admin)));
                 tempConnections[key] = undefined;
 
             };

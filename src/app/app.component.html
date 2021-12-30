@@ -13,7 +13,7 @@
     <div *ngIf="dialog.dc">
       <p style="text-align: center">{{dialog.dc.name}}
       </p>
-      <p style="text-align: center" *ngIf="dialog.dc.addressHelper.ok()">{{dialog.dc.addressHelper.getGeocodeInformation().getAddress()}}</p>
+      <p style="text-align: center" *ngIf="dialog.dc.addressHelper.ok">{{dialog.dc.addressHelper.getGeocodeInformation().getAddress()}}</p>
     </div>
     <h4 *ngIf="remult.user">{{lang.hello}} {{remult.user.name}}</h4>
     <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()" target="_blank">מדריך למנהל</a>

@@ -2,7 +2,7 @@ import { Injectable, HostListener, NgZone } from "@angular/core";
 
 import { DialogService, extractError } from "../select-popup/dialog";
 
-import { Helpers, HelperUserInfo } from "../helpers/helpers";
+import { Helpers } from "../helpers/helpers";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { Allow, BackendMethod, Remult, UserInfo } from 'remult';
@@ -231,7 +231,7 @@ export class AuthService {
 
         }
 
-        let result: HelperUserInfo = await buildHelperUserInfo(h, remult);
+        let result = await buildHelperUserInfo(h, remult);
 
 
         remult.setUser(result);
@@ -392,7 +392,7 @@ export interface loginArgs {
 }
 
 async function buildHelperUserInfo(h: Helpers, remult: Remult) {
-    let result: HelperUserInfo = {
+    let result: UserInfo = {
         id: h.id,
         roles: [Sites.getOrgRole(remult)],
         name: h.name,
@@ -421,6 +421,6 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
     return result;
 }
 
-async function buildToken(result: HelperUserInfo, settings: ApplicationSettings) {
+async function buildToken(result: UserInfo, settings: ApplicationSettings) {
     return AuthService.signJwt(result, settings.timeToDisconnect);
 }

@@ -13,11 +13,7 @@ import { translationConfig, Language } from './translate';
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
-import { Helpers, HelperUserInfo } from './helpers/helpers';
-import { BasketType } from './families/BasketType';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
-import { DistributionCenters } from './manage/distribution-centers';
-import { InputAreaComponent } from './select-popup/input-area/input-area.component';
 import { CreateNewEvent } from './create-new-event/create-new-event';
 
 

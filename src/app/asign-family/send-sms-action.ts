@@ -79,7 +79,7 @@ export class SendSmsAction {
     public static async getSenderPhone(remult: Remult) {
         let sender = (await ApplicationSettings.getAsync(remult)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            sender = remult.currentUser.phone.thePhone;
+            sender = (await remult.getCurrentUser()).phone.thePhone;
         }
         return sender;
     }

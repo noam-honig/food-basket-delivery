@@ -1,38 +1,25 @@
-
 import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
 
-
-
-
-
-
-import { Roles, distCenterAdminGuard } from "../auth/roles";
-
-
-
+import { Roles } from "../auth/roles";
 
 import { getLang } from '../sites/sites';
-import { AddressHelper, GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
+import { AddressHelper, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
-import { Sites } from '../sites/sites';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 import { DialogService } from '../select-popup/dialog';
-import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
-import { EmailSvc } from '../shared/utils';
 import { use, Field, FieldType, IntegerField } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
-import { setHelperInCache } from './init-context';
 import { EntityFilter } from 'remult';
 
 
@@ -75,8 +62,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     (options, remult) => options.apiPrefilter = {
         id: !remult.authenticated() ? [] :
             remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? undefined :
-                [remult.currentUser, remult.currentUser?.theHelperIAmEscorting, remult.currentUser?.escort].
-                    filter(x => !!x).map(x => x.id)
+                [remult.user.id, remult.user.theHelperIAmEscortingId]
 
     }
 )
@@ -236,7 +222,7 @@ export abstract class HelpersBase extends IdEntity {
     allowApiDelete: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: true,
-    saved: self => setHelperInCache(self),
+    
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
         if (self.escort) {
@@ -271,7 +257,7 @@ export abstract class HelpersBase extends IdEntity {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = self.remult.currentUser.distributionCenter;
+                                self.distributionCenter = await self.remult.getUserDistributionCenter();
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -319,7 +305,7 @@ export abstract class HelpersBase extends IdEntity {
             if (self.$.escort.valueChanged()) {
                 let h = self.escort;
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = self.remult.currentUser;
+                    self.$.escort.originalValue.theHelperIAmEscorting = (await self.remult.getCurrentUser());
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -826,11 +812,7 @@ export class Helpers extends HelpersBase {
 
 
 
-export interface HelperUserInfo extends UserInfo {
-    theHelperIAmEscortingId: string;
-    escortedHelperName: string;
-    distributionCenter: string;
-}
+
 export function validatePasswordColumn(remult: Remult, password: FieldRef<any, string>) {
     if (getSettings(remult).requireComplexPassword) {
         var l = getLang(remult);

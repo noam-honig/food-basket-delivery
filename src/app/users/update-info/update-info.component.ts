@@ -44,7 +44,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
 
   async ngOnInit() {
-    this.h = await this.remult.currentUser.getHelper();
+    this.h = await this.remult.getCurrentUser();
     await this.h._.reload();
     if (!this.h.password)
       this.confirmPassword.value = '';

@@ -65,8 +65,8 @@ export class MltFamiliesComponent implements OnInit {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.remult.currentUser);
-    this.thisHelper = this.remult.currentUser;
+    this.thisHelper = (await this.remult.getCurrentUser());
+    this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.thisHelper);
     this.myPhoneNumber = this.thisHelper.phone;
     this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
     this.distCentersButtons = [];
@@ -102,7 +102,7 @@ export class MltFamiliesComponent implements OnInit {
   async countFamilies() {
     let consumed: string[] = []
     let list: FamilyDeliveries[] = await this.remult.repo(FamilyDeliveries).find(
-      { where: { courier: this.remult.currentUser, deliverStatus: DeliveryStatus.isSuccess() } })
+      { where: { courier: (await this.remult.getCurrentUser()), deliverStatus: DeliveryStatus.isSuccess() } })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -177,7 +177,7 @@ export class MltFamiliesComponent implements OnInit {
 
       let fd = await remult.repo(ActiveFamilyDeliveries).findId(id);
       if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-        fd.courier = remult.currentUser;
+        fd.courier = (await remult.getCurrentUser());
         await fd.save();
       }
     }
@@ -275,7 +275,7 @@ export class MltFamiliesComponent implements OnInit {
     let s = (await remult.getSettings());
     if (!s.isSytemForMlt)
       throw "not allowed";
-    for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: remult.currentUser } })) {
+    for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: (await remult.getCurrentUser()) } })) {
       fd.distributionCenter = newDestinationId;
       await fd.save();
     }

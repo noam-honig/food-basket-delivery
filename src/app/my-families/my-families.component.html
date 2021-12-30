@@ -1,5 +1,5 @@
-<app-mlt-families *ngIf="settings.isSytemForMlt()" [comp]="this"></app-mlt-families>
-<ng-container *ngIf="!settings.isSytemForMlt()">
+<app-mlt-families *ngIf="settings.isSytemForMlt" [comp]="this"></app-mlt-families>
+<ng-container *ngIf="!settings.isSytemForMlt">
     <div style="display:flex;justify-content: space-between;">
         <div>
             <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
@@ -26,7 +26,7 @@
 
     <mat-card *ngIf="settings.showDistCenterAsEndAddressForVolunteer&&familyLists.distCenter">
         <mat-card-title>{{settings.lang.pickupLocation}}: {{familyLists.distCenter.name}}</mat-card-title>
-        <div class="phone-container" *ngIf="  familyLists.distCenter.addressHelper.ok()">
+        <div class="phone-container" *ngIf="  familyLists.distCenter.addressHelper.ok">
             <span (click)="familyLists.distCenter.addressHelper.openWaze()">
                 <img src="assets/waze.png">
 

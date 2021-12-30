@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod } from "remult";
+import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener } from "remult";
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, openDialog, RowButton } from '@remult/angular';
 import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
 import { getLang } from '../sites/sites';
@@ -29,7 +29,7 @@ import { SendBulkSms } from "../helpers/send-bulk-sms";
 
 
 
-@ValueListFieldType( {
+@ValueListFieldType({
     caption: use.language.eventType
 })
 export class EventType {
@@ -42,7 +42,7 @@ export class EventType {
 }
 
 
-@ValueListFieldType( {
+@ValueListFieldType({
     translation: l => l.eventStatus,
     defaultValue: () => eventStatus.active
 })
@@ -127,7 +127,7 @@ export class Event extends IdEntity {
         }))
     }
     @Field<Event>({
-        serverExpression: self => self.volunteeredIsRegisteredToEvent(self.remult.currentUser)
+        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await self.remult.getCurrentUser()))
     })
     registeredToEvent: boolean;
 
@@ -322,13 +322,14 @@ export class Event extends IdEntity {
         await this._.reload();
     }
 
-    @BackendMethod({ allowed: Roles.admin })
-    async sendParticipationConfirmMessage(remult?: Remult) {
+    @BackendMethod({ allowed: Roles.admin, queue: true })
+    async sendParticipationConfirmMessage(remult?: Remult, progress?: ProgressListener) {
         let settings = await ApplicationSettings.getAsync(remult);
         if (!settings.bulkSmsEnabled)
             throw "אינך רשאי לשלוח הודעות לקבוצה";
         let i = 0;
         for await (const v of remult.repo(volunteersInEvent).query({
+            progress,
             where: {
                 eventId: this.id,
                 canceled: false,
@@ -609,15 +610,15 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
 },
     (options, remult) => {
         options.apiPrefilter = {
-            helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? remult.currentUser : undefined
+            helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? { $id: [remult.user.id] } : undefined
         };
-        options.saving = (self) => {
+        options.saving = async (self) => {
             if (self.isNew() && isBackend()) {
                 self.createDate = new Date();
-                self.createUser = remult.currentUser;
+                self.createUser = (await remult.getCurrentUser());
             }
             if (self.canceled && self.$.canceled.valueChanged()) {
-                self.cancelUser = remult.currentUser;
+                self.cancelUser = (await remult.getCurrentUser());
 
             }
             if (self.isNew() || self.$.canceled.valueChanged())

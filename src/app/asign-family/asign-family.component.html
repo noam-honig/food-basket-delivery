@@ -145,7 +145,7 @@
             <button mat-menu-item (click)="assignOnMap()">{{settings.lang.selectDeliveryOnMap}}</button>
             <button mat-menu-item (click)="addStreet()">{{settings.lang.selectDeliveryByStreet}}</button>
             <button mat-menu-item (click)="addBuilding()">{{settings.lang.assignBuildings}}</button>
-            <button mat-menu-item (click)="assignClosestDeliveries()" *ngIf="settings.isSytemForMlt()&&familyLists.helper.preferredDistributionAreaAddressHelper.ok()">{{settings.lang.closestDeliveries}}</button>
+            <button mat-menu-item (click)="assignClosestDeliveries()" *ngIf="settings.isSytemForMlt&&familyLists.helper.preferredDistributionAreaaddressHelper.ok">{{settings.lang.closestDeliveries}}</button>
             
             
 

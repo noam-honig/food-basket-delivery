@@ -94,7 +94,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   static async getEvents(phone: string, remult?: Remult): Promise<EventInList[]> {
 
 
-    let helper: HelpersBase = remult.currentUser;
+    let helper: HelpersBase = (await remult.getCurrentUser());
     if (!helper && phone)
       helper = await remult.repo(Helpers).findFirst({ phone: new Phone(phone) });
     return Promise.all((await remult.repo(Event).find({

@@ -74,7 +74,7 @@ declare type factoryFor<T> = {
       }
       if (!self.defaultDistributionCenter)
         self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location);
-      let currentUser = self.remult.currentUser;
+      let currentUser = (await self.remult.getCurrentUser());
       if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
         self.routeOrder = 0;
       if (self.isNew()) {

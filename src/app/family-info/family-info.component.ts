@@ -113,7 +113,7 @@ export class FamilyInfoComponent implements OnInit {
     if (await this.dialog.YesNoPromise(getLang(this.remult).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter = this.remult.currentUser.distributionCenter;
+        d.distributionCenter = await this.remult.getUserDistributionCenter();
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }

@@ -40,23 +40,24 @@ export class RegisterToEvent {
 
 
 
+
+
+
+    }
+    async init() {
+        let s = (await this.remult.getSettings());
         if (!actionInfo.runningOnServer) {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
-            if (remult.currentUser) {
-                let h = remult.currentUser
+            let h = (await this.remult.getCurrentUser())
+            if (h) {
                 this.socialSecurityNumber = h.socialSecurityNumber;
                 this.email = h.email;
                 this.preferredDistributionAreaAddress = h.preferredDistributionAreaAddress;
                 this.preferredFinishAddress = h.preferredFinishAddress;
             }
         }
-
-
-    }
-    async init() {
-        let s = (await this.remult.getSettings());
         this.questions.push({ field: this.$.socialSecurityNumber, show: () => s.registerAskTz, getFieldToUpdate: h => h.socialSecurityNumber })
         this.questions.push({ field: this.$.email, show: () => s.registerAskEmail, getFieldToUpdate: h => h.email })
         this.questions.push({ field: this.$.preferredDistributionAreaAddress, show: () => s.registerAskPreferredDistributionAreaAddress, getFieldToUpdate: h => h.preferredDistributionAreaAddress })
@@ -119,6 +120,7 @@ export class RegisterToEvent {
         await this.init();
         let lang = this.remult.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
+        let currentHelper = (await this.remult.getCurrentUser());
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await openDialog(InputAreaComponent, x => x.args = {
                 title: lang.register,
@@ -130,8 +132,9 @@ export class RegisterToEvent {
                 ok: async () => {
 
                     this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
-                    if (this.remult.currentUser)
-                        await this.remult.currentUser._.reload();
+
+                    if (currentHelper)
+                        await currentHelper._.reload();
                     let refresh = false;
                     if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
                         refresh = true;
@@ -148,8 +151,8 @@ export class RegisterToEvent {
                 }
             });
         else {
-            this.phone = this.remult.currentUser.phone;
-            this.name = this.remult.currentUser.name;
+            this.phone = currentHelper.phone;
+            this.name = currentHelper.name;
             this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
         }
     }
@@ -191,7 +194,6 @@ export class RegisterToEvent {
                 name: helper.name,
                 roles: []
             });
-            this.remult.currentUser = helper as Helpers;
         }
         let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({ eventId: id, helper }, {
             createIfNotFound: register

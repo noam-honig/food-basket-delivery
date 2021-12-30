@@ -477,7 +477,7 @@ export class ApplicationSettings extends EntityBase {
 
   }
   static async getAsync(remult: Remult): Promise<ApplicationSettings> {
-    return (await remult.repo(ApplicationSettings).findFirst());
+    return (await remult.repo(ApplicationSettings).findFirst(undefined,{useCache:true}));
   }
   setDefaultsForProblemStatuses() {
     this.problemButtonText = this.lang.ranIntoAProblem;

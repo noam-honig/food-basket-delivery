@@ -210,10 +210,10 @@ export class InRouteHelpers extends IdEntity {
     allowApiUpdate: Roles.distCenterAdmin,
     defaultOrderBy: { createDate: "desc" },
 
-    saving: (self) => {
+    saving:async  (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = self.remult.currentUser;
+            self.createUser = (await self.remult.getCurrentUser());
         }
     }
 })

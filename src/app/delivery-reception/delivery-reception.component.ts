@@ -86,7 +86,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
             {
               d.archive = true;
 
-              d.distributionCenter = this.remult.currentUser.distributionCenter;
+              d.distributionCenter = await this.remult.getUserDistributionCenter();
               d.deliverStatus = DeliveryStatus.Success;
               await d.save();
               await this.refreshFamilyGrid();
@@ -101,7 +101,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         showInLine: true,
         click: async d => {
           d.deliverStatus = DeliveryStatus.FailedOther;
-          d.distributionCenter = this.remult.currentUser.distributionCenter;
+          d.distributionCenter = await this.remult.getUserDistributionCenter();
           this.editComment(d);
         }
         , textInMenu: () => getLang(this.remult).notDelivered

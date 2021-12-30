@@ -15,12 +15,12 @@ import { Field, use } from "../translate";
     allowApiInsert: Roles.admin
 }, (options, remult) => {
     options.apiPrefilter = {
-        assignedToHelper: !remult.isAllowed(Roles.admin) ? remult.currentUser : undefined
+        assignedToHelper: !remult.isAllowed(Roles.admin) ? { $id: [remult.user.id] } : undefined
     };
-    options.saving = (self) => {
+    options.saving =async  (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = remult.currentUser;
+            self.userCreated = (await remult.getCurrentUser());
         }
         else {
             if (self.$.giftURL.valueChanged()) {
@@ -33,7 +33,7 @@ import { Field, use } from "../translate";
             }
             if (self.$.assignedToHelper.valueChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
-                self.assignedByUser = remult.currentUser;
+                self.assignedByUser = (await remult.getCurrentUser());
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
@@ -72,8 +72,8 @@ export class HelperGifts extends IdEntity {
     @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string, remult?: Remult) {
         let helper = await remult.repo(Helpers).findId(helperId);
-        if (await remult.repo(HelperGifts).count({ assignedToHelper: remult.currentUser }) > 0) {
-            let g = await remult.repo(HelperGifts).findFirst({ assignedToHelper: remult.currentUser });
+        if (await remult.repo(HelperGifts).count({ assignedToHelper: (await remult.getCurrentUser()) }) > 0) {
+            let g = await remult.repo(HelperGifts).findFirst({ assignedToHelper: (await remult.getCurrentUser()) });
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;

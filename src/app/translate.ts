@@ -344,7 +344,7 @@ export class Language {
   entrance = 'כניסה';
   updateComment = 'עדכן הערה';
   clickedByMistake = 'נלחץ בטעות - החזר למשלוחים לחלוקה';
-  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
+  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
   assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';

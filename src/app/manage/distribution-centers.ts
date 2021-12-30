@@ -3,7 +3,7 @@ import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
 import { Roles } from "../auth/roles";
-import { HelpersBase, HelperUserInfo } from "../helpers/helpers";
+import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
 import { DataControl, getValueList } from "@remult/angular";
 import { use, FieldType, Field } from "../translate";
@@ -84,7 +84,7 @@ export class DistributionCenters extends IdEntity {
 
 
   matchesCurrentUser() {
-    return this.id == (<HelperUserInfo>this.remult.user).distributionCenter;
+    return this.id == (this.remult.user).distributionCenter;
   }
 
   async SendMessageToBrowser(message: string, remult: Remult) {
@@ -97,7 +97,7 @@ export class DistributionCenters extends IdEntity {
     if (this.remult.isAllowed(Roles.admin)) {
       return true;
     } else if (this.remult.isAllowed(Roles.distCenterAdmin))
-      return (<HelperUserInfo>this.remult.user).distributionCenter == this.id;
+      return (this.remult.user).distributionCenter == this.id;
     return false;
   }
   async getRouteStartGeo() {

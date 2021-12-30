@@ -1,11 +1,10 @@
 import { BackendMethod, Controller, Field, Filter, getFields, Remult, SqlDatabase } from "remult";
 import { FamilyDeliveries } from "../families/FamilyDeliveries";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
-import { Helpers, HelpersBase } from "./helpers";
+import { Helpers } from "./helpers";
 import { Event, volunteersInEvent, eventStatus } from '../events/events';
 import { HelperCommunicationHistory } from "../in-route-follow-up/in-route-helpers";
 import { Roles } from "../auth/roles";
-import { count } from "console";
 import { Families } from "../families/families";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { EditCustomMessageComponent, messageMerger } from "../edit-custom-message/edit-custom-message.component";
