@@ -117,7 +117,7 @@ export class RegisterToEvent {
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
         this.init();
-        let lang = getSettings(this.remult).lang;
+        let lang = this.remult.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await openDialog(InputAreaComponent, x => x.args = {

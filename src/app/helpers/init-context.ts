@@ -7,6 +7,7 @@ import { GetDistanceBetween, Location } from "../shared/googleApiHelpers";
 import { Roles } from "../auth/roles";
 import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 
 
 export const initConfig = {
@@ -35,6 +36,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         }
     }
     let defaultBasketType: BasketType;
+    remult.getSettings = () => ApplicationSettings.getAsync(remult);
     remult.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
@@ -98,7 +100,8 @@ declare module 'remult' {
         defaultDistributionCenter: () => Promise<DistributionCenters>;
         findClosestDistCenter(loc: Location, centers?: DistributionCenters[]): Promise<DistributionCenters>;
         filterCenterAllowedForUser(): ValueFilter<DistributionCenters>;
-        filterDistCenter(distCenter: DistributionCenters): ValueFilter<DistributionCenters>
+        filterDistCenter(distCenter: DistributionCenters): ValueFilter<DistributionCenters>;
+        getSettings: () => Promise<import('../manage/ApplicationSettings').ApplicationSettings>
         lang: Language;
         getSite(): string;
         getOrigin(): string;

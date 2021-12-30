@@ -199,8 +199,8 @@ export class FamilyDeliveries extends IdEntity {
         translation: l => l.familyName
     },
         (options, remult) =>
-            options.sqlExpression = (entity) => {
-                let r = remult.isAllowed(Roles.distCenterAdmin) || !getSettings(remult).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+            options.sqlExpression =async (entity) => {
+                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.getSettings()).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
                 return r;
             }
     )
@@ -217,7 +217,7 @@ export class FamilyDeliveries extends IdEntity {
     @DataControl({ width: '100' })
     quantity: number;
     isLargeQuantity() {
-        return getSettings(this.remult).isSytemForMlt && (this.quantity > 10);
+        return getSettings(this.remult).isSytemForMlt() && (this.quantity > 10);
     }
 
     @Field({

@@ -304,7 +304,7 @@ export abstract class HelpersBase extends IdEntity {
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if (self.isNew()&& (await self.remult.repo(Helpers).count()) == 0) {
+            if (self.isNew() && (await self.remult.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
@@ -372,7 +372,7 @@ export class Helpers extends HelpersBase {
         return this;
     }
     async displayEditDialog(dialog: DialogService, busy: BusyService) {
-        let settings = getSettings(this.remult);
+        let settings = (await this.remult.getSettings());
         await openDialog(InputAreaComponent, x => x.args = {
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
             ok: async () => {
@@ -761,7 +761,7 @@ export class Helpers extends HelpersBase {
 
     static deliveredPreviously = Filter.createCustom<Helpers,
         { city: string }>(((remult, { city }) => {
-            
+
             return SqlDatabase.customFilter(async c => {
                 let fd = SqlFor(remult.repo((await (import('../families/FamilyDeliveries'))).FamilyDeliveries));
                 let helpers = SqlFor(remult.repo(Helpers));

@@ -78,7 +78,7 @@ export class SendBulkSms {
     
     בתודה !ארגון!
     להסרה השב "הסר"`;
-        let settings = getSettings(this.remult);
+        let settings = (await this.remult.getSettings());
         await openDialog(EditCustomMessageComponent, edit => edit.args = {
             message: this.buildMessage(currentHelper.name, settings),
             templateText: settings.inviteVolunteersMessage || defaultMessage,

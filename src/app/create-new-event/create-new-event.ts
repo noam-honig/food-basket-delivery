@@ -8,7 +8,7 @@ import { Sites, getLang } from '../sites/sites';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { Families } from '../families/families';

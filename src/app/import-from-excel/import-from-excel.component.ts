@@ -228,7 +228,7 @@ export class ImportFromExcelComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, remult?: Remult) {
         for (const r of rowsToUpdate) {
-            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, getSettings(remult));
+            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.getSettings()));
         }
         return rowsToUpdate;
     }

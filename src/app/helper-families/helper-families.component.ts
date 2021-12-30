@@ -423,7 +423,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @BackendMethod({ allowed: Allow.authenticated })
   static async sendSuccessMessageToFamily(deliveryId: string, remult?: Remult) {
-    var settings = getSettings(remult);
+    var settings = (await remult.getSettings());
     if (!settings.allowSendSuccessMessageOption)
       return;
     if (!settings.sendSuccessMessageToFamily)

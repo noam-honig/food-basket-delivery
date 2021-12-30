@@ -56,7 +56,6 @@ import { OrgEventsComponent } from './org-events/org-events.component';
 import { PrintStickersComponent } from './print-stickers/print-stickers.component';
 import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component';
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
-import { ApplicationSettings, getSettings } from '../app/manage/ApplicationSettings';
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 
 
@@ -80,8 +79,8 @@ export class BulkMessageEnabledGuard implements CanActivate {
   constructor(private remult: Remult) {
 
   }
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return getSettings(this.remult).bulkSmsEnabled
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    return (await this.remult.getSettings()).bulkSmsEnabled
   }
 }
 @Injectable()

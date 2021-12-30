@@ -260,7 +260,7 @@ export class Event extends IdEntity {
                     {
                         name: getLang(this.remult).exportToExcel,
                         click: async () => {
-                            saveToExcel(getSettings(this.remult), this.remult.repo(volunteersInEvent), x.args.settings, use.language.volunteersRegisteredTo + " " + this.name, busy,
+                            saveToExcel((await this.remult.getSettings()), this.remult.repo(volunteersInEvent), x.args.settings, use.language.volunteersRegisteredTo + " " + this.name, busy,
                                 (e, c) => c == e.$.id || c == e.$.eventId || c == e.$.helperName || c == e.$.helperPhone)
                         }
                     }
@@ -475,7 +475,7 @@ export class Event extends IdEntity {
         ];
     }
     static async duplicateEvent(remult: Remult, busy: BusyService, events: Event[], done: (createdEvents: Event[]) => void) {
-        let settings = getSettings(remult);
+        let settings = (await remult.getSettings());
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;
         let date = new InputField<Date>({ caption: settings.lang.eventDate, valueConverter: DateOnlyValueConverter });

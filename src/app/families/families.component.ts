@@ -763,7 +763,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(getSettings(remult), remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>((await remult.getSettings()), remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation();
         let street = f.address;
         let house = '';

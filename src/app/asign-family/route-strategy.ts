@@ -201,7 +201,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
 
 
     let destination = strategy.args.getRouteEnd(distCenterLocation, addresses);
-    if (!(await import("../manage/ApplicationSettings")).getSettings(remult).isSytemForMlt() && helper.preferredFinishAddressHelper.ok()) {
+    if (!(await remult.getSettings()).isSytemForMlt() && helper.preferredFinishAddressHelper.ok()) {
         destination = helper.preferredFinishAddressHelper.location();
     }
 

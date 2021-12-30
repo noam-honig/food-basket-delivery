@@ -272,7 +272,7 @@ export class MltFamiliesComponent implements OnInit {
 
   @BackendMethod({ allowed: Allow.authenticated })
   static async changeDestination(newDestinationId: DistributionCenters, remult?: Remult) {
-    let s = getSettings(remult);
+    let s = (await remult.getSettings());
     if (!s.isSytemForMlt())
       throw "not allowed";
     for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: remult.currentUser } })) {

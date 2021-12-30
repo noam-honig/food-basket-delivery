@@ -10,7 +10,7 @@ import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
 import { OverviewComponent } from "../overview/overview.component";
-import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { Subject } from "rxjs";
 import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
@@ -112,7 +112,7 @@ export class AuthService {
                 await h.save();
                 return {
                     valid: true,
-                    authToken: await buildToken(info, getSettings(remult)),
+                    authToken: await buildToken(info, (await remult.getSettings())),
                     requirePassword: false
                 } as LoginResponse
             }
@@ -210,7 +210,7 @@ export class AuthService {
     static async login(args: loginArgs, remult?: Remult): Promise<loginResult> {
 
         let r: loginResult = {};
-        let settings = getSettings(remult);
+        let settings = (await remult.getSettings());
         let h = await remult.repo(Helpers).findFirst({ phone: new Phone(args.phone) });
         if (!h) {
             r.newUser = true;
@@ -351,7 +351,7 @@ export class AuthService {
         let newInfo = await buildHelperUserInfo(h, remult);
         newInfo.roles = newInfo.roles.filter(x => remult.user.roles.includes(x));
 
-        return buildToken(newInfo, getSettings(remult));
+        return buildToken(newInfo, (await remult.getSettings()));
 
     }
 
@@ -411,7 +411,7 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
     if (h.distCenterAdmin) {
         result.roles.push(Roles.distCenterAdmin);
     }
-    if (getSettings(remult).isSytemForMlt()) {
+    if ((await remult.getSettings()).isSytemForMlt()) {
         if (h.labAdmin || h.admin)
             result.roles.push(Roles.lab);
         if (h.isIndependent || h.admin || h.distCenterAdmin)

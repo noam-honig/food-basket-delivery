@@ -13,7 +13,7 @@ import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 
 import { foreachSync, PromiseThrottle } from '../shared/utils';
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 import { Remult } from 'remult';
