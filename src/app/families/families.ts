@@ -69,11 +69,11 @@ declare type factoryFor<T> = {
 
 
 
-      if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
+      if (self.$.address.valueChanged() || !self.addressHelper.ok || self.autoCompleteResult) {
         await self.reloadGeoCoding();
       }
       if (!self.defaultDistributionCenter)
-        self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location());
+        self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location);
       let currentUser = self.remult.currentUser;
       if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
         self.routeOrder = 0;
@@ -265,7 +265,7 @@ export class Families extends IdEntity {
       }
     }
 
-    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await dialog.getDistCenter(this.addressHelper.location()));
+    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await dialog.getDistCenter(this.addressHelper.location));
     let arciveCurrentDelivery = new InputField<boolean>({
       valueType: Boolean,
       caption: getLang(this.remult).archiveCurrentDelivery,
@@ -349,7 +349,7 @@ export class Families extends IdEntity {
     if (f) {
 
       if (!distCenter)
-        distCenter = await remult.findClosestDistCenter(f.addressHelper.location());
+        distCenter = await remult.findClosestDistCenter(f.addressHelper.location);
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;
@@ -586,7 +586,7 @@ export class Families extends IdEntity {
     click: async (e, col) => {
       openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
         searchClosestDefaultFamily: true,
-        location: e.addressHelper.location(),
+        location: e.addressHelper.location,
         onSelect: async selected => col.value = selected
       });
     }
@@ -647,7 +647,7 @@ export class Families extends IdEntity {
   async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
       return;
-    var geo = this.addressHelper.getGeocodeInformation();
+    var geo = this.addressHelper.getGeocodeInformation;
     var house = '';
     var streen = '';
     var location = '';
@@ -784,13 +784,13 @@ export class Families extends IdEntity {
   openWaze() {
 
     //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.addressHelper.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address) + '&navigate=yes');
+    window.open('waze://?ll=' + this.addressHelper.getGeocodeInformation.getlonglat() + "&q=" + encodeURI(this.address) + '&navigate=yes');
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.address, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.remult).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation.getlonglat() + '&hl=' + getLang(this.remult).languageCode, '_blank');
   }
   showOnGovMap() {
     window.open('https://www.govmap.gov.il/?q=' + this.address + '&z=10', '_blank');

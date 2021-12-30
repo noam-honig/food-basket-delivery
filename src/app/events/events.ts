@@ -426,7 +426,7 @@ export class Event extends IdEntity {
         return getSettings(this.remult).logoUrl;
     }
     get location() {
-        return this.getAddress()?.location();
+        return this.getAddress()?.location;
     }
     get orgName() {
         return getSettings(this.remult).organisationName;
@@ -572,23 +572,23 @@ export class Event extends IdEntity {
             return this.getPhone().displayValue;
     }
     get theAddress() {
-        if (this.getAddress().ok())
-            return this.getAddress().getAddress();
+        if (this.getAddress().ok)
+            return this.getAddress().getAddress;
     }
-    getAddress(): AddressHelper {
-        if (this.addressHelper.ok())
+    getAddress() {
+        if (this.addressHelper.ok)
             return this.addressHelper;
-        if (this.distributionCenter?.addressHelper.ok())
+        if (this.distributionCenter?.addressHelper.ok)
             return this.distributionCenter.addressHelper;
         return getSettings(this.remult).addressHelper;
     }
     get city() {
-        if (this.getAddress().ok())
-            return this.getAddress().getGeocodeInformation().getCity();
+        if (this.getAddress().ok)
+            return this.getAddress().getCity;
     }
     get longLat() {
-        if (this.getAddress().ok())
-            return this.getAddress().getGeocodeInformation().getlonglat();
+        if (this.getAddress().ok)
+            return this.getAddress().getlonglat;
     }
 
 

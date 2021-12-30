@@ -411,7 +411,7 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
     if (h.distCenterAdmin) {
         result.roles.push(Roles.distCenterAdmin);
     }
-    if ((await remult.getSettings()).isSytemForMlt()) {
+    if ((await remult.getSettings()).isSytemForMlt) {
         if (h.labAdmin || h.admin)
             result.roles.push(Roles.lab);
         if (h.isIndependent || h.admin || h.distCenterAdmin)

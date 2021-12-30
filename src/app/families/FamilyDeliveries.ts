@@ -217,7 +217,7 @@ export class FamilyDeliveries extends IdEntity {
     @DataControl({ width: '100' })
     quantity: number;
     isLargeQuantity() {
-        return getSettings(this.remult).isSytemForMlt() && (this.quantity > 10);
+        return getSettings(this.remult).isSytemForMlt && (this.quantity > 10);
     }
 
     @Field({
@@ -418,7 +418,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     )
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt() || c.isAllowed(Roles.admin)) })
+    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt || c.isAllowed(Roles.admin)) })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
@@ -544,7 +544,7 @@ export class FamilyDeliveries extends IdEntity {
         var f = await this.remult.repo(Families).findId(this.family);
         let settings = await ApplicationSettings.getAsync(this.remult);
         if (f) {
-            let x = f.addressHelper.getGeocodeInformation();
+            let x = f.addressHelper.getGeocodeInformation;
             let street = f.address;
             let house = '';
             let lastName = '';

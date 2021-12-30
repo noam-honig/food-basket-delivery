@@ -368,8 +368,14 @@ export function GetDistanceBetween(a: Location, b: Location) {
 }
 
 export class AddressHelper {
-    getAddress() {
+    get getAddress() {
         return this.addressColumn().value;
+    }
+    get getCity() {
+        return this.getGeocodeInformation.getCity();
+    }
+    get getlonglat() {
+        return this.getGeocodeInformation.getlonglat();
     }
 
     constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
@@ -377,7 +383,7 @@ export class AddressHelper {
 
     }
     async updateApiResultIfChanged() {
-        if (this.addressColumn().valueChanged() || !this.ok()) {
+        if (this.addressColumn().valueChanged() || !this.ok) {
             let geo = await GetGeoInformation(this.addressColumn().value, this.remult);
             this.apiResultColumn().value = geo.saveToString();
         }
@@ -385,20 +391,20 @@ export class AddressHelper {
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
     openWaze() {
-        window.open('waze://?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
+        window.open('waze://?ll=' + this.getGeocodeInformation.getlonglat() + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
     }
 
-    getGeocodeInformation() {
+    get getGeocodeInformation() {
         if (this._lastString == this.apiResultColumn().value)
             return this._lastGeo ? this._lastGeo : new GeocodeInformation();
         this._lastString = this.apiResultColumn().value;
         return this._lastGeo = GeocodeInformation.fromString(this.apiResultColumn().value);
     }
-    ok() {
-        return this.getGeocodeInformation().ok();
+    get ok() {
+        return this.getGeocodeInformation.ok();
     }
-    location() {
-        return this.getGeocodeInformation().location();
+    get location() {
+        return this.getGeocodeInformation.location();
     }
 }
 export async function getCurrentLocation(useCurrentLocation: boolean, dialog: DialogService) {

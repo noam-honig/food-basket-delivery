@@ -5,7 +5,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 
 EmailSvc.sendMail = async (subject: string, message: string, email: string, remult: Remult) => {
     let settings = await ApplicationSettings.getAsync(remult);
-    if (!settings.isSytemForMlt() && !settings.familySelfOrderEnabled)
+    if (!settings.isSytemForMlt && !settings.familySelfOrderEnabled)
         return;
     if (!email || !email.includes('@'))
         return;

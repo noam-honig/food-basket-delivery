@@ -56,7 +56,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         if (!centers)
             centers = await remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
         for (const c of centers) {
-            let myDist = GetDistanceBetween(c.addressHelper.location(), loc);
+            let myDist = GetDistanceBetween(c.addressHelper.location, loc);
             if (result === undefined || myDist < dist) {
                 result = c;
                 dist = myDist;

@@ -428,7 +428,7 @@ export class Helpers extends HelpersBase {
             width: '120'
         });
 
-        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt) {
             r.push({
                 field: self.isIndependent,
                 width: '120'
@@ -448,7 +448,7 @@ export class Helpers extends HelpersBase {
             });
         }
         let hadCenter = false;
-        if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt) {
             r.push({
                 field: self.labAdmin, width: '120'
             });
@@ -466,7 +466,7 @@ export class Helpers extends HelpersBase {
         });
         r.push(self.createDate);
 
-        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt) {
             r.push({
                 field: self.frozenTill, width: '120'
             });
@@ -475,7 +475,7 @@ export class Helpers extends HelpersBase {
             });
         }
 
-        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt) {
             r.push({
                 field: self.referredBy, width: '120'
             });
@@ -664,7 +664,7 @@ export class Helpers extends HelpersBase {
             throw this.$.phone.error;
         }
         let settings = await ApplicationSettings.getAsync(this.remult);
-        if (!settings.isSytemForMlt())
+        if (!settings.isSytemForMlt)
             throw "Not Allowed";
         this.remult.setUser({
             id: 'WIX',

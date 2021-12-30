@@ -77,11 +77,9 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
       let c = await createSiteContext(org, remult);
 
-      let settings = settingsForSite.get(org);
-      if (!settings) {
-        settings = await ApplicationSettings.getAsync(c);
-        setSettingsForSite(org, settings);
-      }
+      let settings = await c.getSettings();
+      setSettingsForSite(org, settings);
+
 
       if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
         let items = await OrgEventsComponent.getEvents(phone, c);

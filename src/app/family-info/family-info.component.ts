@@ -183,7 +183,7 @@ export class FamilyInfoComponent implements OnInit {
   }
 
   async familiyPickedUp(f: ActiveFamilyDeliveries) {
-    await (this.settings.isSytemForMlt()) ? this.labSelfReception(f) : this.getPickupComments(f);
+    await (this.settings.isSytemForMlt) ? this.labSelfReception(f) : this.getPickupComments(f);
   }
 
   async cancelAssign(f: ActiveFamilyDeliveries) {

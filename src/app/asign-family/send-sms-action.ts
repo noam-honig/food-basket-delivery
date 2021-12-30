@@ -119,7 +119,7 @@ export class SendSmsUtils {
         let un = process.env.SMS_UN;
         let pw = process.env.SMS_PW;
         let accid = process.env.SMS_ACCID;
-        var from = settings.isSytemForMlt() ? 'Mitchashvim' : 'Hagai';
+        var from = settings.isSytemForMlt ? 'Mitchashvim' : 'Hagai';
         if (settings.bulkSmsEnabled) {
             if (settings.smsVirtualPhoneNumber)
                 from = settings.smsVirtualPhoneNumber;

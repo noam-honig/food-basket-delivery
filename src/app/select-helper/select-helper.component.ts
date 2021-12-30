@@ -72,7 +72,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(null);
   }
   isMlt() {
-    return getSettings(this.remult).isSytemForMlt();
+    return getSettings(this.remult).isSytemForMlt;
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, remult?: Remult, db?: SqlDatabase) {
@@ -96,13 +96,13 @@ export class SelectHelperComponent implements OnInit {
         phone: h.phone?.displayValue,
         distance: 99999999
       });
-      if (h.preferredDistributionAreaAddressHelper.ok()) {
+      if (h.preferredDistributionAreaAddressHelper.ok) {
         let theH = helpers.get(h.id);
-        check(theH, h.preferredDistributionAreaAddressHelper.location(), getLang(remult).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress);
+        check(theH, h.preferredDistributionAreaAddressHelper.location, getLang(remult).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress);
       }
-      if (h.preferredFinishAddressHelper.ok()) {
+      if (h.preferredFinishAddressHelper.ok) {
         let theH = helpers.get(h.id);
-        check(theH, h.preferredFinishAddressHelper.location(), getLang(remult).preferredDistributionArea + ": " + h.preferredFinishAddress);
+        check(theH, h.preferredFinishAddressHelper.location, getLang(remult).preferredDistributionArea + ": " + h.preferredFinishAddress);
       }
     }
 
@@ -131,7 +131,7 @@ export class SelectHelperComponent implements OnInit {
             h.assignedDeliveries = 1;
           else
             h.assignedDeliveries++;
-          if (!getSettings(remult).isSytemForMlt())
+          if (!getSettings(remult).isSytemForMlt)
             check(h, { lat: d.lat, lng: d.lng }, getLang(remult).delivery + ": " + d.address);
         }
       }
@@ -276,7 +276,7 @@ export class SelectHelperComponent implements OnInit {
 
   }
   showCompany() {
-    return ApplicationSettings.get(this.remult).showCompanies;
+    return this.settings.showCompanies;
   }
   selectFirst() {
     if (this.filteredHelpers.length > 0)

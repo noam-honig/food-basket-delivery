@@ -74,7 +74,7 @@ serverInit().then(async (dataSource) => {
             result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
 
             let tagid = 'UA-121891791-1'; // default key for Google Analytics
-            if (settings.isSytemForMlt()) {
+            if (settings.isSytemForMlt) {
                 //tagid = 'AW-452581833';
                 result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-452581833');gtag('config', 'UA-174556479-1');");
                 result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `

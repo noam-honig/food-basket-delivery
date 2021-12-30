@@ -55,8 +55,8 @@ export class RegisterToEvent {
 
 
     }
-    init() {
-        let s = getSettings(this.remult);
+    async init() {
+        let s = (await this.remult.getSettings());
         this.questions.push({ field: this.$.socialSecurityNumber, show: () => s.registerAskTz, getFieldToUpdate: h => h.socialSecurityNumber })
         this.questions.push({ field: this.$.email, show: () => s.registerAskEmail, getFieldToUpdate: h => h.email })
         this.questions.push({ field: this.$.preferredDistributionAreaAddress, show: () => s.registerAskPreferredDistributionAreaAddress, getFieldToUpdate: h => h.preferredDistributionAreaAddress })
@@ -116,7 +116,7 @@ export class RegisterToEvent {
     get $() { return getFields(this); }
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
-        this.init();
+        await this.init();
         let lang = this.remult.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
@@ -164,7 +164,7 @@ export class RegisterToEvent {
     }
     @BackendMethod({ allowed: true })
     async registerVolunteerToEvent(id: string, site: string, register: boolean) {
-        this.init();
+        await this.init();
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
 

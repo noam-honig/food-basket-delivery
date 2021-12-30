@@ -58,10 +58,10 @@ export class Phone {
   static sendWhatsappToPhone(phone: string, smsMessage: string, remult: Remult, test = false) {
     phone = Phone.fixPhoneInput(phone, remult);
     if (phone.startsWith('0')) {
-      phone = getSettings(remult).getInternationalPhonePrefix() + phone.substr(1);
+      phone = getSettings(remult).getInternationalPhonePrefix + phone.substr(1);
     }
     if (getSettings(remult).forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
-      phone = getSettings(remult).getInternationalPhonePrefix() + phone;
+      phone = getSettings(remult).getInternationalPhonePrefix + phone;
 
     if (phone.startsWith('+'))
       phone = phone.substr(1);

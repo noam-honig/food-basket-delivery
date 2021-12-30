@@ -74,7 +74,7 @@ export class DeliveryHistoryComponent implements OnInit {
     stam.setDataProvider(this.helperStorage);
     this.helperInfo = new GridSettings(stam.repo(helperHistoryInfo), {
       allowSelection: true,
-      numOfColumnsInGrid: (this.settings.isSytemForMlt() ? 10 : 7),
+      numOfColumnsInGrid: (this.settings.isSytemForMlt ? 10 : 7),
       gridButtons: [{
         name: this.settings.lang.exportToExcel,
         visible: () => this.remult.isAllowed(Roles.admin),
@@ -84,7 +84,7 @@ export class DeliveryHistoryComponent implements OnInit {
       },
       {
         name: 'הענק מתנה',
-        visible: () => this.settings.isSytemForMlt() && this.remult.isAllowed(Roles.admin),
+        visible: () => this.settings.isSytemForMlt && this.remult.isAllowed(Roles.admin),
         click: async () => {
           let rows = this.helperInfo.selectedRows;
 
@@ -118,7 +118,7 @@ export class DeliveryHistoryComponent implements OnInit {
         },
         {
           name: 'הענק מתנה',
-          visible: () => this.settings.isSytemForMlt() && this.remult.isAllowed(Roles.admin),
+          visible: () => this.settings.isSytemForMlt && this.remult.isAllowed(Roles.admin),
           click: async x => {
             await HelperGifts.assignGift(x.courier);
             this.refresh();
@@ -156,7 +156,7 @@ export class DeliveryHistoryComponent implements OnInit {
             field: h.dates,
             width: '75'
           }];
-        if (settings.isSytemForMlt()) {
+        if (settings.isSytemForMlt) {
           r.push(
             {
               field: h.selfassigned,
@@ -244,7 +244,7 @@ export class DeliveryHistoryComponent implements OnInit {
       }
 
 
-      if (this.settings.isSytemForMlt()) {
+      if (this.settings.isSytemForMlt) {
         this.mltColumns = [
           d.name,
           d.basketType,

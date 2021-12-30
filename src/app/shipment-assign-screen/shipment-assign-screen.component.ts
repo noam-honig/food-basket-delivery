@@ -145,7 +145,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
               };
               checkDistance(helper.location1, 'העדפת מתנדב: ' + helper.address1);
               checkDistance(helper.location2, 'העדפת מתנדב: ' + helper.address2);
-              if (!this.settings.isSytemForMlt())
+              if (!this.settings.isSytemForMlt)
                 for (const exF of helper.families) {
                   checkDistance(exF.location, 'משלוח: ' + exF.address);
                 }
@@ -320,10 +320,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
     return {
       id: h.id,
       name: h.name,
-      location1: h.preferredDistributionAreaAddressHelper.ok() ? h.preferredDistributionAreaAddressHelper.location() : undefined,
+      location1: h.preferredDistributionAreaAddressHelper.ok ? h.preferredDistributionAreaAddressHelper.location : undefined,
       address1: h.preferredDistributionAreaAddress,
       address2: h.preferredFinishAddress,
-      location2: h.preferredFinishAddressHelper.ok() ? h.preferredFinishAddressHelper.location() : undefined,
+      location2: h.preferredFinishAddressHelper.ok ? h.preferredFinishAddressHelper.location : undefined,
       families: [],
       problemFamilies: {},
       relevantFamilies: []

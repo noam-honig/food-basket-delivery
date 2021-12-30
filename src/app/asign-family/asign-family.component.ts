@@ -663,7 +663,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async assignClosestDeliveries() {
 
-        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddressHelper.location(), false));
+        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddressHelper.location, false));
 
         await openDialog(SelectListComponent, x => {
             x.args = {
@@ -854,12 +854,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
             if (waitingFamilies.length > 0) {
                 let moreHelperInfo = await helper.getHelper();
-                let preferArea = moreHelperInfo.preferredDistributionAreaAddressHelper.ok();
-                let preferEnd = moreHelperInfo.preferredFinishAddressHelper.ok();
+                let preferArea = moreHelperInfo.preferredDistributionAreaAddressHelper.ok;
+                let preferEnd = moreHelperInfo.preferredFinishAddressHelper.ok;
 
-                if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt() && (preferArea || preferEnd))) {
+                if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt && (preferArea || preferEnd))) {
 
-                    let distCenter = settings.addressHelper.location();
+                    let distCenter = settings.addressHelper.location;
                     let lastFamiliy = waitingFamilies[0];
 
                     if (preferArea || preferEnd) {
@@ -867,14 +867,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         var lastDist: number;
                         for (const f of waitingFamilies) {
                             if (preferArea) {
-                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredDistributionAreaAddressHelper.location());
+                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredDistributionAreaAddressHelper.location);
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
                                 }
                             }
                             if (preferEnd) {
-                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredFinishAddressHelper.location());
+                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredFinishAddressHelper.location);
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;

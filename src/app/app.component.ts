@@ -117,7 +117,7 @@ export class AppComponent {
       return false;
 
     }
-    if (this.settings.isSytemForMlt() && !this.remult.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
+    if (this.settings.isSytemForMlt && !this.remult.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
       return false;
     return true;
   }

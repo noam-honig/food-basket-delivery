@@ -145,7 +145,7 @@ export class ManageComponent implements OnInit {
               d.$.address,
               {
                 caption: this.settings.lang.addressByGoogle,
-                getValue: () => d.addressHelper.getGeocodeInformation().getAddress()
+                getValue: () => d.addressHelper.getGeocodeInformation.getAddress()
               },
               d.$.comments,
               [d.$.phone1, d.$.phone1Description],
@@ -179,7 +179,7 @@ export class ManageComponent implements OnInit {
       },
       {
         caption: this.settings.lang.addressByGoogle,
-        getValue: s => s.addressHelper.getGeocodeInformation().getAddress()
+        getValue: s => s.addressHelper.getGeocodeInformation.getAddress()
       },
       x.comments,
       x.isFrozen,
@@ -203,7 +203,7 @@ export class ManageComponent implements OnInit {
       this.refreshEnvironmentAfterSave();
 
     },
-    numOfColumnsInGrid: this.settings.isSytemForMlt() ? 7 : 4,
+    numOfColumnsInGrid: this.settings.isSytemForMlt ? 7 : 4,
     allowUpdate: true,
     allowInsert: true,
 
@@ -252,7 +252,7 @@ export class ManageComponent implements OnInit {
       this.settings.$.address,
       {
         caption: 'כתובת כפי שגוגל הבין',
-        getValue: s => this.settings.addressHelper.getGeocodeInformation().getAddress()
+        getValue: s => this.settings.addressHelper.getGeocodeInformation.getAddress()
       }
 
     ]
@@ -391,7 +391,7 @@ export class ManageComponent implements OnInit {
         this.settings.$.forWho
       ];
 
-      if (this.settings.isSytemForMlt())
+      if (this.settings.isSytemForMlt)
         r.push(this.settings.$.BusyHelperAllowedFreq_nom, this.settings.$.BusyHelperAllowedFreq_denom, this.settings.$.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee, this.settings.$.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself);
       return r;
     }

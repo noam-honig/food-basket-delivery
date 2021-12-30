@@ -201,7 +201,7 @@ class donorForm {
   @BackendMethod({ allowed: true })
   async createDonor() {
     let settings = await ApplicationSettings.getAsync(this.remult);
-    if (!settings.isSytemForMlt())
+    if (!settings.isSytemForMlt)
       throw "Not Allowed";
     this.remult.setUser({
       id: 'WIX',

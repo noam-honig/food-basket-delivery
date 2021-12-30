@@ -175,8 +175,8 @@ export class ImportFromExcelComponent implements OnInit {
                 if (createDelivery) {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
-                    if (getSettings(remult).isSytemForMlt()) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location());
+                    if (getSettings(remult).isSytemForMlt) {
+                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
                 }
@@ -266,8 +266,8 @@ export class ImportFromExcelComponent implements OnInit {
             for (const c of fd.$) {
                 if (c == col) {
                     fd._disableMessageToUsers = true;
-                    if (settings.isSytemForMlt()) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location());
+                    if (settings.isSytemForMlt) {
+                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
                     break;

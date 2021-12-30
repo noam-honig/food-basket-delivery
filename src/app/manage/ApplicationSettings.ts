@@ -12,7 +12,7 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
   };
 }
 
-import { GeocodeInformation, GetGeoInformation, AddressHelper } from "../shared/googleApiHelpers";
+import { Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Entity, Remult } from 'remult';
 import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
@@ -114,7 +114,7 @@ export class ApplicationSettings extends EntityBase {
 
 
 
-  getInternationalPhonePrefix() {
+  get getInternationalPhonePrefix() {
     let r = this.forWho.args.internationalPrefixForSmsAndAws;
     if (!r)
       r = '+972';
@@ -154,7 +154,7 @@ export class ApplicationSettings extends EntityBase {
     return r;
   }
   showVideo() {
-    return this.lang.languageCode == 'iw' && !this.isSytemForMlt();
+    return this.lang.languageCode == 'iw' && !this.isSytemForMlt;
   }
 
   @IntegerField()
@@ -273,7 +273,7 @@ export class ApplicationSettings extends EntityBase {
   @Field({ translation: l => l.enableSelfPickupModule })
   usingSelfPickupModule: boolean;
 
-  isSytemForMlt() {
+  get isSytemForMlt() {
     return this.forWho == TranslationOptions.donors;
   }
 
@@ -613,19 +613,95 @@ export function setCustomColumnInfo(v: customColumnInfo, caption: string, values
     v.values = values.split(',').map(x => x.trim());
   }
 }
-export const settingsForSite = new Map<string, ApplicationSettings>();
-export function setSettingsForSite(site: string, lang: ApplicationSettings) {
-  settingsForSite.set(site, lang);
+export const settingsForSite = new Map<string, SmallSettings>();
+export function setSettingsForSite(site: string, {
+  usingSelfPickupModule,
+  familySelfOrderEnabled,
+  manageEscorts,
+  requireComplexPassword,
+  forWho,
+  getInternationalPhonePrefix,
+  boxes2Name,
+  boxes1Name,
+  isSytemForMlt,
+  addressHelper,
+  helpPhone,
+  helpText,
+  bulkSmsEnabled,
+  logoUrl,
+  organisationName,
+  hideFamilyPhoneFromVolunteer
+
+
+}: ApplicationSettings) {
+  const
+    {
+      ok,
+      getAddress,
+      getCity,
+      getlonglat,
+      location
+
+    } = addressHelper;
+  settingsForSite.set(site, {
+    usingSelfPickupModule,
+    familySelfOrderEnabled,
+    manageEscorts,
+    requireComplexPassword,
+    forWho,
+    getInternationalPhonePrefix,
+    boxes2Name,
+    boxes1Name,
+    isSytemForMlt,
+    addressHelper: {
+      ok,
+      getAddress,
+      getCity,
+      getlonglat,
+      location
+    },
+    helpPhone,
+    helpText,
+    bulkSmsEnabled,
+    logoUrl,
+    organisationName,
+    hideFamilyPhoneFromVolunteer
+  });
 }
-export function getSettings(remult: Remult): ApplicationSettings {
+export function getSettings(remult: Remult): SmallSettings {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(remult));
   if (r)
     return r;
   //if (context.backend) {
-  return new ApplicationSettings(remult);
+  return new SmallSettings();
   throw "can't find application settings on server for this request";
 
   return ApplicationSettings.get(remult);;
+}
+export class SmallSettings {
+  usingSelfPickupModule: boolean = false;
+  familySelfOrderEnabled: boolean = false;
+  manageEscorts: boolean = false;
+  requireComplexPassword: boolean = false;
+  forWho: TranslationOptions;
+  getInternationalPhonePrefix: string = '';
+  boxes2Name: string = '';
+  boxes1Name: string = '';
+  isSytemForMlt: boolean = false;
+  addressHelper: SmallAdressHelper = new SmallAdressHelper();
+  helpPhone: Phone = new Phone('');
+  helpText: string = '';
+  bulkSmsEnabled: boolean = false
+  logoUrl: string = '';
+  organisationName: string = '';
+  hideFamilyPhoneFromVolunteer: boolean = false;
+}
+export class SmallAdressHelper {
+  ok: boolean = false;
+  getAddress: string = '';
+  getCity: string = '';
+  getlonglat: string = '';
+  location: Location = undefined;
 }
 
 interface customColumnInfo {

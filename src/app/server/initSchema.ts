@@ -231,7 +231,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await pagedRowsIterator(remult.repo(Families), {
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
-                let g = f.addressHelper.getGeocodeInformation();
+                let g = f.addressHelper.getGeocodeInformation;
                 f.addressByGoogle = g.getAddress();
                 f.drivingLatitude = g.location().lat;
                 f.drivingLongitude = g.location().lng;
@@ -368,7 +368,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             where: { addressOk: false },
             forEachRow: async f => {
                 f._suppressLastUpdateDuringSchemaInit = true;
-                f.addressOk = !f.addressHelper.getGeocodeInformation().partialMatch();
+                f.addressOk = !f.addressHelper.getGeocodeInformation.partialMatch();
                 if (f.addressOk)
                     await f.save();
             }

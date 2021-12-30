@@ -589,7 +589,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.phone3Description,
         deliveries.phone4,
         deliveries.phone4Description,
-        { field: deliveries.courier, width: (this.settings.isSytemForMlt() ? '300' : '100') },
+        { field: deliveries.courier, width: (this.settings.isSytemForMlt ? '300' : '100') },
 
         deliveries.courierAssignUser,
         { field: deliveries.courierAssingTime, width: '150' },
@@ -615,7 +615,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       this.normalColumns = [
         deliveries.name
       ]
-      if (this.settings.isSytemForMlt()) {
+      if (this.settings.isSytemForMlt) {
         this.normalColumns.push(
           deliveries.city,
           //deliveries.distributionCenter,
@@ -798,7 +798,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         refresh: () => this.refresh(),
         settings: this.settings,
         busy: this.busy,
-        showAllBeforeNew: this.settings.isSytemForMlt()
+        showAllBeforeNew: this.settings.isSytemForMlt
       })
     ]
   });
@@ -907,7 +907,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
     await f.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
-        if (args.settings.isSytemForMlt()) {
+        if (args.settings.isSytemForMlt) {
           if (d.deliverStatus.isProblem) {
             let newDelivery = await args.remult.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
             for (const otherFailedDelivery of await args.remult.repo(ActiveFamilyDeliveries).find({
@@ -1103,7 +1103,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async d => {
         d.phone1.sendWhatsapp(args.remult, getLang(args.remult).hello + ' ' + d.name + ',');
       },
-      visible: d => d.phone1 && args.remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt()
+      visible: d => d.phone1 && args.remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt
     }
   ] as RowButton<FamilyDeliveries>[]
 }

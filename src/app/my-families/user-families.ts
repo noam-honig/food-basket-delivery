@@ -135,7 +135,7 @@ export class UserFamiliesList {
             this.allFamilies = await this.remult.repo(ActiveFamilyDeliveries).find({
                 where: {
                     courier: this.helper,
-                    visibleToCourier: !this.settings.isSytemForMlt() && !this.remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
+                    visibleToCourier: !this.settings.isSytemForMlt && !this.remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
 
                 }, orderBy: {
                     deliverStatus: "asc",

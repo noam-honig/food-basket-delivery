@@ -216,7 +216,7 @@ export class MltFamiliesComponent implements OnInit {
 
   async getClosestDistCenters() {
     let distCenters = await this.remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
-    distCenters = distCenters.filter(x => x.addressHelper.ok());
+    distCenters = distCenters.filter(x => x.addressHelper.ok);
     let volunteerLocation: Location = undefined;
     try {
       volunteerLocation = await getCurrentLocation(true, this.dialog);
@@ -232,7 +232,7 @@ export class MltFamiliesComponent implements OnInit {
         } else if (b.id == this.familyLists.distCenter.id) {
           return 1;
         } else {
-          return GetDistanceBetween(a.addressHelper.location(), volunteerLocation) - GetDistanceBetween(b.addressHelper.location(), volunteerLocation);
+          return GetDistanceBetween(a.addressHelper.location, volunteerLocation) - GetDistanceBetween(b.addressHelper.location, volunteerLocation);
         }
       });
 
@@ -259,7 +259,7 @@ export class MltFamiliesComponent implements OnInit {
     await openDialog(SelectListComponent, x => x.args = {
       title: 'בחרו יעד למסירת הציוד',
       options: distCenters.map(y => ({
-        name: GetDistanceBetween(y.addressHelper.location(), volunteerLocation).toFixed(1) + " ק\"מ" + ", " + y.name + " " + y.address,
+        name: GetDistanceBetween(y.addressHelper.location, volunteerLocation).toFixed(1) + " ק\"מ" + ", " + y.name + " " + y.address,
         item: y
       })),
       onSelect: async (x) => {
@@ -273,7 +273,7 @@ export class MltFamiliesComponent implements OnInit {
   @BackendMethod({ allowed: Allow.authenticated })
   static async changeDestination(newDestinationId: DistributionCenters, remult?: Remult) {
     let s = (await remult.getSettings());
-    if (!s.isSytemForMlt())
+    if (!s.isSytemForMlt)
       throw "not allowed";
     for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: remult.currentUser } })) {
       fd.distributionCenter = newDestinationId;
