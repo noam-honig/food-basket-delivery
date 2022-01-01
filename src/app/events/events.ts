@@ -272,7 +272,7 @@ export class Event extends IdEntity {
                         click: async (ev) => {
                             let h = await ev.helper.getHelper();
                             await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
-                            ev.save();
+                            await ev._.reload();
                         }
                     },
                     {
