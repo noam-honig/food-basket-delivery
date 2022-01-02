@@ -229,9 +229,12 @@ export class PrintVolunteerComponent implements OnInit {
   }
 
 
-  save() {
-    this.row.info = JSON.parse(JSON.stringify(this.report));
-    this.busy.donotWait(() => this.row.save());
+  lastSave = Promise.resolve();
+  async save() {
+    this.lastSave = this.lastSave.then(async () => {
+      this.row.info = JSON.parse(JSON.stringify(this.report));
+      await this.busy.donotWait(() => this.row.save());
+    });
   }
 }
 

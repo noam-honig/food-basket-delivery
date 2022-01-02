@@ -110,10 +110,12 @@ export class PrintStickersComponent implements OnInit {
     this.pageProps.values = this.report.page;
     this.stickerProps.values = this.report.sticker;
   }
-
-  save() {
-    this.row.info = JSON.parse(JSON.stringify(this.report));
-    this.busy.donotWait(() => this.row.save());
+  lastSave = Promise.resolve();
+  async save() {
+    this.lastSave = this.lastSave.then(async () => {
+      this.row.info = JSON.parse(JSON.stringify(this.report));
+      await this.busy.donotWait(() => this.row.save());
+    });
   }
 }
 
