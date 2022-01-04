@@ -46,7 +46,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
   getTheData(cell: string) {
     let val = this.worksheet[cell];
-    if (!val)
+    if (!val || !val.w)
       return '';
     return val.w.trim();
   }
