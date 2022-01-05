@@ -6,12 +6,10 @@ import { registerEntitiesOnServer, registerActionsOnServer } from 'remult/server
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
-
 import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import "../event-info/RegisterToEvent";
-//import '../app.module';
-import { Remult, SqlDatabase } from 'remult';
+import { Remult } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -21,11 +19,10 @@ import { preparePostgresQueueStorage } from "remult/postgres";
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
-import { AuthService } from '../auth/auth-service';
 import { InitContext } from "../helpers/init-context";
-import { Helpers, HelpersBase } from "../helpers/helpers";
+import { Helpers } from "../helpers/helpers";
 import { Phone } from "../model-shared/phone";
-
+import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
 
@@ -49,9 +46,12 @@ serverInit().then(async (dataSource) => {
 
     async function sendIndex(res: express.Response, req: express.Request) {
         let remult = await eb.getRemult(req);
+
         let org = Sites.getOrganizationFromContext(remult);
         if (redirect.includes(org)) {
-            res.redirect(process.env.REDIRECT_TARGET + org);
+            const target = process.env.REDIRECT_TARGET + req.originalUrl;
+            console.log("Redirect ", target);
+            res.redirect(target);
             return;
         }
         if (!Sites.isValidOrganization(org)) {
@@ -240,7 +240,25 @@ s.parentNode.insertBefore(b, s);})();
     }
     app.use('/*/api/incoming-sms', async (req, res) => {
         try {
+
+
             let remult = await eb.getRemult(req);
+
+            let org = Sites.getOrganizationFromContext(remult);
+            if (redirect.includes(org)) {
+                console.log("Incoming SMS Redirect", {
+                    p: req.path,
+                    q: req.query,
+                    o: req.originalUrl
+                });
+                const target = process.env.REDIRECT_TARGET + req.originalUrl;
+                try {
+                    await fetch.default(target);
+                } catch (err) {
+                    console.error("Incoming sms redirect err", err);
+                }
+
+            }
             let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
 
             let com = comRepo.create({
