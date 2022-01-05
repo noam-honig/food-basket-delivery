@@ -118,3 +118,21 @@ export function getLang(remult: Remult) {
 }
 
 //SELECT string_agg(id::text, ',') FROM guest.sites
+
+//count all tables
+/*
+with tbl as (
+  SELECT table_schema,table_name 
+  FROM information_schema.tables
+  WHERE table_name not like 'pg_%' AND table_schema IN ('shabatm')
+)
+SELECT 
+  table_schema, 
+  table_name, 
+  (xpath('/row/c/text()', 
+    query_to_xml(format('select count(*) AS c from %I.%I', table_schema, table_name), 
+    false, 
+    true, 
+    '')))[1]::text::int AS rows_n 
+FROM tbl ORDER BY 3 DESC;
+*/
