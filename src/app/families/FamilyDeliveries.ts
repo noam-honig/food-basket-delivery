@@ -201,7 +201,7 @@ export class FamilyDeliveries extends IdEntity {
     },
         (options, remult) =>
             options.sqlExpression = async (entity) => {
-                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.getSettings()).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.getSettings())?.showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
                 return r;
             }
     )
