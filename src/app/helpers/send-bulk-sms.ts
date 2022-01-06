@@ -46,7 +46,7 @@ export class SendBulkSms {
                         }
                         if (await this.remult.repo(HelperCommunicationHistory).count({
                             volunteer: h,
-                            createDate: { ">=": this.thisMorning() }
+                            createDate: { ">=": this.yesterdayMorning() }
                         }) > 0) {
                             if (!await dialog.YesNoPromise("כבר נשלחה למתנדב הודעה מאתמול בבוקר, האם לשלוח בכל זאת?"))
                                 return;
@@ -126,7 +126,7 @@ export class SendBulkSms {
         let events = SqlFor(this.remult.repo(Event))
         let ve = SqlFor(this.remult.repo(volunteersInEvent));
         let message = SqlFor(this.remult.repo(HelperCommunicationHistory));
-        let twoDaysAgo = this.thisMorning();
+        let twoDaysAgo = this.yesterdayMorning();
         let q = await sql.query({
             from: helpers,
             select: () => [helpers.phone, helpers.name, helpers.id],
@@ -178,9 +178,9 @@ export class SendBulkSms {
         console.log(q);
         return (await db.execute(q)).rows as { phone: string, name: string, id: string }[];
     }
-    private thisMorning() {
+    private yesterdayMorning() {
         let twoDaysAgo = new Date();
-        //twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
         twoDaysAgo.setHours(0);
         return twoDaysAgo;
     }
