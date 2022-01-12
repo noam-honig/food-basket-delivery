@@ -6,13 +6,12 @@ import { getLang } from "../sites/sites";
 import { FieldType, translationConfig } from "../translate";
 
 @FieldType<Phone>({
-  displayValue: (e, x) => x && x.displayValue,
   valueConverter: {
     toJson: x => x ? x.thePhone : '',
     fromJson: x => x ? new Phone(x) : null
   },
   inputType: InputTypes.tel
-})
+}, (options, remult) => options.displayValue = (e, x) => x && getSettings(remult).forWho.formatPhone(x.thePhone))
 @DataControl<any, Phone>({
   click: (e, x) => window.open('tel:' + x.displayValue),
   allowClick: (e, x) => !!x.displayValue,
