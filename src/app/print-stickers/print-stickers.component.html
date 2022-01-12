@@ -1,16 +1,18 @@
 <div class="container" *ngIf="report" [style]="defs.getStyle(pageProps.props,report.page)">
-    <div *ngFor="let r of data" style="flex-shrink: 0;position: relative;"
-        [ngStyle]="defs.getStyle(stickerProps.props,report.sticker)" class="item">
-        <ng-container *ngFor="let f of report.controls">
+    <div *ngFor="let r of data" style="flex-shrink: 0;position: relative; display: inline-grid;"
+        [ngStyle]="defs.getStyle(stickerProps.props,report.sticker)">
+        <div class="item">
+            <ng-container *ngFor="let f of report.controls">
 
-            <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
-                (click)="editControl(f)">
-                {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}
-            </div>
-        </ng-container>
-        <button mat-icon-button class="edit-button" (click)="defs.editSticker(r,data)">
-            <mat-icon>edit</mat-icon>
-        </button>
+                <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
+                    (click)="editControl(f)">
+                    {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}} {{f.propertyValues&& f.propertyValues[defs.textAfterKey]}}
+                </div>
+            </ng-container>
+            <button mat-icon-button class="edit-button" (click)="defs.editSticker(r,data)">
+                <mat-icon>edit</mat-icon>
+            </button>
+        </div>
     </div>
 </div>
 

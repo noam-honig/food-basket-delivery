@@ -9,7 +9,7 @@
                         <div *ngIf="v.firstRow[f.fieldKey]" cdkDrag
                             [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
                             (click)="editControl(f,report.controls)">
-                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{v.firstRow[f.fieldKey]}}
+                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{v.firstRow[f.fieldKey]}} {{f.propertyValues&& f.propertyValues[defs.textAfterKey]}}
                         </div>
                     </ng-container>
                 </td>
@@ -33,7 +33,7 @@
 
                         <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
                             cdkDrag (click)="editControl(f,c.controls)">
-                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}
+                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}  {{f.propertyValues&& f.propertyValues[defs.textAfterKey ]}}
                         </div>
                     </ng-container>
                 </td>

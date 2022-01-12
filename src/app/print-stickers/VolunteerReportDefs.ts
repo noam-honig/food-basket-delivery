@@ -151,6 +151,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     return r;
   }
   textBeforeKey = "@textBefore";
+  textAfterKey = "@textAfter";
   helperPhoneKey = "helperPhone";
   helperCommentKey = "helperComment";
   fieldProps: ElementProps = {
@@ -166,7 +167,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
           s["text-align"] = "center";
       }),
       new Property('color', "צבע", 'color'),
-      new Property(this.textBeforeKey, "תאור", '', () => { }),
+      new Property(this.textBeforeKey, "לפני", '', () => { }),
+      new Property(this.textAfterKey, "אחרי", '', () => { }),
       new Property("inline", "באותה שורה", InputTypes.checkbox, (v, s) => {
         if (v)
           s["display"] = "inline";
