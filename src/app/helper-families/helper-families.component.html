@@ -102,7 +102,7 @@
       </ng-template>
       <app-map #map> </app-map>
     </mat-tab>
-    <mat-tab [label]="settings.lang.whatToTake">
+    <mat-tab [label]="settings.lang.whatToTake" *ngIf="familyLists.whatToTake">
       <div style="white-space: pre;">{{familyLists.whatToTake}}</div>
     </mat-tab>
   </mat-tab-group>
