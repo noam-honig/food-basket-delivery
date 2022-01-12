@@ -5,7 +5,8 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Remult } from 'remult';
-import { DialogConfig } from '@remult/angular';
+import { BusyService, DialogConfig } from '@remult/angular';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-helper-assignment',
@@ -24,7 +25,9 @@ export class HelperAssignmentComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<any>,
     public settings: ApplicationSettings,
-    public remult: Remult
+    public remult: Remult,
+    private dialog: DialogService,
+    private busy: BusyService
   ) {
   }
   @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;
@@ -34,5 +37,9 @@ export class HelperAssignmentComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+  async edit() {
+    let h = await this.argsHelper.getHelper();
+    await h.displayEditDialog(this.dialog, this.busy)
   }
 }
