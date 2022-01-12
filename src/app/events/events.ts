@@ -276,6 +276,14 @@ export class Event extends IdEntity {
                         }
                     },
                     {
+                        name: getLang(this.remult).confirmed,
+                        icon: 'check',
+                        click: async (ev) => {
+                            ev.confirmed = !ev.confirmed;
+                            await ev.save();
+                        }
+                    },
+                    {
                         name: getLang(this.remult).volunteerInfo,
                         icon: 'edit',
                         click: async (ev) => {
