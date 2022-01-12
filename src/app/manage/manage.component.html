@@ -6,6 +6,7 @@
         <button mat-icon-button (click)="reset()" [disabled]="!wasChange()">
             <mat-icon color="warning">clear</mat-icon>
         </button>
+        <button mat-button (click)="previewVolunteer()">{{settings.lang.previewVolunteerScreen}}</button>
     </div>
 
 
@@ -99,6 +100,12 @@
                 <H4>{{settings.lang.sampleMessage}}</H4>
                 <pre>{{testSms()}}</pre>
             </mat-card>
+
+            <data-area [settings]="settingsMessages"></data-area>
+            <button mat-raised-button (click)="saveAndPreview()" color="primary"
+                style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
+            <data-area [settings]="settings2Messages"></data-area>
+
             <mat-card>
                 <mat-card-title>
                     {{settings.$.reminderSmsText.metadata.caption}}
@@ -153,10 +160,6 @@
                     <pre>{{testSuccessSms()}}</pre>
                 </ng-container>
             </mat-card>
-            <data-area [settings]="settingsMessages"></data-area>
-            <button mat-raised-button (click)="saveAndPreview()" color="primary"
-                style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
-            <data-area [settings]="settings2Messages"></data-area>
         </mat-expansion-panel>
         <mat-expansion-panel>
             <mat-expansion-panel-header>

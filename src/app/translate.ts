@@ -464,12 +464,12 @@ export class Language {
   helpPhone = 'טלפון לעזרה';
   successButtonSettingName = "מלל כפתור נמסר בהצלחה";
   problemButtonSettingName = "מלל כפתור נתקלתי בבעיה";
-  freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
-  urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
-  showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים את כל הסלים';
-  freeText2ForVolunteer = 'מלל חופשי 2 למתנדב';
-  urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
-  showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים את כל הסלים';
+  freeText1ForVolunteer = 'הודעה 1 שתופיע למתנדב בראש המסך';
+  urlFreeText1 = 'כתובת אינטרנט ללחיצה על הודעה 1 שתופיע למתנדב בראש המסך';
+  showText1OnlyWhenDone = 'הצג הודעה 1 רק אם המתנדב סיים את כל המשלוחים';
+  freeText2ForVolunteer = 'הודעה 2 שתופיע למתנדב בראש המסך';
+  urlFreeText2 = 'כתובת אינטרנט ללחיצה על הודעה 2 שתופיע למתנדב בראש המסך';
+  showText2OnlyWhenDone = 'המג הודעה 2 רק אם המתנדב סיים את כל המשלוחים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
   enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה ארגון הגיע המתנדב';
@@ -1235,6 +1235,7 @@ export class Language {
   smsProviderConfiguration = "הגדרות ספק SMS";
   sendMessageToInviteVolunteers = "שליחת הודעה לזימון מתנדבים";
   whatToTake = "להביא";
+  previewVolunteerScreen = "הדגם תצוגת מתנדב";
 
 }
 

@@ -27,6 +27,7 @@ import { GetVolunteerFeedback } from '../update-comment/update-comment.component
 import { Field, use } from '../translate';
 import { Sites } from '../sites/sites';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+import { MyFamiliesComponent } from '../my-families/my-families.component';
 
 @Component({
   selector: 'app-manage',
@@ -270,6 +271,9 @@ export class ManageComponent implements OnInit {
   settingsLogo = new DataAreaSettings({
     fields: s => [this.settings.$.logoUrl]
   });
+  async previewVolunteer(){
+    openDialog(MyFamiliesComponent);
+  }
   async saveAndPreview() {
     await this.save();
     let f = this.remult.repo(ActiveFamilyDeliveries).create();
@@ -309,12 +313,8 @@ export class ManageComponent implements OnInit {
       [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values],
       this.settings.$.askVolunteerForLocationOnDelivery,
       this.settings.$.askVolunteerForAPhotoToHelp,
-      this.settings.$.questionForVolunteerWhenUploadingPhoto,
-      this.settings.$.messageForDoneDelivery,
-      this.settings.$.AddressProblemStatusText,
-      this.settings.$.NotHomeProblemStatusText,
-      this.settings.$.DoNotWantProblemStatusText,
-      this.settings.$.OtherProblemStatusText
+      this.settings.$.questionForVolunteerWhenUploadingPhoto
+
 
 
 
@@ -328,6 +328,10 @@ export class ManageComponent implements OnInit {
 
 
       this.settings.$.messageForDoneDelivery,
+      this.settings.$.AddressProblemStatusText,
+      this.settings.$.NotHomeProblemStatusText,
+      this.settings.$.DoNotWantProblemStatusText,
+      this.settings.$.OtherProblemStatusText
 
 
 
