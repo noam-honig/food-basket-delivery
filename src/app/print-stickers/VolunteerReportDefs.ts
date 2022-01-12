@@ -142,7 +142,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     r.sort((a, b) => {
       const aCourier = a['courier'] || '';
       const bCourier = b['courier'] || '';
-      if (aCourier != bCourier && aCourier == '' || bCourier == '') {
+      if (aCourier != bCourier && (aCourier == '' || bCourier == '')) {
         if (aCourier == '')
           return 1;
         else return -1;
