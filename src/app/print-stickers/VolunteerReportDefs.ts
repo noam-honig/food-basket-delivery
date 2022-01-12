@@ -140,13 +140,20 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
 
     }
     r.sort((a, b) => {
+      const aCourier = a['courier'] || '';
+      const bCourier = b['courier'] || '';
+      if (aCourier != bCourier && aCourier == '' || bCourier == '') {
+        if (aCourier == '')
+          return 1;
+        else return -1;
+      }
       let s: string = a[d.helperCommentKey] || '';
       let comp = s.localeCompare(b[d.helperCommentKey]);
       if (comp != 0) {
         return comp;
       }
-      s = a['courier'] || '';
-      return s.localeCompare(b['courier']);
+
+      return aCourier.localeCompare(bCourier);
     });
     return r;
   }

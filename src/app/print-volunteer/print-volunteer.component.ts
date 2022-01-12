@@ -34,10 +34,19 @@ export class PrintVolunteerComponent implements OnInit {
   defs = new VolunteerReportDefs(this.remult, this.busy);
   report: ReportInfo;
   row: VolunteerReportInfo;
-
+  readonly newPageKey = '@newPageKey';
+  pageBreakBefore() {
+    if (this.report.page[this.newPageKey])
+      return 'always';
+    return 'none';
+  }
   pageProps: ElementProps = {
     caption: 'תכונות דף', props: [
-      ...getMarginsH()]
+      ...getMarginsH(), {
+        caption: "דף חדש לכל מתנדב",
+        inputType: "checkbox",
+        key: this.newPageKey
+      }]
 
   };
 
@@ -108,7 +117,6 @@ export class PrintVolunteerComponent implements OnInit {
   }
   async ngOnInit() {
     let filterVolunteer = this.route.snapshot.queryParams['volunteer'];
-    console.log(filterVolunteer);
     let data = await VolunteerReportDefs.getStickerData(filterVolunteer);
     let volunteer;
     let deliveries: any[];
@@ -224,6 +232,8 @@ export class PrintVolunteerComponent implements OnInit {
         }
       }
     }
+    if (this.report.page[this.newPageKey] === undefined)
+      this.report.page[this.newPageKey] = true;
     this.pageProps.values = this.report.page;
 
   }
