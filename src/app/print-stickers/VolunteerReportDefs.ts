@@ -139,6 +139,15 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       r.push(o);
 
     }
+    r.sort((a, b) => {
+      let s: string = a[d.helperCommentKey] || '';
+      let comp = s.localeCompare(b[d.helperCommentKey]);
+      if (comp != 0) {
+        return comp;
+      }
+      s = a['courier'] || '';
+      return s.localeCompare(b['courier']);
+    });
     return r;
   }
   textBeforeKey = "@textBefore";
