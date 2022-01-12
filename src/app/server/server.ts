@@ -6,7 +6,7 @@ import { registerEntitiesOnServer, registerActionsOnServer } from 'remult/server
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
-import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import "../event-info/RegisterToEvent";
 import { Remult } from 'remult';
@@ -25,6 +25,8 @@ import { Phone } from "../model-shared/phone";
 import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
+import { translationConfig, TranslationOptions } from "../translate";
+
 
 let publicRoot = 'hagai';
 if (!fs.existsSync(publicRoot + '/index.html'))

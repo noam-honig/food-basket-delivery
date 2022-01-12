@@ -477,7 +477,7 @@ export class ApplicationSettings extends EntityBase {
 
   }
   static async getAsync(remult: Remult): Promise<ApplicationSettings> {
-    return (await remult.repo(ApplicationSettings).findFirst(undefined,{useCache:true}));
+    return (await remult.repo(ApplicationSettings).findFirst(undefined, { useCache: true }));
   }
   setDefaultsForProblemStatuses() {
     this.problemButtonText = this.lang.ranIntoAProblem;
@@ -533,7 +533,7 @@ export class PhoneOption {
   });
   static otherPhone = new PhoneOption("otherPhone", "טלפון אחר", async args => {
     if (args.phoneItem.phone) {
-      args.addPhone(args.phoneItem.name, Phone.formatPhone(args.phoneItem.phone));
+      args.addPhone(args.phoneItem.name,args.settings.forWho.formatPhone(args.phoneItem.phone));
     }
   });
   constructor(public key: string, public name: string, public build: ((args: phoneBuildArgs) => Promise<void>)) {
@@ -574,7 +574,7 @@ export class SettingsService {
     this.instance = await ApplicationSettings.getAsync(this.remult);
     setSettingsForSite(Sites.getValidSchemaFromContext(this.remult), this.instance);
 
-    translationConfig.forWho = this.instance.forWho;
+    translationConfig.forWho = () => this.instance.forWho;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;
     (await import('../helpers/helpers')).Helpers.usingCompanyModule = this.instance.showCompanies;
 

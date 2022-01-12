@@ -182,7 +182,12 @@ export class TranslationOptions {
     leftToRight: true,
     languageCode: 'en',
     languageFile: 'en',
-    internationalPrefixForSmsAndAws: '+61'
+    internationalPrefixForSmsAndAws: '+61',
+    formatPhone: x => {
+      x = x.substring(0, x.length - 3) + '-' + x.substring(x.length - 3, x.length);
+      x = x.substring(0, x.length - 7) + '-' + x.substring(x.length - 7, x.length);
+      return x;
+    }
   });
   static uk: TranslationOptions = new TranslationOptions(44, 'United Kingdom', {
     googleMapCountry: 'GB',
@@ -261,14 +266,34 @@ export class TranslationOptions {
     basedOnLang?: string,
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string,
-    suppressPhoneZeroAddition?: boolean
+    suppressPhoneZeroAddition?: boolean,
+    formatPhone?: (s: string) => string
   }) {
+
+  }
+  formatPhone(s: string) {
+    if (!s)
+      return s;
+    let x = s.replace(/\D/g, '');
+    if (x.length < 9 || x.length > 10)
+      return s;
+    if (x.length < 10 && !x.startsWith('0'))
+      x = '0' + x;
+    if (!this.args.formatPhone) {
+      x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
+      x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
+      return x;
+    }
+    else return this.args.formatPhone(x);
 
   }
 
 }
 
-export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
+export const translationConfig = {
+  activateTranslation: false,
+  forWho: () => TranslationOptions.Families
+};
 
 
 
@@ -441,10 +466,10 @@ export class Language {
   problemButtonSettingName = "מלל כפתור נתקלתי בבעיה";
   freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
   urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
-  showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים';
+  showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים את כל הסלים';
   freeText2ForVolunteer = 'מלל חופשי 2 למתנדב';
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
-  showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
+  showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים את כל הסלים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
   enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה ארגון הגיע המתנדב';

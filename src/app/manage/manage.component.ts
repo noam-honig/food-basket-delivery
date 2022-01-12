@@ -291,22 +291,30 @@ export class ManageComponent implements OnInit {
   }
   settingsMessages = new DataAreaSettings({
     fields: s => [
+      this.settings.$.message1Text,
+      this.settings.$.message1Link,
+      this.settings.$.message1OnlyWhenDone,
+      this.settings.$.message2Text,
+      this.settings.$.message2Link,
+      this.settings.$.message2OnlyWhenDone,
       this.settings.$.deliveredButtonText,
       this.settings.$.commentForSuccessDelivery,
       this.settings.$.commentForSuccessLeft,
       this.settings.$.problemButtonText,
       this.settings.$.commentForProblem,
-      this.settings.$.AddressProblemStatusText,
-      this.settings.$.NotHomeProblemStatusText,
-      this.settings.$.DoNotWantProblemStatusText,
-      this.settings.$.OtherProblemStatusText,
+
       [this.settings.$.questionForVolunteer1Caption, this.settings.$.questionForVolunteer1Values],
       [this.settings.$.questionForVolunteer2Caption, this.settings.$.questionForVolunteer2Values],
       [this.settings.$.questionForVolunteer3Caption, this.settings.$.questionForVolunteer3Values],
       [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values],
       this.settings.$.askVolunteerForLocationOnDelivery,
       this.settings.$.askVolunteerForAPhotoToHelp,
-      this.settings.$.questionForVolunteerWhenUploadingPhoto
+      this.settings.$.questionForVolunteerWhenUploadingPhoto,
+      this.settings.$.messageForDoneDelivery,
+      this.settings.$.AddressProblemStatusText,
+      this.settings.$.NotHomeProblemStatusText,
+      this.settings.$.DoNotWantProblemStatusText,
+      this.settings.$.OtherProblemStatusText
 
 
 
@@ -320,12 +328,7 @@ export class ManageComponent implements OnInit {
 
 
       this.settings.$.messageForDoneDelivery,
-      this.settings.$.message1Text,
-      this.settings.$.message1Link,
-      this.settings.$.message1OnlyWhenDone,
-      this.settings.$.message2Text,
-      this.settings.$.message2Link,
-      this.settings.$.message2OnlyWhenDone
+
 
 
 
