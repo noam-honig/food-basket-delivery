@@ -207,7 +207,8 @@ export class Event extends IdEntity {
                     ev.canceled,
                     ev.cancelUser,
                     ev.a1, ev.a2, ev.a3, ev.a4,
-                    ev.confirmed
+                    ev.confirmed,
+                    ev.volunteerComment
 
                 ],
                 rowCssClass: v => {
@@ -289,7 +290,7 @@ export class Event extends IdEntity {
                         click: async (ev) => {
                             let h = await ev.helper.getHelper();
                             await h.displayEditDialog(dialog, busy);
-                            
+
                         }
                     },
                     {
@@ -656,6 +657,23 @@ export class volunteersInEvent extends IdEntity {
             }
     )
     helperName: string;
+
+    @Field<volunteersInEvent>({
+        translation: l => l.volunteerComment
+    },
+        (options, remult) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(remult);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(remult.repo(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.eventComment],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
+    volunteerComment: string;
     @Field({
         translation: l => l.volunteerPhoneNumber
     },
