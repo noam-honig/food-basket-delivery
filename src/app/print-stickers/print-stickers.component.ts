@@ -16,23 +16,23 @@ import { assign } from 'remult/assign';
 })
 export class PrintStickersComponent implements OnInit {
 
-  constructor(private remult: Remult, private busy: BusyService) { }
+  constructor(public remult: Remult, private busy: BusyService) { }
   defs = new VolunteerReportDefs(this.remult, this.busy);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;
   pageProps: ElementProps = {
-    caption: 'תכונות דף', props: [
+    caption: this.remult.lang.pageProperties, props: [
       ...getMarginsH()]
 
   };
   stickerProps: ElementProps = {
-    caption: 'תכונות מדבקה', props: [
-      new Property('height', 'גובה', 'number', (val, s) => assign(s, {
+    caption: this.remult.lang.labelProperties, props: [
+      new Property('height', this.remult.lang.height, 'number', (val, s) => assign(s, {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),
-      new SizeProperty('width', 'רוחב'),
+      new SizeProperty('width', this.remult.lang.width),
       ...getMarginsH(), ...getMarginsV()],
 
   };

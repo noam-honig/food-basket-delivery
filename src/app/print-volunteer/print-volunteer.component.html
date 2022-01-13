@@ -1,5 +1,6 @@
 <ng-container *ngIf="report">
-    <table class="table-bordered" *ngFor="let v of data" style="width:100%;" [style.pageBreakBefore]="pageBreakBefore()">
+    <table class="table-bordered" *ngFor="let v of data" style="width:100%;"
+        [style.pageBreakBefore]="pageBreakBefore()">
         <thead>
             <tr>
                 <td [colSpan]="report.columns.length" cdkDropList
@@ -9,7 +10,8 @@
                         <div *ngIf="v.firstRow[f.fieldKey]" cdkDrag
                             [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
                             (click)="editControl(f,report.controls)">
-                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{v.firstRow[f.fieldKey]}} {{f.propertyValues&& f.propertyValues[defs.textAfterKey]}}
+                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{v.firstRow[f.fieldKey]}}
+                            {{f.propertyValues&& f.propertyValues[defs.textAfterKey]}}
                         </div>
                     </ng-container>
                 </td>
@@ -33,7 +35,8 @@
 
                         <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
                             cdkDrag (click)="editControl(f,c.controls)">
-                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}  {{f.propertyValues&& f.propertyValues[defs.textAfterKey ]}}
+                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}
+                            {{f.propertyValues&& f.propertyValues[defs.textAfterKey ]}}
                         </div>
                     </ng-container>
                 </td>
@@ -44,16 +47,17 @@
 
 <app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps" [(editing)]="editing">
 
-    <button (click)="addControl()">הוסף שדה</button>
-    <button (click)="addColumn()">הוסף עמודה</button>
+    <button (click)="addControl()">{{remult.lang.addField}}</button>
+    <button (click)="addColumn()">{{remult.lang.addColumn}}</button>
     <ng-container *ngIf="currentProps.control">
-        <button (click)="removeControl(currentProps.control)">הסר שדה</button>
+        <button (click)="removeControl(currentProps.control)">{{remult.lang.removeField}}</button>
     </ng-container>
     <ng-container *ngIf="currentColumn&&currentProps == columnProps">
-        <button (click)="removeColumn()">הסר עמודה</button>
+        <button (click)="removeColumn()">{{remult.lang.removeColumn}}</button>
     </ng-container>
     <br>
     <!-- <button (click)="selectControl()">תכונות שדה</button> -->
 
-    <button (click)="currentProps = pageProps;currentControlList = report.controls">תכונות דף</button>
+    <button
+        (click)="currentProps = pageProps;currentControlList = report.controls">{{remult.lang.pageProperties}}</button>
 </app-properties-editor>

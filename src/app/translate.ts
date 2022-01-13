@@ -1236,7 +1236,33 @@ export class Language {
   sendMessageToInviteVolunteers = "שליחת הודעה לזימון מתנדבים";
   whatToTake = "להביא";
   previewVolunteerScreen = "הדגם תצוגת מתנדב";
-
+  fullAddress = "כתובת מלאה";
+  fieldProperties = 'תכונות שדה';
+  fontSize = "גודל גופן";
+  centerAlign = "יישר למרכז";
+  color = "צבע";
+  textBefore = "טקסט לפני";
+  textAfter = "טקסט אחרי";
+  sameLine = "באותה שורה";
+  bold = "הדגשה";
+  pageProperties = 'תכונות דף';
+  labelProperties = 'תכונות מדבקה';
+  height = 'גובה';
+  width = 'רוחב';
+  leftPadding = 'שוליים שמאליים';
+  rightPadding = 'שוליים ימניים';
+  topPadding = 'שוליים עליונים';
+  bottomPadding = 'שוליים תחתונים';
+  newPageForEachVolunteer = "דף חדש לכל מתנדב";
+  columnProperties = 'תכונות עמודה';
+  newColumn = 'עמודה חדשה';
+  addField = "הוסף שדה";
+  addColumn = 'הוסף עמודה';
+  removeField = 'הסר שדה';
+  removeColumn = 'הסר עמודה';
+  moveUp = 'הזז למעלה';
+  moveDown = 'הזז למטה';
+  stickerProperties = 'תכונות מדבקה';
 }
 
 const defaultLang = new Language();

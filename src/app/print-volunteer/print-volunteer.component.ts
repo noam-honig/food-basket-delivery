@@ -30,7 +30,7 @@ import { Control, ElementProps, getMarginsH, Property } from '../properties-edit
 export class PrintVolunteerComponent implements OnInit {
 
 
-  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
+  constructor(public remult: Remult, private busy: BusyService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
   defs = new VolunteerReportDefs(this.remult, this.busy);
   report: ReportInfo;
   row: VolunteerReportInfo;
@@ -41,9 +41,9 @@ export class PrintVolunteerComponent implements OnInit {
     return 'none';
   }
   pageProps: ElementProps = {
-    caption: 'תכונות דף', props: [
+    caption: this.remult.lang.pageProperties, props: [
       ...getMarginsH(), {
-        caption: "דף חדש לכל מתנדב",
+        caption: this.remult.lang.newPageForEachVolunteer,
         inputType: "checkbox",
         key: this.newPageKey
       }]
@@ -51,7 +51,7 @@ export class PrintVolunteerComponent implements OnInit {
   };
 
   columnProps: ElementProps = {
-    caption: 'תכונות עמודה', props: [
+    caption: this.remult.lang.columnProperties, props: [
       ...this.defs.fieldProps.props
     ]
 
@@ -66,7 +66,7 @@ export class PrintVolunteerComponent implements OnInit {
   addColumn() {
     this.report.columns.push({
       controls: [],
-      propertyValues: { [this.defs.textBeforeKey]: 'עמודה חדשה' }
+      propertyValues: { [this.defs.textBeforeKey]: this.remult.lang.newColumn }
     })
     this.editColumn(this.report.columns[this.report.columns.length - 1]);
 
@@ -76,7 +76,7 @@ export class PrintVolunteerComponent implements OnInit {
   editColumn(c: ReportColumn) {
     this.currentProps = this.columnProps;
     this.currentProps.values = c.propertyValues;
-    this.currentProps.caption = 'תכונות עמודה ' + c.propertyValues[this.defs.textBeforeKey];
+    this.currentProps.caption = this.remult.lang.columnProperties + ': ' + c.propertyValues[this.defs.textBeforeKey];
     this.currentColumn = c;
     this.currentControlList = c.controls;
 

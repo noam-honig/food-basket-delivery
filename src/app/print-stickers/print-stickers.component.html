@@ -6,7 +6,8 @@
 
                 <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
                     (click)="editControl(f)">
-                    {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}} {{f.propertyValues&& f.propertyValues[defs.textAfterKey]}}
+                    {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}} {{f.propertyValues&&
+                    f.propertyValues[defs.textAfterKey]}}
                 </div>
             </ng-container>
             <button mat-icon-button class="edit-button" (click)="defs.editSticker(r,data)">
@@ -17,14 +18,14 @@
 </div>
 
 <app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps">
-    <button (click)=" addControl()">הוסף שדה</button>
+    <button (click)=" addControl()">{{remult.lang.addField}}</button>
     <ng-container *ngIf="currentProps.control">
-        <button (click)="moveControl(-1)">הזז למעלה</button>
-        <button (click)="moveControl(1)">הזז למטה</button>
-        <button (click)="removeControl(currentProps.control)">הסר שדה</button>
+        <button (click)="moveControl(-1)">{{remult.lang.moveUp}}</button>
+        <button (click)="moveControl(1)">{{remult.lang.moveDown}}</button>
+        <button (click)="removeControl(currentProps.control)">{{remult.lang.removeField}}</button>
     </ng-container>
     <br>
-    <button (click)="selectControl()">תכונות שדה</button>
-    <button (click)="currentProps = stickerProps">תכונות מדבקה</button>
-    <button (click)="currentProps = pageProps">תכונות דף</button>
+    <button (click)="selectControl()">{{remult.lang.fieldProperties}}</button>
+    <button (click)="currentProps = stickerProps">{{remult.lang.stickerProperties}}</button>
+    <button (click)="currentProps = pageProps">{{remult.lang.pageProperties}}</button>
 </app-properties-editor>
