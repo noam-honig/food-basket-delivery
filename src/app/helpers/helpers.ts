@@ -222,7 +222,6 @@ export abstract class HelpersBase extends IdEntity {
     allowApiDelete: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: true,
-
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
         if (self.escort) {

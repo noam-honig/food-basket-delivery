@@ -26,8 +26,9 @@ import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
 import { translationConfig, TranslationOptions } from "../translate";
+import { DataApi } from "remult/src/data-api";
 
-
+DataApi.defaultGetLimit = 500;
 let publicRoot = 'hagai';
 if (!fs.existsSync(publicRoot + '/index.html'))
     publicRoot = 'dist/' + publicRoot;
