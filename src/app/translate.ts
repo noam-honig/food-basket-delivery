@@ -1220,8 +1220,8 @@ export class Language {
   printVolunteerPage = "הדפס דף למתנדב";
   willBeReplacedBy = "יוחלף על ידי";
   smsClientNumber = "מספר לקוח בגולבל SMS";
-  smsUsername = "שם משתמש בגלובל SMS";
-  smsPasswordInput = "סיסמה בגלובל SMS";
+  smsUsername = "שם משת מש בגלובל SMS";
+  smsPasswordInput = "סי סמה בגלובל SMS";
   smsVirtualPhoneNumber = "מספר קו וירטואלי בגולבל SMS";
   testSmsMessage = "בדיקת שליחת SMS";
   message = "הודעה";

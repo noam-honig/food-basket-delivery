@@ -312,12 +312,16 @@ export function initApp(session: TokenService, settings: SettingsService, remult
         await session.loadUserInfo();
         await remult.userChange.observe(async () => {
           await InitContext(remult);
+          if (settings.instance)
+            await settings.instance._.reload();
 
         });
       } catch {
         session.setToken(undefined, true);
         await remult.userChange.observe(async () => {
           await InitContext(remult);
+          if (settings.instance)
+            await settings.instance._.reload();
 
         });
         console.error("Failed ti init existing user");
