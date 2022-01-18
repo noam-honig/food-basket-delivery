@@ -242,6 +242,9 @@ export class HelperCommunicationHistory extends IdEntity {
     @DataControl({ width: '100' })
     phone: string;
     @Field({ allowApiUpdate: false })
+    @DataControl({
+        width: '70px'
+    })
     incoming: boolean = false;
     @Field({ allowApiUpdate: false })
     automaticAction: string;

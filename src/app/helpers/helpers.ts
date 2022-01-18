@@ -21,6 +21,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 
 
 
@@ -196,7 +197,7 @@ export abstract class HelpersBase extends IdEntity {
 
 
     static active: EntityFilter<HelpersBase> = {
-        archive: false, isFrozen: false
+        archive: false
     }
     async deactivate() {
         this.archive = true;
@@ -392,6 +393,14 @@ export class Helpers extends HelpersBase {
             buttons: [{
                 text: settings.lang.deliveries,
                 click: () => this.showDeliveryHistory(dialog, busy)
+            }, {
+
+                text: this.remult.lang.smsMessages,
+                click: async () => {
+                    this.smsMessages(dialog);
+                },
+
+
             }]
 
         });
@@ -484,8 +493,12 @@ export class Helpers extends HelpersBase {
             field: self.socialSecurityNumber, width: '80'
         });
         r.push(self.leadHelper);
-        if (settings.bulkSmsEnabled)
+        if (settings.bulkSmsEnabled) {
             r.push(self.doNotSendSms);
+            r.push({
+                field: self.frozenTill, width: '120'
+            });
+        }
 
         return r;
     }
@@ -802,6 +815,48 @@ export class Helpers extends HelpersBase {
             }
         }
         return result;
+    }
+    async sendSmsToCourier(dialog: DialogService, message = '') {
+        let h = this;
+
+        await openDialog(EditCommentDialogComponent, x => x.args = {
+            save: async (comment) => {
+                dialog.Info(await Helpers.SendCustomMessageToCourier(this, comment));
+            },
+            title: this.remult.lang.sendMessageToVolunteer + ' ' + h.name,
+            comment: this.remult.lang.hello + ' ' + h.name + '\n' + message
+        });
+    }
+    @BackendMethod({ allowed: Roles.admin })
+    static async SendCustomMessageToCourier(h: HelpersBase, message: string, remult?: Remult) {
+        return await new (await (import('../asign-family/send-sms-action'))).SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
+
+    }
+    async smsMessages(dialog: DialogService) {
+        const HelperCommunicationHistory = (await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory;
+        openDialog(GridDialogComponent, x => x.args = {
+            settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+                where: {
+                    volunteer: this
+                },
+                columnSettings: com => [
+                    com.message,
+                    com.incoming,
+                    com.createDate,
+                    com.automaticAction,
+                    com.apiResponse
+                ],
+                numOfColumnsInGrid: 4
+            }),
+            buttons: [{
+                text: this.remult.lang.customSmsMessage,
+                click: () => {
+                    this.sendSmsToCourier(dialog);
+                    x.args.settings.reloadData();
+                }
+            }],
+            title: this.remult.lang.smsMessages + " " + this.name
+        });
     }
 
 

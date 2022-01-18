@@ -349,6 +349,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
       routeMap.set(ImportHelpersFromExcelComponent, l.ImportHelpersFromExcelComponent);
       routeMap.set(DuplicateFamiliesComponent, l.DuplicateFamiliesComponent);
       routeMap.set(ManageComponent, l.ManageComponent);
+      routeMap.set(IncomingMessagesComponent, l.smsMessages);
       routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent);
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent);
       routeMap.set(LoginComponent, l.LoginComponent);
@@ -360,7 +361,6 @@ export function initApp(session: TokenService, settings: SettingsService, remult
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
       routeMap.set(RegisterURLComponent, l.RegisterURLComponent);
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities);
-      routeMap.set(IncomingMessagesComponent, l.incomingMessages);
 
       RegisterToEvent.init();
 

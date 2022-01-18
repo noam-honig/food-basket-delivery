@@ -561,22 +561,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async customSms() {
     let h = this.familyLists.helper;
-    let phone = h.phone.thePhone;
-    if (phone.startsWith('0')) {
-      phone = '972' + phone.substr(1);
-    }
-    await openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => '',
-      ok: async (comment) => {
-        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper, comment);
-        this.dialog.Info("הודעה נשלחה");
-      },
-      cancel: () => { },
-      hideLocation: true,
-      title: 'שלח הודעת ל' + h.name,
-      family: undefined,
-      comment: this.smsMessage
-    });
+    h.sendSmsToCourier(this.dialog);
   }
   smsMessage: string = '';
   smsPhone: string = '';

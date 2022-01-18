@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend } from 'remult';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields } from 'remult';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -31,6 +31,8 @@ import { getLang } from "../sites/sites";
 
 
 import { Groups, GroupsValue } from "../manage/groups";
+import { async } from "rxjs/internal/scheduler/async";
+import { DateOnlyValueConverter } from "remult/valueConverters";
 
 
 
@@ -185,10 +187,12 @@ export class Families extends IdEntity {
   }
   async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
+
     openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.remult).deliveriesFor + ' ' + this.name,
       stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
+
       buttons: [{
         text: use.language.newDelivery,
 
@@ -197,14 +201,40 @@ export class Families extends IdEntity {
     });
   }
   public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
-    let result = new GridSettings(this.remult.repo(FamilyDeliveries), {
+    let result: GridSettings<import("./FamilyDeliveries").FamilyDeliveries> = new GridSettings(this.remult.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
       rowCssClass: fd => fd.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
         icon: 'add_shopping_cart',
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
+          doNotCheckIfHasExistingDeliveries: true,
+          aDeliveryWasAdded: async () => { result.reloadData(); }
+        })
+      }, {
+
+        name: use.language.addHistoricalDelivery,
+        visible: () => this.remult.isAllowed(Roles.admin),
+        click: async () => {
+          var fd = this.createDelivery(null);
+          var d = new dateInput();
+          openDialog(InputAreaComponent, x => x.args = {
+            title: use.language.addHistoricalDelivery,
+            settings: {
+              fields: () => [
+                getFields(d).date,
+                fd.$.basketType,
+                fd.$.courier
+              ]
+            },
+            ok: async () => {
+              await this.saveAsHistoryEntry(DateOnlyValueConverter.toJson(d.date), fd.basketType, fd.courier);
+              result.reloadData();
+            }
+          });
+        }
+
       }],
       rowButtons: [
         {
@@ -246,6 +276,18 @@ export class Families extends IdEntity {
 
     });
     return result;
+  }
+  @BackendMethod<Families>({ allowed: Roles.admin })
+  async saveAsHistoryEntry(date: string, basket: BasketType, helper: HelpersBase) {
+    const fd = this.createDelivery(null);
+    fd.deliverStatus = DeliveryStatus.Success;
+    fd.basketType = basket;
+    fd.courier = helper;
+    fd.archive = true;
+    await fd.save();
+
+    fd.deliveryStatusDate = DateOnlyValueConverter.fromJson(date);
+    await fd.save();
   }
 
   async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, busy: BusyService, args?: {
@@ -1191,4 +1233,9 @@ async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult
     ],
     orderBy: [{ field: fd.deliveryStatusDate, isDescending: true }]
   });
+}
+
+class dateInput {
+  @DateOnlyField()
+  date: Date = new Date();
 }

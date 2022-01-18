@@ -75,15 +75,7 @@ export class MltOnlyGuard implements CanActivate {
 
 
 }
-@Injectable()
-export class BulkMessageEnabledGuard implements CanActivate {
-  constructor(private remult: Remult) {
 
-  }
-  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return (getSettings(this.remult)).bulkSmsEnabled
-  }
-}
 @Injectable()
 export class MltAdminGuard implements CanActivate {
   constructor(private remult: Remult) {
@@ -147,12 +139,12 @@ export const routes: Routes = [
 
   { path: 'duplicate-families', component: DuplicateFamiliesComponent, canActivate: [AdminGuard] },
   ManageComponent.route,
+  { path: 'sms-messages', component: IncomingMessagesComponent, canActivate: [AdminGuard] },
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
   { path: 'events', component: OrgEventsComponent },
-  { path: 'incoming-messages', component: IncomingMessagesComponent, canActivate: [BulkMessageEnabledGuard] },
   UpdateInfoComponent.route,
   LoginComponent.route,
   { path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard] },
@@ -172,7 +164,7 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
-    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard, BulkMessageEnabledGuard]
+    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard]
 
 })
 

@@ -108,25 +108,9 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
   async sendSmsToCourier() {
     let h = await this.args.familyDelivery.courier.getHelper();
-
-    await openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => '',
-      ok: async (comment) => {
-        await UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.args.familyDelivery.courier, comment);
-        this.dialog.Info("הודעה נשלחה");
-      },
-      cancel: () => { },
-      hideLocation: true,
-      title: 'שלח הודעת ל' + h.name,
-      family: this.args.familyDelivery,
-      comment: 'שלום ' + h.name + '\nבקשר למשפחת "' + this.args.familyDelivery.name + '" מ "' + this.args.familyDelivery.address + '"\n'
-    });
+    h.sendSmsToCourier(this.dialog, 'בקשר למשפחת "' + this.args.familyDelivery.name + '" מ "' + this.args.familyDelivery.address + '"\n')
   }
-  @BackendMethod({ allowed: Roles.admin })
-  static async SendCustomMessageToCourier(h: HelpersBase, message: string, remult?: Remult) {
-    await new SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
 
-  }
   preview() {
     let fd = this.args.familyDelivery;
     if (!fd)

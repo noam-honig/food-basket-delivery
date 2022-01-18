@@ -27,6 +27,7 @@ import { FamilySources } from "./FamilySources";
 import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 import { IdFieldRef } from "remult/src/remult3";
+import { DateOnlyValueConverter } from "remult/valueConverters";
 
 
 @ValueListFieldType({
@@ -117,6 +118,7 @@ export class FamilyDeliveries extends IdEntity {
         let r = (await remult.repo(FamilyImage).find({ where: { familyId: family } })).map(({ image }) => ({ image } as ImageInfo));
         return r;
     }
+  
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })

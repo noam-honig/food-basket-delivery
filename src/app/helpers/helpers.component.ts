@@ -182,8 +182,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: this.settings.lang.sendWhats,
         click: h => h.phone.sendWhatsapp(this.remult),
-
         icon: 'textsms'
+      },
+      {
+        name: this.settings.lang.smsMessages,
+        click: h => h.smsMessages(this.dialog)
       },
       {
         name: use.language.resetPassword,

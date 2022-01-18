@@ -132,7 +132,7 @@ export class SendBulkSms {
             select: () => [helpers.phone, helpers.name, helpers.id],
             where: async () => [
                 await Filter.translateCustomWhere(helpers.where({
-                    archive: false, doNotSendSms: false,
+                    archive: false, doNotSendSms: false, isFrozen: false,
                     $and: [this.city && Helpers.deliveredPreviously({ city: this.city })]
                 }), helpers.metadata, this.remult),
 

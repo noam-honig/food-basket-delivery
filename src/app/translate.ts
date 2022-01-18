@@ -512,7 +512,8 @@ export class Language {
   archiveHelper = 'מחק מתנדב';
   freezeHelper = 'עדכן נתוני הקפאת מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
-  frozenTill = 'מוקפא עד לתאריך';
+  frozenTill = 'לא לשלוח SMS קבוצתי עד לתאריך';
+  doNotSendSms = "לא לשלוח הודעת SMS קבוצתיות כלל";
   maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
   daysCountForBusy = 'מספר ימים לקביעת מתנדב עסוק';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
@@ -564,6 +565,7 @@ export class Language {
   previousDeliveryNotes = 'הערת משלוח קודם';
   addressByGoogle = "כתובת כפי שגוגל הבין";
   addressOk = 'כתובת תקינה';
+
   previousDeliverySummary = 'סיכום משלוח קודם';
   createUser = 'משתמש מוסיף';
   assignUser = 'משתמש משייך';
@@ -1227,7 +1229,7 @@ export class Language {
   message = "הודעה";
   confirmed = "אישר הגעה";
   confirmedVolunteers = "מתנדבים שאישרו הגעה";
-  incomingMessages = "הודעות נכנסות";
+  smsMessages = "הודעות SMS";
   when = "מתי";
   sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
   sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
@@ -1263,6 +1265,9 @@ export class Language {
   moveUp = 'הזז למעלה';
   moveDown = 'הזז למטה';
   stickerProperties = 'תכונות מדבקה';
+  showOnlyIncoming = "הצג רק הודעות נכנסות";
+  incoming = 'נכנסת';
+  addHistoricalDelivery = 'הוסף משלוח היסטורי';
 }
 
 const defaultLang = new Language();
