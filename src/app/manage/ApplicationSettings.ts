@@ -463,6 +463,8 @@ export class ApplicationSettings extends EntityBase {
   familySelfOrderMessage: string;
   @Field({ includeInApi: Roles.admin })
   inviteVolunteersMessage: string;
+  @Field({ allowApiUpdate: Roles.admin })
+  allowVolunteerToSeePreviousActivities: boolean;
 
 
 
@@ -533,7 +535,7 @@ export class PhoneOption {
   });
   static otherPhone = new PhoneOption("otherPhone", "טלפון אחר", async args => {
     if (args.phoneItem.phone) {
-      args.addPhone(args.phoneItem.name,args.settings.forWho.formatPhone(args.phoneItem.phone));
+      args.addPhone(args.phoneItem.name, args.settings.forWho.formatPhone(args.phoneItem.phone));
     }
   });
   constructor(public key: string, public name: string, public build: ((args: phoneBuildArgs) => Promise<void>)) {
@@ -630,7 +632,8 @@ export function setSettingsForSite(site: string, {
   bulkSmsEnabled,
   logoUrl,
   organisationName,
-  hideFamilyPhoneFromVolunteer
+  hideFamilyPhoneFromVolunteer,
+  allowVolunteerToSeePreviousActivities
 
 
 }: ApplicationSettings) {
@@ -665,7 +668,8 @@ export function setSettingsForSite(site: string, {
     bulkSmsEnabled,
     logoUrl,
     organisationName,
-    hideFamilyPhoneFromVolunteer
+    hideFamilyPhoneFromVolunteer,
+    allowVolunteerToSeePreviousActivities
   });
 }
 export function getSettings(remult: Remult): SmallSettings {
@@ -679,6 +683,7 @@ export function getSettings(remult: Remult): SmallSettings {
   return ApplicationSettings.get(remult);;
 }
 export class SmallSettings {
+  allowVolunteerToSeePreviousActivities: boolean = false;
   usingSelfPickupModule: boolean = false;
   familySelfOrderEnabled: boolean = false;
   manageEscorts: boolean = false;

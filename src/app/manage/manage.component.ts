@@ -379,6 +379,7 @@ export class ManageComponent implements OnInit {
         this.settings.$.defaultStatusType,
         this.settings.$.usingSelfPickupModule,
         this.settings.$.showLeftThereButton,
+        this.settings.$.allowVolunteerToSeePreviousActivities,
         this.settings.$.volunteerCanUpdateDeliveryComment,
         this.settings.$.showDeliverySummaryToVolunteerOnFirstSignIn,
         this.settings.$.boxes1Name,

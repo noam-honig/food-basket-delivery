@@ -22,6 +22,7 @@ import { openDialog } from '@remult/angular';
 import { relativeDateName } from '../model-shared/types';
 import { ImageInfo } from '../images/images.component';
 import { SendSmsAction } from '../asign-family/send-sms-action';
+import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
 
 @Component({
   selector: 'app-family-info',
@@ -40,7 +41,7 @@ export class FamilyInfoComponent implements OnInit {
   images: ImageInfo[];
   async ngOnInit() {
     if (this.f) {
-      this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family,this.f.id);
+      this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id);
     }
   }
   async loadImages() {
@@ -51,6 +52,11 @@ export class FamilyInfoComponent implements OnInit {
   }
   async showTz() {
     this.dialog.messageDialog(await FamilyInfoComponent.ShowFamilyTz(this.f.id));
+  }
+  async showHistory() {
+    openDialog(PreviousDeliveryCommentsComponent, x => x.args = {
+        family:this.f.family
+    });
   }
   courierCommentsDateRelativeDate() {
     return relativeDateName(this.remult, { d: this.f.courierCommentsDate })

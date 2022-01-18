@@ -114,6 +114,7 @@ import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-me
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 import { RegisterToEvent } from './event-info/RegisterToEvent';
+import { PreviousDeliveryCommentsComponent } from './previous-delivery-comments/previous-delivery-comments.component';
 
 
 
@@ -221,7 +222,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     PropertiesEditorComponent,
     EditCustomMessageComponent,
     IncomingMessagesComponent,
-    FamilySelfOrderComponent
+    FamilySelfOrderComponent,
+    PreviousDeliveryCommentsComponent
 
 
   ],

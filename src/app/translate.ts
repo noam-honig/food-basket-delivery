@@ -1268,6 +1268,8 @@ export class Language {
   showOnlyIncoming = "הצג רק הודעות נכנסות";
   incoming = 'נכנסת';
   addHistoricalDelivery = 'הוסף משלוח היסטורי';
+  allowVolunteerToSeePreviousActivities = "אפשר למתנדב לראות פעילויות היסטוריות";
+  showPreviousActivities = "פעילויות קודמות";
 }
 
 const defaultLang = new Language();

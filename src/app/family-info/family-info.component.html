@@ -20,6 +20,7 @@
       (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
   <a *ngIf="settings.showTzToVolunteer" (click)="showTz()" style="display:block">הצג מספר זהות</a>
+  <a *ngIf="settings.allowVolunteerToSeePreviousActivities" (click)="showHistory()" style="display:block">{{settings.lang.showPreviousActivities}}</a>
   <ng-container *ngIf="!hideSal">
     <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.$.basketType.displayValue}}<span
       *ngIf="f.basketType?.whatToTake">. - <strong>{{settings.lang.whatToTake}}:</strong> 
