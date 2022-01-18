@@ -261,74 +261,75 @@ s.parentNode.insertBefore(b, s);})();
                     console.error("Incoming sms redirect err", err);
                 }
 
-            }
-            let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
+            } else {
+                let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
 
-            let com = comRepo.create({
-                apiResponse: req.query,
-                message: req.query.message as string,
-                phone: req.query.cell as string,
-                incoming: true,
+                let com = comRepo.create({
+                    apiResponse: req.query,
+                    message: req.query.message as string,
+                    phone: req.query.cell as string,
+                    incoming: true,
 
-            });
-            try {
-                com.message = unescape(com.message).trim();
-                com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(com.phone) });
-                if (!com.volunteer) {
-                    let p = '+972' + com.phone.substring(1);
-                    com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(p) });
-                }
+                });
+                try {
+                    com.message = unescape(com.message).trim();
+                    com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(com.phone) });
+                    if (!com.volunteer) {
+                        let p = '+972' + com.phone.substring(1);
+                        com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(p) });
+                    }
 
-                if (com.volunteer) {
-                    remult.setUser({
-                        id: com.volunteer.id,
-                        name: com.volunteer.name,
-                        roles: []
-                    });
-                    if (com.message == "כן" || com.message == "לא") {
+                    if (com.volunteer) {
+                        remult.setUser({
+                            id: com.volunteer.id,
+                            name: com.volunteer.name,
+                            roles: []
+                        });
+                        if (com.message == "כן" || com.message == "לא") {
 
-                        let previousMessage = await comRepo.findFirst({ volunteer: com.volunteer }, {
-                            orderBy: { createDate: "desc" }
-                        })
-                        if (previousMessage && previousMessage.eventId) {
-                            let e = await remult.repo(Event).findId(previousMessage.eventId);
-                            if (e?.eventStatus == eventStatus.active) {
-                                let v = await remult.repo(volunteersInEvent).findFirst({ eventId: previousMessage.eventId, helper: com.volunteer });
-                                if (v) {
+                            let previousMessage = await comRepo.findFirst({ volunteer: com.volunteer }, {
+                                orderBy: { createDate: "desc" }
+                            })
+                            if (previousMessage && previousMessage.eventId) {
+                                let e = await remult.repo(Event).findId(previousMessage.eventId);
+                                if (e?.eventStatus == eventStatus.active) {
+                                    let v = await remult.repo(volunteersInEvent).findFirst({ eventId: previousMessage.eventId, helper: com.volunteer });
+                                    if (v) {
 
-                                    switch (com.message) {
-                                        case "כן":
-                                            v.confirmed = true;
-                                            v.canceled = false;
-                                            com.automaticAction = "אישר הגעה לאירוע"
-                                            await v.save();
-                                            break;
-                                        case "לא":
-                                            v.canceled = true;
-                                            com.automaticAction += "ביטל הגעה לאירוע"
-                                            await v.save();
-                                            break;
+                                        switch (com.message) {
+                                            case "כן":
+                                                v.confirmed = true;
+                                                v.canceled = false;
+                                                com.automaticAction = "אישר הגעה לאירוע"
+                                                await v.save();
+                                                break;
+                                            case "לא":
+                                                v.canceled = true;
+                                                com.automaticAction += "ביטל הגעה לאירוע"
+                                                await v.save();
+                                                break;
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        if (com.message == "הסר") {
+                            await com.volunteer.getHelper().then(async h => {
+                                h.doNotSendSms = true;
+                                await h.save();
+                            })
+                            com.automaticAction = "הוסר מרשימת הSMS";
+                        }
                     }
 
-                    if (com.message == "הסר") {
-                        await com.volunteer.getHelper().then(async h => {
-                            h.doNotSendSms = true;
-                            await h.save();
-                        })
-                        com.automaticAction = "הוסר מרשימת הSMS";
-                    }
+                } catch (err) {
+                    console.error(err);
+                    com.apiResponse = { ...com.apiResponse, err };
                 }
 
-            } catch (err) {
-                console.error(err);
-                com.apiResponse = { ...com.apiResponse, err };
+                await com.save();
             }
-
-            await com.save();
             res.send("thanks");
 
 
