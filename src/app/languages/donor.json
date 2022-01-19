@@ -83,6 +83,10 @@
     "google": "להוסיף שיוך לקבוצה",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addHistoricalDelivery": {
+    "google": "הוסף משלוח היסטורי",
+    "valueInCode": "הוסף משלוח היסטורי"
+  },
   "addRepeatFamilies": {
     "google": "בחירת תורמים שהמתנדב היה אצלהם בעבר",
     "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר"
@@ -170,6 +174,10 @@
   "allowSendSuccessMessageOption": {
     "google": "הרשה אפשרות של שליחת הודעת SMS לתורם",
     "valueInCode": "הרשה אפשרות של שליחת הודעת SMS למשפחה"
+  },
+  "allowVolunteerToSeePreviousActivities": {
+    "google": "אפשר למתנדב לראות פעילויות היסטוריות",
+    "valueInCode": "אפשר למתנדב לראות פעילויות היסטוריות"
   },
   "allRegions": {
     "google": "כל האזורים",
@@ -1105,6 +1113,10 @@
     "google": "סיימו",
     "valueInCode": "סיימו"
   },
+  "doNotSendSms": {
+    "google": "לא לשלוח הודעת SMS קבוצתיות כלל",
+    "valueInCode": "לא לשלוח הודעת SMS קבוצתיות כלל"
+  },
   "donotShowEventsInGeneralList": {
     "google": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
     "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים"
@@ -1612,7 +1624,7 @@
   },
   "frozenTill": {
     "google": "תאריך סיום הקפאה",
-    "valueInCode": "מוקפא עד לתאריך"
+    "valueInCode": "לא לשלוח SMS קבוצתי עד לתאריך"
   },
   "fullAddress": {
     "google": "כתובת מלאה",
@@ -1754,9 +1766,9 @@
     "google": "רק עבור תורמים בקבוצות אלו",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"
   },
-  "incomingMessages": {
-    "google": "הודעות נכנסות",
-    "valueInCode": "הודעות נכנסות"
+  "incoming": {
+    "google": "נכנסת",
+    "valueInCode": "נכנסת"
   },
   "indie": {
     "google": "מתנדב עצמאי",
@@ -2117,6 +2129,14 @@
   "nameIsTooShort": {
     "google": "השם קצר מידי",
     "valueInCode": "השם קצר מידי"
+  },
+  "navigateWithGoogleMaps": {
+    "google": "נווט עם גוגל",
+    "valueInCode": "נווט עם גוגל"
+  },
+  "navigateWithWaze": {
+    "google": "נווט עם WAZE",
+    "valueInCode": "נווט עם WAZE"
   },
   "needEscort": {
     "google": "צריך מלווה",
@@ -3164,6 +3184,10 @@
     "google": "הצג רק משלוחים שהסתיימו",
     "valueInCode": "הצג רק משלוחים שהסתיימו"
   },
+  "showOnlyIncoming": {
+    "google": "הצג רק הודעות נכנסות",
+    "valueInCode": "הצג רק הודעות נכנסות"
+  },
   "showOnlyLastNamePartToVolunteer": {
     "google": "הצג רק מילה אחרונה למתנדב בשם התורם",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
@@ -3175,6 +3199,10 @@
   "showPie": {
     "google": "הצג פאי",
     "valueInCode": "הצג פאי"
+  },
+  "showPreviousActivities": {
+    "google": "פעילויות קודמות",
+    "valueInCode": "פעילויות קודמות"
   },
   "showQRCode": {
     "google": "הצג לקליטה",
@@ -3228,6 +3256,10 @@
     "google": "תוכן הודעת SMS",
     "valueInCode": "תוכן הודעת SMS"
   },
+  "smsMessages": {
+    "google": "הודעות SMS",
+    "valueInCode": "הודעות SMS"
+  },
   "smsMessageSentTo": {
     "google": "הודעת SMS נשלחה ל",
     "valueInCode": "הודעת SMS נשלחה ל"
@@ -3246,7 +3278,7 @@
   },
   "smsPasswordInput": {
     "google": "סיסמה בגלובל SMS",
-    "valueInCode": "סיסמה בגלובל SMS"
+    "valueInCode": "סי סמה בגלובל SMS"
   },
   "smsProviderConfiguration": {
     "google": "הגדרות ספק SMS",
@@ -3266,7 +3298,7 @@
   },
   "smsUsername": {
     "google": "שם משתמש בגלובל SMS",
-    "valueInCode": "שם משתמש בגלובל SMS"
+    "valueInCode": "שם משת מש בגלובל SMS"
   },
   "smsVirtualPhoneNumber": {
     "google": "מספר קו וירטואלי בגולבל SMS",

@@ -213,6 +213,7 @@ export class italy {
   freezeHelper = 'Freeze Volunteer';
   helperInternalComment = 'Commento interno su un volontario';
   frozenTill = 'Blocca la data di fine';
+  doNotSendSms = 'Non inviare affatto SMS di gruppo';
   maxDeliveriesBeforeBusy = 'Numero di consegne per definire un volontario impegnato';
   daysCountForBusy = 'Diversi giorni per determinare un volontario impegnato';
   familySelfPickup = 'Ritiro automatico, nessuna consegna richiesta?';
@@ -917,7 +918,7 @@ export class italy {
   message = 'Messaggio';
   confirmed = 'Arrivo approvato';
   confirmedVolunteers = "Volontari che hanno confermato l'arrivo";
-  incomingMessages = 'Messaggi in arrivo';
+  smsMessages = 'Messaggi SMS';
   when = 'quando';
   sendRequestConfirmSms = "Invio di un SMS per confermare l'arrivo";
   sendSelfOrderLink = 'Invia un link per un auto-ordine';
@@ -953,4 +954,11 @@ export class italy {
   moveUp = 'Andare avanti';
   moveDown = 'Abbassati';
   stickerProperties = "Caratteristiche dell'adesivo";
+  showOnlyIncoming = 'Mostra solo i messaggi in arrivo';
+  incoming = 'Stai entrando';
+  addHistoricalDelivery = 'Aggiungi spedizione storica';
+  allowVolunteerToSeePreviousActivities = 'Consenti al volontario di vedere le attività storiche';
+  showPreviousActivities = 'Attività precedenti';
+  navigateWithGoogleMaps = 'Naviga con Google';
+  navigateWithWaze = 'Naviga con WAZE';
 }

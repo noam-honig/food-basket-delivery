@@ -90,6 +90,10 @@
     "google": "Add affiliation to the group",
     "valueInCode": "להוסיף שיוך לקבוצה"
   },
+  "addHistoricalDelivery": {
+    "google": "Add historical shipping",
+    "valueInCode": "הוסף משלוח היסטורי"
+  },
   "addRepeatFamilies": {
     "google": "Selecting families that the volunteer has had in the past",
     "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
@@ -190,6 +194,10 @@
     "google": "Allow the possibility of sending an SMS message to the family",
     "valueInCode": "הרשה אפשרות של שליחת הודעת SMS למשפחה",
     "custom": "Allow Send SMS to family option"
+  },
+  "allowVolunteerToSeePreviousActivities": {
+    "google": "Allow the volunteer to see historical activities",
+    "valueInCode": "אפשר למתנדב לראות פעילויות היסטוריות"
   },
   "allRegions": {
     "google": "All areas",
@@ -1244,6 +1252,10 @@
     "google": "Finish",
     "valueInCode": "סיימו"
   },
+  "doNotSendSms": {
+    "google": "Do not send group SMS at all",
+    "valueInCode": "לא לשלוח הודעת SMS קבוצתיות כלל"
+  },
   "donotShowEventsInGeneralList": {
     "google": "Do not present volunteering opportunities in the list of all organizations",
     "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים"
@@ -1785,7 +1797,7 @@
   },
   "frozenTill": {
     "google": "Freeze end date",
-    "valueInCode": "מוקפא עד לתאריך"
+    "valueInCode": "לא לשלוח SMS קבוצתי עד לתאריך"
   },
   "fullAddress": {
     "google": "full address",
@@ -1933,9 +1945,9 @@
     "google": "Only for families in these groups",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"
   },
-  "incomingMessages": {
-    "google": "Incoming messages",
-    "valueInCode": "הודעות נכנסות"
+  "incoming": {
+    "google": "You are entering",
+    "valueInCode": "נכנסת"
   },
   "indie": {
     "google": "Independent volunteer",
@@ -2308,6 +2320,14 @@
   "nameIsTooShort": {
     "google": "The name is too short",
     "valueInCode": "השם קצר מידי"
+  },
+  "navigateWithGoogleMaps": {
+    "google": "Navigate with Google",
+    "valueInCode": "נווט עם גוגל"
+  },
+  "navigateWithWaze": {
+    "google": "Navigate with WAZE",
+    "valueInCode": "נווט עם WAZE"
   },
   "needEscort": {
     "google": "Need a companion",
@@ -3420,6 +3440,10 @@
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "custom": "Show only completed deliveries"
   },
+  "showOnlyIncoming": {
+    "google": "Show only incoming messages",
+    "valueInCode": "הצג רק הודעות נכנסות"
+  },
   "showOnlyLastNamePartToVolunteer": {
     "google": "Show just one last word to the volunteer on behalf of the family",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
@@ -3431,6 +3455,10 @@
   "showPie": {
     "google": "Show pie",
     "valueInCode": "הצג פאי"
+  },
+  "showPreviousActivities": {
+    "google": "Previous activities",
+    "valueInCode": "פעילויות קודמות"
   },
   "showQRCode": {
     "google": "Show for absorption",
@@ -3487,6 +3515,10 @@
     "google": "SMS message content",
     "valueInCode": "תוכן הודעת SMS"
   },
+  "smsMessages": {
+    "google": "SMS messages",
+    "valueInCode": "הודעות SMS"
+  },
   "smsMessageSentTo": {
     "google": "SMS message sent to",
     "valueInCode": "הודעת SMS נשלחה ל"
@@ -3507,7 +3539,7 @@
   },
   "smsPasswordInput": {
     "google": "Global SMS password",
-    "valueInCode": "סיסמה בגלובל SMS"
+    "valueInCode": "סי סמה בגלובל SMS"
   },
   "smsProviderConfiguration": {
     "google": "SMS provider settings",
@@ -3528,7 +3560,7 @@
   },
   "smsUsername": {
     "google": "Global SMS username",
-    "valueInCode": "שם משתמש בגלובל SMS"
+    "valueInCode": "שם משת מש בגלובל SMS"
   },
   "smsVirtualPhoneNumber": {
     "google": "Virtual line number in SMS limit",

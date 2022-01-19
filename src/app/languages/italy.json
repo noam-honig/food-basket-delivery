@@ -104,6 +104,11 @@
     "valueInCode": "להוסיף שיוך לקבוצה",
     "valueInEnglish": "Add affiliation to the group"
   },
+  "addHistoricalDelivery": {
+    "google": "Aggiungi spedizione storica",
+    "valueInCode": "הוסף משלוח היסטורי",
+    "valueInEnglish": "Add historical shipping"
+  },
   "addRepeatFamilies": {
     "google": "Scegli tra le consegne precedenti",
     "valueInCode": "בחירת משפחות שהמתנדב היה אצלהם בעבר",
@@ -213,6 +218,11 @@
     "google": "Consenti l'opzione Invia SMS a famiglia",
     "valueInCode": "הרשה אפשרות של שליחת הודעת SMS למשפחה",
     "valueInEnglish": "Allow Send SMS to family option"
+  },
+  "allowVolunteerToSeePreviousActivities": {
+    "google": "Consenti al volontario di vedere le attività storiche",
+    "valueInCode": "אפשר למתנדב לראות פעילויות היסטוריות",
+    "valueInEnglish": "Allow the volunteer to see historical activities"
   },
   "allRegions": {
     "google": "Tutte le aree",
@@ -1380,6 +1390,11 @@
     "valueInCode": "סיימו",
     "valueInEnglish": "Finish"
   },
+  "doNotSendSms": {
+    "google": "Non inviare affatto SMS di gruppo",
+    "valueInCode": "לא לשלוח הודעת SMS קבוצתיות כלל",
+    "valueInEnglish": "Do not send group SMS at all"
+  },
   "donotShowEventsInGeneralList": {
     "google": "Non presentare opportunità di volontariato nell'elenco di tutte le organizzazioni",
     "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
@@ -2012,7 +2027,7 @@
   },
   "frozenTill": {
     "google": "Blocca la data di fine",
-    "valueInCode": "מוקפא עד לתאריך",
+    "valueInCode": "לא לשלוח SMS קבוצתי עד לתאריך",
     "valueInEnglish": "Freeze end date"
   },
   "fullAddress": {
@@ -2190,10 +2205,10 @@
     "valueInCode": "רק עבור משפחות בקבוצות אלו",
     "valueInEnglish": "Only for families in these groups"
   },
-  "incomingMessages": {
-    "google": "Messaggi in arrivo",
-    "valueInCode": "הודעות נכנסות",
-    "valueInEnglish": "Incoming messages"
+  "incoming": {
+    "google": "Stai entrando",
+    "valueInCode": "נכנסת",
+    "valueInEnglish": "You are entering"
   },
   "indie": {
     "google": "Volontario indipendente",
@@ -2644,6 +2659,16 @@
     "google": "Il nome è troppo corto",
     "valueInCode": "השם קצר מידי",
     "valueInEnglish": "The name is too short"
+  },
+  "navigateWithGoogleMaps": {
+    "google": "Naviga con Google",
+    "valueInCode": "נווט עם גוגל",
+    "valueInEnglish": "Navigate with Google"
+  },
+  "navigateWithWaze": {
+    "google": "Naviga con WAZE",
+    "valueInCode": "נווט עם WAZE",
+    "valueInEnglish": "Navigate with WAZE"
   },
   "needEscort": {
     "google": "Hai bisogno di un compagno",
@@ -3946,6 +3971,11 @@
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "valueInEnglish": "Show only completed deliveries"
   },
+  "showOnlyIncoming": {
+    "google": "Mostra solo i messaggi in arrivo",
+    "valueInCode": "הצג רק הודעות נכנסות",
+    "valueInEnglish": "Show only incoming messages"
+  },
   "showOnlyLastNamePartToVolunteer": {
     "google": "Mostra solo un'ultima parola al volontario per conto della famiglia",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
@@ -3960,6 +3990,11 @@
     "google": "Mostra torta",
     "valueInCode": "הצג פאי",
     "valueInEnglish": "Show pie"
+  },
+  "showPreviousActivities": {
+    "google": "Attività precedenti",
+    "valueInCode": "פעילויות קודמות",
+    "valueInEnglish": "Previous activities"
   },
   "showQRCode": {
     "google": "Mostra per assorbimento",
@@ -4026,6 +4061,11 @@
     "valueInCode": "תוכן הודעת SMS",
     "valueInEnglish": "SMS message content"
   },
+  "smsMessages": {
+    "google": "Messaggi SMS",
+    "valueInCode": "הודעות SMS",
+    "valueInEnglish": "SMS messages"
+  },
   "smsMessageSentTo": {
     "google": "SMS inviato a",
     "valueInCode": "הודעת SMS נשלחה ל",
@@ -4048,7 +4088,7 @@
   },
   "smsPasswordInput": {
     "google": "Password SMS globale",
-    "valueInCode": "סיסמה בגלובל SMS",
+    "valueInCode": "סי סמה בגלובל SMS",
     "valueInEnglish": "Global SMS password"
   },
   "smsProviderConfiguration": {
@@ -4073,7 +4113,7 @@
   },
   "smsUsername": {
     "google": "Nome utente SMS globale",
-    "valueInCode": "שם משתמש בגלובל SMS",
+    "valueInCode": "שם משת מש בגלובל SMS",
     "valueInEnglish": "Global SMS username"
   },
   "smsVirtualPhoneNumber": {

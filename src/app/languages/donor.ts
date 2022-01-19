@@ -213,6 +213,7 @@ export class donor {
   freezeHelper = 'הקפא מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
   frozenTill = 'תאריך סיום הקפאה';
+  doNotSendSms = 'לא לשלוח הודעת SMS קבוצתיות כלל';
   maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
   daysCountForBusy = 'מספר ימים לקביעת מתנדב עסוק';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
@@ -917,7 +918,7 @@ export class donor {
   message = 'הודעה';
   confirmed = 'אישר הגעה';
   confirmedVolunteers = 'מתנדבים שאישרו הגעה';
-  incomingMessages = 'הודעות נכנסות';
+  smsMessages = 'הודעות SMS';
   when = 'מתי';
   sendRequestConfirmSms = 'שליחת הודעת SMS לאישור הגעה';
   sendSelfOrderLink = 'שליחת קישור להזמנה עצמית';
@@ -953,4 +954,11 @@ export class donor {
   moveUp = 'הזז למעלה';
   moveDown = 'הזז למטה';
   stickerProperties = 'תכונות מדבקה';
+  showOnlyIncoming = 'הצג רק הודעות נכנסות';
+  incoming = 'נכנסת';
+  addHistoricalDelivery = 'הוסף משלוח היסטורי';
+  allowVolunteerToSeePreviousActivities = 'אפשר למתנדב לראות פעילויות היסטוריות';
+  showPreviousActivities = 'פעילויות קודמות';
+  navigateWithGoogleMaps = 'נווט עם גוגל';
+  navigateWithWaze = 'נווט עם WAZE';
 }

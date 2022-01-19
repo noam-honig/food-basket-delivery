@@ -213,6 +213,7 @@ export class en {
   freezeHelper = 'Freeze Volunteer';
   helperInternalComment = 'Internal comment about a volunteer';
   frozenTill = 'Freeze end date';
+  doNotSendSms = 'Do not send group SMS at all';
   maxDeliveriesBeforeBusy = 'Number of deliveries to define a busy volunteer';
   daysCountForBusy = 'Several days to determine a busy volunteer';
   familySelfPickup = 'Self Pickup, no delivery required?';
@@ -917,7 +918,7 @@ export class en {
   message = 'message';
   confirmed = 'Arrival approved';
   confirmedVolunteers = 'Volunteers who confirmed arrival';
-  incomingMessages = 'Incoming messages';
+  smsMessages = 'SMS messages';
   when = 'When';
   sendRequestConfirmSms = 'Sending an SMS to confirm arrival';
   sendSelfOrderLink = 'Submit a link for a self-order';
@@ -953,4 +954,11 @@ export class en {
   moveUp = 'Move up';
   moveDown = 'Move down';
   stickerProperties = 'Sticker Features';
+  showOnlyIncoming = 'Show only incoming messages';
+  incoming = 'You are entering';
+  addHistoricalDelivery = 'Add historical shipping';
+  allowVolunteerToSeePreviousActivities = 'Allow the volunteer to see historical activities';
+  showPreviousActivities = 'Previous activities';
+  navigateWithGoogleMaps = 'Navigate with Google';
+  navigateWithWaze = 'Navigate with WAZE';
 }
