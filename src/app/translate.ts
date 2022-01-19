@@ -191,6 +191,7 @@ export class TranslationOptions {
   });
   static bulgaria: TranslationOptions = new TranslationOptions(359, 'Bulgaria', {
     googleMapCountry: 'BG',
+    preferWaze: true,
     bounds: new myBounds(22.3805257504, 41.2344859889, 28.5580814959, 44.2349230007),
     leftToRight: true,
     languageCode: 'en',
