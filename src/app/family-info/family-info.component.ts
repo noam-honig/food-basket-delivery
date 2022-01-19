@@ -23,7 +23,7 @@ import { relativeDateName } from '../model-shared/types';
 import { ImageInfo } from '../images/images.component';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
-
+const useWazeKey = "useWaze";
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -43,6 +43,11 @@ export class FamilyInfoComponent implements OnInit {
     if (this.f) {
       this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id);
     }
+    this.useWaze = this.settings.lang.languageCode == 'iw';
+    let x = localStorage.getItem(useWazeKey);
+    if (x != undefined) {
+      this.useWaze = Boolean(JSON.parse(x));
+    }
   }
   async loadImages() {
     this.images = await FamilyDeliveries.getFamilyImages(this.f.family, this.f.id);
@@ -55,7 +60,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   async showHistory() {
     openDialog(PreviousDeliveryCommentsComponent, x => x.args = {
-        family:this.f.family
+      family: this.f.family
     });
   }
   courierCommentsDateRelativeDate() {
@@ -82,9 +87,7 @@ export class FamilyInfoComponent implements OnInit {
 
   @Input() userFamilies: UserFamiliesList;
   @Input() selfPickupScreen = false;
-  useWaze() {
-    return this.settings.lang.languageCode == 'iw';
-  }
+  useWaze: boolean;
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier && f.deliverStatus == DeliveryStatus.ReadyForDelivery;
@@ -197,23 +200,26 @@ export class FamilyInfoComponent implements OnInit {
     this.assignmentCanceled.emit();
 
   }
-  openWaze(f: ActiveFamilyDeliveries) {
+  navigate(f: ActiveFamilyDeliveries, useWaze?: boolean) {
+    if (useWaze === undefined)
+      useWaze = this.useWaze;
+    else if (useWaze != this.useWaze) {
+      localStorage.setItem(useWazeKey, JSON.stringify(useWaze));
+      this.useWaze = useWaze;
+    }
     if (!f.addressOk) {
       this.dialog.YesNoQuestion(use.language.addressNotOkOpenWaze, () => {
-        if (this.useWaze())
+        if (useWaze)
           f.openWaze();
         else
           f.openGoogleMaps();
       });
     }
     else
-      if (this.useWaze())
+      if (useWaze)
         f.openWaze();
       else
         f.openGoogleMaps();
-
-
-
   }
   async udpateInfo(f: ActiveFamilyDeliveries) {
     let x = f.courier;

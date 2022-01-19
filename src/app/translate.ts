@@ -280,9 +280,12 @@ export class TranslationOptions {
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string,
     suppressPhoneZeroAddition?: boolean,
+    preferWaze?: boolean,
     formatPhone?: (s: string) => string
   }) {
-
+    if (args.preferWaze === undefined) {
+      args.preferWaze == (args.languageCode == 'iw');
+    }
   }
   formatPhone(s: string) {
     if (!s)
@@ -1283,6 +1286,8 @@ export class Language {
   addHistoricalDelivery = 'הוסף משלוח היסטורי';
   allowVolunteerToSeePreviousActivities = "אפשר למתנדב לראות פעילויות היסטוריות";
   showPreviousActivities = "פעילויות קודמות";
+  navigateWithGoogleMaps = "נווט עם גוגל";
+  navigateWithWaze = "נווט עם WAZE";
 }
 
 const defaultLang = new Language();

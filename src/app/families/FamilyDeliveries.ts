@@ -28,6 +28,7 @@ import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 import { IdFieldRef } from "remult/src/remult3";
 import { DateOnlyValueConverter } from "remult/valueConverters";
+import { isDesktop } from "../shared/utils";
 
 
 @ValueListFieldType({
@@ -118,7 +119,7 @@ export class FamilyDeliveries extends IdEntity {
         let r = (await remult.repo(FamilyImage).find({ where: { familyId: family } })).map(({ image }) => ({ image } as ImageInfo));
         return r;
     }
-  
+
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })
@@ -681,8 +682,14 @@ export class FamilyDeliveries extends IdEntity {
             }
     }
     openWaze() {
-        //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address) + 'export &navigate=yes', '_blank');
-        location.href = 'waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address) + '&navigate=yes';
+        if (isDesktop())
+            window.open('https://waze.com/ul?ll=' + this.getDrivingLocation() + "&q=" + encodeURI(this.address) + 'export &navigate=yes', '_blank');
+        else
+            try {
+                location.href = 'waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address) + '&navigate=yes';
+            } catch (err) {
+                console.log(err);
+            }
     }
     openGoogleMaps() {
         window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.addressByGoogle, '_blank');
