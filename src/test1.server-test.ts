@@ -112,13 +112,13 @@ function init() {
             await InitContext(remult);
             done();
         });
-        async function callAddBox() {
+        async function callAddBox(num=1) {
             return await AsignFamilyComponent.AddBox(helperWhoIsAdmin, null, null, {
                 allRepeat: false,
                 area: '',
                 city: '',
                 group: '',
-                numOfBaskets: 1,
+                numOfBaskets: num,
                 preferRepeatFamilies: false
             }, remult, sql);
         }
@@ -151,6 +151,24 @@ function init() {
 
             expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
             expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
+        });
+        itAsync("chooses closest to previous delivery2", async () => {
+            await createDelivery(0);
+            await createDelivery(7);
+            await createDelivery(5);
+            await createDelivery(8);
+            await createDelivery(10);
+            let d = await createDelivery(6);
+            d.courier = helperWhoIsAdmin;
+            await d.save();
+            expect(await (remult.repo(ActiveFamilyDeliveries).count({ courier: null }))).toBe(5);
+            let r = await callAddBox(3);
+            expect(r.families.length).toBe(4);
+
+            expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
+            expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
+            expect(r.families.some(d => d.internalDeliveryComment == '7')).toBeTruthy();;
+            expect(r.families.some(d => d.internalDeliveryComment == '8')).toBeTruthy();
         });
         itAsync("chooses closest to helper", async () => {
 
