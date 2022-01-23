@@ -47,7 +47,8 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
     let rows = repo.query(await grid.getFilterWithSelectedRows());
     let currentPage = await rows.paginator();
     while (currentPage != null) {
-      await loadPage(currentPage.items);
+      if (loadPage)
+        await loadPage(currentPage.items);
       for (const f of currentPage.items) {
         let colPrefix = '';
         let colName = 'A';
