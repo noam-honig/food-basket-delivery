@@ -6,6 +6,7 @@ import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty
 import { Entity } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
 import { assign } from 'remult/assign';
+import { InputTypes } from 'remult/inputTypes';
 
 
 
@@ -21,17 +22,26 @@ export class PrintStickersComponent implements OnInit {
   data: any[];
   report: ReportInfo;
   row: StickerInfo;
+  borderKey = '@border';
   pageProps: ElementProps = {
     caption: this.remult.lang.pageProperties, props: [
       ...getMarginsH()]
 
   };
+  getStickerBorderSettings() {
+    if (this.stickerProps.values[this.borderKey])
+      return '1px dotted lightgray';
+    return '';
+  }
   stickerProps: ElementProps = {
     caption: this.remult.lang.labelProperties, props: [
       new Property('height', this.remult.lang.height, 'number', (val, s) => assign(s, {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),
+      new Property(this.borderKey, this.remult.lang.border, InputTypes.checkbox, (val, s) => {
+       
+      }),
       new SizeProperty('width', this.remult.lang.width),
       ...getMarginsH(), ...getMarginsV()],
 

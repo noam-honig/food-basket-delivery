@@ -1289,6 +1289,7 @@ export class Language {
   showPreviousActivities = "פעילויות קודמות";
   navigateWithGoogleMaps = "נווט עם גוגל";
   navigateWithWaze = "נווט עם WAZE";
+  border = 'מסגרת';
 }
 
 const defaultLang = new Language();

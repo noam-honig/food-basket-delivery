@@ -1,7 +1,7 @@
 <div class="container" *ngIf="report" [style]="defs.getStyle(pageProps.props,report.page)">
     <div *ngFor="let r of data" style="flex-shrink: 0;position: relative; display: inline-grid;"
         [ngStyle]="defs.getStyle(stickerProps.props,report.sticker)">
-        <div class="item">
+        <div class="item" [style.outline]="getStickerBorderSettings()">
             <ng-container *ngFor="let f of report.controls">
 
                 <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
