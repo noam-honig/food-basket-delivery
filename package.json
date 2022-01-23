@@ -6,7 +6,7 @@
     "gc": "ng generate component --spec false",
     "ng-serve": "ng serve",
     "node-serve": "tsc-watch -p tsconfig.server.json --onSuccess \"npm run server:dev-run\"",
-    "server-test": "./node_modules/.bin/tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
+    "server-test": "tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
     "ng-serve-noam-ip-10.0.0.6": "ng serve --host 10.0.0.6",
     "start": "node server/app/server/server.js",
     "t-start": "node dist/server/app/server/server.js",

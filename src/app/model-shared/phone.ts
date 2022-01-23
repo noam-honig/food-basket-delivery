@@ -11,7 +11,7 @@ import { FieldType, translationConfig } from "../translate";
     fromJson: x => x ? new Phone(x) : null
   },
   inputType: InputTypes.tel
-}, (options, remult) => options.displayValue = (e, x) => x && getSettings(remult).forWho.formatPhone(x.thePhone))
+}, (options, remult) => options.displayValue = (e, x) => x && getSettings(remult).forWho?.formatPhone(x.thePhone))
 @DataControl<any, Phone>({
   click: (e, x) => window.open('tel:' + x.displayValue),
   allowClick: (e, x) => !!x.displayValue,
@@ -30,7 +30,7 @@ export class Phone {
     return this.thePhone;
   }
   get displayValue() {
-    return translationConfig.forWho().formatPhone(this.thePhone);
+    return translationConfig.forWho()?.formatPhone(this.thePhone);
   }
 
   static toJson(x: Phone): string {

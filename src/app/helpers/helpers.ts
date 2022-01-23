@@ -296,7 +296,7 @@ export abstract class HelpersBase extends IdEntity {
             }
             self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone, self.remult));
             if (!self._disableDuplicateCheck)
-                await Validators.unique(self, self.$.phone, self.remult.lang.alreadyExist);
+                await Validators.unique(self, self.$.phone, self.remult.lang?.alreadyExist);
             if (self.isNew())
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();

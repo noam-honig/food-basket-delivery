@@ -26,7 +26,6 @@ import { InitContext } from "./app/helpers/init-context";
 initSettings.disableSchemaInit = true;
 
 
-
 function init() {
 
     let remult = new Remult();
