@@ -215,7 +215,10 @@ export class DeliveryHistoryComponent implements OnInit {
             f.addStatusExcelColumn(addColumn);
             if (includeFamilyInfo)
               await f.addFamilyInfoToExcelFile(addColumn);
-
+          }, async deliveries => {
+            if (includeFamilyInfo) {
+              await FamilyDeliveries.loadFamilyInfoForExcepExport(this.remult, deliveries);
+            }
           });
       }, visible: () => this.remult.isAllowed(Roles.admin)
     }],

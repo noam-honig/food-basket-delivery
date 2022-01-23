@@ -738,6 +738,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
               if (includeFamilyInfo)
                 await fd.addFamilyInfoToExcelFile(addColumn);
 
+            }, async deliveries => {
+              if (includeFamilyInfo) {
+                await FamilyDeliveries.loadFamilyInfoForExcepExport(this.remult, deliveries);
+              }
             });
         }
         , visible: () => this.remult.isAllowed(Roles.admin)
@@ -892,6 +896,8 @@ export interface deliveryButtonsHelper {
   deliveries: () => GridSettings<FamilyDeliveries>,
   showAllBeforeNew?: boolean
 }
+
+
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
   let newDelivery: (d: FamilyDeliveries) => void = async d => {
     let f = await args.remult.repo(Families).findId(d.family);

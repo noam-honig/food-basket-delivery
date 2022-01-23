@@ -543,9 +543,15 @@ export class FamilyDeliveries extends IdEntity {
     constructor(protected remult: Remult) {
         super();
     }
-
+    static async loadFamilyInfoForExcepExport(remult: Remult, deliveries: ActiveFamilyDeliveries[]) {
+        let families = await remult.repo(Families).find({ limit: deliveries.length, where: { id: deliveries.map(d => d.family) } });
+        for (const d of deliveries) {
+            d.familyForExcelExport = families.find(f => f.id == d.family);
+        }
+    }
+    private familyForExcelExport: Families;
     async addFamilyInfoToExcelFile(addColumn) {
-        var f = await this.remult.repo(Families).findId(this.family);
+        var f = this.familyForExcelExport;
         let settings = await ApplicationSettings.getAsync(this.remult);
         if (f) {
             let x = f.addressHelper.getGeocodeInformation;
