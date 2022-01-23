@@ -111,10 +111,10 @@ export class PrintStickersComponent implements OnInit {
         sticker: {
           width: '105',
           height: '70',
-          "padding-right": '5',
-          "padding-left": '5',
-          "padding-top": '5',
-          "padding-bottom": '5'
+          "padding-right": '1',
+          "padding-left": '0',
+          "padding-top": '0',
+          "padding-bottom": '1'
         }
       }
     }
