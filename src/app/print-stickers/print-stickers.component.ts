@@ -39,11 +39,12 @@ export class PrintStickersComponent implements OnInit {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),
-      new Property(this.borderKey, this.remult.lang.border, InputTypes.checkbox, (val, s) => {
-       
-      }),
       new SizeProperty('width', this.remult.lang.width),
-      ...getMarginsH(), ...getMarginsV()],
+      ...getMarginsH(), ...getMarginsV(),
+      new Property(this.borderKey, this.remult.lang.border, InputTypes.checkbox, (val, s) => {
+
+      })
+    ],
 
   };
   editControl(c: Control) {
