@@ -796,7 +796,7 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.groups.caption,
             updateFamily: async (v, f, h) => {
                 if (v && v.trim().length > 0) {
-                    let g = await this.remult.repo(Groups).findFirst({ name: v.trim() }, { createIfNotFound: true });
+                    let g = await this.remult.repo(Groups).findFirst({ name: v.trim() }, { createIfNotFound: true, useCache: true });
                     if (g.isNew())
                         await g.save();
                 }
@@ -1462,7 +1462,7 @@ class columnUpdateHelper {
         getResult: (entity: T) => Y,
         updateResultTo: FieldRef<any, Y>,
         additionalUpdates?: ((entity: T) => void)) {
-        let x = await this.remult.repo(c).findFirst(searchForExistingValueFilter(val), { createIfNotFound: true });
+        let x = await this.remult.repo(c).findFirst(searchForExistingValueFilter(val), { createIfNotFound: true, useCache: true });
         if (x.isNew()) {
             let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {
