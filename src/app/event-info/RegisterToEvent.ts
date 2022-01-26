@@ -107,16 +107,16 @@ export class RegisterToEvent {
     @CustomColumn(() => registerQuestionForVolunteers[4])
     a4: string = '';
     @Field({ translation: l => l.socialSecurityNumber })
-    socialSecurityNumber: string;
+    socialSecurityNumber: string = '';
     @Field()
-    email: Email;
+    email: Email = new Email('');
     @Field({ translation: l => l.preferredDistributionArea })
-    preferredDistributionAreaAddress: string;
+    preferredDistributionAreaAddress: string = '';
     @Field({
 
         dbName: 'preferredDistributionAreaAddress2'
     })
-    preferredFinishAddress: string;
+    preferredFinishAddress: string='';
 
     get $() { return getFields(this, this.remult); }
     async registerToEvent(e: EventInList, dialog: DialogService) {
