@@ -44,7 +44,11 @@ export class RegisterToEvent {
 
 
     }
+    inited = false;
     async init() {
+        if (this.inited)
+            return;
+        this.inited = true;
         let s = (await this.remult.getSettings());
         if (!actionInfo.runningOnServer) {
 
@@ -95,13 +99,13 @@ export class RegisterToEvent {
     rememberMeOnThisDevice: boolean;
 
     @CustomColumn(() => registerQuestionForVolunteers[1])
-    a1: string;
+    a1: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[2])
-    a2: string;
+    a2: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[3])
-    a3: string;
+    a3: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[4])
-    a4: string;
+    a4: string = '';
     @Field({ translation: l => l.socialSecurityNumber })
     socialSecurityNumber: string;
     @Field()
@@ -114,19 +118,27 @@ export class RegisterToEvent {
     })
     preferredFinishAddress: string;
 
-    get $() { return getFields(this); }
+    get $() { return getFields(this, this.remult); }
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
         await this.init();
+        this.a1 = '';
+        this.a2 = '';
+        this.a3 = '';
+        this.a4 = '';
         let lang = this.remult.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
         let currentHelper = (await this.remult.getCurrentUser());
+        if (this.remult.authenticated()) {
+            this.phone = currentHelper.phone;
+            this.name = currentHelper.name;
+        }
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await openDialog(InputAreaComponent, x => x.args = {
                 title: lang.register,
                 helpText: lang.registerHelpText,
                 settings: {
-                    fields: () => [this.$.name, this.$.phone, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
+                    fields: () => [{ field: this.$.name, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
                 },
                 cancel: () => { },
                 ok: async () => {
@@ -151,8 +163,7 @@ export class RegisterToEvent {
                 }
             });
         else {
-            this.phone = currentHelper.phone;
-            this.name = currentHelper.name;
+
             this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
         }
     }
@@ -209,6 +220,7 @@ export class RegisterToEvent {
                 }
             }
             await helper.save();
+            console.log(helperInEvent.$.toArray().filter(x => x.valueChanged()).map(({ value, originalValue, ...f }) => ({ key: f.metadata.key, value, originalValue })));
             await helperInEvent.save();
         }
         else {

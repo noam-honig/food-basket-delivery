@@ -195,9 +195,9 @@ export class ManageComponent implements OnInit {
     ],
 
     rowsInPage: 25,
-    where: {
+    where: () => ({
       archive: !this.showArchivedDistributionCenters ? false : undefined
-    },
+    }),
     orderBy: { name: "asc" },
 
     saving: f => {
@@ -271,7 +271,7 @@ export class ManageComponent implements OnInit {
   settingsLogo = new DataAreaSettings({
     fields: s => [this.settings.$.logoUrl]
   });
-  async previewVolunteer(){
+  async previewVolunteer() {
     openDialog(MyFamiliesComponent);
   }
   async saveAndPreview() {

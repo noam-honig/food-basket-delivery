@@ -114,7 +114,7 @@ export class DialogService {
         if (this.distCenter != null)
             return this.distCenter;
         if (!this.allCenters)
-            this.allCenters = await this.remult.repo(DistributionCenters).find();
+            this.allCenters = await this.remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
         return this.remult.findClosestDistCenter(loc, this.allCenters);
 
     }
