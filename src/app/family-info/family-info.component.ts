@@ -23,6 +23,7 @@ import { relativeDateName } from '../model-shared/types';
 import { ImageInfo } from '../images/images.component';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
+import { quantityHelper } from '../families/BasketType';
 const useWazeKey = "useWaze";
 @Component({
   selector: 'app-family-info',
@@ -48,7 +49,18 @@ export class FamilyInfoComponent implements OnInit {
     if (x != undefined) {
       this.useWaze = Boolean(JSON.parse(x));
     }
+    this.refreshWhatToTake();
   }
+  whatToTake: string = '';
+  private refreshWhatToTake() {
+    let toTake = new quantityHelper();
+    this.whatToTake = '';
+    if (this.f.basketType) {
+      toTake.parseComment(this.f.basketType.whatToTake, this.f.quantity);
+      this.whatToTake = toTake.toString();
+    }
+  }
+
   async loadImages() {
     this.images = await FamilyDeliveries.getFamilyImages(this.f.family, this.f.id);
   }
@@ -227,6 +239,7 @@ export class FamilyInfoComponent implements OnInit {
       dialog: this.dialog,
       refreshDeliveryStats: () => {
         x = f.courier;
+        this.refreshWhatToTake();
         if (this.userFamilies)
           this.userFamilies.reload();
       }

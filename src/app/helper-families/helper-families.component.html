@@ -102,7 +102,11 @@
       </ng-template>
       <app-map #map> </app-map>
     </mat-tab>
-    <mat-tab [label]="settings.lang.whatToTake" *ngIf="familyLists.whatToTake">
+    <mat-tab *ngIf="familyLists.whatToTake">
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">shopping_cart</mat-icon>
+        {{settings.lang.whatToTake}}
+      </ng-template>
       <div style="white-space: pre;">{{familyLists.whatToTake}}</div>
     </mat-tab>
   </mat-tab-group>

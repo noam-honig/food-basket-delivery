@@ -23,9 +23,11 @@
   <a *ngIf="settings.allowVolunteerToSeePreviousActivities" (click)="showHistory()"
     style="display:block">{{settings.lang.showPreviousActivities}}</a>
   <ng-container *ngIf="!hideSal">
-    <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.$.basketType.displayValue}}<span
-      *ngIf="f.basketType?.whatToTake">. - <strong>{{settings.lang.whatToTake}}:</strong>
-      {{f.basketType?.whatToTake}}</span>
+    <h4 style="display:inline">{{settings.lang.basket}}</h4> - <span *ngIf="f.quantity>1">{{f.quantity}} X</span> {{f.$.basketType.displayValue}} 
+    <div *ngIf="whatToTake">
+      <strong>{{settings.lang.whatToTake}}: </strong>
+      {{whatToTake}}
+    </div>
   </ng-container>
 
   <div *ngIf="f.deliveryComments">
@@ -100,7 +102,7 @@
 
       <button mat-icon-button [matMenuTriggerFor]="addressMenu" color="primary">
 
-        <mat-icon >explore</mat-icon>
+        <mat-icon>explore</mat-icon>
       </button>
 
 

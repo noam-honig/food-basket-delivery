@@ -12,15 +12,22 @@
     </div>
     <div>
         <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
-            *ngIf="familyLists.toDeliver.length&&settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
-        <a href="{{settings.message1Link}}" target="_blank" class="no-print" style="display: block"
-            *ngIf="!settings.message1OnlyWhenDone || familyLists.toDeliver.length==0">{{settings.message1Text}}</a>
-        <ng-container *ngIf="!settings.message2OnlyWhenDone || familyLists.toDeliver.length==0">
+            *ngIf="settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
+        <ng-container
+            *ngIf="settings.message1Text&&( !settings.message1OnlyWhenDone || familyLists.toDeliver.length==0)">
+            <a href="{{settings.message1Link}}" target="_blank" class="no-print" *ngIf="settings.message1Link"
+                style="display: block">{{settings.message1Text}}</a>
+            <div *ngIf="!settings.message1Link">
+                {{settings.message1Text}}
+            </div>
+        </ng-container>
+        <ng-container
+            *ngIf="settings.message2Text&&(!settings.message2OnlyWhenDone || familyLists.toDeliver.length==0)">
             <a href="{{settings.message2Link}}" target="_blank" class="no-print" *ngIf="settings.message2Link"
                 style="display: block">{{settings.message2Text}}</a>
-            <span *ngIf="!settings.message2Link">
+            <div *ngIf="!settings.message2Link">
                 {{settings.message2Text}}
-            </span>
+            </div>
         </ng-container>
     </div>
 
@@ -45,7 +52,8 @@
 
     <div *ngIf="hasEvents" style="text-align: center;">
 
-        <button mat-raised-button color="primary" (click)="moveToOpertunities()">{{settings.lang.wantToVolnteerMore}}</button>
+        <button mat-raised-button color="primary"
+            (click)="moveToOpertunities()">{{settings.lang.wantToVolnteerMore}}</button>
     </div>
 
 </ng-container>

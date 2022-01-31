@@ -486,7 +486,7 @@ export class Language {
   showText1OnlyWhenDone = 'הצג הודעה 1 רק אם המתנדב סיים את כל המשלוחים';
   freeText2ForVolunteer = 'הודעה 2 שתופיע למתנדב בראש המסך';
   urlFreeText2 = 'כתובת אינטרנט ללחיצה על הודעה 2 שתופיע למתנדב בראש המסך';
-  showText2OnlyWhenDone = 'המג הודעה 2 רק אם המתנדב סיים את כל המשלוחים';
+  showText2OnlyWhenDone = 'הצג הודעה 2 רק אם המתנדב סיים את כל המשלוחים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
   enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה ארגון הגיע המתנדב';
@@ -973,7 +973,7 @@ export class Language {
   addGroupAssignmentVerb = 'להוסיף שיוך לקבוצה';
   removeGroupAssignmentVerb = 'להסיר שיוך לקבצה';
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
-  volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
+  volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה למתנדב במסך הגדרות אישיות';
   volunteerCanUpdateDeliveryComment = "מתנדב יכול לעדכן הערה למשלוח";
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'דואל';

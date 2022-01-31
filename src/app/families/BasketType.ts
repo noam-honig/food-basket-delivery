@@ -70,9 +70,11 @@ export class quantityHelper {
     for (let item of comment.split(',')) {
       item = item.trim();
       let reg = /(^\d*)(.*)/.exec(item);
-      if (reg[1])
-        this.add(reg[2], +reg[1] * quantity)
-      else this.add(reg[2], 1 * quantity);
+      if (reg[2].trim()) {
+        if (reg[1])
+          this.add(reg[2], +reg[1] * quantity)
+        else this.add(reg[2], 1 * quantity);
+      }
     }
   }
   toString(seperator = "\n") {
