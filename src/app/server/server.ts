@@ -9,7 +9,7 @@ import { ServerEvents } from './server-events';
 import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import "../event-info/RegisterToEvent";
-import { Remult } from 'remult';
+import { OmitEB, Remult } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -355,6 +355,7 @@ s.parentNode.insertBefore(b, s);})();
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
     });
+    
 
     let port = process.env.PORT || 3000;
     app.listen(port);
@@ -419,3 +420,4 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         }
     });
 }
+

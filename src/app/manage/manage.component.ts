@@ -8,7 +8,7 @@ import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } 
 
 
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields } from 'remult';
+import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -21,13 +21,14 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { saveToExcel } from '../shared/saveToExcel';
-import { Groups } from './groups';
+import { Groups, GroupsValue } from './groups';
 import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Field, use } from '../translate';
 import { Sites } from '../sites/sites';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
+import { Phone } from '../model-shared/phone';
 
 @Component({
   selector: 'app-manage',
@@ -301,7 +302,7 @@ export class ManageComponent implements OnInit {
       this.settings.$.message2Text,
       this.settings.$.message2Link,
       this.settings.$.message2OnlyWhenDone,
-      
+
       this.settings.$.showDistCenterAsEndAddressForVolunteer,
       this.settings.$.volunteerCanUpdateDeliveryComment,
       this.settings.$.deliveredButtonText,
@@ -693,15 +694,38 @@ export class ManageComponent implements OnInit {
       orderBy: { createDate: "desc" },
       progress
     })) {
+      await ManageComponent.clearDataFromFamilyDeliveries(f.id, remult);
       await f.delete();
       i++;
     }
     return i;
   }
+  static async clearDataFromFamilyDeliveries(familyId: string, remult: Remult) {
+    var db = remult._dataSource as SqlDatabase;
+    const sql = new SqlBuilder(remult);
+    const fd = await SqlFor(remult.repo(FamilyDeliveries));
+    const set: [FieldMetadata, any][] = [];
+    const fieldsToKeep: select<FamilyDeliveries> = {
+      id: true,
+      family: true
+    };
+    for (const field of fd.metadata.fields) {
+      if ((field.valueType == String || field.valueType == Phone || field.valueType == GroupsValue) && !fieldsToKeep[field.key]) {
+        set.push([field, "''"]);
+      } else {
+        //        console.log(field.key);
+      }
+    }
+    await db.execute((await sql.update(fd, {
+      set: () => set,
+      where: () => [fd.where({ family: familyId })]
+    })));
+  }
 
 
 
 }
+declare type select<T> = { [Properties in keyof Partial<OmitEB<T>>]?: boolean; }
 
 @Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
   allowApiRead: Roles.distCenterAdmin,
