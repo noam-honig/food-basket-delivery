@@ -26,10 +26,7 @@
     "release-docs": "deploy-docs.sh",
     "test": "ng test",
     "t-build": "npm run ng-build && npm run server:build",
-    "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
-  },
-  "engines": {
-    "node": "14.18"
+    "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
   },
   "private": true,
   "dependencies": {
