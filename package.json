@@ -1,6 +1,6 @@
 {
   "name": "hug-moms",
-  "version": "0.9.48",
+  "version": "0.9.53",
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
@@ -72,7 +72,6 @@
     "remult": "^0.10.5",
     "rxjs": "~6.5.3",
     "spherical-geometry-js": "^2.0.0",
-    "tsickle": "^0.35.0",
     "twilio": "^3.48.1",
     "uuid": "^3.3.2",
     "web-animations-js": "^2.3.2",
@@ -101,7 +100,6 @@
     "@types/xlsx": "0.0.36",
     "@vuepress/plugin-back-to-top": "1.5.2",
     "@vuepress/plugin-medium-zoom": "1.5.2",
-    "codelyzer": "^5.0.1",
     "concurrently": "^4.1.2",
     "install": "^0.13.0",
     "jasmine-core": "~3.6.0",
