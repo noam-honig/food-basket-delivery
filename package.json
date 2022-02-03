@@ -29,7 +29,7 @@
     "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
   },
   "engines": {
-    "node": "14.x"
+    "node": "14.18"
   },
   "private": true,
   "dependencies": {
