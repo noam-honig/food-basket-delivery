@@ -1290,6 +1290,7 @@ export class Language {
   navigateWithGoogleMaps = "נווט עם גוגל";
   navigateWithWaze = "נווט עם WAZE";
   border = 'מסגרת';
+  asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
 }
 
 const defaultLang = new Language();

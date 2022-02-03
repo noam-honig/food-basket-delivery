@@ -13,7 +13,7 @@ import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
 import { Controller } from "remult";
-import { DataAreaFieldsSetting, DataControl, InputField } from "@remult/angular";
+import { DataAreaFieldsSetting, DataControl, getValueList, InputField } from "@remult/angular";
 
 import { getFields } from "remult";
 
@@ -75,12 +75,23 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
         });
     }
 }
+const asCurrentBasket = 'AS_CURRENT_BASKET';
 @Controller('UpdateFamilyDefaults')
 export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
+
     @Field({ translation: l => l.defaultVolunteer })
     byCurrentCourier: boolean;
     @Field({ translation: l => l.defaultBasketType })
     basketType: boolean;
+    @Field({ translation: l => l.basketType })
+    @DataControl({
+        valueList: async (remult) => {
+            let r = await getValueList(remult.repo(BasketType));
+            r.splice(0, 0, { id: asCurrentBasket, caption: use.language.asCurrentBasket })
+            return r;
+        }
+    })
+    selectBasket: string = asCurrentBasket;
     @Field({ translation: l => l.defaultDistributionCenter })
     defaultDistributionCenter: boolean;
     @Field({ translation: l => l.defaultQuantity })
@@ -96,7 +107,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
         super(remult, ActiveFamilyDeliveries, {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
-                this.$.basketType, this.$.quantity, this.$.byCurrentCourier, this.$.comment, { field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule },
+                this.$.basketType, { field: this.$.selectBasket, visible: () => this.basketType }, this.$.quantity, this.$.byCurrentCourier, this.$.comment, { field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule },
                 { field: this.$.defaultDistributionCenter, visible: () => c.dialog.hasManyCenters }
             ],
 
@@ -110,8 +121,11 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                         if (fd.courier)
                             f.fixedCourier = fd.courier;
                     }
-                    if (this.basketType)
-                        f.basketType = fd.basketType;
+                    if (this.basketType) {
+                        if (this.selectBasket == asCurrentBasket)
+                            f.basketType = fd.basketType;
+                        else f.basketType = await this.remult.repo(BasketType).findId(this.selectBasket);
+                    }
                     if (this.quantity)
                         f.quantity = fd.quantity;
                     if (this.comment)
@@ -346,7 +360,7 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
 }
 
 
-@ValueListFieldType( {
+@ValueListFieldType({
     defaultValue: () => HelperStrategy.familyDefault,
     translation: l => l.volunteer
 })
