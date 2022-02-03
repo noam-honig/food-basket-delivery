@@ -28,6 +28,9 @@
     "t-build": "npm run ng-build && npm run server:build",
     "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~11.2.10",
