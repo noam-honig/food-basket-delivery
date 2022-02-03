@@ -105,8 +105,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
   }
 
   helpText() {
-    let s = ApplicationSettings.get(this.remult);
-    return this.args.helpText(s);
+    return this.args.helpText(this.settings);
   }
   images: ImageInfo[] = [];
 

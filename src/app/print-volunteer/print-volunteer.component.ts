@@ -30,19 +30,28 @@ import { Control, ElementProps, getMarginsH, Property } from '../properties-edit
 export class PrintVolunteerComponent implements OnInit {
 
 
-  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
+  constructor(public remult: Remult, private busy: BusyService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
   defs = new VolunteerReportDefs(this.remult, this.busy);
   report: ReportInfo;
   row: VolunteerReportInfo;
-
+  readonly newPageKey = '@newPageKey';
+  pageBreakBefore() {
+    if (this.report.page[this.newPageKey])
+      return 'always';
+    return 'none';
+  }
   pageProps: ElementProps = {
-    caption: 'תכונות דף', props: [
-      ...getMarginsH()]
+    caption: this.remult.lang.pageProperties, props: [
+      ...getMarginsH(), {
+        caption: this.remult.lang.newPageForEachVolunteer,
+        inputType: "checkbox",
+        key: this.newPageKey
+      }]
 
   };
 
   columnProps: ElementProps = {
-    caption: 'תכונות עמודה', props: [
+    caption: this.remult.lang.columnProperties, props: [
       ...this.defs.fieldProps.props
     ]
 
@@ -57,7 +66,7 @@ export class PrintVolunteerComponent implements OnInit {
   addColumn() {
     this.report.columns.push({
       controls: [],
-      propertyValues: { [this.defs.textBeforeKey]: 'עמודה חדשה' }
+      propertyValues: { [this.defs.textBeforeKey]: this.remult.lang.newColumn }
     })
     this.editColumn(this.report.columns[this.report.columns.length - 1]);
 
@@ -67,7 +76,7 @@ export class PrintVolunteerComponent implements OnInit {
   editColumn(c: ReportColumn) {
     this.currentProps = this.columnProps;
     this.currentProps.values = c.propertyValues;
-    this.currentProps.caption = 'תכונות עמודה ' + c.propertyValues[this.defs.textBeforeKey];
+    this.currentProps.caption = this.remult.lang.columnProperties + ': ' + c.propertyValues[this.defs.textBeforeKey];
     this.currentColumn = c;
     this.currentControlList = c.controls;
 
@@ -108,7 +117,6 @@ export class PrintVolunteerComponent implements OnInit {
   }
   async ngOnInit() {
     let filterVolunteer = this.route.snapshot.queryParams['volunteer'];
-    console.log(filterVolunteer);
     let data = await VolunteerReportDefs.getStickerData(filterVolunteer);
     let volunteer;
     let deliveries: any[];
@@ -224,14 +232,19 @@ export class PrintVolunteerComponent implements OnInit {
         }
       }
     }
+    if (this.report.page[this.newPageKey] === undefined)
+      this.report.page[this.newPageKey] = true;
     this.pageProps.values = this.report.page;
 
   }
 
 
-  save() {
-    this.row.info = JSON.parse(JSON.stringify(this.report));
-    this.busy.donotWait(() => this.row.save());
+  lastSave = Promise.resolve();
+  async save() {
+    this.lastSave = this.lastSave.then(async () => {
+      this.row.info = JSON.parse(JSON.stringify(this.report));
+      await this.busy.donotWait(() => this.row.save());
+    });
   }
 }
 

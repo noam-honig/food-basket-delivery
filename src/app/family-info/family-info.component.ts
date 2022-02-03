@@ -22,7 +22,9 @@ import { openDialog } from '@remult/angular';
 import { relativeDateName } from '../model-shared/types';
 import { ImageInfo } from '../images/images.component';
 import { SendSmsAction } from '../asign-family/send-sms-action';
-
+import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
+import { quantityHelper } from '../families/BasketType';
+const useWazeKey = "useWaze";
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -40,9 +42,25 @@ export class FamilyInfoComponent implements OnInit {
   images: ImageInfo[];
   async ngOnInit() {
     if (this.f) {
-      this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family,this.f.id);
+      this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id);
+    }
+    this.useWaze = this.settings.lang.languageCode == 'iw';
+    let x = localStorage.getItem(useWazeKey);
+    if (x != undefined) {
+      this.useWaze = Boolean(JSON.parse(x));
+    }
+    this.refreshWhatToTake();
+  }
+  whatToTake: string = '';
+  private refreshWhatToTake() {
+    let toTake = new quantityHelper();
+    this.whatToTake = '';
+    if (this.f.basketType) {
+      toTake.parseComment(this.f.basketType.whatToTake, this.f.quantity);
+      this.whatToTake = toTake.toString();
     }
   }
+
   async loadImages() {
     this.images = await FamilyDeliveries.getFamilyImages(this.f.family, this.f.id);
   }
@@ -51,6 +69,11 @@ export class FamilyInfoComponent implements OnInit {
   }
   async showTz() {
     this.dialog.messageDialog(await FamilyInfoComponent.ShowFamilyTz(this.f.id));
+  }
+  async showHistory() {
+    openDialog(PreviousDeliveryCommentsComponent, x => x.args = {
+      family: this.f.family
+    });
   }
   courierCommentsDateRelativeDate() {
     return relativeDateName(this.remult, { d: this.f.courierCommentsDate })
@@ -76,9 +99,7 @@ export class FamilyInfoComponent implements OnInit {
 
   @Input() userFamilies: UserFamiliesList;
   @Input() selfPickupScreen = false;
-  useWaze() {
-    return this.settings.lang.languageCode == 'iw';
-  }
+  useWaze: boolean;
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier && f.deliverStatus == DeliveryStatus.ReadyForDelivery;
@@ -113,7 +134,7 @@ export class FamilyInfoComponent implements OnInit {
     if (await this.dialog.YesNoPromise(getLang(this.remult).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter = this.remult.currentUser.distributionCenter;
+        d.distributionCenter = await this.remult.getUserDistributionCenter();
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }
@@ -183,7 +204,7 @@ export class FamilyInfoComponent implements OnInit {
   }
 
   async familiyPickedUp(f: ActiveFamilyDeliveries) {
-    await (this.settings.isSytemForMlt()) ? this.labSelfReception(f) : this.getPickupComments(f);
+    await (this.settings.isSytemForMlt) ? this.labSelfReception(f) : this.getPickupComments(f);
   }
 
   async cancelAssign(f: ActiveFamilyDeliveries) {
@@ -191,23 +212,26 @@ export class FamilyInfoComponent implements OnInit {
     this.assignmentCanceled.emit();
 
   }
-  openWaze(f: ActiveFamilyDeliveries) {
+  navigate(f: ActiveFamilyDeliveries, useWaze?: boolean) {
+    if (useWaze === undefined)
+      useWaze = this.useWaze;
+    else if (useWaze != this.useWaze) {
+      localStorage.setItem(useWazeKey, JSON.stringify(useWaze));
+      this.useWaze = useWaze;
+    }
     if (!f.addressOk) {
       this.dialog.YesNoQuestion(use.language.addressNotOkOpenWaze, () => {
-        if (this.useWaze())
+        if (useWaze)
           f.openWaze();
         else
           f.openGoogleMaps();
       });
     }
     else
-      if (this.useWaze())
+      if (useWaze)
         f.openWaze();
       else
         f.openGoogleMaps();
-
-
-
   }
   async udpateInfo(f: ActiveFamilyDeliveries) {
     let x = f.courier;
@@ -215,6 +239,7 @@ export class FamilyInfoComponent implements OnInit {
       dialog: this.dialog,
       refreshDeliveryStats: () => {
         x = f.courier;
+        this.refreshWhatToTake();
         if (this.userFamilies)
           this.userFamilies.reload();
       }

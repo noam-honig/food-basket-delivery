@@ -93,8 +93,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       click: async () => {
         await saveToExcel(this.settings, this.remult.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
           async (h, addColumn) => {
-            addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation().getCity(), 's');
-            addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation().getCity(), 's');
+            addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation.getCity(), 's');
+            addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation.getCity(), 's');
 
           });
       }
@@ -182,8 +182,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: this.settings.lang.sendWhats,
         click: h => h.phone.sendWhatsapp(this.remult),
-
         icon: 'textsms'
+      },
+      {
+        name: this.settings.lang.smsMessages,
+        click: h => h.smsMessages(this.dialog)
       },
       {
         name: use.language.resetPassword,
@@ -215,7 +218,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.freezeHelper,
-        visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt(),
+        visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt,
         click: async h => this.editFreezeDate(h)
       },
       {
@@ -257,7 +260,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       this.numOfColsInGrid = 4;
       if (this.remult.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
-      if (this.settings.isSytemForMlt())
+      if (this.settings.isSytemForMlt)
         this.numOfColsInGrid += 6;
 
       return Helpers.selectColumns(helpers, this.remult);

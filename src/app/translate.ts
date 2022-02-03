@@ -142,8 +142,8 @@ export function DateOnlyField<entityType = any>(settings?: FieldOptions<entityTy
 export function FieldType<valueType = any>(settings?: FieldOptions<any, valueType> & TranslatedCaption, ...options: (FieldOptions<any, valueType> | ((options: FieldOptions<any, valueType>, remult: Remult) => void))[]) {
   return origFieldType<valueType>(...adjustSettings(settings, options));
 }
-export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(type: ClassType<valueType>, settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: (FieldOptions<entityType, valueType> | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void))[]) {
-  return origValueListFieldType<valueType>(type, ...adjustSettings(settings, options));
+export function ValueListFieldType<entityType = any, valueType extends ValueListItem = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: (FieldOptions<entityType, valueType> | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void))[]) {
+  return origValueListFieldType<valueType>(...adjustSettings(settings, options));
 }
 export function Entity<T>(key: string, settings: EntityOptions<T> & TranslatedCaption, ...options: (EntityOptions | ((options: EntityOptions, remult: Remult) => void))[]) {
   let opts: (EntityOptions | ((options: EntityOptions, remult: Remult) => void))[] = [settings];
@@ -159,7 +159,7 @@ export function Entity<T>(key: string, settings: EntityOptions<T> & TranslatedCa
 
 //https://gist.github.com/graydon/11198540
 const israel = new myBounds(34.2654333839, 29.5013261988, 35.8363969256, 33.2774264593);
-@ValueListFieldType(TranslationOptions)
+@ValueListFieldType()
 export class TranslationOptions {
 
 
@@ -182,7 +182,26 @@ export class TranslationOptions {
     leftToRight: true,
     languageCode: 'en',
     languageFile: 'en',
-    internationalPrefixForSmsAndAws: '+61'
+    internationalPrefixForSmsAndAws: '+61',
+    formatPhone: x => {
+      x = x.substring(0, x.length - 3) + '-' + x.substring(x.length - 3, x.length);
+      x = x.substring(0, x.length - 7) + '-' + x.substring(x.length - 7, x.length);
+      return x;
+    }
+  });
+  static bulgaria: TranslationOptions = new TranslationOptions(359, 'Bulgaria', {
+    googleMapCountry: 'BG',
+    preferWaze: true,
+    bounds: new myBounds(22.3805257504, 41.2344859889, 28.5580814959, 44.2349230007),
+    leftToRight: true,
+    languageCode: 'en',
+    languageFile: 'en',
+    internationalPrefixForSmsAndAws: '+359',
+    formatPhone: x => {
+      x = x.substring(0, x.length - 3) + '-' + x.substring(x.length - 3, x.length);
+      x = x.substring(0, x.length - 7) + '-' + x.substring(x.length - 7, x.length);
+      return x;
+    }
   });
   static uk: TranslationOptions = new TranslationOptions(44, 'United Kingdom', {
     googleMapCountry: 'GB',
@@ -261,14 +280,37 @@ export class TranslationOptions {
     basedOnLang?: string,
     translateFunction?: (s: string) => string,
     internationalPrefixForSmsAndAws?: string,
-    suppressPhoneZeroAddition?: boolean
+    suppressPhoneZeroAddition?: boolean,
+    preferWaze?: boolean,
+    formatPhone?: (s: string) => string
   }) {
+    if (args.preferWaze === undefined) {
+      args.preferWaze == (args.languageCode == 'iw');
+    }
+  }
+  formatPhone(s: string) {
+    if (!s)
+      return s;
+    let x = s.replace(/\D/g, '');
+    if (x.length < 9 || x.length > 10)
+      return s;
+    if (x.length < 10 && !x.startsWith('0'))
+      x = '0' + x;
+    if (!this.args.formatPhone) {
+      x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
+      x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
+      return x;
+    }
+    else return this.args.formatPhone(x);
 
   }
 
 }
 
-export const translationConfig = { activateTranslation: false, forWho: TranslationOptions.Families };
+export const translationConfig = {
+  activateTranslation: false,
+  forWho: () => TranslationOptions.Families
+};
 
 
 
@@ -344,7 +386,7 @@ export class Language {
   entrance = 'כניסה';
   updateComment = 'עדכן הערה';
   clickedByMistake = 'נלחץ בטעות - החזר למשלוחים לחלוקה';
-  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו ביומיים האחרונים';
+  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו';
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו';
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps';
   assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי';
@@ -439,12 +481,12 @@ export class Language {
   helpPhone = 'טלפון לעזרה';
   successButtonSettingName = "מלל כפתור נמסר בהצלחה";
   problemButtonSettingName = "מלל כפתור נתקלתי בבעיה";
-  freeText1ForVolunteer = 'מלל חופשי 1 למתנדב';
-  urlFreeText1 = 'כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב';
-  showText1OnlyWhenDone = 'להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים';
-  freeText2ForVolunteer = 'מלל חופשי 2 למתנדב';
-  urlFreeText2 = 'כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב';
-  showText2OnlyWhenDone = 'להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים';
+  freeText1ForVolunteer = 'הודעה 1 שתופיע למתנדב בראש המסך';
+  urlFreeText1 = 'כתובת אינטרנט ללחיצה על הודעה 1 שתופיע למתנדב בראש המסך';
+  showText1OnlyWhenDone = 'הצג הודעה 1 רק אם המתנדב סיים את כל המשלוחים';
+  freeText2ForVolunteer = 'הודעה 2 שתופיע למתנדב בראש המסך';
+  urlFreeText2 = 'כתובת אינטרנט ללחיצה על הודעה 2 שתופיע למתנדב בראש המסך';
+  showText2OnlyWhenDone = 'הצג הודעה 2 רק אם המתנדב סיים את כל המשלוחים';
   enableSelfPickupModule = 'ישנן משפחות שבאות לקחת ממרכז החלוקה';
   enableLabReception = 'משלוח מסתיים אחרי קליטה במעבדה';
   showVolunteerCompany = 'שמור מטעם איזה ארגון הגיע המתנדב';
@@ -487,7 +529,8 @@ export class Language {
   archiveHelper = 'מחק מתנדב';
   freezeHelper = 'עדכן נתוני הקפאת מתנדב';
   helperInternalComment = 'הערה פנימית לגבי מתנדב';
-  frozenTill = 'מוקפא עד לתאריך';
+  frozenTill = 'לא לשלוח SMS קבוצתי עד לתאריך';
+  doNotSendSms = "לא לשלוח הודעת SMS קבוצתיות כלל";
   maxDeliveriesBeforeBusy = 'מספר משלוחים להגדרת מתנדב עסוק';
   daysCountForBusy = 'מספר ימים לקביעת מתנדב עסוק';
   familySelfPickup = 'יבואו לקחת את המשלוח ואינם צריכים משלוח?';
@@ -539,6 +582,7 @@ export class Language {
   previousDeliveryNotes = 'הערת משלוח קודם';
   addressByGoogle = "כתובת כפי שגוגל הבין";
   addressOk = 'כתובת תקינה';
+
   previousDeliverySummary = 'סיכום משלוח קודם';
   createUser = 'משתמש מוסיף';
   assignUser = 'משתמש משייך';
@@ -929,7 +973,7 @@ export class Language {
   addGroupAssignmentVerb = 'להוסיף שיוך לקבוצה';
   removeGroupAssignmentVerb = 'להסיר שיוך לקבצה';
   replaceGroupAssignmentVerb = 'להחליף שיוך לקבוצה';
-  volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה';
+  volunteerCanUpdateComment = 'מתנדב יכול לעדכן לעצמו הערה למתנדב במסך הגדרות אישיות';
   volunteerCanUpdateDeliveryComment = "מתנדב יכול לעדכן הערה למשלוח";
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'דואל';
@@ -1195,21 +1239,57 @@ export class Language {
   printVolunteerPage = "הדפס דף למתנדב";
   willBeReplacedBy = "יוחלף על ידי";
   smsClientNumber = "מספר לקוח בגולבל SMS";
-  smsUsername = "שם משתמש בגלובל SMS";
-  smsPasswordInput = "סיסמה בגלובל SMS";
+  smsUsername = "שם משת מש בגלובל SMS";
+  smsPasswordInput = "סי סמה בגלובל SMS";
   smsVirtualPhoneNumber = "מספר קו וירטואלי בגולבל SMS";
   testSmsMessage = "בדיקת שליחת SMS";
   message = "הודעה";
   confirmed = "אישר הגעה";
   confirmedVolunteers = "מתנדבים שאישרו הגעה";
-  incomingMessages = "הודעות נכנסות";
+  smsMessages = "הודעות SMS";
   when = "מתי";
   sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
   sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
   whatToOrder = "מה להזמין?";
-  smsProviderConfiguration ="הגדרות ספק SMS";
+  smsProviderConfiguration = "הגדרות ספק SMS";
   sendMessageToInviteVolunteers = "שליחת הודעה לזימון מתנדבים";
-
+  whatToTake = "להביא";
+  previewVolunteerScreen = "הדגם תצוגת מתנדב";
+  fullAddress = "כתובת מלאה";
+  fieldProperties = 'תכונות שדה';
+  fontSize = "גודל גופן";
+  centerAlign = "יישר למרכז";
+  color = "צבע";
+  textBefore = "טקסט לפני";
+  textAfter = "טקסט אחרי";
+  sameLine = "באותה שורה";
+  bold = "הדגשה";
+  pageProperties = 'תכונות דף';
+  labelProperties = 'תכונות מדבקה';
+  height = 'גובה';
+  width = 'רוחב';
+  leftPadding = 'שוליים שמאליים';
+  rightPadding = 'שוליים ימניים';
+  topPadding = 'שוליים עליונים';
+  bottomPadding = 'שוליים תחתונים';
+  newPageForEachVolunteer = "דף חדש לכל מתנדב";
+  columnProperties = 'תכונות עמודה';
+  newColumn = 'עמודה חדשה';
+  addField = "הוסף שדה";
+  addColumn = 'הוסף עמודה';
+  removeField = 'הסר שדה';
+  removeColumn = 'הסר עמודה';
+  moveUp = 'הזז למעלה';
+  moveDown = 'הזז למטה';
+  stickerProperties = 'תכונות מדבקה';
+  showOnlyIncoming = "הצג רק הודעות נכנסות";
+  incoming = 'נכנסת';
+  addHistoricalDelivery = 'הוסף משלוח היסטורי';
+  allowVolunteerToSeePreviousActivities = "אפשר למתנדב לראות פעילויות היסטוריות";
+  showPreviousActivities = "פעילויות קודמות";
+  navigateWithGoogleMaps = "נווט עם גוגל";
+  navigateWithWaze = "נווט עם WAZE";
+  border = 'מסגרת';
 }
 
 const defaultLang = new Language();

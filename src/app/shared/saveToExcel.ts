@@ -1,14 +1,10 @@
-import { Entity, Remult, EntityBase, Repository,  FieldRef } from 'remult';
+import { Entity, Remult, EntityBase, Repository, FieldRef } from 'remult';
 import { BusyService, GridSettings } from '@remult/angular';
 
-import { DateTimeColumn } from "../model-shared/types";
-
-import { foreachSync } from "./utils";
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DateOnlyValueConverter } from 'remult/valueConverters';
 import { HelpersBase } from '../helpers/helpers';
-
 export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
   repo: Repository<E>,
   grid: T,
@@ -16,7 +12,7 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
   busy: BusyService,
   hideColumn?: (e: E, c: FieldRef<any>) => boolean,
   excludeColumn?: (e: E, c: FieldRef<any>) => boolean,
-  moreColumns?: (e: E, addfield: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void) {
+  moreColumns?: (e: E, addfield: (caption: string, v: string, t: import('xlsx').ExcelDataType) => void) => void, loadPage?: (items: E[]) => Promise<void>) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx');
     if (!hideColumn)
@@ -49,10 +45,11 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
 
 
     let rows = repo.query(await grid.getFilterWithSelectedRows());
-
-    if (true)
-
-      for await (const f of rows) {
+    let currentPage = await rows.paginator();
+    while (currentPage != null) {
+      if (loadPage)
+        await loadPage(currentPage.items);
+      for (const f of currentPage.items) {
         let colPrefix = '';
         let colName = 'A';
         let colIndex = 0;
@@ -131,7 +128,11 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
         rowNum++;
 
       }
-
+      if (currentPage.hasNextPage) {
+        currentPage = await currentPage.nextPage();
+      }
+      else currentPage = undefined;
+    }
 
 
 

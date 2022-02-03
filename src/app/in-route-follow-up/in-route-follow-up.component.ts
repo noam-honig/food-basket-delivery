@@ -125,7 +125,7 @@ export class InRouteFollowUpComponent implements OnInit {
     },
     {
       name: use.language.freezeHelper,
-      visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt(),
+      visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt,
       click: async h => this.editFreezeDate(h)
     },]
   });

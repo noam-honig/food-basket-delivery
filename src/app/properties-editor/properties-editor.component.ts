@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FieldMetadata, FieldsMetadata, IdEntity, Remult } from 'remult';
 import { ClassType } from 'remult/classType';
 import { InputTypes } from 'remult/inputTypes';
+import { use } from '../translate';
 
 @Component({
   selector: 'app-properties-editor',
@@ -67,14 +68,14 @@ export interface Control {
 
 export function getMarginsH() {
   return [
-    new SizeProperty('padding-left', 'שוליים שמאליים'),
-    new SizeProperty('padding-right', 'שוליים ימניים')
+    new SizeProperty('padding-left', use.language.leftPadding),
+    new SizeProperty('padding-right', use.language.rightPadding)
   ]
 }
 export function getMarginsV() {
   return [
-    new SizeProperty('padding-top', 'שוליים עליונים'),
-    new SizeProperty('padding-bottom', 'שוליים תחתונים')
+    new SizeProperty('padding-top', use.language.topPadding),
+    new SizeProperty('padding-bottom', use.language.bottomPadding)
   ]
 }
 

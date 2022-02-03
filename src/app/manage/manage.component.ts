@@ -8,7 +8,7 @@ import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } 
 
 
 import { BusyService, DataAreaSettings, GridSettings, InputField, openDialog } from '@remult/angular';
-import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields } from 'remult';
+import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard, Roles } from '../auth/roles';
 import { Route } from '@angular/router';
@@ -21,11 +21,14 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { saveToExcel } from '../shared/saveToExcel';
-import { Groups } from './groups';
+import { Groups, GroupsValue } from './groups';
 import { EmailSvc } from '../shared/utils';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { Field, use } from '../translate';
 import { Sites } from '../sites/sites';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+import { MyFamiliesComponent } from '../my-families/my-families.component';
+import { Phone } from '../model-shared/phone';
 
 @Component({
   selector: 'app-manage',
@@ -88,6 +91,17 @@ export class ManageComponent implements OnInit {
       {
         field: x.boxes2,
         width: '100px'
+      }, {
+        field: x.whatToTake,
+        click: b => {
+          openDialog(EditCommentDialogComponent, x => x.args = {
+            title: use.language.whatToTake,
+            comment: b.whatToTake.split(',').join("\n"),
+            save: (c) => {
+              b.whatToTake = c.split("\n").join(", ")
+            }
+          });
+        }
       }
     ],
     saving: () => this.refreshEnvironmentAfterSave(),
@@ -133,7 +147,7 @@ export class ManageComponent implements OnInit {
               d.$.address,
               {
                 caption: this.settings.lang.addressByGoogle,
-                getValue: () => d.addressHelper.getGeocodeInformation().getAddress()
+                getValue: () => d.addressHelper.getGeocodeInformation.getAddress()
               },
               d.$.comments,
               [d.$.phone1, d.$.phone1Description],
@@ -167,7 +181,7 @@ export class ManageComponent implements OnInit {
       },
       {
         caption: this.settings.lang.addressByGoogle,
-        getValue: s => s.addressHelper.getGeocodeInformation().getAddress()
+        getValue: s => s.addressHelper.getGeocodeInformation.getAddress()
       },
       x.comments,
       x.isFrozen,
@@ -182,16 +196,16 @@ export class ManageComponent implements OnInit {
     ],
 
     rowsInPage: 25,
-    where: {
+    where: () => ({
       archive: !this.showArchivedDistributionCenters ? false : undefined
-    },
+    }),
     orderBy: { name: "asc" },
 
     saving: f => {
       this.refreshEnvironmentAfterSave();
 
     },
-    numOfColumnsInGrid: this.settings.isSytemForMlt() ? 7 : 4,
+    numOfColumnsInGrid: this.settings.isSytemForMlt ? 7 : 4,
     allowUpdate: true,
     allowInsert: true,
 
@@ -240,7 +254,7 @@ export class ManageComponent implements OnInit {
       this.settings.$.address,
       {
         caption: 'כתובת כפי שגוגל הבין',
-        getValue: s => this.settings.addressHelper.getGeocodeInformation().getAddress()
+        getValue: s => this.settings.addressHelper.getGeocodeInformation.getAddress()
       }
 
     ]
@@ -258,6 +272,9 @@ export class ManageComponent implements OnInit {
   settingsLogo = new DataAreaSettings({
     fields: s => [this.settings.$.logoUrl]
   });
+  async previewVolunteer() {
+    openDialog(MyFamiliesComponent);
+  }
   async saveAndPreview() {
     await this.save();
     let f = this.remult.repo(ActiveFamilyDeliveries).create();
@@ -279,15 +296,22 @@ export class ManageComponent implements OnInit {
   }
   settingsMessages = new DataAreaSettings({
     fields: s => [
+      this.settings.$.message1Text,
+      this.settings.$.message1Link,
+      this.settings.$.message1OnlyWhenDone,
+      this.settings.$.message2Text,
+      this.settings.$.message2Link,
+      this.settings.$.message2OnlyWhenDone,
+
+      this.settings.$.showDistCenterAsEndAddressForVolunteer,
+      this.settings.$.volunteerCanUpdateDeliveryComment,
       this.settings.$.deliveredButtonText,
       this.settings.$.commentForSuccessDelivery,
+      this.settings.$.showLeftThereButton,
       this.settings.$.commentForSuccessLeft,
       this.settings.$.problemButtonText,
       this.settings.$.commentForProblem,
-      this.settings.$.AddressProblemStatusText,
-      this.settings.$.NotHomeProblemStatusText,
-      this.settings.$.DoNotWantProblemStatusText,
-      this.settings.$.OtherProblemStatusText,
+
       [this.settings.$.questionForVolunteer1Caption, this.settings.$.questionForVolunteer1Values],
       [this.settings.$.questionForVolunteer2Caption, this.settings.$.questionForVolunteer2Values],
       [this.settings.$.questionForVolunteer3Caption, this.settings.$.questionForVolunteer3Values],
@@ -301,6 +325,7 @@ export class ManageComponent implements OnInit {
 
 
 
+
     ]
   });
   settings2Messages = new DataAreaSettings({
@@ -308,12 +333,11 @@ export class ManageComponent implements OnInit {
 
 
       this.settings.$.messageForDoneDelivery,
-      this.settings.$.message1Text,
-      this.settings.$.message1Link,
-      this.settings.$.message1OnlyWhenDone,
-      this.settings.$.message2Text,
-      this.settings.$.message2Link,
-      this.settings.$.message2OnlyWhenDone
+      this.settings.$.AddressProblemStatusText,
+      this.settings.$.NotHomeProblemStatusText,
+      this.settings.$.DoNotWantProblemStatusText,
+      this.settings.$.OtherProblemStatusText
+
 
 
 
@@ -359,16 +383,17 @@ export class ManageComponent implements OnInit {
         this.settings.$.donotShowEventsInGeneralList,
         this.settings.$.defaultStatusType,
         this.settings.$.usingSelfPickupModule,
-        this.settings.$.showLeftThereButton,
-        this.settings.$.volunteerCanUpdateDeliveryComment,
+        this.settings.$.volunteerCanUpdateComment,
+
+        this.settings.$.allowVolunteerToSeePreviousActivities,
+
         this.settings.$.showDeliverySummaryToVolunteerOnFirstSignIn,
         this.settings.$.boxes1Name,
         this.settings.$.boxes2Name,
         this.settings.$.showCompanies,
         this.settings.$.showHelperComment,
-        this.settings.$.volunteerCanUpdateComment,
         this.settings.$.routeStrategy,
-        this.settings.$.showDistCenterAsEndAddressForVolunteer,
+
         this.settings.$.defaultPrefixForExcelImport,
         this.settings.$.redTitleBar,
         this.settings.$.manageEscorts,
@@ -379,7 +404,7 @@ export class ManageComponent implements OnInit {
         this.settings.$.forWho
       ];
 
-      if (this.settings.isSytemForMlt())
+      if (this.settings.isSytemForMlt)
         r.push(this.settings.$.BusyHelperAllowedFreq_nom, this.settings.$.BusyHelperAllowedFreq_denom, this.settings.$.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee, this.settings.$.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself);
       return r;
     }
@@ -399,7 +424,7 @@ export class ManageComponent implements OnInit {
         click: async () => {
           await this.settings.save()
           var message = new SendTestSms(this.remult);
-          message.phone = this.remult.currentUser.phone.thePhone;
+          message.phone = (await this.remult.getCurrentUser()).phone.thePhone;
           message.message = this.testSms();
           openDialog(InputAreaComponent, x => x.args = {
             settings: {
@@ -669,15 +694,38 @@ export class ManageComponent implements OnInit {
       orderBy: { createDate: "desc" },
       progress
     })) {
+      await ManageComponent.clearDataFromFamilyDeliveries(f.id, remult);
       await f.delete();
       i++;
     }
     return i;
   }
+  static async clearDataFromFamilyDeliveries(familyId: string, remult: Remult) {
+    var db = remult._dataSource as SqlDatabase;
+    const sql = new SqlBuilder(remult);
+    const fd = await SqlFor(remult.repo(FamilyDeliveries));
+    const set: [FieldMetadata, any][] = [];
+    const fieldsToKeep: select<FamilyDeliveries> = {
+      id: true,
+      family: true
+    };
+    for (const field of fd.metadata.fields) {
+      if ((field.valueType == String || field.valueType == Phone || field.valueType == GroupsValue) && !fieldsToKeep[field.key]) {
+        set.push([field, "''"]);
+      } else {
+        //        console.log(field.key);
+      }
+    }
+    await db.execute((await sql.update(fd, {
+      set: () => set,
+      where: () => [fd.where({ family: familyId })]
+    })));
+  }
 
 
 
 }
+declare type select<T> = { [Properties in keyof Partial<OmitEB<T>>]?: boolean; }
 
 @Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
   allowApiRead: Roles.distCenterAdmin,

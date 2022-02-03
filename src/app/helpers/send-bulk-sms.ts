@@ -1,11 +1,10 @@
 import { BackendMethod, Controller, Field, Filter, getFields, Remult, SqlDatabase } from "remult";
 import { FamilyDeliveries } from "../families/FamilyDeliveries";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
-import { Helpers, HelpersBase } from "./helpers";
+import { Helpers } from "./helpers";
 import { Event, volunteersInEvent, eventStatus } from '../events/events';
 import { HelperCommunicationHistory } from "../in-route-follow-up/in-route-helpers";
 import { Roles } from "../auth/roles";
-import { count } from "console";
 import { Families } from "../families/families";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { EditCustomMessageComponent, messageMerger } from "../edit-custom-message/edit-custom-message.component";
@@ -47,7 +46,7 @@ export class SendBulkSms {
                         }
                         if (await this.remult.repo(HelperCommunicationHistory).count({
                             volunteer: h,
-                            createDate: { ">=": this.YesterdayMorning() }
+                            createDate: { ">=": this.yesterdayMorning() }
                         }) > 0) {
                             if (!await dialog.YesNoPromise("כבר נשלחה למתנדב הודעה מאתמול בבוקר, האם לשלוח בכל זאת?"))
                                 return;
@@ -78,7 +77,7 @@ export class SendBulkSms {
     
     בתודה !ארגון!
     להסרה השב "הסר"`;
-        let settings = getSettings(this.remult);
+        let settings = (await this.remult.getSettings());
         await openDialog(EditCustomMessageComponent, edit => edit.args = {
             message: this.buildMessage(currentHelper.name, settings),
             templateText: settings.inviteVolunteersMessage || defaultMessage,
@@ -127,15 +126,15 @@ export class SendBulkSms {
         let events = SqlFor(this.remult.repo(Event))
         let ve = SqlFor(this.remult.repo(volunteersInEvent));
         let message = SqlFor(this.remult.repo(HelperCommunicationHistory));
-        let twoDaysAgo = this.YesterdayMorning();
+        let twoDaysAgo = this.yesterdayMorning();
         let q = await sql.query({
             from: helpers,
             select: () => [helpers.phone, helpers.name, helpers.id],
             where: async () => [
                 await Filter.translateCustomWhere(helpers.where({
-                    archive: false, doNotSendSms: false,
+                    archive: false, doNotSendSms: false, isFrozen: false,
                     $and: [this.city && Helpers.deliveredPreviously({ city: this.city })]
-                }), helpers.metadata, helpers.metadata, this.remult),
+                }), helpers.metadata, this.remult),
 
                 await sql.build(helpers.id, " not in (", sql.query({
                     select: () => [fd.courier],
@@ -179,7 +178,7 @@ export class SendBulkSms {
         console.log(q);
         return (await db.execute(q)).rows as { phone: string, name: string, id: string }[];
     }
-    private YesterdayMorning() {
+    private yesterdayMorning() {
         let twoDaysAgo = new Date();
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
         twoDaysAgo.setHours(0);

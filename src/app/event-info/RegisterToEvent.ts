@@ -40,23 +40,28 @@ export class RegisterToEvent {
 
 
 
+
+
+
+    }
+    inited = false;
+    async init() {
+        if (this.inited)
+            return;
+        this.inited = true;
+        let s = (await this.remult.getSettings());
         if (!actionInfo.runningOnServer) {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
-            if (remult.currentUser) {
-                let h = remult.currentUser
+            let h = (await this.remult.getCurrentUser())
+            if (h) {
                 this.socialSecurityNumber = h.socialSecurityNumber;
                 this.email = h.email;
                 this.preferredDistributionAreaAddress = h.preferredDistributionAreaAddress;
                 this.preferredFinishAddress = h.preferredFinishAddress;
             }
         }
-
-
-    }
-    init() {
-        let s = getSettings(this.remult);
         this.questions.push({ field: this.$.socialSecurityNumber, show: () => s.registerAskTz, getFieldToUpdate: h => h.socialSecurityNumber })
         this.questions.push({ field: this.$.email, show: () => s.registerAskEmail, getFieldToUpdate: h => h.email })
         this.questions.push({ field: this.$.preferredDistributionAreaAddress, show: () => s.registerAskPreferredDistributionAreaAddress, getFieldToUpdate: h => h.preferredDistributionAreaAddress })
@@ -94,44 +99,54 @@ export class RegisterToEvent {
     rememberMeOnThisDevice: boolean;
 
     @CustomColumn(() => registerQuestionForVolunteers[1])
-    a1: string;
+    a1: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[2])
-    a2: string;
+    a2: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[3])
-    a3: string;
+    a3: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[4])
-    a4: string;
+    a4: string = '';
     @Field({ translation: l => l.socialSecurityNumber })
-    socialSecurityNumber: string;
+    socialSecurityNumber: string = '';
     @Field()
-    email: Email;
+    email: Email = new Email('');
     @Field({ translation: l => l.preferredDistributionArea })
-    preferredDistributionAreaAddress: string;
+    preferredDistributionAreaAddress: string = '';
     @Field({
 
         dbName: 'preferredDistributionAreaAddress2'
     })
-    preferredFinishAddress: string;
+    preferredFinishAddress: string='';
 
-    get $() { return getFields(this); }
+    get $() { return getFields(this, this.remult); }
     async registerToEvent(e: EventInList, dialog: DialogService) {
         dialog.trackVolunteer("register-event:" + e.site);
-        this.init();
-        let lang = getSettings(this.remult).lang;
+        await this.init();
+        this.a1 = '';
+        this.a2 = '';
+        this.a3 = '';
+        this.a4 = '';
+        let lang = this.remult.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
+        let currentHelper = (await this.remult.getCurrentUser());
+        if (this.remult.authenticated()) {
+            this.phone = currentHelper.phone;
+            this.name = currentHelper.name;
+        }
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await openDialog(InputAreaComponent, x => x.args = {
                 title: lang.register,
                 helpText: lang.registerHelpText,
                 settings: {
-                    fields: () => [this.$.name, this.$.phone, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
+                    fields: () => [{ field: this.$.name, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
                 },
                 cancel: () => { },
                 ok: async () => {
 
                     this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
-                    if (this.remult.currentUser)
-                        await this.remult.currentUser._.reload();
+
+                    if (currentHelper)
+                        await currentHelper._.reload();
                     let refresh = false;
                     if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
                         refresh = true;
@@ -148,8 +163,7 @@ export class RegisterToEvent {
                 }
             });
         else {
-            this.phone = this.remult.currentUser.phone;
-            this.name = this.remult.currentUser.name;
+
             this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
         }
     }
@@ -164,7 +178,7 @@ export class RegisterToEvent {
     }
     @BackendMethod({ allowed: true })
     async registerVolunteerToEvent(id: string, site: string, register: boolean) {
-        this.init();
+        await this.init();
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
 
@@ -176,7 +190,7 @@ export class RegisterToEvent {
         }
         let helper: Helpers;
         if (this.remult.authenticated()) {
-            helper = this.remult.currentUser;
+            helper = await this.remult.repo(Helpers).findId(this.remult.user.id);
         }
         else {
             helper = await this.remult.repo(Helpers).findFirst({ phone: this.phone }, {
@@ -191,7 +205,6 @@ export class RegisterToEvent {
                 name: helper.name,
                 roles: []
             });
-            this.remult.currentUser = helper as Helpers;
         }
         let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({ eventId: id, helper }, {
             createIfNotFound: register
@@ -207,6 +220,7 @@ export class RegisterToEvent {
                 }
             }
             await helper.save();
+            console.log(helperInEvent.$.toArray().filter(x => x.valueChanged()).map(({ value, originalValue, ...f }) => ({ key: f.metadata.key, value, originalValue })));
             await helperInEvent.save();
         }
         else {

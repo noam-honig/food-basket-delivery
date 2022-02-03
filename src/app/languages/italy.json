@@ -64,6 +64,11 @@
     "valueInCode": "הוסף את כל המתנדבים",
     "valueInEnglish": "Add all volunteers"
   },
+  "addColumn": {
+    "google": "Aggiungi una colonna",
+    "valueInCode": "הוסף עמודה",
+    "valueInEnglish": "Add a column"
+  },
   "addColumnsThatAreNotInTheFile": {
     "google": "Aggiungi colonne non trovate nel file importato",
     "valueInCode": "הוספת עמודות שלא מופיעות באקסל",
@@ -89,10 +94,20 @@
     "valueInCode": "הוסף עמודה",
     "valueInEnglish": "Add a column"
   },
+  "addField": {
+    "google": "Aggiungi un campo",
+    "valueInCode": "הוסף שדה",
+    "valueInEnglish": "Add a field"
+  },
   "addGroupAssignmentVerb": {
     "google": "Aggiungi affiliazione al gruppo",
     "valueInCode": "להוסיף שיוך לקבוצה",
     "valueInEnglish": "Add affiliation to the group"
+  },
+  "addHistoricalDelivery": {
+    "google": "Aggiungi spedizione storica",
+    "valueInCode": "הוסף משלוח היסטורי",
+    "valueInEnglish": "Add historical shipping"
   },
   "addRepeatFamilies": {
     "google": "Scegli tra le consegne precedenti",
@@ -203,6 +218,11 @@
     "google": "Consenti l'opzione Invia SMS a famiglia",
     "valueInCode": "הרשה אפשרות של שליחת הודעת SMS למשפחה",
     "valueInEnglish": "Allow Send SMS to family option"
+  },
+  "allowVolunteerToSeePreviousActivities": {
+    "google": "Consenti al volontario di vedere le attività storiche",
+    "valueInCode": "אפשר למתנדב לראות פעילויות היסטוריות",
+    "valueInEnglish": "Allow the volunteer to see historical activities"
   },
   "allRegions": {
     "google": "Tutte le aree",
@@ -519,6 +539,16 @@
     "valueInCode": "תאריך לידה",
     "valueInEnglish": "Date of birth"
   },
+  "bold": {
+    "google": "enfasi",
+    "valueInCode": "הדגשה",
+    "valueInEnglish": "emphasis"
+  },
+  "bottomPadding": {
+    "google": "Margine inferiore",
+    "valueInCode": "שוליים תחתונים",
+    "valueInEnglish": "Lower margin"
+  },
   "boxes1Name": {
     "google": "scatole",
     "valueInCode": "מנות",
@@ -629,6 +659,11 @@
     "valueInCode": "תאור",
     "valueInEnglish": "description"
   },
+  "centerAlign": {
+    "google": "Raddrizzare al centro",
+    "valueInCode": "יישר למרכז",
+    "valueInEnglish": "Straighten to the center"
+  },
   "changeRouteOrder": {
     "google": "Modifica l'ordine del percorso",
     "valueInCode": "שנה סדר מסלול",
@@ -728,6 +763,16 @@
     "google": "Parola in codice",
     "valueInCode": "מילת קוד",
     "valueInEnglish": "Code word"
+  },
+  "color": {
+    "google": "Colore",
+    "valueInCode": "צבע",
+    "valueInEnglish": "Color"
+  },
+  "columnProperties": {
+    "google": "Proprietà della colonna",
+    "valueInCode": "תכונות עמודה",
+    "valueInEnglish": "Column properties"
   },
   "columnSelectionInFile": {
     "google": "Colonne nella selezione dei file",
@@ -1122,7 +1167,7 @@
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "Consegnato negli ultimi due giorni",
-    "valueInCode": "משלוחים שחולקו ביומיים האחרונים",
+    "valueInCode": "משלוחים שחולקו",
     "valueInEnglish": "Delivered over the last two days"
   },
   "deliveriesFor": {
@@ -1344,6 +1389,11 @@
     "google": "finire",
     "valueInCode": "סיימו",
     "valueInEnglish": "Finish"
+  },
+  "doNotSendSms": {
+    "google": "Non inviare affatto SMS di gruppo",
+    "valueInCode": "לא לשלוח הודעת SMS קבוצתיות כלל",
+    "valueInEnglish": "Do not send group SMS at all"
   },
   "donotShowEventsInGeneralList": {
     "google": "Non presentare opportunità di volontariato nell'elenco di tutte le organizzazioni",
@@ -1815,6 +1865,11 @@
     "valueInCode": "משפחה לא נמצאה",
     "valueInEnglish": "No family found"
   },
+  "fieldProperties": {
+    "google": "Proprietà del campo",
+    "valueInCode": "תכונות שדה",
+    "valueInEnglish": "Field properties"
+  },
   "filter": {
     "google": "filtraggio",
     "valueInCode": "סינון",
@@ -1829,6 +1884,11 @@
     "google": "Filtraggio della città",
     "valueInCode": "סינון עיר",
     "valueInEnglish": "City filtering"
+  },
+  "filterCityHelp": {
+    "google": "Mostra solo i volontari distribuiti in città",
+    "valueInCode": "הצג רק מתנדבים שחילקו בעיר",
+    "valueInEnglish": "Show only volunteers distributed in the city"
   },
   "filterFamilyGroups": {
     "google": "Filtro di gruppo",
@@ -1859,6 +1919,11 @@
     "google": "Pavimento",
     "valueInCode": "קומה",
     "valueInEnglish": "Floor"
+  },
+  "fontSize": {
+    "google": "Dimensione del font",
+    "valueInCode": "גודל גופן",
+    "valueInEnglish": "Font size"
   },
   "foodDelivery": {
     "google": "Distribuzione di cibo",
@@ -1897,12 +1962,12 @@
   },
   "freeText1ForVolunteer": {
     "google": "Testo libero 1 per volontari",
-    "valueInCode": "מלל חופשי 1 למתנדב",
+    "valueInCode": "הודעה 1 שתופיע למתנדב בראש המסך",
     "valueInEnglish": "Free text 1 for volunteer"
   },
   "freeText2ForVolunteer": {
     "google": "Testo libero 2 per volontari",
-    "valueInCode": "מלל חופשי 2 למתנדב",
+    "valueInCode": "הודעה 2 שתופיע למתנדב בראש המסך",
     "valueInEnglish": "Free text 2 for volunteer"
   },
   "freezeDeliveries": {
@@ -1962,8 +2027,13 @@
   },
   "frozenTill": {
     "google": "Blocca la data di fine",
-    "valueInCode": "מוקפא עד לתאריך",
+    "valueInCode": "לא לשלוח SMS קבוצתי עד לתאריך",
     "valueInEnglish": "Freeze end date"
+  },
+  "fullAddress": {
+    "google": "indirizzo completo",
+    "valueInCode": "כתובת מלאה",
+    "valueInEnglish": "full address"
   },
   "GeocodeComponent": {
     "google": "geocode",
@@ -1999,6 +2069,11 @@
     "google": "ha avuto problemi",
     "valueInCode": "היתה בעיה בעבר",
     "valueInEnglish": "had problem"
+  },
+  "height": {
+    "google": "altezza",
+    "valueInCode": "גובה",
+    "valueInEnglish": "height"
   },
   "hello": {
     "google": "Pace",
@@ -2130,10 +2205,10 @@
     "valueInCode": "רק עבור משפחות בקבוצות אלו",
     "valueInEnglish": "Only for families in these groups"
   },
-  "incomingMessages": {
-    "google": "Messaggi in arrivo",
-    "valueInCode": "הודעות נכנסות",
-    "valueInEnglish": "Incoming messages"
+  "incoming": {
+    "google": "Stai entrando",
+    "valueInCode": "נכנסת",
+    "valueInEnglish": "You are entering"
   },
   "indie": {
     "google": "Volontario indipendente",
@@ -2220,6 +2295,11 @@
     "valueInCode": "עובד מעבדה",
     "valueInEnglish": "Laboratory worker"
   },
+  "labelProperties": {
+    "google": "Caratteristiche dell'adesivo",
+    "valueInCode": "תכונות מדבקה",
+    "valueInEnglish": "Sticker Features"
+  },
   "languageCode": {
     "google": "IW",
     "valueInCode": "iw",
@@ -2284,6 +2364,11 @@
     "google": "Pacco lasciato fuori",
     "valueInCode": "השארתי ליד הבית",
     "valueInEnglish": "Parcel left outside"
+  },
+  "leftPadding": {
+    "google": "Margine sinistro",
+    "valueInCode": "שוליים שמאליים",
+    "valueInEnglish": "Left margin"
   },
   "linesInExcel": {
     "google": "Linee nell'asse",
@@ -2505,6 +2590,11 @@
     "valueInCode": "הועברו מ",
     "valueInEnglish": "Moved from"
   },
+  "moveDown": {
+    "google": "Abbassati",
+    "valueInCode": "הזז למטה",
+    "valueInEnglish": "Move down"
+  },
   "moveTheFamily": {
     "google": "Per spostare la famiglia",
     "valueInCode": "להעביר את משפחת",
@@ -2529,6 +2619,11 @@
     "google": "Inoltra all'aggiornamento delle famiglie",
     "valueInCode": "העבר למשפחות עדכון",
     "valueInEnglish": "Forward to families update"
+  },
+  "moveUp": {
+    "google": "Andare avanti",
+    "valueInCode": "הזז למעלה",
+    "valueInEnglish": "Move up"
   },
   "mustConfirmEula": {
     "google": "L'applicazione non può essere utilizzata senza il consenso ai termini di utilizzo",
@@ -2565,6 +2660,16 @@
     "valueInCode": "השם קצר מידי",
     "valueInEnglish": "The name is too short"
   },
+  "navigateWithGoogleMaps": {
+    "google": "Naviga con Google",
+    "valueInCode": "נווט עם גוגל",
+    "valueInEnglish": "Navigate with Google"
+  },
+  "navigateWithWaze": {
+    "google": "Naviga con WAZE",
+    "valueInCode": "נווט עם WAZE",
+    "valueInEnglish": "Navigate with WAZE"
+  },
   "needEscort": {
     "google": "Hai bisogno di un compagno",
     "valueInCode": "צריך מלווה",
@@ -2574,6 +2679,11 @@
     "google": "Nuovo",
     "valueInCode": "חדש",
     "valueInEnglish": "New"
+  },
+  "newColumn": {
+    "google": "Nuova colonna",
+    "valueInCode": "עמודה חדשה",
+    "valueInEnglish": "New column"
   },
   "newDeliveriesQM": {
     "google": "Nuove consegne?",
@@ -2609,6 +2719,11 @@
     "google": "Aggiungi famiglia",
     "valueInCode": "משפחה חדשה",
     "valueInEnglish": "Add Family"
+  },
+  "newPageForEachVolunteer": {
+    "google": "Nuova pagina per ogni volontario",
+    "valueInCode": "דף חדש לכל מתנדב",
+    "valueInEnglish": "New page for every volunteer"
   },
   "newPasswordMustBeNew": {
     "google": "La password nuova ed esistente è un'identità",
@@ -2840,6 +2955,11 @@
     "valueInCode": "אספו את החבילה",
     "valueInEnglish": "Collected"
   },
+  "pageProperties": {
+    "google": "Caratteristiche della pagina",
+    "valueInCode": "תכונות דף",
+    "valueInEnglish": "Page Features"
+  },
   "parcelPackaging": {
     "google": "Pacchetti di imballaggio",
     "valueInCode": "אריזת חבילות",
@@ -2999,6 +3119,11 @@
     "google": "Indirizzo per terminare il percorso",
     "valueInCode": "כתובת לסיום המסלול",
     "valueInEnglish": "Address to end the route"
+  },
+  "previewVolunteerScreen": {
+    "google": "Il modello di esposizione del volontario",
+    "valueInCode": "הדגם תצוגת מתנדב",
+    "valueInEnglish": "The volunteer display model"
   },
   "previous": {
     "google": "precedente",
@@ -3261,6 +3386,11 @@
     "valueInCode": "הסר",
     "valueInEnglish": "Remove"
   },
+  "removeColumn": {
+    "google": "Rimuovi colonna",
+    "valueInCode": "הסר עמודה",
+    "valueInEnglish": "Remove column"
+  },
   "removedFromList": {
     "google": "Rimosso dall'elenco",
     "valueInCode": "הוצא מהרשימות",
@@ -3280,6 +3410,11 @@
     "google": "Visualizza in famiglie per l'aggiornamento",
     "valueInCode": "הצג במשפחות לעדכון",
     "valueInEnglish": "View in families for update"
+  },
+  "removeField": {
+    "google": "Rimuovi campo",
+    "valueInCode": "הסר שדה",
+    "valueInEnglish": "Remove field"
   },
   "removeFollowUpFor": {
     "google": "Rimuovi \"Followup\" per",
@@ -3406,6 +3541,11 @@
     "valueInCode": "החזר מארכיון",
     "valueInEnglish": "Return from archive"
   },
+  "rightPadding": {
+    "google": "Margine destro",
+    "valueInCode": "שוליים ימניים",
+    "valueInEnglish": "Right margin"
+  },
   "routeOptimization": {
     "google": "Pianificazione del percorso",
     "valueInCode": "תכנון מסלול",
@@ -3420,6 +3560,11 @@
     "google": "Stesso indirizzo",
     "valueInCode": "כתובת זהה",
     "valueInEnglish": "Same address"
+  },
+  "sameLine": {
+    "google": "Nella stessa linea",
+    "valueInCode": "באותה שורה",
+    "valueInEnglish": "In the same line"
   },
   "sameLineExcelMatchesSeveralRowsInTheDatabase": {
     "google": "La stessa famiglia sul sito si adatta a più righe in Excel:",
@@ -3610,6 +3755,11 @@
     "google": "Invia su WhatsApp",
     "valueInCode": "שלח קישור ב whatsapp",
     "valueInEnglish": "Send on WhatsApp"
+  },
+  "sendMessageToInviteVolunteers": {
+    "google": "Invio di un messaggio per convocare i volontari",
+    "valueInCode": "שליחת הודעה לזימון מתנדבים",
+    "valueInEnglish": "Sending a message to summon volunteers"
   },
   "sendMessageToVolunteer": {
     "google": "Invia un messaggio al volontario",
@@ -3821,6 +3971,11 @@
     "valueInCode": "הצג רק משלוחים שהסתיימו",
     "valueInEnglish": "Show only completed deliveries"
   },
+  "showOnlyIncoming": {
+    "google": "Mostra solo i messaggi in arrivo",
+    "valueInCode": "הצג רק הודעות נכנסות",
+    "valueInEnglish": "Show only incoming messages"
+  },
   "showOnlyLastNamePartToVolunteer": {
     "google": "Mostra solo un'ultima parola al volontario per conto della famiglia",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה",
@@ -3836,6 +3991,11 @@
     "valueInCode": "הצג פאי",
     "valueInEnglish": "Show pie"
   },
+  "showPreviousActivities": {
+    "google": "Attività precedenti",
+    "valueInCode": "פעילויות קודמות",
+    "valueInEnglish": "Previous activities"
+  },
   "showQRCode": {
     "google": "Mostra per assorbimento",
     "valueInCode": "הצג לקליטה",
@@ -3848,12 +4008,12 @@
   },
   "showText1OnlyWhenDone": {
     "google": "Visualizza il testo libero 1 solo quando il volontario ha completato tutti i pacchi",
-    "valueInCode": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים",
+    "valueInCode": "הצג הודעה 1 רק אם המתנדב סיים את כל המשלוחים",
     "valueInEnglish": "Display free text 1 only when the volunteer has finished all parcels"
   },
   "showText2OnlyWhenDone": {
     "google": "Visualizza testo libero 2 solo quando il volontario ha completato tutti i pacchi",
-    "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
+    "valueInCode": "המג הודעה 2 רק אם המתנדב סיים את כל המשלוחים",
     "valueInEnglish": "Display free text 2 only when the volunteer has finished all parcels"
   },
   "showTzToVolunteer": {
@@ -3901,6 +4061,11 @@
     "valueInCode": "תוכן הודעת SMS",
     "valueInEnglish": "SMS message content"
   },
+  "smsMessages": {
+    "google": "Messaggi SMS",
+    "valueInCode": "הודעות SMS",
+    "valueInEnglish": "SMS messages"
+  },
   "smsMessageSentTo": {
     "google": "SMS inviato a",
     "valueInCode": "הודעת SMS נשלחה ל",
@@ -3923,8 +4088,13 @@
   },
   "smsPasswordInput": {
     "google": "Password SMS globale",
-    "valueInCode": "סיסמה בגלובל SMS",
+    "valueInCode": "סי סמה בגלובל SMS",
     "valueInEnglish": "Global SMS password"
+  },
+  "smsProviderConfiguration": {
+    "google": "Impostazioni del provider SMS",
+    "valueInCode": "הגדרות ספק SMS",
+    "valueInEnglish": "SMS provider settings"
   },
   "smsReminderMessageContentCaption": {
     "google": "Contenuto del promemoria via SMS",
@@ -3943,7 +4113,7 @@
   },
   "smsUsername": {
     "google": "Nome utente SMS globale",
-    "valueInCode": "שם משתמש בגלובל SMS",
+    "valueInCode": "שם משת מש בגלובל SMS",
     "valueInEnglish": "Global SMS username"
   },
   "smsVirtualPhoneNumber": {
@@ -4001,6 +4171,11 @@
     "valueInCode": "סיכום סטטוס",
     "valueInEnglish": "Status summary"
   },
+  "stickerProperties": {
+    "google": "Caratteristiche dell'adesivo",
+    "valueInCode": "תכונות מדבקה",
+    "valueInEnglish": "Sticker Features"
+  },
   "stopAskingForConfirmation": {
     "google": "Smetti di chiedere se accetti qualcosa",
     "valueInCode": "הפסק לשאול האם מסכים לפני כל דבר",
@@ -4030,6 +4205,16 @@
     "google": "Controllo invio SMS",
     "valueInCode": "בדיקת שליחת SMS",
     "valueInEnglish": "SMS sending check"
+  },
+  "textAfter": {
+    "google": "Testo dopo",
+    "valueInCode": "טקסט אחרי",
+    "valueInEnglish": "Text after"
+  },
+  "textBefore": {
+    "google": "Testo prima",
+    "valueInCode": "טקסט לפני",
+    "valueInEnglish": "Text before"
   },
   "thanksForVolunteering": {
     "google": ". Grazie per il volontariato e la disponibilità ad aiutare!",
@@ -4130,6 +4315,11 @@
     "google": "Troppe famiglie contemporaneamente",
     "valueInCode": "יותר מידי משפחות בבת אחת",
     "valueInEnglish": "Too many families at once"
+  },
+  "topPadding": {
+    "google": "Margine superiore",
+    "valueInCode": "שוליים עליונים",
+    "valueInEnglish": "Upper margin"
   },
   "total": {
     "google": "Totale",
@@ -4363,12 +4553,12 @@
   },
   "urlFreeText1": {
     "google": "Indirizzo web volontario gratuito 1 per volontario",
-    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב",
+    "valueInCode": "כתובת אינטרנט ללחיצה על הודעה 1 שתופיע למתנדב בראש המסך",
     "valueInEnglish": "Free volunteer 1 web address for volunteer"
   },
   "urlFreeText2": {
     "google": "Testo volontario gratuito URL 2 per volontari",
-    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב",
+    "valueInCode": "כתובת אינטרנט ללחיצה על הודעה 2 שתופיע למתנדב בראש המסך",
     "valueInEnglish": "Free volunteer text URL 2 for volunteer"
   },
   "useBusketTypeFromCurrentDelivery": {
@@ -4566,6 +4756,11 @@
     "valueInCode": "מה להזמין?",
     "valueInEnglish": "What to order?"
   },
+  "whatToTake": {
+    "google": "portare",
+    "valueInCode": "להביא",
+    "valueInEnglish": "bring"
+  },
   "whatWentWrong": {
     "google": "Cosa non ha funzionato?",
     "valueInCode": "מה לא הסתדר?",
@@ -4575,6 +4770,11 @@
     "google": "quando",
     "valueInCode": "מתי",
     "valueInEnglish": "When"
+  },
+  "width": {
+    "google": "larghezza",
+    "valueInCode": "רוחב",
+    "valueInEnglish": "width"
   },
   "willBeReplacedBy": {
     "google": "Sarà sostituito da",

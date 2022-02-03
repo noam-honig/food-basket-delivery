@@ -3,16 +3,15 @@ import { Remult, FieldRef } from "remult";
 import { InputTypes } from "remult/inputTypes";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
-import { FieldType } from "../translate";
+import { FieldType, translationConfig } from "../translate";
 
 @FieldType<Phone>({
-  displayValue: (e, x) => x && x.displayValue,
   valueConverter: {
     toJson: x => x ? x.thePhone : '',
     fromJson: x => x ? new Phone(x) : null
   },
   inputType: InputTypes.tel
-})
+}, (options, remult) => options.displayValue = (e, x) => x && getSettings(remult).forWho?.formatPhone(x.thePhone))
 @DataControl<any, Phone>({
   click: (e, x) => window.open('tel:' + x.displayValue),
   allowClick: (e, x) => !!x.displayValue,
@@ -27,8 +26,11 @@ export class Phone {
   constructor(public thePhone: string) {
 
   }
+  toString() {
+    return this.thePhone;
+  }
   get displayValue() {
-    return Phone.formatPhone(this.thePhone);
+    return translationConfig.forWho()?.formatPhone(this.thePhone);
   }
 
   static toJson(x: Phone): string {
@@ -55,10 +57,10 @@ export class Phone {
   static sendWhatsappToPhone(phone: string, smsMessage: string, remult: Remult, test = false) {
     phone = Phone.fixPhoneInput(phone, remult);
     if (phone.startsWith('0')) {
-      phone = getSettings(remult).getInternationalPhonePrefix() + phone.substr(1);
+      phone = getSettings(remult).getInternationalPhonePrefix + phone.substr(1);
     }
     if (getSettings(remult).forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
-      phone = getSettings(remult).getInternationalPhonePrefix() + phone;
+      phone = getSettings(remult).getInternationalPhonePrefix + phone;
 
     if (phone.startsWith('+'))
       phone = phone.substr(1);
@@ -68,20 +70,7 @@ export class Phone {
       window.open('https://wa.me/' + phone + '?text=' + encodeURI(smsMessage), '_blank');
   }
 
-  static formatPhone(s: string) {
-    if (!s)
-      return s;
-    let x = s.replace(/\D/g, '');
-    if (x.length < 9 || x.length > 10)
-      return s;
-    if (x.length < 10 && !x.startsWith('0'))
-      x = '0' + x;
-    x = x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length);
 
-    x = x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length);
-
-    return x;
-  }
   static validatePhone(col: FieldRef<any, Phone>, remult: Remult, required = false) {
     if (!col.value || col.value.thePhone == '') {
       if (required)

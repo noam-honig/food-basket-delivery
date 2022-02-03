@@ -9,11 +9,11 @@ import { DialogService } from '../select-popup/dialog';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { UpdateStatus, updateGroup } from '../families/familyActions';
 import { FamiliesComponent, saveFamiliesToExcel } from '../families/families.component';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Field } from '../translate';
+import { Field, translationConfig } from '../translate';
 
 @Component({
   selector: 'app-duplicate-families',
@@ -142,114 +142,115 @@ export class DuplicateFamiliesComponent implements OnInit {
         ],
 
         rowsInPage: 25,
-        where: { status: { $ne: FamilyStatus.ToDelete  }, id: d.ids.split(',')
-      },
+        where: {
+          status: { $ne: FamilyStatus.ToDelete }, id: d.ids.split(',')
+        },
         orderBy: { name: "asc" }
 
 
       })
 
-  });
+    });
     this.viewdFamilies.set(d.ids, true);
   }
 
   private async mergeFamilies(x: GridDialogComponent) {
-  let items = x.args.settings.selectedRows.length > 0 ? [...x.args.settings.selectedRows] : [...x.args.settings.items];
-  if (items.length == 0) {
-    await this.dialog.Error(this.settings.lang.noFamiliesSelected);
-    return;
-  }
-  if (items.length == 1) {
-    await this.dialog.Error(this.settings.lang.cantMergeOneFamily);
-    return;
-  }
-  if (items.length > 10) {
-    await this.dialog.Error(this.settings.lang.tooManyFamiliesForMerge);
-    return;
-  }
-  await openDialog(MergeFamiliesComponent, y => y.families = items, y => {
-    if (y.merged)
-      x.args.settings.reloadData();
-  });
-}
-
-@BackendMethod({ allowed: true })
-static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, remult ?: Remult, db ?: SqlDatabase) {
-  if (!compare.address && !compare.name && !compare.phone && !compare.tz)
-    throw "some column needs to be selected for compare";
-  let sql = new SqlBuilder(remult);
-  let f = SqlFor(remult.repo(Families));
-  let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
-  let q = '';
-  for (const tz of [f.tz, f.tz2]) {
-    for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-      if (q.length > 0) {
-        q += '\r\n union all \r\n';
-
-      }
-      q += await sql.query({
-        select: () => [
-          sql.columnWithAlias(f.addressLatitude, 'lat'),
-          sql.columnWithAlias(f.addressLongitude, 'lng'),
-          sql.columnWithAlias(f.address, 'address'),
-          f.name,
-          sql.columnWithAlias(f.id, 'id'),
-          sql.columnWithAlias(sql.extractNumber(tz), 'tz'),
-          sql.columnWithAlias(sql.extractNumber(phone), 'phone')
-        ],
-        from: f,
-        where: () => {
-          let r: any[] = [f.where({ status: { "!=": FamilyStatus.ToDelete } })];
-          if (compare.onlyActive) {
-            r.push(sql.build(f.id, ' in (', sql.query({ select: () => [fd.family], from: fd }), ')'));
-          }
-          return r;
-        },
-      });
+    let items = x.args.settings.selectedRows.length > 0 ? [...x.args.settings.selectedRows] : [...x.args.settings.items];
+    if (items.length == 0) {
+      await this.dialog.Error(this.settings.lang.noFamiliesSelected);
+      return;
     }
+    if (items.length == 1) {
+      await this.dialog.Error(this.settings.lang.cantMergeOneFamily);
+      return;
+    }
+    if (items.length > 10) {
+      await this.dialog.Error(this.settings.lang.tooManyFamiliesForMerge);
+      return;
+    }
+    await openDialog(MergeFamiliesComponent, y => y.families = items, y => {
+      if (y.merged)
+        x.args.settings.reloadData();
+    });
   }
 
-  let where = [];
-  let groupBy = [];
-  if (compare.address) {
-    groupBy.push('lat');
-    groupBy.push('lng');
+  @BackendMethod({ allowed: true })
+  static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, remult?: Remult, db?: SqlDatabase) {
+    if (!compare.address && !compare.name && !compare.phone && !compare.tz)
+      throw "some column needs to be selected for compare";
+    let sql = new SqlBuilder(remult);
+    let f = SqlFor(remult.repo(Families));
+    let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
+    let q = '';
+    for (const tz of [f.tz, f.tz2]) {
+      for (const phone of [f.phone1, f.phone2, f.phone3, f.phone4]) {
+        if (q.length > 0) {
+          q += '\r\n union all \r\n';
+
+        }
+        q += await sql.query({
+          select: () => [
+            sql.columnWithAlias(f.addressLatitude, 'lat'),
+            sql.columnWithAlias(f.addressLongitude, 'lng'),
+            sql.columnWithAlias(f.address, 'address'),
+            f.name,
+            sql.columnWithAlias(f.id, 'id'),
+            sql.columnWithAlias(sql.extractNumber(tz), 'tz'),
+            sql.columnWithAlias(sql.extractNumber(phone), 'phone')
+          ],
+          from: f,
+          where: () => {
+            let r: any[] = [f.where({ status: { "!=": FamilyStatus.ToDelete } })];
+            if (compare.onlyActive) {
+              r.push(sql.build(f.id, ' in (', sql.query({ select: () => [fd.family], from: fd }), ')'));
+            }
+            return r;
+          },
+        });
+      }
+    }
+
+    let where = [];
+    let groupBy = [];
+    if (compare.address) {
+      groupBy.push('lat');
+      groupBy.push('lng');
+    }
+    if (compare.phone) {
+      groupBy.push('phone');
+      where.push('phone<>0');
+    }
+    if (compare.tz) {
+      groupBy.push('tz');
+      where.push('tz<>0');
+    }
+    if (compare.name) {
+      groupBy.push('name');
+    }
+    q = await sql.build('select ', [
+      sql.columnWithAlias(sql.max('address'), 'address'),
+      sql.columnWithAlias(sql.max('name'), '"name"'),
+      sql.columnWithAlias(sql.max('tz'), 'tz'),
+      sql.columnWithAlias(sql.max('phone'), 'phone'), 'count (distinct id) c', "string_agg(id::text, ',') ids"], ' from ('
+      , q, ') as result');
+    if (where.length > 0)
+      q += ' where ' + await sql.and(...where);
+    q += ' group by ' + await sql.build([groupBy]);
+    q += ' having count(distinct id)>1';
+
+
+
+
+
+    return (await db.execute(q)).rows.map(x => ({
+      address: x['address'],
+      name: x['name'],
+      phone: getSettings(remult).forWho.formatPhone(x['phone']),
+      tz: x['tz'],
+      count: +x['c'],
+      ids: x['ids'].split(',').filter((val, index, self) => self.indexOf(val) == index).join(',')
+    } as duplicateFamilies));
   }
-  if (compare.phone) {
-    groupBy.push('phone');
-    where.push('phone<>0');
-  }
-  if (compare.tz) {
-    groupBy.push('tz');
-    where.push('tz<>0');
-  }
-  if (compare.name) {
-    groupBy.push('name');
-  }
-  q = await sql.build('select ', [
-    sql.columnWithAlias(sql.max('address'), 'address'),
-    sql.columnWithAlias(sql.max('name'), '"name"'),
-    sql.columnWithAlias(sql.max('tz'), 'tz'),
-    sql.columnWithAlias(sql.max('phone'), 'phone'), 'count (distinct id) c', "string_agg(id::text, ',') ids"], ' from ('
-    , q, ') as result');
-  if (where.length > 0)
-    q += ' where ' + await sql.and(...where);
-  q += ' group by ' + await sql.build([groupBy]);
-  q += ' having count(distinct id)>1';
-
-
-
-
-
-  return (await db.execute(q)).rows.map(x => ({
-    address: x['address'],
-    name: x['name'],
-    phone: Phone.formatPhone(x['phone']),
-    tz: x['tz'],
-    count: +x['c'],
-    ids: x['ids'].split(',').filter((val, index, self) => self.indexOf(val) == index).join(',')
-  } as duplicateFamilies));
-}
 
 }
 export interface duplicateFamilies {

@@ -33,7 +33,7 @@ export class FamilySelfOrderComponent implements OnInit {
   basket: string;
 
   @DataControl({
-    valueList: [{ id: '', caption: 'ללא' }, ...['1', '2', '3', '4', '4+', '5', '6'].map(item => ({
+    valueList: [{ id: '', caption: 'ללא' }, ...['NB', '1', '2', '3', '4', '4+', '5', '6'].map(item => ({
       id: 'טיטולים ' + item,
       caption: item
     }))]

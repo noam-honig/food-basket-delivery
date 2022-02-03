@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings } from '@remult/angular';
+import { BusyService, GridSettings } from '@remult/angular';
 import { Remult } from 'remult';
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-incoming-messages',
@@ -10,8 +11,8 @@ import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpe
 })
 export class IncomingMessagesComponent implements OnInit {
 
-  constructor(private remult: Remult) { }
-  showAll = false;
+  constructor(private remult: Remult, private dialog: DialogService, private busy: BusyService) { }
+  showAll = true;
   grid = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
     where: () => ({ incoming: !this.showAll ? true : undefined }),
     knowTotalRows: true,
@@ -19,15 +20,43 @@ export class IncomingMessagesComponent implements OnInit {
       com.message,
       com.phone,
       com.volunteer,
+      com.incoming,
       com.createDate,
       com.automaticAction,
       com.createUser,
       com.apiResponse,
-      com.eventId,
-      com.incoming
+      com.eventId
     ],
+    rowButtons: [{
+
+      textInMenu: this.remult.lang.volunteerInfo,
+      click: async (com) => {
+        const h = await com.volunteer.getHelper();
+        h.displayEditDialog(this.dialog, this.busy);
+      },
+      visible: com => Boolean(com.volunteer)
+
+    }, {
+
+      textInMenu: this.remult.lang.smsMessages,
+      click: async (com) => {
+        const h = await com.volunteer.getHelper();
+        h.smsMessages(this.dialog);
+      },
+      visible: com => Boolean(com.volunteer)
+
+    },
+    {
+      textInMenu: this.remult.lang.customSmsMessage,
+      click: async (com) => {
+        const h = await com.volunteer.getHelper();
+        h.sendSmsToCourier(this.dialog);
+      },
+      visible: com => Boolean(com.volunteer)
+
+    }],
     gridButtons: [{
-      name: 'הצג גם הודעות יוצאות', click: () => {
+      name: this.remult.lang.showOnlyIncoming, click: () => {
         this.showAll = !this.showAll;
         this.grid.reloadData();
       }

@@ -79,7 +79,7 @@ export class SendSmsAction {
     public static async getSenderPhone(remult: Remult) {
         let sender = (await ApplicationSettings.getAsync(remult)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            sender = remult.currentUser.phone.thePhone;
+            sender = (await remult.getCurrentUser()).phone.thePhone;
         }
         return sender;
     }
@@ -119,7 +119,7 @@ export class SendSmsUtils {
         let un = process.env.SMS_UN;
         let pw = process.env.SMS_PW;
         let accid = process.env.SMS_ACCID;
-        var from = settings.isSytemForMlt() ? 'Mitchashvim' : 'Hagai';
+        var from = settings.isSytemForMlt ? 'Mitchashvim' : 'Hagai';
         if (settings.bulkSmsEnabled) {
             if (settings.smsVirtualPhoneNumber)
                 from = settings.smsVirtualPhoneNumber;

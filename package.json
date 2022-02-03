@@ -1,14 +1,15 @@
 {
   "name": "hug-moms",
-  "version": "0.9.7",
+  "version": "0.9.47",
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
     "ng-serve": "ng serve",
     "node-serve": "tsc-watch -p tsconfig.server.json --onSuccess \"npm run server:dev-run\"",
-    "server-test": "./node_modules/.bin/tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
+    "server-test": "tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
     "ng-serve-noam-ip-10.0.0.6": "ng serve --host 10.0.0.6",
     "start": "node server/app/server/server.js",
+    "t-start": "node dist/server/app/server/server.js",
     "server:dev-run": "node --inspect dist/server/app/server/server.js",
     "server:dev-run-direct-ref": "node  dist/hug-moms/src/app/server/server.js",
     "ng-build": "ng build --prod",
@@ -24,7 +25,8 @@
     "build-docs": "vuepress build docs",
     "release-docs": "deploy-docs.sh",
     "test": "ng test",
-    "release": "npm run ng-build && npm run server:build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
+    "t-build": "npm run ng-build && npm run server:build",
+    "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master"
   },
   "private": true,
   "dependencies": {
@@ -40,7 +42,7 @@
     "@angular/router": "~11.2.10",
     "@auth0/angular-jwt": "^5.0.2",
     "@google/markerclustererplus": "^5.0.3",
-    "@remult/angular": "^0.9.9",
+    "@remult/angular": "^0.10.5",
     "angular2-qrcode": "^2.0.3",
     "aws-sdk": "^2.683.0",
     "body-parser": "^1.19.0",
@@ -67,7 +69,7 @@
     "path": "^0.12.7",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
-    "remult": "^0.9.17",
+    "remult": "^0.10.5",
     "rxjs": "~6.5.3",
     "spherical-geometry-js": "^2.0.0",
     "tsickle": "^0.35.0",

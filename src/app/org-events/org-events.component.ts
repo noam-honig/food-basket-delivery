@@ -77,11 +77,9 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
 
       let c = await createSiteContext(org, remult);
 
-      let settings = settingsForSite.get(org);
-      if (!settings) {
-        settings = await ApplicationSettings.getAsync(c);
-        setSettingsForSite(org, settings);
-      }
+      let settings = await c.getSettings();
+      setSettingsForSite(org, settings);
+
 
       if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
         let items = await OrgEventsComponent.getEvents(phone, c);
@@ -96,7 +94,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   static async getEvents(phone: string, remult?: Remult): Promise<EventInList[]> {
 
 
-    let helper: HelpersBase = remult.currentUser;
+    let helper: HelpersBase = (await remult.getCurrentUser());
     if (!helper && phone)
       helper = await remult.repo(Helpers).findFirst({ phone: new Phone(phone) });
     return Promise.all((await remult.repo(Event).find({

@@ -12,7 +12,7 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
   };
 }
 
-import { GeocodeInformation, GetGeoInformation, AddressHelper } from "../shared/googleApiHelpers";
+import { Location, AddressHelper } from "../shared/googleApiHelpers";
 import { Entity, Remult } from 'remult';
 import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
@@ -34,7 +34,7 @@ import { InputTypes } from 'remult/inputTypes';
 
 
 
-@ValueListFieldType(RemovedFromListExcelImportStrategy)
+@ValueListFieldType()
 export class RemovedFromListExcelImportStrategy {
   static displayAsError = new RemovedFromListExcelImportStrategy(0, 'הצג כשגיאה');
   static showInUpdate = new RemovedFromListExcelImportStrategy(1, 'הצג במשפחות לעדכון');
@@ -114,7 +114,7 @@ export class ApplicationSettings extends EntityBase {
 
 
 
-  getInternationalPhonePrefix() {
+  get getInternationalPhonePrefix() {
     let r = this.forWho.args.internationalPrefixForSmsAndAws;
     if (!r)
       r = '+972';
@@ -154,7 +154,7 @@ export class ApplicationSettings extends EntityBase {
     return r;
   }
   showVideo() {
-    return this.lang.languageCode == 'iw' && !this.isSytemForMlt();
+    return this.lang.languageCode == 'iw' && !this.isSytemForMlt;
   }
 
   @IntegerField()
@@ -273,7 +273,7 @@ export class ApplicationSettings extends EntityBase {
   @Field({ translation: l => l.enableSelfPickupModule })
   usingSelfPickupModule: boolean;
 
-  isSytemForMlt() {
+  get isSytemForMlt() {
     return this.forWho == TranslationOptions.donors;
   }
 
@@ -463,6 +463,8 @@ export class ApplicationSettings extends EntityBase {
   familySelfOrderMessage: string;
   @Field({ includeInApi: Roles.admin })
   inviteVolunteersMessage: string;
+  @Field({ allowApiUpdate: Roles.admin })
+  allowVolunteerToSeePreviousActivities: boolean;
 
 
 
@@ -477,7 +479,7 @@ export class ApplicationSettings extends EntityBase {
 
   }
   static async getAsync(remult: Remult): Promise<ApplicationSettings> {
-    return (await remult.repo(ApplicationSettings).findFirst());
+    return (await remult.repo(ApplicationSettings).findFirst(undefined, { useCache: true }));
   }
   setDefaultsForProblemStatuses() {
     this.problemButtonText = this.lang.ranIntoAProblem;
@@ -533,7 +535,7 @@ export class PhoneOption {
   });
   static otherPhone = new PhoneOption("otherPhone", "טלפון אחר", async args => {
     if (args.phoneItem.phone) {
-      args.addPhone(args.phoneItem.name, Phone.formatPhone(args.phoneItem.phone));
+      args.addPhone(args.phoneItem.name, args.settings.forWho.formatPhone(args.phoneItem.phone));
     }
   });
   constructor(public key: string, public name: string, public build: ((args: phoneBuildArgs) => Promise<void>)) {
@@ -574,7 +576,7 @@ export class SettingsService {
     this.instance = await ApplicationSettings.getAsync(this.remult);
     setSettingsForSite(Sites.getValidSchemaFromContext(this.remult), this.instance);
 
-    translationConfig.forWho = this.instance.forWho;
+    translationConfig.forWho = () => this.instance.forWho;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;
     (await import('../helpers/helpers')).Helpers.usingCompanyModule = this.instance.showCompanies;
 
@@ -613,19 +615,98 @@ export function setCustomColumnInfo(v: customColumnInfo, caption: string, values
     v.values = values.split(',').map(x => x.trim());
   }
 }
-export const settingsForSite = new Map<string, ApplicationSettings>();
-export function setSettingsForSite(site: string, lang: ApplicationSettings) {
-  settingsForSite.set(site, lang);
+export const settingsForSite = new Map<string, SmallSettings>();
+export function setSettingsForSite(site: string, {
+  usingSelfPickupModule,
+  familySelfOrderEnabled,
+  manageEscorts,
+  requireComplexPassword,
+  forWho,
+  getInternationalPhonePrefix,
+  boxes2Name,
+  boxes1Name,
+  isSytemForMlt,
+  addressHelper,
+  helpPhone,
+  helpText,
+  bulkSmsEnabled,
+  logoUrl,
+  organisationName,
+  hideFamilyPhoneFromVolunteer,
+  allowVolunteerToSeePreviousActivities
+
+
+}: ApplicationSettings) {
+  const
+    {
+      ok,
+      getAddress,
+      getCity,
+      getlonglat,
+      location
+
+    } = addressHelper;
+  settingsForSite.set(site, {
+    usingSelfPickupModule,
+    familySelfOrderEnabled,
+    manageEscorts,
+    requireComplexPassword,
+    forWho,
+    getInternationalPhonePrefix,
+    boxes2Name,
+    boxes1Name,
+    isSytemForMlt,
+    addressHelper: {
+      ok,
+      getAddress,
+      getCity,
+      getlonglat,
+      location
+    },
+    helpPhone,
+    helpText,
+    bulkSmsEnabled,
+    logoUrl,
+    organisationName,
+    hideFamilyPhoneFromVolunteer,
+    allowVolunteerToSeePreviousActivities
+  });
 }
-export function getSettings(remult: Remult): ApplicationSettings {
+export function getSettings(remult: Remult): SmallSettings {
   let r = settingsForSite.get(Sites.getValidSchemaFromContext(remult));
   if (r)
     return r;
   //if (context.backend) {
-  return new ApplicationSettings(remult);
+  return new SmallSettings();
   throw "can't find application settings on server for this request";
 
   return ApplicationSettings.get(remult);;
+}
+export class SmallSettings {
+  allowVolunteerToSeePreviousActivities: boolean = false;
+  usingSelfPickupModule: boolean = false;
+  familySelfOrderEnabled: boolean = false;
+  manageEscorts: boolean = false;
+  requireComplexPassword: boolean = false;
+  forWho: TranslationOptions;
+  getInternationalPhonePrefix: string = '';
+  boxes2Name: string = '';
+  boxes1Name: string = '';
+  isSytemForMlt: boolean = false;
+  addressHelper: SmallAdressHelper = new SmallAdressHelper();
+  helpPhone: Phone = new Phone('');
+  helpText: string = '';
+  bulkSmsEnabled: boolean = false
+  logoUrl: string = '';
+  organisationName: string = '';
+  hideFamilyPhoneFromVolunteer: boolean = false;
+}
+export class SmallAdressHelper {
+  ok: boolean = false;
+  getAddress: string = '';
+  getCity: string = '';
+  getlonglat: string = '';
+  location: Location = undefined;
 }
 
 interface customColumnInfo {

@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend } from 'remult';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields } from 'remult';
 import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -31,6 +31,8 @@ import { getLang } from "../sites/sites";
 
 
 import { Groups, GroupsValue } from "../manage/groups";
+import { async } from "rxjs/internal/scheduler/async";
+import { DateOnlyValueConverter } from "remult/valueConverters";
 
 
 
@@ -69,12 +71,12 @@ declare type factoryFor<T> = {
 
 
 
-      if (self.$.address.valueChanged() || !self.addressHelper.ok() || self.autoCompleteResult) {
+      if (self.$.address.valueChanged() || !self.addressHelper.ok || self.autoCompleteResult) {
         await self.reloadGeoCoding();
       }
       if (!self.defaultDistributionCenter)
-        self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location());
-      let currentUser = self.remult.currentUser;
+        self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location);
+      let currentUser = (await self.remult.getCurrentUser());
       if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
         self.routeOrder = 0;
       if (self.isNew()) {
@@ -185,10 +187,12 @@ export class Families extends IdEntity {
   }
   async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
+
     openDialog(GridDialogComponent, x => x.args = {
       title: getLang(this.remult).deliveriesFor + ' ' + this.name,
       stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
+
       buttons: [{
         text: use.language.newDelivery,
 
@@ -197,14 +201,40 @@ export class Families extends IdEntity {
     });
   }
   public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
-    let result = new GridSettings(this.remult.repo(FamilyDeliveries), {
+    let result: GridSettings<import("./FamilyDeliveries").FamilyDeliveries> = new GridSettings(this.remult.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
       rowCssClass: fd => fd.getCss(),
       gridButtons: [{
         name: use.language.newDelivery,
         icon: 'add_shopping_cart',
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
+          doNotCheckIfHasExistingDeliveries: true,
+          aDeliveryWasAdded: async () => { result.reloadData(); }
+        })
+      }, {
+
+        name: use.language.addHistoricalDelivery,
+        visible: () => this.remult.isAllowed(Roles.admin),
+        click: async () => {
+          var fd = this.createDelivery(null);
+          var d = new dateInput();
+          openDialog(InputAreaComponent, x => x.args = {
+            title: use.language.addHistoricalDelivery,
+            settings: {
+              fields: () => [
+                getFields(d).date,
+                fd.$.basketType,
+                fd.$.courier
+              ]
+            },
+            ok: async () => {
+              await this.saveAsHistoryEntry(DateOnlyValueConverter.toJson(d.date), fd.basketType, fd.courier);
+              result.reloadData();
+            }
+          });
+        }
+
       }],
       rowButtons: [
         {
@@ -247,6 +277,18 @@ export class Families extends IdEntity {
     });
     return result;
   }
+  @BackendMethod<Families>({ allowed: Roles.admin })
+  async saveAsHistoryEntry(date: string, basket: BasketType, helper: HelpersBase) {
+    const fd = this.createDelivery(null);
+    fd.deliverStatus = DeliveryStatus.Success;
+    fd.basketType = basket;
+    fd.courier = helper;
+    fd.archive = true;
+    await fd.save();
+
+    fd.deliveryStatusDate = DateOnlyValueConverter.fromJson(date);
+    await fd.save();
+  }
 
   async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, busy: BusyService, args?: {
     copyFrom?: import("./FamilyDeliveries").FamilyDeliveries,
@@ -265,7 +307,7 @@ export class Families extends IdEntity {
       }
     }
 
-    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await dialog.getDistCenter(this.addressHelper.location()));
+    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await dialog.getDistCenter(this.addressHelper.location));
     let arciveCurrentDelivery = new InputField<boolean>({
       valueType: Boolean,
       caption: getLang(this.remult).archiveCurrentDelivery,
@@ -349,7 +391,7 @@ export class Families extends IdEntity {
     if (f) {
 
       if (!distCenter)
-        distCenter = await remult.findClosestDistCenter(f.addressHelper.location());
+        distCenter = await remult.findClosestDistCenter(f.addressHelper.location);
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;
@@ -586,7 +628,7 @@ export class Families extends IdEntity {
     click: async (e, col) => {
       openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
         searchClosestDefaultFamily: true,
-        location: e.addressHelper.location(),
+        location: e.addressHelper.location,
         onSelect: async selected => col.value = selected
       });
     }
@@ -647,7 +689,7 @@ export class Families extends IdEntity {
   async setPostalCodeServerOnly() {
     if (!process.env.AUTO_POSTAL_CODE)
       return;
-    var geo = this.addressHelper.getGeocodeInformation();
+    var geo = this.addressHelper.getGeocodeInformation;
     var house = '';
     var streen = '';
     var location = '';
@@ -784,13 +826,13 @@ export class Families extends IdEntity {
   openWaze() {
 
     //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.addressHelper.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address) + '&navigate=yes');
+    window.open('waze://?ll=' + this.addressHelper.getGeocodeInformation.getlonglat() + "&q=" + encodeURI(this.address) + '&navigate=yes');
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.address, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation().getlonglat() + '&hl=' + getLang(this.remult).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getGeocodeInformation.getlonglat() + '&hl=' + getLang(this.remult).languageCode, '_blank');
   }
   showOnGovMap() {
     window.open('https://www.govmap.gov.il/?q=' + this.address + '&z=10', '_blank');
@@ -1191,4 +1233,9 @@ async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult
     ],
     orderBy: [{ field: fd.deliveryStatusDate, isDescending: true }]
   });
+}
+
+class dateInput {
+  @DateOnlyField()
+  date: Date = new Date();
 }

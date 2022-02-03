@@ -30,15 +30,15 @@
   <mat-nav-list>
     <ng-container *ngFor="let c of helpers">
       <mat-list-item class="followup-list-item" (click)="deliveryDetails(c)" *ngIf="showHelper(c)">
-        <a matLine>{{c.name}} <mat-panel-description>
-            {{settings.lang.completed}} {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span
-              *ngIf="c.problem>0">&nbsp;
-              ({{c.problem}}
-              {{settings.lang.notDelivered}})</span>
-            <span *ngIf="c.viewedSms&&c.smsWasSent">, {{settings.lang.smsSent}} {{c.smsDateName}}</span>
-            <span *ngIf="!c.viewedSms&&c.smsWasSent">,{{settings.lang.smsNotOpened}}</span>
-            <span *ngIf="!c.smsWasSent">,{{settings.lang.smsNotSent}}</span>
-          </mat-panel-description></a>
+        <a matLine>{{c.name}} <span *ngIf="c.eventComment">, {{c.eventComment}}</span></a>
+        <mat-panel-description matLine>
+          {{settings.lang.completed}} {{c.deliveries - c.inProgress}}/{{c.deliveries}} <span *ngIf="c.problem>0">&nbsp;
+            ({{c.problem}}
+            {{settings.lang.notDelivered}})</span>
+          <span *ngIf="c.viewedSms&&c.smsWasSent">, {{settings.lang.smsSent}} {{c.smsDateName}}</span>
+          <span *ngIf="!c.viewedSms&&c.smsWasSent">,{{settings.lang.smsNotOpened}}</span>
+          <span *ngIf="!c.smsWasSent">,{{settings.lang.smsNotSent}}</span>
+        </mat-panel-description>
       </mat-list-item>
       <mat-divider></mat-divider>
 

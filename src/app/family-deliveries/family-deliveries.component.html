@@ -13,7 +13,7 @@
         </div>
         <a [class.hidden]="!showChart" *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name
             }} - {{s.value}}, </a>
-        <div *ngIf="showTotalBoxes()" [class.hidden]="!showChart">{{showTotalBoxes()}}</div>
+        <div *ngIf="showTotalBoxes()" [class.hidden]="!showChart">{{showTotalBoxes()}} <span *ngIf="getToTake()"> <strong>{{settings.lang.whatToTake}}:</strong> {{getToTake()}}</span></div>
 
         <strong>{{deliveries.totalRows}} {{settings.lang.deliveries}} </strong> <strong *ngIf="currentStatFilter"> -
             {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter"

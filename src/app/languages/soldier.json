@@ -51,6 +51,10 @@
     "google": "הוסף את כל המתנדבים",
     "valueInCode": "הוסף את כל המתנדבים"
   },
+  "addColumn": {
+    "google": "הוסף עמודה",
+    "valueInCode": "הוסף עמודה"
+  },
   "addColumnsThatAreNotInTheFile": {
     "google": "הוספת עמודות שלא מופיעות באקסל",
     "valueInCode": "הוספת עמודות שלא מופיעות באקסל"
@@ -71,9 +75,17 @@
     "google": "הוסף עמודה",
     "valueInCode": "הוסף עמודה"
   },
+  "addField": {
+    "google": "הוסף שדה",
+    "valueInCode": "הוסף שדה"
+  },
   "addGroupAssignmentVerb": {
     "google": "להוסיף שיוך לקבוצה",
     "valueInCode": "להוסיף שיוך לקבוצה"
+  },
+  "addHistoricalDelivery": {
+    "google": "הוסף משלוח היסטורי",
+    "valueInCode": "הוסף משלוח היסטורי"
   },
   "addRepeatFamilies": {
     "google": "בחירת חיילים שהמתנדב היה אצלהם בעבר",
@@ -162,6 +174,10 @@
   "allowSendSuccessMessageOption": {
     "google": "הרשה אפשרות של שליחת הודעת SMS לחייל",
     "valueInCode": "הרשה אפשרות של שליחת הודעת SMS למשפחה"
+  },
+  "allowVolunteerToSeePreviousActivities": {
+    "google": "אפשר למתנדב לראות פעילויות היסטוריות",
+    "valueInCode": "אפשר למתנדב לראות פעילויות היסטוריות"
   },
   "allRegions": {
     "google": "כל האזורים",
@@ -415,6 +431,14 @@
     "google": "תאריך לידה",
     "valueInCode": "תאריך לידה"
   },
+  "bold": {
+    "google": "הדגשה",
+    "valueInCode": "הדגשה"
+  },
+  "bottomPadding": {
+    "google": "שוליים תחתונים",
+    "valueInCode": "שוליים תחתונים"
+  },
   "boxes1Name": {
     "google": "מנות",
     "valueInCode": "מנות"
@@ -503,6 +527,10 @@
     "google": "תאור",
     "valueInCode": "תאור"
   },
+  "centerAlign": {
+    "google": "יישר למרכז",
+    "valueInCode": "יישר למרכז"
+  },
   "changeRouteOrder": {
     "google": "שנה סדר מסלול",
     "valueInCode": "שנה סדר מסלול"
@@ -582,6 +610,14 @@
   "codeWord": {
     "google": "מילת קוד",
     "valueInCode": "מילת קוד"
+  },
+  "color": {
+    "google": "צבע",
+    "valueInCode": "צבע"
+  },
+  "columnProperties": {
+    "google": "תכונות עמודה",
+    "valueInCode": "תכונות עמודה"
   },
   "columnSelectionInFile": {
     "google": "בחירת עמודות בקובץ",
@@ -897,7 +933,7 @@
   },
   "deliveriesDoneInTheLastTwoDays": {
     "google": "משלוחים שחולקו ביומיים האחרונים",
-    "valueInCode": "משלוחים שחולקו ביומיים האחרונים"
+    "valueInCode": "משלוחים שחולקו"
   },
   "deliveriesFor": {
     "google": "משלוחים עבור",
@@ -1074,6 +1110,10 @@
   "doneVolunteers": {
     "google": "סיימו",
     "valueInCode": "סיימו"
+  },
+  "doNotSendSms": {
+    "google": "לא לשלוח הודעת SMS קבוצתיות כלל",
+    "valueInCode": "לא לשלוח הודעת SMS קבוצתיות כלל"
   },
   "donotShowEventsInGeneralList": {
     "google": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
@@ -1451,6 +1491,10 @@
     "google": "חייל לא נמצאה",
     "valueInCode": "משפחה לא נמצאה"
   },
+  "fieldProperties": {
+    "google": "תכונות שדה",
+    "valueInCode": "תכונות שדה"
+  },
   "filter": {
     "google": "סינון",
     "valueInCode": "סינון"
@@ -1462,6 +1506,10 @@
   "filterCity": {
     "google": "סינון עיר",
     "valueInCode": "סינון עיר"
+  },
+  "filterCityHelp": {
+    "google": "הצג רק מתנדבים שחילקו בעיר",
+    "valueInCode": "הצג רק מתנדבים שחילקו בעיר"
   },
   "filterFamilyGroups": {
     "google": "סינון קבוצת חייל",
@@ -1486,6 +1534,10 @@
   "floor": {
     "google": "קומה",
     "valueInCode": "קומה"
+  },
+  "fontSize": {
+    "google": "גודל גופן",
+    "valueInCode": "גודל גופן"
   },
   "foodDelivery": {
     "google": "חלוקת מזון",
@@ -1517,11 +1569,11 @@
   },
   "freeText1ForVolunteer": {
     "google": "מלל חופשי 1 למתנדב",
-    "valueInCode": "מלל חופשי 1 למתנדב"
+    "valueInCode": "הודעה 1 שתופיע למתנדב בראש המסך"
   },
   "freeText2ForVolunteer": {
     "google": "מלל חופשי 2 למתנדב",
-    "valueInCode": "מלל חופשי 2 למתנדב"
+    "valueInCode": "הודעה 2 שתופיע למתנדב בראש המסך"
   },
   "freezeDeliveries": {
     "google": "הקפא משלוחים",
@@ -1569,7 +1621,11 @@
   },
   "frozenTill": {
     "google": "מוקפא עד לתאריך",
-    "valueInCode": "מוקפא עד לתאריך"
+    "valueInCode": "לא לשלוח SMS קבוצתי עד לתאריך"
+  },
+  "fullAddress": {
+    "google": "כתובת מלאה",
+    "valueInCode": "כתובת מלאה"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -1598,6 +1654,10 @@
   "hadProblemBefore": {
     "google": "היתה בעיה בעבר",
     "valueInCode": "היתה בעיה בעבר"
+  },
+  "height": {
+    "google": "גובה",
+    "valueInCode": "גובה"
   },
   "hello": {
     "google": "שלום",
@@ -1703,9 +1763,9 @@
     "google": "רק עבור חיילים בקבוצות אלו",
     "valueInCode": "רק עבור משפחות בקבוצות אלו"
   },
-  "incomingMessages": {
-    "google": "הודעות נכנסות",
-    "valueInCode": "הודעות נכנסות"
+  "incoming": {
+    "google": "נכנסת",
+    "valueInCode": "נכנסת"
   },
   "indie": {
     "google": "מתנדב עצמאי",
@@ -1775,6 +1835,10 @@
     "google": "עובד מעבדה",
     "valueInCode": "עובד מעבדה"
   },
+  "labelProperties": {
+    "google": "תכונות מדבקה",
+    "valueInCode": "תכונות מדבקה"
+  },
   "languageCode": {
     "google": "iw",
     "valueInCode": "iw"
@@ -1826,6 +1890,10 @@
   "leftDeliveryNextToHouse": {
     "google": "השארתי ליד הבית",
     "valueInCode": "השארתי ליד הבית"
+  },
+  "leftPadding": {
+    "google": "שוליים שמאליים",
+    "valueInCode": "שוליים שמאליים"
   },
   "linesInExcel": {
     "google": "שורות באקסל",
@@ -2003,6 +2071,10 @@
     "google": "הועברו מ",
     "valueInCode": "הועברו מ"
   },
+  "moveDown": {
+    "google": "הזז למטה",
+    "valueInCode": "הזז למטה"
+  },
   "moveTheFamily": {
     "google": "להעביר את משפחת",
     "valueInCode": "להעביר את משפחת"
@@ -2022,6 +2094,10 @@
   "moveToUpdateFamilies": {
     "google": "העבר לחיילים עדכון",
     "valueInCode": "העבר למשפחות עדכון"
+  },
+  "moveUp": {
+    "google": "הזז למעלה",
+    "valueInCode": "הזז למעלה"
   },
   "mustConfirmEula": {
     "google": "לא ניתן להשתמש באפליקציה ללא הסכמה לתנאי השימוש",
@@ -2051,6 +2127,14 @@
     "google": "השם קצר מידי",
     "valueInCode": "השם קצר מידי"
   },
+  "navigateWithGoogleMaps": {
+    "google": "נווט עם גוגל",
+    "valueInCode": "נווט עם גוגל"
+  },
+  "navigateWithWaze": {
+    "google": "נווט עם WAZE",
+    "valueInCode": "נווט עם WAZE"
+  },
   "needEscort": {
     "google": "צריך מלווה",
     "valueInCode": "צריך מלווה"
@@ -2058,6 +2142,10 @@
   "new": {
     "google": "חדש",
     "valueInCode": "חדש"
+  },
+  "newColumn": {
+    "google": "עמודה חדש",
+    "valueInCode": "עמודה חדשה"
   },
   "newDeliveriesQM": {
     "google": "משלוחים חדשים?",
@@ -2086,6 +2174,10 @@
   "newFamily": {
     "google": "חייל חדש",
     "valueInCode": "משפחה חדשה"
+  },
+  "newPageForEachVolunteer": {
+    "google": "דף חדש לכל מתנדב",
+    "valueInCode": "דף חדש לכל מתנדב"
   },
   "newPasswordMustBeNew": {
     "google": "הסיסמה החדש והקיימת זהות",
@@ -2271,6 +2363,10 @@
     "google": "אספו את החבילה",
     "valueInCode": "אספו את החבילה"
   },
+  "pageProperties": {
+    "google": "תכונות דף",
+    "valueInCode": "תכונות דף"
+  },
   "parcelPackaging": {
     "google": "אריזת חבילות",
     "valueInCode": "אריזת חבילות"
@@ -2398,6 +2494,10 @@
   "preferredFinishAddress": {
     "google": "כתובת לסיום המסלול",
     "valueInCode": "כתובת לסיום המסלול"
+  },
+  "previewVolunteerScreen": {
+    "google": "הדגם תצוגת מתנדב",
+    "valueInCode": "הדגם תצוגת מתנדב"
   },
   "previous": {
     "google": "קודם",
@@ -2607,6 +2707,10 @@
     "google": "הסר",
     "valueInCode": "הסר"
   },
+  "removeColumn": {
+    "google": "הסר עמודה",
+    "valueInCode": "הסר עמודה"
+  },
   "removedFromList": {
     "google": "הוצא מהרשימות",
     "valueInCode": "הוצא מהרשימות"
@@ -2622,6 +2726,10 @@
   "RemovedFromListExcelImportStrategy_showInUpdate": {
     "google": "הצג בחיילים לעדכון",
     "valueInCode": "הצג במשפחות לעדכון"
+  },
+  "removeField": {
+    "google": "הסר שדה",
+    "valueInCode": "הסר שדה"
   },
   "removeFollowUpFor": {
     "google": "לבטל את הסימון \"מצריך טיפול\" למשפחת",
@@ -2723,6 +2831,10 @@
     "google": "החזר מארכיון",
     "valueInCode": "החזר מארכיון"
   },
+  "rightPadding": {
+    "google": "שוליים ימניים",
+    "valueInCode": "שוליים ימניים"
+  },
   "routeOptimization": {
     "google": "תכנון מסלול",
     "valueInCode": "תכנון מסלול"
@@ -2734,6 +2846,10 @@
   "sameAddress": {
     "google": "כתובת זהה",
     "valueInCode": "כתובת זהה"
+  },
+  "sameLine": {
+    "google": "באותה שורה",
+    "valueInCode": "באותה שורה"
   },
   "sameLineExcelMatchesSeveralRowsInTheDatabase": {
     "google": "אותה חייל באתר מתאימה למספר שורות באקסל: ",
@@ -2886,6 +3002,10 @@
   "sendLinkOnWhatsapp": {
     "google": "שלח קישור ב whatsapp",
     "valueInCode": "שלח קישור ב whatsapp"
+  },
+  "sendMessageToInviteVolunteers": {
+    "google": "שליחת הודעה לזימון מתנדבים",
+    "valueInCode": "שליחת הודעה לזימון מתנדבים"
   },
   "sendMessageToVolunteer": {
     "google": "שלח הודעה למתנדב",
@@ -3055,6 +3175,10 @@
     "google": "הצג רק משלוחים שהסתיימו",
     "valueInCode": "הצג רק משלוחים שהסתיימו"
   },
+  "showOnlyIncoming": {
+    "google": "הצג רק הודעות נכנסות",
+    "valueInCode": "הצג רק הודעות נכנסות"
+  },
   "showOnlyLastNamePartToVolunteer": {
     "google": "הצג רק מילה אחרונה למתנדב בשם החייל",
     "valueInCode": "הצג רק מילה אחרונה למתנדב בשם המשפחה"
@@ -3067,6 +3191,10 @@
     "google": "הצג פאי",
     "valueInCode": "הצג פאי"
   },
+  "showPreviousActivities": {
+    "google": "פעילויות קודמות",
+    "valueInCode": "פעילויות קודמות"
+  },
   "showQRCode": {
     "google": "הצג לקליטה",
     "valueInCode": "הצג לקליטה"
@@ -3077,11 +3205,11 @@
   },
   "showText1OnlyWhenDone": {
     "google": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים",
-    "valueInCode": "להציג מלל חופשי 1 רק כאשר המתנדב סיים אל כל הסלים"
+    "valueInCode": "הצג הודעה 1 רק אם המתנדב סיים את כל המשלוחים"
   },
   "showText2OnlyWhenDone": {
     "google": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
-    "valueInCode": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים"
+    "valueInCode": "המג הודעה 2 רק אם המתנדב סיים את כל המשלוחים"
   },
   "showTzToVolunteer": {
     "google": "הצג מספר זהות למתנדב",
@@ -3119,6 +3247,10 @@
     "google": "תוכן הודעת SMS",
     "valueInCode": "תוכן הודעת SMS"
   },
+  "smsMessages": {
+    "google": "הודעות SMS",
+    "valueInCode": "הודעות SMS"
+  },
   "smsMessageSentTo": {
     "google": "הודעת SMS נשלחה ל",
     "valueInCode": "הודעת SMS נשלחה ל"
@@ -3137,7 +3269,11 @@
   },
   "smsPasswordInput": {
     "google": "סיסמה בגלובל SMS",
-    "valueInCode": "סיסמה בגלובל SMS"
+    "valueInCode": "סי סמה בגלובל SMS"
+  },
+  "smsProviderConfiguration": {
+    "google": "הגדרות ספק SMS",
+    "valueInCode": "הגדרות ספק SMS"
   },
   "smsReminderMessageContentCaption": {
     "google": "תוכן הודעת תזכורת SMS",
@@ -3153,7 +3289,7 @@
   },
   "smsUsername": {
     "google": "שם משתמש בגלובל SMS",
-    "valueInCode": "שם משתמש בגלובל SMS"
+    "valueInCode": "שם משת מש בגלובל SMS"
   },
   "smsVirtualPhoneNumber": {
     "google": "מספר קו וירטואלי בגולבל SMS",
@@ -3199,6 +3335,10 @@
     "google": "סיכום סטטוס",
     "valueInCode": "סיכום סטטוס"
   },
+  "stickerProperties": {
+    "google": "תכונות מדבקה",
+    "valueInCode": "תכונות מדבקה"
+  },
   "stopAskingForConfirmation": {
     "google": "הפסק לשאול האם מסכים לפני כל דבר",
     "valueInCode": "הפסק לשאול האם מסכים לפני כל דבר"
@@ -3222,6 +3362,14 @@
   "testSmsMessage": {
     "google": "בדיקת שליחת SMS",
     "valueInCode": "בדיקת שליחת SMS"
+  },
+  "textAfter": {
+    "google": "טקסט אחרי",
+    "valueInCode": "טקסט אחרי"
+  },
+  "textBefore": {
+    "google": "טקסט לפני",
+    "valueInCode": "טקסט לפני"
   },
   "thanksForVolunteering": {
     "google": ". תודה על ההתנדבות והנכונות לעזור!",
@@ -3302,6 +3450,10 @@
   "tooManyFamiliesForMerge": {
     "google": "יותר מידי חיילים בבת אחת",
     "valueInCode": "יותר מידי משפחות בבת אחת"
+  },
+  "topPadding": {
+    "google": "שוליים עליונים",
+    "valueInCode": "שוליים עליונים"
   },
   "total": {
     "google": "סה\"כ",
@@ -3489,11 +3641,11 @@
   },
   "urlFreeText1": {
     "google": "כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב",
-    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 1 למתנדב"
+    "valueInCode": "כתובת אינטרנט ללחיצה על הודעה 1 שתופיע למתנדב בראש המסך"
   },
   "urlFreeText2": {
     "google": "כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב",
-    "valueInCode": "כתובת אינטרנט ללחיצה על מלל חופשי 2 למתנדב"
+    "valueInCode": "כתובת אינטרנט ללחיצה על הודעה 2 שתופיע למתנדב בראש המסך"
   },
   "useBusketTypeFromCurrentDelivery": {
     "google": "השתמש בסוג הסל המוגדר במשלוח הנוכחי",
@@ -3651,6 +3803,10 @@
     "google": "מה להזמין?",
     "valueInCode": "מה להזמין?"
   },
+  "whatToTake": {
+    "google": "להביא",
+    "valueInCode": "להביא"
+  },
   "whatWentWrong": {
     "google": "מה לא הסתדר?",
     "valueInCode": "מה לא הסתדר?"
@@ -3658,6 +3814,10 @@
   "when": {
     "google": "מתי",
     "valueInCode": "מתי"
+  },
+  "width": {
+    "google": "רוחב",
+    "valueInCode": "רוחב"
   },
   "willBeReplacedBy": {
     "google": "יוחלף על ידי",

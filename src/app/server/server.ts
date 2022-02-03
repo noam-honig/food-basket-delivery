@@ -6,12 +6,10 @@ import { registerEntitiesOnServer, registerActionsOnServer } from 'remult/server
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
-
-import { ApplicationSettings, setSettingsForSite } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import "../helpers/helpers.component";
 import "../event-info/RegisterToEvent";
-//import '../app.module';
-import { Remult, SqlDatabase } from 'remult';
+import { OmitEB, Remult } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -21,15 +19,19 @@ import { preparePostgresQueueStorage } from "remult/postgres";
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
-import { AuthService } from '../auth/auth-service';
 import { InitContext } from "../helpers/init-context";
-import { Helpers, HelpersBase } from "../helpers/helpers";
+import { Helpers } from "../helpers/helpers";
 import { Phone } from "../model-shared/phone";
-
+import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
+import { translationConfig, TranslationOptions } from "../translate";
+import { DataApi } from "remult/src/data-api";
 
-
+DataApi.defaultGetLimit = 500;
+let publicRoot = 'hagai';
+if (!fs.existsSync(publicRoot + '/index.html'))
+    publicRoot = 'dist/' + publicRoot;
 serverInit().then(async (dataSource) => {
 
     let app = express();
@@ -47,16 +49,19 @@ serverInit().then(async (dataSource) => {
 
     async function sendIndex(res: express.Response, req: express.Request) {
         let remult = await eb.getRemult(req);
+
         let org = Sites.getOrganizationFromContext(remult);
         if (redirect.includes(org)) {
-            res.redirect(process.env.REDIRECT_TARGET + org);
+            const target = process.env.REDIRECT_TARGET + req.originalUrl;
+            console.log("Redirect ", target);
+            res.redirect(target);
             return;
         }
         if (!Sites.isValidOrganization(org)) {
             res.redirect('/' + Sites.guestSchema + '/');
             return;
         }
-        const index = 'hagai/index.html';
+        const index = publicRoot + '/index.html';
 
 
         if (fs.existsSync(index)) {
@@ -72,7 +77,7 @@ serverInit().then(async (dataSource) => {
             result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
 
             let tagid = 'UA-121891791-1'; // default key for Google Analytics
-            if (settings.isSytemForMlt()) {
+            if (settings.isSytemForMlt) {
                 //tagid = 'AW-452581833';
                 result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-452581833');gtag('config', 'UA-174556479-1');");
                 result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
@@ -238,75 +243,93 @@ s.parentNode.insertBefore(b, s);})();
     }
     app.use('/*/api/incoming-sms', async (req, res) => {
         try {
+
+
             let remult = await eb.getRemult(req);
-            let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
 
-            let com = comRepo.create({
-                apiResponse: req.query,
-                message: req.query.message as string,
-                phone: req.query.cell as string,
-                incoming: true,
-
-            });
-            try {
-                com.message = unescape(com.message).trim();
-                com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(com.phone) });
-                if (!com.volunteer) {
-                    let p = '+972' + com.phone.substring(1);
-                    com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(p) });
+            let org = Sites.getOrganizationFromContext(remult);
+            if (redirect.includes(org)) {
+                console.log("Incoming SMS Redirect", {
+                    p: req.path,
+                    q: req.query,
+                    o: req.originalUrl
+                });
+                const target = process.env.REDIRECT_TARGET + req.originalUrl;
+                try {
+                    await fetch.default(target);
+                } catch (err) {
+                    console.error("Incoming sms redirect err", err);
                 }
 
-                if (com.volunteer) {
-                    remult.currentUser = await com.volunteer.getHelper();
-                    remult.setUser({
-                        id: com.volunteer.id,
-                        name: com.volunteer.name,
-                        roles: []
-                    });
-                    if (com.message == "כן" || com.message == "לא") {
+            } else {
+                let comRepo = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory);
 
-                        let previousMessage = await comRepo.findFirst({ volunteer: com.volunteer }, {
-                            orderBy: { createDate: "desc" }
-                        })
-                        if (previousMessage && previousMessage.eventId) {
-                            let e = await remult.repo(Event).findId(previousMessage.eventId);
-                            if (e?.eventStatus == eventStatus.active) {
-                                let v = await remult.repo(volunteersInEvent).findFirst({ eventId: previousMessage.eventId, helper: com.volunteer });
-                                if (v) {
+                let com = comRepo.create({
+                    apiResponse: req.query,
+                    message: req.query.message as string,
+                    phone: req.query.cell as string,
+                    incoming: true,
 
-                                    switch (com.message) {
-                                        case "כן":
-                                            v.confirmed = true;
-                                            v.canceled = false;
-                                            com.automaticAction = "אישר הגעה לאירוע"
-                                            await v.save();
-                                            break;
-                                        case "לא":
-                                            v.canceled = true;
-                                            com.automaticAction += "ביטל הגעה לאירוע"
-                                            await v.save();
-                                            break;
+                });
+                try {
+                    com.message = unescape(com.message).trim();
+                    com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(com.phone) });
+                    if (!com.volunteer) {
+                        let p = '+972' + com.phone.substring(1);
+                        com.volunteer = await remult.repo(Helpers).findFirst({ phone: new Phone(p) });
+                    }
+
+                    if (com.volunteer) {
+                        remult.setUser({
+                            id: com.volunteer.id,
+                            name: com.volunteer.name,
+                            roles: []
+                        });
+                        if (com.message == "כן" || com.message == "לא") {
+
+                            let previousMessage = await comRepo.findFirst({ volunteer: com.volunteer }, {
+                                orderBy: { createDate: "desc" }
+                            })
+                            if (previousMessage && previousMessage.eventId) {
+                                let e = await remult.repo(Event).findId(previousMessage.eventId);
+                                if (e?.eventStatus == eventStatus.active) {
+                                    let v = await remult.repo(volunteersInEvent).findFirst({ eventId: previousMessage.eventId, helper: com.volunteer });
+                                    if (v) {
+
+                                        switch (com.message) {
+                                            case "כן":
+                                                v.confirmed = true;
+                                                v.canceled = false;
+                                                com.automaticAction = "אישר הגעה לאירוע"
+                                                await v.save();
+                                                break;
+                                            case "לא":
+                                                v.canceled = true;
+                                                com.automaticAction += "ביטל הגעה לאירוע"
+                                                await v.save();
+                                                break;
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        if (com.message == "הסר") {
+                            await com.volunteer.getHelper().then(async h => {
+                                h.doNotSendSms = true;
+                                await h.save();
+                            })
+                            com.automaticAction = "הוסר מרשימת הSMS";
+                        }
                     }
 
-                    if (com.message == "הסר") {
-                        await com.volunteer.getHelper().then(async h => {
-                            h.doNotSendSms = true;
-                            await h.save();
-                        })
-                        com.automaticAction = "הוסר מרשימת הSMS";
-                    }
+                } catch (err) {
+                    console.error(err);
+                    com.apiResponse = { ...com.apiResponse, err };
                 }
 
-            } catch (err) {
-                console.error(err);
-                com.apiResponse = { ...com.apiResponse, err };
+                await com.save();
             }
-
-            await com.save();
             res.send("thanks");
 
 
@@ -327,11 +350,12 @@ s.parentNode.insertBefore(b, s);})();
 
         sendIndex(res, req);
     });
-    app.use(express.static('hagai'));
+    app.use(express.static(publicRoot));
 
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
     });
+    
 
     let port = process.env.PORT || 3000;
     app.listen(port);
@@ -361,7 +385,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         catch (err) {
         }
         try {
-            res.send(fs.readFileSync('hagai/assets/apple-touch-icon.png'));
+            res.send(fs.readFileSync(publicRoot + '/assets/apple-touch-icon.png'));
         }
         catch (err) {
             res.statusCode = 404;
@@ -370,10 +394,10 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
     });
     app.use('/guest/favicon.ico', async (req, res) => {
         try {
-            res.send(fs.readFileSync('hagai/favicon.ico'));
+            res.send(fs.readFileSync(publicRoot + '/favicon.ico'));
         }
         catch {
-            res.send(fs.readFileSync('assets/favicon.ico'));
+            res.send(fs.readFileSync(publicRoot + '/assets/favicon.ico'));
         }
     })
     app.use(sitePrefix + '/favicon.ico', async (req, res) => {
@@ -388,7 +412,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         }
         catch (err) { }
         try {
-            res.send(fs.readFileSync('hagai/favicon.ico'));
+            res.send(fs.readFileSync(publicRoot + '/favicon.ico'));
         }
         catch (err) {
             res.statusCode = 404;
@@ -396,3 +420,4 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         }
     });
 }
+

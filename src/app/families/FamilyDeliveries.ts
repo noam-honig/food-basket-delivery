@@ -26,9 +26,12 @@ import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
+import { IdFieldRef } from "remult/src/remult3";
+import { DateOnlyValueConverter } from "remult/valueConverters";
+import { isDesktop } from "../shared/utils";
 
 
-@ValueListFieldType(MessageStatus, {
+@ValueListFieldType({
     translation: l => l.messageStatus
 })
 export class MessageStatus {
@@ -52,9 +55,9 @@ export class MessageStatus {
 
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = self.remult.currentUser;
+            self.createUser = (await self.remult.getCurrentUser());
             self.deliveryStatusDate = new Date();
-            self.deliveryStatusUser = self.remult.currentUser;
+            self.deliveryStatusUser = (await self.remult.getCurrentUser());
         }
         if (self.quantity < 1)
             self.quantity = 1;
@@ -110,19 +113,20 @@ export class FamilyDeliveries extends IdEntity {
     static async getFamilyImages(family: string, delivery: string, remult?: Remult): Promise<ImageInfo[]> {
         if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
-            if (d.courier != remult.currentUser)
+            if (d.courier?.id != (await remult.getCurrentUser())?.id)
                 return [];
         }
         let r = (await remult.repo(FamilyImage).find({ where: { familyId: family } })).map(({ image }) => ({ image } as ImageInfo));
         return r;
     }
+
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })
     static async hasFamilyImages(family: string, delivery: string, remult?: Remult): Promise<boolean> {
         if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
-            if (d.courier != remult.currentUser)
+            if (d.courier?.id != (await remult.getCurrentUser())?.id)
                 return false;
         }
         let r = (await remult.repo(FamilyImage).count({ familyId: family })) > 0;
@@ -199,8 +203,8 @@ export class FamilyDeliveries extends IdEntity {
         translation: l => l.familyName
     },
         (options, remult) =>
-            options.sqlExpression = (entity) => {
-                let r = remult.isAllowed(Roles.distCenterAdmin) || !getSettings(remult).showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+            options.sqlExpression = async (entity) => {
+                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.getSettings())?.showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
                 return r;
             }
     )
@@ -259,7 +263,7 @@ export class FamilyDeliveries extends IdEntity {
     relativeDeliveryStatusDate() {
         return relativeDateName(this.remult, { d: this.deliveryStatusDate });
     }
-    @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser ,includeInApi:Roles.distCenterAdmin})
+    @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser, includeInApi: Roles.distCenterAdmin })
     courierAssignUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.courierAsignDate })
     courierAssingTime: Date;
@@ -274,7 +278,7 @@ export class FamilyDeliveries extends IdEntity {
     })
     needsWork: boolean;
 
-    @Field({ translation: l => l.requireFollowUpUpdateUser ,includeInApi:Roles.distCenterAdmin})
+    @Field({ translation: l => l.requireFollowUpUpdateUser, includeInApi: Roles.distCenterAdmin })
     needsWorkUser: HelpersBase;
     @ChangeDateColumn({ translation: l => l.requireFollowUpUpdateDate })
     needsWorkDate: Date;
@@ -356,7 +360,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: false
     })
     addressOk: boolean;
-    @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false ,includeInApi:Roles.distCenterAdmin})
+    @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false, includeInApi: Roles.distCenterAdmin })
     fixedCourier: HelpersBase;
     @IntegerField({ allowApiUpdate: false })
     familyMembers: number;
@@ -418,7 +422,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     )
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt() || c.isAllowed(Roles.admin)) })
+    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt || c.isAllowed(Roles.admin)) })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
@@ -486,7 +490,7 @@ export class FamilyDeliveries extends IdEntity {
         group: string,
         area: string,
         basketId: string
-    }>(async ( remult, { city, group, area, basketId }) => {
+    }>(async (remult, { city, group, area, basketId }) => {
         let basket = await remult.repo(BasketType).findId(basketId);
         return {
             deliverStatus: DeliveryStatus.ReadyForDelivery,
@@ -498,12 +502,12 @@ export class FamilyDeliveries extends IdEntity {
             basketType: basket != null ? basket : undefined
         }
     });
-    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>(( remult) => {
+    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>(async (remult) => {
 
         if (!remult.authenticated())
             return { id: [] };
         let result: EntityFilter<FamilyDeliveries>[] = [];
-        let user = remult.currentUser;
+        let user = (await remult.getCurrentUser());
         if (!remult.isAllowed([Roles.admin, Roles.lab])) {
             result.push(FamilyDeliveries.active);
             if (remult.isAllowed(Roles.distCenterAdmin))
@@ -539,12 +543,18 @@ export class FamilyDeliveries extends IdEntity {
     constructor(protected remult: Remult) {
         super();
     }
-
+    static async loadFamilyInfoForExcepExport(remult: Remult, deliveries: ActiveFamilyDeliveries[]) {
+        let families = await remult.repo(Families).find({ limit: deliveries.length, where: { id: deliveries.map(d => d.family) } });
+        for (const d of deliveries) {
+            d.familyForExcelExport = families.find(f => f.id == d.family);
+        }
+    }
+    private familyForExcelExport: Families;
     async addFamilyInfoToExcelFile(addColumn) {
-        var f = await this.remult.repo(Families).findId(this.family);
+        var f = this.familyForExcelExport;
         let settings = await ApplicationSettings.getAsync(this.remult);
         if (f) {
-            let x = f.addressHelper.getGeocodeInformation();
+            let x = f.addressHelper.getGeocodeInformation;
             let street = f.address;
             let house = '';
             let lastName = '';
@@ -678,8 +688,14 @@ export class FamilyDeliveries extends IdEntity {
             }
     }
     openWaze() {
-        //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address) + 'export &navigate=yes', '_blank');
-        location.href = 'waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address) + '&navigate=yes';
+        if (isDesktop())
+            window.open('https://waze.com/ul?ll=' + this.getDrivingLocation() + "&q=" + encodeURI(this.address) + 'export &navigate=yes', '_blank');
+        else
+            try {
+                location.href = 'waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address) + '&navigate=yes';
+            } catch (err) {
+                console.log(err);
+            }
     }
     openGoogleMaps() {
         window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.addressByGoogle, '_blank');
@@ -806,7 +822,7 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
     translate: async (remult, f) => {
-        return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, remult.repo(FamilyDeliveries).metadata, remult);
+        return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, remult);
     }
 });
 
@@ -822,10 +838,10 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
-function logChanged(remult: Remult, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: FieldRef<any, HelpersBase>, wasChanged: (() => void)) {
+function logChanged(remult: Remult, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
-        user.value = remult.currentUser;
+        user.setId(remult.user.id);
         wasChanged();
     }
 }

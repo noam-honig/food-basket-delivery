@@ -6,6 +6,7 @@
         <button mat-icon-button (click)="reset()" [disabled]="!wasChange()">
             <mat-icon color="warning">clear</mat-icon>
         </button>
+        <button mat-button (click)="previewVolunteer()">{{settings.lang.previewVolunteerScreen}}</button>
     </div>
 
 
@@ -89,8 +90,8 @@
                 {{settings.lang.smsTextHelpTitle}}
                 <ul>
                     <li>!מתנדב! - {{settings.lang.replacedByVolunteerName}}</li>
-                    <li *ngIf="settings.isSytemForMlt()">!משפחה! - {{settings.lang.replacedByFamilyName}}</li>
-                    <li *ngIf="settings.isSytemForMlt()">!תורם! - {{settings.lang.replacedByFamilyName}}</li>
+                    <li *ngIf="settings.isSytemForMlt">!משפחה! - {{settings.lang.replacedByFamilyName}}</li>
+                    <li *ngIf="settings.isSytemForMlt">!תורם! - {{settings.lang.replacedByFamilyName}}</li>
                     <li>!שולח! - {{settings.lang.replcaedBySenderName}}</li>
                     <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
                     <li>!אתר! - {{settings.lang.replaceBySiteUrl}}</li>
@@ -99,6 +100,12 @@
                 <H4>{{settings.lang.sampleMessage}}</H4>
                 <pre>{{testSms()}}</pre>
             </mat-card>
+
+            <data-area [settings]="settingsMessages"></data-area>
+            <button mat-raised-button (click)="saveAndPreview()" color="primary"
+                style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
+            <data-area [settings]="settings2Messages"></data-area>
+
             <mat-card>
                 <mat-card-title>
                     {{settings.$.reminderSmsText.metadata.caption}}
@@ -109,7 +116,7 @@
                 <h4>{{settings.lang.sampleReminderSms}}</h4>
                 <pre>{{testSmsReminder()}}</pre>
             </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt()">
+            <mat-card *ngIf="settings.isSytemForMlt">
                 <mat-card-title>
                     {{settings.$.registerFamilyReplyEmailText.metadata.caption}}
                 </mat-card-title>
@@ -119,7 +126,7 @@
                 <h4>{{settings.lang.sampleMessage}}</h4>
                 <pre [innerHTML]="testEmailDonor()"></pre>
             </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt()">
+            <mat-card *ngIf="settings.isSytemForMlt">
                 <mat-card-title>
                     {{settings.$.registerHelperReplyEmailText.metadata.caption}}
                 </mat-card-title>
@@ -129,7 +136,7 @@
                 <h4>{{settings.lang.sampleMessage}}</h4>
                 <pre [innerHTML]="testEmailHelper()"></pre>
             </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt()">
+            <mat-card *ngIf="settings.isSytemForMlt||settings.familySelfOrderEnabled">
                 <mat-card-title>
                     הגדרות מייל
                 </mat-card-title>
@@ -153,10 +160,6 @@
                     <pre>{{testSuccessSms()}}</pre>
                 </ng-container>
             </mat-card>
-            <data-area [settings]="settingsMessages"></data-area>
-            <button mat-raised-button (click)="saveAndPreview()" color="primary"
-                style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
-            <data-area [settings]="settings2Messages"></data-area>
         </mat-expansion-panel>
         <mat-expansion-panel>
             <mat-expansion-panel-header>

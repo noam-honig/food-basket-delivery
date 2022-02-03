@@ -13,7 +13,7 @@ import { ValueListValueConverter } from 'remult/valueConverters';
   , width: '150'
 
 })
-@ValueListFieldType(DeliveryStatus, {
+@ValueListFieldType( {
   displayValue: (e, val) => val.caption,
   translation: l => l.deliveryStatus
 })
@@ -105,7 +105,7 @@ export class DeliveryStatus {
     if (!getSettings(remult).usingSelfPickupModule) {
       op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
     }
-    if (!getSettings(remult).isSytemForMlt()) {
+    if (!getSettings(remult).isSytemForMlt) {
       op = op.filter(x =>
         x.id != DeliveryStatus.FailedNotReady.id &&
         x.id != DeliveryStatus.FailedTooFar.id

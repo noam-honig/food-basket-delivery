@@ -145,7 +145,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
               };
               checkDistance(helper.location1, 'העדפת מתנדב: ' + helper.address1);
               checkDistance(helper.location2, 'העדפת מתנדב: ' + helper.address2);
-              if (!this.settings.isSytemForMlt())
+              if (!this.settings.isSytemForMlt)
                 for (const exF of helper.families) {
                   checkDistance(exF.location, 'משלוח: ' + exF.address);
                 }
@@ -178,17 +178,18 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
     let i = 0;
     //collect helpers
-    for (let h of await remult.repo(Helpers).find({ where: { ...Helpers.active , preferredDistributionAreaAddress: { "!=": '' } }, limit: 1000 })) {
+    for (let h of await remult.repo(Helpers).find({ where: { ...Helpers.active, preferredDistributionAreaAddress: { "!=": '' } }, limit: 1000 })) {
       result.helpers[h.id] = ShipmentAssignScreenComponent.helperInfoFromHelper(h);
       i++;
     }
 
     //remove busy helpers
     {
+      let settings = (await remult.getSettings());
       let fd = SqlFor(remult.repo(FamilyDeliveries));
       let sql = new SqlBuilder(remult);
       let busyLimitdate = new Date();
-      busyLimitdate.setDate(busyLimitdate.getDate() - getSettings(remult).BusyHelperAllowedFreq_denom);
+      busyLimitdate.setDate(busyLimitdate.getDate() - settings.BusyHelperAllowedFreq_denom);
 
 
       for (let busy of (await db.execute(await sql.query({
@@ -196,7 +197,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
         from: fd,
         where: () => [fd.where({ deliverStatus: DeliveryStatus.isAResultStatus(), deliveryStatusDate: { ">": busyLimitdate } })],
         groupBy: () => [fd.courier],
-        having: () => [sql.build('count(distinct ', fd.family, ' )>', getSettings(remult).BusyHelperAllowedFreq_nom)]
+        having: () => [sql.build('count(distinct ', fd.family, ' )>', settings.BusyHelperAllowedFreq_nom)]
       }))).rows) {
         result.helpers[busy.courier] = undefined;
       }
@@ -319,10 +320,10 @@ export class ShipmentAssignScreenComponent implements OnInit {
     return {
       id: h.id,
       name: h.name,
-      location1: h.preferredDistributionAreaAddressHelper.ok() ? h.preferredDistributionAreaAddressHelper.location() : undefined,
+      location1: h.preferredDistributionAreaAddressHelper.ok ? h.preferredDistributionAreaAddressHelper.location : undefined,
       address1: h.preferredDistributionAreaAddress,
       address2: h.preferredFinishAddress,
-      location2: h.preferredFinishAddressHelper.ok() ? h.preferredFinishAddressHelper.location() : undefined,
+      location2: h.preferredFinishAddressHelper.ok ? h.preferredFinishAddressHelper.location : undefined,
       families: [],
       problemFamilies: {},
       relevantFamilies: []

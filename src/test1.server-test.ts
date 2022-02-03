@@ -12,7 +12,7 @@ import { UpdateArea, UpdateAreaForDeliveries, UpdateStatus, UpdateStatusForDeliv
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "./app/families/FamilyDeliveries";
 import { FamilyStatus } from "./app/families/FamilyStatus";
 import { DeleteDeliveries, UpdateDeliveriesStatus } from "./app/family-deliveries/family-deliveries-actions";
-import { Helpers, HelperUserInfo } from "./app/helpers/helpers";
+import { Helpers } from "./app/helpers/helpers";
 import { ApplicationSettings } from "./app/manage/ApplicationSettings";
 import { initSettings, serverInit } from "./app/server/serverInit";
 import { GeocodeInformation } from "./app/shared/googleApiHelpers";
@@ -24,7 +24,6 @@ import { AuthService } from './app/auth/auth-service';
 import { actionInfo } from 'remult/src/server-action';
 import { InitContext } from "./app/helpers/init-context";
 initSettings.disableSchemaInit = true;
-
 
 
 function init() {
@@ -113,13 +112,13 @@ function init() {
             await InitContext(remult);
             done();
         });
-        async function callAddBox() {
+        async function callAddBox(num=1) {
             return await AsignFamilyComponent.AddBox(helperWhoIsAdmin, null, null, {
                 allRepeat: false,
                 area: '',
                 city: '',
                 group: '',
-                numOfBaskets: 1,
+                numOfBaskets: num,
                 preferRepeatFamilies: false
             }, remult, sql);
         }
@@ -149,9 +148,27 @@ function init() {
             expect(await (remult.repo(ActiveFamilyDeliveries).count({ courier: null }))).toBe(2);
             let r = await callAddBox();
             expect(r.families.length).toBe(2);
-            
+
             expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
             expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
+        });
+        itAsync("chooses closest to previous delivery2", async () => {
+            await createDelivery(0);
+            await createDelivery(7);
+            await createDelivery(5);
+            await createDelivery(8);
+            await createDelivery(10);
+            let d = await createDelivery(6);
+            d.courier = helperWhoIsAdmin;
+            await d.save();
+            expect(await (remult.repo(ActiveFamilyDeliveries).count({ courier: null }))).toBe(5);
+            let r = await callAddBox(3);
+            expect(r.families.length).toBe(4);
+
+            expect(r.families.some(d => d.internalDeliveryComment == '6')).toBeTruthy();;
+            expect(r.families.some(d => d.internalDeliveryComment == '5')).toBeTruthy();
+            expect(r.families.some(d => d.internalDeliveryComment == '7')).toBeTruthy();;
+            expect(r.families.some(d => d.internalDeliveryComment == '8')).toBeTruthy();
         });
         itAsync("chooses closest to helper", async () => {
 
@@ -412,7 +429,7 @@ function init() {
                 escortedHelperName: undefined,
                 theHelperIAmEscortingId: undefined,
                 roles: [Roles.distCenterAdmin]
-            } as HelperUserInfo);
+            });
             await InitContext(c2);
 
             expect(+(await remult.repo(ActiveFamilyDeliveries).count())).toBe(3);

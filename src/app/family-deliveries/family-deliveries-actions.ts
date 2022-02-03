@@ -188,7 +188,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
     constructor(remult: Remult) {
         super(remult, {
             title: getLang(remult).updateDeliveriesStatus,
-            help: () => getSettings(remult).isSytemForMlt() ? '' : getLang(this.remult).updateDeliveriesStatusHelp,
+            help: () => getSettings(remult).isSytemForMlt ? '' : getLang(this.remult).updateDeliveriesStatusHelp,
             validate: async () => {
                 if (this.status == undefined)
                     throw getLang(this.remult).statusNotSelected;
@@ -211,7 +211,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
                 }
             },
             forEach: async f => {
-                if (getSettings(remult).isSytemForMlt() || !(this.status == DeliveryStatus.Frozen && f.deliverStatus != DeliveryStatus.ReadyForDelivery)) {
+                if (getSettings(remult).isSytemForMlt || !(this.status == DeliveryStatus.Frozen && f.deliverStatus != DeliveryStatus.ReadyForDelivery)) {
                     f.deliverStatus = this.status;
                     if (this.deleteExistingComment) {
                         f.internalDeliveryComment = '';
@@ -346,7 +346,7 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
 }
 
 
-@ValueListFieldType(HelperStrategy, {
+@ValueListFieldType( {
     defaultValue: () => HelperStrategy.familyDefault,
     translation: l => l.volunteer
 })

@@ -45,10 +45,10 @@ export class MapComponent implements OnInit, OnDestroy {
             });
             // console.timeEnd('load families to map');
             if (!this.hasFamilies && this.helper) {
-                if (this.helper.preferredDistributionAreaAddressHelper.ok())
-                    this.map.setCenter(this.helper.preferredDistributionAreaAddressHelper.location())
-                else if (this.helper.preferredFinishAddressHelper.ok())
-                    this.map.setCenter(this.helper.preferredFinishAddressHelper.location())
+                if (this.helper.preferredDistributionAreaAddressHelper.ok)
+                    this.map.setCenter(this.helper.preferredDistributionAreaAddressHelper.location)
+                else if (this.helper.preferredFinishAddressHelper.ok)
+                    this.map.setCenter(this.helper.preferredFinishAddressHelper.location)
                 else
                     this.fitBounds();
             }
@@ -174,16 +174,16 @@ export class MapComponent implements OnInit, OnDestroy {
                 start = (await families[0].distributionCenter.getRouteStartGeo()).location();
             else if (this.dialog.distCenter)
                 start = (await this.dialog.distCenter.getRouteStartGeo()).location();
-            else start = this.settings.addressHelper.location();
+            else start = this.settings.addressHelper.location;
             this.helperMarkers = [];
 
             this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: start, icon: 'https://labs.google.com/ridefinder/images/mm_20_purple.png' }));
             this.helper = helper;
-            if (helper.preferredDistributionAreaAddressHelper.ok()) {
-                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredDistributionAreaAddressHelper.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }));
+            if (helper.preferredDistributionAreaAddressHelper.ok) {
+                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredDistributionAreaAddressHelper.location, icon: 'https://maps.google.com/mapfiles/arrow.png' }));
             }
-            if (helper.preferredFinishAddressHelper.ok()) {
-                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredFinishAddressHelper.location(), icon: 'https://maps.google.com/mapfiles/arrow.png' }))
+            if (helper.preferredFinishAddressHelper.ok) {
+                this.helperMarkers.push(new google.maps.Marker({ map: this.map, position: helper.preferredFinishAddressHelper.location, icon: 'https://maps.google.com/mapfiles/arrow.png' }))
             }
         }
 
@@ -267,7 +267,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private async initMap() {
         if (!this.mapInit) {
             if (!this.center) {
-                var x = (await ApplicationSettings.get(this.remult)).addressHelper.location();
+                var x = (await this.remult.getSettings()).addressHelper.location;
                 this.center = new google.maps.LatLng(x.lat, x.lng);
             }
             var mapProp: google.maps.MapOptions = {

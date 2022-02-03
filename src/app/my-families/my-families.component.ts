@@ -3,9 +3,9 @@ import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
 import { BusyService, RouteHelperService } from '@remult/angular';
-import { Remult } from 'remult';
+import { Remult, UserInfo } from 'remult';
 
-import { Helpers, HelperUserInfo } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
 
@@ -30,11 +30,11 @@ export class MyFamiliesComponent implements OnInit {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
   familyLists = new UserFamiliesList(this.remult, this.settings);
-  user: HelperUserInfo;
+  user: UserInfo;
 
   constructor(public remult: Remult, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
     private busy: BusyService) {
-    this.user = remult.user as HelperUserInfo;
+    this.user = remult.user as UserInfo;
   }
   hasEvents = false;
   moveToOpertunities() {

@@ -300,7 +300,7 @@ export class FamiliesComponent implements OnInit {
                 families.addressByGoogle,
                 {
                     caption: this.settings.lang.googleApiProblem,
-                    getValue: f => f.addressHelper.getGeocodeInformation().whyProblem()
+                    getValue: f => f.addressHelper.getGeocodeInformation.whyProblem()
                 },
                 families.phone1Description,
                 families.phone2,
@@ -344,7 +344,7 @@ export class FamiliesComponent implements OnInit {
                 families.address,
                 families.phone1
             ];
-            if (this.settings.isSytemForMlt()) {
+            if (this.settings.isSytemForMlt) {
                 this.normalColumns.push(
                     families.email,
                     families.createDate
@@ -763,8 +763,8 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>(getSettings(remult), remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
-        let x = f.addressHelper.getGeocodeInformation();
+    await saveToExcel<Families, GridSettings<Families>>((await remult.getSettings()), remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+        let x = f.addressHelper.getGeocodeInformation;
         let street = f.address;
         let house = '';
         let lastName = '';

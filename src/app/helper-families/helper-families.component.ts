@@ -105,8 +105,9 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignSmsSent = new EventEmitter<void>();
   @Input() preview = false;
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
-  ngOnInit() {
-
+  currentUser: Helpers;
+  async ngOnInit() {
+    this.currentUser = await this.remult.getCurrentUser();
 
   }
   volunteerLocation: Location = undefined;
@@ -126,8 +127,8 @@ export class HelperFamiliesComponent implements OnInit {
       settings: {
         fields: () => [
           { field: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
-          { field: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt() },
-          { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt() }
+          { field: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt },
+          { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt }
         ]
       },
       cancel: () => { },
@@ -150,7 +151,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   @BackendMethod({ allowed: Roles.indie })
   static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, remult?: Remult, db?: SqlDatabase) {
-    if (!getSettings(remult).isSytemForMlt())
+    if (!getSettings(remult).isSytemForMlt)
       throw "not allowed";
     let result: selectListItem<DeliveryInList>[] = [];
 
@@ -279,8 +280,9 @@ export class HelperFamiliesComponent implements OnInit {
     if (this.settings.helpText && this.settings.helpPhone)
       return r + this.settings.helpText + ", " + this.settings.helpPhone.displayValue;
     else {
-      var h = this.remult.currentUser;
-      return r + h.name + ", " + h.phone.displayValue;
+      var h = this.currentUser;
+      if (h)
+        return r + h.name + ", " + h.phone.displayValue;
     }
   }
 
@@ -369,7 +371,7 @@ export class HelperFamiliesComponent implements OnInit {
       await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, remult);
   }
   notMLT() {
-    return !this.settings.isSytemForMlt();
+    return !this.settings.isSytemForMlt;
   }
 
   limitReady = new limitList(30, () => this.familyLists.toDeliver.length);
@@ -414,7 +416,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   otherDependentVolunteers: HelpersBase[] = [];
 
-  allDoneMessage() { return ApplicationSettings.get(this.remult).messageForDoneDelivery; };
+  allDoneMessage() { return this.settings.messageForDoneDelivery; };
   async deliveredToFamily(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.Success, s => s.commentForSuccessDelivery);
   }
@@ -423,7 +425,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   @BackendMethod({ allowed: Allow.authenticated })
   static async sendSuccessMessageToFamily(deliveryId: string, remult?: Remult) {
-    var settings = getSettings(remult);
+    var settings = (await remult.getSettings());
     if (!settings.allowSendSuccessMessageOption)
       return;
     if (!settings.sendSuccessMessageToFamily)
@@ -559,22 +561,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async customSms() {
     let h = this.familyLists.helper;
-    let phone = h.phone.thePhone;
-    if (phone.startsWith('0')) {
-      phone = '972' + phone.substr(1);
-    }
-    await openDialog(GetVolunteerFeedback, x => x.args = {
-      helpText: () => '',
-      ok: async (comment) => {
-        await (await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent.SendCustomMessageToCourier(this.familyLists.helper, comment);
-        this.dialog.Info("הודעה נשלחה");
-      },
-      cancel: () => { },
-      hideLocation: true,
-      title: 'שלח הודעת ל' + h.name,
-      family: undefined,
-      comment: this.smsMessage
-    });
+    h.sendSmsToCourier(this.dialog);
   }
   smsMessage: string = '';
   smsPhone: string = '';
@@ -600,7 +587,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async callHelper() {
     location.href = 'tel:' + this.familyLists.helper.phone;
-    if (this.settings.isSytemForMlt()) {
+    if (this.settings.isSytemForMlt) {
       await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
         title: 'הוסף הערה לתכתובות של המתנדב',
 
@@ -652,7 +639,7 @@ export class HelperFamiliesComponent implements OnInit {
 
     });
   }
-  routeStart = this.settings.addressHelper.getGeocodeInformation();
+  routeStart = this.settings.addressHelper.getGeocodeInformation;
   async showRouteOnGoogleMaps() {
 
     if (this.familyLists.toDeliver.length > 0) {

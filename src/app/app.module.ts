@@ -114,6 +114,7 @@ import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-me
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 import { RegisterToEvent } from './event-info/RegisterToEvent';
+import { PreviousDeliveryCommentsComponent } from './previous-delivery-comments/previous-delivery-comments.component';
 
 
 
@@ -221,7 +222,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     PropertiesEditorComponent,
     EditCustomMessageComponent,
     IncomingMessagesComponent,
-    FamilySelfOrderComponent
+    FamilySelfOrderComponent,
+    PreviousDeliveryCommentsComponent
 
 
   ],
@@ -312,12 +314,16 @@ export function initApp(session: TokenService, settings: SettingsService, remult
         await session.loadUserInfo();
         await remult.userChange.observe(async () => {
           await InitContext(remult);
+          if (settings.instance)
+            await settings.instance._.reload();
 
         });
       } catch {
         session.setToken(undefined, true);
         await remult.userChange.observe(async () => {
           await InitContext(remult);
+          if (settings.instance)
+            await settings.instance._.reload();
 
         });
         console.error("Failed ti init existing user");
@@ -345,6 +351,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
       routeMap.set(ImportHelpersFromExcelComponent, l.ImportHelpersFromExcelComponent);
       routeMap.set(DuplicateFamiliesComponent, l.DuplicateFamiliesComponent);
       routeMap.set(ManageComponent, l.ManageComponent);
+      routeMap.set(IncomingMessagesComponent, l.smsMessages);
       routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent);
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent);
       routeMap.set(LoginComponent, l.LoginComponent);
@@ -356,7 +363,6 @@ export function initApp(session: TokenService, settings: SettingsService, remult
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent);
       routeMap.set(RegisterURLComponent, l.RegisterURLComponent);
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities);
-      routeMap.set(IncomingMessagesComponent, l.incomingMessages);
 
       RegisterToEvent.init();
 

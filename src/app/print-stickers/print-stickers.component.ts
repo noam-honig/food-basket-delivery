@@ -6,6 +6,7 @@ import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty
 import { Entity } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
 import { assign } from 'remult/assign';
+import { InputTypes } from 'remult/inputTypes';
 
 
 
@@ -16,24 +17,34 @@ import { assign } from 'remult/assign';
 })
 export class PrintStickersComponent implements OnInit {
 
-  constructor(private remult: Remult, private busy: BusyService) { }
+  constructor(public remult: Remult, private busy: BusyService) { }
   defs = new VolunteerReportDefs(this.remult, this.busy);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;
+  borderKey = '@border';
   pageProps: ElementProps = {
-    caption: 'תכונות דף', props: [
+    caption: this.remult.lang.pageProperties, props: [
       ...getMarginsH()]
 
   };
+  getStickerBorderSettings() {
+    if (this.stickerProps.values[this.borderKey])
+      return '1px dotted lightgray';
+    return '';
+  }
   stickerProps: ElementProps = {
-    caption: 'תכונות מדבקה', props: [
-      new Property('height', 'גובה', 'number', (val, s) => assign(s, {
+    caption: this.remult.lang.labelProperties, props: [
+      new Property('height', this.remult.lang.height, 'number', (val, s) => assign(s, {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),
-      new SizeProperty('width', 'רוחב'),
-      ...getMarginsH(), ...getMarginsV()],
+      new SizeProperty('width', this.remult.lang.width),
+      ...getMarginsH(), ...getMarginsV(),
+      new Property(this.borderKey, this.remult.lang.border, InputTypes.checkbox, (val, s) => {
+
+      })
+    ],
 
   };
   editControl(c: Control) {
@@ -100,20 +111,22 @@ export class PrintStickersComponent implements OnInit {
         sticker: {
           width: '105',
           height: '70',
-          "padding-right": '5',
-          "padding-left": '5',
-          "padding-top": '5',
-          "padding-bottom": '5'
+          "padding-right": '1',
+          "padding-left": '0',
+          "padding-top": '0',
+          "padding-bottom": '1'
         }
       }
     }
     this.pageProps.values = this.report.page;
     this.stickerProps.values = this.report.sticker;
   }
-
-  save() {
-    this.row.info = JSON.parse(JSON.stringify(this.report));
-    this.busy.donotWait(() => this.row.save());
+  lastSave = Promise.resolve();
+  async save() {
+    this.lastSave = this.lastSave.then(async () => {
+      this.row.info = JSON.parse(JSON.stringify(this.report));
+      await this.busy.donotWait(() => this.row.save());
+    });
   }
 }
 

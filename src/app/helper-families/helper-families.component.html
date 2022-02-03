@@ -20,7 +20,7 @@
 
         <button mat-menu-item (click)="familyLists.showBasketSummary()"
           *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
-          <button mat-menu-item (click)="toggleReorder()">{{settings.lang.changeRouteOrder}}</button>
+        <button mat-menu-item (click)="toggleReorder()">{{settings.lang.changeRouteOrder}}</button>
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="showRouteOnGoogleMaps()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
@@ -45,6 +45,7 @@
       {{settings.lang.minutes}},
       {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
         style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
+
   </div>
   <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
     <mat-tab>
@@ -80,7 +81,8 @@
                 <br />
                 <button mat-raised-button class="myButton badButton"
                   (click)="couldntDeliverToFamily(f)">{{settings.problemButtonText}}</button>
-                <button mat-raised-button class="myButton" *ngIf="settings.isSytemForMlt()||settings.volunteerCanUpdateDeliveryComment"
+                <button mat-raised-button class="myButton"
+                  *ngIf="settings.isSytemForMlt||settings.volunteerCanUpdateDeliveryComment"
                   (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
 
 
@@ -99,6 +101,13 @@
         {{settings.lang.map}}
       </ng-template>
       <app-map #map> </app-map>
+    </mat-tab>
+    <mat-tab *ngIf="familyLists.whatToTake">
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">shopping_cart</mat-icon>
+        {{settings.lang.whatToTake}}
+      </ng-template>
+      <div style="white-space: pre;">{{familyLists.whatToTake}}</div>
     </mat-tab>
   </mat-tab-group>
 

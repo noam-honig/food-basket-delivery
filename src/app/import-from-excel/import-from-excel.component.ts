@@ -175,8 +175,8 @@ export class ImportFromExcelComponent implements OnInit {
                 if (createDelivery) {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
-                    if (getSettings(remult).isSytemForMlt()) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location());
+                    if (getSettings(remult).isSytemForMlt) {
+                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
                 }
@@ -228,7 +228,7 @@ export class ImportFromExcelComponent implements OnInit {
     @BackendMethod({ allowed: Roles.admin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, remult?: Remult) {
         for (const r of rowsToUpdate) {
-            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, getSettings(remult));
+            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.getSettings()));
         }
         return rowsToUpdate;
     }
@@ -266,8 +266,8 @@ export class ImportFromExcelComponent implements OnInit {
             for (const c of fd.$) {
                 if (c == col) {
                     fd._disableMessageToUsers = true;
-                    if (settings.isSytemForMlt()) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location());
+                    if (settings.isSytemForMlt) {
+                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
                     break;
@@ -557,7 +557,7 @@ export class ImportFromExcelComponent implements OnInit {
                 this.newRows = JSON.parse(sessionStorage.getItem("newRows"));
                 this.updateRows = JSON.parse(sessionStorage.getItem("updateRows"));
                 this.identicalRows = JSON.parse(sessionStorage.getItem("identicalRows"));
-                this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f.$[x]);
+                this.columnsInCompare = JSON.parse(sessionStorage.getItem("columnsInCompare")).map(x => this.f[x]);
                 if (this.columnsInCompare.length > 0) {
                     setTimeout(() => {
                         this.stepper.next();
@@ -796,7 +796,7 @@ export class ImportFromExcelComponent implements OnInit {
             name: this.f.groups.caption,
             updateFamily: async (v, f, h) => {
                 if (v && v.trim().length > 0) {
-                    let g = await this.remult.repo(Groups).findFirst({ name: v.trim() }, { createIfNotFound: true });
+                    let g = await this.remult.repo(Groups).findFirst({ name: v.trim() }, { createIfNotFound: true, useCache: true });
                     if (g.isNew())
                         await g.save();
                 }
@@ -1462,7 +1462,7 @@ class columnUpdateHelper {
         getResult: (entity: T) => Y,
         updateResultTo: FieldRef<any, Y>,
         additionalUpdates?: ((entity: T) => void)) {
-        let x = await this.remult.repo(c).findFirst(searchForExistingValueFilter(val), { createIfNotFound: true });
+        let x = await this.remult.repo(c).findFirst(searchForExistingValueFilter(val), { createIfNotFound: true, useCache: true });
         if (x.isNew()) {
             let s = updateResultTo.metadata.caption + " \"" + val + "\" " + use.language.doesNotExist;
             if (this.autoAdd || await this.dialog.YesNoPromise(s + ", " + use.language.questionAddToApplication + "?")) {

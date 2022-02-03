@@ -20,8 +20,14 @@
       (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
   </div>
   <a *ngIf="settings.showTzToVolunteer" (click)="showTz()" style="display:block">הצג מספר זהות</a>
+  <a *ngIf="settings.allowVolunteerToSeePreviousActivities" (click)="showHistory()"
+    style="display:block">{{settings.lang.showPreviousActivities}}</a>
   <ng-container *ngIf="!hideSal">
-    <h4 style="display:inline">{{settings.lang.basket}}</h4> - {{f.$.basketType.displayValue}}
+    <h4 style="display:inline">{{settings.lang.basket}}</h4> - <span *ngIf="f.quantity>1">{{f.quantity}} X</span> {{f.$.basketType.displayValue}} 
+    <div *ngIf="whatToTake">
+      <strong>{{settings.lang.whatToTake}}: </strong>
+      {{whatToTake}}
+    </div>
   </ng-container>
 
   <div *ngIf="f.deliveryComments">
@@ -36,9 +42,9 @@
   </div>
   <h4>{{settings.lang.address}}</h4>
   <div class="address-container">
-    <span (click)="openWaze(f)">
-      <img src="assets/waze.png" *ngIf="useWaze()">
-      <img src="assets/google_maps_icon.png" *ngIf="!useWaze()">
+    <span (click)="navigate(f)">
+      <img src="assets/waze.png" *ngIf="useWaze">
+      <img src="assets/google_maps_icon.png" *ngIf="!useWaze">
     </span>
     <div style="flex-grow:1;padding:0 5px;">
       <ng-container *ngIf="!f.addressOk">
@@ -48,7 +54,7 @@
         <br />
         <br />
       </ng-container>
-      <a (click)="openWaze(f)">
+      <a (click)="navigate(f)">
 
 
 
@@ -84,18 +90,19 @@
 
     <div class="address-links">
       <mat-menu #addressMenu="matMenu">
-        <button mat-menu-item (click)="f.openGoogleMaps()" *ngIf="useWaze()">google map</button>
+        <button mat-menu-item (click)="navigate(f,true)">{{settings.lang.navigateWithWaze}}</button>
+        <button mat-menu-item (click)="navigate(f,false)">{{settings.lang.navigateWithGoogleMaps}}</button>
 
-        <button mat-menu-item (click)="f.showOnGovMap()" *ngIf="useWaze()">govmap</button>
+        <button mat-menu-item (click)="f.showOnGovMap()">govmap</button>
 
         <button mat-menu-item (click)="copyAddress(f)">{{settings.lang.copyAddress}}</button>
 
 
       </mat-menu>
 
-      <button mat-icon-button [matMenuTriggerFor]="addressMenu">
+      <button mat-icon-button [matMenuTriggerFor]="addressMenu" color="primary">
 
-        <mat-icon style="color:lightblue">explore</mat-icon>
+        <mat-icon>explore</mat-icon>
       </button>
 
 

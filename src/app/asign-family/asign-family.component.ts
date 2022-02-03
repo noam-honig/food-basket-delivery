@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, BackendMethod, SqlDatabase, FieldRef, Allow, EntityFilter } from 'remult';
+import { UrlBuilder, Filter, BackendMethod, SqlDatabase, FieldRef, Allow, EntityFilter, ProgressListener } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -13,7 +13,7 @@ import { environment } from '../../environments/environment';
 import { Route } from '@angular/router';
 
 import { foreachSync, PromiseThrottle } from '../shared/utils';
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 
 import { Remult } from 'remult';
@@ -48,6 +48,7 @@ import { use } from '../translate';
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { getLang } from '../sites/sites';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
+import { Progress } from 'aws-sdk/lib/request';
 
 
 
@@ -663,7 +664,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async assignClosestDeliveries() {
 
-        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddressHelper.location(), false));
+        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddressHelper.location, false));
 
         await openDialog(SelectListComponent, x => {
             x.args = {
@@ -689,8 +690,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
     }
-    @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, remult?: Remult, db?: SqlDatabase) {
+    @BackendMethod({ allowed: Roles.distCenterAdmin, queue: false })
+    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, remult?: Remult, db?: SqlDatabase, progress?: ProgressListener) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
             families: [],
@@ -806,6 +807,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         let i = 0;
         let settings = await ApplicationSettings.getAsync(remult);
         while (i < info.numOfBaskets) {
+            if (progress)
+                progress.progress(i / info.numOfBaskets);
             if (info.preferRepeatFamilies && waitingFamilies.length == 0 && !info.allRepeat) {
                 info.preferRepeatFamilies = false;
                 waitingFamilies = await getFamilies();
@@ -854,12 +857,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
             if (waitingFamilies.length > 0) {
                 let moreHelperInfo = await helper.getHelper();
-                let preferArea = moreHelperInfo.preferredDistributionAreaAddressHelper.ok();
-                let preferEnd = moreHelperInfo.preferredFinishAddressHelper.ok();
+                let preferArea = moreHelperInfo.preferredDistributionAreaAddressHelper.ok;
+                let preferEnd = moreHelperInfo.preferredFinishAddressHelper.ok;
 
-                if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt() && (preferArea || preferEnd))) {
+                if (locationReferenceFamilies.length == 0 || (settings.isSytemForMlt && (preferArea || preferEnd))) {
 
-                    let distCenter = settings.addressHelper.location();
+                    let distCenter = settings.addressHelper.location;
                     let lastFamiliy = waitingFamilies[0];
 
                     if (preferArea || preferEnd) {
@@ -867,14 +870,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         var lastDist: number;
                         for (const f of waitingFamilies) {
                             if (preferArea) {
-                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredDistributionAreaAddressHelper.location());
+                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredDistributionAreaAddressHelper.location);
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
                                 }
                             }
                             if (preferEnd) {
-                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredFinishAddressHelper.location());
+                                let dist = GetDistanceBetween(f, moreHelperInfo.preferredFinishAddressHelper.location);
                                 if (!lastFamiliy || dist < lastDist) {
                                     lastFamiliy = f;
                                     lastDist = dist;
@@ -923,25 +926,55 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         return r;
 
                     }
+                    const neededBaskets = info.numOfBaskets - i;
+                    if (neededBaskets == 1) {
 
-                    let smallFamily = waitingFamilies[0];
-                    let dist = getDistance({
-                        lat: smallFamily.lat,
-                        lng: smallFamily.lng
-                    });
-                    for (let i = 1; i < waitingFamilies.length; i++) {
-                        let f = waitingFamilies[i];
-                        let myDist = getDistance({ lng: f.lng, lat: f.lat });
-                        if (myDist < dist) {
-                            dist = myDist;
-                            smallFamily = waitingFamilies[i]
-                            if (myDist == 0) {
-                                break;
+                        let smallFamily = waitingFamilies[0];
+                        let dist = getDistance({
+                            lat: smallFamily.lat,
+                            lng: smallFamily.lng
+                        });
+                        for (let i = 1; i < waitingFamilies.length; i++) {
+                            let f = waitingFamilies[i];
+                            let myDist = getDistance({ lng: f.lng, lat: f.lat });
+                            if (myDist < dist) {
+                                dist = myDist;
+                                smallFamily = waitingFamilies[i]
+                                if (myDist == 0) {
+                                    break;
+                                }
+                            }
+
+                        }
+                        await addFamilyToResult(smallFamily);
+                    }
+                    else {
+                        let closesFamilies: FamilyDistance[] = [];
+                        let maxDist: number = undefined;
+                        let add = (f: FamilyDistance) => {
+                            closesFamilies.push(f);
+                            if (closesFamilies.length > neededBaskets) {
+                                closesFamilies.sort((a, b) => a.dist - b.dist);
+                                closesFamilies.pop();
+                                maxDist = closesFamilies.reduce((max, val) => max > val.dist ? max : val.dist, closesFamilies[0].dist);
+                            }
+                        };
+
+
+                        for (let i = 0; i < waitingFamilies.length; i++) {
+                            let f = waitingFamilies[i];
+                            let dist = getDistance({ lng: f.lng, lat: f.lat });
+                            var famDist: FamilyDistance = { dist, lng: f.lng, lat: f.lat };
+
+                            if (dist < maxDist || maxDist === undefined) {
+                                add(famDist);
                             }
                         }
-
+                        for (const f of closesFamilies) {
+                            await addFamilyToResult(f);
+                        }
                     }
-                    await addFamilyToResult(smallFamily);
+
 
 
 
@@ -1228,4 +1261,9 @@ export interface CityInfo {
 export interface refreshRouteArgs {
     doNotUseGoogle?: boolean,
     volunteerLocation?: Location
+}
+
+
+export interface FamilyDistance {
+    lat: number, lng: number, dist: number;
 }

@@ -19,28 +19,28 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     super(remult);
     this.fields.push({
       key: 'name',
-      caption: 'שם',
+      caption: remult.lang.familyName,
       build: ({ fd }) => (fd.courier ? fd.routeOrder + ". " : "") + fd.name
     });
     this.fields.push({
       key: this.helperPhoneKey,
-      caption: 'טלפון מתנדב',
+      caption: remult.lang.volunteerPhoneNumber,
       build: ({ fd }) => (fd.courier ? fd.courier?.phone?.displayValue : "")
     });
     this.fields.push({
       key: this.helperCommentKey,
-      caption: 'הערה למתנדב',
+      caption: remult.lang.volunteerComment,
       build: ({ fd }) => (fd.courier ? fd.courier?.eventComment : "")
     });
     this.fields.push({
       key: 'address',
-      caption: 'כתובת מלאה',
+      caption: remult.lang.fullAddress,
       build: ({ fd }) => fd.getAddressDescription() +
         (fd.entrance ? ", " + fd.$.entrance.metadata.caption + ": " + fd.entrance : '') +
         (fd.floor ? ", " + fd.$.floor.metadata.caption + ": " + fd.floor : '') +
         (fd.appartment ? ", " + fd.$.appartment.metadata.caption + ": " + fd.appartment : '') +
         (fd.buildingCode ? ", " + fd.$.buildingCode.metadata.caption + ": " + fd.buildingCode : '') +
-        (fd.addressComment ? ", שים לב: " + fd.addressComment : '')
+        (fd.addressComment ? ", " + remult.lang.notice + ": " + fd.addressComment : '')
     });
     this.fields.push({
       key: 'basketType',
@@ -64,6 +64,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     })
 
     this.addFields(ActiveFamilyDeliveries, a => a.fd, f => [
+      f.area,
+      f.addressComment,
       f.phone1,
       f.phone1Description,
       f.phone2,
@@ -77,7 +79,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       f.custom1,
       f.custom2,
       f.custom3,
-      f.custom4
+      f.custom4,
+      f.birthDate
     ]);
     this.fields.sort((a, b) => a.caption.localeCompare(b.caption));
   }
@@ -136,26 +139,44 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       r.push(o);
 
     }
+    r.sort((a, b) => {
+      const aCourier = a['courier'] || '';
+      const bCourier = b['courier'] || '';
+      if (aCourier != bCourier && (aCourier == '' || bCourier == '')) {
+        if (aCourier == '')
+          return 1;
+        else return -1;
+      }
+      let s: string = a[d.helperCommentKey] || '';
+      let comp = s.localeCompare(b[d.helperCommentKey]);
+      if (comp != 0) {
+        return comp;
+      }
+
+      return aCourier.localeCompare(bCourier);
+    });
     return r;
   }
   textBeforeKey = "@textBefore";
+  textAfterKey = "@textAfter";
   helperPhoneKey = "helperPhone";
   helperCommentKey = "helperComment";
   fieldProps: ElementProps = {
-    caption: 'תכונות שדה',
+    caption: this.remult.lang.fieldProperties,
     props: [
-      new SizeProperty("font-size", "גודל גופן", "px"),
-      new Property("bold", "הדגשה", InputTypes.checkbox, (v, s) => {
+      new SizeProperty("font-size", this.remult.lang.fontSize, "px"),
+      new Property("bold", this.remult.lang.bold, InputTypes.checkbox, (v, s) => {
         if (v)
           s["font-weight"] = "bold";
       }),
-      new Property("align-center", "יישר למרכז", InputTypes.checkbox, (v, s) => {
+      new Property("align-center", this.remult.lang.centerAlign, InputTypes.checkbox, (v, s) => {
         if (v)
           s["text-align"] = "center";
       }),
-      new Property('color', "צבע", 'color'),
-      new Property(this.textBeforeKey, "תאור", '', () => { }),
-      new Property("inline", "באותה שורה", InputTypes.checkbox, (v, s) => {
+      new Property('color', this.remult.lang.color, 'color'),
+      new Property(this.textBeforeKey, this.remult.lang.textBefore, '', () => { }),
+      new Property(this.textAfterKey, this.remult.lang.textAfter, '', () => { }),
+      new Property("inline", this.remult.lang.sameLine, InputTypes.checkbox, (v, s) => {
         if (v)
           s["display"] = "inline";
       })
@@ -167,7 +188,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     if (!c.propertyValues)
       c.propertyValues = {};
     this.fieldProps.values = c.propertyValues;
-    this.fieldProps.caption = "תכונות שדה " + this.fields.find(x => x.key == c.fieldKey)?.caption;
+    this.fieldProps.caption = this.remult.lang.fieldProperties+": " + this.fields.find(x => x.key == c.fieldKey)?.caption;
     this.fieldProps.control = c;
   }
 }

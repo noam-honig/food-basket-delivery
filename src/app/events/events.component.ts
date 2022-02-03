@@ -54,7 +54,7 @@ export class EventsComponent implements OnInit {
       startTime: "asc"
     },
     newRow: async e =>
-      e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location()),
+      e.distributionCenter = await this.dialog.getDistCenter(e.addressHelper.location),
     allowSelection: true,
     gridButtons: [
 

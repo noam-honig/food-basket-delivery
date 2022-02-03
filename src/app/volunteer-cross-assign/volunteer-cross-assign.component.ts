@@ -122,7 +122,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
               };
               checkDistance(helper.location1, 'העדפת מתנדב: ' + helper.address1);
               checkDistance(helper.location2, 'העדפת מתנדב: ' + helper.address2);
-              if (!this.settings.isSytemForMlt())
+              if (!this.settings.isSytemForMlt)
                 for (const exF of helper.families) {
                   checkDistance(exF.location, 'משלוח: ' + exF.address);
                 }

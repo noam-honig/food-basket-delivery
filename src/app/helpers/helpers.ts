@@ -1,39 +1,27 @@
-
 import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
 import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
 
-
-
-
-
-
-import { Roles, distCenterAdminGuard } from "../auth/roles";
-
-
-
+import { Roles } from "../auth/roles";
 
 import { getLang } from '../sites/sites';
-import { AddressHelper, GeocodeInformation, GetGeoInformation, Location } from '../shared/googleApiHelpers';
+import { AddressHelper, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
-import { Sites } from '../sites/sites';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
 import { DialogService } from '../select-popup/dialog';
-import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
-import { EmailSvc } from '../shared/utils';
 import { use, Field, FieldType, IntegerField } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
-import { setHelperInCache } from './init-context';
 import { EntityFilter } from 'remult';
+import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 
 
 
@@ -75,8 +63,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     (options, remult) => options.apiPrefilter = {
         id: !remult.authenticated() ? [] :
             remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? undefined :
-                [remult.currentUser, remult.currentUser?.theHelperIAmEscorting, remult.currentUser?.escort].
-                    filter(x => !!x).map(x => x.id)
+                [remult.user.id, remult.user.theHelperIAmEscortingId]
 
     }
 )
@@ -210,7 +197,7 @@ export abstract class HelpersBase extends IdEntity {
 
 
     static active: EntityFilter<HelpersBase> = {
-        archive: false, isFrozen: false
+        archive: false
     }
     async deactivate() {
         this.archive = true;
@@ -236,7 +223,6 @@ export abstract class HelpersBase extends IdEntity {
     allowApiDelete: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: true,
-    saved: self => setHelperInCache(self),
     saving: async (self) => {
         if (self._disableOnSavingRow) return;
         if (self.escort) {
@@ -271,7 +257,7 @@ export abstract class HelpersBase extends IdEntity {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = self.remult.currentUser.distributionCenter;
+                                self.distributionCenter = await self.remult.getUserDistributionCenter();
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -304,13 +290,13 @@ export abstract class HelpersBase extends IdEntity {
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if ((await self.remult.repo(Helpers).count()) == 0) {
+            if (self.isNew() && (await self.remult.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
             self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone, self.remult));
             if (!self._disableDuplicateCheck)
-                await Validators.unique(self, self.$.phone, use.language.alreadyExist);
+                await Validators.unique(self, self.$.phone, self.remult.lang?.alreadyExist);
             if (self.isNew())
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -319,7 +305,7 @@ export abstract class HelpersBase extends IdEntity {
             if (self.$.escort.valueChanged()) {
                 let h = self.escort;
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = self.remult.currentUser;
+                    self.$.escort.originalValue.theHelperIAmEscorting = (await self.remult.getCurrentUser());
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -372,7 +358,7 @@ export class Helpers extends HelpersBase {
         return this;
     }
     async displayEditDialog(dialog: DialogService, busy: BusyService) {
-        let settings = getSettings(this.remult);
+        let settings = (await this.remult.getSettings());
         await openDialog(InputAreaComponent, x => x.args = {
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
             ok: async () => {
@@ -407,6 +393,14 @@ export class Helpers extends HelpersBase {
             buttons: [{
                 text: settings.lang.deliveries,
                 click: () => this.showDeliveryHistory(dialog, busy)
+            }, {
+
+                text: this.remult.lang.smsMessages,
+                click: async () => {
+                    this.smsMessages(dialog);
+                },
+
+
             }]
 
         });
@@ -428,7 +422,7 @@ export class Helpers extends HelpersBase {
             width: '120'
         });
 
-        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt) {
             r.push({
                 field: self.isIndependent,
                 width: '120'
@@ -448,7 +442,7 @@ export class Helpers extends HelpersBase {
             });
         }
         let hadCenter = false;
-        if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt) {
             r.push({
                 field: self.labAdmin, width: '120'
             });
@@ -466,7 +460,7 @@ export class Helpers extends HelpersBase {
         });
         r.push(self.createDate);
 
-        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt) {
             r.push({
                 field: self.frozenTill, width: '120'
             });
@@ -475,7 +469,7 @@ export class Helpers extends HelpersBase {
             });
         }
 
-        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt()) {
+        if (remult.isAllowed(Roles.admin) && settings.isSytemForMlt) {
             r.push({
                 field: self.referredBy, width: '120'
             });
@@ -499,8 +493,12 @@ export class Helpers extends HelpersBase {
             field: self.socialSecurityNumber, width: '80'
         });
         r.push(self.leadHelper);
-        if (settings.bulkSmsEnabled)
+        if (settings.bulkSmsEnabled) {
             r.push(self.doNotSendSms);
+            r.push({
+                field: self.frozenTill, width: '120'
+            });
+        }
 
         return r;
     }
@@ -664,7 +662,7 @@ export class Helpers extends HelpersBase {
             throw this.$.phone.error;
         }
         let settings = await ApplicationSettings.getAsync(this.remult);
-        if (!settings.isSytemForMlt())
+        if (!settings.isSytemForMlt)
             throw "Not Allowed";
         this.remult.setUser({
             id: 'WIX',
@@ -761,7 +759,7 @@ export class Helpers extends HelpersBase {
 
     static deliveredPreviously = Filter.createCustom<Helpers,
         { city: string }>(((remult, { city }) => {
-            
+
             return SqlDatabase.customFilter(async c => {
                 let fd = SqlFor(remult.repo((await (import('../families/FamilyDeliveries'))).FamilyDeliveries));
                 let helpers = SqlFor(remult.repo(Helpers));
@@ -818,6 +816,48 @@ export class Helpers extends HelpersBase {
         }
         return result;
     }
+    async sendSmsToCourier(dialog: DialogService, message = '') {
+        let h = this;
+
+        await openDialog(EditCommentDialogComponent, x => x.args = {
+            save: async (comment) => {
+                dialog.Info(await Helpers.SendCustomMessageToCourier(this, comment));
+            },
+            title: this.remult.lang.sendMessageToVolunteer + ' ' + h.name,
+            comment: this.remult.lang.hello + ' ' + h.name + '\n' + message
+        });
+    }
+    @BackendMethod({ allowed: Roles.admin })
+    static async SendCustomMessageToCourier(h: HelpersBase, message: string, remult?: Remult) {
+        return await new (await (import('../asign-family/send-sms-action'))).SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
+
+    }
+    async smsMessages(dialog: DialogService) {
+        const HelperCommunicationHistory = (await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory;
+        openDialog(GridDialogComponent, x => x.args = {
+            settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+                where: {
+                    volunteer: this
+                },
+                columnSettings: com => [
+                    com.message,
+                    com.incoming,
+                    com.createDate,
+                    com.automaticAction,
+                    com.apiResponse
+                ],
+                numOfColumnsInGrid: 4
+            }),
+            buttons: [{
+                text: this.remult.lang.customSmsMessage,
+                click: () => {
+                    this.sendSmsToCourier(dialog);
+                    x.args.settings.reloadData();
+                }
+            }],
+            title: this.remult.lang.smsMessages + " " + this.name
+        });
+    }
 
 
 }
@@ -826,11 +866,7 @@ export class Helpers extends HelpersBase {
 
 
 
-export interface HelperUserInfo extends UserInfo {
-    theHelperIAmEscortingId: string;
-    escortedHelperName: string;
-    distributionCenter: string;
-}
+
 export function validatePasswordColumn(remult: Remult, password: FieldRef<any, string>) {
     if (getSettings(remult).requireComplexPassword) {
         var l = getLang(remult);
