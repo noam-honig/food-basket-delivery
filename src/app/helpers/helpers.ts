@@ -1,5 +1,5 @@
 import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
-import {  DataControl, DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
+import { DataControl, DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -23,6 +23,7 @@ import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+import { UITools } from './init-context';
 
 
 
@@ -358,7 +359,7 @@ export class Helpers extends HelpersBase {
     async getHelper(): Promise<Helpers> {
         return this;
     }
-    async displayEditDialog(dialog: DialogService, busy: BusyService) {
+    async displayEditDialog(ui: UITools) {
         let settings = (await this.remult.getSettings());
         await openDialog(InputAreaComponent, x => x.args = {
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
@@ -393,12 +394,12 @@ export class Helpers extends HelpersBase {
             },
             buttons: [{
                 text: settings.lang.deliveries,
-                click: () => this.showDeliveryHistory(dialog, busy)
+                click: () => this.showDeliveryHistory(ui)
             }, {
 
                 text: this.remult.lang.smsMessages,
                 click: async () => {
-                    this.smsMessages(dialog);
+                    this.smsMessages(ui);
                 },
 
 
@@ -507,7 +508,7 @@ export class Helpers extends HelpersBase {
     userRequiresPassword() {
         return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent;
     }
-    async showDeliveryHistory(dialog: DialogService, busy: BusyService) {
+    async showDeliveryHistory(ui: UITools) {
         let ctx = this.remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         openDialog(GridDialogComponent, x => x.args = {
             title: use.language.deliveriesFor + ' ' + this.name,
@@ -524,7 +525,7 @@ export class Helpers extends HelpersBase {
                     click: async fd => {
                         fd.showDetailsDialog({
 
-                            dialog: dialog
+                            ui: ui
                         });
                     }
                     , textInMenu: () => use.language.deliveryDetails
@@ -536,7 +537,7 @@ export class Helpers extends HelpersBase {
                     visible: () => x.args.settings.selectedRows.length > 0,
                     click: async () => {
                         let deliveries: import('../families/FamilyDeliveries').FamilyDeliveries[] = x.args.settings.selectedRows;
-                        await this.setAsDefaultVolunteerToDeliveries(busy, deliveries, dialog);
+                        await this.setAsDefaultVolunteerToDeliveries(deliveries, ui);
                     }
                 }],
                 rowCssClass: fd => fd.getCss(),
@@ -606,11 +607,11 @@ export class Helpers extends HelpersBase {
         () => this.$.addressApiResult);
 
 
-    async setAsDefaultVolunteerToDeliveries(busy: BusyService, deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], dialog: DialogService) {
+    async setAsDefaultVolunteerToDeliveries(deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], ui: UITools) {
         let ids: string[] = [];
         let i = 0;
 
-        await busy.doWhileShowingBusy(async () => {
+        await ui.doWhileShowingBusy(async () => {
             for (const fd of deliveries) {
 
                 if (ids.includes(fd.family))
@@ -632,7 +633,7 @@ export class Helpers extends HelpersBase {
             }
         });
         if (otherFamilies.length > 0) {
-            if (await dialog.YesNoPromise(use.language.thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + use.language.familiesDotCancelTheseAssignments)) {
+            if (await ui.YesNoPromise(use.language.thisVolunteerIsSetAsTheDefaultFor + " " + otherFamilies.length + " " + use.language.familiesDotCancelTheseAssignments)) {
                 for (const f of otherFamilies) {
                     f.fixedCourier = null;
                     await f.save();
@@ -641,7 +642,7 @@ export class Helpers extends HelpersBase {
             }
         }
 
-        dialog.Info(i + " " + use.language.familiesUpdated);
+        ui.Info(i + " " + use.language.familiesUpdated);
     }
     @BackendMethod({ allowed: true })
     async mltRegister() {
@@ -817,12 +818,12 @@ export class Helpers extends HelpersBase {
         }
         return result;
     }
-    async sendSmsToCourier(dialog: DialogService, message = '') {
+    async sendSmsToCourier(ui: UITools, message = '') {
         let h = this;
 
         await openDialog(EditCommentDialogComponent, x => x.args = {
             save: async (comment) => {
-                dialog.Info(await Helpers.SendCustomMessageToCourier(this, comment));
+                ui.Info(await Helpers.SendCustomMessageToCourier(this, comment));
             },
             title: this.remult.lang.sendMessageToVolunteer + ' ' + h.name,
             comment: this.remult.lang.hello + ' ' + h.name + '\n' + message
@@ -833,7 +834,7 @@ export class Helpers extends HelpersBase {
         return await new (await (import('../asign-family/send-sms-action'))).SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
 
     }
-    async smsMessages(dialog: DialogService) {
+    async smsMessages(ui: UITools) {
         const HelperCommunicationHistory = (await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory;
         openDialog(GridDialogComponent, x => x.args = {
             settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
@@ -852,7 +853,7 @@ export class Helpers extends HelpersBase {
             buttons: [{
                 text: this.remult.lang.customSmsMessage,
                 click: () => {
-                    this.sendSmsToCourier(dialog);
+                    this.sendSmsToCourier(ui);
                     x.args.settings.reloadData();
                 }
             }],

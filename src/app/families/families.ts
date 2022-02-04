@@ -6,8 +6,8 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields } from 'remult';
-import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields } from 'remult';
+
 import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -18,22 +18,15 @@ import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/A
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { DateOnlyField, Field, FieldType, use, Entity, QuantityColumn, IntegerField } from "../translate";
+import { DateOnlyField, Field, use, Entity, IntegerField } from "../translate";
 import { FamilyStatus } from "./FamilyStatus";
 
-import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
-import { DialogService } from "../select-popup/dialog";
-import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-
-
-import { YesNoQuestionComponent } from "../select-popup/yes-no-question/yes-no-question.component";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 
-
-import { Groups, GroupsValue } from "../manage/groups";
-import { async } from "rxjs/internal/scheduler/async";
+import { GroupsValue } from "../manage/groups";
 import { DateOnlyValueConverter } from "remult/valueConverters";
+import { evil, UITools } from "../helpers/init-context";
 
 
 
@@ -129,9 +122,9 @@ declare type factoryFor<T> = {
       if (statusChangedOutOfActive) {
         let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).query({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
         if (await activeDeliveries.count() > 0) {
-          if (await openDialog(YesNoQuestionComponent, async x => x.args = {
-            question: getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
-          }, y => y.yes)) {
+          if (await evil.uiTools.YesNoPromise(
+            getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
+          )) {
             for await (const d of activeDeliveries) {
               await d.delete();
 
@@ -176,20 +169,11 @@ export class Families extends IdEntity {
     }
     return result;
   }
-  async showFamilyDialog(tools?: { onSave?: () => Promise<void>, focusOnAddress?: boolean }) {
-    openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
-      family: this,
-      focusOnAddress: tools && tools.focusOnAddress,
-      onSave: async () => {
-        if (tools && tools.onSave)
-          await tools.onSave();
-      }
-    });
-  }
-  async showDeliveryHistoryDialog(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
+
+  async showDeliveryHistoryDialog(args: { ui: UITools, settings: ApplicationSettings }) {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
 
-    openDialog(GridDialogComponent, x => x.args = {
+    args.ui.gridDialog({
       title: getLang(this.remult).deliveriesFor + ' ' + this.name,
       stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
@@ -197,11 +181,11 @@ export class Families extends IdEntity {
       buttons: [{
         text: use.language.newDelivery,
 
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, { doNotCheckIfHasExistingDeliveries: true })
+        click: () => this.showNewDeliveryDialog(args.ui, args.settings, { doNotCheckIfHasExistingDeliveries: true })
       }]
     });
   }
-  public async deliveriesGridSettings(args: { dialog: DialogService, settings: ApplicationSettings, busy: BusyService }) {
+  public async deliveriesGridSettings(args: { ui: UITools, settings: ApplicationSettings }) {
     let result: GridSettings<import("./FamilyDeliveries").FamilyDeliveries> = new GridSettings(this.remult.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
@@ -209,7 +193,7 @@ export class Families extends IdEntity {
       gridButtons: [{
         name: use.language.newDelivery,
         icon: 'add_shopping_cart',
-        click: () => this.showNewDeliveryDialog(args.dialog, args.settings, args.busy, {
+        click: () => this.showNewDeliveryDialog(args.ui, args.settings, {
           doNotCheckIfHasExistingDeliveries: true,
           aDeliveryWasAdded: async () => { result.reloadData(); }
         })
@@ -220,7 +204,7 @@ export class Families extends IdEntity {
         click: async () => {
           var fd = this.createDelivery(null);
           var d = new dateInput();
-          openDialog(InputAreaComponent, x => x.args = {
+          args.ui.inputAreaDialog({
             title: use.language.addHistoricalDelivery,
             settings: {
               fields: () => [
@@ -241,18 +225,16 @@ export class Families extends IdEntity {
         {
           name: use.language.deliveryDetails,
           click: async fd => fd.showDeliveryOnlyDetail({
-            dialog: args.dialog,
+            ui: args.ui,
             refreshDeliveryStats: () => result.reloadData()
           })
         },
-        ...(await import("../family-deliveries/family-deliveries.component")).getDeliveryGridButtons({
+        ...(await import("../family-deliveries/getDeliveryGridButtons")).getDeliveryGridButtons({
           remult: this.remult,
           refresh: () => result.reloadData(),
           deliveries: () => result,
-          dialog: args.dialog,
-          settings: args.settings,
-          busy: args.busy
-
+          ui: args.ui,
+          settings: args.settings
         })
       ],
       columnSettings: fd => {
@@ -291,7 +273,7 @@ export class Families extends IdEntity {
     await fd.save();
   }
 
-  async showNewDeliveryDialog(dialog: DialogService, settings: ApplicationSettings, busy: BusyService, args?: {
+  async showNewDeliveryDialog(ui: UITools, settings: ApplicationSettings, args?: {
     copyFrom?: import("./FamilyDeliveries").FamilyDeliveries,
     aDeliveryWasAdded?: (newDeliveryId: string) => Promise<void>,
     doNotCheckIfHasExistingDeliveries?: boolean
@@ -301,14 +283,14 @@ export class Families extends IdEntity {
     if (!args.doNotCheckIfHasExistingDeliveries) {
       let hasExisting = await this.remult.repo(ActiveFamilyDeliveries).count({ family: this.id, deliverStatus: DeliveryStatus.isNotAResultStatus() });
       if (hasExisting > 0) {
-        if (await dialog.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
-          this.showDeliveryHistoryDialog({ dialog, settings, busy });
+        if (await ui.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
+          this.showDeliveryHistoryDialog({ ui, settings });
           return;
         }
       }
     }
 
-    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await dialog.getDistCenter(this.addressHelper.location));
+    let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await ui.getDistCenter(this.addressHelper.location));
     let arciveCurrentDelivery = new InputField<boolean>({
       valueType: Boolean,
       caption: getLang(this.remult).archiveCurrentDelivery,
@@ -330,54 +312,53 @@ export class Families extends IdEntity {
     }
 
 
-    await openDialog(InputAreaComponent, x => {
-      x.args = {
-        settings: {
-          fields: () => {
-            let r: DataAreaFieldsSetting<any>[] = [
-              [newDelivery.$.basketType,
-              newDelivery.$.quantity],
-              newDelivery.$.deliveryComments];
-            if (dialog.hasManyCenters)
-              r.push(newDelivery.$.distributionCenter);
-            r.push(newDelivery.$.courier);
-            if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus()) {
-              r.push(arciveCurrentDelivery);
-            }
-            r.push({ field: selfPickup, visible: () => settings.usingSelfPickupModule })
+    await ui.inputAreaDialog({
+      settings: {
+        fields: () => {
+          let r: DataAreaFieldsSetting<any>[] = [
+            [newDelivery.$.basketType,
+            newDelivery.$.quantity],
+            newDelivery.$.deliveryComments];
+          if (ui.hasManyCenters)
+            r.push(newDelivery.$.distributionCenter);
+          r.push(newDelivery.$.courier);
+          if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus()) {
+            r.push(arciveCurrentDelivery);
+          }
+          r.push({ field: selfPickup, visible: () => settings.usingSelfPickupModule })
 
-            return r;
-          }
-        },
-        title: getLang(this.remult).newDeliveryFor + this.name,
-        validate: async () => {
-          let count = await newDelivery.duplicateCount();
-          if (count > 0) {
-            if (await dialog.YesNoPromise(getLang(this.remult).familyAlreadyHasAnActiveDelivery)) {
-              return;
-            }
-            else {
-              throw getLang(this.remult).notOk;
-            }
-          }
-        },
-        ok: async () => {
-          let newId = await Families.addDelivery(newDelivery.family, newDelivery.basketType, newDelivery.distributionCenter, newDelivery.courier, {
-            quantity: newDelivery.quantity,
-            comment: newDelivery.deliveryComments,
-            selfPickup: selfPickup.value
-          });
-          if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus() && arciveCurrentDelivery.value) {
-            args.copyFrom.archive = true;
-            await args.copyFrom.save();
-          }
-          if (args.aDeliveryWasAdded)
-            await args.aDeliveryWasAdded(newId);
-          dialog.Info(getLang(this.remult).deliveryCreatedSuccesfully);
+          return r;
         }
-        , cancel: () => { }
-
+      },
+      title: getLang(this.remult).newDeliveryFor + this.name,
+      validate: async () => {
+        let count = await newDelivery.duplicateCount();
+        if (count > 0) {
+          if (await ui.YesNoPromise(getLang(this.remult).familyAlreadyHasAnActiveDelivery)) {
+            return;
+          }
+          else {
+            throw getLang(this.remult).notOk;
+          }
+        }
+      },
+      ok: async () => {
+        let newId = await Families.addDelivery(newDelivery.family, newDelivery.basketType, newDelivery.distributionCenter, newDelivery.courier, {
+          quantity: newDelivery.quantity,
+          comment: newDelivery.deliveryComments,
+          selfPickup: selfPickup.value
+        });
+        if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus() && arciveCurrentDelivery.value) {
+          args.copyFrom.archive = true;
+          await args.copyFrom.save();
+        }
+        if (args.aDeliveryWasAdded)
+          await args.aDeliveryWasAdded(newId);
+        ui.Info(getLang(this.remult).deliveryCreatedSuccesfully);
       }
+      , cancel: () => { }
+
+
     });
   }
   @BackendMethod({ allowed: Roles.admin })
@@ -627,7 +608,7 @@ export class Families extends IdEntity {
   @Field({ translation: l => l.defaultVolunteer })
   @DataControl<Families, HelpersBase>({
     click: async (e, col) => {
-      openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
+      evil.uiTools.selectHelper({
         searchClosestDefaultFamily: true,
         location: e.addressHelper.location,
         onSelect: async selected => col.value = selected
@@ -1103,12 +1084,12 @@ export function AreaColumn() {
     DataControl<any, string>({
       click: async (row, col) => {
         let areas = await Families.getAreas();
-        await openDialog(SelectValueDialogComponent, x => x.args({
+        await evil.uiTools.selectValuesDialog({
           values: areas.map(x => ({ caption: x.area })),
           onSelect: area => {
             col.value = area.caption;
           }
-        }))
+        })
       }
     })(target, key);
     return Field({

@@ -9,7 +9,8 @@ import { Route, ActivatedRoute } from '@angular/router';
 
 import { Filter } from 'remult';
 import { BusyService, openDialog } from '@remult/angular';
-import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
+import { distCenterAdminGuard } from '../auth/guards';
+import { Roles } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { Helpers } from '../helpers/helpers';
 
@@ -50,7 +51,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     }
     async updateFamily(n: ActiveFamilyDeliveries) {
-        n.showDetailsDialog({ dialog: this.dialog });
+        n.showDetailsDialog({ ui: this.dialog });
 
 
     }

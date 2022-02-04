@@ -324,7 +324,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   setDefaultCourier() {
-    this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.busy, this.familyLists.toDeliver, this.dialog);
+    this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.familyLists.toDeliver, this.dialog);
   }
   @BackendMethod({ allowed: Roles.distCenterAdmin })
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {

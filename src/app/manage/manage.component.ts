@@ -11,7 +11,8 @@ import { DataAreaSettings, GridSettings, InputField } from '@remult/angular/inte
 import { BusyService, openDialog } from '@remult/angular';
 import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
 import { DialogService } from '../select-popup/dialog';
-import { AdminGuard, Roles } from '../auth/roles';
+import { AdminGuard } from '../auth/guards';
+import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Families } from '../families/families';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";

@@ -7,7 +7,7 @@ import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
 import { FamiliesComponent } from './families/families.component';
 import { Remult } from 'remult';
-import { RouteHelperService, BusyService } from '@remult/angular';
+import { RouteHelperService, BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
 
@@ -15,8 +15,6 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryStatus } from './families/DeliveryStatus';
 import { AssignEscortComponent } from './assign-escort/assign-escort.component';
 import { CreateNewEvent } from './create-new-event/create-new-event';
-
-
 
 
 @Component({
@@ -47,8 +45,6 @@ export class AppComponent {
     if (settings.redTitleBar) {
       this.toolbarColor = 'accent';
     }
-
-
 
   }
 

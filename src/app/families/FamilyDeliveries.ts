@@ -14,13 +14,11 @@ import { YesNo } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
-import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-import { DialogService } from "../select-popup/dialog";
 import { use, FieldType, Field, ValueListFieldType, Entity, QuantityColumn, IntegerField } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataControl, IDataAreaSettings } from "@remult/angular/interfaces";
-import { BusyService, openDialog } from '@remult/angular';
+
 
 import { Groups, GroupsValue } from "../manage/groups";
 
@@ -28,8 +26,8 @@ import { FamilySources } from "./FamilySources";
 import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 import { IdFieldRef } from "remult/src/remult3";
-import { DateOnlyValueConverter } from "remult/valueConverters";
 import { isDesktop } from "../shared/utils";
+import { evil, UITools } from "../helpers/init-context";
 
 
 @ValueListFieldType({
@@ -240,7 +238,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.distCenterAdmin
     })
     @DataControl<FamilyDeliveries, HelpersBase>({
-        click: async (self) => openDialog((await import("../select-helper/select-helper.component")).SelectHelperComponent, x => x.args = {
+        click: async (self) => evil.uiTools.selectHelper({
             onSelect: helper => self.courier = helper,
             location: self.getDrivingLocation(),
             familyId: self.family
@@ -739,7 +737,7 @@ export class FamilyDeliveries extends IdEntity {
         reloadDeliveries?: () => void,
         onSave?: () => Promise<void>,
         focusOnAddress?: boolean,
-        dialog: DialogService
+        ui: UITools
     }) {
 
 
@@ -748,25 +746,25 @@ export class FamilyDeliveries extends IdEntity {
             let f = await this.remult.repo(Families).findId(this.family);
             if (f) {
 
-                openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = {
+                callerHelper.ui.updateFamilyDialog({
                     familyDelivery: this,
                     focusOnAddress: callerHelper.focusOnAddress,
                     onSave: async () => {
                         if (callerHelper && callerHelper.onSave)
                             await callerHelper.onSave();
-                    }
-                }, y => {
-                    if (y.refreshDeliveryStatistics)
-                        if (callerHelper && callerHelper.refreshDeliveryStats)
-                            callerHelper.refreshDeliveryStats();
-                    if (y.reloadDeliveries)
-                        if (callerHelper && callerHelper.reloadDeliveries)
-                            callerHelper.reloadDeliveries();
+                    }, afterSave: y => {
+                        if (y.refreshDeliveryStatistics)
+                            if (callerHelper && callerHelper.refreshDeliveryStats)
+                                callerHelper.refreshDeliveryStats();
+                        if (y.reloadDeliveries)
+                            if (callerHelper && callerHelper.reloadDeliveries)
+                                callerHelper.reloadDeliveries();
 
+                    }
                 });
             }
             else {
-                await callerHelper.dialog.Error(getLang(this.remult).familyWasNotFound);
+                await callerHelper.ui.Error(getLang(this.remult).familyWasNotFound);
                 showFamilyDetails = false;
             }
         }
@@ -777,31 +775,30 @@ export class FamilyDeliveries extends IdEntity {
 
 
     }
-    async showDeliveryOnlyDetail(callerHelper: { refreshDeliveryStats?: () => void; onSave?: () => Promise<void>; focusOnDelivery?: boolean; dialog: DialogService; }) {
-        openDialog(InputAreaComponent, x => {
-            x.args = {
-                title: getLang(this.remult).deliveryDetailsFor + ' ' + this.name,
-                ok:
-                    async () => {
+    async showDeliveryOnlyDetail(callerHelper: { refreshDeliveryStats?: () => void; onSave?: () => Promise<void>; focusOnDelivery?: boolean; ui: UITools; }) {
+        callerHelper.ui.inputAreaDialog({
+            title: getLang(this.remult).deliveryDetailsFor + ' ' + this.name,
+            ok:
+                async () => {
 
-                        this.save();
+                    this.save();
 
-                        if (callerHelper) {
-                            if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
-                                callerHelper.refreshDeliveryStats();
-                            if (callerHelper.onSave)
-                                callerHelper.onSave();
-                        }
-                    },
-                cancel: () => {
-                    this._.undoChanges();
+                    if (callerHelper) {
+                        if (this.changeRequireStatsRefresh() && callerHelper.refreshDeliveryStats)
+                            callerHelper.refreshDeliveryStats();
+                        if (callerHelper.onSave)
+                            callerHelper.onSave();
+                    }
                 },
-                settings: this.deilveryDetailsAreaSettings(callerHelper.dialog)
-            };
-        });
+            cancel: () => {
+                this._.undoChanges();
+            },
+            settings: this.deilveryDetailsAreaSettings(callerHelper.ui)
+        }
+        );
     }
 
-    deilveryDetailsAreaSettings(dialog: DialogService): IDataAreaSettings {
+    deilveryDetailsAreaSettings(ui: UITools): IDataAreaSettings {
         return {
             fields: () =>
                 [
@@ -809,7 +806,7 @@ export class FamilyDeliveries extends IdEntity {
                     [{ width: '', field: this.$.deliverStatus }, this.$.deliveryStatusDate],
                     this.$.deliveryComments,
                     this.$.courier,
-                    { field: this.$.distributionCenter, visible: () => dialog.hasManyCenters },
+                    { field: this.$.distributionCenter, visible: () => ui.hasManyCenters },
                     this.$.needsWork,
                     this.$.courierComments,
                     this.$.a1, this.$.a2, this.$.a3, this.$.a4,

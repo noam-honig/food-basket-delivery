@@ -6,7 +6,7 @@ import { Remult } from 'remult';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { distCenterOrLabGuard } from '../auth/roles';
+import { distCenterOrLabGuard } from '../auth/guards';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { GridSettings } from '@remult/angular/interfaces';

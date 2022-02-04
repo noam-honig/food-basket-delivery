@@ -121,7 +121,7 @@ export class InRouteFollowUpComponent implements OnInit {
       name: use.language.volunteerInfo,
       click: async s => {
         let h = await this.remult.repo(Helpers).findId(s.id);
-        h.displayEditDialog(this.dialog, this.busy);
+        h.displayEditDialog(this.dialog);
       }
     },
     {

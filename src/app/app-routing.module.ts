@@ -25,7 +25,8 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles, SignedInAndNotOverviewGuard, EventListGuard } from './auth/roles';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, SignedInAndNotOverviewGuard, EventListGuard } from './auth/guards';
+import { Roles } from './auth/roles';
 import { AuthenticatedGuard } from '@remult/angular';
 import { Remult } from 'remult';
 

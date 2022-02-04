@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewIn
 import { MatDialogRef, MatDialogActions } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
-import {  DataAreaFieldsSetting, DataAreaSettings,  GridSettings, InputField } from '@remult/angular/interfaces';
+import { DataAreaFieldsSetting, DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { Remult, BackendMethod } from 'remult';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
@@ -24,6 +24,7 @@ import { ImageInfo } from '../images/images.component';
 import { FamilyImage } from '../families/DeiveryImages';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { BusyService, DialogConfig, openDialog } from '@remult/angular';
+import { UpdateFamilyDialogArgs } from '../helpers/init-context';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -35,17 +36,7 @@ import { BusyService, DialogConfig, openDialog } from '@remult/angular';
   minWidth: '95vw'
 })
 export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
-  public args: {
-    family?: Families,
-    familyDelivery?: FamilyDeliveries,
-    familyId?: string,
-    deliveryId?: string,
-    focusOnAddress?: boolean,
-    message?: string,
-    disableSave?: boolean,
-    userCanUpdateButDontSave?: boolean,
-    onSave?: () => void
-  };
+  public args: UpdateFamilyDialogArgs;
   constructor(
     private dialogRef: MatDialogRef<any>,
 
@@ -191,12 +182,17 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     this.dialogRef.close();
     if (this.args && this.args.onSave)
       this.args.onSave();
-
+    if (this.args.afterSave) {
+      this.args.afterSave({
+        refreshDeliveryStatistics: this.refreshDeliveryStatistics,
+        reloadDeliveries: this.reloadDeliveries
+      })
+    }
   }
   async newDelivery() {
     if (this.delivery && this.delivery._.wasChanged())
       this.delivery.save();
-    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, this.busy, {
+    await this.args.family.showNewDeliveryDialog(this.dialog, this.settings, {
       copyFrom: this.delivery,
       aDeliveryWasAdded: async (id) => {
         if (this.delivery)
@@ -374,8 +370,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     if (!this.families.currentRow.isNew()) {
       this.familyDeliveries = await this.args.family.deliveriesGridSettings({
         settings: this.settings,
-        dialog: this.dialog,
-        busy: this.busy
+        ui: this.dialog
       });
       new columnOrderAndWidthSaver(this.familyDeliveries).load('familyDeliveriesInUpdateFamily');
     }

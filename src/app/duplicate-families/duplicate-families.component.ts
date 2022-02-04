@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendMethod, Remult, SqlDatabase, FieldMetadata, getFields, Filter } from 'remult';
-import {  DataAreaSettings, DataControl, GridSettings } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControl, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
@@ -134,11 +134,11 @@ export class DuplicateFamiliesComponent implements OnInit {
         rowButtons: [
           {
             name: this.settings.lang.familyDetails,
-            click: f => f.showFamilyDialog()
+            click: family => this.dialog.updateFamilyDialog({ family })
           },
           {
             name: this.settings.lang.deliveries,
-            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy })
+            click: f => f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog })
           }
         ],
 

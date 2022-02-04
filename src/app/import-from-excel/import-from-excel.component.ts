@@ -1253,8 +1253,8 @@ export class ImportFromExcelComponent implements OnInit {
     }
     stopAskingQuestions = false;
     async openFamilyInfo(r: excelRowInfo) {
-        let f = await this.remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
-        await f.showFamilyDialog();
+        let family = await this.remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
+        await this.dialog.updateFamilyDialog({ family });
     }
     async familyHistory(r: excelRowInfo) {
         let f = await this.remult.repo(Families).findId(r.duplicateFamilyInfo[0].id);
@@ -1404,8 +1404,8 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async updateFamily(i: duplicateFamilyInfo) {
-        let f = await this.remult.repo(Families).findId(i.id);
-        f.showFamilyDialog();
+        let family = await this.remult.repo(Families).findId(i.id);
+        this.dialog.updateFamilyDialog({ family });
 
     }
 }

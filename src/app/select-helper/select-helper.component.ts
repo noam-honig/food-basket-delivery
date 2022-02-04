@@ -19,6 +19,7 @@ import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { getLang } from '../sites/sites';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
+import { SelectHelperArgs } from '../helpers/init-context';
 
 @Component({
   selector: 'app-select-helper',
@@ -35,17 +36,7 @@ export class SelectHelperComponent implements OnInit {
 
   searchString: string = '';
   lastFilter: string = undefined;
-  public args: {
-    familyId?: string,
-    searchByDistance?: boolean,
-    hideRecent?: boolean,
-    location?: Location,
-    includeFrozen?: boolean,
-    searchClosestDefaultFamily?: boolean,
-    onSelect: (selectedValue: HelpersBase) => void,
-    filter?: EntityFilter<HelpersAndStats>
-
-  };
+  public args:SelectHelperArgs;
   filteredHelpers: helperInList[] = [];
   constructor(
     private dialogRef: MatDialogRef<any>,
@@ -59,7 +50,7 @@ export class SelectHelperComponent implements OnInit {
   }
   async addHelper() {
     let h = this.remult.repo(Helpers).create({ name: this.searchString });;
-    await h.displayEditDialog(this.dialog, this.busy);
+    await h.displayEditDialog(this.dialog);
     if (!h.isNew()) {
       this.select({
         helperId: h.id,

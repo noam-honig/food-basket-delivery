@@ -1,4 +1,4 @@
-import { IdFilter, Remult, UserInfo, ValueFilter } from "remult";
+import { EntityFilter, IdFilter, Remult, UserInfo, ValueFilter } from "remult";
 import { BasketType } from "../families/BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
 
@@ -8,6 +8,8 @@ import { Roles } from "../auth/roles";
 import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { async } from "rxjs/internal/scheduler/async";
+import { GridSettings, IDataAreaSettings } from "@remult/angular/interfaces";
 
 
 export const initConfig = {
@@ -67,6 +69,83 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         return [];
     }
     remult.lang = getLang(remult);
+}
+export interface GridDialogArgs {
+    title: string,
+    settings: GridSettings<any>,
+    stateName?: string,
+    ok?: () => void,
+    cancel?: () => void,
+    validate?: () => Promise<void>,
+    buttons?: button[]
+}
+export interface button {
+    text: string,
+    click: ((close: () => void) => void),
+    visible?: () => boolean
+
+}
+export interface InputAreaArgs {
+    title: string,
+    helpText?: string,
+    settings: IDataAreaSettings,
+    ok: () => void,
+    cancel?: () => void,
+    validate?: () => Promise<void>,
+    buttons?: button[]
+}
+export interface UpdateFamilyDialogArgs {
+    family?: import('../families/families').Families,
+    familyDelivery?: import('../families/FamilyDeliveries').FamilyDeliveries,
+    familyId?: string,
+    deliveryId?: string,
+    focusOnAddress?: boolean,
+    message?: string,
+    disableSave?: boolean,
+    userCanUpdateButDontSave?: boolean,
+    onSave?: () => void,
+    afterSave?: (args: {
+        refreshDeliveryStatistics: boolean,
+        reloadDeliveries: boolean
+    }) => void
+}
+export interface SelectHelperArgs {
+    familyId?: string,
+    searchByDistance?: boolean,
+    hideRecent?: boolean,
+    location?: Location,
+    includeFrozen?: boolean,
+    searchClosestDefaultFamily?: boolean,
+    onSelect: (selectedValue: import('../helpers/helpers').HelpersBase) => void,
+    filter?: EntityFilter<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>
+
+}
+
+
+export interface UITools {
+    YesNoPromise(question: string): Promise<Boolean>;
+    Error(err: string): Promise<void>;
+    Info(message: string): void;
+    updateFamilyDialog(args: UpdateFamilyDialogArgs): Promise<void>;
+    gridDialog(args: GridDialogArgs): Promise<void>;
+    inputAreaDialog(args: InputAreaArgs): Promise<void>;
+    helperAssignment(helper: import('../helpers/helpers').HelpersBase): Promise<void>;
+    selectHelper(args: SelectHelperArgs): Promise<void>;
+    selectValuesDialog<T extends {
+        caption?: string;
+    }>(args: {
+        values: T[];
+        onSelect: (selected: T) => void;
+        title?: string;
+    }): Promise<void>,
+    doWhileShowingBusy(what: () => Promise<void>): Promise<void>;
+    hasManyCenters: boolean,
+    getDistCenter(loc: Location): Promise<import('../manage/distribution-centers').DistributionCenters>;
+    filterDistCenter(): IdFilter<DistributionCenters>;
+}
+
+export const evil = {
+    uiTools: undefined as UITools
 }
 
 

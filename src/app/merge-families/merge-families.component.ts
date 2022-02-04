@@ -167,8 +167,7 @@ export class MergeFamiliesComponent implements OnInit {
 
         await this.family.showDeliveryHistoryDialog({
           settings: this.settings,
-          dialog: this.dialog,
-          busy: this.busy
+          ui: this.dialog
         });
       }
     }

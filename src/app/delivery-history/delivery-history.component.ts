@@ -15,7 +15,8 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { DataAreaSettings, DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 
 import { BackendMethod } from 'remult';
-import { Roles, AdminGuard } from '../auth/roles';
+import { AdminGuard } from '../auth/guards';
+import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { getLang } from '../sites/sites';
@@ -114,7 +115,7 @@ export class DeliveryHistoryComponent implements OnInit {
           name: this.settings.lang.deliveries,
           click: async x => {
             let h = await this.remult.repo(Helpers).findId(x.courier);
-            h.showDeliveryHistory(this.dialog, this.busy);
+            h.showDeliveryHistory(this.dialog);
           },
         },
         {
@@ -283,7 +284,7 @@ export class DeliveryHistoryComponent implements OnInit {
         showInLine: true,
         click: async fd => {
           fd.showDetailsDialog({
-            dialog: this.dialog
+            ui: this.dialog
           });
         }
         , textInMenu: () => getLang(this.remult).deliveryDetails

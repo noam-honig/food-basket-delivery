@@ -33,7 +33,7 @@ export class IncomingMessagesComponent implements OnInit {
       textInMenu: this.remult.lang.volunteerInfo,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
-        h.displayEditDialog(this.dialog, this.busy);
+        h.displayEditDialog(this.dialog);
       },
       visible: com => Boolean(com.volunteer)
 

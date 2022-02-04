@@ -29,7 +29,8 @@ import { Remult } from 'remult';
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { Roles, AdminGuard } from '../auth/roles';
+import { AdminGuard } from '../auth/guards';
+import { Roles } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { ApplicationSettings, getCustomColumnVisible, getSettings } from '../manage/ApplicationSettings';
@@ -109,11 +110,12 @@ export class FamiliesComponent implements OnInit {
     quickAdd() {
         let family = this.remult.repo(Families).create();
         family.name = this.searchString;
-        family.showFamilyDialog({
+        this.dialog.updateFamilyDialog({
+            family,
             focusOnAddress: true,
             onSave: async () => {
                 this.families.items.push(family);
-                await family.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
+                await family.showNewDeliveryDialog(this.dialog, this.settings);
 
                 this.refreshStats();
             }
@@ -260,8 +262,8 @@ export class FamiliesComponent implements OnInit {
                     field: families.address,
                     width: '250',
                     clickIcon: 'edit',
-                    click: (f) => {
-                        f.showFamilyDialog({ focusOnAddress: true });
+                    click: (family) => {
+                        this.dialog.updateFamilyDialog({ family, focusOnAddress: true })
                     },
                     cssClass: f => {
                         if (!f.addressOk)
@@ -417,8 +419,8 @@ export class FamiliesComponent implements OnInit {
                 name: '',
                 icon: 'edit',
                 showInLine: true,
-                click: async f => {
-                    await f.showFamilyDialog();
+                click: async family => {
+                    this.dialog.updateFamilyDialog({ family });
                 }
                 , textInMenu: () => this.settings.lang.familyDetails
             },
@@ -427,7 +429,7 @@ export class FamiliesComponent implements OnInit {
                 name: this.settings.lang.newDelivery,
                 icon: 'add_shopping_cart',
                 click: async f => {
-                    await f.showNewDeliveryDialog(this.dialog, this.settings, this.busy);
+                    await f.showNewDeliveryDialog(this.dialog, this.settings);
                 }
                 , visible: f => !f.isNew()
 
@@ -476,7 +478,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
-                    f.showDeliveryHistoryDialog({ settings: this.settings, dialog: this.dialog, busy: this.busy });
+                    f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog });
                 }
                 , visible: f => !f.isNew()
             }

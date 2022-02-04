@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { DialogConfig } from '@remult/angular';
 import { GridSettings } from '@remult/angular/interfaces';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
+import { button, GridDialogArgs } from '../helpers/init-context';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
@@ -16,15 +17,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class GridDialogComponent implements OnInit {
 
-  args: {
-    title: string,
-    settings: GridSettings<any>,
-    stateName?: string,
-    ok?: () => void,
-    cancel?: () => void,
-    validate?: () => Promise<void>,
-    buttons?: button[]
-  };
+  args: GridDialogArgs;
 
   constructor(
     public dialogRef: MatDialogRef<any>,
@@ -77,9 +70,3 @@ export class GridDialogComponent implements OnInit {
 }
 
 
-export interface button {
-  text: string,
-  click: ((close: () => void) => void),
-  visible?: () => boolean
-
-}

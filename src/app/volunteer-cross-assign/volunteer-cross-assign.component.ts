@@ -41,7 +41,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
   }
   async helperDetails(rh: helperInfo) {
     let h = await this.remult.repo(Helpers).findId(rh.id);
-    h.displayEditDialog(this.dialog, this.busy);
+    h.displayEditDialog(this.dialog);
 
   }
 

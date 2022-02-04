@@ -236,7 +236,7 @@ export class FamilyInfoComponent implements OnInit {
   async udpateInfo(f: ActiveFamilyDeliveries) {
     let x = f.courier;
     await f.showDetailsDialog({
-      dialog: this.dialog,
+      ui: this.dialog,
       refreshDeliveryStats: () => {
         x = f.courier;
         this.refreshWhatToTake();

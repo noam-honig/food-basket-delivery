@@ -4,7 +4,7 @@ import { Remult, getFields, BackendMethod, ValueFilter, IdFilter } from 'remult'
 
 
 import { DataAreaSettings, DataControl, getValueList } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
@@ -16,6 +16,8 @@ import { use, Field } from "../translate";
 import { Location } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import "../helpers/init-context";
+import { evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs } from "../helpers/init-context";
+import { HelpersBase } from "../helpers/helpers";
 
 
 
@@ -23,7 +25,7 @@ import "../helpers/init-context";
 declare var gtag;
 
 @Injectable()
-export class DialogService {
+export class DialogService implements UITools {
     filterDistCenter(): IdFilter<DistributionCenters> {
         return this.remult.filterDistCenter(this.distCenter);
     }
@@ -57,7 +59,7 @@ export class DialogService {
 
     async Error(err: string) {
 
-        return this.messageDialog(extractError(err));
+        await this.messageDialog(extractError(err));
     }
     private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`);
 
@@ -73,10 +75,33 @@ export class DialogService {
 
 
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy) {
+        evil.uiTools = this;
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
             this.distCenter = null;
 
+    }
+    async helperAssignment(helper: HelpersBase): Promise<void> {
+        await openDialog(
+            (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = helper);
+    }
+    async updateFamilyDialog(args: UpdateFamilyDialogArgs): Promise<void> {
+        openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = args);
+    }
+    async gridDialog(args: GridDialogArgs): Promise<void> {
+        openDialog((await import('../grid-dialog/grid-dialog.component')).GridDialogComponent, x => x.args = args);
+    }
+    async inputAreaDialog(args: InputAreaArgs): Promise<void> {
+        openDialog((await import('../select-popup/input-area/input-area.component')).InputAreaComponent, x => x.args = args)
+    }
+    async selectHelper(args: SelectHelperArgs): Promise<void> {
+        openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent, x => x.args = args);
+    }
+    async selectValuesDialog<T extends { caption?: string; }>(args: { values: T[]; onSelect: (selected: T) => void; title?: string; }): Promise<void> {
+        openDialog(SelectValueDialogComponent, x => x.args(args))
+    }
+    async doWhileShowingBusy(what: () => Promise<void>): Promise<void> {
+        this.busy.doWhileShowingBusy(what);
     }
     refreshFamiliesAndDistributionCenters() {
         (<CustomReuseStrategy>this.routeReuseStrategy).recycleAll();

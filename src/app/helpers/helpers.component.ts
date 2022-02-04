@@ -7,7 +7,8 @@ import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 
-import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
+import { AdminGuard } from '../auth/guards';
+import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { saveToExcel } from '../shared/saveToExcel';
@@ -41,7 +42,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   quickAdd() {
     this.helpers.addNewRow();
 
-    this.helpers.currentRow.displayEditDialog(this.dialog, this.busy);
+    this.helpers.currentRow.displayEditDialog(this.dialog);
 
   }
   destroyHelper = new DestroyHelper();
@@ -168,7 +169,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         showInLine: true,
         textInMenu: () => use.language.volunteerInfo,
         click: async f => {
-          f.displayEditDialog(this.dialog, this.busy);
+          f.displayEditDialog(this.dialog);
         }
       },
       {
@@ -242,7 +243,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.deliveries,
         visible: h => !h.isNew(),
         click: async h => {
-          await h.showDeliveryHistory(this.dialog, this.busy);
+          await h.showDeliveryHistory(this.dialog);
         }
       },
       new SendBulkSms(this.remult).sendSingleHelperButton(this.dialog)

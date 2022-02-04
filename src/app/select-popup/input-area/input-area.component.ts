@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { DialogService } from '../dialog';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { DataAreaSettings, IDataAreaSettings } from '@remult/angular/interfaces';
+import { button, InputAreaArgs } from '../../helpers/init-context';
 
 
 @Component({
@@ -12,15 +13,7 @@ import { DataAreaSettings, IDataAreaSettings } from '@remult/angular/interfaces'
   styleUrls: ['./input-area.component.scss']
 })
 export class InputAreaComponent implements OnInit {
-  args: {
-    title: string,
-    helpText?: string,
-    settings: IDataAreaSettings,
-    ok: () => void,
-    cancel?: () => void,
-    validate?: () => Promise<void>,
-    buttons?: button[]
-  };
+  args: InputAreaArgs;
 
   constructor(
     public dialogRef: MatDialogRef<any>,
@@ -69,12 +62,4 @@ export class InputAreaComponent implements OnInit {
       this.dialogRef.close();
     });
   }
-
-
-}
-
-
-export interface button {
-  text: string,
-  click: ((close: () => void) => void);
 }

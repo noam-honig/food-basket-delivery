@@ -40,6 +40,6 @@ export class HelperAssignmentComponent implements OnInit {
   }
   async edit() {
     let h = await this.argsHelper.getHelper();
-    await h.displayEditDialog(this.dialog, this.busy)
+    await h.displayEditDialog(this.dialog)
   }
 }

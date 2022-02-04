@@ -9,7 +9,7 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { BackendMethod, Remult, getFields } from 'remult';
 import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
 
-import { AdminGuard } from '../../auth/roles';
+
 import { Sites } from '../../sites/sites';
 
 import { MatStepper } from '@angular/material/stepper';

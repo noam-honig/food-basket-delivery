@@ -1,4 +1,4 @@
-import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
@@ -11,10 +11,8 @@ import { DialogService } from '../select-popup/dialog';
 
 import { LoginComponent } from '../users/login/login.component';
 import { AuthService } from '../auth/auth-service';
-import { Event, eventStatus, volunteersInEvent } from '../events/events';
-import { SignedInAndNotOverviewGuard } from '../auth/roles';
-import { MatExpansionPanel } from '@angular/material/expansion';
-import { Phone } from "../model-shared/phone";
+import { Event } from '../events/events';
+import { SignedInAndNotOverviewGuard } from '../auth/guards';
 import { OrgEventsComponent } from '../org-events/org-events.component';
 
 

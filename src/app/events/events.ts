@@ -290,7 +290,7 @@ export class Event extends IdEntity {
                         icon: 'edit',
                         click: async (ev) => {
                             let h = await ev.helper.getHelper();
-                            await h.displayEditDialog(dialog, busy);
+                            await h.displayEditDialog(dialog);
 
                         }
                     },

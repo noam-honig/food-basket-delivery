@@ -2,11 +2,9 @@
 import * as chart from 'chart.js';
 import { Component, OnInit, ViewChild, Sanitizer, OnDestroy } from '@angular/core';
 
-
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { GeocodeInformation, GetGeoInformation, polygonContains, polygonGetBounds } from '../shared/googleApiHelpers';
+import { polygonContains } from '../shared/googleApiHelpers';
 
-import { DomSanitizer } from '@angular/platform-browser';
 import { Route } from '@angular/router';
 
 import { EntityFilter, Remult, SqlDatabase } from 'remult';
@@ -19,22 +17,19 @@ import { colors } from '../families/stats-action';
 import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
 import { BusyService } from '@remult/angular';
 import { YesNo } from '../families/YesNo';
-import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
+import { distCenterAdminGuard } from '../auth/guards';
+import { Roles } from '../auth/roles';
 
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import MarkerClusterer, { ClusterIconInfo } from "@google/markerclustererplus";
+import MarkerClusterer from "@google/markerclustererplus";
 import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { getLang, Sites } from '../sites/sites';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { UpdateDistributionCenter, NewDelivery, UpdateDeliveriesStatus, UpdateCourier, DeleteDeliveries } from '../family-deliveries/family-deliveries-actions';
-import { actionDialogNeeds } from '../families/familyActionsWiring';
-import { UpdateArea, UpdateAreaForDeliveries, updateGroup, updateGroupForDeliveries } from '../families/familyActions';
-import { AreaColumn, Families } from '../families/families';
+import { UpdateAreaForDeliveries, updateGroupForDeliveries } from '../families/familyActions';
+import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
 import { use } from '../translate';
 import { BasketType } from '../families/BasketType';
 
@@ -262,7 +257,7 @@ export class DistributionMap implements OnInit, OnDestroy {
                 this.dict.delete(f.id);
                 this.refreshDeliveries()
               }
-              , dialog: this.dialog
+              , ui: this.dialog
             });
 
           });
