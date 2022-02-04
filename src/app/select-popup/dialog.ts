@@ -3,7 +3,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Remult, getFields, BackendMethod, ValueFilter, IdFilter } from 'remult';
 
 
-import { BusyService, DataAreaSettings, DataControl, getValueList, openDialog } from '@remult/angular';
+import { DataAreaSettings, DataControl, getValueList } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";

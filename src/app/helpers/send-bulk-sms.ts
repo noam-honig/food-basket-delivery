@@ -10,7 +10,7 @@ import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings"
 import { EditCustomMessageComponent, messageMerger } from "../edit-custom-message/edit-custom-message.component";
 import { Sites } from "../sites/sites";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
-import { openDialog, RowButton } from "@remult/angular";
+import { openDialog } from "@remult/angular";
 import { DialogService } from "../select-popup/dialog";
 
 @Controller("SendBulkSms")

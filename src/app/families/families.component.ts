@@ -14,7 +14,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 
 
-import { BusyService, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
+import { DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 

@@ -1,5 +1,6 @@
 import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
-import { BusyService, DataControl, DataControlInfo, DataControlSettings, GridSettings, openDialog } from '@remult/angular';
+import {  DataControl, DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";

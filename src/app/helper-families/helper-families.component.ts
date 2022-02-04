@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
 import { BackendMethod, SqlDatabase, FieldRef, Allow } from 'remult';
-import { BusyService, DataAreaSettings, GridButton, InputField, openDialog } from '@remult/angular';
+import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';

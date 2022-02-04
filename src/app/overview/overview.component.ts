@@ -12,11 +12,12 @@ import { DialogService, extractError } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
 import { SitesEntity } from '../sites/sites.entity';
-import { BusyService, InputField, openDialog } from '@remult/angular';
+import { BusyService, openDialog } from '@remult/angular';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InitContext } from '../helpers/init-context';
 import { Phone } from '../model-shared/phone';
 import { actionInfo } from 'remult/src/server-action';
+import { InputField } from '@remult/angular/interfaces';
 
 @Component({
   selector: 'app-overview',

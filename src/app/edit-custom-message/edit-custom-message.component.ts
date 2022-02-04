@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { GridButton } from '@remult/angular';
+import { GridButton } from '@remult/angular/interfaces';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({

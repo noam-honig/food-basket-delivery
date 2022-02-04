@@ -12,7 +12,8 @@ import { EmailSvc } from '../shared/utils';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ActivatedRoute } from '@angular/router';
 import { BackendMethod } from 'remult';
-import { DataAreaSettings, DataControl, openDialog } from '@remult/angular';
+import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
+import {  openDialog } from '@remult/angular';
 
 import { Field, FieldType } from '../translate';
 import { FamilySources } from '../families/FamilySources';

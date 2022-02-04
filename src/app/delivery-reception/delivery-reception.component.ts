@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Remult } from 'remult';
-import { BusyService, DataControlInfo, GridSettings, InputField, openDialog } from '@remult/angular';
+import { DataControlInfo, GridSettings, InputField } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 

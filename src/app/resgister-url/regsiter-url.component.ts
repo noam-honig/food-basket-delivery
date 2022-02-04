@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Remult, SqlDatabase } from 'remult';
-import { GridSettings, openDialog } from '@remult/angular';
+import { GridSettings } from '@remult/angular/interfaces';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RegisterURL } from './regsiter-url';
+import { openDialog } from '@remult/angular';
 
 @Component({
   selector: 'app-register-url',

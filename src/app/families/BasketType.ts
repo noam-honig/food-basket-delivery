@@ -8,7 +8,7 @@ import { Remult, } from 'remult';
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
 import { getLang } from '../sites/sites';
-import { DataControl, getValueList } from '@remult/angular';
+import { DataControl, getValueList } from '@remult/angular/interfaces';
 import { getSettings } from '../manage/ApplicationSettings';
 
 

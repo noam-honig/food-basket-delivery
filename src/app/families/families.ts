@@ -7,7 +7,8 @@ import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Remult, BackendMethod, IdEntity, SqlDatabase, Filter, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields } from 'remult';
-import { BusyService, DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
 

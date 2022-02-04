@@ -1,4 +1,4 @@
-import { DataControl } from "@remult/angular";
+import { DataControl } from "@remult/angular/interfaces";
 import { Remult, FieldRef } from "remult";
 import { InputTypes } from "remult/inputTypes";
 import { getSettings } from "../manage/ApplicationSettings";

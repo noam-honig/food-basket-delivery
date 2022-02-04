@@ -1,5 +1,5 @@
 
-import { DataControlSettings, getFieldDefinition, GridSettings } from '@remult/angular';
+import { DataControlSettings, getFieldDefinition, GridSettings } from '@remult/angular/interfaces';
 import { sortColumns } from '../shared/utils';
 
 const storageEntryName = 'grid-state';

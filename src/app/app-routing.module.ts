@@ -26,7 +26,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
 import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, Roles, SignedInAndNotOverviewGuard, EventListGuard } from './auth/roles';
-import { AuthenticatedInGuard } from '@remult/angular';
+import { AuthenticatedGuard } from '@remult/angular';
 import { Remult } from 'remult';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
@@ -170,5 +170,5 @@ export const routes: Routes = [
 
 export class AppRoutingModule { }
 
-AuthenticatedInGuard.componentToNavigateIfNotAllowed = LoginComponent;
+AuthenticatedGuard.componentToNavigateIfNotAllowed = LoginComponent;
 

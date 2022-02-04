@@ -13,7 +13,7 @@ import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
 import { Controller } from "remult";
-import { DataAreaFieldsSetting, DataControl, getValueList, InputField } from "@remult/angular";
+import { DataAreaFieldsSetting, DataControl, getValueList, InputField } from "@remult/angular/interfaces";
 
 import { getFields } from "remult";
 

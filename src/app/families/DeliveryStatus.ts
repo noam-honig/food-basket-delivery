@@ -4,7 +4,7 @@ import { use, ValueListFieldType } from '../translate';
 
 import { getSettings } from '../manage/ApplicationSettings';
 
-import { DataControl } from '@remult/angular';
+import { DataControl } from '@remult/angular/interfaces';
 import { ValueListValueConverter } from 'remult/valueConverters';
 
 

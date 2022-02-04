@@ -1,4 +1,5 @@
-import { DataControl, openDialog } from '@remult/angular';
+import { openDialog } from '@remult/angular';
+import { DataControl } from '@remult/angular/interfaces';
 import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
@@ -116,7 +117,7 @@ export class RegisterToEvent {
 
         dbName: 'preferredDistributionAreaAddress2'
     })
-    preferredFinishAddress: string='';
+    preferredFinishAddress: string = '';
 
     get $() { return getFields(this, this.remult); }
     async registerToEvent(e: EventInList, dialog: DialogService) {

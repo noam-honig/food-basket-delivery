@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DataAreaSettings, DataControl, getValueList } from '@remult/angular';
+import { DataAreaSettings, DataControl, getValueList } from '@remult/angular/interfaces';
 import { BackendMethod, Controller, getFields, Remult } from 'remult';
 import { BasketType } from '../families/BasketType';
 import { Families } from '../families/families';

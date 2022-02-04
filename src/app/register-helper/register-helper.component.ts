@@ -5,7 +5,8 @@ import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DataAreaSettings, openDialog } from '@remult/angular';
+import { DataAreaSettings } from '@remult/angular/interfaces';
+import { openDialog } from '@remult/angular';
 
 
 declare var gtag;
@@ -21,8 +22,8 @@ export class RegisterHelperComponent implements OnInit {
   refer: string = null;
   isDone = false;
 
-  helper = this. remult.repo(Helpers).create();
-  
+  helper = this.remult.repo(Helpers).create();
+
   area = new DataAreaSettings({
     fields: () => [
       { field: this.helper.$.socialSecurityNumber, caption: "תעודת זהות (עבור ביטוח מתנדבים)" },

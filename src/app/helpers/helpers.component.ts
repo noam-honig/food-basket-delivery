@@ -4,7 +4,8 @@ import { Route } from '@angular/router';
 import { BackendMethod, Field, getFields } from 'remult';
 import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { BusyService, DataControlInfo, GridSettings, openDialog } from '@remult/angular';
+import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

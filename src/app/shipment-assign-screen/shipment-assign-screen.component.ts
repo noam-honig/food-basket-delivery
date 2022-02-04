@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Roles } from '../auth/roles';
-import { BusyService, InputField, openDialog } from '@remult/angular';
+import { BusyService,  openDialog } from '@remult/angular';
 import { BackendMethod, EntityFilter, Remult, SqlDatabase } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -12,6 +12,7 @@ import { HelperAssignmentComponent } from '../helper-assignment/helper-assignmen
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { BasketType } from '../families/BasketType';
 import { getSettings, ApplicationSettings } from '../manage/ApplicationSettings';
+import { InputField } from '@remult/angular/interfaces';
 
 @Component({
   selector: 'app-shipment-assign-screen',

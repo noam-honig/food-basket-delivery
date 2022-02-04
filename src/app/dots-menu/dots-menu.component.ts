@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RowButton } from '@remult/angular';
+import { RowButton } from '@remult/angular/interfaces';
 
 
 @Component({

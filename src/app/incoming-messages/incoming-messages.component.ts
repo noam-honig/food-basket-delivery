@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { BusyService, GridSettings } from '@remult/angular';
+import { BusyService } from '@remult/angular';
+import { GridSettings } from '@remult/angular/interfaces';
 import { Remult } from 'remult';
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
 import { DialogService } from '../select-popup/dialog';

@@ -5,7 +5,7 @@ import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
-import { DataControl, getValueList } from "@remult/angular";
+import { DataControl, getValueList } from "@remult/angular/interfaces";
 import { use, FieldType, Field } from "../translate";
 
 

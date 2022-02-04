@@ -1,5 +1,5 @@
 import { FieldMetadata, Remult } from "remult";
-import { DataControlInfo, DataControlSettings, GridSettings } from "@remult/angular";
+import { DataControlInfo, DataControlSettings, GridSettings } from "@remult/angular/interfaces";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
   for (let i = 0; i < array.length; i++) {

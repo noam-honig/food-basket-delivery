@@ -1,4 +1,4 @@
-import { AuthenticatedInGuard, NotAuthenticatedGuard } from '@remult/angular';
+import { AuthenticatedGuard } from '@remult/angular';
 import { Remult } from 'remult';
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
@@ -16,21 +16,21 @@ export class Roles {
 
 
 @Injectable()
-export class AdminGuard extends AuthenticatedInGuard {
+export class AdminGuard extends AuthenticatedGuard {
 
     isAllowed() {
         return Roles.admin;
     }
 }
 @Injectable()
-export class distCenterAdminGuard extends AuthenticatedInGuard {
+export class distCenterAdminGuard extends AuthenticatedGuard {
 
     isAllowed() {
         return Roles.distCenterAdmin;
     }
 }
 @Injectable()
-export class distCenterOrOverviewOrAdmin extends AuthenticatedInGuard {
+export class distCenterOrOverviewOrAdmin extends AuthenticatedGuard {
 
     isAllowed() {
         return this.remult.isAllowed([Roles.distCenterAdmin, Roles.admin, Roles.overview]);
@@ -38,7 +38,7 @@ export class distCenterOrOverviewOrAdmin extends AuthenticatedInGuard {
 }
 
 @Injectable()
-export class OverviewGuard extends AuthenticatedInGuard {
+export class OverviewGuard extends AuthenticatedGuard {
 
     isAllowed() {
         return Roles.overview;
@@ -49,14 +49,14 @@ export class OverviewGuard extends AuthenticatedInGuard {
 
 
 @Injectable()
-export class OverviewOrAdminGuard extends AuthenticatedInGuard {
+export class OverviewOrAdminGuard extends AuthenticatedGuard {
 
     isAllowed() {
         return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.overview);
     }
 }
 @Injectable()
-export class SignedInAndNotOverviewGuard extends AuthenticatedInGuard {
+export class SignedInAndNotOverviewGuard extends AuthenticatedGuard {
 
     isAllowed() {
         return c => c.authenticated() && !c.isAllowed(Roles.overview)
@@ -64,20 +64,20 @@ export class SignedInAndNotOverviewGuard extends AuthenticatedInGuard {
 }
 
 @Injectable()
-export class IndieGuard extends AuthenticatedInGuard {
+export class IndieGuard extends AuthenticatedGuard {
     isAllowed() {
         return Roles.indie;
     }
 }
 @Injectable()
-export class LabGuard extends AuthenticatedInGuard {
+export class LabGuard extends AuthenticatedGuard {
     isAllowed() {
         return Roles.lab;
     }
 }
 
 @Injectable()
-export class distCenterOrLabGuard extends AuthenticatedInGuard {
+export class distCenterOrLabGuard extends AuthenticatedGuard {
 
     isAllowed() {
         return c => c.isAllowed(Roles.admin) || c.isAllowed(Roles.lab) || c.isAllowed(Roles.distCenterAdmin);

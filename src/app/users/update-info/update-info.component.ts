@@ -4,10 +4,11 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { AuthenticatedInGuard, RouteHelperService, InputField, GridSettings, DataAreaSettings } from '@remult/angular';
+import { InputField, GridSettings, DataAreaSettings } from '@remult/angular/interfaces';
 import { Route } from '@angular/router';
 import { Remult } from 'remult';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
+import { AuthenticatedGuard, RouteHelperService } from '@remult/angular';
 
 
 
@@ -28,7 +29,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
   }
 
-  static route: Route = { path: 'update-info', component: UpdateInfoComponent, canActivate: [AuthenticatedInGuard] };
+  static route: Route = { path: 'update-info', component: UpdateInfoComponent, canActivate: [AuthenticatedGuard] };
 
   confirmPassword = new InputField<string>({ caption: this.settings.lang.confirmPassword, inputType: 'password', defaultValue: () => Helpers.emptyPassword });
   h: Helpers;

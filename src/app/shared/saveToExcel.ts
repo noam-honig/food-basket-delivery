@@ -1,10 +1,11 @@
 import { Entity, Remult, EntityBase, Repository, FieldRef } from 'remult';
-import { BusyService, GridSettings } from '@remult/angular';
+import { BusyService } from '@remult/angular';
 
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DateOnlyValueConverter } from 'remult/valueConverters';
 import { HelpersBase } from '../helpers/helpers';
+import { GridSettings } from '@remult/angular/interfaces';
 export async function saveToExcel<E extends EntityBase, T extends GridSettings<E>>(settings: ApplicationSettings,
   repo: Repository<E>,
   grid: T,

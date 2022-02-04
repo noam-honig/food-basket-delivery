@@ -7,7 +7,7 @@ import { Router, Route, RouteReuseStrategy } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 import { BackendMethod, Remult, getFields } from 'remult';
-import { RouteHelperService, NotAuthenticatedGuard, InputField, DataAreaSettings, DataControl } from '@remult/angular';
+import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
 
 import { AdminGuard } from '../../auth/roles';
 import { Sites } from '../../sites/sites';
@@ -17,6 +17,7 @@ import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/phone";
 import { use, Field } from '../../translate';
 import { InputTypes } from 'remult/inputTypes';
+import { NotAuthenticatedGuard } from '@remult/angular';
 
 
 
@@ -206,7 +207,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   @BackendMethod({ allowed: true })
   static async registerNewUser(phone: string, name: string, remult?: Remult) {
-    let h =  remult.repo(Helpers).create();
+    let h = remult.repo(Helpers).create();
     h.phone = new Phone(phone);
     h.name = name;
     await h.save();

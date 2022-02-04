@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { Sites, getLang } from '../sites/sites';
 import { EmailSvc, isDesktop } from '../shared/utils';
 import { isDate } from 'util';
-import { DataControl } from '@remult/angular';
+import { DataControl } from '@remult/angular/interfaces';
 import { filterHelper } from 'remult/src/filter/filter-interfaces';
 import { InputTypes } from 'remult/inputTypes';
 import { SqlBuilder } from './SqlBuilder';

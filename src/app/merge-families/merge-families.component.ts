@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
-import { BusyService, DataControlSettings, FieldCollection, getFieldDefinition, GridSettings, openDialog } from '@remult/angular';
+import { DataControlSettings, FieldCollection, getFieldDefinition } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import { Remult, BackendMethod, Fields, FieldRef, FieldMetadata } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';

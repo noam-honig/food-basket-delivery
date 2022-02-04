@@ -24,7 +24,8 @@ import { BasketType } from '../families/BasketType';
 
 import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { BusyService, DataAreaSettings, InputField, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { DataAreaSettings, InputField } from '@remult/angular/interfaces';
 import { Roles, AdminGuard, distCenterAdminGuard } from '../auth/roles';
 import { GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';
 import { SendSmsAction } from './send-sms-action';

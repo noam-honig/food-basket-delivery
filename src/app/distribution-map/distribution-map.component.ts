@@ -16,7 +16,8 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 import { colors } from '../families/stats-action';
-import { BusyService, DataAreaSettings, GridButton, InputField } from '@remult/angular';
+import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
+import { BusyService } from '@remult/angular';
 import { YesNo } from '../families/YesNo';
 import { Roles, AdminGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, OverviewGuard } from '../auth/roles';
 

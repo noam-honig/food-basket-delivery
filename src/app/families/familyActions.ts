@@ -14,7 +14,7 @@ import { use, Field, ValueListFieldType, QuantityColumn } from "../translate";
 import { getLang } from '../sites/sites';
 import { Controller } from "remult";
 
-import { DataControl, getValueList } from "@remult/angular";
+import { DataControl, getValueList } from "@remult/angular/interfaces";
 import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 import { ValueListValueConverter } from "remult/valueConverters";

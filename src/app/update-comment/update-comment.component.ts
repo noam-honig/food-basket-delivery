@@ -7,7 +7,7 @@ import { Remult } from 'remult';
 
 import { DialogService } from '../select-popup/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { DataAreaSettings } from '@remult/angular';
+import { DataAreaSettings } from '@remult/angular/interfaces';
 import { ImageInfo } from '../images/images.component';
 import { DeliveryImage } from '../families/DeiveryImages';
 
@@ -93,7 +93,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this. remult.repo(DeliveryImage).create({
+        await this.remult.repo(DeliveryImage).create({
           deliveryId: this.args.family.id, image: image.image
         }).save();
         this.args.family.needsWork = true;

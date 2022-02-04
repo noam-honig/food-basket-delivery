@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { BusyService, InputField } from '@remult/angular';
+import { BusyService } from '@remult/angular';
 import { EventEmitter } from 'events';
 
 import { Remult } from 'remult';

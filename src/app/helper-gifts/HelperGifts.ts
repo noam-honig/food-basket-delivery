@@ -1,5 +1,5 @@
 import { Remult, Entity, IdEntity, BackendMethod, Allow } from "remult";
-import { BusyService, DataControl, GridSettings, openDialog } from '@remult/angular';
+import { DataControl, GridSettings } from '@remult/angular/interfaces';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -8,6 +8,7 @@ import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
 import { Field, use } from "../translate";
+import { BusyService, openDialog } from "@remult/angular";
 
 @Entity<HelperGifts>("HelperGifts", {
     allowApiRead: Allow.authenticated,
@@ -17,7 +18,7 @@ import { Field, use } from "../translate";
     options.apiPrefilter = {
         assignedToHelper: !remult.isAllowed(Roles.admin) ? { $id: [remult.user.id] } : undefined
     };
-    options.saving =async  (self) => {
+    options.saving = async (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
             self.userCreated = (await remult.getCurrentUser());

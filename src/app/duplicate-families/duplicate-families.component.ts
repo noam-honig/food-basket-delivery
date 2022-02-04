@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendMethod, Remult, SqlDatabase, FieldMetadata, getFields, Filter } from 'remult';
-import { BusyService, DataAreaSettings, DataControl, GridSettings, InputField, openDialog } from '@remult/angular';
+import {  DataAreaSettings, DataControl, GridSettings } from '@remult/angular/interfaces';
+import { BusyService, openDialog } from '@remult/angular';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Families } from '../families/families';

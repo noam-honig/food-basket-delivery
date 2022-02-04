@@ -1,8 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { Remult } from "remult";
-import { GridSettings, openDialog } from "@remult/angular";
+import { GridSettings } from "@remult/angular/interfaces";
 import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
 import { HelperGifts } from "./HelperGifts";
+import { openDialog } from "@remult/angular";
 @Component({
   selector: "app-helper-gifts",
   templateUrl: "./helper-gifts.component.html",

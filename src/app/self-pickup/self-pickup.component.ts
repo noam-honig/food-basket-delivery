@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Route } from '@angular/router';
 
-import { BusyService, GridSettings } from '@remult/angular';
+import { BusyService } from '@remult/angular';
 import { Remult } from 'remult';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -9,6 +9,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { distCenterOrLabGuard } from '../auth/roles';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { GridSettings } from '@remult/angular/interfaces';
 
 @Component({
   selector: 'app-self-pickup',

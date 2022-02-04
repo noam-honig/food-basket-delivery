@@ -11,7 +11,8 @@ import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-dialog.component";
 import { use, Field } from "../translate";
 
-import { DataControl, GridSettings, openDialog } from "@remult/angular";
+import { DataControl, GridSettings } from "@remult/angular/interfaces";
+import {  openDialog } from '@remult/angular';
 import { DateOnlyField } from "remult/src/remult3";
 
 @Entity<InRouteHelpers>('in-route-helpers', {
@@ -210,7 +211,7 @@ export class InRouteHelpers extends IdEntity {
     allowApiUpdate: Roles.distCenterAdmin,
     defaultOrderBy: { createDate: "desc" },
 
-    saving:async  (self) => {
+    saving: async (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
             self.createUser = (await self.remult.getCurrentUser());

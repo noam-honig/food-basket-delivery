@@ -1,5 +1,5 @@
 import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata, Allow, isBackend } from 'remult';
-import { DataControl } from '@remult/angular';
+import { DataControl } from '@remult/angular/interfaces';
 export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowed) {
   return (target, key) => {
     DataControl({
