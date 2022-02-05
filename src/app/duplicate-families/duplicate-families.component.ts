@@ -112,7 +112,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           ...[new UpdateStatus(this.remult), new updateGroup(this.remult)].map(a => a.gridButton(
             {
               afterAction: async () => await x.args.settings.reloadData(),
-              dialog: this.dialog,
+              ui: this.dialog,
               userWhere: async () => (await x.args.settings.getFilterWithSelectedRows()).where,
               settings: this.settings
             }))

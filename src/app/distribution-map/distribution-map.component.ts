@@ -82,7 +82,7 @@ export class DistributionMap implements OnInit, OnDestroy {
       new DeleteDeliveries(this.remult)
     ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
-      dialog: this.dialog,
+      ui: this.dialog,
       userWhere: () => ({ id: this.selectedDeliveries.map(x => x.id) }),
       settings: this.settings
     })),

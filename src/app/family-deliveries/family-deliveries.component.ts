@@ -670,7 +670,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         new UpdateStatusForDeliveries(this.remult)
       ].map(a => a.gridButton({
         afterAction: async () => await this.refresh(),
-        dialog: this.dialog,
+        ui: this.dialog,
         userWhere: async () => (await this.deliveries.getFilterWithSelectedRows()).where,
         settings: this.settings
       })),
@@ -734,7 +734,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async () => {
 
           let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-          await saveToExcel(this.settings, this.remult.repo(ActiveFamilyDeliveries), this.deliveries, getLang(this.remult).deliveries, this.busy, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+          await saveToExcel(this.settings, this.remult.repo(ActiveFamilyDeliveries), this.deliveries, getLang(this.remult).deliveries, this.dialog, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
             async (fd, addColumn) => {
               await fd.basketType?.addBasketTypes(fd.quantity, addColumn);
               fd.addStatusExcelColumn(addColumn);

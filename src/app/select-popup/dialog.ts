@@ -4,7 +4,7 @@ import { Remult, getFields, BackendMethod, ValueFilter, IdFilter } from 'remult'
 
 
 import { DataAreaSettings, DataControl, getValueList } from '@remult/angular/interfaces';
-import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, openDialog, RouteHelperService, SelectValueDialogComponent } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
@@ -16,8 +16,9 @@ import { use, Field } from "../translate";
 import { Location } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import "../helpers/init-context";
-import { evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs } from "../helpers/init-context";
+import { EditCommentArgs, EditCustomMessageArgs, evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs, UpdateGroupArgs } from "../helpers/init-context";
 import { HelpersBase } from "../helpers/helpers";
+import { extractError } from "./extractError";
 
 
 
@@ -74,12 +75,30 @@ export class DialogService implements UITools {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService) {
         evil.uiTools = this;
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
             this.distCenter = null;
 
+    }
+    async editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void> {
+        openDialog((await import('../edit-custom-message/edit-custom-message.component')).EditCustomMessageComponent,
+            x => x.args = args);
+    }
+    navigateToComponent(component: any): void {
+        this.routeHelper.navigateToComponent(component);
+    }
+    async editCommentDialog(args: EditCommentArgs): Promise<void> {
+        await openDialog((await import('../edit-comment-dialog/edit-comment-dialog.component')).EditCommentDialogComponent, x => x.args = args);
+    }
+    async selectCompany(args: (selectedValue: string) => void): Promise<void> {
+        openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = args)
+    }
+    async updateGroup(args: UpdateGroupArgs): Promise<void> {
+        openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
+            s.init(args)
+        });
     }
     async helperAssignment(helper: HelpersBase): Promise<void> {
         await openDialog(
@@ -248,35 +267,6 @@ export class DialogService implements UITools {
         console.log(s);
     }
 }
-export function extractError(err: any) {
-    if (typeof err === "string")
-        return err;
-    if (err.modelState) {
-        if (err.message)
-            return err.message;
-        for (const key in err.modelState) {
-            if (err.modelState.hasOwnProperty(key)) {
-                const element = err.modelState[key];
-                return key + ": " + element;
-
-            }
-        }
-    }
-    if (err.rejection)
-        return extractError(err.rejection);//for promise failed errors and http errors
-    if (err.message) {
-        let r = err.message;
-        if (err.error && err.error.message)
-            r = err.error.message;
-        return r;
-    }
-    if (err.error)
-        return extractError(err.error);
-
-
-    return JSON.stringify(err);
-}
-
 export class DestroyHelper {
     private destroyList: (() => void)[] = [];
     add(arg0: () => void) {

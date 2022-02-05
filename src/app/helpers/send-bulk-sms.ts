@@ -7,11 +7,10 @@ import { HelperCommunicationHistory } from "../in-route-follow-up/in-route-helpe
 import { Roles } from "../auth/roles";
 import { Families } from "../families/families";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
-import { EditCustomMessageComponent, messageMerger } from "../edit-custom-message/edit-custom-message.component";
+import { messageMerger } from "../edit-custom-message/messageMerger";
 import { Sites } from "../sites/sites";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
-import { openDialog } from "@remult/angular";
-import { DialogService } from "../select-popup/dialog";
+import { UITools } from "./init-context";
 
 @Controller("SendBulkSms")
 export class SendBulkSms {
@@ -26,29 +25,29 @@ export class SendBulkSms {
         return i;
     }
     constructor(private remult: Remult) { }
-    async sendBulkDialog(dialog: DialogService, currentHelper: Helpers) {
+    async sendBulkDialog(ui: UITools, currentHelper: Helpers) {
         let messageCount = await this.count();
-        this.editInviteMethod(dialog, currentHelper, {
+        this.editInviteMethod(ui, currentHelper, {
             send: () => this.send(),
             messageCount
 
         })
     }
-    sendSingleHelperButton(dialog: DialogService) {
+    sendSingleHelperButton(ui: UITools) {
         return {
             name: "שליחת הודעת זימון",
             click: async (h: Helpers) => {
-                this.editInviteMethod(dialog, h, {
+                this.editInviteMethod(ui, h, {
                     send: async () => {
                         if (h.doNotSendSms) {
-                            if (!await dialog.YesNoPromise("המתנדב ביקש לא לקבל הודעות, האם לשלוח בכל זאת?"))
+                            if (!await ui.YesNoPromise("המתנדב ביקש לא לקבל הודעות, האם לשלוח בכל זאת?"))
                                 return;
                         }
                         if (await this.remult.repo(HelperCommunicationHistory).count({
                             volunteer: h,
                             createDate: { ">=": this.yesterdayMorning() }
                         }) > 0) {
-                            if (!await dialog.YesNoPromise("כבר נשלחה למתנדב הודעה מאתמול בבוקר, האם לשלוח בכל זאת?"))
+                            if (!await ui.YesNoPromise("כבר נשלחה למתנדב הודעה מאתמול בבוקר, האם לשלוח בכל זאת?"))
                                 return;
                         }
 
@@ -65,7 +64,7 @@ export class SendBulkSms {
 
 
     private async editInviteMethod(
-        dialog: DialogService,
+        ui: UITools,
         currentHelper: Helpers,
         args: {
             messageCount: number,
@@ -78,20 +77,20 @@ export class SendBulkSms {
     בתודה !ארגון!
     להסרה השב "הסר"`;
         let settings = (await this.remult.getSettings());
-        await openDialog(EditCustomMessageComponent, edit => edit.args = {
+        await ui.editCustomMessageDialog({
             message: this.buildMessage(currentHelper.name, settings),
             templateText: settings.inviteVolunteersMessage || defaultMessage,
             helpText: '',
             title: settings.lang.sendMessageToInviteVolunteers + ' ' + settings.lang.to + ' ' + args.messageCount + ' ' + settings.lang.volunteers,
             buttons: [{
                 name: 'שלח הודעה',
-                click: async () => {
-                    settings.inviteVolunteersMessage = edit.args.templateText;
+                click: async ({ templateText, close }) => {
+                    settings.inviteVolunteersMessage = templateText;
                     await settings.save();
-                    if (await dialog.YesNoPromise(settings.lang.sendMessageToInviteVolunteers + ' ' + settings.lang.to + ' ' + args.messageCount + ' ' + settings.lang.volunteers + "?")) {
+                    if (await ui.YesNoPromise(settings.lang.sendMessageToInviteVolunteers + ' ' + settings.lang.to + ' ' + args.messageCount + ' ' + settings.lang.volunteers + "?")) {
                         let r = await args.send();
-                        dialog.Info(r + " הודעות נשלחו");
-                        edit.ref.close();
+                        ui.Info(r + " הודעות נשלחו");
+                        close();
                     }
                 }
             }]

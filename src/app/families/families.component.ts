@@ -45,8 +45,10 @@ import { BasketType } from './BasketType';
 import { use } from '../translate';
 import { ChartType } from 'chart.js';
 import { GroupsValue } from '../manage/groups';
-import { EditCustomMessageComponent, messageMerger } from '../edit-custom-message/edit-custom-message.component';
+import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
+import { messageMerger } from "../edit-custom-message/messageMerger";
 import { makeId } from '../helpers/helpers';
+import { UITools } from '../helpers/init-context';
 
 
 
@@ -193,7 +195,7 @@ export class FamiliesComponent implements OnInit {
     }
     stats = new Stats(this.remult);
     async saveToExcel() {
-        await saveFamiliesToExcel(this.remult, this.families, this.busy, this.settings.lang.families);
+        await saveFamiliesToExcel(this.remult, this.families, this.dialog, this.settings.lang.families);
     }
 
 
@@ -394,7 +396,7 @@ export class FamiliesComponent implements OnInit {
             ].map(x => x.gridButton(
                 {
                     afterAction: async () => await this.refresh(),
-                    dialog: this.dialog,
+                    ui: this.dialog,
                     userWhere: async () => (await this.families.getFilterWithSelectedRows()).where,
                     settings: this.settings
                 }))
@@ -765,8 +767,8 @@ interface statsOnTab {
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
-export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, busy: BusyService, name) {
-    await saveToExcel<Families, GridSettings<Families>>((await remult.getSettings()), remult.repo(Families), gs, name, busy, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, ui: UITools, name) {
+    await saveToExcel<Families, GridSettings<Families>>((await remult.getSettings()), remult.repo(Families), gs, name, ui, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation;
         let street = f.address;
         let house = '';

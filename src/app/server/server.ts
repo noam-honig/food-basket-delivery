@@ -7,14 +7,11 @@ import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
 import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
-import "../helpers/helpers.component";
-import "../event-info/RegisterToEvent";
 import { OmitEB, Remult } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
-import { OverviewComponent } from "../overview/overview.component";
 import { preparePostgresQueueStorage } from "remult/postgres";
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
@@ -27,6 +24,7 @@ import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
 import { translationConfig, TranslationOptions } from "../translate";
 import { DataApi } from "remult/src/data-api";
+import { OverviewController } from "../overview/overview.controller";
 
 DataApi.defaultGetLimit = 500;
 let publicRoot = 'hagai';
@@ -222,7 +220,7 @@ s.parentNode.insertBefore(b, s);})();
         registerImageUrls(app, (req) => eb.getRemult(req), '/*');
 
 
-        OverviewComponent.createSchemaApi = async schema => {
+        OverviewController.createSchemaApi = async schema => {
             let stack: [] = app._router.stack;
             stack.splice(stack.length - 1, 1);
 
@@ -355,7 +353,7 @@ s.parentNode.insertBefore(b, s);})();
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
     });
-    
+
 
     let port = process.env.PORT || 3000;
     app.listen(port);

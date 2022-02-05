@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { siteItem, dateRange } from '../overview/overview.component';
+import { siteItem, dateRange } from '../overview/overview.controller';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BackendMethod, Remult } from 'remult';
 import { Roles } from '../auth/roles';

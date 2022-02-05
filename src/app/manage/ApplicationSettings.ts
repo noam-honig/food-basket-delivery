@@ -18,13 +18,12 @@ import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { translationConfig, Language, use, TranslationOptions, Field, FieldType, IntegerField, langByCode } from "../translate";
+import { Language, use, TranslationOptions, Field, FieldType, IntegerField, langByCode } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
-import { Injectable, Self } from '@angular/core';
+import { Self } from '@angular/core';
 
 import { BasketType } from '../families/BasketType';
-import { HttpClient } from '@angular/common/http';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { routeStrategy } from '../asign-family/route-strategy';
 
@@ -562,39 +561,6 @@ export interface phoneBuildArgs {
   phoneItem: PhoneItem,
   settings: ApplicationSettings,
   addPhone: (name: string, value: string) => void
-}
-
-
-@Injectable()
-export class SettingsService {
-  constructor(private remult: Remult, private http: HttpClient) {
-
-  }
-  instance: ApplicationSettings;
-  async init() {
-
-    this.instance = await ApplicationSettings.getAsync(this.remult);
-    setSettingsForSite(Sites.getValidSchemaFromContext(this.remult), this.instance);
-
-    translationConfig.forWho = () => this.instance.forWho;
-    DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;
-    (await import('../helpers/helpers')).Helpers.usingCompanyModule = this.instance.showCompanies;
-
-    PhoneOption.assignerOrOrg.name = this.instance.lang.assignerOrOrg;
-    PhoneOption.familyHelpPhone.name = this.instance.lang.familyHelpPhone;
-    PhoneOption.familySource.name = this.instance.lang.familySourcePhone;
-    PhoneOption.otherPhone.name = this.instance.lang.otherPhone;
-
-    RemovedFromListExcelImportStrategy.displayAsError.caption = this.instance.lang.RemovedFromListExcelImportStrategy_displayAsError;
-    RemovedFromListExcelImportStrategy.showInUpdate.caption = this.instance.lang.RemovedFromListExcelImportStrategy_showInUpdate;
-    RemovedFromListExcelImportStrategy.ignore.caption = this.instance.lang.RemovedFromListExcelImportStrategy_ignore;
-
-    this.instance.updateStaticTexts();
-
-
-
-  }
-
 }
 
 

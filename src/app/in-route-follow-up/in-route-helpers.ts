@@ -12,8 +12,9 @@ import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-
 import { use, Field } from "../translate";
 
 import { DataControl, GridSettings } from "@remult/angular/interfaces";
-import {  openDialog } from '@remult/angular';
+
 import { DateOnlyField } from "remult/src/remult3";
+import { UITools } from "../helpers/init-context";
 
 @Entity<InRouteHelpers>('in-route-helpers', {
     allowApiRead: Roles.admin,
@@ -80,53 +81,54 @@ export class InRouteHelpers extends IdEntity {
     async helper() {
         return this.remult.repo(Helpers).findId(this.id);
     }
-    async showHistory() {
+    async showHistory(ui: UITools) {
         let h = await this.helper();
-        await openDialog(GridDialogComponent, gridDialog => gridDialog.args = {
+        const settings = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+            numOfColumnsInGrid: 6,
+            knowTotalRows: true,
+            rowButtons: [
+                {
+                    name: getLang(this.remult).editComment,
+                    click: async (r) => {
+                        ui.editCommentDialog({
+                            title: 'הוסף הערה',
+
+                            save: async (comment) => {
+                                r.message = comment;
+                                await r.save();
+                            },
+                            comment: r.message
+
+
+                        });
+                    },
+                    visible: r => r.createUser.isCurrentUser()
+                }
+            ],
+
+            columnSettings: hist => [hist.createDate, hist.message, hist.createUser],
+
+            where: { volunteer: h },
+            orderBy: { createDate: "desc" },
+            rowsInPage: 25
+
+        })
+        await ui.gridDialog({
             title: 'היסטוריה עבור ' + this.name,
             buttons: [{
                 text: 'הוסף',
                 click: async () => {
 
-                    await this.addCommunication(() => gridDialog.args.settings.reloadData());
+                    await this.addCommunication(ui, () => settings.reloadData());
                 }
             }],
-            settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
-                numOfColumnsInGrid: 6,
-                knowTotalRows: true,
-                rowButtons: [
-                    {
-                        name: getLang(this.remult).editComment,
-                        click: async (r) => {
-                            await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
-                                title: 'הוסף הערה',
-
-                                save: async (comment) => {
-                                    r.message = comment;
-                                    await r.save();
-                                },
-                                comment: r.message
-
-
-                            });
-                        },
-                        visible: r => r.createUser.isCurrentUser()
-                    }
-                ],
-
-                columnSettings: hist => [hist.createDate, hist.message, hist.createUser],
-
-                where: { volunteer: h },
-                orderBy: { createDate: "desc" },
-                rowsInPage: 25
-
-            })
+            settings
         });
         this._.reload();
     }
-    async addCommunication(reload: () => void) {
+    async addCommunication(ui: UITools, reload: () => void) {
 
-        await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
+        await ui.editCommentDialog({
             title: 'הוסף תכתובת',
 
             save: async (comment) => {
@@ -141,10 +143,9 @@ export class InRouteHelpers extends IdEntity {
         });
     }
 
-    async showAssignment() {
+    async showAssignment(ui: UITools) {
         let h = await this.remult.repo(Helpers).findId(this.id);
-        await openDialog(
-            HelperAssignmentComponent, s => s.argsHelper = h);
+        await ui.helperAssignment(h);
         this._.reload();
 
     }

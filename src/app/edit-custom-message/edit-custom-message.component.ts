@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { GridButton } from '@remult/angular/interfaces';
 import { MatDialogRef } from '@angular/material/dialog';
+import { messageMerger } from './messageMerger';
+import { EditCustomMessageArgs } from '../helpers/init-context';
 
 @Component({
   selector: 'app-edit-custom-message',
@@ -10,28 +12,35 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class EditCustomMessageComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, public ref:MatDialogRef<any>) { }
+  constructor(public settings: ApplicationSettings, public ref: MatDialogRef<any>) { }
 
-args = {
-  message: specificMessage("noam"),
-  templateText: "test",
-  title: "שליחת SMS",
-  helpText: "עזרה",
-  buttons: [] as GridButton[]
+  args: EditCustomMessageArgs = {
+    message: specificMessage("noam"),
+    templateText: "test",
+    title: "שליחת SMS",
+    helpText: "עזרה",
+    buttons: [] as GridButton[]
+  }
+  ngOnInit(): void {
+  }
+
+
+  testSms() {
+    return this.args.message.merge(this.args.templateText);
+  }
+  getButtonArgs() {
+    return {
+      templateText: this.args.templateText,
+      close: () => this.ref.close()
+    }
+  }
+
 }
-ngOnInit(): void {
-}
-
-
-testSms() {
-  return this.args.message.merge(this.args.templateText);
-}
-
-}
 
 
 
-function specificMessage(volunteer: string) {
+
+export function specificMessage(volunteer: string) {
   return new messageMerger([{
     token: '!מתנדב!',
     caption: "שם מתנדב",
@@ -39,23 +48,3 @@ function specificMessage(volunteer: string) {
   }])
 }
 
-export class messageMerger {
-  constructor(public tokens: {
-    token: string;
-    caption?: string;
-    value: string;
-  }[]) {
-    for (const t of this.tokens) {
-      if (!t.caption)
-        t.caption = t.token;
-      t.token = "!" + t.token + "!";
-    }
-  }
-  merge(message: string) {
-    for (const t of this.tokens) {
-      message = message.split(t.token).join(t.value);
-    }
-    return message;
-  }
-
-}

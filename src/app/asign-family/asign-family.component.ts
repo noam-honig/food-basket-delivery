@@ -6,7 +6,8 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
 
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { DialogService, DestroyHelper, extractError } from '../select-popup/dialog';
+import { DialogService, DestroyHelper } from '../select-popup/dialog';
+import { extractError } from "../select-popup/extractError";
 import { UserFamiliesList } from '../my-families/user-families';
 
 import { environment } from '../../environments/environment';

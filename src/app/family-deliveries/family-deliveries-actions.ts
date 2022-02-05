@@ -108,7 +108,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
                 this.$.basketType, { field: this.$.selectBasket, visible: () => this.basketType }, this.$.quantity, this.$.byCurrentCourier, this.$.comment, { field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule },
-                { field: this.$.defaultDistributionCenter, visible: () => c.dialog.hasManyCenters }
+                { field: this.$.defaultDistributionCenter, visible: () => c.ui.hasManyCenters }
             ],
 
             title: getLang(remult).updateFamilyDefaults,
@@ -217,7 +217,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
                     ]
                 })
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
-                    if (await c.dialog.YesNoPromise(
+                    if (await c.ui.YesNoPromise(
                         getLang(this.remult).thereAre + " " + deliveriesWithResultStatus + " " + getLang(this.remult).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
 
                     )
@@ -413,16 +413,16 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
             dialogColumns: async (component) => {
                 this.basketType = await this.remult.defaultBasketType();
                 this.quantity = 1;
-                this.distributionCenter = component.dialog.distCenter;
-                this.useCurrentDistributionCenter = component.dialog.distCenter == null;
+                this.distributionCenter = component.ui.distCenter;
+                this.useCurrentDistributionCenter = component.ui.distCenter == null;
                 return [
                     this.$.useExistingBasket,
                     [
                         { field: this.$.basketType, visible: () => !this.useExistingBasket },
                         { field: this.$.quantity, visible: () => !this.useExistingBasket }
                     ],
-                    { field: this.$.useCurrentDistributionCenter, visible: () => component.dialog.distCenter == null && component.dialog.hasManyCenters },
-                    { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useCurrentDistributionCenter },
+                    { field: this.$.useCurrentDistributionCenter, visible: () => component.ui.distCenter == null && component.ui.hasManyCenters },
+                    { field: this.$.distributionCenter, visible: () => component.ui.hasManyCenters && !this.useCurrentDistributionCenter },
                     this.$.helperStrategy,
                     { field: this.$.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
                     ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, await this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),

@@ -87,7 +87,7 @@ export class NewDelivery extends ActionOnRows<Families> {
             dialogColumns: async (component) => {
                 this.basketType = await this.remult.defaultBasketType();
                 this.quantity = 1;
-                this.distributionCenter = component.dialog.distCenter;
+                this.distributionCenter = component.ui.distCenter;
                 if (!this.distributionCenter)
                     this.distributionCenter = await remult.defaultDistributionCenter();
                 return [
@@ -96,8 +96,8 @@ export class NewDelivery extends ActionOnRows<Families> {
                     this.$.useFamilyQuantity,
                     { field: this.$.useFamilyMembersAsQuantity, visible: () => !this.useFamilyQuantity },
                     { field: this.$.quantity, visible: () => !this.useFamilyQuantity && !this.useFamilyMembersAsQuantity },
-                    { field: this.$.useFamilyDistributionList, visible: () => component.dialog.hasManyCenters },
-                    { field: this.$.distributionCenter, visible: () => component.dialog.hasManyCenters && !this.useFamilyDistributionList },
+                    { field: this.$.useFamilyDistributionList, visible: () => component.ui.hasManyCenters },
+                    { field: this.$.distributionCenter, visible: () => component.ui.hasManyCenters && !this.useFamilyDistributionList },
                     this.$.useDefaultVolunteer,
                     { field: this.$.courier, visible: () => !this.useDefaultVolunteer },
                     {
@@ -377,8 +377,8 @@ export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
     constructor(remult: Remult) {
         super(remult, Families, {
             dialogColumns: async (x) => {
-                if (x.dialog.distCenter)
-                    this.distributionCenter = x.dialog.distCenter;
+                if (x.ui.distCenter)
+                    this.distributionCenter = x.ui.distCenter;
                 return [
                     { field: this.$.distributionCenter }
                 ]
@@ -422,7 +422,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
             dialogColumns: x => orig.args.dialogColumns({
                 afterAction: x.afterAction,
                 userWhere: () => { throw 'err' },
-                dialog: x.dialog,
+                ui: x.ui,
                 settings: x.settings
             }),
             help: orig.args.help,
@@ -432,7 +432,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
             validateInComponent: x => orig.args.validateInComponent({
                 afterAction: x.afterAction,
                 userWhere: () => { throw 'err' },
-                dialog: x.dialog,
+                ui: x.ui,
                 settings: x.settings
             })
         }, {

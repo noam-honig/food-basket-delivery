@@ -6,6 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { InputField } from '@remult/angular/interfaces';
+import { UpdateGroupArgs } from '../helpers/init-context';
 
 
 @Component({
@@ -23,27 +24,24 @@ export class UpdateGroupDialogComponent implements OnInit {
   }
 
 
-  init(args: {
-    groups: string,
-    ok: (s: string) => void
-  }) {
-    this.groups.value = new GroupsValue( args.groups||"");
+  init(args: UpdateGroupArgs) {
+    this.groups.value = new GroupsValue(args.groups || "");
     this.ok = args.ok;
   }
   ok: (s: string) => void;
 
   availableGroups: Groups[] = [];
   async ngOnInit() {
-    this.availableGroups = await this. remult.repo(Groups).find({ limit: 1000 });
+    this.availableGroups = await this.remult.repo(Groups).find({ limit: 1000 });
   }
 
-  groups = new InputField<GroupsValue>({valueType:GroupsValue});
+  groups = new InputField<GroupsValue>({ valueType: GroupsValue });
   selected(group: string) {
     return this.groups.value.selected(group);
   }
   select(group: string) {
     if (!this.selected(group)) {
-      this.groups.value =  this.groups.value.addGroup(group);
+      this.groups.value = this.groups.value.addGroup(group);
 
     }
     else {

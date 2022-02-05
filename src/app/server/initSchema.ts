@@ -5,9 +5,6 @@ import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { SqlDatabase, FieldMetadata, Remult } from 'remult';
-//import '../app.module';
-
-//
 
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';

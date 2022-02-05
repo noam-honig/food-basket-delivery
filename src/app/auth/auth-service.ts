@@ -1,6 +1,7 @@
 import { Injectable, HostListener, NgZone } from "@angular/core";
 
-import { DialogService, extractError } from "../select-popup/dialog";
+import { DialogService } from "../select-popup/dialog";
+import { extractError } from "../select-popup/extractError";
 
 import { Helpers } from "../helpers/helpers";
 

@@ -4,7 +4,8 @@ import { AuthService } from './auth/auth-service';
 
 import { MatSidenav } from '@angular/material/sidenav';
 import { DialogService } from './select-popup/dialog';
-import { ApplicationSettings, SettingsService } from './manage/ApplicationSettings';
+import { ApplicationSettings } from './manage/ApplicationSettings';
+import { SettingsService } from "./manage/SettingsService";
 import { FamiliesComponent } from './families/families.component';
 import { Remult } from 'remult';
 import { RouteHelperService, BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';

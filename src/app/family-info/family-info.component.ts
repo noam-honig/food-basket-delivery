@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular/core';
 
 import * as copy from 'copy-to-clipboard';
-import { DialogService, extractError } from '../select-popup/dialog';
+import { DialogService } from '../select-popup/dialog';
+import { extractError } from "../select-popup/extractError";
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Remult, FieldRef, BackendMethod, Allow } from 'remult';
 
@@ -24,6 +25,7 @@ import { ImageInfo } from '../images/images.component';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
 import { quantityHelper } from '../families/BasketType';
+import { FamilyInfoController } from './family-info.controller';
 const useWazeKey = "useWaze";
 @Component({
   selector: 'app-family-info',
@@ -142,7 +144,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   async privateCall() {
     this.dialog.analytics("Private Call");
-    let r = await FamilyInfoComponent.privateCall(this.f.id);
+    let r = await FamilyInfoController.privateCall(this.f.id);
     if (r.error)
       this.dialog.Error(r.error);
     else
@@ -160,48 +162,7 @@ export class FamilyInfoComponent implements OnInit {
   async sendWhatsapp(phone: Phone) {
     phone.sendWhatsapp(this.remult, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
   }
-  static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
-  @BackendMethod({ allowed: Allow.authenticated })
-  static async privateCall(deliveryId: string, remult?: Remult): Promise<{
-    phone?: string,
-    error?: string
-  }> {
-    let cleanPhone = '';
-    let reqInfo = Sites.getOrganizationFromContext(remult) + "/proxy/" + remult.user.id + " => " + deliveryId;
-    try {
-      let settings = await ApplicationSettings.getAsync(remult);
-      if (!settings.usePhoneProxy)
-        throw "פרוקסי לא מופעל לסביבה זו";
-      let fd = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
-      if (!fd) throw "משלוח לא נמצא";
-      if (!fd.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
-        throw "אינך רשאי לחייג למשפחה זו";
 
-      cleanPhone = Phone.fixPhoneInput(fd.phone1.thePhone, remult);
-      if (!cleanPhone) return { error: "למשפחה זו לא מעודכן טלפון" };
-      if (cleanPhone.startsWith('0'))
-        cleanPhone = cleanPhone.substring(1);
-      cleanPhone = "+972" + cleanPhone;
-      let h = await remult.repo(Helpers).findId(remult.user.id);
-      if (!h)
-        throw "מתנדב לא נמצא";
-      let vPhone = h.phone.thePhone;
-      if (vPhone.startsWith('0'))
-        vPhone = vPhone.substring(1);
-      vPhone = "+972" + vPhone;
-
-
-      let r = await FamilyInfoComponent.createPhoneProxyOnServer(cleanPhone, vPhone);
-
-      console.log(reqInfo + " (" + r.phone + "," + r.session + ")");
-      return r;
-    }
-    catch (err) {
-      console.error(reqInfo, err, "phone:" + cleanPhone);
-      return { error: "תקלה בשירות הטלפונים: " + extractError(err) }
-    }
-
-  }
 
   async familiyPickedUp(f: ActiveFamilyDeliveries) {
     await (this.settings.isSytemForMlt) ? this.labSelfReception(f) : this.getPickupComments(f);

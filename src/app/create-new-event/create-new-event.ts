@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Remult, Controller, BackendMethod, getFields, ProgressListener } from 'remult';
-import { RouteHelperService, openDialog } from '@remult/angular';
-import { DialogService } from '../select-popup/dialog';
+
+
 import { Sites, getLang } from '../sites/sites';
 
 import { DistributionCenters } from '../manage/distribution-centers';
@@ -20,6 +20,7 @@ import { FamilyStatus } from '../families/FamilyStatus';
 import { use, Field } from '../translate';
 import { GroupsValue } from '../manage/groups';
 import { DataControl } from '@remult/angular/interfaces';
+import { UITools } from '../helpers/init-context';
 
 
 function visible(when: () => boolean, caption?: string) {
@@ -36,10 +37,10 @@ export class CreateNewEvent {
     @Field({ translation: l => l.createNewDeliveryForAllFamilies })
     createNewDelivery: boolean;
     @Field<CreateNewEvent>()
-    @DataControl<CreateNewEvent>({ visible: (self) => self.dialog?.hasManyCenters && self.createNewDelivery && self.moreOptions })
+    @DataControl<CreateNewEvent>({ visible: (self) => self.ui?.hasManyCenters && self.createNewDelivery && self.moreOptions })
     useFamilyDistributionList: boolean = true;
     @Field<CreateNewEvent>()
-    @DataControl<CreateNewEvent>({ visible: (self) => self.dialog?.hasManyCenters && self.createNewDelivery && self.moreOptions && !self.useFamilyDistributionList })
+    @DataControl<CreateNewEvent>({ visible: (self) => self.ui?.hasManyCenters && self.createNewDelivery && self.moreOptions && !self.useFamilyDistributionList })
     distributionCenter: DistributionCenters;
     @DataControl({ visible: () => false })
     @Field<CreateNewEvent>()
@@ -152,10 +153,10 @@ export class CreateNewEvent {
 
 
     }
-    dialog: DialogService;
+    ui: UITools;
 
-    async show(dialog: DialogService, settings: ApplicationSettings, routeHelper: RouteHelperService) {
-        this.dialog = dialog;
+    async show(ui: UITools, settings: ApplicationSettings) {
+        this.ui = ui;
         await settings._.reload();
         for (const x of [
             [this.$.createNewDelivery, settings.$.createBasketsForAllFamiliesInCreateEvent],
@@ -166,15 +167,15 @@ export class CreateNewEvent {
         if (this.includeGroups.evilGet() != '') {
             this.moreOptions = true;
         }
-        this._selectedDistributionList = dialog.distCenter;
-        if (dialog.distCenter == null)
+        this._selectedDistributionList = ui.distCenter;
+        if (ui.distCenter == null)
             this.allDistCenters = true;
 
 
         let notDoneDeliveries = await this.remult.repo(ActiveFamilyDeliveries).count({ ...FamilyDeliveries.readyFilter(), distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) });
         if (notDoneDeliveries > 0) {
-            await dialog.messageDialog(getLang(this.remult).thereAre + " " + notDoneDeliveries + " " + getLang(this.remult).notDoneDeliveriesShouldArchiveThem);
-            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+            await ui.messageDialog(getLang(this.remult).thereAre + " " + notDoneDeliveries + " " + getLang(this.remult).notDoneDeliveriesShouldArchiveThem);
+            ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
             return;
         }
         let threeHoursAgo = new Date();
@@ -184,8 +185,8 @@ export class CreateNewEvent {
             courierAssingTime: { ">=": threeHoursAgo },
             distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList)
         });
-        if (recentOnTheWay > 0 && !await dialog.YesNoPromise(getLang(this.remult).thereAre + " " + recentOnTheWay + " " + getLang(this.remult).deliveresOnTheWayAssignedInTheLast3Hours)) {
-            routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+        if (recentOnTheWay > 0 && !await ui.YesNoPromise(getLang(this.remult).thereAre + " " + recentOnTheWay + " " + getLang(this.remult).deliveresOnTheWayAssignedInTheLast3Hours)) {
+            ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
             return;
         }
         this.useFamilyBasket = true;
@@ -193,7 +194,7 @@ export class CreateNewEvent {
         let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
 
 
-        openDialog(InputAreaComponent, x => x.args = {
+        ui.inputAreaDialog( {
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {
@@ -201,10 +202,10 @@ export class CreateNewEvent {
             },
             ok: async () => {
                 let deliveriesCreated = await this.createNewEvent();
-                dialog.refreshFamiliesAndDistributionCenters();
-                dialog.distCenter = dialog.distCenter;
-                if (await dialog.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
-                    routeHelper.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+                ui.refreshFamiliesAndDistributionCenters();
+                ui.distCenter = ui.distCenter;
+                if (await ui.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
+                    ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
 
                 }
             },
@@ -214,10 +215,10 @@ export class CreateNewEvent {
 
                 let count = await this.remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) });
                 if (count > 0) {
-                    if (!await dialog.YesNoPromise(getLang(this.remult).confirmArchive + " " + count + " " + getLang(this.remult).deliveries))
+                    if (!await ui.YesNoPromise(getLang(this.remult).confirmArchive + " " + count + " " + getLang(this.remult).deliveries))
                         throw getLang(this.remult).actionCanceled;
                 }
-                if (this.createNewDelivery && !await dialog.YesNoPromise(getLang(this.remult).create + " " + await this.countNewDeliveries() + " " + getLang(this.remult).newDeliveriesQM))
+                if (this.createNewDelivery && !await ui.YesNoPromise(getLang(this.remult).create + " " + await this.countNewDeliveries() + " " + getLang(this.remult).newDeliveriesQM))
                     throw getLang(this.remult).actionCanceled;
             }
 

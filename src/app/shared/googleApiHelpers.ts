@@ -74,7 +74,7 @@ export async function GetGeoInformation(address: string, remult: Remult) {
 
         }
         catch (err) {
-            return new GeocodeInformation({ results: [], status: (await import('../select-popup/dialog')).extractError(err) });
+            return new GeocodeInformation({ results: [], status: (await import('../select-popup/extractError')).extractError(err) });
 
         }
         finally {

@@ -1,6 +1,5 @@
 import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
 import { DataControl, DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
@@ -23,7 +22,7 @@ import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
-import { UITools } from './init-context';
+import { evil, UITools } from './init-context';
 
 
 
@@ -31,7 +30,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     return (target, key) => {
         DataControl<any, string>({
             width: '300',
-            click: async (e, col) => openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = x => col.value = x)
+            click: async (e, col) => evil.uiTools.selectCompany(x => col.value = x)
         })(target, key);
 
         return Field<entityType, string>({
@@ -78,18 +77,17 @@ export abstract class HelpersBase extends IdEntity {
         includeFrozen?: boolean,
         searchClosestDefaultFamily?: boolean
     }, onSelect?: () => void) {
-        openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent,
-            x => x.args = {
-                filter: args.filter, location: args.location ? args.location() : undefined,
-                familyId: args.familyId ? args.familyId() : undefined,
-                includeFrozen: args.includeFrozen,
-                searchClosestDefaultFamily: args.searchClosestDefaultFamily
-                , onSelect: async s => {
-                    col.value = s ? s : null;
-                    if (onSelect)
-                        onSelect();
-                }
-            })
+        evil.uiTools.selectHelper({
+            filter: args.filter, location: args.location ? args.location() : undefined,
+            familyId: args.familyId ? args.familyId() : undefined,
+            includeFrozen: args.includeFrozen,
+            searchClosestDefaultFamily: args.searchClosestDefaultFamily
+            , onSelect: async s => {
+                col.value = s ? s : null;
+                if (onSelect)
+                    onSelect();
+            }
+        })
     }
     getHelper(): Promise<Helpers> {
         return this.remult.repo(Helpers).findId(this.id);
@@ -361,7 +359,7 @@ export class Helpers extends HelpersBase {
     }
     async displayEditDialog(ui: UITools) {
         let settings = (await this.remult.getSettings());
-        await openDialog(InputAreaComponent, x => x.args = {
+        await ui.inputAreaDialog({
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
             ok: async () => {
                 await this.save();
@@ -510,57 +508,58 @@ export class Helpers extends HelpersBase {
     }
     async showDeliveryHistory(ui: UITools) {
         let ctx = this.remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
-        openDialog(GridDialogComponent, x => x.args = {
+        const settings = new GridSettings(ctx, {
+            numOfColumnsInGrid: 7,
+            knowTotalRows: true,
+            allowSelection: true,
+            rowButtons: [{
+
+                name: '',
+                icon: 'edit',
+                showInLine: true,
+                click: async fd => {
+                    fd.showDetailsDialog({
+
+                        ui: ui
+                    });
+                }
+                , textInMenu: () => use.language.deliveryDetails
+            }
+            ],
+            gridButtons: [{
+
+                name: use.language.updateDefaultVolunteer,
+                visible: () => settings.selectedRows.length > 0,
+                click: async () => {
+                    let deliveries: import('../families/FamilyDeliveries').FamilyDeliveries[] = settings.selectedRows;
+                    await this.setAsDefaultVolunteerToDeliveries(deliveries, ui);
+                }
+            }],
+            rowCssClass: fd => fd.getCss(),
+            columnSettings: fd => {
+                let r: FieldMetadata[] = [
+                    fd.deliverStatus,
+                    fd.deliveryStatusDate,
+                    fd.basketType,
+                    fd.quantity,
+                    fd.name,
+                    fd.address,
+                    fd.courierComments,
+                    fd.distributionCenter
+                ]
+                r.push(...[...fd].filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.caption.localeCompare(b.caption)));
+                return r;
+            },
+
+            where: { courier: this },
+            orderBy: { deliveryStatusDate: "desc" },
+            rowsInPage: 25
+
+        });
+        ui.gridDialog({
             title: use.language.deliveriesFor + ' ' + this.name,
             stateName: 'deliveries-for-volunteer',
-            settings: new GridSettings(ctx, {
-                numOfColumnsInGrid: 7,
-                knowTotalRows: true,
-                allowSelection: true,
-                rowButtons: [{
-
-                    name: '',
-                    icon: 'edit',
-                    showInLine: true,
-                    click: async fd => {
-                        fd.showDetailsDialog({
-
-                            ui: ui
-                        });
-                    }
-                    , textInMenu: () => use.language.deliveryDetails
-                }
-                ],
-                gridButtons: [{
-
-                    name: use.language.updateDefaultVolunteer,
-                    visible: () => x.args.settings.selectedRows.length > 0,
-                    click: async () => {
-                        let deliveries: import('../families/FamilyDeliveries').FamilyDeliveries[] = x.args.settings.selectedRows;
-                        await this.setAsDefaultVolunteerToDeliveries(deliveries, ui);
-                    }
-                }],
-                rowCssClass: fd => fd.getCss(),
-                columnSettings: fd => {
-                    let r: FieldMetadata[] = [
-                        fd.deliverStatus,
-                        fd.deliveryStatusDate,
-                        fd.basketType,
-                        fd.quantity,
-                        fd.name,
-                        fd.address,
-                        fd.courierComments,
-                        fd.distributionCenter
-                    ]
-                    r.push(...[...fd].filter(c => !r.includes(c) && c != fd.id && c != fd.familySource).sort((a, b) => a.caption.localeCompare(b.caption)));
-                    return r;
-                },
-
-                where: { courier: this },
-                orderBy: { deliveryStatusDate: "desc" },
-                rowsInPage: 25
-
-            })
+            settings
         });
     }
 
@@ -821,7 +820,7 @@ export class Helpers extends HelpersBase {
     async sendSmsToCourier(ui: UITools, message = '') {
         let h = this;
 
-        await openDialog(EditCommentDialogComponent, x => x.args = {
+        ui.editCommentDialog({
             save: async (comment) => {
                 ui.Info(await Helpers.SendCustomMessageToCourier(this, comment));
             },
@@ -836,25 +835,26 @@ export class Helpers extends HelpersBase {
     }
     async smsMessages(ui: UITools) {
         const HelperCommunicationHistory = (await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory;
-        openDialog(GridDialogComponent, x => x.args = {
-            settings: new GridSettings(this.remult.repo(HelperCommunicationHistory), {
-                where: {
-                    volunteer: this
-                },
-                columnSettings: com => [
-                    com.message,
-                    com.incoming,
-                    com.createDate,
-                    com.automaticAction,
-                    com.apiResponse
-                ],
-                numOfColumnsInGrid: 4
-            }),
+        const settings = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+            where: {
+                volunteer: this
+            },
+            columnSettings: com => [
+                com.message,
+                com.incoming,
+                com.createDate,
+                com.automaticAction,
+                com.apiResponse
+            ],
+            numOfColumnsInGrid: 4
+        })
+        ui.gridDialog({
+            settings,
             buttons: [{
                 text: this.remult.lang.customSmsMessage,
                 click: () => {
                     this.sendSmsToCourier(ui);
-                    x.args.settings.reloadData();
+                    settings.reloadData();
                 }
             }],
             title: this.remult.lang.smsMessages + " " + this.name

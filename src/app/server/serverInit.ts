@@ -1,25 +1,19 @@
-
 import { Pool, QueryResult } from 'pg';
 import { config } from 'dotenv';
 import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from 'remult/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
 import { Remult, Entity, SqlDatabase } from 'remult';
-import '../app-routing.module';
 import '../create-new-event/create-new-event'
-
-
 
 import { Helpers } from '../helpers/helpers';
 
 import { initSchema } from './initSchema';
 import { Sites } from '../sites/sites';
-import { OverviewComponent } from '../overview/overview.component';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 
 import { ConnectionOptions } from 'tls';
 import { SitesEntity } from '../sites/sites.entity';
-import { FamilyInfoComponent } from '../family-info/family-info.component';
 import './send-email';
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { DistributionCenters } from '../manage/distribution-centers';
@@ -27,6 +21,8 @@ import { ClassType } from 'remult/classType';
 
 import { InitContext as InitRemult } from '../helpers/init-context';
 import { actionInfo } from 'remult/src/server-action';
+import { OverviewController } from '../overview/overview.controller';
+import { FamilyInfoController } from '../family-info/family-info.controller';
 
 declare const lang = '';
 export const initSettings = {
@@ -34,7 +30,7 @@ export const initSettings = {
 }
 actionInfo.runningOnServer = true;
 export async function serverInit() {
-    
+
     try {
         config();
         let ssl: boolean | ConnectionOptions = {
@@ -69,7 +65,7 @@ export async function serverInit() {
 
         const accountSID = process.env.twilio_accountSID;
         const authToken = process.env.twilio_authToken;
-        FamilyInfoComponent.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
+        FamilyInfoController.createPhoneProxyOnServer = async (cleanPhone, vPhone) => {
             const proxyService = process.env.twilio_proxyService;
             if (!accountSID)
                 throw "לא הוגדר שירות טלפונים";
@@ -186,7 +182,7 @@ export async function serverInit() {
 
 
     async function InitSchemas(pool: Pool) {
-        OverviewComponent.createDbSchema = async site => {
+        OverviewController.createDbSchema = async site => {
             return await InitSpecificSchema(pool, site);
         }
         //init application settings

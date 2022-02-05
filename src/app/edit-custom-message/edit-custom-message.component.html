@@ -15,7 +15,7 @@
     <pre>{{testSms()}}</pre>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-raised-button *ngFor="let b of args.buttons" (click)="b.click()">
+    <button mat-raised-button *ngFor="let b of args.buttons" (click)=" b.click(getButtonArgs())">
         {{b.name}}
     </button>
     <button type="button" mat-raised-button color="warning" [mat-dialog-close]>

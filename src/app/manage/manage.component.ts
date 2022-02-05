@@ -4,7 +4,8 @@ import { FamilySources } from "../families/FamilySources";
 import { BasketType } from "../families/BasketType";
 
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
-import { ApplicationSettings, PhoneItem, PhoneOption, qaItem, SettingsService } from './ApplicationSettings';
+import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
+import { SettingsService } from "./SettingsService";
 
 
 import { DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
@@ -131,7 +132,7 @@ export class ManageComponent implements OnInit {
       {
         name: this.settings.lang.exportToExcel,
         click: async () => {
-          await saveToExcel(this.settings, this.remult.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.busy, (d: DistributionCenters, c) => c == d.$.id);
+          await saveToExcel(this.settings, this.remult.repo(DistributionCenters), this.distributionCenters, this.settings.lang.distributionLists, this.dialog, (d: DistributionCenters, c) => c == d.$.id);
         }
         , visible: () => this.remult.isAllowed(Roles.admin)
       },

@@ -8,8 +8,8 @@ import { Roles } from "../auth/roles";
 import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { async } from "rxjs/internal/scheduler/async";
-import { GridSettings, IDataAreaSettings } from "@remult/angular/interfaces";
+import { GridButton, GridSettings, IDataAreaSettings, RowButton } from "@remult/angular/interfaces";
+import { messageMerger } from "../edit-custom-message/messageMerger";
 
 
 export const initConfig = {
@@ -120,17 +120,37 @@ export interface SelectHelperArgs {
     filter?: EntityFilter<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>
 
 }
-
+export interface UpdateGroupArgs {
+    groups: string,
+    ok: (s: string) => void
+}
+export interface EditCommentArgs {
+    title: string,
+    comment: string,
+    save?: (comment: string) => void
+}
+export interface EditCustomMessageArgs {
+    message: messageMerger,
+    templateText: string,
+    title: string,
+    helpText: string,
+    buttons: RowButton<{ templateText: string, close: VoidFunction}>[]
+}
 
 export interface UITools {
     YesNoPromise(question: string): Promise<Boolean>;
+    messageDialog(question: string): Promise<Boolean>;
     Error(err: string): Promise<void>;
     Info(message: string): void;
+    selectCompany(args: (selectedValue: string) => void): Promise<void>;
     updateFamilyDialog(args: UpdateFamilyDialogArgs): Promise<void>;
+    updateGroup(args: UpdateGroupArgs): Promise<void>;
     gridDialog(args: GridDialogArgs): Promise<void>;
     inputAreaDialog(args: InputAreaArgs): Promise<void>;
     helperAssignment(helper: import('../helpers/helpers').HelpersBase): Promise<void>;
     selectHelper(args: SelectHelperArgs): Promise<void>;
+    editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void>;
+    refreshFamiliesAndDistributionCenters(): void;
     selectValuesDialog<T extends {
         caption?: string;
     }>(args: {
@@ -141,7 +161,10 @@ export interface UITools {
     doWhileShowingBusy(what: () => Promise<void>): Promise<void>;
     hasManyCenters: boolean,
     getDistCenter(loc: Location): Promise<import('../manage/distribution-centers').DistributionCenters>;
+    distCenter: import('../manage/distribution-centers').DistributionCenters;
     filterDistCenter(): IdFilter<DistributionCenters>;
+    editCommentDialog(args: EditCommentArgs): Promise<void>;
+    navigateToComponent(component: any): void;
 }
 
 export const evil = {

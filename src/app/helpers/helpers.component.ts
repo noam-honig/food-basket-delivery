@@ -24,7 +24,8 @@ import { Phone } from '../model-shared/phone';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
 import { SendBulkSms } from './send-bulk-sms';
-import { EditCustomMessageComponent, messageMerger } from '../edit-custom-message/edit-custom-message.component';
+import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
+import { messageMerger } from "../edit-custom-message/messageMerger";
 
 @Component({
   selector: 'app-helpers',

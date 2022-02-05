@@ -1,7 +1,4 @@
 import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions } from "remult";
-import { InputAreaComponent } from "../select-popup/input-area/input-area.component";
-import { DialogService, extractError } from "../select-popup/dialog";
-
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
@@ -9,13 +6,9 @@ import { PromiseThrottle } from "../shared/utils";
 
 import { Families } from "./families";
 import { DataAreaFieldsSetting, GridButton } from "@remult/angular/interfaces";
-import { BusyService, openDialog } from '@remult/angular';
+
 import { Roles } from "../auth/roles";
-
-
-
-
-
+import { UITools } from "../helpers/init-context";
 
 export interface packetServerUpdateInfo {
     packedWhere: any;
@@ -77,39 +70,36 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             click: async () => {
 
                 let cols = await this.args.dialogColumns(component);
-                await openDialog(InputAreaComponent, x => {
-                    x.args = {
-                        settings: {
-                            fields: () => cols
-                        },
-                        title: this.args.title,
-                        helpText: this.args.help ? this.args.help() : undefined,
-                        validate: async () => {
-                            if (this.args.validate)
-                                await this.args.validate();
+                await component.ui.inputAreaDialog({
+                    settings: {
+                        fields: () => cols
+                    },
+                    title: this.args.title,
+                    helpText: this.args.help ? this.args.help() : undefined,
+                    validate: async () => {
+                        if (this.args.validate)
+                            await this.args.validate();
 
-                            await this.args.validateInComponent(component);
-
-
-                        },
-                        ok: async () => {
-                            let groupName = this.remult.repo(this.entity).metadata.caption;
-                            let where = await this.composeWhere(component.userWhere);
-                            let count = await this.remult.repo(this.entity).count(where)
-                            if (await component.dialog.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
-                                let r = await this.internalForTestingCallTheServer({
-                                    count,
-                                    where
-                                });
+                        await this.args.validateInComponent(component);
 
 
+                    },
+                    ok: async () => {
+                        let groupName = this.remult.repo(this.entity).metadata.caption;
+                        let where = await this.composeWhere(component.userWhere);
+                        let count = await this.remult.repo(this.entity).count(where)
+                        if (await component.ui.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
+                            let r = await this.internalForTestingCallTheServer({
+                                count,
+                                where
+                            });
 
-                                component.afterAction();
-                            }
+
+
+                            component.afterAction();
                         }
-                        , cancel: () => { }
-
                     }
+                    , cancel: () => { }
                 });
 
             }
@@ -169,7 +159,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 }
 
 export interface actionDialogNeeds<T extends IdEntity> {
-    dialog: DialogService,
+    ui: UITools,
     settings: ApplicationSettings,
     afterAction: () => {},
     userWhere: EntityFilter<T> | (() => EntityFilter<T> | Promise<EntityFilter<T>>)

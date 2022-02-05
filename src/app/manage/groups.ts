@@ -1,7 +1,8 @@
-import { openDialog } from "@remult/angular";
+
 import { DataControl } from "@remult/angular/interfaces";
 import { IdEntity, Remult, Entity } from "remult";
 import { Roles } from "../auth/roles";
+import { evil } from "../helpers/init-context";
 import { Field, FieldType, use } from "../translate";
 
 @Entity("groups", {
@@ -25,14 +26,11 @@ export class Groups extends IdEntity {
 @DataControl<any, GroupsValue>({
   width: '300',
   click: async (row, col) => {
-    openDialog((await import('../update-group-dialog/update-group-dialog.component')).UpdateGroupDialogComponent, s => {
-      s.init({
-        groups: col.value?.value,
-        ok: x => col.value = new GroupsValue(x)
-      })
-    });
+    evil.uiTools.updateGroup({
+      groups: col.value?.value,
+      ok: x => col.value = new GroupsValue(x)
+    })
   }
-
 })
 export class GroupsValue {
   hasAny() {
