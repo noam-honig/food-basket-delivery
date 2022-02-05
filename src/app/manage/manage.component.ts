@@ -10,7 +10,7 @@ import { SettingsService } from "./SettingsService";
 
 import { DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, IdEntity, Entity, BackendMethod, ProgressListener, FieldRef, EntityBase, FieldsMetadata, Controller, getFields, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
+import { Remult, IdEntity, BackendMethod, ProgressListener, FieldRef, FieldsMetadata, Controller, getFields, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
@@ -730,81 +730,6 @@ export class ManageComponent implements OnInit {
 }
 declare type select<T> = { [Properties in keyof Partial<OmitEB<T>>]?: boolean; }
 
-@Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
-  allowApiRead: Roles.distCenterAdmin,
-  defaultOrderBy: { name: "asc" }
-},
-  (options, remult) =>
-    options.sqlExpression = async (self) => {
-      let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
-      let g = SqlFor(remult.repo(Groups));
-      let d = SqlFor(remult.repo(DistributionCenters));
-      let sql = new SqlBuilder(remult);
-      sql.addEntity(f, 'Families');
-      sql.addEntity(g, 'groups');
-      return sql.entityDbName(
-        {
-          select: () => [g.name, sql.columnWithAlias(d.id, self.distCenter), sql.countInnerSelect({
-            from: f,
-
-            where: () => [
-              sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-              f.where(FamilyDeliveries.readyFilter()),
-              sql.eq(f.distributionCenter, d.id)]
-
-          }, self.familiesCount)],
-          from: g,
-          crossJoin: () => [d],
-
-        })
-    })
-export class GroupsStatsPerDistributionCenter extends EntityBase implements GroupsStats {
-  @Field()
-  name: string;
-  @Field()
-  distCenter: DistributionCenters;
-  @Field()
-  familiesCount: number;
-
-  constructor(private remult: Remult) {
-    super();
-  }
-
-}
-@Entity<GroupsStatsForAllDeliveryCenters>('GroupsStatsForAllDeliveryCenters', {
-  allowApiRead: Roles.distCenterAdmin,
-  defaultOrderBy: { name: "asc" },
-},
-  (options, remult) => {
-    options.sqlExpression = async (self) => {
-      let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
-      let g = SqlFor(remult.repo(Groups));
-
-      let sql = new SqlBuilder(remult);
-      sql.addEntity(f, 'Families');
-      sql.addEntity(g, 'groups');
-      return sql.entityDbName(
-        {
-          select: async () => [g.name, await sql.countInnerSelect({
-            from: f,
-            where: () => [
-              sql.build(f.groups, ' like \'%\'||', g.name, '||\'%\''),
-              f.where(FamilyDeliveries.readyFilter())]
-          }, self.familiesCount)],
-          from: g
-        })
-    }
-  })
-export class GroupsStatsForAllDeliveryCenters extends EntityBase implements GroupsStats {
-  @Field()
-  name: string;
-  @Field()
-  familiesCount: number;
-
-  constructor(private remult: Remult) {
-    super();
-  }
-}
 export interface GroupsStats {
   name: string;
   familiesCount: number;

@@ -3,12 +3,11 @@ import { DataControl, GridSettings } from '@remult/angular/interfaces';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
 import { Helpers, HelpersBase } from "../helpers/helpers";
-import { DialogService } from "../select-popup/dialog";
-import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { MyGiftsDialogComponent } from "./my-gifts-dialog.component";
 import { Field, use } from "../translate";
-import { BusyService, openDialog } from "@remult/angular";
+import { UITools } from "../helpers/init-context";
+
 
 @Entity<HelperGifts>("HelperGifts", {
     allowApiRead: Allow.authenticated,
@@ -119,17 +118,13 @@ export class HelperGifts extends IdEntity {
 
 
 
-export async function showUsersGifts(helperId: string, remult: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
-    openDialog(MyGiftsDialogComponent, x => x.args = {
-        helperId: helperId
-    });
-}
 
-export async function showHelperGifts(hid: Helpers, remult: Remult, settings: ApplicationSettings, dialog: DialogService, busy: BusyService): Promise<void> {
+
+export async function showHelperGifts(hid: Helpers, remult: Remult, ui: UITools): Promise<void> {
 
 
     let helperName = hid.name;
-    openDialog(GridDialogComponent, x => x.args = {
+    ui.gridDialog({
         title: 'משאלות למתנדב:' + helperName,
 
         buttons: [{

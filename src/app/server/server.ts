@@ -1,6 +1,6 @@
 //import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
-import * as ApplicationImages from "../manage/ApplicationImages";
+import { ApplicationImages } from "../manage/ApplicationImages";
 import * as express from 'express';
 import { registerEntitiesOnServer, registerActionsOnServer } from 'remult/server';
 import * as fs from 'fs';//
@@ -10,21 +10,65 @@ import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/
 import { OmitEB, Remult } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
-import { GeoCodeOptions } from "../shared/googleApiHelpers";
+import { GeocodeCache, GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { preparePostgresQueueStorage } from "remult/postgres";
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
 import { InitContext } from "../helpers/init-context";
-import { Helpers } from "../helpers/helpers";
+import { Helpers, HelpersBase } from "../helpers/helpers";
 import { Phone } from "../model-shared/phone";
 import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
-import { translationConfig, TranslationOptions } from "../translate";
 import { DataApi } from "remult/src/data-api";
 import { OverviewController } from "../overview/overview.controller";
+import { FamilyDeliveries } from "../families/FamilyDeliveries";
+import { HelpersAndStats } from "../delivery-follow-up/HelpersAndStats";
+import { BasketType } from "../families/BasketType";
+import { DeliveryImage, FamilyImage } from "../families/DeiveryImages";
+import { FamilySources } from "../families/FamilySources";
+import { CitiesStats, CitiesStatsPerDistCenter } from "../family-deliveries/family-deliveries-stats";
+import { HelperGifts } from "../helper-gifts/HelperGifts";
+import { InRouteHelpers } from "../in-route-follow-up/in-route-helpers";
+import { DistributionCenters } from "../manage/distribution-centers";
+import { Groups } from "../manage/groups";
+import { GroupsStatsPerDistributionCenter } from "../manage/GroupsStatsPerDistributionCenter";
+import { GroupsStatsForAllDeliveryCenters } from "../manage/GroupsStatsForAllDeliveryCenters";
+import { VolunteerReportInfo } from "../print-volunteer/VolunteerReportInfo";
+import { RegisterURL } from "../resgister-url/regsiter-url";
+import { SitesEntity } from "../sites/sites.entity";
+const entities = [
+    HelpersAndStats,
+    Event,
+    volunteersInEvent,
+    BasketType,
+    DeliveryImage,
+    FamilyImage,
+    FamilySources,
+    CitiesStats,
+    CitiesStatsPerDistCenter,
+    HelperGifts,
+    HelpersBase,
+    Helpers,
+    InRouteHelpers,
+    ApplicationImages,
+    ApplicationSettings,
+    DistributionCenters,
+    Groups,
+    GroupsStatsForAllDeliveryCenters,
+    GroupsStatsPerDistributionCenter,
+    VolunteerReportInfo,
+    RegisterURL,
+    GeocodeCache,
+    SitesEntity,
+    Families,
+    FamilyDeliveries
+];
+const controllers = [
+
+];
 
 DataApi.defaultGetLimit = 500;
 let publicRoot = 'hagai';
@@ -373,7 +417,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
     app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
         try {
             let remult = await getContext(req);
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(remult)).base64PhoneHomeImage;
+            let imageBase = (await ApplicationImages.getAsync(remult)).base64PhoneHomeImage;
             res.contentType('png');
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -402,7 +446,7 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         try {
             let remult = await getContext(req);
             res.contentType('ico');
-            let imageBase = (await ApplicationImages.ApplicationImages.getAsync(remult)).base64Icon;
+            let imageBase = (await ApplicationImages.getAsync(remult)).base64Icon;
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;

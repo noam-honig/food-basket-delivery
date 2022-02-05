@@ -29,7 +29,9 @@ import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/ang
 import { DataAreaSettings, InputField } from '@remult/angular/interfaces';
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
-import { GroupsStatsPerDistributionCenter, GroupsStats, GroupsStatsForAllDeliveryCenters } from '../manage/manage.component';
+import { GroupsStats } from '../manage/manage.component';
+import { GroupsStatsPerDistributionCenter } from "../manage/GroupsStatsPerDistributionCenter";
+import { GroupsStatsForAllDeliveryCenters } from "../manage/GroupsStatsForAllDeliveryCenters";
 import { SendSmsAction } from './send-sms-action';
 
 import { SelectCompanyComponent } from '../select-company/select-company.component';

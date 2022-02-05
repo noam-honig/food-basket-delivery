@@ -2,12 +2,12 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
-import { Entity, Field, IdEntity, Remult } from 'remult';
+import { Remult } from 'remult';
 import { InputTypes } from 'remult/inputTypes';
-import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
 import { Control, ElementProps, getMarginsH, Property } from '../properties-editor/properties-editor.component';
+import { VolunteerReportInfo } from './VolunteerReportInfo';
 
 /*
 [] Add field to page crashes
@@ -249,18 +249,7 @@ export class PrintVolunteerComponent implements OnInit {
 }
 
 
-@Entity("stickerInfo", {//don't change name - it's wrong, but data needs to be migrated for it to work again
-  allowApiCrud: Roles.admin
-})
-class VolunteerReportInfo extends IdEntity {
-  @Field()
-  key: string;
-  @Field({ allowNull: true })
-  info: ReportInfo;
-
-}
-
-interface ReportInfo {
+export interface ReportInfo {
   page: any;
   controls: Control[];
   columns: ReportColumn[];

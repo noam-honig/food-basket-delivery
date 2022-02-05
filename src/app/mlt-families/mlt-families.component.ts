@@ -6,7 +6,8 @@ import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
-import { HelperGifts, showUsersGifts } from '../helper-gifts/HelperGifts';
+import { HelperGifts } from '../helper-gifts/HelperGifts';
+import { MyGiftsDialogComponent } from '../helper-gifts/my-gifts-dialog.component';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
@@ -127,7 +128,9 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async showMyGifts() {
-    showUsersGifts(this.remult.user.id, this.remult, this.settings, this.dialog, this.busy);
+    openDialog(MyGiftsDialogComponent, x => x.args = {
+      helperId: this.remult.user.id
+    });
   }
 
   async assignNewDelivery() {
