@@ -164,9 +164,9 @@ export class UserFamiliesList {
 
     distCenter: DistributionCenters;
 
-    async refreshRoute(args: import("../asign-family/asign-family.component").refreshRouteArgs, strategy?: routeStrategy) {
+    async refreshRoute(args: import("../asign-family/asign-family.controller").refreshRouteArgs, strategy?: routeStrategy) {
 
-        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(this.helper, args, strategy).then(r => {
+        await (await import("../asign-family/asign-family.controller")).AsignFamilyController.RefreshRoute(this.helper, args, strategy).then(r => {
 
             if (r && r.ok && r.families.length == this.toDeliver.length) {
                 this.setRouteStats(r.stats);

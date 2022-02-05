@@ -121,7 +121,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     })) {
       if (fd.courier != lastCourier) {
         lastCourier = fd.courier;
-        await (await import("../asign-family/asign-family.component")).AsignFamilyComponent.RefreshRoute(fd.courier, {}, undefined, remult);
+        await (await import("../asign-family/asign-family.controller")).AsignFamilyController.RefreshRoute(fd.courier, {}, undefined, remult);
       }
     }
 
@@ -188,7 +188,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     if (!c.propertyValues)
       c.propertyValues = {};
     this.fieldProps.values = c.propertyValues;
-    this.fieldProps.caption = this.remult.lang.fieldProperties+": " + this.fields.find(x => x.key == c.fieldKey)?.caption;
+    this.fieldProps.caption = this.remult.lang.fieldProperties + ": " + this.fields.find(x => x.key == c.fieldKey)?.caption;
     this.fieldProps.control = c;
   }
 }

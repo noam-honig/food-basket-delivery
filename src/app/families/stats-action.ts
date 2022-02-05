@@ -2,7 +2,7 @@ import { BackendMethod, EntityFilter } from 'remult';
 import { Filter } from 'remult';
 import { Families } from "./families";
 import { Remult } from 'remult';
-import { BasketInfo } from "../asign-family/asign-family.component";
+import { BasketInfo } from "../asign-family/asign-family.controller";
 
 import { Roles } from "../auth/roles";
 import { Groups } from "../manage/groups";
