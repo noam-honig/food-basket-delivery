@@ -15,7 +15,7 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { use, Field } from '../translate';
 import { GroupsValue } from '../manage/groups';
-import { DataAreaFieldsSetting, DataControl } from '@remult/angular/interfaces';
+import { DataControl } from '@remult/angular/interfaces';
 import { UITools } from '../helpers/init-context';
 
 
@@ -153,52 +153,48 @@ export class CreateNewEvent {
 
     async show(ui: UITools, settings: ApplicationSettings) {
         this.ui = ui;
-        let archiveHelperFields: DataAreaFieldsSetting<any>[];
-        await ui.doWhileShowingBusy(async () => {
-            await settings._.reload();
-            for (const x of [
-                [this.$.createNewDelivery, settings.$.createBasketsForAllFamiliesInCreateEvent],
-                [this.$.includeGroups, settings.$.includeGroupsInCreateEvent],
-                [this.$.excludeGroups, settings.$.excludeGroupsInCreateEvent]]) {
-                x[0].value = x[1].value;
-            }
-            if (this.includeGroups.evilGet() != '') {
-                this.moreOptions = true;
-            }
-            this._selectedDistributionList = ui.distCenter;
-            if (ui.distCenter == null)
-                this.allDistCenters = true;
+        await settings._.reload();
+        for (const x of [
+            [this.$.createNewDelivery, settings.$.createBasketsForAllFamiliesInCreateEvent],
+            [this.$.includeGroups, settings.$.includeGroupsInCreateEvent],
+            [this.$.excludeGroups, settings.$.excludeGroupsInCreateEvent]]) {
+            x[0].value = x[1].value;
+        }
+        if (this.includeGroups.evilGet() != '') {
+            this.moreOptions = true;
+        }
+        this._selectedDistributionList = ui.distCenter;
+        if (ui.distCenter == null)
+            this.allDistCenters = true;
 
 
-            let notDoneDeliveries = await this.remult.repo(ActiveFamilyDeliveries).count({ ...FamilyDeliveries.readyFilter(), distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) });
-            if (notDoneDeliveries > 0) {
-                await ui.messageDialog(getLang(this.remult).thereAre + " " + notDoneDeliveries + " " + getLang(this.remult).notDoneDeliveriesShouldArchiveThem);
-                ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-                return;
-            }
-            let threeHoursAgo = new Date();
-            threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
-            let recentOnTheWay = await this.remult.repo(ActiveFamilyDeliveries).count({
-                $and: [FamilyDeliveries.onTheWayFilter()],
-                courierAssingTime: { ">=": threeHoursAgo },
-                distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList)
-            });
-            if (recentOnTheWay > 0 && !await ui.YesNoPromise(getLang(this.remult).thereAre + " " + recentOnTheWay + " " + getLang(this.remult).deliveresOnTheWayAssignedInTheLast3Hours)) {
-                ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
-                return;
-            }
-            this.useFamilyBasket = true;
+        let notDoneDeliveries = await this.remult.repo(ActiveFamilyDeliveries).count({ ...FamilyDeliveries.readyFilter(), distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) });
+        if (notDoneDeliveries > 0) {
+            await ui.messageDialog(getLang(this.remult).thereAre + " " + notDoneDeliveries + " " + getLang(this.remult).notDoneDeliveriesShouldArchiveThem);
+            ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+            return;
+        }
+        let threeHoursAgo = new Date();
+        threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
+        let recentOnTheWay = await this.remult.repo(ActiveFamilyDeliveries).count({
+            $and: [FamilyDeliveries.onTheWayFilter()],
+            courierAssingTime: { ">=": threeHoursAgo },
+            distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList)
+        });
+        if (recentOnTheWay > 0 && !await ui.YesNoPromise(getLang(this.remult).thereAre + " " + recentOnTheWay + " " + getLang(this.remult).deliveresOnTheWayAssignedInTheLast3Hours)) {
+            ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
+            return;
+        }
+        this.useFamilyBasket = true;
 
-            archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
-
-        })
+         let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
 
         await ui.inputAreaDialog({
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {
                 fields: () => [
-                    ...archiveHelperFields,
+                    //...archiveHelperFields, 
                     ...[...this.$].filter(x => x != this.$.archiveHelper)]
             },
             ok: async () => {
