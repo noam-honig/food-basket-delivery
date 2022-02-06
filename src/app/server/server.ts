@@ -77,6 +77,7 @@ import { PlaybackController } from "../playback/playback.controller";
 import { DialogController } from "../select-popup/dialog.controller";
 import { ServerEventAuthorizeAction } from "./server-event-authorize-action";
 import { ShipmentAssignScreenController } from "../shipment-assign-screen/shipment-assign-screen.controller";
+import { PrintVolunteersController } from "../print-volunteers/print-volunteers.controller";
 const entities = [
     HelpersAndStats,
     Event,
@@ -143,7 +144,8 @@ const controllers = [
     PlaybackController,
     DialogController,
     ServerEventAuthorizeAction,
-    ShipmentAssignScreenController
+    ShipmentAssignScreenController,
+    PrintVolunteersController
 ];
 
 DataApi.defaultGetLimit = 500;
@@ -473,7 +475,12 @@ s.parentNode.insertBefore(b, s);})();
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
     });
+    // var api = JSON.parse(fs.readFileSync('/temp/api-orig.json').toString());
+    // fs.writeFileSync('/temp/origApiList.json', JSON.stringify(Object.keys(api.paths).sort((a, b) => a.localeCompare(b)), undefined, 4));
+    // var api = eb.openApiDoc({ title: '' });
+    // fs.writeFileSync('/temp/newApiList.json', JSON.stringify(Object.keys(api.paths).sort((a, b) => a.localeCompare(b)), undefined, 4));
 
+    //fs.writeFileSync('/temp/api.json', JSON.stringify(eb.openApiDoc({ title: '' }), undefined, 4));
 
     let port = process.env.PORT || 3000;
     app.listen(port);
