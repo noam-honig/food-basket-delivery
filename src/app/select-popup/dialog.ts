@@ -1,9 +1,9 @@
 import { Injectable, NgZone, ErrorHandler } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Remult, getFields, BackendMethod, ValueFilter, IdFilter } from 'remult';
+import { Remult, getFields, IdFilter } from 'remult';
 
 
-import { DataAreaSettings, DataControl, getValueList } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService, SelectValueDialogComponent } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
@@ -19,6 +19,7 @@ import "../helpers/init-context";
 import { EditCommentArgs, EditCustomMessageArgs, evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs, UpdateGroupArgs } from "../helpers/init-context";
 import { HelpersBase } from "../helpers/helpers";
 import { extractError } from "./extractError";
+import { DialogController } from "./dialog.controller";
 
 
 
@@ -82,6 +83,9 @@ export class DialogService implements UITools {
             this.distCenter = null;
 
     }
+    donotWait<T>(what: () => Promise<T>): Promise<T> {
+        return this.busy.donotWait(what);
+    }
     async editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void> {
         openDialog((await import('../edit-custom-message/edit-custom-message.component')).EditCustomMessageComponent,
             x => x.args = args);
@@ -119,8 +123,8 @@ export class DialogService implements UITools {
     async selectValuesDialog<T extends { caption?: string; }>(args: { values: T[]; onSelect: (selected: T) => void; title?: string; }): Promise<void> {
         openDialog(SelectValueDialogComponent, x => x.args(args))
     }
-    async doWhileShowingBusy(what: () => Promise<void>): Promise<void> {
-        this.busy.doWhileShowingBusy(what);
+    async doWhileShowingBusy<T>(what: () => Promise<T>): Promise<T> {
+        return this.busy.doWhileShowingBusy(what);
     }
     refreshFamiliesAndDistributionCenters() {
         (<CustomReuseStrategy>this.routeReuseStrategy).recycleAll();
@@ -260,12 +264,9 @@ export class DialogService implements UITools {
         if (title) {
             title + " - " + message;
         }
-        await DialogService.doLog(message);
+        await DialogController.doLog(message);
     }
-    @BackendMethod({ allowed: true })
-    static async doLog(s: string, remult?: Remult) {
-        console.log(s);
-    }
+
 }
 export class DestroyHelper {
     private destroyList: (() => void)[] = [];

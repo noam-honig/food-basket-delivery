@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { DataControlSettings, FieldCollection, getFieldDefinition } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, BackendMethod, Fields, FieldRef, FieldMetadata } from 'remult';
+import { Remult, Fields, FieldRef, FieldMetadata } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService } from '../select-popup/dialog';
@@ -12,6 +12,7 @@ import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-fami
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
+import { MergeFamiliesController } from './merge-families.controller';
 
 
 function phoneDigits(val: Phone | string) {
@@ -160,7 +161,7 @@ export class MergeFamiliesComponent implements OnInit {
   async confirm() {
     try {
       await this.family.save();
-      await MergeFamiliesComponent.mergeFamilies(this.families.map(x => x.id));
+      await MergeFamiliesController.mergeFamilies(this.families.map(x => x.id));
       this.merged = true;
       this.dialogRef.close();
       let deliveries = await this.remult.repo(ActiveFamilyDeliveries).count({ family: this.family.id, deliverStatus: DeliveryStatus.isNotAResultStatus() })
@@ -181,20 +182,7 @@ export class MergeFamiliesComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  @BackendMethod({ allowed: Roles.admin })
-  static async mergeFamilies(ids: string[], remult?: Remult) {
-    let id = ids.splice(0, 1)[0];
-    let newFamily = await remult.repo(Families).findId(id);
 
-    for (const oldId of ids) {
-      for await (const fd of remult.repo(FamilyDeliveries).query({ where: { family: oldId } })) {
-        fd.family = id;
-        newFamily.updateDelivery(fd);
-        await fd.save();
-      }
-      await (await remult.repo(Families).findId(oldId)).delete();
-    }
-  }
 
 
   columnsToCompare: FieldMetadata[] = [];

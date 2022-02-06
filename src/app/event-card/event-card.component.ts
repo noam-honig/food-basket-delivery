@@ -22,7 +22,7 @@ export class EventCardComponent implements OnInit {
     {
       name: use.language.duplicateEvents,
       click: (e) => {
-        Event.duplicateEvent(this.remult, this.busy, [e], (newEvents) => {
+        Event.duplicateEvent(this.remult, this.dialog, [e], (newEvents) => {
           if (e.eventStatus == eventStatus.archive) {
             this.events = this.events.filter(x => x != e);
           }
@@ -159,11 +159,11 @@ export class EventCardComponent implements OnInit {
   }
   showVolunteers(e: EventInList) {
     if (e instanceof Event)
-      e.showVolunteers(this.dialog, this.busy);
+      e.showVolunteers(this.dialog);
   }
   edit(e: EventInList) {
     if (e instanceof Event) {
-      e.openEditDialog(this.dialog, this.busy);
+      e.openEditDialog(this.dialog);
       this.refresh();
     }
   }

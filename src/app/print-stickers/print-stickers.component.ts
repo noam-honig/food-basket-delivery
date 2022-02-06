@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Field, IdEntity, Remult } from 'remult';
 import { Roles } from '../auth/roles';
-import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../properties-editor/properties-editor.component';
+import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from './VolunteerReportDefs';
 import { Entity } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
 import { assign } from 'remult/assign';
 import { InputTypes } from 'remult/inputTypes';
+import { DialogService } from '../select-popup/dialog';
 
 
 
@@ -17,8 +18,8 @@ import { InputTypes } from 'remult/inputTypes';
 })
 export class PrintStickersComponent implements OnInit {
 
-  constructor(public remult: Remult, private busy: BusyService) { }
-  defs = new VolunteerReportDefs(this.remult, this.busy);
+  constructor(public remult: Remult, private dialog: DialogService) { }
+  defs = new VolunteerReportDefs(this.remult, this.dialog);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;
@@ -125,7 +126,7 @@ export class PrintStickersComponent implements OnInit {
   async save() {
     this.lastSave = this.lastSave.then(async () => {
       this.row.info = JSON.parse(JSON.stringify(this.report));
-      await this.busy.donotWait(() => this.row.save());
+      await this.dialog.donotWait(() => this.row.save());
     });
   }
 }

@@ -1,27 +1,21 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Entity, BackendMethod, SqlDatabase, EntityFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, Filter, getFields } from 'remult';
-import { DataAreaFieldsSetting, DataAreaSettings, DataControl, DataControlInfo, GridSettings, InputField } from '@remult/angular/interfaces';
+import { EntityFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, getFields } from 'remult';
+import { DataAreaFieldsSetting, DataAreaSettings, DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 
 import { Remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { Phone } from "../model-shared/phone";
 
-
 import { Families, parseAddress, duplicateFamilyInfo, displayDupInfo } from '../families/families';
 
 import { BasketType } from '../families/BasketType';
 import { FamilySources } from '../families/FamilySources';
-import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DialogService } from '../select-popup/dialog';
-import { extractError } from "../select-popup/extractError";
 
-
-
-import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material/stepper';
 
-import { ApplicationSettings, RemovedFromListExcelImportStrategy, getSettings, getCustomColumnVisible } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getCustomColumnVisible } from '../manage/ApplicationSettings';
 import { Field, use } from '../translate';
 import { getLang } from '../sites/sites';
 
@@ -32,9 +26,10 @@ import { Sites } from '../sites/sites';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { leaveOnlyNumericChars } from '../shared/googleApiHelpers';
-import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
-import { PromiseThrottle } from '../shared/utils';
+import { SelectListComponent } from '../select-list/select-list.component';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { selectListItem } from '../helpers/init-context';
+import { compareValuesWithRow, excelRowInfo, getColumnDisplayValue, ImportFromExcelController } from './import-from-excel.controller';
 
 @Component({
     selector: 'app-excel-import',
@@ -80,20 +75,9 @@ export class ImportFromExcelComponent implements OnInit {
 
 
     getColInfo(i: excelRowInfo, col: columnInCompare) {
-        return ImportFromExcelComponent.actualGetColInfo(i, keyFromColumnInCompare(col));
+        return ImportFromExcelController.actualGetColInfo(i, keyFromColumnInCompare(col));
     }
-    static actualGetColInfo(i: excelRowInfo, colMemberName: string) {
-        let r = i.values[colMemberName];
-        if (!r) {
-            r = {
-                newDisplayValue: '',
-                existingDisplayValue: '',
-                newValue: '',
-                existingValue: ''
-            };
-        }
-        return r;
-    }
+
 
     async addAll() {
         let count = this.newRows.length;
@@ -119,7 +103,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 let timeLeft = ((new Date().valueOf() - start) / index) * (count - index) / 1000 / 60;
                                 this.dialog.Info(i.rowInExcel + ' ' + (i.name) + " " + timeLeft.toFixed(1) + " " + use.language.minutesRemaining);
                             }
-                            await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery);
+                            await ImportFromExcelController.insertRows(rowsToInsert, this.addDelivery);
                             for (const r of rowsToInsert) {
                                 r.created = true;
                             }
@@ -134,7 +118,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                     }
                     if (rowsToInsert.length > 0) {
-                        await ImportFromExcelComponent.insertRows(rowsToInsert, this.addDelivery);
+                        await ImportFromExcelController.insertRows(rowsToInsert, this.addDelivery);
                         for (const r of rowsToInsert) {
                             r.created = true;
                         }
@@ -155,40 +139,7 @@ export class ImportFromExcelComponent implements OnInit {
             });
         }
     }
-    @BackendMethod({ allowed: Roles.admin })
-    static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, remult?: Remult) {
-        let t = new PromiseThrottle(10);
-        for (const r of rowsToInsert) {
-            let f = remult.repo(Families).create();
-            let fd = remult.repo(ActiveFamilyDeliveries).create();
-            for (const val in r.values) {
-                let col = columnFromKey(f, fd, val);
-                if (col != f.$.id && col != fd.$.id) {
-                    col.inputValue = r.values[val].newValue;
-                    await col.load();
-                }
 
-            }
-            if (!f.name)
-                f.name = 'ללא שם';
-            let save = async () => {
-
-                await f.save();
-                if (createDelivery) {
-                    fd._disableMessageToUsers = true;
-                    f.updateDelivery(fd);
-                    if (getSettings(remult).isSytemForMlt) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
-                    }
-                    await fd.save();
-                }
-            };
-            await t.push(save());
-        }
-        await t.done();
-
-
-    }
     async updateAllCol(col: columnInCompare) {
         let count = this.getColUpdateCount(col);
         let message = use.language.shouldUpdateColumn + " " + col.c.caption + " " + use.language.for + " " + count + " " + use.language.families + "?";
@@ -208,7 +159,7 @@ export class ImportFromExcelComponent implements OnInit {
                         allRows.push(i);
 
                     if (rowsToUpdate.length == 35) {
-                        allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType));
+                        allRows.push(...await ImportFromExcelController.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType));
                         if (new Date().valueOf() - lastDate > 1000) {
                             this.dialog.Info(i.rowInExcel + ' ' + (i.name));
                         }
@@ -219,7 +170,7 @@ export class ImportFromExcelComponent implements OnInit {
 
                 }
                 if (rowsToUpdate.length > 0) {
-                    allRows.push(...await ImportFromExcelComponent.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType));
+                    allRows.push(...await ImportFromExcelController.updateColsOnServer(rowsToUpdate, keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType));
                 }
                 this.sortRows();
                 this.updateRows = allRows;
@@ -227,59 +178,13 @@ export class ImportFromExcelComponent implements OnInit {
         });
     }
 
-    @BackendMethod({ allowed: Roles.admin })
-    static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, remult?: Remult) {
-        for (const r of rowsToUpdate) {
-            await ImportFromExcelComponent.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.getSettings()));
-        }
-        return rowsToUpdate;
-    }
+
 
     async updateCol(i: excelRowInfo, col: columnInCompare) {
-        let r = await ImportFromExcelComponent.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType);
+        let r = await ImportFromExcelController.updateColsOnServer([i], keyFromColumnInCompare(col), this.addDelivery, this.compareBasketType);
         i.values = r[0].values;
     }
-    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, remult: Remult, settings: ApplicationSettings) {
-        let c = ImportFromExcelComponent.actualGetColInfo(i, entityAndColumnName);
-        if (c.existingDisplayValue == c.newDisplayValue)
-            return;
-        let basket = await remult.repo(BasketType).findId(i.basketType);
-        let distCenter = await remult.repo(DistributionCenters).findId(i.distCenter);
-        let f = await remult.repo(Families).findId(i.duplicateFamilyInfo[0].id);
-        let fd = await remult.repo(ActiveFamilyDeliveries).findFirst({
-            family: i.duplicateFamilyInfo[0].id,
-            distributionCenter: distCenter,
-            deliverStatus: DeliveryStatus.isNotAResultStatus(),
-            basketType: compareBasketType ? basket : undefined
-        });
-        if (!fd) {
-            fd = f.createDelivery(distCenter);
-            fd.basketType = basket;
-        }
-        let val = c.newValue;
-        if (val === null)
-            val = '';
-        let col = columnFromKey(f, fd, entityAndColumnName);
-        col.inputValue = val;
 
-        await f.save();
-        f.updateDelivery(fd);
-        if (addDelivery) {
-            for (const c of fd.$) {
-                if (c == col) {
-                    fd._disableMessageToUsers = true;
-                    if (settings.isSytemForMlt) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
-                    }
-                    await fd.save();
-                    break;
-                }
-            }
-        }
-
-        c.existingDisplayValue = await getColumnDisplayValue(columnFromKey(f, fd, entityAndColumnName));
-        c.existingValue = columnFromKey(f, fd, entityAndColumnName).inputValue;
-    }
     async clearColumnUpdate(i: excelRowInfo, col: columnInCompare) {
         let c = this.getColInfo(i, col);
         c.newDisplayValue = c.existingDisplayValue;
@@ -1049,7 +954,7 @@ export class ImportFromExcelComponent implements OnInit {
     private async processExcelRowsAndCheckOnServer(rows: excelRowInfo[]) {
         if (this.settings.checkIfFamilyExistsInDb) {
 
-            let r = await ImportFromExcelComponent.checkExcelInput(rows, this.columnsInCompareMemberName, this.compareBasketType);
+            let r = await ImportFromExcelController.checkExcelInput(rows, this.columnsInCompareMemberName, this.compareBasketType);
             this.errorRows.push(...r.errorRows);
             this.newRows.push(...r.newRows);
             this.updateRows.push(...r.updateRows);
@@ -1095,89 +1000,7 @@ export class ImportFromExcelComponent implements OnInit {
         return r + displayDupInfo(info, this.remult);
     }
 
-    @BackendMethod({ allowed: Roles.admin })
-    static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, remult?: Remult, db?: SqlDatabase) {
-        let result: serverCheckResults = {
-            errorRows: [],
-            identicalRows: [],
-            newRows: [],
-            updateRows: []
 
-        } as serverCheckResults;
-        let settings = await ApplicationSettings.getAsync(remult);
-        for (const info of excelRowInfo) {
-            info.duplicateFamilyInfo = [];
-            let findDuplicate = async (w: EntityFilter<Families>) => {
-                if (info.duplicateFamilyInfo.length == 0)
-                    info.duplicateFamilyInfo = (await remult.repo(Families).find({
-                        where: {
-                            status: { "!=": FamilyStatus.ToDelete },
-                            $and: [w]
-                        }
-                    }))
-                        .map(f => (<duplicateFamilyInfo>{
-                            id: f.id,
-                            address: f.address,
-                            name: f.name,
-                            tz: true,
-                            removedFromList: f.status == FamilyStatus.RemovedFromList,
-                            rank: 9
-                        }));
-            }
-            if (info.idInHagai)
-                await findDuplicate({ id: info.idInHagai });
-            else {
-                if (info.iDinExcel && info.duplicateFamilyInfo.length == 0)
-                    await findDuplicate({ iDinExcel: info.iDinExcel });
-                if (info.tz && info.duplicateFamilyInfo.length == 0)
-                    await findDuplicate({ tz: info.tz });
-
-                if (info.duplicateFamilyInfo.length == 0) {
-                    info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, remult, db);
-                    if (info.duplicateFamilyInfo.length > 1) {
-                        if (info.duplicateFamilyInfo.find(f => f.nameDup && f.sameAddress)) {
-                            info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f => !onlyNameMatch(f)
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (settings.removedFromListStrategy == RemovedFromListExcelImportStrategy.ignore) {
-                info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(x => !x.removedFromList);
-            }
-            if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
-                result.newRows.push(info);
-            } else if (info.duplicateFamilyInfo.length > 1) {
-                info.error = getLang(remult).moreThanOneRowInDbMatchesExcel;
-                result.errorRows.push(info);
-            } else {
-                let hasDifference = false;
-                let existingFamily;
-                ({ ef: existingFamily, hasDifference } = await compareValuesWithRow(remult, info, info.duplicateFamilyInfo[0].id, compareBasketType, columnsInCompareMemeberName));
-                if (existingFamily.status == FamilyStatus.RemovedFromList) {
-                    switch (settings.removedFromListStrategy) {
-                        case RemovedFromListExcelImportStrategy.displayAsError:
-                            info.error = use.language.familyAlreadyRemovedFromList;
-                            result.errorRows.push(info);
-                            break;
-                        case RemovedFromListExcelImportStrategy.showInUpdate:
-                            result.updateRows.push(info);
-                            break;
-                        case RemovedFromListExcelImportStrategy.ignore:
-                            result.newRows.push(info);
-                            break;
-                    }
-                }
-                else if (hasDifference) {
-                    result.updateRows.push(info);
-                }
-                else
-                    result.identicalRows.push(info);
-            }
-        }
-        return result;
-    }
 
 
     saveSettings() {
@@ -1481,106 +1304,11 @@ class columnUpdateHelper {
         updateResultTo.value = getResult(x);
     }
 }
-interface excelRowInfo {
-    rowInExcel: number;
-    name: string;
-    tz: string;
-    tz2: string;
-    iDinExcel: string;
-    idInHagai: string;
-    address: string;
-    phone1ForDuplicateCheck: string;
-    phone2ForDuplicateCheck: string;
-    phone3ForDuplicateCheck: string;
-    phone4ForDuplicateCheck: string;
-    valid: boolean;
-    error?: string;
-    otherExcelRow?: excelRowInfo;
-    created?: boolean;
-    distCenter: string;
-    basketType: string;
-    duplicateFamilyInfo?: duplicateFamilyInfo[];
-    values: { [key: string]: updateColumns };
-    userIgnoreError?: boolean;
-}
-interface updateColumns {
 
-    existingValue?: any;
-    existingDisplayValue?: string;
-    newValue: any;
-    newDisplayValue: any;
-}
-interface serverCheckResults {
-    newRows: excelRowInfo[],
-    identicalRows: excelRowInfo[],
-    updateRows: excelRowInfo[],
-    errorRows: excelRowInfo[]
-}
-function onlyNameMatch(f: duplicateFamilyInfo) {
-    return (f.nameDup
-        && !f.sameAddress
-        && !f.phone1
-        && !f.phone2
-        && !f.phone3
-        && !f.phone4
-        && !f.tz
-        && !f.tz2);
-}
 
-async function compareValuesWithRow(remult: Remult, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
-    let hasDifference = false;
-    let basketType = await remult.repo(BasketType).findId(info.basketType);
-    let distCenter = await remult.repo(DistributionCenters).findId(info.distCenter);
-    let ef = await remult.repo(Families).findId(withFamily);
-    let fd = await remult.repo(ActiveFamilyDeliveries).findFirst({
-        family: ef.id,
-        distributionCenter: distCenter,
-        deliverStatus: DeliveryStatus.isNotAResultStatus(),
-        basketType: compareBasketType ? basketType : undefined
-    }, { createIfNotFound: true });
-    for (const columnMemberName of columnsInCompareMemeberName) {
-        let upd = info.values[columnMemberName];
-        if (!upd) {
-            upd = { newDisplayValue: '', newValue: '', existingDisplayValue: '', existingValue: '' };
-            info.values[columnMemberName] = upd;
-        }
-        let col = columnFromKey(ef, fd, columnMemberName);
-        upd.existingValue = col.inputValue;
-        upd.existingDisplayValue = await getColumnDisplayValue(col);
-        if (upd.existingValue == upd.newValue && upd.existingValue == "")
-            upd.newDisplayValue = upd.existingDisplayValue;
-        if (upd.existingDisplayValue != upd.newDisplayValue) {
-            if (col == ef.$.groups) {
-                let existingString = ef.groups.evilGet();
-                let newVal = upd.newValue;
-                if (!newVal || newVal.toString() == '') {
-                    upd.newValue = upd.existingValue;
-                    upd.newDisplayValue = upd.existingDisplayValue;
-                }
-                else if (existingString && existingString.trim().length > 0) {
-                    let existingArray = existingString.toString().split(',').map(x => x.trim());
-                    for (const val of newVal.split(',').map(x => x.trim())) {
-                        if (existingArray.indexOf(val) < 0)
-                            existingArray.push(val);
-                    }
-                    upd.newValue = existingArray.join(', ');
-                    upd.newDisplayValue = upd.newValue;
-                }
-            }
-            if (upd.existingDisplayValue != upd.newDisplayValue) {
-                hasDifference = true;
-            }
-        }
-    }
-    return { ef, hasDifference };
-}
 
-async function getColumnDisplayValue(c: FieldRef<any>) {
 
-    let v = c.displayValue;
 
-    return v?.trim();
-}
 interface laterSteps {
     step: number,
     what: () => Promise<void>
@@ -1801,11 +1529,4 @@ interface columnInCompare {
 }
 function keyFromColumnInCompare(c: columnInCompare) {
     return c.e.key + '.' + c.c.key;
-}
-function columnFromKey(f: Families, fd: ActiveFamilyDeliveries, key: string): FieldRef<any> {
-    let split = key.split('.');
-    if (split[0] == f._.repository.metadata.key)
-        return f.$[split[1]];
-    else
-        return fd.$[split[1]];
 }

@@ -517,6 +517,33 @@ export class AsignFamilyController {
         }));
         return r;
     }
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
+    static async assignMultipleFamilies(helper: HelpersBase, args: {
+        ids: string[],
+        quantity: number,
+    }, remult?: Remult) {
+        let familyDeliveries = await remult.repo(ActiveFamilyDeliveries).find({
+            where: { id: args.ids, ...FamilyDeliveries.readyFilter() }
+        });
+        if (args.quantity > 0) {
+            familyDeliveries.sort((a, b) => {
+                if (a.floor == b.floor) {
+                    return (+b.appartment - +a.appartment);
+                }
+                return +b.floor - +a.floor;
+            });
+        }
+        let added = 0;
+        for (const fd of familyDeliveries) {
+            if (args.quantity) {
+                added += fd.quantity;
+                if (added > args.quantity)
+                    break;
+            }
+            fd.courier = helper;
+            await fd.save();
+        }
+    }
 }
 export interface BasketInfo {
     name: string;

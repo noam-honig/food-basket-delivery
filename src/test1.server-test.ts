@@ -23,6 +23,7 @@ import { Phone } from './app/model-shared/phone';
 import { AuthService } from './app/auth/auth-service';
 import { actionInfo } from 'remult/src/server-action';
 import { InitContext } from "./app/helpers/init-context";
+import { AsignFamilyController } from "./app/asign-family/asign-family.controller";
 initSettings.disableSchemaInit = true;
 
 
@@ -113,7 +114,7 @@ function init() {
             done();
         });
         async function callAddBox(num=1) {
-            return await AsignFamilyComponent.AddBox(helperWhoIsAdmin, null, null, {
+            return await AsignFamilyController.AddBox(helperWhoIsAdmin, null, null, {
                 allRepeat: false,
                 area: '',
                 city: '',

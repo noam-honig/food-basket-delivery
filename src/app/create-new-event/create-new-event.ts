@@ -1,5 +1,3 @@
-import { Component, OnInit } from '@angular/core';
-
 import { Remult, Controller, BackendMethod, getFields, ProgressListener } from 'remult';
 
 
@@ -9,8 +7,6 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DeliveryStatus } from '../families/DeliveryStatus';
-import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { Families } from '../families/families';
 import { BasketType } from '../families/BasketType';
 import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions';
@@ -193,8 +189,7 @@ export class CreateNewEvent {
 
         let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
 
-
-        ui.inputAreaDialog( {
+        await ui.inputAreaDialog( {
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
             settings: {

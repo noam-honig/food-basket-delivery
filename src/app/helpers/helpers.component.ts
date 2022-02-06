@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Helpers } from './helpers';
 import { Route } from '@angular/router';
-import { BackendMethod, Field, getFields } from 'remult';
+import { Field, getFields } from 'remult';
 import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
@@ -14,18 +14,12 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { saveToExcel } from '../shared/saveToExcel';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
-import { Sites } from '../sites/sites';
-import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { use, TranslationOptions } from '../translate';
+import { use } from '../translate';
 import { getLang } from '../sites/sites';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
-import { Phone } from '../model-shared/phone';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
-import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
 import { SendBulkSms } from './send-bulk-sms';
-import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
-import { messageMerger } from "../edit-custom-message/messageMerger";
+import { HelpersController } from './helpers.controller';
 
 @Component({
   selector: 'app-helpers',
@@ -94,7 +88,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     {
       name: use.language.exportToExcel,
       click: async () => {
-        await saveToExcel(this.settings, this.remult.repo(Helpers), this.helpers, use.language.volunteer, this.busy, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
+        await saveToExcel(this.settings, this.remult.repo(Helpers), this.helpers, use.language.volunteer, this.dialog, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
           async (h, addColumn) => {
             addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation.getCity(), 's');
             addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation.getCity(), 's');
@@ -115,7 +109,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       name: use.language.clearAllVolunteerComments,
       click: async () => {
         if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearAllVolunteerCommentsAreYouSure }, x => x.yes)) {
-          await HelpersComponent.clearCommentsOnServer();
+          await HelpersController.clearCommentsOnServer();
           this.helpers.reloadData();
         }
       },
@@ -126,7 +120,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       name: use.language.clearEscortInfo,
       click: async () => {
         if (await openDialog(YesNoQuestionComponent, x => x.args = { question: use.language.clearEscortInfoAreYouSure }, x => x.yes)) {
-          await HelpersComponent.clearEscortsOnServer();
+          await HelpersController.clearEscortsOnServer();
           this.helpers.reloadData();
         }
       },
@@ -195,7 +189,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.resetPassword,
         click: async h => {
           this.dialog.YesNoQuestion(use.language.resetPasswordAreYouSureFor + " " + h.name, async () => {
-            await HelpersComponent.resetPassword(h.id);
+            await HelpersController.resetPassword(h.id);
             this.dialog.Info(use.language.passwordWasReset);
           });
         },
@@ -205,7 +199,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         name: use.language.invalidatePassword,
         click: async h => {
           this.dialog.YesNoQuestion(use.language.invalidatePassword + " " + h.name, async () => {
-            await HelpersComponent.invalidatePassword(h.id);
+            await HelpersController.invalidatePassword(h.id);
             this.dialog.Info(use.language.passwordInvalidated);
           });
         },
@@ -214,7 +208,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       {
         name: use.language.sendInviteBySms,
         click: async h => {
-          let r = await HelpersComponent.sendInvite(h.id);
+          let r = await HelpersController.sendInvite(h.id);
           this.dialog.Info(r);
         },
         visible: h => h.admin || h.distCenterAdmin
@@ -317,49 +311,6 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
 
-  @BackendMethod({ allowed: Roles.admin })
-  static async resetPassword(helperId: string, remult?: Remult) {
-
-    await remult.repo(Helpers).query({ where: { id: helperId } }).forEach(async h => {
-      h.realStoredPassword = '';
-      await h.save();
-    });
-  }
-  @BackendMethod({ allowed: Roles.admin })
-  static async invalidatePassword(helperId: string, remult?: Remult) {
-
-    await remult.repo(Helpers).query({ where: { id: helperId } }).forEach(async h => {
-      h.passwordChangeDate = new Date(1901, 1, 1);
-      await h.save();
-    });
-  }
-
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async sendInvite(helperId: string, remult?: Remult) {
-    let h = await remult.repo(Helpers).findId(helperId);
-    if (!h)
-      return getLang(remult).unfitForInvite;
-    if (!(h.admin || h.distCenterAdmin))
-      return getLang(remult).unfitForInvite;
-    let url = remult.getOrigin() + '/' + Sites.getOrganizationFromContext(remult);
-    let s = await ApplicationSettings.getAsync(remult);
-    let hasPassword = h.password && h.password.length > 0;
-    let message = getLang(remult).hello + ` ${h.name}
-`+ getLang(remult).welcomeTo + ` ${s.organisationName}.
-`+ getLang(remult).pleaseEnterUsing + `
-${url}
-`;
-    if (!hasPassword) {
-      message += getLang(remult).enterFirstTime
-    }
-    await new SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
-    return getLang(remult).inviteSentSuccesfully
-
-
-
-
-
-  }
 
 
 
@@ -374,22 +325,5 @@ ${url}
 
 
 
-  @BackendMethod({ allowed: Roles.admin })
-  static async clearCommentsOnServer(remult?: Remult) {
-    for await (const h of remult.repo(Helpers).query({ where: { eventComment: { "!=": "" } } })) {
-      h.eventComment = '';
-      await h.save();
-    }
-  }
-
-  @BackendMethod({ allowed: Roles.admin })
-  static async clearEscortsOnServer(remult?: Remult) {
-    for await (const h of remult.repo(Helpers).query()) {
-      h.escort = null;
-      h.needEscort = false;
-      h.theHelperIAmEscorting = null;
-      await h.save();
-    }
-  }
 
 }

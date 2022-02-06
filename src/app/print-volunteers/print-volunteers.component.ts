@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
-import { Remult, BackendMethod } from 'remult';
-import { Roles } from '../auth/roles';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { Remult } from 'remult';
+import { PrintVolunteersController, volunteer } from './print-volunteers.controller';
 
 @Component({
   selector: 'app-print-volunteers',
@@ -15,39 +14,9 @@ export class PrintVolunteersComponent implements OnInit {
   volunteers: volunteer[] = [];
   total: number = 0;
   ngOnInit() {
-    PrintVolunteersComponent.volunteersForPrint().then(x => {
+    PrintVolunteersController.volunteersForPrint().then(x => {
       this.volunteers = x.volunteers;
       this.total = x.total;
     });
-
   }
-  @BackendMethod({ allowed: Roles.admin })
-  static async volunteersForPrint(remult?: Remult) {
-    let total = 0;
-    let volunteers: volunteer[] = [];
-    for await (const d of  remult.repo(ActiveFamilyDeliveries).query()) {
-      
-      let v = volunteers.find(v => v.id == d.courier?.id);
-      if (!v) {
-        v = {
-          id: d.courier?.id,
-          name: d.courier?.name,
-          quantity: 0
-        }
-        volunteers.push(v);
-      }
-      v.quantity += d.quantity;
-      total++;
-    }
-    volunteers.sort((a, b) => a.name?.localeCompare(b.name));
-
-    return { total, volunteers };
-  }
-
-}
-
-interface volunteer {
-  id: string,
-  name: string,
-  quantity: number
 }

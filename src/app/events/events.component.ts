@@ -12,9 +12,6 @@ import * as copy from 'copy-to-clipboard';
 import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
-
-import { DateOnlyValueConverter } from 'remult/valueConverters';
-import { EventInfoComponent } from '../event-info/event-info.component';
 import { EventCardComponent } from '../event-card/event-card.component';
 import { use } from '../translate';
 
@@ -62,7 +59,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          await Event.duplicateEvent(this.remult, this.busy, this.events.selectedRows, () => {
+          await Event.duplicateEvent(this.remult, this.dialog, this.events.selectedRows, () => {
             this.events.reloadData();
             this.events.selectedRows.splice(0);
           });
@@ -87,7 +84,7 @@ export class EventsComponent implements OnInit {
     ],
     numOfColumnsInGrid: 100,
     columnSettings: e => Event.displayColumns(e, this.dialog),
-    rowButtons: Event.rowButtons(this.settings, this.dialog, this.busy)
+    rowButtons: Event.rowButtons(this.settings, this.dialog)
   });
   listOptions: RowButton<any>[] = [
     {
@@ -144,7 +141,7 @@ export class EventsComponent implements OnInit {
   add() {
     this.events.addNewRow();
     this.card.refresh();
-    this.events.currentRow.openEditDialog(this.dialog, this.busy, () => {
+    this.events.currentRow.openEditDialog(this.dialog, () => {
       this.events.items.splice(this.events.items.indexOf(this.events.currentRow), 1);
       this.card.refresh();
     });

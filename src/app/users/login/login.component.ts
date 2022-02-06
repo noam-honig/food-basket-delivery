@@ -1,14 +1,12 @@
-import { Component, OnInit, ViewChild, NgZone, ElementRef, AfterContentInit, AfterViewInit } from '@angular/core';
-
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 import { DialogService } from '../../select-popup/dialog';
-import { AuthService, loginResult } from '../../auth/auth-service';
-import { Router, Route, RouteReuseStrategy } from '@angular/router';
+import { AuthService } from '../../auth/auth-service';
+import { Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { BackendMethod, Remult, getFields } from 'remult';
+import { Remult, getFields } from 'remult';
 import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
-
 
 import { Sites } from '../../sites/sites';
 
@@ -18,8 +16,8 @@ import { Phone } from "../../model-shared/phone";
 import { use, Field } from '../../translate';
 import { InputTypes } from 'remult/inputTypes';
 import { NotAuthenticatedGuard } from '@remult/angular';
-
-
+import { loginResult } from '../../auth/auth-service.controller';
+import { LoginController } from './login.controller';
 
 @Component({
   selector: 'app-login',
@@ -190,7 +188,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   });
   newUserState = new loginState(async () => {
     try {
-      await LoginComponent.registerNewUser(this.phone.thePhone, this.name);
+      await LoginController.registerNewUser(this.phone.thePhone, this.name);
       this.doLogin();
 
     }
@@ -205,13 +203,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.confirmPassword = '';
   }
 
-  @BackendMethod({ allowed: true })
-  static async registerNewUser(phone: string, name: string, remult?: Remult) {
-    let h = remult.repo(Helpers).create();
-    h.phone = new Phone(phone);
-    h.name = name;
-    await h.save();
-  }
+
 
   loginState = this.phoneState;
 

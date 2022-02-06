@@ -12,6 +12,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { getLang } from '../sites/sites';
 import { ActivatedRoute } from '@angular/router';
 import { FamilyDeliveriesComponent } from '../family-deliveries/family-deliveries.component';
+import { FamilyDeliveriesController } from '../family-deliveries/family-deliveries.controller';
 
 
 @Component({
@@ -162,7 +163,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   async search() {
     try {
-      this.deliveriesForPhone = (await FamilyDeliveriesComponent.getDeliveriesByPhone(this.phone.value)).map(x => x.id);
+      this.deliveriesForPhone = (await FamilyDeliveriesController.getDeliveriesByPhone(this.phone.value)).map(x => x.id);
       this.showData = (this.deliveriesForPhone.length > 0);
     } catch (err) {
 

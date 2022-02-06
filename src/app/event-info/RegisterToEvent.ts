@@ -1,15 +1,12 @@
-import { openDialog } from '@remult/angular';
 import { DataControl } from '@remult/angular/interfaces';
 import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
-import { Helpers, HelpersBase } from '../helpers/helpers';
-import { InitContext } from '../helpers/init-context';
-import { CustomColumn, getSettings, registerQuestionForVolunteers } from '../manage/ApplicationSettings';
+import { Helpers } from '../helpers/helpers';
+import { InitContext, UITools } from '../helpers/init-context';
+import { CustomColumn, registerQuestionForVolunteers } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
 import { Email } from '../model-shared/types';
-import { DialogService } from '../select-popup/dialog';
-import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { Sites } from '../sites/sites';
 import { Field } from '../translate';
 
@@ -120,8 +117,8 @@ export class RegisterToEvent {
     preferredFinishAddress: string = '';
 
     get $() { return getFields(this, this.remult); }
-    async registerToEvent(e: EventInList, dialog: DialogService) {
-        dialog.trackVolunteer("register-event:" + e.site);
+    async registerToEvent(e: EventInList, ui: UITools) {
+        ui.trackVolunteer("register-event:" + e.site);
         await this.init();
         this.a1 = '';
         this.a2 = '';
@@ -135,7 +132,7 @@ export class RegisterToEvent {
             this.name = currentHelper.name;
         }
         if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
-            await openDialog(InputAreaComponent, x => x.args = {
+            await ui.inputAreaDialog({
                 title: lang.register,
                 helpText: lang.registerHelpText,
                 settings: {
@@ -157,8 +154,8 @@ export class RegisterToEvent {
                     if (refresh)
                         RegisterToEvent.volunteerInfoChanged.fire();
                     let message = lang.youVeRegisteredTo + " " + e.name + ", " + eventDisplayDate(e) + lang.thanksForVolunteering;
-                    dialog.messageDialog(message).then(() => {
-                        dialog.Info(message);
+                    ui.messageDialog(message).then(() => {
+                        ui.Info(message);
                     });
 
                 }
@@ -173,8 +170,8 @@ export class RegisterToEvent {
             await e._.reload();
         else Object.assign(e, update);
     }
-    async removeFromEvent(e: EventInList, dialog: DialogService) {
-        dialog.trackVolunteer("un-register-event:" + e.site);
+    async removeFromEvent(e: EventInList, ui: UITools) {
+        ui.trackVolunteer("un-register-event:" + e.site);
         this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false));
     }
     @BackendMethod({ allowed: true })

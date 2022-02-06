@@ -1,22 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FieldMetadata, FieldsMetadata, Entity, FieldRef, BackendMethod } from 'remult';
+import { FieldMetadata, FieldsMetadata, FieldRef } from 'remult';
 import { Remult } from 'remult';
-
-
-
-
 
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/angular';
-
-
-import { Roles } from '../auth/roles';
 import { MatStepper } from '@angular/material/stepper';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Helpers } from '../helpers/helpers';
 import { fixPhone } from '../import-from-excel/import-from-excel.component';
 import { Phone } from "../model-shared/phone";
+import { duplicateHelperInfo, excelRowInfo, getColumnDisplayValue, ImportHelpersFromExcelController } from './import-helpers-from-excel.controller';
 @Component({
   selector: 'app-import-helpers-from-excel',
   templateUrl: './import-helpers-from-excel.component.html',
@@ -57,7 +51,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
   getColInfo(i: excelRowInfo, col: FieldMetadata) {
-    return ExcelHelper.actualGetColInfo(i, col.key);
+    return ImportHelpersFromExcelController.actualGetColInfo(i, col.key);
   }
 
   async addAll() {
@@ -72,7 +66,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
           if (rowsToInsert.length == 35) {
-            await ImportHelpersFromExcelComponent.insertHelperRows(rowsToInsert);
+            await ImportHelpersFromExcelController.insertHelperRows(rowsToInsert);
             if (new Date().valueOf() - lastDate > 1000) {
               this.dialog.Info(i.rowInExcel + ' ' + (i.name));
             }
@@ -84,7 +78,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
         }
         if (rowsToInsert.length > 0) {
-          await ImportHelpersFromExcelComponent.insertHelperRows(rowsToInsert);
+          await ImportHelpersFromExcelController.insertHelperRows(rowsToInsert);
           this.identicalRows.push(...rowsToInsert);
         }
         this.newRows = [];
@@ -93,17 +87,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
     });
   }
-  @BackendMethod({ allowed: Roles.admin })
-  static async insertHelperRows(rowsToInsert: excelRowInfo[], remult?: Remult) {
-    for (const r of rowsToInsert) {
-      let f = remult.repo(Helpers).create();
-      for (const val in r.values) {
-        f[val] = r.values[val].newValue;
-      }
-      await f.save();
-    }
 
-  }
   async updateAllCol(col: FieldMetadata) {
     let count = this.getColUpdateCount(col);
     let message = "האם לעדכן את השדה " + col.caption + " ל" + count + " מתנדבים?";
@@ -122,7 +106,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
             allRows.push(i);
 
           if (rowsToUpdate.length == 35) {
-            allRows.push(...await ImportHelpersFromExcelComponent.updateHelperColsOnServer(rowsToUpdate, col.key));
+            allRows.push(...await ImportHelpersFromExcelController.updateHelperColsOnServer(rowsToUpdate, col.key));
             if (new Date().valueOf() - lastDate > 1000) {
               this.dialog.Info(i.rowInExcel + ' ' + (i.name));
             }
@@ -133,7 +117,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
         }
         if (rowsToUpdate.length > 0) {
-          allRows.push(...await ImportHelpersFromExcelComponent.updateHelperColsOnServer(rowsToUpdate, col.key));
+          allRows.push(...await ImportHelpersFromExcelController.updateHelperColsOnServer(rowsToUpdate, col.key));
         }
         allRows.sort((a, b) => a.rowInExcel - b.rowInExcel);
         this.updateRows = allRows;
@@ -141,29 +125,11 @@ export class ImportHelpersFromExcelComponent implements OnInit {
     });
   }
 
-  @BackendMethod({ allowed: Roles.admin })
-  static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, remult?: Remult) {
-    for (const r of rowsToUpdate) {
-      await ImportHelpersFromExcelComponent.actualUpdateCol(r, columnMemberName, remult);
-    }
-    return rowsToUpdate;
-  }
+
   async updateCol(i: excelRowInfo, col: FieldMetadata) {
-    await ImportHelpersFromExcelComponent.actualUpdateCol(i, col.key, this.remult);
+    await ImportHelpersFromExcelController.actualUpdateCol(i, col.key, this.remult);
   }
-  static async actualUpdateCol(i: excelRowInfo, colMemberName: string, remult: Remult) {
-    let c = ExcelHelper.actualGetColInfo(i, colMemberName);
-    if (c.existingDisplayValue == c.newDisplayValue)
-      return;
-    let f = await remult.repo(Helpers).findId(i.duplicateHelperInfo[0].id);
-    let val = c.newValue;
-    if (val === null)
-      val = '';
-    f.$[colMemberName].inputValue = val;
-    await f.save();
-    c.existingDisplayValue = await getColumnDisplayValue(f.$[colMemberName]);
-    c.existingValue = f.$[colMemberName].inputValue;
-  }
+
   async clearColumnUpdate(i: excelRowInfo, col: FieldMetadata) {
     let c = this.getColInfo(i, col);
     c.newDisplayValue = c.existingDisplayValue;
@@ -479,7 +445,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
           if (rows.length == 200) {
             this.dialog.Info((index - 1) + ' ' + (f.name ? f.name : 'ללא שם') + ' ' + (f.error ? f.error : ''));
-            let r = await ImportHelpersFromExcelComponent.checkExcelInputHelpers(rows, columnsInCompareMemberName);
+            let r = await ImportHelpersFromExcelController.checkExcelInputHelpers(rows, columnsInCompareMemberName);
             this.errorRows.push(...r.errorRows);
             this.newRows.push(...r.newRows);
             this.updateRows.push(...r.updateRows);
@@ -489,7 +455,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
         }
         if (rows.length > 0) {
 
-          let r = await ImportHelpersFromExcelComponent.checkExcelInputHelpers(rows, columnsInCompareMemberName);
+          let r = await ImportHelpersFromExcelController.checkExcelInputHelpers(rows, columnsInCompareMemberName);
           this.errorRows.push(...r.errorRows);
           this.newRows.push(...r.newRows);
           this.updateRows.push(...r.updateRows);
@@ -543,59 +509,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   displayDupInfo(info: duplicateHelperInfo) {
     return 'טלפון זהה';
   }
-  @BackendMethod({ allowed: Roles.admin })
-  static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], remult?: Remult) {
-    let result: serverCheckResults = {
-      errorRows: [],
-      identicalRows: [],
-      newRows: [],
-      updateRows: []
-    } as serverCheckResults;
-    for (const info of excelRowInfo) {
 
-      info.duplicateHelperInfo = (await remult.repo(Helpers).find({ where: { phone: new Phone(info.phone) } })).map(x => {
-        return {
-          id: x.id,
-          name: x.name
-        } as duplicateHelperInfo;
-      });
-
-      if (!info.duplicateHelperInfo || info.duplicateHelperInfo.length == 0) {
-        result.newRows.push(info);
-      } else if (info.duplicateHelperInfo.length > 1) {
-        info.error = 'מתנדב קיים יותר מפעם אחת בבסיס הנתונים';
-        result.errorRows.push(info);
-      } else {
-        let ef = await remult.repo(Helpers).findId(info.duplicateHelperInfo[0].id);
-        let hasDifference = false;
-        for (const columnMemberName of columnsInCompareMemeberName) {
-
-          let upd = info.values[columnMemberName];
-          if (!upd) {
-            upd = { newDisplayValue: '', newValue: '', existingDisplayValue: '', existingValue: '' };
-            info.values[columnMemberName] = upd;
-          }
-
-          let col = ef.$[columnMemberName];
-          upd.existingValue = col.inputValue;
-          upd.existingDisplayValue = await getColumnDisplayValue(col);
-          if (upd.existingDisplayValue != upd.newDisplayValue) {
-
-
-            if (upd.existingDisplayValue != upd.newDisplayValue) {
-              hasDifference = true;
-            }
-          }
-        }
-        if (hasDifference) {
-          result.updateRows.push(info);
-        }
-        else
-          result.identicalRows.push(info);
-      }
-    }
-    return result;
-  }
 
 
   saveSettings() {
@@ -702,54 +616,8 @@ class columnUpdateHelper {
 
 
 }
-interface excelRowInfo {
-  rowInExcel: number;
-  name: string;
-  phone: string;
 
-  valid: boolean;
-  error?: string;
-  duplicateHelperInfo?: duplicateHelperInfo[];
-  values: { [key: string]: updateColumns };
-}
-interface updateColumns {
-
-  existingValue?: any;
-  existingDisplayValue?: string;
-  newValue: any;
-  newDisplayValue: any;
-}
-interface serverCheckResults {
-  newRows: excelRowInfo[],
-  identicalRows: excelRowInfo[],
-  updateRows: excelRowInfo[],
-  errorRows: excelRowInfo[]
-}
-async function getColumnDisplayValue(c: FieldRef<any>) {
-  let v = c.displayValue;
-  return v?.trim();
-}
 interface laterSteps {
   step: number,
   what: () => void
-}
-
-class ExcelHelper {
-  static actualGetColInfo(i: excelRowInfo, colMemberName: string) {
-    let r = i.values[colMemberName];
-    if (!r) {
-      r = {
-        newDisplayValue: '',
-        existingDisplayValue: '',
-        newValue: ''
-      };
-      //  i.values.push(r);
-    }
-    return r;
-  }
-
-}
-interface duplicateHelperInfo {
-  id: string;
-  name: string;
 }

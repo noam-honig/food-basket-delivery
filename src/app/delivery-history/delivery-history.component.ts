@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Remult, SqlDatabase, EntityBase, getFields } from 'remult';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { Remult,  EntityBase, getFields } from 'remult';
 import { Phone } from "../model-shared/phone";
 import { Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -10,11 +9,9 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 
 import { Route } from '@angular/router';
 
-
 import { saveToExcel } from '../shared/saveToExcel';
 import { DataAreaSettings, DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 
-import { BackendMethod } from 'remult';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -27,6 +24,7 @@ import { use, Field, IntegerField } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { BusyService, openDialog } from '@remult/angular';
+import { DeliveryHistoryController } from './delivery-history.controller';
 
 
 
@@ -81,7 +79,7 @@ export class DeliveryHistoryComponent implements OnInit {
         name: this.settings.lang.exportToExcel,
         visible: () => this.remult.isAllowed(Roles.admin),
         click: async () => {
-          await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.busy, (d: helperHistoryInfo, c) => c == d.$.courier);
+          await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.dialog, (d: helperHistoryInfo, c) => c == d.$.courier);
         }
       },
       {
@@ -187,7 +185,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
   private async refreshHelpers() {
 
-    var x = await DeliveryHistoryComponent.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
+    var x = await DeliveryHistoryController.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
 
     let rows: any[] = this.helperStorage.rows[(await this.remult.repo(helperHistoryInfo).metadata.getDbName())];
     x = x.map(x => {
@@ -211,7 +209,7 @@ export class DeliveryHistoryComponent implements OnInit {
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-        await saveToExcel(this.settings, this.remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.busy, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+        await saveToExcel(this.settings, this.remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.dialog, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
             await f.basketType?.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -311,69 +309,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.refreshHelpers();
 
   }
-  @BackendMethod({ allowed: Roles.admin })
-  static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, remult?: Remult, db?: SqlDatabase) {
 
-
-    toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-    var sql = new SqlBuilder(remult);
-    var fd = await SqlFor(remult.repo(FamilyDeliveries));
-
-    var h = await SqlFor(remult.repo(Helpers));
-    var hg = await SqlFor(remult.repo(HelperGifts));
-
-
-    let r = fd.where({
-      deliveryStatusDate: { ">=": fromDate, "<": toDate },
-      distributionCenter: remult.filterDistCenter(distCenter),
-      deliverStatus: onlyDone ? DeliveryStatus.isAResultStatus() : undefined,
-      archive: onlyArchived ? true : undefined
-    });
-
-    let queryText =
-      await sql.build("select ", [
-        fd.courier.getDbName(),
-        sql.columnInnerSelect(fd, {
-          select: () => [h.name],
-          from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.getDbName())]
-        }),
-        sql.columnInnerSelect(fd, {
-          select: () => [h.company],
-          from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.getDbName())]
-        }),
-        sql.columnInnerSelect(fd, {
-          select: () => [h.phone],
-          from: h,
-          where: () => [sql.build(h.id, "=", fd.courier.getDbName())]
-        }),
-        sql.columnInnerSelect(hg, {
-          select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, true), ' then 1 else 0 end) consumed')],
-          from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.getDbName())]
-        }),
-        sql.columnInnerSelect(hg, {
-          select: () => [sql.build('sum (case when ', sql.eq(hg.wasConsumed, false), ' then 1 else 0 end) pending')],
-          from: hg,
-          where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.getDbName())]
-        })
-        , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
-        await sql.build("select ", [
-          fd.courier,
-          "count(*) deliveries",
-          sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),
-          sql.build("count (distinct ", fd.family, ") families"),
-          sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(fd.where({ deliverStatus: DeliveryStatus.isSuccess() })), ' then 1 else 0 end) selfassigned'),
-          sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isSuccess() })], then: 1 }], 0), ') succesful')],
-          ' from ', fd,
-          ' where ', sql.and(r))
-
-        + await sql.build(' group by ', fd.courier), ") x");
-
-    return (await db.execute(queryText)).rows;
-
-  }
 
 }
 

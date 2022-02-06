@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Remult, Filter, BackendMethod, SqlDatabase, EntityFilter } from 'remult';
-import { DataAreaFieldsSetting, DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
+import { Remult, EntityFilter } from 'remult';
+import { DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -23,25 +23,24 @@ import { ArchiveDeliveries, DeleteDeliveries, NewDelivery, UpdateBasketType, Upd
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { ApplicationSettings, getCustomColumnVisible } from '../manage/ApplicationSettings';
-import { TranslationOptions, use } from '../translate'
-import { Helpers } from '../helpers/helpers';
+import { use } from '../translate'
+
 
 import { sortColumns } from '../shared/utils';
 import { getLang } from '../sites/sites';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
-import { Phone } from "../model-shared/phone";
-import { Groups, GroupsValue } from '../manage/groups';
+
+import { GroupsValue } from '../manage/groups';
 import { UpdateAreaForDeliveries, updateGroupForDeliveries, UpdateStatusForDeliveries } from '../families/familyActions';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { PrintVolunteersComponent } from '../print-volunteers/print-volunteers.component';
-import { DistributionCenters } from '../manage/distribution-centers';
 import { DeliveryImagesComponent } from '../delivery-images/delivery-images.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PrintStickersComponent } from '../print-stickers/print-stickers.component';
 import { PrintVolunteerComponent } from '../print-volunteer/print-volunteer.component';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
-import { UITools } from '../helpers/init-context';
+
 import { getDeliveryGridButtons } from './getDeliveryGridButtons';
+import { FamilyDeliveriesController } from './family-deliveries.controller';
 
 @Component({
   selector: 'app-family-deliveries',
@@ -192,7 +191,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter, true);
+        let areas = await FamilyDeliveriesController.getGroups(this.dialog.distCenter, true);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           g => ({ groups: { $contains: g }, $and: [FamilyDeliveries.readyFilter()] }),
@@ -209,7 +208,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       moreStats: [],
       fourthColumn: () => this.groupsColumn,
       refreshStats: async x => {
-        let areas = await FamilyDeliveriesComponent.getGroups(this.dialog.distCenter);
+        let areas = await FamilyDeliveriesController.getGroups(this.dialog.distCenter);
         this.prepComplexStats(areas.map(g => ({ name: g.name, count: g.totalReady })),
           x,
           g => ({ groups: { $contains: g } }),
@@ -808,62 +807,6 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       })
     ]
   });
-
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async getGroups(dist: DistributionCenters, readyOnly = false, remult?: Remult) {
-    let pendingStats = [];
-    let result: groupStats[] = [];
-    await remult.repo(Groups).find({
-      limit: 1000,
-      orderBy: { name: 'asc' }
-    }).then(groups => {
-      for (const g of groups) {
-        let x: groupStats = {
-          name: g.name,
-          totalReady: 0
-        };
-        result.push(x);
-        pendingStats.push(remult.repo(ActiveFamilyDeliveries).count({
-          groups: { $contains: x.name },
-          distributionCenter: remult.filterDistCenter(dist),
-          $and: [readyOnly ? FamilyDeliveries.readyFilter() : undefined]
-        }).then(r => x.totalReady = r));
-
-      }
-    });
-    await Promise.all(pendingStats);
-    return result;
-  }
-  @BackendMethod({ allowed: Roles.lab })
-  static async getDeliveriesByPhone(phoneNumIn: string, remult?: Remult, db?: SqlDatabase) {
-    let phoneNum = new Phone(phoneNumIn);
-    let sql1 = new SqlBuilder(remult);
-
-    let fd = SqlFor(remult.repo(FamilyDeliveries));
-    let result: string[] = [];
-    let courier = await (await remult.repo(Helpers).findFirst({ phone: phoneNum }));
-
-    for (const d of (await db.execute(await sql1.query({
-      from: fd,
-      where: () => [
-        (courier != undefined ? fd.where({ courier, $and: [FamilyDeliveries.active] }) :
-          sql1.or(
-            fd.where({ phone1: phoneNum, $and: [FamilyDeliveries.active] }),
-            fd.where({ phone2: phoneNum, $and: [FamilyDeliveries.active] }),
-            fd.where({ phone3: phoneNum, $and: [FamilyDeliveries.active] }),
-            fd.where({ phone4: phoneNum, $and: [FamilyDeliveries.active] }))
-        )
-      ],
-      select: () => [
-        sql1.columnWithAlias(fd.id, "id"),
-      ],
-    }))).rows) {
-      result.push(d.id)
-    }
-
-    return await (await remult.repo(FamilyDeliveries).find({ where: { id: result } })).map(x => x._.toApiJson());
-  }
-
 
 
   ngOnInit() {

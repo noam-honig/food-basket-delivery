@@ -6,7 +6,8 @@ import { Remult } from 'remult';
 import { InputTypes } from 'remult/inputTypes';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
-import { Control, ElementProps, getMarginsH, Property } from '../properties-editor/properties-editor.component';
+import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../print-stickers/VolunteerReportDefs';
+import { DialogService } from '../select-popup/dialog';
 import { VolunteerReportInfo } from './VolunteerReportInfo';
 
 /*
@@ -30,8 +31,8 @@ import { VolunteerReportInfo } from './VolunteerReportInfo';
 export class PrintVolunteerComponent implements OnInit {
 
 
-  constructor(public remult: Remult, private busy: BusyService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
-  defs = new VolunteerReportDefs(this.remult, this.busy);
+  constructor(public remult: Remult, private dialog: DialogService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
+  defs = new VolunteerReportDefs(this.remult, this.dialog);
   report: ReportInfo;
   row: VolunteerReportInfo;
   readonly newPageKey = '@newPageKey';
@@ -243,7 +244,7 @@ export class PrintVolunteerComponent implements OnInit {
   async save() {
     this.lastSave = this.lastSave.then(async () => {
       this.row.info = JSON.parse(JSON.stringify(this.report));
-      await this.busy.donotWait(() => this.row.save());
+      await this.dialog.donotWait(() => this.row.save());
     });
   }
 }

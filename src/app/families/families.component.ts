@@ -1,18 +1,13 @@
-import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { Filter, BackendMethod, SqlDatabase, EntityFilter } from 'remult';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {  EntityFilter } from 'remult';
 
-import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
+import { Families,  sendWhatsappToFamily, canSendWhatsapp } from './families';
 
 import { YesNo } from "./YesNo";
 
-
-
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
-
 import { DomSanitizer } from '@angular/platform-browser';
-
-
 
 import { DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
@@ -20,13 +15,11 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+
 import { Phone } from "../model-shared/phone";
 import { Route } from '@angular/router';
 
 import { Remult } from 'remult';
-
-
 
 import { saveToExcel } from '../shared/saveToExcel';
 import { AdminGuard } from '../auth/guards';
@@ -49,9 +42,7 @@ import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-m
 import { messageMerger } from "../edit-custom-message/messageMerger";
 import { makeId } from '../helpers/helpers';
 import { UITools } from '../helpers/init-context';
-
-
-
+import { FamiliesController } from './families.controller';
 
 @Component({
     selector: 'app-families',
@@ -59,23 +50,7 @@ import { UITools } from '../helpers/init-context';
     styleUrls: ['./families.component.scss']
 })
 export class FamiliesComponent implements OnInit {
-    @BackendMethod({ allowed: Roles.admin })
-    static async getCities(remult?: Remult, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
-        var sql = new SqlBuilder(remult);
-        let f = SqlFor(remult.repo(Families));
-        let r = await db.execute(await sql.query({
-            from: f,
-            select: () => [f.city, 'count (*) as count'],
-            where: () => [f.where({ status: FamilyStatus.Active })],
-            groupBy: () => [f.city],
-            orderBy: [{ field: f.city }]
 
-        }));
-        return r.rows.map(x => ({
-            city: x.city,
-            count: x.count
-        }));
-    }
 
     test = new NewDelivery(this.remult);
     limit = 25;
@@ -552,7 +527,7 @@ export class FamiliesComponent implements OnInit {
             stats: [],
             moreStats: [],
             refreshStats: async x => {
-                let areas = await FamiliesComponent.getCities();
+                let areas = await FamiliesController.getCities();
                 this.prepComplexStats(areas.map(g => ({ name: g.city, count: g.count })),
                     x,
                     g => ({ status: FamilyStatus.Active, city: g.name }),

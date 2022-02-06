@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { selectListItem } from '../helpers/init-context';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({
@@ -46,9 +47,3 @@ export class SelectListComponent implements OnInit {
 }
 
 
-
-export interface selectListItem<itemType = any> {
-  name: string,
-  item: itemType,
-  selected?: boolean
-}

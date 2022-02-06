@@ -38,7 +38,7 @@ export class InRouteFollowUpComponent implements OnInit {
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,
-      click: () => saveToExcel(this.settings, this.remult.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.busy)
+      click: () => saveToExcel(this.settings, this.remult.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.dialog)
     }],
     rowCssClass: x => {
       if ((!x.seenFirstAssign) && (!x.lastCommunicationDate || x.lastCommunicationDate < daysAgo(3)))
@@ -54,7 +54,7 @@ export class InRouteFollowUpComponent implements OnInit {
       showInLine: true,
       visible: h => !h.isNew(),
       click: async s => {
-        s.showAssignment();
+        s.showAssignment(this.dialog);
       }
     }, {
       name: use.language.ActiveDeliveries,
@@ -66,11 +66,11 @@ export class InRouteFollowUpComponent implements OnInit {
           buttons: [
             {
               text: 'תכתובות',
-              click: () => h.showHistory()
+              click: () => h.showHistory(this.dialog)
             },
             {
               text: 'שיוך משלוחים',
-              click: () => h.showAssignment()
+              click: () => h.showAssignment(this.dialog)
             }
           ],
           settings: new GridSettings(this.remult.repo(ActiveFamilyDeliveries), {
@@ -108,13 +108,13 @@ export class InRouteFollowUpComponent implements OnInit {
     {
       name: 'תכתובות',
       click: async h => {
-        h.showHistory();
+        h.showHistory(this.dialog);
       }
     },
     {
       name: 'הוסף תכתובת',
       click: async s => {
-        s.addCommunication(() => { });
+        s.addCommunication(this.dialog, () => { });
       }
     },
     {

@@ -43,7 +43,7 @@ export class EventInfoComponent implements OnInit {
   }
   edit() {
     if (this.e instanceof Event)
-      this.e.openEditDialog(this.dialog, this.busy);
+      this.e.openEditDialog(this.dialog);
   }
 
 

@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-import { Location, GeocodeInformation, toLongLat, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { UrlBuilder, Filter, BackendMethod, SqlDatabase, FieldRef, Allow, EntityFilter, ProgressListener } from 'remult';
+import { FieldRef, EntityFilter } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -18,7 +17,6 @@ import { Remult } from 'remult';
 
 import { BasketType } from '../families/BasketType';
 
-import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { DataAreaSettings, InputField } from '@remult/angular/interfaces';
@@ -27,31 +25,23 @@ import { Roles } from '../auth/roles';
 import { GroupsStats } from '../manage/manage.component';
 import { GroupsStatsPerDistributionCenter } from "../manage/GroupsStatsPerDistributionCenter";
 import { GroupsStatsForAllDeliveryCenters } from "../manage/GroupsStatsForAllDeliveryCenters";
-import { SendSmsAction } from './send-sms-action';
 
 import { SelectCompanyComponent } from '../select-company/select-company.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { SelectFamilyComponent } from '../select-family/select-family.component';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
-import { DistributionCenters } from '../manage/distribution-centers';
-import { CitiesStats, CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Families } from '../families/families';
 
-import { HelperFamiliesComponent, DeliveryInList } from '../helper-families/helper-families.component';
-import { familiesInRoute, optimizeRoute, routeStats, routeStrategy } from './route-strategy';
+import { HelperFamiliesComponent } from '../helper-families/helper-families.component';
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper';
 import { SelectListComponent } from '../select-list/select-list.component';
 import { use } from '../translate';
-import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 import { getLang } from '../sites/sites';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { AsignFamilyController, BasketInfo, CityInfo } from './asign-family.controller';
-
-
-
-
+import { DeliveryInList, HelperFamiliesController } from '../helper-families/helper-families.controller';
+import { MltFamiliesController } from '../mlt-families/mlt-families.controller';
 
 @Component({
     selector: 'app-asign-family',
@@ -512,7 +502,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async assignClosestDeliveries() {
 
-        let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddressHelper.location, false));
+        let afdList = await (HelperFamiliesController.getDeliveriesByLocation(this.familyLists.helper.preferredDistributionAreaAddressHelper.location, false));
 
         await openDialog(SelectListComponent, x => {
             x.args = {
@@ -526,7 +516,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                                 let d: DeliveryInList = selectedItem.item;
                                 ids.push(...d.ids);
                             }
-                            await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+                            await MltFamiliesController.assignFamilyDeliveryToIndie(ids);
 
                             await this.familyLists.reload();
                             this.doRefreshRoute();
@@ -600,39 +590,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     private async assignMultipleFamilies(ids: string[], quantity = 0) {
         await this.verifyHelperExistance();
-        await AsignFamilyComponent.assignMultipleFamilies(this.helper, {
+        await AsignFamilyController.assignMultipleFamilies(this.helper, {
             ids,
             quantity
         });
         this.refreshList();
     }
-    @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async assignMultipleFamilies(helper: HelpersBase, args: {
-        ids: string[],
-        quantity: number,
-    }, remult?: Remult) {
-        let familyDeliveries = await remult.repo(ActiveFamilyDeliveries).find({
-            where: { id: args.ids, ...FamilyDeliveries.readyFilter() }
-        });
-        if (args.quantity > 0) {
-            familyDeliveries.sort((a, b) => {
-                if (a.floor == b.floor) {
-                    return (+b.appartment - +a.appartment);
-                }
-                return +b.floor - +a.floor;
-            });
-        }
-        let added = 0;
-        for (const fd of familyDeliveries) {
-            if (args.quantity) {
-                added += fd.quantity;
-                if (added > args.quantity)
-                    break;
-            }
-            fd.courier = helper;
-            await fd.save();
-        }
-    }
+
     showSave() {
         return this.helper && this.helper._.wasChanged();
     }

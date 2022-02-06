@@ -12,6 +12,7 @@ import { DialogService } from '../select-popup/dialog';
 import { Location } from '../shared/googleApiHelpers';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { BasketType } from '../families/BasketType';
+import { DistributionMapController } from '../distribution-map/distribution-map.controller';
 
 //import 'googlemaps';
 
@@ -26,7 +27,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
         await this.initMap();
 
-        let families = await DistributionMap.GetDeliveriesLocation(true, city, group, distCenter, area, basketType);
+        let families = await DistributionMapController.GetDeliveriesLocation(true, city, group, distCenter, area, basketType);
         for (const f of this.loadedPotentialFamilies) {
             let fi = this.dict.get(f);
             if (fi && fi.getIcon().toString().includes('yellow-dot.png')) {
@@ -213,7 +214,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 case DeliveryStatus.ReadyForDelivery:
                     let currentIndex = ++i;
                     if (prevMarker == undefined || JSON.stringify(prevMarker.getPosition()) != JSON.stringify(marker.getPosition())) {
-                        marker.setLabel({ text: (currentIndex).toString() ,color:'blue'});
+                        marker.setLabel({ text: (currentIndex).toString(), color: 'blue' });
                         marker.setIcon('/assets/map-markers/number.png');
                         marker.set
                         prevMarker = marker;

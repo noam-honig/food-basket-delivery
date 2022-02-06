@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, BackendMethod, Allow } from 'remult';
+import { Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
-import { DeliveryInList, HelperFamiliesComponent } from '../helper-families/helper-families.component';
+
+import { DeliveryInList, HelperFamiliesController } from '../helper-families/helper-families.controller';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { MyGiftsDialogComponent } from '../helper-gifts/my-gifts-dialog.component';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -16,6 +17,7 @@ import { DialogService } from '../select-popup/dialog';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
 import { use } from '../translate';
+import { MltFamiliesController } from './mlt-families.controller';
 
 @Component({
   selector: 'app-mlt-families',
@@ -136,7 +138,7 @@ export class MltFamiliesComponent implements OnInit {
   async assignNewDelivery() {
     var volunteerLocation = await getCurrentLocation(true, this.dialog);
 
-    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(volunteerLocation, true));
+    let afdList = await (HelperFamiliesController.getDeliveriesByLocation(volunteerLocation, true));
 
     await openDialog(SelectListComponent, x => {
       x.args = {
@@ -158,7 +160,7 @@ export class MltFamiliesComponent implements OnInit {
                   let d: DeliveryInList = selectedItem.item;
                   ids.push(...d.ids);
                 }
-                await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+                await MltFamiliesController.assignFamilyDeliveryToIndie(ids);
                 await this.familyLists.refreshRoute({
                   volunteerLocation: volunteerLocation
                 });
@@ -174,17 +176,7 @@ export class MltFamiliesComponent implements OnInit {
 
   }
 
-  @BackendMethod({ allowed: Roles.indie })
-  static async assignFamilyDeliveryToIndie(deliveryIds: string[], remult?: Remult) {
-    for (const id of deliveryIds) {
 
-      let fd = await remult.repo(ActiveFamilyDeliveries).findId(id);
-      if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-        fd.courier = (await remult.getCurrentUser());
-        await fd.save();
-      }
-    }
-  }
 
   selectedFamily: ActiveFamilyDeliveries;
   deliveriesForFamily: ActiveFamilyDeliveries[] = [];
@@ -266,23 +258,14 @@ export class MltFamiliesComponent implements OnInit {
         item: y
       })),
       onSelect: async (x) => {
-        await MltFamiliesComponent.changeDestination(x[0].item.id);
+        await MltFamiliesController.changeDestination(x[0].item.id);
         this.familyLists.reload();
       }
     });
   }
 
 
-  @BackendMethod({ allowed: Allow.authenticated })
-  static async changeDestination(newDestinationId: DistributionCenters, remult?: Remult) {
-    let s = (await remult.getSettings());
-    if (!s.isSytemForMlt)
-      throw "not allowed";
-    for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: (await remult.getCurrentUser()) } })) {
-      fd.distributionCenter = newDestinationId;
-      await fd.save();
-    }
-  }
+
 
   async couldntDeliverToFamily(f: ActiveFamilyDeliveries, status?) {
     let family = f.family;

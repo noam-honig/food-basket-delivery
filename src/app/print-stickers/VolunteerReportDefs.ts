@@ -1,21 +1,53 @@
-import { BusyService, openDialog } from '@remult/angular';
-import { BackendMethod, Remult } from 'remult';
+import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, Remult } from 'remult';
+import { ClassType } from 'remult/classType';
 import { InputTypes } from 'remult/inputTypes';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Helpers, HelpersBase } from '../helpers/helpers';
+import { Helpers } from '../helpers/helpers';
+import { UITools } from '../helpers/init-context';
 import { getSettings } from '../manage/ApplicationSettings';
-import { Control, ElementProps, OptionalFieldsDefinition, Property, SizeProperty } from '../properties-editor/properties-editor.component';
-import { UpdateFamilyDialogComponent } from '../update-family-dialog/update-family-dialog.component';
+import { use } from '../translate';
+
+
+export class OptionalFieldsDefinition<dataArgs> {
+
+  fields: {
+    key: string,
+    caption: string,
+    build: (args: dataArgs) => string
+  }[] = [];
+  constructor(public remult: Remult) {
+
+  }
+  addFields<entityType extends IdEntity>(entity: ClassType<entityType>, extractFromArgs: (x: dataArgs) => entityType, getFields: (entity: FieldsMetadata<entityType>) => FieldMetadata[]) {
+    let repo = this.remult.repo(entity);
+    let meta = repo.metadata;
+    for (const field of getFields(meta.fields)) {
+      let key = meta.key + "_" + field.key;
+      this.fields.push({
+        key,
+        caption: field.caption,
+        build: (args) => extractFromArgs(args).$.find(field).displayValue
+      })
+    }
+  }
+  buildObject(id: string, args: dataArgs) {
+    let r = { id };
+    for (const field of this.fields) {
+      r[field.key] = field.build(args);
+    }
+    return r;
+  }
+}
 
 export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   fd: ActiveFamilyDeliveries;
   f: Families;
 }> {
 
-  constructor(remult: Remult, private busy: BusyService) {
+  constructor(remult: Remult, private ui: UITools) {
     super(remult);
     this.fields.push({
       key: 'name',
@@ -96,9 +128,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   }
   async editSticker(d: any, arrayToReplaceItIn: any[]) {
 
-    let [familyDelivery, family] = await this.busy.doWhileShowingBusy(() => this.remult.repo(ActiveFamilyDeliveries).findId(d.id).then(async (fd) => [fd, await this.remult.repo(Families).findId(fd.family)]));
-
-    openDialog(UpdateFamilyDialogComponent, x => x.args = {
+    let [familyDelivery, family] = await this.ui.doWhileShowingBusy(() => this.remult.repo(ActiveFamilyDeliveries).findId(d.id).then(async (fd) => [fd, await this.remult.repo(Families).findId(fd.family)]));
+    this.ui.updateFamilyDialog({
       family, familyDelivery, onSave: async () => {
         await familyDelivery._.reload();
         let i = arrayToReplaceItIn.indexOf(d);
@@ -191,4 +222,41 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     this.fieldProps.caption = this.remult.lang.fieldProperties + ": " + this.fields.find(x => x.key == c.fieldKey)?.caption;
     this.fieldProps.control = c;
   }
+}
+export interface Control {
+  fieldKey: string,
+  propertyValues?: any
+}
+export interface ElementProps {
+  caption: string,
+  props: Property[],
+  values?: {},
+  control?: Control;
+}
+export class Property {
+  constructor(public key: string, public caption: string, public inputType: string, public setStyle?: (value: string, style: any) => void) {
+    if (!setStyle) {
+      this.setStyle = (val, style) => style[key] = val;
+    }
+  }
+}
+export class SizeProperty extends Property {
+  constructor(public key: string, public caption: string, uom = 'mm') {
+    super(key, caption, InputTypes.number, (val, style) => style[key] = val + uom);
+  }
+}
+
+
+
+export function getMarginsH() {
+  return [
+    new SizeProperty('padding-left', use.language.leftPadding),
+    new SizeProperty('padding-right', use.language.rightPadding)
+  ]
+}
+export function getMarginsV() {
+  return [
+    new SizeProperty('padding-top', use.language.topPadding),
+    new SizeProperty('padding-bottom', use.language.bottomPadding)
+  ]
 }

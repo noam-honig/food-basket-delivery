@@ -69,4 +69,20 @@ export class FamilyInfoController {
         }
 
     }
+    @BackendMethod({ allowed: Allow.authenticated })
+    static async ShowFamilyTz(deliveryId: string, remult?: Remult) {
+        let s = await ApplicationSettings.getAsync(remult);
+        if (!s.showTzToVolunteer)
+            return "";
+        var d = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
+        if (!d)
+            return;
+        if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+            return "";
+        var f = await remult.repo(Families).findId(d.family);
+        if (!f)
+            return "";
+        return f.name + ":" + f.tz;
+
+    }
 }

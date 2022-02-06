@@ -2,9 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular
 
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
-import { extractError } from "../select-popup/extractError";
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Remult, FieldRef, BackendMethod, Allow } from 'remult';
+import { Remult } from 'remult';
 
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -13,11 +12,8 @@ import { GetVolunteerFeedback } from '../update-comment/update-comment.component
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-import { Helpers } from '../helpers/helpers';
 import { getLang, Sites } from '../sites/sites';
-import { Roles } from '../auth/roles';
 import { Phone } from "../model-shared/phone";
-import { Families } from '../families/families';
 import { UserFamiliesList } from '../my-families/user-families';
 import { openDialog } from '@remult/angular';
 import { relativeDateName } from '../model-shared/types';
@@ -70,7 +66,7 @@ export class FamilyInfoComponent implements OnInit {
     return this.showHelp && this.f.deliverStatus != DeliveryStatus.ReadyForDelivery;
   }
   async showTz() {
-    this.dialog.messageDialog(await FamilyInfoComponent.ShowFamilyTz(this.f.id));
+    this.dialog.messageDialog(await FamilyInfoController.ShowFamilyTz(this.f.id));
   }
   async showHistory() {
     openDialog(PreviousDeliveryCommentsComponent, x => x.args = {
@@ -80,22 +76,7 @@ export class FamilyInfoComponent implements OnInit {
   courierCommentsDateRelativeDate() {
     return relativeDateName(this.remult, { d: this.f.courierCommentsDate })
   }
-  @BackendMethod({ allowed: Allow.authenticated })
-  static async ShowFamilyTz(deliveryId: string, remult?: Remult) {
-    let s = await ApplicationSettings.getAsync(remult);
-    if (!s.showTzToVolunteer)
-      return "";
-    var d = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
-    if (!d)
-      return;
-    if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
-      return "";
-    var f = await remult.repo(Families).findId(d.family);
-    if (!f)
-      return "";
-    return f.name + ":" + f.tz;
 
-  }
   @Input() partOfAssign: Boolean;
   @Output() assignmentCanceled = new EventEmitter<void>();
 

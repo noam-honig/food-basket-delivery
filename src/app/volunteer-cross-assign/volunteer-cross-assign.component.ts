@@ -6,7 +6,7 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { helperInfo, familyInfo, ShipmentAssignScreenComponent, data } from '../shipment-assign-screen/shipment-assign-screen.component';
+import { helperInfo, familyInfo, data, ShipmentAssignScreenController } from '../shipment-assign-screen/shipment-assign-screen.controller';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryFollowUpComponent } from '../delivery-follow-up/delivery-follow-up.component';
 @Component({
@@ -98,7 +98,7 @@ export class VolunteerCrossAssignComponent implements OnInit {
   }
   private async getFamiliesAndSortThem() {
     this.helpers = [];
-    this.data = await ShipmentAssignScreenComponent.getShipmentAssignInfo();
+    this.data = await ShipmentAssignScreenController.getShipmentAssignInfo();
 
     for (const key in this.data.helpers) {
       if (Object.prototype.hasOwnProperty.call(this.data.helpers, key)) {

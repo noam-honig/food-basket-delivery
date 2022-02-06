@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { siteItem, dateRange } from '../overview/overview.controller';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BackendMethod, Remult } from 'remult';
-import { Roles } from '../auth/roles';
-import { createSiteContext } from '../helpers/init-context';
-import { Helpers } from '../helpers/helpers';
+import { Remult } from 'remult';
 import { Phone } from '../model-shared/phone';
+import { Manager, SiteOverviewController } from './site-overview.controller';
 
 @Component({
   selector: 'app-site-overview',
@@ -21,20 +19,12 @@ export class SiteOverviewComponent implements OnInit {
   }
   managers: Manager[] = [];
   ngOnInit() {
-    SiteOverviewComponent.siteInfo(this.args.site.site).then(x => this.managers = x);
+    SiteOverviewController.siteInfo(this.args.site.site).then(x => this.managers = x);
   }
   openSite() {
     window.open(location.origin + '/' + this.args.site.site, '_blank');
   }
-  @BackendMethod({ allowed: Roles.overview })
-  static async siteInfo(site: string, remult?: Remult): Promise<Manager[]> {
-    let c = await createSiteContext(site, remult);
-    return (await c.repo(Helpers).find({ where: { admin: true }, orderBy: { lastSignInDate: "desc" } })).map(
-      ({ name, phone, lastSignInDate }) => ({
-        name, phone: phone?.thePhone, lastSignInDate
-      })
-    ).sort((a, b) => b.lastSignInDate?.valueOf() - a.lastSignInDate?.valueOf());
-  }
+
   sendWhatsapp(m: Manager) {
     let message: string = localStorage.getItem("message");
     if (!message)
@@ -44,9 +34,4 @@ export class SiteOverviewComponent implements OnInit {
     Phone.sendWhatsappToPhone(m.phone, message.replace('!שם!', m.name), this.remult, true);
   }
 
-}
-interface Manager {
-  name: string,
-  phone: string,
-  lastSignInDate: Date
 }

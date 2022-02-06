@@ -7,31 +7,27 @@ import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 import { SettingsService } from "./SettingsService";
 
-
 import { DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, IdEntity, BackendMethod, ProgressListener, FieldRef, FieldsMetadata, Controller, getFields, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
+import { Remult, FieldRef, FieldsMetadata, getFields } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Families } from '../families/families';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters } from './distribution-centers';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { saveToExcel } from '../shared/saveToExcel';
-import { Groups, GroupsValue } from './groups';
-import { EmailSvc } from '../shared/utils';
+import { Groups } from './groups';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
-import { Field, use } from '../translate';
-import { Sites } from '../sites/sites';
+import { use } from '../translate';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
-import { Phone } from '../model-shared/phone';
+import { ManageController, SendTestSms } from './manage.controller';
 
 @Component({
   selector: 'app-manage',
@@ -357,7 +353,7 @@ export class ManageComponent implements OnInit {
       },
       title: 'בדיקת מייל',
       ok: async () => {
-        let x = await ManageComponent.TestSendEmail(sc.value, this.testEmailDonor());
+        let x = await ManageController.TestSendEmail(sc.value, this.testEmailDonor());
         if (x) {
           this.dialog.Info('נשלח בהצלחה');
         }
@@ -367,10 +363,7 @@ export class ManageComponent implements OnInit {
       }
     });
   }
-  @BackendMethod({ allowed: Roles.admin })
-  static async TestSendEmail(to: string, text: string, remult?: Remult) {
-    return await EmailSvc.sendMail("test email", text, to, remult);
-  }
+
 
   prefereces = new DataAreaSettings({
     fields: s => {
@@ -655,7 +648,7 @@ export class ManageComponent implements OnInit {
       this.dialog.Error(this.settings.lang.wrongCodeWordProcessAborted);
       return;
     }
-    let r = await ManageComponent.deleteFamiliesOnServer();
+    let r = await ManageController.deleteFamiliesOnServer();
     this.dialog.Info(this.settings.lang.deleted + ' ' + r + ' ' + this.settings.lang.families);
   }
   async resetToDefault() {
@@ -687,48 +680,12 @@ export class ManageComponent implements OnInit {
   }
 
 
-  @BackendMethod({ allowed: Roles.admin, queue: true })
-  static async deleteFamiliesOnServer(remult?: Remult, progress?: ProgressListener) {
 
-
-    let i = 0;
-    for await (const f of remult.repo(Families).query({
-      where: { status: FamilyStatus.ToDelete },
-      orderBy: { createDate: "desc" },
-      progress
-    })) {
-      await ManageComponent.clearDataFromFamilyDeliveries(f.id, remult);
-      await f.delete();
-      i++;
-    }
-    return i;
-  }
-  static async clearDataFromFamilyDeliveries(familyId: string, remult: Remult) {
-    var db = remult._dataSource as SqlDatabase;
-    const sql = new SqlBuilder(remult);
-    const fd = await SqlFor(remult.repo(FamilyDeliveries));
-    const set: [FieldMetadata, any][] = [];
-    const fieldsToKeep: select<FamilyDeliveries> = {
-      id: true,
-      family: true
-    };
-    for (const field of fd.metadata.fields) {
-      if ((field.valueType == String || field.valueType == Phone || field.valueType == GroupsValue) && !fieldsToKeep[field.key]) {
-        set.push([field, "''"]);
-      } else {
-        //        console.log(field.key);
-      }
-    }
-    await db.execute((await sql.update(fd, {
-      set: () => set,
-      where: () => [fd.where({ family: familyId })]
-    })));
-  }
 
 
 
 }
-declare type select<T> = { [Properties in keyof Partial<OmitEB<T>>]?: boolean; }
+
 
 export interface GroupsStats {
   name: string;
@@ -736,22 +693,3 @@ export interface GroupsStats {
 
 }
 
-@Controller("sendTestSms")
-export class SendTestSms {
-  constructor(private remult: Remult) {
-
-
-  }
-  @Field({ translation: l => l.phone })
-  phone: string;
-  @Field({ translation: l => l.customSmsMessage })
-  message: string;
-  @BackendMethod({ allowed: Roles.admin })
-  async sendTestMessage() {
-    let settings = await ApplicationSettings.getAsync(this.remult);
-    if (!settings.bulkSmsEnabled)
-      throw "can only use this with bulk sms enabled";
-    return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult, undefined);
-  }
-
-}

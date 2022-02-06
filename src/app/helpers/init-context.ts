@@ -70,6 +70,11 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     }
     remult.lang = getLang(remult);
 }
+export interface selectListItem<itemType = any> {
+    name: string,
+    item: itemType,
+    selected?: boolean
+  }
 export interface GridDialogArgs {
     title: string,
     settings: GridSettings<any>,
@@ -138,6 +143,7 @@ export interface EditCustomMessageArgs {
 }
 
 export interface UITools {
+    trackVolunteer(arg0: string);
     YesNoPromise(question: string): Promise<Boolean>;
     messageDialog(question: string): Promise<Boolean>;
     Error(err: string): Promise<void>;
@@ -158,7 +164,8 @@ export interface UITools {
         onSelect: (selected: T) => void;
         title?: string;
     }): Promise<void>,
-    doWhileShowingBusy(what: () => Promise<void>): Promise<void>;
+    doWhileShowingBusy<T>(what: () => Promise<T>): Promise<T>;
+    donotWait<T>(what: () => Promise<T>): Promise<T>;
     hasManyCenters: boolean,
     getDistCenter(loc: Location): Promise<import('../manage/distribution-centers').DistributionCenters>;
     distCenter: import('../manage/distribution-centers').DistributionCenters;

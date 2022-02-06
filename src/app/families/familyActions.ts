@@ -7,9 +7,9 @@ import { HelpersBase } from "../helpers/helpers";
 
 import { FamilyStatus } from "./FamilyStatus";
 
-import { ActionOnRows, packetServerUpdateInfo } from "./familyActionsWiring";
+import { ActionOnRows } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
-import { ActiveFamilyDeliveries, FamilyDeliveries } from "./FamilyDeliveries";
+import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
 import { use, Field, ValueListFieldType, QuantityColumn } from "../translate";
 import { getLang } from '../sites/sites';
 import { Controller } from "remult";
@@ -21,7 +21,7 @@ import { ValueListValueConverter } from "remult/valueConverters";
 
 import { controllerRefImpl, getControllerRef } from "remult/src/remult3";
 
-@ValueListFieldType( {
+@ValueListFieldType({
     translation: l => l.selfPickupStrategy
 })
 export class SelfPickupStrategy {
@@ -146,7 +146,7 @@ export class NewDelivery extends ActionOnRows<Families> {
         });
     }
 }
-@ValueListFieldType( {
+@ValueListFieldType({
     translation: l => l.action
 })
 export class UpdateGroupStrategy {
@@ -437,7 +437,7 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
             })
         }, {
             serializeOnClient: async () => this.familyActionInfo = (getControllerRef(orig) as unknown as controllerRefImpl).toApiJson(),
-            deserializeOnServer: async () => await (getControllerRef(orig)as unknown as controllerRefImpl)._updateEntityBasedOnApi(this.familyActionInfo)
+            deserializeOnServer: async () => await (getControllerRef(orig) as unknown as controllerRefImpl)._updateEntityBasedOnApi(this.familyActionInfo)
         });
     }
 }

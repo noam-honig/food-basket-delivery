@@ -29,7 +29,7 @@ import { HelpersAndStats } from "../delivery-follow-up/HelpersAndStats";
 import { BasketType } from "../families/BasketType";
 import { DeliveryImage, FamilyImage } from "../families/DeiveryImages";
 import { FamilySources } from "../families/FamilySources";
-import { CitiesStats, CitiesStatsPerDistCenter } from "../family-deliveries/family-deliveries-stats";
+import { CitiesStats, CitiesStatsPerDistCenter, FamilyDeliveryStats } from "../family-deliveries/family-deliveries-stats";
 import { HelperGifts } from "../helper-gifts/HelperGifts";
 import { InRouteHelpers } from "../in-route-follow-up/in-route-helpers";
 import { DistributionCenters } from "../manage/distribution-centers";
@@ -39,6 +39,44 @@ import { GroupsStatsForAllDeliveryCenters } from "../manage/GroupsStatsForAllDel
 import { VolunteerReportInfo } from "../print-volunteer/VolunteerReportInfo";
 import { RegisterURL } from "../resgister-url/regsiter-url";
 import { SitesEntity } from "../sites/sites.entity";
+import { SendSmsAction } from "../asign-family/send-sms-action";
+import { AsignFamilyController } from "../asign-family/asign-family.controller";
+import { AuthServiceController } from "../auth/auth-service.controller";
+import { CreateNewEvent } from "../create-new-event/create-new-event";
+import { DeliveryFollowUpController } from "../delivery-follow-up/delivery-follow-up.controller";
+import { DistributionMapController } from "../distribution-map/distribution-map.controller";
+import { DuplicateFamiliesController } from "../duplicate-families/duplicate-families.controller";
+import { RegisterToEvent } from "../event-info/RegisterToEvent";
+import { FamiliesController } from "../families/families.controller";
+import { Stats } from "../families/stats-action";
+import { FamilyDeliveriesController } from "../family-deliveries/family-deliveries.controller";
+import { FamilyInfoController } from "../family-info/family-info.controller";
+import { FamilySelfOrderController } from "../family-self-order/family-self-order.controller";
+import { HelperFamiliesController } from "../helper-families/helper-families.controller";
+import { moveDeliveriesHelperController } from "../helper-families/move-deliveries-helper.controller";
+import { HelpersController } from "../helpers/helpers.controller";
+import { SendBulkSms } from "../helpers/send-bulk-sms";
+import { ImportFromExcelController } from "../import-from-excel/import-from-excel.controller";
+import { ImportHelpersFromExcelController } from "../import-helpers-from-excel/import-helpers-from-excel.controller";
+import { ManageController } from "../manage/manage.controller";
+import { MergeFamiliesController } from "../merge-families/merge-families.controller";
+import { MltFamiliesController } from "../mlt-families/mlt-families.controller";
+import { OrgEventsController } from "../org-events/org-events.controller";
+import { PreviousDeliveryController } from "../previous-delivery-comments/previous-delivery-comments.controller";
+import { VolunteerReportDefs } from "../print-stickers/VolunteerReportDefs";
+import { donorForm } from "../register-donor/register-donor.controller";
+import { SelectCompanyController } from "../select-company/select-company.controller";
+import { SelectHelperController } from "../select-helper/select-helper.controller";
+import { SiteOverviewController } from "../site-overview/site-overview.controller";
+import { LoginController } from "../users/login/login.controller";
+import { WeeklyReportMltController } from "../weekly-report-mlt/weekly-report-mlt.controller";
+import { DeliveryHistoryController } from "../delivery-history/delivery-history.controller";
+import { NewDelivery } from "../families/familyActions";
+import { DeleteDeliveries } from "../family-deliveries/family-deliveries-actions";
+import { PlaybackController } from "../playback/playback.controller";
+import { DialogController } from "../select-popup/dialog.controller";
+import { ServerEventAuthorizeAction } from "./server-event-authorize-action";
+import { ShipmentAssignScreenController } from "../shipment-assign-screen/shipment-assign-screen.controller";
 const entities = [
     HelpersAndStats,
     Event,
@@ -67,7 +105,45 @@ const entities = [
     FamilyDeliveries
 ];
 const controllers = [
-
+    SendSmsAction,
+    AsignFamilyController,
+    AuthServiceController,
+    CreateNewEvent,
+    DeliveryFollowUpController,
+    DistributionMapController,
+    DuplicateFamiliesController,
+    RegisterToEvent,
+    FamiliesController,
+    Stats,
+    FamilyDeliveryStats,
+    FamilyDeliveriesController,
+    FamilyInfoController,
+    FamilySelfOrderController,
+    HelperFamiliesController,
+    moveDeliveriesHelperController,
+    HelpersController,
+    SendBulkSms,
+    ImportFromExcelController,
+    ImportHelpersFromExcelController,
+    ManageController,
+    MergeFamiliesController,
+    MltFamiliesController,
+    OrgEventsController,
+    PreviousDeliveryController,
+    VolunteerReportDefs,
+    donorForm,
+    SelectCompanyController,
+    SelectHelperController,
+    SiteOverviewController,
+    LoginController,
+    WeeklyReportMltController,
+    DeliveryHistoryController,
+    NewDelivery,
+    DeleteDeliveries,
+    PlaybackController,
+    DialogController,
+    ServerEventAuthorizeAction,
+    ShipmentAssignScreenController
 ];
 
 DataApi.defaultGetLimit = 500;

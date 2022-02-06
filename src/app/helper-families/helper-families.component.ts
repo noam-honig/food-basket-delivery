@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { BackendMethod, SqlDatabase, FieldRef, Allow } from 'remult';
 import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import * as copy from 'copy-to-clipboard';
@@ -9,39 +8,38 @@ import { MapComponent } from '../map/map.component';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
-import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
+import { SendSmsAction } from '../asign-family/send-sms-action';
 
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Remult } from 'remult';
 
-import { use, TranslationOptions } from '../translate';
+import { use } from '../translate';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { isGpsAddress, Location, toLongLat, GetDistanceBetween, getCurrentLocation } from '../shared/googleApiHelpers';
-import { Roles } from '../auth/roles';
-import { pagedRowsIterator } from '../families/familyActionsWiring';
 import { MatTabGroup } from '@angular/material/tabs';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { myThrottle, relativeDateName } from '../model-shared/types';
-import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { relativeDateName } from '../model-shared/types';
+
 import { Phone } from "../model-shared/phone";
-import { Sites, getLang } from '../sites/sites';
-import { SelectListComponent, selectListItem } from '../select-list/select-list.component';
+import { getLang } from '../sites/sites';
+import { SelectListComponent } from '../select-list/select-list.component';
 import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
 
-import { BasketType } from '../families/BasketType';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { DistributionCenters } from '../manage/distribution-centers';
+
 import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
-import { FamilySources } from '../families/FamilySources';
+
 import { routeStrategy } from '../asign-family/route-strategy';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PromiseThrottle } from '../shared/utils';
+import { DeliveryInList, HelperFamiliesController } from './helper-families.controller';
+import { MltFamiliesController } from '../mlt-families/mlt-families.controller';
 
 
 @Component({
@@ -150,100 +148,14 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
 
-  @BackendMethod({ allowed: Roles.indie })
-  static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, remult?: Remult, db?: SqlDatabase) {
-    if (!getSettings(remult).isSytemForMlt)
-      throw "not allowed";
-    let result: selectListItem<DeliveryInList>[] = [];
 
-    let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
-
-    let sql = new SqlBuilder(remult);
-    let settings = await ApplicationSettings.getAsync(remult);
-    let privateDonation = selfAssign ? (await remult.repo(FamilySources).findFirst({ name: 'תרומה פרטית' })) : null;
-
-    for (const r of (await db.execute(await sql.query({
-      select: () => [
-        fd.addressLatitude,
-        fd.addressLongitude,
-        fd.quantity,
-        fd.basketType,
-        fd.id,
-        fd.family,
-        fd.floor,
-        fd.city],
-      from: fd,
-      where: () => {
-        return [fd.where({
-          deliverStatus: DeliveryStatus.ReadyForDelivery,
-          courier: null,
-          familySource: selfAssign ? [null, privateDonation] : undefined
-        })];
-      }
-    }))).rows) {
-      let existing = result.find(async x => x.item.familyId == await getValueFromResult(r, fd.family));
-      let basketName = (await remult.repo(BasketType).findFirst({ id: await getValueFromResult(r, fd.basketType) })).name;
-      if (existing) {
-        existing.name += ", " + await getValueFromResult(r, fd.quantity) + " X " + basketName;
-        existing.item.totalItems += await getValueFromResult(r, fd.quantity);
-        existing.item.ids.push(await getValueFromResult(r, fd.id));
-
-      }
-      else {
-        let loc: Location = {
-          lat: +await getValueFromResult(r, fd.addressLatitude),
-          lng: +await getValueFromResult(r, fd.addressLongitude)
-        };
-        let dist = GetDistanceBetween(pivotLocation, loc);
-        let myItem: DeliveryInList = {
-
-          city: await getValueFromResult(r, fd.city),
-          floor: await getValueFromResult(r, fd.floor),
-
-          ids: [await getValueFromResult(r, fd.id)],
-          familyId: await getValueFromResult(r, fd.family),
-          location: loc,
-          distance: dist,
-          totalItems: await getValueFromResult(r, fd.quantity)
-        };
-        let itemString: string =
-          myItem.distance.toFixed(1) + use.language.km +
-          (myItem.city ? ' (' + myItem.city + ')' : '') +
-          (myItem.floor ? ' [' + use.language.floor + ' ' + myItem.floor + ']' : '') +
-          ' : ' +
-          await getValueFromResult(r, fd.quantity) + ' x ' + basketName;
-
-        result.push({
-          selected: false,
-          item: myItem,
-          name: itemString
-        });
-      }
-    }
-    let calcAffectiveDistance = (await (import('../volunteer-cross-assign/volunteer-cross-assign.component'))).calcAffectiveDistance;
-    result.sort((a, b) => {
-      return calcAffectiveDistance(a.item.distance, a.item.totalItems) - calcAffectiveDistance(b.item.distance, b.item.totalItems);
-    });
-    if (selfAssign) {
-      let removeFam = -1;
-
-      do {
-        removeFam = result.findIndex(f => f.item.totalItems > settings.MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee);
-        if (removeFam >= 0) {
-          result.splice(removeFam, 1);
-        }
-      } while (removeFam >= 0)
-    }
-    result.splice(15);
-    return result;
-  };
 
 
 
 
   async assignNewDelivery() {
     await this.updateCurrentLocation(true);
-    let afdList = await (HelperFamiliesComponent.getDeliveriesByLocation(this.volunteerLocation, false));
+    let afdList = await (HelperFamiliesController.getDeliveriesByLocation(this.volunteerLocation, false));
 
     await openDialog(SelectListComponent, x => {
       x.args = {
@@ -257,7 +169,7 @@ export class HelperFamiliesComponent implements OnInit {
                 let d: DeliveryInList = selectedItem.item;
                 ids.push(...d.ids);
               }
-              await MltFamiliesComponent.assignFamilyDeliveryToIndie(ids);
+              await MltFamiliesController.assignFamilyDeliveryToIndie(ids);
               await this.familyLists.refreshRoute({
                 volunteerLocation: this.volunteerLocation
               });
@@ -316,7 +228,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('cancel all');
-        await HelperFamiliesComponent.cancelAssignAllForHelperOnServer(this.familyLists.helper);
+        await HelperFamiliesController.cancelAssignAllForHelperOnServer(this.familyLists.helper);
         this.familyLists.reload();
         this.assignmentCanceled.emit();
       });
@@ -326,23 +238,7 @@ export class HelperFamiliesComponent implements OnInit {
   setDefaultCourier() {
     this.familyLists.helper.setAsDefaultVolunteerToDeliveries(this.familyLists.toDeliver, this.dialog);
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async cancelAssignAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
-    let dist: DistributionCenters = null;
-    await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
-      where: {
-        courier: helper,
-        $and: [FamilyDeliveries.onTheWayFilter()]
-      },
-      forEachRow: async fd => {
-        fd.courier = null;
-        fd._disableMessageToUsers = true;
-        dist = fd.distributionCenter;
-        await fd.save();
-      }
-    });
-    await dist.SendMessageToBrowser(getLang(remult).cancelAssignmentForHelperFamilies, remult);
-  }
+
   distanceFromPreviousLocation(f: ActiveFamilyDeliveries, i: number): number {
     if (i == 0) { return undefined; }
     if (!f.addressOk)
@@ -352,25 +248,7 @@ export class HelperFamiliesComponent implements OnInit {
       return undefined;
     return GetDistanceBetween(of.getDrivingLocation(), f.getDrivingLocation());
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
-  static async okAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
-    let dist: DistributionCenters = null;
 
-    await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
-      where: {
-        courier: helper,
-        $and: [FamilyDeliveries.onTheWayFilter()]
-      },
-      forEachRow: async fd => {
-        dist = fd.distributionCenter;
-        fd.deliverStatus = DeliveryStatus.Success;
-        fd._disableMessageToUsers = true;
-        await fd.save();
-      }
-    });
-    if (dist)
-      await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, remult);
-  }
   notMLT() {
     return !this.settings.isSytemForMlt;
   }
@@ -382,7 +260,7 @@ export class HelperFamiliesComponent implements OnInit {
       await this.busy.doWhileShowingBusy(async () => {
 
         this.dialog.analytics('ok all');
-        await HelperFamiliesComponent.okAllForHelperOnServer(this.familyLists.helper);
+        await HelperFamiliesController.okAllForHelperOnServer(this.familyLists.helper);
         this.familyLists.reload();
       });
     });
@@ -424,33 +302,7 @@ export class HelperFamiliesComponent implements OnInit {
   async leftThere(f: ActiveFamilyDeliveries) {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
-  @BackendMethod({ allowed: Allow.authenticated })
-  static async sendSuccessMessageToFamily(deliveryId: string, remult?: Remult) {
-    var settings = (await remult.getSettings());
-    if (!settings.allowSendSuccessMessageOption)
-      return;
-    if (!settings.sendSuccessMessageToFamily)
-      return;
-    let fd = await remult.repo(ActiveFamilyDeliveries).findFirst({
-      id: deliveryId,
-      visibleToCourier: true,
-      deliverStatus: [DeliveryStatus.Success, DeliveryStatus.SuccessLeftThere]
-    });
-    if (!fd)
-      console.log("did not send sms to " + deliveryId + " failed to find delivery");
-    if (!fd.phone1)
-      return;
-    if (!fd.phone1.canSendWhatsapp())
-      return;
-    let phone = Phone.fixPhoneInput(fd.phone1.thePhone, remult);
-    if (phone.length != 10) {
-      console.log(phone + " doesn't match sms structure");
-      return;
-    }
 
-
-    await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), remult, undefined, { familyId: fd.family });
-  }
   async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
 
     openDialog(GetVolunteerFeedback, x => x.args = {
@@ -476,7 +328,7 @@ export class HelperFamiliesComponent implements OnInit {
               this.dialog.messageDialog(this.allDoneMessage());
             }
             if (this.settings.allowSendSuccessMessageOption && this.settings.sendSuccessMessageToFamily)
-              HelperFamiliesComponent.sendSuccessMessageToFamily(f.id);
+              HelperFamiliesController.sendSuccessMessageToFamily(f.id);
 
           }
           catch (err) {
@@ -678,15 +530,7 @@ export class HelperFamiliesComponent implements OnInit {
 
 }
 
-export interface DeliveryInList {
-  ids: string[],
-  familyId: string,
-  city: string,
-  floor: string,
-  location: Location,
-  distance: number,
-  totalItems: number
-}
+
 
 class limitList {
   constructor(public limit: number, private relevantCount: () => number) {
