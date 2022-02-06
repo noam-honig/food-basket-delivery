@@ -1,30 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular/core';
 
-import * as copy from 'copy-to-clipboard';
-import { DialogService } from '../select-popup/dialog';
 import { extractError } from "../select-popup/extractError";
-import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Remult, FieldRef, BackendMethod, Allow } from 'remult';
+import { Remult, BackendMethod, Allow } from 'remult';
 
-import { use } from '../translate';
-import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
-
-
-import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 import { Helpers } from '../helpers/helpers';
-import { getLang, Sites } from '../sites/sites';
+import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { Phone } from "../model-shared/phone";
 import { Families } from '../families/families';
-import { UserFamiliesList } from '../my-families/user-families';
-import { openDialog } from '@remult/angular';
-import { relativeDateName } from '../model-shared/types';
-import { ImageInfo } from '../images/images.component';
-import { SendSmsAction } from '../asign-family/send-sms-action';
-import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
-import { quantityHelper } from '../families/BasketType';
+
 
 export class FamilyInfoController {
     static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
