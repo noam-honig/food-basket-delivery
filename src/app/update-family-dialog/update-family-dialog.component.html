@@ -6,7 +6,7 @@
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.newDelivery}}</button>
             <button mat-menu-item (click)="preview()">{{settings.lang.displayFamilyAsVolunteerWillSeeIt}}</button>
             <button mat-menu-item
-                (click)="families.currentRow.showDeliveryHistoryDialog({dialog:dialog,settings:settings,busy:busy})"
+                (click)="families.currentRow.showDeliveryHistoryDialog({dialog:dialog,settings:settings})"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.deliveries}}</button>
             <button mat-menu-item (click)="updateInfo()"
                 *ngIf="!this.families.currentRow.isNew()">{{settings.lang.infoAboutUpdates}}</button>

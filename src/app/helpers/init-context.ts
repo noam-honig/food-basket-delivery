@@ -74,7 +74,7 @@ export interface selectListItem<itemType = any> {
     name: string,
     item: itemType,
     selected?: boolean
-  }
+}
 export interface GridDialogArgs {
     title: string,
     settings: GridSettings<any>,
@@ -139,24 +139,17 @@ export interface EditCustomMessageArgs {
     templateText: string,
     title: string,
     helpText: string,
-    buttons: RowButton<{ templateText: string, close: VoidFunction}>[]
+    buttons: RowButton<{ templateText: string, close: VoidFunction }>[]
 }
 
 export interface UITools {
-    trackVolunteer(arg0: string);
     YesNoPromise(question: string): Promise<Boolean>;
     messageDialog(question: string): Promise<Boolean>;
     Error(err: string): Promise<void>;
     Info(message: string): void;
-    selectCompany(args: (selectedValue: string) => void): Promise<void>;
-    updateFamilyDialog(args: UpdateFamilyDialogArgs): Promise<void>;
-    updateGroup(args: UpdateGroupArgs): Promise<void>;
+
     gridDialog(args: GridDialogArgs): Promise<void>;
     inputAreaDialog(args: InputAreaArgs): Promise<void>;
-    helperAssignment(helper: import('../helpers/helpers').HelpersBase): Promise<void>;
-    selectHelper(args: SelectHelperArgs): Promise<void>;
-    editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void>;
-    refreshFamiliesAndDistributionCenters(): void;
     selectValuesDialog<T extends {
         caption?: string;
     }>(args: {
@@ -164,14 +157,27 @@ export interface UITools {
         onSelect: (selected: T) => void;
         title?: string;
     }): Promise<void>,
+
     doWhileShowingBusy<T>(what: () => Promise<T>): Promise<T>;
     donotWait<T>(what: () => Promise<T>): Promise<T>;
+    navigateToComponent(component: any): void;
+
+    trackVolunteer(arg0: string);
+
+    selectCompany(args: (selectedValue: string) => void): Promise<void>;
+    updateFamilyDialog(args: UpdateFamilyDialogArgs): Promise<void>;
+    updateGroup(args: UpdateGroupArgs): Promise<void>;
+    helperAssignment(helper: import('../helpers/helpers').HelpersBase): Promise<void>;
+    selectHelper(args: SelectHelperArgs): Promise<void>;
+    editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void>;
+    refreshFamiliesAndDistributionCenters(): void;
+
     hasManyCenters: boolean,
     getDistCenter(loc: Location): Promise<import('../manage/distribution-centers').DistributionCenters>;
     distCenter: import('../manage/distribution-centers').DistributionCenters;
     filterDistCenter(): IdFilter<DistributionCenters>;
     editCommentDialog(args: EditCommentArgs): Promise<void>;
-    navigateToComponent(component: any): void;
+
 }
 
 export const evil = {

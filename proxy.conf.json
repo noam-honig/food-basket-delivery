@@ -1,22 +1,5 @@
 {
-    "/api": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    },
-    "/test/api": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    },
-    "/test/assets": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    },
+   
     "/test1/api": {
       "target": "http://localhost:3000",
       "secure": true,
@@ -44,34 +27,7 @@
       "changeOrigin": true
     }
     ,
-    "/test3/api": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    }
-    ,
-    "/test3/assets": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    }
-    ,
-    "/mlt/api": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    }
-    ,
-    "/mlt/assets": {
-      "target": "http://localhost:3000",
-      "secure": true,
-      "logLevel":"debug",
-      "changeOrigin": true
-    }
-    ,
+ 
     "/guest/api": {
       "target": "http://localhost:3000",
       "secure": true,

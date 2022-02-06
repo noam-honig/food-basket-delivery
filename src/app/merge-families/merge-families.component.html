@@ -27,7 +27,7 @@
             <td *ngFor="let f of families">
                 <a (click)="updateFamily(f)">{{settings.lang.familyDetails}}</a><br>
                 <a
-                    (click)="f.showDeliveryHistoryDialog({dialog:dialog,busy:busy,settings:settings})">{{settings.lang.deliveries}}</a>
+                    (click)="f.showDeliveryHistoryDialog({dialog:dialog,settings:settings})">{{settings.lang.deliveries}}</a>
             </td>
         </tr>
     </table>
