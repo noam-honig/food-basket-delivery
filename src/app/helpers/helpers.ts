@@ -688,16 +688,10 @@ export class Helpers extends HelpersBase {
     @Field()
     addressApiResult2: string;
     @Field({
-
         dbName: 'preferredDistributionAreaAddress2'
     })
     preferredFinishAddress: string;
     preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);
-
-
-
-
-
 
     @Field<Helpers>({
         inputType: InputTypes.password,
@@ -890,3 +884,4 @@ export function makeId() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+
