@@ -192,7 +192,8 @@ export class DistributionMap implements OnInit, OnDestroy {
     valueType: HelpersBase,
     caption: this.settings.lang.volunteer,
     valueChange: () => this.refreshDeliveries(),
-    click: async () => HelpersBase.showSelectDialog(this.filterCourier, {
+    clickWithTools: async (_, __, ui) => ui.selectHelper({
+      onSelect: s => this.filterCourier.value = s,
       filter: { allDeliveires: { ">": 0 } }
     })
 

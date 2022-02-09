@@ -21,8 +21,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
-import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
-import { evil, UITools } from './init-context';
+import { UITools } from './init-context';
 
 
 
@@ -33,7 +32,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
         })(target, key);
 
         return Field<entityType, string>({
-            myClick: (e, col, ui) => ui.selectCompany(x => col.value = x),
+            clickWithTools: (e, col, ui) => ui.selectCompany(x => col.value = x),
             translation: l => l.company,
             ...settings
         })(target, key);
@@ -49,11 +48,13 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
         toJson: x => x != undefined ? x : '',
         fromJson: x => x ? x : null
     },
+    clickWithTools: async (e, col, ui) => ui.selectHelper({
+        onSelect: s => col.value = s
+    })
 })
 @DataControl<any, Helpers>({
     getValue: (e, val) => val.value ? val.value.name : '',
     hideDataOnInput: true,
-    click: async (e, col) => HelpersBase.showSelectDialog(col, {})
 })
 @Entity<HelpersBase>("HelpersBase", {
     dbName: "Helpers",
@@ -69,25 +70,6 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
 )
 export abstract class HelpersBase extends IdEntity {
 
-    static async showSelectDialog(col: FieldRef<any, HelpersBase>, args: {
-        filter?: EntityFilter<import('../delivery-follow-up/HelpersAndStats').HelpersAndStats>,
-        location?: () => Location,
-        familyId?: () => string,
-        includeFrozen?: boolean,
-        searchClosestDefaultFamily?: boolean
-    }, onSelect?: () => void) {
-        evil.uiTools.selectHelper({
-            filter: args.filter, location: args.location ? args.location() : undefined,
-            familyId: args.familyId ? args.familyId() : undefined,
-            includeFrozen: args.includeFrozen,
-            searchClosestDefaultFamily: args.searchClosestDefaultFamily
-            , onSelect: async s => {
-                col.value = s ? s : null;
-                if (onSelect)
-                    onSelect();
-            }
-        })
-    }
     getHelper(): Promise<Helpers> {
         return this.remult.repo(Helpers).findId(this.id);
     }

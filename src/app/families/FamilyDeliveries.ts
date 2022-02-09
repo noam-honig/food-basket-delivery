@@ -27,7 +27,7 @@ import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 import { IdFieldRef } from "remult/src/remult3";
 import { isDesktop } from "../shared/utils";
-import { evil, UITools } from "../helpers/init-context";
+import {  UITools } from "../helpers/init-context";
 
 
 @ValueListFieldType({
@@ -235,15 +235,14 @@ export class FamilyDeliveries extends IdEntity {
     deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
     @Field({
         translation: l => l.volunteer,
-        allowApiUpdate: Roles.distCenterAdmin
-    })
-    @DataControl<FamilyDeliveries, HelpersBase>({
-        click: async (self) => evil.uiTools.selectHelper({
+        allowApiUpdate: Roles.distCenterAdmin,
+        clickWithTools: async (self, _, ui) => ui.selectHelper({
             onSelect: helper => self.courier = helper,
             location: self.getDrivingLocation(),
             familyId: self.family
         })
     })
+
     courier: HelpersBase;
     @Field({ translation: l => l.commentsWritteByVolunteer })
     courierComments: string;

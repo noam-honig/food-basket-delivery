@@ -180,8 +180,10 @@ export interface UITools {
 
 }
 
-export const evil = {
-    uiTools: undefined as UITools
+export const evil: {
+    YesNoPromise(question: string): Promise<Boolean>;
+} = {
+    YesNoPromise: undefined
 }
 
 
@@ -213,11 +215,12 @@ declare module 'remult' {
         distributionCenter: string;
     }
     export interface FieldOptions<entityType, valueType> {
-        myClick?: (e: entityType, c: FieldRef<entityType, valueType>, ui: UITools) => void;
+        clickWithTools?: (e: entityType, c: FieldRef<entityType, valueType>, ui: UITools) => void;
         customInput?: (select: {
             addressDialog: VoidFunction,
             textArea: VoidFunction
-        }) => void
+        }) => void,
+        width?: string
     }
 }
 

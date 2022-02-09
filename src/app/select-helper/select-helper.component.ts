@@ -126,7 +126,7 @@ export class SelectHelperComponent implements OnInit {
       this.select(this.filteredHelpers[0]);
   }
   async select(h: helperInList) {
-    let helper: HelpersBase;
+    let helper: HelpersBase = null;
     if (h) {
       if (!h.helper)
         h.helper = await this.remult.repo(Helpers).findId(h.helperId);

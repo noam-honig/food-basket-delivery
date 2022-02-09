@@ -122,7 +122,7 @@ declare type factoryFor<T> = {
       if (statusChangedOutOfActive) {
         let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).query({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
         if (await activeDeliveries.count() > 0) {
-          if (await evil.uiTools.YesNoPromise(
+          if (await evil.YesNoPromise(
             getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
           )) {
             for await (const d of activeDeliveries) {
@@ -605,10 +605,10 @@ export class Families extends IdEntity {
   statusDate: Date;
   @Field({ translation: l => l.statusChangeUser, allowApiUpdate: false })
   statusUser: HelpersBase;
-  @Field({ translation: l => l.defaultVolunteer })
-  @DataControl<Families, HelpersBase>({
-    click: async (e, col) => {
-      evil.uiTools.selectHelper({
+  @Field({
+    translation: l => l.defaultVolunteer,
+    clickWithTools: async (e, col, ui) => {
+      ui.selectHelper({
         searchClosestDefaultFamily: true,
         location: e.addressHelper.location,
         onSelect: async selected => col.value = selected
@@ -1082,18 +1082,18 @@ export interface parseAddressResult {
 export function AreaColumn() {
   return (target, key) => {
     DataControl<any, string>({
-      click: async (row, col) => {
+    })(target, key);
+    return Field({
+      translation: l => l.region,
+      clickWithTools: async (row, col, ui) => {
         let areas = await Families.getAreas();
-        await evil.uiTools.selectValuesDialog({
+        await ui.selectValuesDialog({
           values: areas.map(x => ({ caption: x.area })),
           onSelect: area => {
             col.value = area.caption;
           }
         })
       }
-    })(target, key);
-    return Field({
-      translation: l => l.region
     })(target, key);
   }
 }

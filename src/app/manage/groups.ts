@@ -2,7 +2,6 @@
 import { DataControl } from "@remult/angular/interfaces";
 import { IdEntity, Remult, Entity } from "remult";
 import { Roles } from "../auth/roles";
-import { evil } from "../helpers/init-context";
 import { Field, FieldType, use } from "../translate";
 
 @Entity("groups", {
@@ -22,11 +21,9 @@ export class Groups extends IdEntity {
     displayValue: x => x.value
   },
   translation: l => l.familyGroup,
-})
-@DataControl<any, GroupsValue>({
   width: '300',
-  click: async (row, col) => {
-    evil.uiTools.updateGroup({
+  clickWithTools: async (row, col, ui) => {
+    ui.updateGroup({
       groups: col.value?.value,
       ok: x => col.value = new GroupsValue(x)
     })

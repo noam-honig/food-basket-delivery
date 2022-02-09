@@ -51,11 +51,18 @@ export class HelperGifts extends IdEntity {
     dateCreated: Date;
     @Field({ translation: l => l.createUser, allowApiUpdate: false })
     userCreated: Helpers;
-    @Field({ translation: l => l.volunteer, allowApiUpdate: Roles.admin })
-    @DataControl<HelperGifts, Helpers>({
-        click: (x, col) => {
-            HelpersBase.showSelectDialog(col, { includeFrozen: true });
+    @Field({
+        translation: l => l.volunteer,
+        allowApiUpdate: Roles.admin,
+        clickWithTools: (x, col, ui) => {
+            ui.selectHelper({
+                onSelect: h => col.value = h,
+                includeFrozen: true
+            })
         }
+
+    })
+    @DataControl<HelperGifts, Helpers>({
     })
     assignedToHelper: HelpersBase;
     @ChangeDateColumn({ translation: l => l.dateGranted })

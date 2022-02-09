@@ -82,7 +82,7 @@ export class DialogService implements UITools {
 
 
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
-        evil.uiTools = this;
+        evil.YesNoPromise = (message) => this.YesNoPromise(message);
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
             this.distCenter = null;
@@ -99,9 +99,9 @@ export class DialogService implements UITools {
                     }
                 });
             }
-            if (f?.options.myClick)
+            if (f?.options.clickWithTools)
                 if (!s.click) {
-                    s.click = (r, c) => f.options.myClick(r, c, this);
+                    s.click = (r, c) => f.options.clickWithTools(r, c, this);
                 }
         }
 
