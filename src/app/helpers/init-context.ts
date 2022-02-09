@@ -1,4 +1,4 @@
-import { EntityFilter, IdFilter, Remult, UserInfo, ValueFilter } from "remult";
+import { EntityFilter, FieldRef, IdFilter, Remult, UserInfo, ValueFilter } from "remult";
 import { BasketType } from "../families/BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
 
@@ -211,6 +211,13 @@ declare module 'remult' {
         theHelperIAmEscortingId: string;
         escortedHelperName: string;
         distributionCenter: string;
+    }
+    export interface FieldOptions<entityType, valueType> {
+        myClick?: (e: entityType, c: FieldRef<entityType, valueType>, ui: UITools) => void;
+        customInput?: (select: {
+            addressDialog: VoidFunction,
+            textArea: VoidFunction
+        }) => void
     }
 }
 

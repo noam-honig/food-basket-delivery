@@ -1,10 +1,10 @@
-import { Injectable, NgZone, ErrorHandler } from "@angular/core";
+import { Injectable, NgZone, ErrorHandler, Component } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Remult, getFields, IdFilter } from 'remult';
+import { Remult, getFields, IdFilter, Repository, FieldRef, FieldMetadata } from 'remult';
 
 
-import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
-import { BusyService, openDialog, RouteHelperService, SelectValueDialogComponent } from '@remult/angular';
+import { DataAreaSettings, DataControl, DataControlInfo, DataControlSettings, GridSettings, IDataSettings } from '@remult/angular/interfaces';
+import { BusyService, openDialog, RemultAngularPluginsService, RouteHelperService, SelectValueDialogComponent } from '@remult/angular';
 import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
@@ -20,6 +20,9 @@ import { EditCommentArgs, EditCustomMessageArgs, evil, GridDialogArgs, InputArea
 import { HelpersBase } from "../helpers/helpers";
 import { extractError } from "./extractError";
 import { DialogController } from "./dialog.controller";
+import { AddressInputComponent } from "../address-input/address-input.component";
+import { AreaDataComponent } from "../area-data/area-data.component";
+
 
 
 
@@ -28,6 +31,8 @@ declare var gtag;
 
 @Injectable()
 export class DialogService implements UITools {
+
+
     filterDistCenter(): IdFilter<DistributionCenters> {
         return this.remult.filterDistCenter(this.distCenter);
     }
@@ -76,11 +81,30 @@ export class DialogService implements UITools {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
         evil.uiTools = this;
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
             this.distCenter = null;
+
+        plugInService.dataControlAugmenter = (f, s) => {
+            if (f?.options.customInput) {
+                f.options.customInput({
+                    addressDialog: () =>
+                        s.customComponent = {
+                            component: AddressInputComponent
+                        },
+                    textArea: () => s.customComponent = {
+                        component: AreaDataComponent
+                    }
+                });
+            }
+            if (f?.options.myClick)
+                if (!s.click) {
+                    s.click = (r, c) => f.options.myClick(r, c, this);
+                }
+        }
+
 
     }
     donotWait<T>(what: () => Promise<T>): Promise<T> {

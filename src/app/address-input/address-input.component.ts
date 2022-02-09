@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { CustomComponentArgs, CustomDataComponent } from '@remult/angular/interfaces';
 
 import { FieldRef } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -10,12 +11,16 @@ import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from
   templateUrl: './address-input.component.html',
   styleUrls: ['./address-input.component.scss']
 })
-export class AddressInputComponent implements AfterViewInit {
+export class AddressInputComponent implements AfterViewInit, CustomDataComponent {
 
   @Input() field: FieldRef<any, string>;
   @Input() autoInit: boolean = false;
   @Input() caption: string;
   constructor(private settings: ApplicationSettings, private zone: NgZone) { }
+  set args(value: CustomComponentArgs) {
+    this.field = value.fieldRef;
+    this.autoInit = true;
+  }
   initAddressAutoComplete = false;
   destroyMe: google.maps.MapsEventListener;
 

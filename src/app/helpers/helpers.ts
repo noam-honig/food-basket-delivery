@@ -29,12 +29,11 @@ import { evil, UITools } from './init-context';
 export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityType, string>) {
     return (target, key) => {
         DataControl<any, string>({
-            width: '300',
-            click: async (e, col) => evil.uiTools.selectCompany(x => col.value = x)
+            width: '300'
         })(target, key);
 
         return Field<entityType, string>({
-
+            myClick: (e, col, ui) => ui.selectCompany(x => col.value = x),
             translation: l => l.company,
             ...settings
         })(target, key);
@@ -130,7 +129,8 @@ export abstract class HelpersBase extends IdEntity {
 
     @Field({
         translation: l => l.helperComment,
-        allowApiUpdate: Roles.admin
+        allowApiUpdate: Roles.admin,
+        customInput: c => c.textArea()
     })
     eventComment: string;
 
@@ -599,7 +599,7 @@ export class Helpers extends HelpersBase {
     email: Email;
     @Field()
     addressApiResult: string;
-    @Field({ translation: l => l.preferredDistributionArea })
+    @Field({ translation: l => l.preferredDistributionArea, customInput: i => i.addressDialog() })
     preferredDistributionAreaAddress: string;
     preferredDistributionAreaAddressHelper = new AddressHelper(this.remult,
         () => this.$.preferredDistributionAreaAddress,
