@@ -107,37 +107,33 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   updateInfo() {
     let f = this.families.currentRow;
+    const fields: DataAreaFieldsSetting<any>[] =
+      [
+        [f.$.createUser,
+        f.$.createDate],
+        [f.$.lastUpdateUser,
+        f.$.lastUpdateDate],
+        [f.$.statusUser,
+        f.$.statusDate]
+      ];
+    if (this.args.familyDelivery) {
+      let fd = this.args.familyDelivery;
+      fields.push(
+        {
+          getValue: () => 'עדכונים למשלוח'
+        },
+        [fd.$.deliveryStatusUser,
+        fd.$.deliveryStatusDate],
+        [fd.$.courierAssignUser,
+        fd.$.courierAssingTime],
+        [fd.$.createUser,
+        fd.$.createDate]
+      )
+    }
     openDialog(InputAreaComponent, x => x.args = {
       title: 'פרטי עדכונים עבור ' + f.name,
       ok: () => { },
-      settings: {
-        fields: () => {
-          let r: DataAreaFieldsSetting<any>[] =
-            [
-              [f.$.createUser,
-              f.$.createDate],
-              [f.$.lastUpdateUser,
-              f.$.lastUpdateDate],
-              [f.$.statusUser,
-              f.$.statusDate]
-            ];
-          if (this.args.familyDelivery) {
-            let fd = this.args.familyDelivery;
-            r.push(
-              {
-                getValue: () => 'עדכונים למשלוח'
-              },
-              [fd.$.deliveryStatusUser,
-              fd.$.deliveryStatusDate],
-              [fd.$.courierAssignUser,
-              fd.$.courierAssingTime],
-              [fd.$.createUser,
-              fd.$.createDate]
-            )
-          }
-          return r;
-        }
-      }
+      fields
     });
   }
   refreshDeliveryStatistics = false;
@@ -221,7 +217,6 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   callInfo = new DataAreaSettings<Families>();
   deliverInfo = new DataAreaSettings();
   extraFamilyInfo = new DataAreaSettings<Families>();
-  extraFamilyInfo2 = new DataAreaSettings<Families>();
   deliveryDefaults = new DataAreaSettings<Families>();
   familyDeliveries: GridSettings<FamilyDeliveries>;
   onMapLocation: Location;
@@ -275,12 +270,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     this.extraFamilyInfo = this.families.addArea({
       fields: families => [
         families.groups,
-        [families.status, families.familyMembers]
-
-      ]
-    });
-    this.extraFamilyInfo2 = this.families.addArea({
-      fields: families => [
+        [families.status, families.familyMembers],
+        families.internalComment,
         families.email,
         [
           families.tz,
@@ -358,7 +349,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         ].filter(x => this.settings.usingSelfPickupModule ? true : x != f.defaultSelfPickup)
     });
     if (this.delivery) {
-      this.deliverInfo = new DataAreaSettings(this.delivery.deilveryDetailsAreaSettings(this.dialog));
+      this.deliverInfo = new DataAreaSettings({ fields: () => this.delivery.deilveryDetailsAreaSettings(this.dialog) });
 
 
     }

@@ -17,7 +17,7 @@ import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 import { use, FieldType, Field, ValueListFieldType, Entity, QuantityColumn, IntegerField } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
-import { DataControl, IDataAreaSettings } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, DataControl, IDataAreaSettings } from "@remult/angular/interfaces";
 
 
 import { Groups, GroupsValue } from "../manage/groups";
@@ -27,7 +27,7 @@ import { DeliveryImage, FamilyImage } from "./DeiveryImages";
 import { ImageInfo } from "../images/images.component";
 import { IdFieldRef } from "remult/src/remult3";
 import { isDesktop } from "../shared/utils";
-import {  UITools } from "../helpers/init-context";
+import { UITools } from "../helpers/init-context";
 
 
 @ValueListFieldType({
@@ -792,29 +792,25 @@ export class FamilyDeliveries extends IdEntity {
             cancel: () => {
                 this._.undoChanges();
             },
-            settings: this.deilveryDetailsAreaSettings(callerHelper.ui)
+            fields: this.deilveryDetailsAreaSettings(callerHelper.ui)
         }
         );
     }
 
-    deilveryDetailsAreaSettings(ui: UITools): IDataAreaSettings {
-        return {
-            fields: () =>
-                [
-                    [{ width: '', field: this.$.basketType }, { width: '', field: this.$.quantity }],
-                    [{ width: '', field: this.$.deliverStatus }, this.$.deliveryStatusDate],
-                    this.$.deliveryComments,
-                    this.$.courier,
-                    { field: this.$.distributionCenter, visible: () => ui.hasManyCenters },
-                    this.$.needsWork,
-                    this.$.courierComments,
-                    this.$.a1, this.$.a2, this.$.a3, this.$.a4,
-                    this.$.internalDeliveryComment,
-                    this.$.special,
-                ]
-        };
-    }
-
+    deilveryDetailsAreaSettings(ui: UITools): DataAreaFieldsSetting[] {
+        return [
+            [{ width: '', field: this.$.basketType }, { width: '', field: this.$.quantity }],
+            [{ width: '', field: this.$.deliverStatus }, this.$.deliveryStatusDate],
+            this.$.deliveryComments,
+            this.$.courier,
+            { field: this.$.distributionCenter, visible: () => ui.hasManyCenters },
+            this.$.needsWork,
+            this.$.courierComments,
+            this.$.a1, this.$.a2, this.$.a3, this.$.a4,
+            this.$.internalDeliveryComment,
+            this.$.special,
+        ]
+    };
 
 }
 SqlBuilder.filterTranslators.push({

@@ -1,5 +1,5 @@
 import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
-import { DataControl, DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
+import { DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";
@@ -10,11 +10,8 @@ import { getLang } from '../sites/sites';
 import { AddressHelper, Location } from '../shared/googleApiHelpers';
 import { routeStats } from '../asign-family/route-strategy';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 
-import { DialogService } from '../select-popup/dialog';
 import { FamilyStatus } from '../families/FamilyStatus';
-import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 
 import { use, Field, FieldType, IntegerField } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
@@ -359,19 +356,10 @@ export class Helpers extends HelpersBase {
             cancel: () => {
                 this._.undoChanges();
             },
-            settings: {
-                fields: () => {
-                    let r = Helpers.selectColumns(this._.repository.metadata.fields, this.remult).map(map => {
-
-                        return ({
-                            ...map,
-                            field: this.$.find(map.field ? map.field as any : map)
-                        })
-                    });
-
-                    return r;
-                }
-            },
+            fields: Helpers.selectColumns(this._.repository.metadata.fields, this.remult).map(map => ({
+                ...map,
+                field: this.$.find(map.field ? map.field as any : map)
+            })),
             buttons: [{
                 text: settings.lang.deliveries,
                 click: () => this.showDeliveryHistory(ui)
@@ -385,6 +373,19 @@ export class Helpers extends HelpersBase {
 
             }]
 
+        });
+    }
+    async addCommunicationHistoryDialog(ui: UITools, defaultMessage = '', onSave: VoidFunction = () => { }) {
+        let hist = this.remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create({
+            volunteer: this,
+            message: defaultMessage
+        });
+        ui.inputAreaDialog({
+            title: 'הוסף הערה לתכתובות של המתנדב',
+            ok: async () => {
+                await hist.save();
+            },
+            fields: [hist.$.message]
         });
     }
     static selectColumns(self: FieldsMetadata<Helpers>, remult: Remult) {
@@ -581,7 +582,7 @@ export class Helpers extends HelpersBase {
     email: Email;
     @Field()
     addressApiResult: string;
-    @Field({ translation: l => l.preferredDistributionArea, customInput: i => i.addressDialog() })
+    @Field({ translation: l => l.preferredDistributionArea, customInput: i => i.addressInput() })
     preferredDistributionAreaAddress: string;
     preferredDistributionAreaAddressHelper = new AddressHelper(this.remult,
         () => this.$.preferredDistributionAreaAddress,
@@ -795,13 +796,17 @@ export class Helpers extends HelpersBase {
     }
     async sendSmsToCourier(ui: UITools, message = '') {
         let h = this;
-
-        ui.editCommentDialog({
-            save: async (comment) => {
-                ui.Info(await Helpers.SendCustomMessageToCourier(this, comment));
+        const comment = new InputField<string>({
+            customInput: c => c.textArea(),
+            caption: this.remult.lang.sendMessageToVolunteer,
+            defaultValue: () => this.remult.lang.hello + ' ' + h.name + '\n' + message
+        });
+        ui.inputAreaDialog({
+            ok: async () => {
+                ui.Info(await Helpers.SendCustomMessageToCourier(this, comment.value));
             },
+            fields: [comment],
             title: this.remult.lang.sendMessageToVolunteer + ' ' + h.name,
-            comment: this.remult.lang.hello + ' ' + h.name + '\n' + message
         });
     }
     @BackendMethod({ allowed: Roles.admin })

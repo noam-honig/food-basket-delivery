@@ -187,16 +187,14 @@ export class CreateNewEvent {
         }
         this.useFamilyBasket = true;
 
-         let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
+        let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(this.remult, { distributionCenter: this.remult.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
 
         await ui.inputAreaDialog({
             title: settings.lang.createNewEvent,
             helpText: settings.lang.createNewEventHelp,
-            settings: {
-                fields: () => [
-                    //...archiveHelperFields, 
-                    ...[...this.$].filter(x => x != this.$.archiveHelper)]
-            },
+            fields: [
+                ...archiveHelperFields, 
+                ...[...this.$].filter(x => x != this.$.archiveHelper)],
             ok: async () => {
                 let deliveriesCreated = await this.createNewEvent();
                 ui.refreshFamiliesAndDistributionCenters();

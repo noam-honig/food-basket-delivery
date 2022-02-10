@@ -646,9 +646,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         let q = new InputField<number>({ valueType: Number, caption: this.settings.lang.quantity });
                         q.value = r.item.quantity;
                         await openDialog(InputAreaComponent, x => x.args = {
-                            settings: {
-                                fields: () => [q]
-                            },
+                            fields: [q],
                             title: this.settings.lang.quantity + " " + this.settings.lang.for + " " + r.item.address,
                             cancel: () => { },
                             ok: async () => {

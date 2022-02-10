@@ -27,7 +27,6 @@ import { relativeDateName } from '../model-shared/types';
 import { Phone } from "../model-shared/phone";
 import { getLang } from '../sites/sites';
 import { SelectListComponent } from '../select-list/select-list.component';
-import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { moveDeliveriesHelper } from './move-deliveries-helper';
 
@@ -123,13 +122,11 @@ export class HelperFamiliesComponent implements OnInit {
 
     await openDialog(InputAreaComponent, x => x.args = {
       title: use.language.replanRoute,
-      settings: {
-        fields: () => [
-          { field: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
-          { field: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt },
-          { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt }
-        ]
-      },
+      fields: [
+        { field: useCurrentLocation, visible: () => !this.partOfAssign && !this.partOfReview && !!navigator.geolocation },
+        { field: this.familyLists.helper.$.preferredFinishAddress, visible: () => !this.settings.isSytemForMlt },
+        { field: strategy, visible: () => !this.familyLists.helper.preferredFinishAddress || this.familyLists.helper.preferredFinishAddress.trim().length == 0 || this.settings.isSytemForMlt }
+      ],
       cancel: () => { },
       ok: async () => {
         await this.updateCurrentLocation(useCurrentLocation.value);
@@ -441,19 +438,7 @@ export class HelperFamiliesComponent implements OnInit {
   async callHelper() {
     location.href = 'tel:' + this.familyLists.helper.phone;
     if (this.settings.isSytemForMlt) {
-      await openDialog(EditCommentDialogComponent, inputArea => inputArea.args = {
-        title: 'הוסף הערה לתכתובות של המתנדב',
-
-        save: async (comment) => {
-          let hist = this.remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create();
-          hist.volunteer = this.familyLists.helper;
-          hist.message = comment;
-          await hist.save();
-        },
-        comment: 'התקשרתי'
-
-
-      });
+      this.familyLists.helper.addCommunicationHistoryDialog(this.dialog, "התקשרתי");
     }
   }
   callEscort() {

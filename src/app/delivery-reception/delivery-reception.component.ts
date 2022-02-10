@@ -141,9 +141,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
       },
       cancel: () => {
       },
-      settings: {
-        fields: () => this.receptionCommentEntry(d)
-      }
+      fields: this.receptionCommentEntry(d)
     });
   }
 

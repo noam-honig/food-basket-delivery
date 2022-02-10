@@ -71,9 +71,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         openDialog(InputAreaComponent, x => x.args = {
           title: use.language.filterCity,
           helpText: use.language.filterCityHelp,
-          settings: {
-            fields: () => [getFields(this).city]
-          },
+          fields: [getFields(this).city],
           ok: async () => {
             this.helpers.reloadData();
           },
@@ -133,9 +131,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         openDialog(InputAreaComponent, x => x.args = {
           title: use.language.sendMessageToInviteVolunteers,
           helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
-          settings: {
-            fields: () => [c.$.city, c.$.limit]
-          },
+          fields: [c.$.city, c.$.limit],
           ok: async () => {
             c.sendBulkDialog(this.dialog, this.helpers.currentRow);
           },
@@ -289,11 +285,8 @@ export class HelpersComponent implements OnInit, OnDestroy {
       ok: () => {
         h.save();
       },
-      cancel: () => {
-      },
-      settings: {
-        fields: () => this.freezeDateEntry(h)
-      }
+      cancel: () => { },
+      fields: this.freezeDateEntry(h)
     });
   }
 

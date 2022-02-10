@@ -110,19 +110,16 @@ export class EventsComponent implements OnInit {
         openDialog(InputAreaComponent, x => x.args = {
           title: use.language.volunteerRegistrationSettings,
           ok: async () => await s.save(),
-          settings: {
-            fields: () => [
-              [this.settings.$.questionForRegistration1Caption, this.settings.$.questionForRegistration1Values],
-              [this.settings.$.questionForRegistration2Caption, this.settings.$.questionForRegistration2Values],
-              [this.settings.$.questionForRegistration3Caption, this.settings.$.questionForRegistration3Values],
-              [this.settings.$.questionForRegistration4Caption, this.settings.$.questionForRegistration4Values],
-              s.$.registerAskTz,
-              s.$.registerAskEmail,
-              s.$.registerAskPreferredDistributionAreaAddress,
-              s.$.registerAskPreferredFinishAddress
-            ]
-          }
-
+          fields: [
+            [this.settings.$.questionForRegistration1Caption, this.settings.$.questionForRegistration1Values],
+            [this.settings.$.questionForRegistration2Caption, this.settings.$.questionForRegistration2Values],
+            [this.settings.$.questionForRegistration3Caption, this.settings.$.questionForRegistration3Values],
+            [this.settings.$.questionForRegistration4Caption, this.settings.$.questionForRegistration4Values],
+            s.$.registerAskTz,
+            s.$.registerAskEmail,
+            s.$.registerAskPreferredDistributionAreaAddress,
+            s.$.registerAskPreferredFinishAddress
+          ]
         });
       }
     }

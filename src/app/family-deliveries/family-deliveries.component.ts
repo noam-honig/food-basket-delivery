@@ -3,7 +3,7 @@ import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
 import { Remult, EntityFilter } from 'remult';
-import { DataControlInfo, DataControlSettings, GridSettings } from '@remult/angular/interfaces';
+import { DataControlInfo, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -37,7 +37,6 @@ import { DeliveryImagesComponent } from '../delivery-images/delivery-images.comp
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { PrintStickersComponent } from '../print-stickers/print-stickers.component';
 import { PrintVolunteerComponent } from '../print-volunteer/print-volunteer.component';
-import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
 
 import { getDeliveryGridButtons } from './getDeliveryGridButtons';
 import { FamilyDeliveriesController } from './family-deliveries.controller';
@@ -720,11 +719,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
 
 
-
-          openDialog(EditCommentDialogComponent, edit => edit.args = {
-            title: getLang(this.remult).whatToOrder,
-            save: () => { },
-            comment: items.toString() + "\n---------------\n" + parcels.toString()
+          const field = new InputField<string>({
+            customInput: c => c.textArea(), caption: this.remult.lang.whatToOrder,
+            defaultValue: () => items.toString() + "\n---------------\n" + parcels.toString()
+          });
+          this.dialog.inputAreaDialog({
+            fields: [field],
+            ok: () => { },
           });
         }
       },
@@ -783,17 +784,14 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           openDialog(InputAreaComponent, x => x.args = {
             title: use.language.infoAboutUpdates + " " + use.language.for + " " + fd.name,
             ok: () => { },
-            settings: {
-              fields: () => [
-
-                [fd.$.deliveryStatusUser,
-                fd.$.deliveryStatusDate],
-                [fd.$.courierAssignUser,
-                fd.$.courierAssingTime],
-                [fd.$.createUser,
-                fd.$.createDate],
-              ]
-            }
+            fields: [
+              [fd.$.deliveryStatusUser,
+              fd.$.deliveryStatusDate],
+              [fd.$.courierAssignUser,
+              fd.$.courierAssingTime],
+              [fd.$.createUser,
+              fd.$.createDate],
+            ]
           });
         }
       },

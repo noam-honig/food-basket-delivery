@@ -25,7 +25,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { Groups } from './groups';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
 import { use } from '../translate';
-import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { ManageController, SendTestSms } from './manage.controller';
 
@@ -93,11 +93,12 @@ export class ManageComponent implements OnInit {
       }, {
         field: x.whatToTake,
         click: b => {
-          openDialog(EditCommentDialogComponent, x => x.args = {
-            title: use.language.whatToTake,
-            comment: b.whatToTake.split(',').join("\n"),
-            save: (c) => {
-              b.whatToTake = c.split("\n").join(", ")
+          const field = new InputField<string>({ customInput: c => c.textArea(), caption: b.$.whatToTake.metadata.caption });
+          field.value = b.whatToTake.split(',').map(x => x.trim()).join("\n");
+          this.dialog.inputAreaDialog({
+            fields: [field],
+            ok: () => {
+              b.whatToTake = field.value.split("\n").map(x => x.trim()).join(", ")
             }
           });
         }
@@ -140,21 +141,19 @@ export class ManageComponent implements OnInit {
         openDialog(InputAreaComponent, x => x.args = {
           title: d.name,
           ok: async () => await d.save(),
-          settings: {
-            fields: () => [
-              d.$.name,
-              d.$.address,
-              {
-                caption: this.settings.lang.addressByGoogle,
-                getValue: () => d.addressHelper.getGeocodeInformation.getAddress()
-              },
-              d.$.comments,
-              [d.$.phone1, d.$.phone1Description],
-              [d.$.phone2, d.$.phone2Description],
-              d.$.isFrozen,
-              d.$.semel
-            ]
-          }
+          fields: [
+            d.$.name,
+            d.$.address,
+            {
+              caption: this.settings.lang.addressByGoogle,
+              getValue: () => d.addressHelper.getGeocodeInformation.getAddress()
+            },
+            d.$.comments,
+            [d.$.phone1, d.$.phone1Description],
+            [d.$.phone2, d.$.phone2Description],
+            d.$.isFrozen,
+            d.$.semel
+          ]
         });
       }
     },
@@ -348,9 +347,7 @@ export class ManageComponent implements OnInit {
   async sendTestEmail() {
     var sc = new InputField<string>({ caption: 'email' });
     await openDialog(InputAreaComponent, x => x.args = {
-      settings: {
-        fields: () => [sc]
-      },
+      fields: [sc],
       title: 'בדיקת מייל',
       ok: async () => {
         let x = await ManageController.TestSendEmail(sc.value, this.testEmailDonor());
@@ -408,12 +405,10 @@ export class ManageComponent implements OnInit {
   configureSmsGlobal() {
     openDialog(InputAreaComponent, a => a.args = {
       title: use.language.smsProviderConfiguration,
-      settings: {
-        fields: () => [this.settings.$.smsClientNumber,
-        this.settings.$.smsUsername,
-        this.settings.$.smsPasswordInput,
-        this.settings.$.smsVirtualPhoneNumber]
-      },
+      fields: [this.settings.$.smsClientNumber,
+      this.settings.$.smsUsername,
+      this.settings.$.smsPasswordInput,
+      this.settings.$.smsVirtualPhoneNumber],
       ok: () => this.settings.save()
       , buttons: [{
         text: use.language.testSmsMessage,
@@ -423,9 +418,7 @@ export class ManageComponent implements OnInit {
           message.phone = (await this.remult.getCurrentUser()).phone.thePhone;
           message.message = this.testSms();
           openDialog(InputAreaComponent, x => x.args = {
-            settings: {
-              fields: () => [...getFields(message)]
-            },
+            fields: message.$.toArray(),
             title: use.language.testSmsMessage,
             ok: async () => {
               let result = await message.sendTestMessage();
@@ -639,7 +632,7 @@ export class ManageComponent implements OnInit {
     await openDialog(InputAreaComponent, x => {
       x.args = {
         title: this.settings.lang.toConfirmPleaseTypeTheCodeWord + '"' + correctCodeWord + '"',
-        settings: { fields: () => [codeWord] }, ok: () => doIt = true, cancel: () => doIt = false
+        fields: [codeWord], ok: () => doIt = true, cancel: () => doIt = false
       }
     })
     if (!doIt)

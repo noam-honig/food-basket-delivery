@@ -2,14 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
 import { Remult } from 'remult';
 import { Roles } from '../auth/roles';
-import { EditCommentDialogComponent } from '../edit-comment-dialog/edit-comment-dialog.component';
+
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 
 import { DeliveryInList, HelperFamiliesController } from '../helper-families/helper-families.controller';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { MyGiftsDialogComponent } from '../helper-gifts/my-gifts-dialog.component';
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { SelectListComponent } from '../select-list/select-list.component';
@@ -348,20 +348,19 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   updateComment(f: ActiveFamilyDeliveries) {
-    openDialog(EditCommentDialogComponent, x => x.args = {
-      comment: f.courierComments,
-
-      save: async comment => {
+    this.dialog.inputAreaDialog({
+      title: use.language.updateComment,
+      fields: [f.$.courierComments],
+      ok: async () => {
         if (f.isNew())
           return;
-        f.courierComments = comment;
         f.checkNeedsWork();
         await f.save();
         this.dialog.analytics('Update Comment');
-      }
-      , title: use.language.updateComment
+      },
+      cancel: () => f._.undoChanges()
+    })
 
-    });
   }
 
   async freezeUser() {

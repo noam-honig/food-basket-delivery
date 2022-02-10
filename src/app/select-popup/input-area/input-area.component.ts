@@ -27,7 +27,13 @@ export class InputAreaComponent implements OnInit {
   area: DataAreaSettings;
 
   ngOnInit() {
-    this.area = new DataAreaSettings(this.args.settings, null, null);
+    this.area = new DataAreaSettings({
+      fields: () => this.args.fields
+    }, null, null);
+    if (!this.args.title && this.area.lines.length > 0) {
+      this.args.title = this.area.lines[0][0].caption;
+      this.area.lines[0][0].caption = '';
+    }
   }
   cancel() {
     if (!this.ok && this.args.cancel)

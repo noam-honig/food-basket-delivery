@@ -68,12 +68,9 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             },
             icon: this.args.icon,
             click: async () => {
-
-                let cols = await this.args.dialogColumns(component);
                 await component.ui.inputAreaDialog({
-                    settings: {
-                        fields: () => cols
-                    },
+                    fields: await this.args.dialogColumns(component),
+
                     title: this.args.title,
                     helpText: this.args.help ? this.args.help() : undefined,
                     validate: async () => {

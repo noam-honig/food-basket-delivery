@@ -41,7 +41,6 @@ import { ImportFromExcelComponent } from './import-from-excel/import-from-excel.
 import { NewsComponent } from './news/news.component';
 import { NewsFilterService } from "./news/news-filter-service";
 
-
 import { UpdateFamilyDialogComponent } from './update-family-dialog/update-family-dialog.component';
 
 import { SelfPickupComponent } from './self-pickup/self-pickup.component';
@@ -52,15 +51,11 @@ import { FamilyInListComponent } from './family-in-list/family-in-list.component
 
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component';
 
-
-
-
 import { SelectCompanyComponent } from './select-company/select-company.component';
 import { HelperAssignmentComponent } from './helper-assignment/helper-assignment.component';
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';
 import { PlaybackComponent } from './playback/playback.component';
 import { APP_BASE_HREF } from '@angular/common';
-import { environment } from '../environments/environment';
 import { getSiteFromUrl, Sites } from './sites/sites';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { SettingsService } from "./manage/SettingsService";
@@ -86,7 +81,6 @@ import { RegisterDonorComponent } from './register-donor/register-donor.componen
 import { RegisterHelperComponent } from './register-helper/register-helper.component';
 import { AddressInputComponent } from './address-input/address-input.component';
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component';
-import { EditCommentDialogComponent } from './edit-comment-dialog/edit-comment-dialog.component';
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component';
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component';
 import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component';
@@ -167,16 +161,11 @@ export class MyHammerConfig extends HammerGestureConfig {
     ImportFromExcelComponent,
     NewsComponent,
     UpdateFamilyDialogComponent,
-
     SelfPickupComponent,
-
     DeliveryHistoryComponent,
     PreviewFamilyComponent,
     FamilyInListComponent,
     UpdateGroupDialogComponent,
-
-
-
     SelectCompanyComponent,
     HelperAssignmentComponent,
     ImportHelpersFromExcelComponent,
@@ -203,7 +192,6 @@ export class MyHammerConfig extends HammerGestureConfig {
     RegisterHelperComponent,
     AddressInputComponent,
     InRouteFollowUpComponent,
-    EditCommentDialogComponent,
     ShipmentAssignScreenComponent,
     VolunteerCrossAssignComponent,
     WeeklyReportMltComponent,
@@ -301,7 +289,6 @@ export class MyHammerConfig extends HammerGestureConfig {
     GetVolunteerFeedback,
     UpdateGroupDialogComponent,
     BasketSummaryComponent,
-    EditCommentDialogComponent,
     GeneralImportFromExcelComponent,
     MyGiftsDialogComponent]
 })

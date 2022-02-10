@@ -183,9 +183,7 @@ export class InRouteFollowUpComponent implements OnInit {
       },
       cancel: () => {
       },
-      settings: {
-        fields: () => this.freezeDateEntry(h)
-      }
+      fields: this.freezeDateEntry(h)
     });
   }
 }

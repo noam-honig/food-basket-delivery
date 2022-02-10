@@ -16,7 +16,7 @@ import { use, Field } from "../translate";
 import { Location } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import "../helpers/init-context";
-import { EditCommentArgs, EditCustomMessageArgs, evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs, UpdateGroupArgs } from "../helpers/init-context";
+import { EditCustomMessageArgs, evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs, UpdateGroupArgs } from "../helpers/init-context";
 import { HelpersBase } from "../helpers/helpers";
 import { extractError } from "./extractError";
 import { DialogController } from "./dialog.controller";
@@ -90,7 +90,7 @@ export class DialogService implements UITools {
         plugInService.dataControlAugmenter = (f, s) => {
             if (f?.options.customInput) {
                 f.options.customInput({
-                    addressDialog: () =>
+                    addressInput: () =>
                         s.customComponent = {
                             component: AddressInputComponent
                         },
@@ -117,9 +117,7 @@ export class DialogService implements UITools {
     navigateToComponent(component: any): void {
         this.routeHelper.navigateToComponent(component);
     }
-    async editCommentDialog(args: EditCommentArgs): Promise<void> {
-        await openDialog((await import('../edit-comment-dialog/edit-comment-dialog.component')).EditCommentDialogComponent, x => x.args = args);
-    }
+
     async selectCompany(args: (selectedValue: string) => void): Promise<void> {
         openDialog((await import("../select-company/select-company.component")).SelectCompanyComponent, s => s.argOnSelect = args)
     }

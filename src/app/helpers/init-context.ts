@@ -8,7 +8,7 @@ import { Roles } from "../auth/roles";
 import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { GridButton, GridSettings, IDataAreaSettings, RowButton } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, GridSettings, RowButton } from "@remult/angular/interfaces";
 import { messageMerger } from "../edit-custom-message/messageMerger";
 
 
@@ -91,9 +91,9 @@ export interface button {
 
 }
 export interface InputAreaArgs {
-    title: string,
+    title?: string,
     helpText?: string,
-    settings: IDataAreaSettings,
+    fields: DataAreaFieldsSetting<any>[];
     ok: () => void,
     cancel?: () => void,
     validate?: () => Promise<void>,
@@ -129,11 +129,7 @@ export interface UpdateGroupArgs {
     groups: string,
     ok: (s: string) => void
 }
-export interface EditCommentArgs {
-    title: string,
-    comment: string,
-    save?: (comment: string) => void
-}
+
 export interface EditCustomMessageArgs {
     message: messageMerger,
     templateText: string,
@@ -176,8 +172,6 @@ export interface UITools {
     getDistCenter(loc: Location): Promise<import('../manage/distribution-centers').DistributionCenters>;
     distCenter: import('../manage/distribution-centers').DistributionCenters;
     filterDistCenter(): IdFilter<DistributionCenters>;
-    editCommentDialog(args: EditCommentArgs): Promise<void>;
-
 }
 
 export const evil: {
@@ -217,7 +211,7 @@ declare module 'remult' {
     export interface FieldOptions<entityType, valueType> {
         clickWithTools?: (e: entityType, c: FieldRef<entityType, valueType>, ui: UITools) => void;
         customInput?: (select: {
-            addressDialog: VoidFunction,
+            addressInput: VoidFunction,
             textArea: VoidFunction
         }) => void,
         width?: string

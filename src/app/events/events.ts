@@ -268,10 +268,8 @@ export class Event extends IdEntity {
     openEditDialog(ui: UITools, cancel: () => void = () => { }) {
         ui.inputAreaDialog({
             title: use.language.eventInfo,
-            settings: {
-                fields: () => Event.displayColumns(this._.repository.metadata.fields, ui)
-                    .map(x => mapFieldMetadataToFieldRef(this._, x))
-            },
+            fields: Event.displayColumns(this._.repository.metadata.fields, ui)
+                .map(x => mapFieldMetadataToFieldRef(this._, x)),
             ok: () => this.save(),
             cancel: () => {
                 this._.undoChanges();
@@ -309,9 +307,7 @@ export class Event extends IdEntity {
         date.value = new Date();
         await ui.inputAreaDialog({
             title: settings.lang.duplicateEvents,
-            settings: {
-                fields: () => [archiveCurrentEvent, date]
-            },
+            fields: [archiveCurrentEvent, date],
             cancel: () => { },
             ok: async () => {
                 await ui.doWhileShowingBusy(async () => {

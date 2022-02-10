@@ -6,10 +6,8 @@ import { getLang } from "../sites/sites";
 import { Helpers, HelpersBase } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { HelperAssignmentComponent } from "../helper-assignment/helper-assignment.component";
-import { GridDialogComponent } from "../grid-dialog/grid-dialog.component";
-import { EditCommentDialogComponent } from "../edit-comment-dialog/edit-comment-dialog.component";
-import { use, Field } from "../translate";
+
+import { Field } from "../translate";
 
 import { DataControl, GridSettings } from "@remult/angular/interfaces";
 
@@ -90,16 +88,11 @@ export class InRouteHelpers extends IdEntity {
                 {
                     name: getLang(this.remult).editComment,
                     click: async (r) => {
-                        ui.editCommentDialog({
-                            title: 'הוסף הערה',
-
-                            save: async (comment) => {
-                                r.message = comment;
-                                await r.save();
-                            },
-                            comment: r.message
-
-
+                        ui.inputAreaDialog({
+                            title: 'ערוך הערה',
+                            fields: [r.$.message],
+                            ok: async () => await r.save(),
+                            cancel: () => r._.undoChanges()
                         });
                     },
                     visible: r => r.createUser.isCurrentUser()
@@ -127,19 +120,9 @@ export class InRouteHelpers extends IdEntity {
         this._.reload();
     }
     async addCommunication(ui: UITools, reload: () => void) {
-
-        await ui.editCommentDialog({
-            title: 'הוסף תכתובת',
-
-            save: async (comment) => {
-                let hist = this.remult.repo(HelperCommunicationHistory).create();
-                hist.volunteer = await this.helper();
-                hist.message = comment;
-                await hist.save();
-                this._.reload();
-                reload();
-            },
-            comment: ''
+        (await this.helper()).addCommunicationHistoryDialog(ui, "", () => {
+            this._.reload();
+            reload();
         });
     }
 
@@ -233,9 +216,10 @@ export class HelperCommunicationHistory extends IdEntity {
     @Field({ allowApiUpdate: false })
     eventId: string;
     @Field({
-        translation: l => l.message
+        translation: l => l.message,
+        customInput: c => c.textArea(),
+        width: '200'
     })
-    @DataControl({ width: '200' })
     message: string;
     @Field({ allowApiUpdate: false })
     apiResponse: any;

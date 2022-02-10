@@ -135,9 +135,7 @@ export class RegisterToEvent {
             await ui.inputAreaDialog({
                 title: lang.register,
                 helpText: lang.registerHelpText,
-                settings: {
-                    fields: () => [{ field: this.$.name, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice]
-                },
+                fields: [{ field: this.$.name, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice],
                 cancel: () => { },
                 ok: async () => {
 

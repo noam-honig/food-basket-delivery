@@ -206,13 +206,11 @@ export class Families extends IdEntity {
           var d = new dateInput();
           args.ui.inputAreaDialog({
             title: use.language.addHistoricalDelivery,
-            settings: {
-              fields: () => [
-                getFields(d).date,
-                fd.$.basketType,
-                fd.$.courier
-              ]
-            },
+            fields: [
+              getFields(d).date,
+              fd.$.basketType,
+              fd.$.courier
+            ],
             ok: async () => {
               await this.saveAsHistoryEntry(DateOnlyValueConverter.toJson(d.date), fd.basketType, fd.courier);
               result.reloadData();
@@ -311,25 +309,20 @@ export class Families extends IdEntity {
         newDelivery.courier = null;
     }
 
+    const fields: DataAreaFieldsSetting<any>[] = [
+      [newDelivery.$.basketType,
+      newDelivery.$.quantity],
+      newDelivery.$.deliveryComments];
+    if (ui.hasManyCenters)
+      fields.push(newDelivery.$.distributionCenter);
+    fields.push(newDelivery.$.courier);
+    if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus()) {
+      fields.push(arciveCurrentDelivery);
+    }
+    fields.push({ field: selfPickup, visible: () => settings.usingSelfPickupModule })
 
     await ui.inputAreaDialog({
-      settings: {
-        fields: () => {
-          let r: DataAreaFieldsSetting<any>[] = [
-            [newDelivery.$.basketType,
-            newDelivery.$.quantity],
-            newDelivery.$.deliveryComments];
-          if (ui.hasManyCenters)
-            r.push(newDelivery.$.distributionCenter);
-          r.push(newDelivery.$.courier);
-          if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus()) {
-            r.push(arciveCurrentDelivery);
-          }
-          r.push({ field: selfPickup, visible: () => settings.usingSelfPickupModule })
-
-          return r;
-        }
-      },
+      fields,
       title: getLang(this.remult).newDeliveryFor + this.name,
       validate: async () => {
         let count = await newDelivery.duplicateCount();
@@ -526,7 +519,9 @@ export class Families extends IdEntity {
   defaultSelfPickup: boolean;
   @Field({ translation: l => l.familyUniqueId })
   iDinExcel: string;
-  @Field()
+  @Field({
+    customInput: c => c.textArea()
+  })
   internalComment: string;
   @Field()
   addressApiResult: string;

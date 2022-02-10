@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Remult } from 'remult';
-import {  validSchemaName } from '../sites/sites';
+import { validSchemaName } from '../sites/sites';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { DialogService } from '../select-popup/dialog';
@@ -68,9 +68,7 @@ export class OverviewComponent implements OnInit {
     let phone = new InputField<string>({ caption: 'טלפון', inputType: 'tel' });
     openDialog(InputAreaComponent, x => x.args = {
       title: 'הוספת סביבה חדשה',
-      settings: {
-        fields: () => [id, name, address, manager, phone]
-      },
+      fields: [id, name, address, manager, phone],
       validate: async () => {
         let x = validSchemaName(id.value);
         if (x != id.value) {

@@ -1,7 +1,7 @@
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 
-import { Remult, BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata } from 'remult';
+import { Remult, BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase } from 'remult';
 
 import { Roles } from '../auth/roles';
 
@@ -63,11 +63,7 @@ export class ManageController {
 declare type select<T> = { [Properties in keyof Partial<OmitEB<T>>]?: boolean; }
 
 @Controller("sendTestSms")
-export class SendTestSms {
-    constructor(private remult: Remult) {
-
-
-    }
+export class SendTestSms extends ControllerBase {
     @Field({ translation: l => l.phone })
     phone: string;
     @Field({ translation: l => l.customSmsMessage })
