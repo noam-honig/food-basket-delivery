@@ -1,10 +1,10 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { CustomComponentArgs, CustomDataComponent } from '@remult/angular/interfaces';
 
 import { FieldRef } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { getAddress, Location, getCity, GeocodeInformation, GeocodeResult } from '../shared/googleApiHelpers';
+import { getAddress, Location, getCity, GeocodeResult } from '../shared/googleApiHelpers';
 
 @Component({
   selector: 'app-address-input',
@@ -36,13 +36,16 @@ export class AddressInputComponent implements AfterViewInit, CustomDataComponent
     this.initAddressAutoComplete = true;
     let b = this.settings.forWho.args.bounds;
     let bounds = new google.maps.LatLngBounds(new google.maps.LatLng(b.west, b.south), new google.maps.LatLng(b.east, b.north));
-    const autocomplete = new google.maps.places.SearchBox(this.addressInput.nativeElement, { bounds: bounds }
+    const autocomplete = new google.maps.places.Autocomplete(this.addressInput.nativeElement, {
+      bounds: bounds,
+      fields: ['address_components', 'formatted_address', 'geometry', 'type']
+    }
     );
-    this.destroyMe = google.maps.event.addListener(autocomplete, 'places_changed', () => {
-      if (autocomplete.getPlaces().length == 0)
+    this.destroyMe = google.maps.event.addListener(autocomplete, 'place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (!place)
         return;
-      const place = autocomplete.getPlaces()[0];
-
+      console.log(place);
 
       this.zone.run(() => {
         this.field.value = this.addressInput.nativeElement.value;

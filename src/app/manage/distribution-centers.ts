@@ -51,7 +51,7 @@ export class DistributionCenters extends IdEntity {
   @Field()
   addressApiResult: string;
   @Field({
-    translation: l => l.deliveryCenterAddress
+    translation: l => l.deliveryCenterAddress, customInput: i => i.addressInput()
   })
   address: string;
   addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);

@@ -63,7 +63,7 @@ export class OverviewComponent implements OnInit {
   async createNewSchema() {
     let id = new InputField<string>({ caption: 'id' });
     let name = new InputField<string>({ caption: 'שם הארגון' });
-    let address = new InputField<string>({ caption: 'כתובת מרכז חלוקה' });
+    let address = new InputField<string>({ caption: 'כתובת מרכז חלוקה', customInput: c => c.addressInput() });
     let manager = new InputField<string>({ caption: 'שם מנהל' });
     let phone = new InputField<string>({ caption: 'טלפון', inputType: 'tel' });
     openDialog(InputAreaComponent, x => x.args = {

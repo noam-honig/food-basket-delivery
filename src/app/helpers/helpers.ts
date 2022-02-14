@@ -671,7 +671,7 @@ export class Helpers extends HelpersBase {
     @Field()
     addressApiResult2: string;
     @Field({
-        dbName: 'preferredDistributionAreaAddress2'
+        dbName: 'preferredDistributionAreaAddress2', customInput: i => i.addressInput()
     })
     preferredFinishAddress: string;
     preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);

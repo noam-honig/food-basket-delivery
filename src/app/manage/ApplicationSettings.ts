@@ -193,7 +193,7 @@ export class ApplicationSettings extends EntityBase {
   logoUrl: string;
   @Field()
   addressApiResult: string;
-  @Field({ translation: l => l.deliveryCenterAddress })
+  @Field({ translation: l => l.deliveryCenterAddress, customInput: i => i.addressInput() })
   address: string;
   addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
   @Field({ translation: l => l.successMessageColumnName })
