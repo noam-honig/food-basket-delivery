@@ -597,6 +597,7 @@ export class FamilyDeliveries extends IdEntity {
             addColumn("X" + use.language.houseNumber, house, 's');
             addColumn("X" + f.$.tz.metadata.caption, f.tz, 's');
             addColumn("X" + f.$.tz2.metadata.caption, f.tz2, 's');
+            addColumn("X" + f.$.iDinExcel.metadata.caption, f.iDinExcel, 's');
 
         }
     }
