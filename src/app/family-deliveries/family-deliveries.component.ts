@@ -698,14 +698,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async () => {
           let items = new quantityHelper();
           let parcels = new quantityHelper();
-          let add = (to: totalItem[], key: string, quantity: number) => {
-            key = key.trim();
-            let x = to.find(w => w.name == key);
-            if (x)
-              x.quantity += quantity;
-            else
-              to.push({ name: key, quantity });
-          }
+         
           for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query()) {
             parcels.add(fd.basketType?.name || '', fd.quantity);
             for (let item of fd.deliveryComments.split(',')) {
@@ -716,9 +709,6 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
               else items.add(reg[2], 1);
             }
           }
-
-
-
           const field = new InputField<string>({
             customInput: c => c.textArea(), caption: this.remult.lang.whatToOrder,
             defaultValue: () => items.toString() + "\n---------------\n" + parcels.toString()

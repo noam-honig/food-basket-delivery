@@ -55,8 +55,6 @@ declare type factoryFor<T> = {
   allowApiInsert: Roles.admin,
 
   saving: async (self) => {
-    if (self.disableOnSavingRow)
-      return;
     if (isBackend()) {
       if (!self.quantity || self.quantity < 1)
         self.quantity = 1;
@@ -452,7 +450,6 @@ export class Families extends IdEntity {
     super();
   }
   disableChangeLogging = false;
-  disableOnSavingRow = false;
   _suppressLastUpdateDuringSchemaInit = false;
 
   @Field({

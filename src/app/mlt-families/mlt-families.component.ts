@@ -47,7 +47,8 @@ export class MltFamiliesComponent implements OnInit {
   showFrozen() {
     if (this.thisHelper) {
       let frozenTill = this.thisHelper.frozenTill;
-      this.userFrozenTill = frozenTill.displayValue;
+      if (frozenTill)
+        this.userFrozenTill = frozenTill.displayValue;
       return (frozenTill > this.today);
     }
     return false;
@@ -71,7 +72,7 @@ export class MltFamiliesComponent implements OnInit {
     this.thisHelper = (await this.remult.getCurrentUser());
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.thisHelper);
     this.myPhoneNumber = this.thisHelper.phone;
-    this.userFrozenTill = this.thisHelper.frozenTill.displayValue;
+    this.userFrozenTill = this.thisHelper?.frozenTill?.displayValue;
     this.distCentersButtons = [];
     this.countFamilies();
     this.startPage();
