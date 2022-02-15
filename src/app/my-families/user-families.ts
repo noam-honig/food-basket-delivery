@@ -82,6 +82,7 @@ export class UserFamiliesList {
     showBasketSummary() {
         openDialog(BasketSummaryComponent, x => x.families = this);
     }
+    
     getLeftFamiliesDescription() {
 
 
@@ -173,6 +174,11 @@ export class UserFamiliesList {
                 this.initForFamilies(this.helper, r.families);
             }
         });
+    }
+    labs = Boolean(localStorage.getItem("labs"));
+    toggleLabs() {
+        this.labs = !this.labs;
+        localStorage.setItem("labs", this.labs ? "true" : "");
     }
     whatToTake: string = '';
 

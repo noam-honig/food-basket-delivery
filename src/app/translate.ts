@@ -1219,7 +1219,7 @@ export class Language {
   DoNotWantProblemStatusText = "מלל סטטוס לא מעוניינים";
   OtherProblemStatusText = "מלל סטטוס בעיה אחר";
   updateDefaultDistributionCenter = "עדכן רשימת חלוקה ברירת מחדל";
-  loadImages = "טען תמונות";
+  loadImages = "הצג תמונות";
   dido = 'כנ"ל';
   organisationName = "שם הארגון";
   printStickers = "הדפסת מדבקות";

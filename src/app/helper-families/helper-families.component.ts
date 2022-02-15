@@ -39,6 +39,11 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PromiseThrottle } from '../shared/utils';
 import { DeliveryInList, HelperFamiliesController } from './helper-families.controller';
 import { MltFamiliesController } from '../mlt-families/mlt-families.controller';
+import { MatExpansionPanel } from '@angular/material/expansion';
+import { NgDialogAnimationService } from 'ng-dialog-animation';
+import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component';
+import { assign } from 'remult/assign';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -63,6 +68,53 @@ export class HelperFamiliesComponent implements OnInit {
   }
   trackBy(i: number, f: ActiveFamilyDeliveries) {
     return f.id;
+  }
+
+  deliveryDetails(f: FamilyDeliveries, p: MatExpansionPanel) {
+    if (this.familyLists.labs) {
+      const dialogRef = this.animDialog.open(DeliveryDetailsComponent, {
+        width: '100%',
+        minWidth: '100%',
+        height: '100vh',
+        panelClass: 'no-padding',
+
+        // option1
+        // animation: { to: 'aside' },
+
+        // option2
+        animation: {
+          to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
+          incomingOptions: {
+            keyframeAnimationOptions: { duration: 200 }
+          },
+          outgoingOptions: {
+            keyframeAnimationOptions: { duration: 200 }
+          },
+        },
+        position: { rowEnd: '0' },
+      });
+      assign(dialogRef.componentInstance.famInfo, {
+        f: f,
+        showHelp: true,
+        partOfAssign: this.partOfAssign,
+        userFamilies: this.familyLists,
+      });
+      assign(dialogRef.componentInstance, {
+        deliveredToFamily: () => {
+          this.deliveredToFamilyOk(f, DeliveryStatus.Success, () => this.settings.commentForSuccessDelivery, () => {
+            dialogRef.componentInstance.ref.close();
+          });
+        },
+        updateComment: () =>
+          this.updateComment(f)
+      });
+      const sub = dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() => this.cancelAssign(f));
+      dialogRef.afterClosed().subscribe(x => sub.unsubscribe());
+      dialogRef.componentInstance.famInfo.ngOnInit();
+      if (p)
+        p.close();
+      return false;
+    }
   }
   signs = ["🙂", "👌", "😉", "😍", "🤩", "💖", "👍", "🙏"];
   visibleSigns: string[] = [];
@@ -94,7 +146,8 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
 
-  constructor(public auth: AuthService, private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings) { }
+  constructor(public auth: AuthService, private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings,
+    public animDialog: NgDialogAnimationService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
   @Input() partOfReview = false;
@@ -106,6 +159,12 @@ export class HelperFamiliesComponent implements OnInit {
   currentUser: Helpers;
   async ngOnInit() {
     this.currentUser = await this.remult.getCurrentUser();
+    if (!environment.production)
+      setTimeout(() => {
+        if (this.familyLists.toDeliver.length > 0) {
+          this.deliveryDetails(this.familyLists.toDeliver[0], undefined);
+        }
+      }, 2000);
 
   }
   volunteerLocation: Location = undefined;
@@ -300,7 +359,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.deliveredToFamilyOk(f, DeliveryStatus.SuccessLeftThere, s => s.commentForSuccessLeft);
   }
 
-  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string) {
+  async deliveredToFamilyOk(f: ActiveFamilyDeliveries, status: DeliveryStatus, helpText: (s: ApplicationSettings) => string, callMeOnOk?: VoidFunction) {
 
     openDialog(GetVolunteerFeedback, x => x.args = {
       family: f,
@@ -321,11 +380,14 @@ export class HelperFamiliesComponent implements OnInit {
             this.cool();
             this.dialog.analytics('delivered');
             this.initFamilies();
+
             if (this.familyLists.toDeliver.length == 0) {
               this.dialog.messageDialog(this.allDoneMessage());
             }
             if (this.settings.allowSendSuccessMessageOption && this.settings.sendSuccessMessageToFamily)
               HelperFamiliesController.sendSuccessMessageToFamily(f.id);
+            if (callMeOnOk)
+              callMeOnOk();
 
           }
           catch (err) {

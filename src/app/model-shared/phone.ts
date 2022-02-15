@@ -26,6 +26,9 @@ export class Phone {
   constructor(public thePhone: string) {
 
   }
+  call() {
+    window.location.href = "tel:" + this.thePhone;
+  }
   toString() {
     return this.thePhone;
   }

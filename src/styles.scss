@@ -438,3 +438,17 @@ textarea {
   border-radius: 10px;
   border-color: lightgray;
 }
+.no-padding{
+  .mat-dialog-container{
+    padding:0px;
+
+  }
+}
+.rounded-button{
+  line-height: 30px !important;
+  border-radius: 100px !important;
+  .mat-icon{
+    font-size:small;
+    height:inherit;
+  }
+}

@@ -36,6 +36,10 @@ export class FamilyInfoComponent implements OnInit {
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
   @Input() hideSal = false;
+  @Input() partOfAssign: Boolean;
+  @Output() assignmentCanceled = new EventEmitter<void>();
+  @Input() userFamilies: UserFamiliesList;
+  @Input() selfPickupScreen = false;
   hasImages = false;
   images: ImageInfo[];
   async ngOnInit() {
@@ -55,7 +59,7 @@ export class FamilyInfoComponent implements OnInit {
     this.whatToTake = '';
     if (this.f.basketType) {
       toTake.parseComment(this.f.basketType.whatToTake, this.f.quantity);
-      this.whatToTake = toTake.toString(', ');
+      this.whatToTake = toTake.toString(this.userFamilies?.labs ? undefined : ', ');
     }
   }
 
@@ -77,11 +81,7 @@ export class FamilyInfoComponent implements OnInit {
     return relativeDateName(this.remult, { d: this.f.courierCommentsDate })
   }
 
-  @Input() partOfAssign: Boolean;
-  @Output() assignmentCanceled = new EventEmitter<void>();
 
-  @Input() userFamilies: UserFamiliesList;
-  @Input() selfPickupScreen = false;
   useWaze: boolean;
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
@@ -138,7 +138,7 @@ export class FamilyInfoComponent implements OnInit {
   }
   callPhone(col: Phone) {
 
-    window.location.href = "tel:" + col.thePhone;
+    col?.call();
   }
   async sendWhatsapp(phone: Phone) {
     phone.sendWhatsapp(this.remult, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));

@@ -111,6 +111,8 @@ import { FamilySelfOrderComponent } from './family-self-order/family-self-order.
 import { RegisterToEvent } from './event-info/RegisterToEvent';
 import { PreviousDeliveryCommentsComponent } from './previous-delivery-comments/previous-delivery-comments.component';
 import { AreaDataComponent } from './area-data/area-data.component';
+import { NgDialogAnimationService } from 'ng-dialog-animation';
+import { DeliveryDetailsComponent } from './delivery-details/delivery-details.component';
 
 
 
@@ -214,7 +216,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     IncomingMessagesComponent,
     FamilySelfOrderComponent,
     PreviousDeliveryCommentsComponent,
-    AreaDataComponent
+    AreaDataComponent,
+    DeliveryDetailsComponent
 
 
   ],
@@ -236,7 +239,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 
   ],
   providers: [
-
+    NgDialogAnimationService,
     DialogService,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
 
