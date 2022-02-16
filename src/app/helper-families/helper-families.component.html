@@ -49,7 +49,7 @@
         style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
 
   </div>
-  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab>
+  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab style="margin:0 -16px">
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">toc</mat-icon>
@@ -267,7 +267,7 @@
     </table>
   </div>
 
-  <mat-card *ngIf="familyLists.problem.length>0" class="no-print">
+  <div *ngIf="familyLists.problem.length>0" class="no-print">
     <mat-card-title>{{settings.lang.failedDeliveries}} - {{familyLists.problem.length}}
     </mat-card-title>
     <mat-accordion>
@@ -287,8 +287,8 @@
         </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
-  </mat-card>
-  <mat-card *ngIf="familyLists.delivered.length>0" class="no-print">
+  </div>
+  <div *ngIf="familyLists.delivered.length>0" class="no-print">
     <mat-card-title>
       {{settings.lang.deliveriesDoneInTheLastTwoDays}} - {{familyLists.delivered.length}}
     </mat-card-title>
@@ -312,7 +312,5 @@
     </mat-accordion>
     <button mat-raised-button (click)="limitDelivered.showAll()" *ngIf="limitDelivered.showButton()"
       style="margin-top: 10px;">{{settings.lang.showAllCompletedDeliveries}}</button>
-  </mat-card>
-
-
+  </div>
 </div>
