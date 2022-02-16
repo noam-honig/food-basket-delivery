@@ -10,8 +10,24 @@ background-color: rgb(250, 250, 250);" *ngIf="famInfo.f">
                     </button>
                     <app-dots-menu [buttons]="buttons"></app-dots-menu>
                 </div>
+                <div *ngIf="famInfo.showStatus()" style="padding: 16px;
+                margin: 0 -16px;
+                display: flex;
+    justify-content: space-between;
+    align-items: center;" class="{{famInfo.f.deliverStatus.getCss(famInfo.f.courier)}}">
+                    <strong>{{famInfo.f.deliverStatus.caption}}</strong>
+                    <button mat-stroked-button (click)="returnToDeliver()">ביטול סטטוס</button>
+                </div>
                 <h3 style="margin-bottom:8px">{{famInfo.f.name}}</h3>
-
+                <div *ngIf="famInfo.f.courierComments" class="icon-and-text" (click)="this.updateComment()">
+                    <mat-icon>comment</mat-icon>
+                    <div>
+                        <strong>
+                            {{famInfo.f.courierComments}}
+                        </strong>
+                        ({{famInfo.courierCommentsDateRelativeDate()}})
+                    </div>
+                </div>
                 <ng-container *ngFor="let p of phones">
                     <div class="icon-and-text" *ngIf="p.phone" (click)="p.phone.call()">
                         <mat-icon>phone</mat-icon>
@@ -28,6 +44,12 @@ background-color: rgb(250, 250, 250);" *ngIf="famInfo.f">
                         </strong>
                     </div>
                 </div>
+                <div *ngIf="famInfo.f.courierBeenHereBefore" class="icon-and-text">
+                    <mat-icon>repeat</mat-icon>
+                    <div>
+                        {{settings.lang.repeatFamilyNotice}}
+                    </div>
+                </div>
                 <div class="top-button-bar">
                     <button mat-flat-button color="primary" class="rounded-button"
                         (click)="famInfo.navigate(famInfo.f)">ניווט
@@ -40,11 +62,30 @@ background-color: rgb(250, 250, 250);" *ngIf="famInfo.f">
                     <img src="assets/whatsapp.png" *ngIf="this.whatsAppPhone"
                         (click)="this.famInfo.sendWhatsapp(this.whatsAppPhone)">
                 </div>
+                <div class="top-button-bar">
+                    <button mat-stroked-button color="primary" class="rounded-button" *ngIf="settings.showTzToVolunteer"
+                        (click)="famInfo.showTz()">הצג מספר זהות
+                    </button>
+                    <button mat-stroked-button color="primary" class="rounded-button"
+                        *ngIf="settings.allowVolunteerToSeePreviousActivities"
+                        (click)="famInfo.showHistory()">{{settings.lang.showPreviousActivities}}
+                    </button>
+                </div>
+                <div class="top-button-bar" *ngIf="famInfo.partOfAssign">
+                    <button *ngIf="famInfo.showCancelAssign(famInfo.f)" mat-stroked-button color="accent"
+                        class="rounded-button" (click)="cancelAssignment()">{{settings.lang.cancelAsignment}}
+                        <mat-icon>person_add_disabled</mat-icon>
+                    </button>
+                    <button mat-stroked-button color="primary" class="rounded-button"
+                        (click)="updateInfo()">{{settings.lang.deliveryDetails}}
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
 
             </div>
         </mat-card>
     </div>
-    <div style=" flex-grow:1;padding:8px;    overflow-y: scroll;    ">
+    <div style=" flex-grow:1;padding:8px;    overflow-y: auto;    ">
 
         <h4 style="display:inline">{{settings.lang.basket}}</h4>:
         <span *ngIf="famInfo.f.quantity>1">{{famInfo.f.quantity}} X</span>
@@ -105,7 +146,7 @@ background-color: rgb(250, 250, 250);" *ngIf="famInfo.f">
         <button mat-flat-button color="primary" (click)="deliveredToFamily()">
             {{settings.deliveredButtonText}}
         </button>
-        <button mat-stroked-button color="primary">
+        <button mat-stroked-button color="primary" (click)="couldntDeliverToFamily()">
             {{settings.problemButtonText}}
         </button>
     </div>

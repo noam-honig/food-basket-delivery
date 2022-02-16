@@ -72,27 +72,34 @@ export class HelperFamiliesComponent implements OnInit {
 
   deliveryDetails(f: FamilyDeliveries, p: MatExpansionPanel) {
     if (this.familyLists.labs) {
-      const dialogRef = this.animDialog.open(DeliveryDetailsComponent, {
-        width: '100%',
-        minWidth: '100%',
-        height: '100vh',
-        panelClass: 'no-padding',
+      const dialogRef = this.animDialog.open(DeliveryDetailsComponent,
+        this.dialog.isScreenSmall() ? {
+          width: '100%',
+          minWidth: '100%',
+          height: '100vh',
+          panelClass: 'no-padding',
 
-        // option1
-        // animation: { to: 'aside' },
+          // option1
+          // animation: { to: 'aside' },
 
-        // option2
-        animation: {
-          to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
-          incomingOptions: {
-            keyframeAnimationOptions: { duration: 200 }
+          // option2
+          animation: {
+            to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
+            incomingOptions: {
+              keyframeAnimationOptions: { duration: 200 }
+            },
+            outgoingOptions: {
+              keyframeAnimationOptions: { duration: 200 }
+            },
           },
-          outgoingOptions: {
-            keyframeAnimationOptions: { duration: 200 }
-          },
-        },
-        position: { rowEnd: '0' },
-      });
+          position: { rowEnd: '0' },
+        } : {
+          maxWidth: '400px',
+          height: '90vh',
+          maxHeight: '100vh',
+          panelClass: 'no-padding',
+          
+        });
       assign(dialogRef.componentInstance.famInfo, {
         f: f,
         showHelp: true,
@@ -102,11 +109,19 @@ export class HelperFamiliesComponent implements OnInit {
       assign(dialogRef.componentInstance, {
         deliveredToFamily: () => {
           this.deliveredToFamilyOk(f, DeliveryStatus.Success, () => this.settings.commentForSuccessDelivery, () => {
-            dialogRef.componentInstance.ref.close();
+            dialogRef.close();
           });
         },
         updateComment: () =>
-          this.updateComment(f)
+          this.updateComment(f),
+        couldntDeliverToFamily: () => {
+          this.couldntDeliverToFamily(f, () =>
+            dialogRef.close())
+        },
+        returnToDeliver: () => {
+          this.returnToDeliver(f);
+          dialogRef.close()
+        }
       });
       const sub = dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() => this.cancelAssign(f));
       dialogRef.afterClosed().subscribe(x => sub.unsubscribe());
@@ -261,6 +276,14 @@ export class HelperFamiliesComponent implements OnInit {
   mapTabClicked() {
     if (this.map && this.map != this.prevMap) {
       this.familyLists.setMap(this.map);
+      var x = this.familyLists.userClickedOnFamilyOnMap;
+      this.familyLists.userClickedOnFamilyOnMap = fams => {
+        x(fams);
+        var f = this.familyLists.allFamilies.find(x => fams.includes(x.id));
+        if (f) {
+          this.deliveryDetails(f, undefined);
+        }
+      }
       this.prevMap = this.map;
     }
     if (this.map) {
@@ -410,7 +433,7 @@ export class HelperFamiliesComponent implements OnInit {
   showLeftFamilies() {
     return this.partOfAssign || this.partOfReview || this.familyLists.toDeliver.length > 0;
   }
-  async couldntDeliverToFamily(f: ActiveFamilyDeliveries) {
+  async couldntDeliverToFamily(f: ActiveFamilyDeliveries, onOk?: VoidFunction) {
     let showUpdateFail = false;
     let q = this.settings.getQuestions();
     if (!q || q.length == 0) {
@@ -436,6 +459,8 @@ export class HelperFamiliesComponent implements OnInit {
             await f.save();
             this.dialog.analytics('Problem');
             this.initFamilies();
+            if (onOk)
+              onOk();
 
 
           }

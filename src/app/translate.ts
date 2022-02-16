@@ -395,7 +395,7 @@ export class Language {
   packageWasPickedUp = 'אספו את החבילה';
   cancelAsignment = 'בטל שיוך';
   deliveryDetails = 'פרטי משלוח';
-  repeatFamilyNotice = 'הייתם אצל המשפחה הזו גם פעם קודמת';
+  repeatFamilyNotice = 'הייתם אצל המשפחה הזו בעבר';
   inacurateAddress = 'שימו לב, כתובת לא מדוייקת!';
   copyAddress = 'העתק כתובת';
   SelfPickupComponent = 'באים לקחת';

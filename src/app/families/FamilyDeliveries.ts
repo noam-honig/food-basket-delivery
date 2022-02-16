@@ -746,7 +746,7 @@ export class FamilyDeliveries extends IdEntity {
             let f = await this.remult.repo(Families).findId(this.family);
             if (f) {
 
-                callerHelper.ui.updateFamilyDialog({
+                await callerHelper.ui.updateFamilyDialog({
                     familyDelivery: this,
                     focusOnAddress: callerHelper.focusOnAddress,
                     onSave: async () => {

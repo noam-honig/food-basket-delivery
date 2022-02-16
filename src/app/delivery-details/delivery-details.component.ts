@@ -20,9 +20,25 @@ export class DeliveryDetailsComponent implements OnInit {
   buttons: RowButton<any>[] = [
     {
       name: this.settings.lang.updateComment,
-      
+      icon: 'comment',
       click: () => this.updateComment()
+    },
+    {
+      name: this.settings.lang.navigateWithWaze,
+      click: () => this.famInfo.navigate(this.famInfo.f, true),
+      icon: 'assets/waze.png'
+    },
+    {
+      name: this.settings.lang.navigateWithGoogleMaps,
+      click: () => this.famInfo.navigate(this.famInfo.f, false),
+      icon: "location_on"
+    },
+    {
+      name: this.settings.lang.copyAddress,
+      click: () => this.famInfo.copyAddress(this.famInfo.f),
+      icon: "content_copy"
     }
+
   ];
   phones: { phone: Phone, desc: string }[];
   ngOnInit(): void {
@@ -46,6 +62,19 @@ export class DeliveryDetailsComponent implements OnInit {
   whatsAppPhone: Phone;
   deliveredToFamily: () => void;
   updateComment: () => void;
+  couldntDeliverToFamily: VoidFunction;
+  returnToDeliver: VoidFunction;
+  async updateInfo() {
+    const x = this.famInfo.f.courier;
+    await this.famInfo.udpateInfo(this.famInfo.f);
+    if (x != this.famInfo.f.courier) {
+      this.ref.close()
+    }
+  }
+  async cancelAssignment() {
+    await this.famInfo.cancelAssign(this.famInfo.f)
+    this.ref.close();
+  }
 
 }
 /*
@@ -53,22 +82,24 @@ export class DeliveryDetailsComponent implements OnInit {
 [V] make each phone clickable
 [V] make dial only display if dialable
 [V] make whatsapp only display if whatsappable
-[] add handle problem.
-[] add update comment
-[] add user comment
-[] add you've been here before
-[] add cancel button
-[] add update info button[]
-[] add copy address
-[] add support for private call
-[] add management buttons (cancel, and details)
-[] add select waze or google
-[] add previous activities and show tz
-[] add display status and click to cancel status
-[] add click on map
-
+[V] add handle problem.
+[V] add update comment
+[V] add user comment
+[V] add you've been here before
+[V] add cancel button
+[V] add update info button
+[V] add management buttons (cancel, and details)
+[V] add copy address
+[V] add select waze or google
+[V] add previous activities and show tz
+[V] add display status and click to cancel status
+[V] add click on map
+[V] change volunteer in update delivery should close 
+[] handle display when not full screen
 V2
 [] add left near home to delivered screen
 [] internationalize
 [] fix dialog bug when openning again and again
+[] handle family picked up
+[] add support for private call
 */

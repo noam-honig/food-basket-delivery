@@ -271,7 +271,7 @@
     <mat-card-title>{{settings.lang.failedDeliveries}} - {{familyLists.problem.length}}
     </mat-card-title>
     <mat-accordion>
-      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem">
+      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem" (click)="deliveryDetails(f,myPanel)">
         <mat-expansion-panel-header>
           <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
         </mat-expansion-panel-header>
@@ -294,7 +294,7 @@
     </mat-card-title>
     <mat-accordion>
       <ng-container *ngFor="let f of familyLists.delivered;let i=index">
-        <mat-expansion-panel #myPanel *ngIf="limitDelivered.shouldShow(i)">
+        <mat-expansion-panel #myPanel *ngIf="limitDelivered.shouldShow(i)" (click)="deliveryDetails(f,myPanel)">
           <mat-expansion-panel-header>
             <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
           </mat-expansion-panel-header>

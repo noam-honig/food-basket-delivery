@@ -131,19 +131,19 @@ export class DialogService implements UITools {
             (await import('../helper-assignment/helper-assignment.component')).HelperAssignmentComponent, s => s.argsHelper = helper);
     }
     async updateFamilyDialog(args: UpdateFamilyDialogArgs): Promise<void> {
-        openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = args);
+        await openDialog((await import("../update-family-dialog/update-family-dialog.component")).UpdateFamilyDialogComponent, x => x.args = args);
     }
     async gridDialog(args: GridDialogArgs): Promise<void> {
-        openDialog((await import('../grid-dialog/grid-dialog.component')).GridDialogComponent, x => x.args = args);
+        await openDialog((await import('../grid-dialog/grid-dialog.component')).GridDialogComponent, x => x.args = args);
     }
     async inputAreaDialog(args: InputAreaArgs): Promise<void> {
-        openDialog((await import('../select-popup/input-area/input-area.component')).InputAreaComponent, x => x.args = args)
+        await openDialog((await import('../select-popup/input-area/input-area.component')).InputAreaComponent, x => x.args = args)
     }
     async selectHelper(args: SelectHelperArgs): Promise<void> {
-        openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent, x => x.args = args);
+        await openDialog((await import('../select-helper/select-helper.component')).SelectHelperComponent, x => x.args = args);
     }
     async selectValuesDialog<T extends { caption?: string; }>(args: { values: T[]; onSelect: (selected: T) => void; title?: string; }): Promise<void> {
-        openDialog(SelectValueDialogComponent, x => x.args(args))
+        await openDialog(SelectValueDialogComponent, x => x.args(args))
     }
     async doWhileShowingBusy<T>(what: () => Promise<T>): Promise<T> {
         return this.busy.doWhileShowingBusy(what);
