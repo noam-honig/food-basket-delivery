@@ -33,14 +33,14 @@
 
     <mat-card *ngIf="settings.showDistCenterAsEndAddressForVolunteer&&familyLists.distCenter">
         <mat-card-title>{{settings.lang.pickupLocation}}: {{familyLists.distCenter.name}}</mat-card-title>
-        <div class="phone-container" *ngIf="  familyLists.distCenter.addressHelper.ok">
-            <span (click)="familyLists.distCenter.addressHelper.openWaze()">
+        <div class="phone-container">
+            <span (click)="addressHelper().openWaze()">
                 <img src="assets/waze.png">
 
             </span>
             <div>
-                <a (click)="familyLists.distCenter.addressHelper.openWaze()">
-                    <span style="display:block"> {{familyLists.distCenter.address}} </span>
+                <a (click)="addressHelper().openWaze()">
+                    <span style="display:block"> {{addressHelper().getAddress}} </span>
                 </a>
             </div>
         </div>

@@ -173,7 +173,7 @@ export class HelperFamiliesComponent implements OnInit {
   currentUser: Helpers;
   async ngOnInit() {
     this.currentUser = await this.remult.getCurrentUser();
-    if (!environment.production)
+    if (!environment.production && false)
       setTimeout(() => {
         if (this.familyLists.toDeliver.length > 0) {
           this.deliveryDetails(this.familyLists.toDeliver[0], undefined);

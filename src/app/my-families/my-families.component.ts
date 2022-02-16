@@ -38,6 +38,11 @@ export class MyFamiliesComponent implements OnInit {
   moveToOpertunities() {
     this.helper.navigateToComponent(OrgEventsComponent);
   }
+  addressHelper() {
+    if (this.familyLists.distCenter.address)
+      return this.familyLists.distCenter.addressHelper;
+    return this.settings.addressHelper
+  }
   async ngOnInit() {
 
     let done = ''
