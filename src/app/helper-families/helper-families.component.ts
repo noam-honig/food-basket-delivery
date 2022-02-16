@@ -95,6 +95,7 @@ export class HelperFamiliesComponent implements OnInit {
           position: { rowEnd: '0' },
         } : {
           maxWidth: '400px',
+          width: '400px',
           height: '90vh',
           maxHeight: '100vh',
           panelClass: 'no-padding',
