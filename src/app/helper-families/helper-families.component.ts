@@ -98,7 +98,7 @@ export class HelperFamiliesComponent implements OnInit {
           height: '90vh',
           maxHeight: '100vh',
           panelClass: 'no-padding',
-          
+
         });
       assign(dialogRef.componentInstance.famInfo, {
         f: f,
@@ -120,7 +120,6 @@ export class HelperFamiliesComponent implements OnInit {
         },
         returnToDeliver: () => {
           this.returnToDeliver(f);
-          dialogRef.close()
         }
       });
       const sub = dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() => this.cancelAssign(f));

@@ -142,7 +142,7 @@ background-color: rgb(250, 250, 250);" *ngIf="famInfo.f">
     <div style="    display: flex;
     gap: 8px;
     padding: 8px;
-    justify-content: space-between;">
+    justify-content: space-between;" *ngIf="!famInfo.showStatus()">
         <button mat-flat-button color="primary" (click)="deliveredToFamily()">
             {{settings.deliveredButtonText}}
         </button>
