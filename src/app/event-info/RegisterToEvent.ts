@@ -108,11 +108,12 @@ export class RegisterToEvent {
     socialSecurityNumber: string = '';
     @Field()
     email: Email = new Email('');
-    @Field({ translation: l => l.preferredDistributionArea })
+    @Field({ translation: l => l.preferredDistributionArea, customInput: c => c.addressInput() })
     preferredDistributionAreaAddress: string = '';
     @Field({
 
         dbName: 'preferredDistributionAreaAddress2'
+        , customInput: c => c.addressInput()
     })
     preferredFinishAddress: string = '';
 
