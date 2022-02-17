@@ -78,6 +78,7 @@ import { DialogController } from "../select-popup/dialog.controller";
 import { ServerEventAuthorizeAction } from "./server-event-authorize-action";
 import { ShipmentAssignScreenController } from "../shipment-assign-screen/shipment-assign-screen.controller";
 import { PrintVolunteersController } from "../print-volunteers/print-volunteers.controller";
+import { PromiseThrottle } from "../shared/utils";
 const entities = [
     HelpersAndStats,
     Event,
@@ -482,6 +483,8 @@ s.parentNode.insertBefore(b, s);})();
 
     //fs.writeFileSync('/temp/api.json', JSON.stringify(eb.openApiDoc({ title: '' }), undefined, 4));
 
+    await downloadPaperTrailLogs();
+
     let port = process.env.PORT || 3000;
     app.listen(port);
 });
@@ -494,6 +497,44 @@ export interface monitorResult {
     deliveries: number;
     onTheWay: number;
     helpers: number;
+}
+
+async function downloadPaperTrailLogs() {
+    try {
+        var myHeaders = new fetch.Headers();
+        myHeaders.append("X-Papertrail-Token", process.env.PaperTrailToken);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders
+        };
+
+        var t = new PromiseThrottle(50);
+        for (let day = 1; day < 28; day++) {
+
+            for (let hour = 0; hour < 24; hour++) {
+                const theTime = '2022-02-' + day.toString().padStart(2, '0') + '-' + hour.toString().padStart(2, '0');
+                const file = 'c:\\fbd\\temp\\' + theTime + '.tsv.gz';
+                if (!fs.existsSync(file)) {
+                    console.log('fetch', theTime);
+                    await t.push(fetch.default("https://papertrailapp.com/api/v1/archives/" + theTime + "/download", requestOptions)
+                        .then(async (response) => fs.writeFileSync(file, await response.buffer()))
+                        .then(result => console.log("done", theTime))
+                        .catch(error => console.log('error ' + theTime, error)));
+                    await new Promise((res) => setTimeout(() => {
+                        res({});
+                    }, 350));
+                }
+                else
+                    console.log(theTime, "exists");
+            }
+        }
+        await t.done();
+        console.log("DONE ");
+    }
+    catch (err) {
+        console.error(err);
+    }
 }
 
 function registerImageUrls(app, getContext: (req: express.Request) => Promise<Remult>, sitePrefix: string) {
@@ -544,5 +585,6 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
             res.send(err);
         }
     });
+
 }
 
