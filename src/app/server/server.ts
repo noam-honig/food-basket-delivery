@@ -328,7 +328,14 @@ s.parentNode.insertBefore(b, s);})();
                 remult.getOrigin = () => req.headers['origin'] as string;
                 await InitContext(remult, undefined)
             },
-
+            initApi: async (remult) => {
+                remult.getSite = () => 'test1';
+                remult.setDataProvider(dataSource(remult));
+                console.log({
+                    fi: await remult.repo(FamilyImage).count(),
+                    fdi: await remult.repo(DeliveryImage).count()
+                });
+            },
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
@@ -476,14 +483,9 @@ s.parentNode.insertBefore(b, s);})();
     app.use('/*', async (req, res) => {
         await sendIndex(res, req);
     });
-    // var api = JSON.parse(fs.readFileSync('/temp/api-orig.json').toString());
-    // fs.writeFileSync('/temp/origApiList.json', JSON.stringify(Object.keys(api.paths).sort((a, b) => a.localeCompare(b)), undefined, 4));
-    // var api = eb.openApiDoc({ title: '' });
-    // fs.writeFileSync('/temp/newApiList.json', JSON.stringify(Object.keys(api.paths).sort((a, b) => a.localeCompare(b)), undefined, 4));
 
-    //fs.writeFileSync('/temp/api.json', JSON.stringify(eb.openApiDoc({ title: '' }), undefined, 4));
+    //await downloadPaperTrailLogs();
 
-    await downloadPaperTrailLogs();
 
     let port = process.env.PORT || 3000;
     app.listen(port);
