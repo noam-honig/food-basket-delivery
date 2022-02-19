@@ -329,12 +329,7 @@ s.parentNode.insertBefore(b, s);})();
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
-                remult.getSite = () => 'test1';
-                remult.setDataProvider(dataSource(remult));
-                console.log({
-                    fi: await remult.repo(FamilyImage).count(),
-                    fdi: await remult.repo(DeliveryImage).count()
-                });
+            
             },
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
