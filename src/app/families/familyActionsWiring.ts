@@ -37,7 +37,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         if (!args.confirmQuestion)
             args.confirmQuestion = () => args.title;
         if (args.allowed === undefined)
-            args.allowed = Roles.admin;
+            args.allowed = Roles.familyAdmin;
 
         if (!args.onEnd) {
             args.onEnd = async () => { };

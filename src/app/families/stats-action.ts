@@ -45,7 +45,7 @@ export class Stats {
         }
         return r;
     }
-    @BackendMethod({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.familyAdmin })
     static async getFamilyStats(distCenter: string, remult?: Remult) {
         let result = { data: {}, groups: [] as groupStats[] };
         let stats = new Stats(remult);

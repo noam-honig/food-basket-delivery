@@ -1291,6 +1291,7 @@ export class Language {
   navigateWithWaze = "נווט עם WAZE";
   border = 'מסגרת';
   asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
+  familyAdmin = "מנהל משפחות";
 }
 
 const defaultLang = new Language();

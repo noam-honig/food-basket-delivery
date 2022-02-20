@@ -424,6 +424,11 @@ export class Helpers extends HelpersBase {
                 field: self.distCenterAdmin, width: '160'
             });
         }
+        if (remult.isAllowed(Roles.familyAdmin)) {
+            r.push({
+                field: self.familyAdmin, width: '160'
+            });
+        }
         let hadCenter = false;
         if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt) {
             r.push({
@@ -734,6 +739,25 @@ export class Helpers extends HelpersBase {
         }
     })
     distCenterAdmin: boolean;
+    @Field<Helpers>({
+        allowApiUpdate: Roles.familyAdmin,
+        includeInApi: Roles.familyAdmin,
+
+        validate: (self) => {
+            if (self.remult.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
+                return;
+            }
+            if (self.$.distCenterAdmin || self.$.familyAdmin)
+                if (self.$.admin.originalValue) {
+                    self.$.distCenterAdmin.error = use.language.notAllowedToUpdateVolunteer;
+                }
+                else if (self.distributionCenter && !self.distributionCenter.matchesCurrentUser()) {
+                    self.$.distributionCenter.error = use.language.notAllowedToUpdateVolunteer;
+                }
+
+        }
+    })
+    familyAdmin: boolean;
 
     static deliveredPreviously = Filter.createCustom<Helpers,
         { city: string }>(((remult, { city }) => {

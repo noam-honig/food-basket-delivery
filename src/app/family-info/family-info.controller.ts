@@ -1,6 +1,6 @@
 
 import { extractError } from "../select-popup/extractError";
-import { Remult, BackendMethod, Allow } from 'remult';
+import { Remult, BackendMethod, Allow, SqlDatabase } from 'remult';
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -65,6 +65,7 @@ export class FamilyInfoController {
             return;
         if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return "";
+            SqlDatabase.LogToConsole = true;
         var f = await remult.repo(Families).findId(d.family);
         if (!f)
             return "";
@@ -72,3 +73,9 @@ export class FamilyInfoController {
 
     }
 }
+
+/*
+1.	Make sure volunteer admin can’t change dist center.
+2.	Verify that family image is restricted to current dist list
+3.	Make sure that show tz works for volunteer.
+*/

@@ -174,9 +174,14 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
         else {
             result.roles.push(Roles.admin);
             result.roles.push(Roles.distCenterAdmin);
+            result.roles.push(Roles.familyAdmin);
         }
     }
     if (h.distCenterAdmin) {
+        result.roles.push(Roles.distCenterAdmin);
+    }
+    if (h.familyAdmin) {
+        result.roles.push(Roles.familyAdmin);
         result.roles.push(Roles.distCenterAdmin);
     }
     if ((await remult.getSettings()).isSytemForMlt) {

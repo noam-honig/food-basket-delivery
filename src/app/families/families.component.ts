@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {  EntityFilter } from 'remult';
+import { EntityFilter } from 'remult';
 
-import { Families,  sendWhatsappToFamily, canSendWhatsapp } from './families';
+import { Families, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
 import { YesNo } from "./YesNo";
 
@@ -22,7 +22,7 @@ import { Route } from '@angular/router';
 import { Remult } from 'remult';
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { AdminGuard } from '../auth/guards';
+import { AdminGuard, FamilyAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { MatTabGroup } from '@angular/material/tabs';
 
@@ -728,7 +728,7 @@ export class FamiliesComponent implements OnInit {
     static route: Route = {
         path: 'families',
         component: FamiliesComponent,
-        canActivate: [AdminGuard]
+        canActivate: [FamilyAdminGuard]
     }
 
 }

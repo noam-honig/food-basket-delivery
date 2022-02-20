@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields } from 'remult';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter } from 'remult';
 
 import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 
@@ -49,10 +49,10 @@ declare type factoryFor<T> = {
 
 @Entity<Families>("Families", {
   translation: l => l.families,
-  allowApiRead: Roles.admin,
-  allowApiUpdate: Roles.admin,
+  allowApiRead: Roles.familyAdmin,
+  allowApiUpdate: Roles.familyAdmin,
   allowApiDelete: false,
-  allowApiInsert: Roles.admin,
+  allowApiInsert: Roles.familyAdmin,
 
   saving: async (self) => {
     if (isBackend()) {
@@ -134,13 +134,11 @@ declare type factoryFor<T> = {
   }
 },
   (options, remult) =>
-    options.apiPrefilter = (self) => {
-      if (!remult.isAllowed(Roles.admin)) {
-        if (remult.isAllowed(Roles.admin))
-          return undefined;
-        return self.id.isEqualTo('no rows');
-      }
-    },
+    options.backendPrefilter = (self: Families) => {
+      if (remult.isAllowed(Roles.admin))
+        return undefined;
+      return Families.isAllowedForUser();
+    }
 )
 export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
@@ -994,6 +992,16 @@ export class Families extends IdEntity {
     return result;
 
   }
+  static isAllowedForUser = Filter.createCustom<Families>(async (remult) => {
+
+    if (!remult.authenticated())
+      return { id: [] };
+    let result: EntityFilter<Families>[] = [];
+    if (!remult.isAllowed([Roles.admin])) {
+      result.push({ defaultDistributionCenter: remult.filterCenterAllowedForUser() });
+    }
+    return { $and: result };
+  });
 }
 
 

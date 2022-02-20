@@ -12,6 +12,14 @@ export class AdminGuard extends AuthenticatedGuard {
         return Roles.admin;
     }
 }
+
+@Injectable()
+export class FamilyAdminGuard extends AuthenticatedGuard {
+
+    isAllowed() {
+        return Roles.familyAdmin;
+    }
+}
 @Injectable()
 export class distCenterAdminGuard extends AuthenticatedGuard {
 

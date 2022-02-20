@@ -25,7 +25,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, SignedInAndNotOverviewGuard, EventListGuard } from './auth/guards';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, SignedInAndNotOverviewGuard, EventListGuard, FamilyAdminGuard } from './auth/guards';
 import { Roles } from './auth/roles';
 import { AuthenticatedGuard } from '@remult/angular';
 import { Remult } from 'remult';
@@ -164,7 +164,7 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,FamilyAdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
     MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard]
 
 })
