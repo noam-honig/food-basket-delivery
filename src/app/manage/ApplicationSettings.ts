@@ -134,7 +134,7 @@ export class ApplicationSettings extends EntityBase {
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
-    let family = await remult.repo(Families).findId(d.family);
+    let family = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family, remult);
     let r: phoneOption[] = [];
     let settings = await ApplicationSettings.getAsync(remult);
     for (const x of settings.getPhoneStrategy()) {

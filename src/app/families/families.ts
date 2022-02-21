@@ -1002,6 +1002,11 @@ export class Families extends IdEntity {
     }
     return { $and: result };
   });
+  static getSpecificFamilyWithoutUserRestrictionsBackendOnly(id: string, remult: Remult) {
+    if (!isBackend())
+      throw "forbidden";
+    return remult.repo(FamiliesWithoutUserRestrictions).findId(id);
+  }
 }
 
 
@@ -1220,4 +1225,12 @@ async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult
 class dateInput {
   @DateOnlyField()
   date: Date = new Date();
+}
+@Entity(undefined, {
+  allowApiRead: false,
+  backendPrefilter: () => undefined,
+  dbName: 'families'
+})
+class FamiliesWithoutUserRestrictions extends Families {
+
 }

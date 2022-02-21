@@ -27,7 +27,7 @@ export class DeliveryImage extends IdEntity {
 
 }
 @Entity('family_images', {
-    allowApiCrud: Roles.familyAdmin
+    allowApiCrud: Roles.familyAdmin,
 })
 export class FamilyImage extends IdEntity {
     @Field()
