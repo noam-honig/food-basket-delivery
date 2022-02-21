@@ -332,24 +332,24 @@ s.parentNode.insertBefore(b, s);})();
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
-                remult.getSite = () => "test1";
-                remult.setDataProvider(dataSource(remult));
-                await InitContext(remult, undefined);
-                var h = await remult.repo(Helpers).findFirst();
-                remult.setUser({
-                    distributionCenter: "dist",
-                    escortedHelperName: "",
-                    id: h.id,
-                    name: "Asdf",
-                    roles: [Roles.admin],
-                    theHelperIAmEscortingId: ""
-                });
+                // remult.getSite = () => "test1";
+                // remult.setDataProvider(dataSource(remult));
+                // await InitContext(remult, undefined);
+                // var h = await remult.repo(Helpers).findFirst();
+                // remult.setUser({
+                //     distributionCenter: "dist",
+                //     escortedHelperName: "",
+                //     id: h.id,
+                //     name: "Asdf",
+                //     roles: [Roles.admin],
+                //     theHelperIAmEscortingId: ""
+                // });
 
-                console.table(await remult.repo(ChangeLog).find({
-                    where: {
-                        changedFields: { $contains: JSON.stringify('name') }
-                    }
-                }));
+                // console.table(await remult.repo(ChangeLog).find({
+                //     where: {
+                //         changedFields: { $contains: JSON.stringify('name') }
+                //     }
+                // }));
 
             },
             disableAutoApi: Sites.multipleSites,
