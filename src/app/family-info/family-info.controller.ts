@@ -65,7 +65,7 @@ export class FamilyInfoController {
             return;
         if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return "";
-        SqlDatabase.LogToConsole = true;
+        
         var f = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family, remult);
         if (!f)
             return "";

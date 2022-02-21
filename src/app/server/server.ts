@@ -7,7 +7,7 @@ import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
 import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
-import { OmitEB, Remult } from 'remult';
+import { Filter, OmitEB, Remult, SqlDatabase } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeocodeCache, GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -79,6 +79,8 @@ import { ServerEventAuthorizeAction } from "./server-event-authorize-action";
 import { ShipmentAssignScreenController } from "../shipment-assign-screen/shipment-assign-screen.controller";
 import { PrintVolunteersController } from "../print-volunteers/print-volunteers.controller";
 import { PromiseThrottle } from "../shared/utils";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { Roles } from "../auth/roles";
 const entities = [
     HelpersAndStats,
     Event,
@@ -329,7 +331,25 @@ s.parentNode.insertBefore(b, s);})();
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
-            
+                // remult.getSite = () => "test1";
+                // remult.setDataProvider(dataSource(remult));
+                // await InitContext(remult, undefined);
+                // var h = await remult.repo(Helpers).findFirst();
+                // remult.setUser({
+                //     distributionCenter: "dist",
+                //     escortedHelperName: "",
+                //     id: h.id,
+                //     name: "Asdf",
+                //     roles: [Roles.admin],
+                //     theHelperIAmEscortingId: ""
+                // });
+
+
+                // SqlDatabase.LogToConsole = true;
+                // const repo = remult.repo(FamilyImage);
+                // await repo.find({ where:await Filter.resolve<FamilyImage>( repo.metadata.options.apiPrefilter) });
+                // SqlDatabase.LogToConsole = false;
+
             },
             disableAutoApi: Sites.multipleSites,
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))

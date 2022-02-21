@@ -1,6 +1,8 @@
-import { Allow, Remult, Entity, Field, IdEntity } from "remult";
+import { Allow, Remult, Entity, Field, IdEntity, SqlDatabase } from "remult";
 import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { Families } from "./families";
 
 
 @Entity<DeliveryImage>('delivery_images', {
@@ -28,6 +30,16 @@ export class DeliveryImage extends IdEntity {
 }
 @Entity('family_images', {
     allowApiCrud: Roles.familyAdmin,
+
+}, (options, remult) => options.apiPrefilter = () => {
+    if (!remult.isAllowed(Roles.admin)) {
+        return SqlDatabase.customFilter(async b => {
+            var f = await SqlFor(remult.repo(Families));
+            var fi = await SqlFor(remult.repo(FamilyImage));
+            var sql = new SqlBuilder(remult);
+            b.sql = await sql.build(fi.familyId, sql.func(" in ", sql.build("select ", f.id, " from ", f, " where ", f.defaultDistributionCenter, "=", sql.str(remult.user.distributionCenter))));
+        })
+    }
 })
 export class FamilyImage extends IdEntity {
     @Field()
