@@ -136,7 +136,7 @@ export class AuthServiceController {
         await h.save();
         return { authToken: await buildToken(result, settings) };
     }
-    @BackendMethod({ allowed: Allow.authenticated })
+    @BackendMethod({ allowed: Allow.authenticated, blockUser: false })
     static async renewToken(remult?: Remult) {
         if (!remult.authenticated())
             return undefined;
@@ -144,7 +144,7 @@ export class AuthServiceController {
         if (!h)
             return undefined;
         let newInfo = await buildHelperUserInfo(h, remult);
-        newInfo.roles = newInfo.roles.filter(x => remult.user.roles.includes(x));
+
 
         return buildToken(newInfo, (await remult.getSettings()));
 

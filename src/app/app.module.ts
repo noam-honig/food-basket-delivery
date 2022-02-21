@@ -113,6 +113,7 @@ import { PreviousDeliveryCommentsComponent } from './previous-delivery-comments/
 import { AreaDataComponent } from './area-data/area-data.component';
 import { NgDialogAnimationService } from 'ng-dialog-animation';
 import { DeliveryDetailsComponent } from './delivery-details/delivery-details.component';
+import { ChangeLogComponent } from './change-log/change-log.component';
 
 
 
@@ -217,7 +218,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     FamilySelfOrderComponent,
     PreviousDeliveryCommentsComponent,
     AreaDataComponent,
-    DeliveryDetailsComponent
+    DeliveryDetailsComponent,
+    ChangeLogComponent
 
 
   ],

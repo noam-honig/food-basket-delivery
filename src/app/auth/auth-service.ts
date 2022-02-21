@@ -41,6 +41,7 @@ export class TokenService {
         let user: UserInfo = undefined;
         if (token) {
             user = await AuthService.decodeJwt(token);
+
             await InitContext(this.remult, user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
@@ -52,10 +53,17 @@ export class TokenService {
             localStorage.removeItem(this.keyInStorage);
         }
 
-
-        await this.remult.setUser(user);
+        if (toCompare(user) != toCompare(this.remult.user))
+            await this.remult.setUser(user);
 
     }
+}
+function toCompare(r: UserInfo) {
+    if (!r)
+        return '';
+    return JSON.stringify([r.roles, r.name, r.distributionCenter])
+
+
 }
 
 @Injectable()
@@ -195,24 +203,25 @@ export class AuthService {
             this.userActivity = setTimeout(() => this.userInactive.next(undefined), this.settings.timeToDisconnect * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS);
     }
     async serverTokenRenewal() {
-        if (this.settings.timeToDisconnect > 0) {
-            if (this.remult.authenticated())
-                try {
-                    let r = await AuthServiceController.renewToken();
-                    if (!r)
-                        this.signout();
-                    else
-                        await this.tokenService.setToken(r, this.remember);
-
-                }
-                catch {
+        let renewPeriod = this.settings.timeToDisconnect;
+        if (renewPeriod == 0)
+            renewPeriod = 5;
+        if (this.remult.authenticated())
+            try {
+                let r = await AuthServiceController.renewToken();
+                if (!r)
                     this.signout();
-                }
-            setTimeout(async () => {
+                else
+                    await this.tokenService.setToken(r, this.remember);
 
-                this.serverTokenRenewal();
-            }, this.settings.timeToDisconnect * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
-        }
+            }
+            catch {
+                this.signout();
+            }
+        setTimeout(async () => {
+
+            this.serverTokenRenewal();
+        }, renewPeriod * 1000 * TIMEOUT_MULTIPLIER_IN_SECONDS)
     }
 
 

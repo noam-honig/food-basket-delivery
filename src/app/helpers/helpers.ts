@@ -311,7 +311,7 @@ export abstract class HelpersBase extends IdEntity {
                     self.$.passwordChangeDate
                 ],
                 excludeValues: [self.$.realStoredPassword]
-            })
+            });
         }
 
 

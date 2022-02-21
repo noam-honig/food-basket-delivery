@@ -27,6 +27,7 @@ import { getLang } from "../sites/sites";
 import { GroupsValue } from "../manage/groups";
 import { DateOnlyValueConverter } from "remult/valueConverters";
 import { evil, UITools } from "../helpers/init-context";
+import { recordChanges } from "../change-log/change-log";
 
 
 
@@ -113,7 +114,6 @@ declare type factoryFor<T> = {
           await fd.save();
         }
       }
-
     }
     else if (!isBackend()) {
       let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
@@ -131,6 +131,7 @@ declare type factoryFor<T> = {
         }
       }
     }
+    recordChanges(self.remult, self)
   }
 },
   (options, remult) =>
