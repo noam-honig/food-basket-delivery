@@ -1292,6 +1292,7 @@ export class Language {
   border = 'מסגרת';
   asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
   familyAdmin = "מנהל משפחות";
+  changeLog = "לוג שינויים";
 }
 
 const defaultLang = new Language();

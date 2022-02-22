@@ -20,6 +20,7 @@ import { getLang } from '../sites/sites';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { SendBulkSms } from './send-bulk-sms';
 import { HelpersController } from './helpers.controller';
+import { ChangeLogComponent } from '../change-log/change-log.component';
 
 @Component({
   selector: 'app-helpers',
@@ -237,7 +238,11 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await h.showDeliveryHistory(this.dialog);
         }
       },
-      new SendBulkSms(this.remult).sendSingleHelperButton(this.dialog)
+      new SendBulkSms(this.remult).sendSingleHelperButton(this.dialog), {
+        name: use.language.changeLog,
+        visible: h => this.remult.isAllowed(Roles.admin),
+        click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
+      }
     ],
 
 

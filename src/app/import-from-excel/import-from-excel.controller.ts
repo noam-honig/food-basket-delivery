@@ -20,7 +20,7 @@ import { PromiseThrottle } from '../shared/utils';
 
 
 export class ImportFromExcelController {
-    @BackendMethod({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.familyAdmin })
     static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, remult?: Remult) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
@@ -54,7 +54,7 @@ export class ImportFromExcelController {
 
 
     }
-    @BackendMethod({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.familyAdmin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, remult?: Remult) {
         for (const r of rowsToUpdate) {
             await ImportFromExcelController.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.getSettings()));
@@ -114,7 +114,7 @@ export class ImportFromExcelController {
         }
         return r;
     }
-    @BackendMethod({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.familyAdmin })
     static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, remult?: Remult, db?: SqlDatabase) {
         let result: serverCheckResults = {
             errorRows: [],

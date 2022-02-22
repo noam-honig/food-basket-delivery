@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityMetadata, IdEntity, Remult } from 'remult';
+import { EntityBase, EntityMetadata, IdEntity, Remult } from 'remult';
 import { ChangeLog } from './change-log';
 
 @Component({
@@ -14,7 +14,7 @@ export class ChangeLogComponent implements OnInit {
 
   }
   args!: {
-    for: IdEntity
+    for: EntityBase
   }
 
 
@@ -22,7 +22,7 @@ export class ChangeLogComponent implements OnInit {
   meta!: EntityMetadata;
   async ngOnInit() {
     this.meta = this.args.for._.metadata;
-    this.changes = await this.remult.repo(ChangeLog).find({ where: { relatedId: this.args.for.id } });
+    this.changes = await this.remult.repo(ChangeLog).find({ where: { relatedId: this.args.for._.getId() } });
     console.log(this.changes);
   }
 

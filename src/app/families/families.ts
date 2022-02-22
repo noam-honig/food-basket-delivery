@@ -69,6 +69,9 @@ declare type factoryFor<T> = {
       }
       if (!self.defaultDistributionCenter)
         self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location);
+      if (!self.remult.isAllowed(Roles.admin)) {
+        self.defaultDistributionCenter = await self.remult.getUserDistributionCenter()
+      }
       let currentUser = (await self.remult.getCurrentUser());
       if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
         self.routeOrder = 0;
@@ -916,7 +919,7 @@ export class Families extends IdEntity {
 
 
   }
-  @BackendMethod({ allowed: Roles.admin, blockUser: false })
+  @BackendMethod({ allowed: Roles.familyAdmin, blockUser: false })
   static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, remult?: Remult, db?: SqlDatabase) {
     let result: duplicateFamilyInfo[] = [];
 

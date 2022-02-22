@@ -28,7 +28,7 @@
             </div>
             <div>
                 <button mat-raised-button color="primary" (click)="quickAdd()"
-                    *ngIf="isAdmin">{{settings.lang.newFamily}}</button>
+                    *ngIf="canAdd">{{settings.lang.newFamily}}</button>
             </div>
         </div>
 

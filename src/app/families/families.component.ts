@@ -43,6 +43,7 @@ import { messageMerger } from "../edit-custom-message/messageMerger";
 import { makeId } from '../helpers/helpers';
 import { UITools } from '../helpers/init-context';
 import { FamiliesController } from './families.controller';
+import { ChangeLogComponent } from '../change-log/change-log.component';
 
 @Component({
     selector: 'app-families',
@@ -72,6 +73,7 @@ export class FamiliesComponent implements OnInit {
         });
     }
     isAdmin = this.remult.isAllowed(Roles.admin);
+    canAdd = this.remult.isAllowed(Roles.familyAdmin);
 
     resetRow() {
         var focus: Families;
@@ -183,7 +185,7 @@ export class FamiliesComponent implements OnInit {
 
     families: GridSettings<Families> = new GridSettings(this.remult.repo(Families), {
         allowUpdate: true,
-        allowInsert: this.isAdmin,
+        allowInsert: this.canAdd,
 
         rowCssClass: f => f.status.getCss(),
         numOfColumnsInGrid: 5,
@@ -458,8 +460,12 @@ export class FamiliesComponent implements OnInit {
                     f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog });
                 }
                 , visible: f => !f.isNew()
+            },
+            {
+                name: use.language.changeLog,
+                visible: h => this.remult.isAllowed(Roles.admin),
+                click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
             }
-
         ]
     });
 

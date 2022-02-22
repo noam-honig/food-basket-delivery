@@ -28,6 +28,7 @@ import { use } from '../translate';
 
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { ManageController, SendTestSms } from './manage.controller';
+import { ChangeLogComponent } from '../change-log/change-log.component';
 
 @Component({
   selector: 'app-manage',
@@ -672,7 +673,10 @@ export class ManageComponent implements OnInit {
     }
   }
 
+  changeLog() {
+    openDialog(ChangeLogComponent, x => x.args = { for: this.settings })
 
+  }
 
 
 

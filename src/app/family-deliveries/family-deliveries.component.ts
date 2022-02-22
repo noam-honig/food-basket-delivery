@@ -338,6 +338,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
 
   isAdmin = this.remult.isAllowed(Roles.admin);
+  canAdd = this.remult.isAllowed(Roles.familyAdmin);
   refreshStats() {
     if (this.suspend)
       return;
@@ -698,7 +699,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async () => {
           let items = new quantityHelper();
           let parcels = new quantityHelper();
-         
+
           for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query()) {
             parcels.add(fd.basketType?.name || '', fd.quantity);
             for (let item of fd.deliveryComments.split(',')) {

@@ -30,6 +30,7 @@ import { SelectListComponent } from '../select-list/select-list.component';
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { selectListItem } from '../helpers/init-context';
 import { compareValuesWithRow, excelRowInfo, getColumnDisplayValue, ImportFromExcelController } from './import-from-excel.controller';
+import { Roles } from '../auth/roles';
 
 @Component({
     selector: 'app-excel-import',
@@ -1191,7 +1192,8 @@ export class ImportFromExcelComponent implements OnInit {
     }
 
     async testImport() {
-        await this.settings.save();
+        if (this.remult.isAllowed(Roles.admin))
+            await this.settings.save();
         await this.iterateExcelFile(false);
     }
 

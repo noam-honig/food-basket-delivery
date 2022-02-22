@@ -133,7 +133,7 @@ export const routes: Routes = [
   { path: 'register-helper', component: RegisterHelperComponent, canActivate: [MltOnlyGuard], data: { hide: true } },
 
 
-  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [AdminGuard] },
+  { path: 'import-from-excel', component: ImportFromExcelComponent, canActivate: [FamilyAdminGuard] },
   { path: 'import-helpers-from-excel', component: ImportHelpersFromExcelComponent, canActivate: [AdminGuard] },
   { path: 'helper-gifts', component: HelperGiftsComponent, canActivate: [MltAdminGuard] },
   { path: 'register-url', component: RegisterURLComponent, canActivate: [MltAdminGuard] },
@@ -164,7 +164,7 @@ export const routes: Routes = [
   ],
   declarations: [],
   exports: [RouterModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard,FamilyAdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, FamilyAdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
     MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard]
 
 })
