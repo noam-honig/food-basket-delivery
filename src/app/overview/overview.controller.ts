@@ -162,78 +162,82 @@ export class OverviewController {
         return result;
 
     }
-    
-  @BackendMethod({ allowed: Roles.overview })
-  static async createSchema(id: string, name: string, address: string, manager: string, phone: string, remult?: Remult): Promise<{
-    ok: boolean,
-    errorText: string
-  }> {
-    let r = await OverviewController.validateNewSchema(id, remult);
-    if (r) {
-      return {
-        ok: false,
-        errorText: r
-      }
+
+    @BackendMethod({ allowed: Roles.overview })
+    static async createSchema(id: string, name: string, address: string, manager: string, phone: string, remult?: Remult): Promise<{
+        ok: boolean,
+        errorText: string
+    }> {
+        let r = await OverviewController.validateNewSchema(id, remult);
+        if (r) {
+            return {
+                ok: false,
+                errorText: r
+            }
+        }
+        try {
+            if (!name || name.length == 0)
+                name = id;
+            let oh = await remult.repo(Helpers).findId(remult.user.id);
+            let db = await OverviewController.createDbSchema(id);
+            let otherContext = new Remult();
+            otherContext.setDataProvider(db);
+            otherContext.setUser(remult.user);
+            Sites.setSiteToContext(otherContext, id, remult);
+            await InitContext(otherContext);
+            {
+                let h = await otherContext.repo(Helpers).create();
+                h.name = oh.name;
+                h.realStoredPassword = oh.realStoredPassword;
+                h.phone = oh.phone;
+                h.admin = oh.admin;
+                await h.save();
+            }
+            if (manager && phone) {
+                let h2 = await otherContext.repo(Helpers).create();
+                h2.name = manager;
+                h2.phone = new Phone(phone);
+                h2.admin = true;
+                await h2.save();
+            }
+            let settings = await ApplicationSettings.getAsync(otherContext);
+
+            settings.organisationName = name;
+            settings.address = address;
+            await settings.save();
+
+            let s = remult.repo(SitesEntity).create();
+            s.id = id;
+            await s.save();
+
+
+
+            await OverviewController.createSchemaApi(id);
+            Sites.addSchema(id);
+            return { ok: true, errorText: '' }
+        }
+        catch (err) {
+            return { ok: false, errorText: extractError(err) }
+        }
     }
-    try {
-      if (!name || name.length == 0)
-        name = id;
-      let oh = await remult.repo(Helpers).findId(remult.user.id);
-      let db = await OverviewController.createDbSchema(id);
-      let otherContext = new Remult();
-      otherContext.setDataProvider(db);
-      otherContext.setUser(remult.user);
-      Sites.setSiteToContext(otherContext, id, remult);
-      await InitContext(otherContext);
-      {
-        let h = await otherContext.repo(Helpers).create();
-        h.name = oh.name;
-        h.realStoredPassword = oh.realStoredPassword;
-        h.phone = oh.phone;
-        h.admin = oh.admin;
-        await h.save();
-      }
-      if (manager && phone) {
-        let h2 = await otherContext.repo(Helpers).create();
-        h2.name = manager;
-        h2.phone = new Phone(phone);
-        h2.admin = true;
-        await h2.save();
-      }
-      let settings = await ApplicationSettings.getAsync(otherContext);
+    static createDbSchema = async (id: string): Promise<SqlDatabase> => { return undefined };
+    static createSchemaApi = async (id: string) => { };
 
-      settings.organisationName = name;
-      settings.address = address;
-      await settings.save();
-
-      let s = remult.repo(SitesEntity).create();
-      s.id = id;
-      await s.save();
-
-
-
-      await OverviewController.createSchemaApi(id);
-      Sites.addSchema(id);
-      return { ok: true, errorText: '' }
+    @BackendMethod({ allowed: Roles.overview })
+    static async validateNewSchema(id: string, remult?: Remult) {
+        let x = await remult.repo(SitesEntity).findId(id);
+        if (x) {
+            return "מזהה כבר קיים";
+        }
+        let invalidSchemaName = ['admin', 'guest', 'public', 'select'];
+        if (invalidSchemaName.includes(id))
+            return id + ' הוא מזהה שמור ואסור לשימוש';
+        return '';
     }
-    catch (err) {
-      return { ok: false, errorText: extractError(err) }
+    @BackendMethod({ allowed: Roles.overview })
+    static async getSites() {
+        return Sites.schemas.join(",");
     }
-  }
-  static createDbSchema = async (id: string): Promise<SqlDatabase> => { return undefined };
-  static createSchemaApi = async (id: string) => { };
-
-  @BackendMethod({ allowed: Roles.overview })
-  static async validateNewSchema(id: string, remult?: Remult) {
-    let x = await remult.repo(SitesEntity).findId(id);
-    if (x) {
-      return "מזהה כבר קיים";
-    }
-    let invalidSchemaName = ['admin', 'guest', 'public', 'select'];
-    if (invalidSchemaName.includes(id))
-      return id + ' הוא מזהה שמור ואסור לשימוש';
-    return '';
-  }
 }
 
 export interface siteItem {

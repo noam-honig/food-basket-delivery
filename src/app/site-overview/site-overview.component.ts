@@ -4,6 +4,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Remult } from 'remult';
 import { Phone } from '../model-shared/phone';
 import { Manager, SiteOverviewController } from './site-overview.controller';
+import { messageMerger } from '../edit-custom-message/messageMerger';
+import { DialogService } from '../select-popup/dialog';
 
 @Component({
   selector: 'app-site-overview',
@@ -12,7 +14,7 @@ import { Manager, SiteOverviewController } from './site-overview.controller';
 })
 export class SiteOverviewComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<any>, private remult: Remult) { }
+  constructor(public dialogRef: MatDialogRef<any>, private remult: Remult, private ui: DialogService) { }
   args: {
     site: siteItem,
     statistics: dateRange[]
@@ -32,6 +34,28 @@ export class SiteOverviewComponent implements OnInit {
 
 
     Phone.sendWhatsappToPhone(m.phone, message.replace('!שם!', m.name), this.remult, true);
+  }
+  createMessage(m: Manager) {
+    return new messageMerger([
+      { token: "שם", value: m.name },
+      { token: "ארגון", value: this.args.site.name },
+      { token: "אתר", value: this.args.site.site }
+    ])
+  }
+  editMessage() {
+    this.ui.editCustomMessageDialog({
+      message: this.createMessage(this.managers[0]),
+      templateText: localStorage.getItem("message") || "הי !שם! מ!ארגון!",
+      title: "מבנה הודעה למנהל",
+      helpText: "ערוך את ההודעה כאן, ואז לחץ על שמור ובמסך הארגון לחץ על שם המנהל כדי לשלוח לו הודעה",
+      buttons: [{
+        name: "שמור",
+        click: x => {
+          localStorage.setItem("message", x.templateText);
+          x.close();
+        }
+      }]
+    })
   }
 
 }

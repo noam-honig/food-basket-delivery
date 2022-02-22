@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { OverviewController } from '../overview/overview.controller';
 
 @Component({
   selector: 'app-token-replacer',
@@ -23,7 +24,7 @@ export class TokenReplacerComponent implements OnInit {
         if (s.length > 0) {
           if (this.result != '')
             this.result += this.seperator + '\r\n';
-          this.result += this.sql.split(this.token).join(s) ;
+          this.result += this.sql.split(this.token).join(s);
         }
       }
     }
@@ -31,6 +32,7 @@ export class TokenReplacerComponent implements OnInit {
 
   ngOnInit() {
     this.build();
+    OverviewController.getSites().then(x => { this.listOfSchemas = x; this.build() });
   }
 
 }

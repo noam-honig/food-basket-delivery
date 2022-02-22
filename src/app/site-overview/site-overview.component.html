@@ -9,7 +9,7 @@
     מנהלים:
     <table>
         <tr *ngFor="let m of managers">
-            <td><a  (click)="sendWhatsapp(m)"> {{m.name}}</a></td>
+            <td><a (click)="sendWhatsapp(m)"> {{m.name}}</a></td>
             <td> {{m.lastSignInDate|date}} </td>
             <td> {{m.phone}}</td>
         </tr>
@@ -27,6 +27,9 @@
 
     <button mat-raised-button color="accent" (click)="openSite()">
         עבור לאתר
+    </button>
+    <button type="button" mat-raised-button (click)="this.editMessage()">
+        <mat-icon>message</mat-icon>
     </button>
 
 </mat-dialog-actions>
