@@ -319,7 +319,7 @@ s.parentNode.insertBefore(b, s);})();
             initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
-                    remult.requestRefererOnBackend = req.headers['referer'].toString();
+                    remult.requestRefererOnBackend = req.headers['referer']?.toString();
                     if (req.originalUrl)
                         url = req.originalUrl;
                     else
