@@ -131,7 +131,7 @@ declare type factoryFor<T> = {
         }
       }
     }
-    recordChanges(self.remult, self)
+    recordChanges(self.remult, self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
   }
 },
   (options, remult) =>
@@ -497,7 +497,7 @@ export class Families extends IdEntity {
   nextBirthday: Date
   @Field({ translation: l => l.defaultBasketType })
   basketType: BasketType;
-  @IntegerField({ translation: l => l.defaultQuantity, allowApiUpdate: Roles.admin })
+  @IntegerField({ translation: l => l.defaultQuantity })
   quantity: number;
   @Field({ includeInApi: true, translation: l => l.familySource })
   familySource: FamilySources;

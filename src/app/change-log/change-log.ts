@@ -1,5 +1,5 @@
 
-import { Entity, Field, FieldRef, Fields, FieldType, IdEntity, isBackend, Remult } from "remult";
+import { Entity, EntityBase, EntityMetadata, EntityRef, Field, FieldRef, Fields, FieldType, getEntityRef, IdEntity, isBackend, Remult } from "remult";
 import { Roles } from "../auth/roles";
 
 @Entity<ChangeLog>("changeLog", {
@@ -15,6 +15,10 @@ export class ChangeLog extends IdEntity {
     relatedName: string = '';
     @Field()
     entity: string = '';
+    @Field()
+    appUrl: string = '';
+    @Field()
+    apiUrl: string = '';
     @Field()
     changeDate: Date = new Date();
     @Field()
@@ -42,13 +46,12 @@ export interface change {
 }
 
 
-export async function recordChanges<entityType extends IdEntity>(remult: Remult, self: entityType, exclude?: (e: Fields<entityType>) => FieldRef<any>[]) {
+export async function recordChanges<entityType extends EntityBase>(remult: Remult, self: entityType, options?: ColumnDeciderArgs<entityType>) {
     if (!self.isNew() && isBackend()) {
         let changes = [] as change[];
-        if (!exclude)
-            exclude = () => [];
-        let excludedFields = exclude(self.$);
-        for (const c of [...self.$].filter(c => !excludedFields.includes(c)).filter(c => c.valueChanged())) {
+        const decider = new FieldDecider(remult, self, options);
+
+        for (const c of decider.fields.filter(c => c.valueChanged())) {
             try {
                 let transValue = (val: any) => val;
                 if (c.metadata.options.displayValue)
@@ -56,13 +59,13 @@ export async function recordChanges<entityType extends IdEntity>(remult: Remult,
                 else if (c.metadata.valueType === Boolean)
                     transValue = val => val ? "V" : "X";
 
-
+                const noVal = decider.excludedValues.includes(c);
                 changes.push({
                     key: c.metadata.key,
-                    oldDisplayValue: transValue(c.originalValue),
-                    newDisplayValue: transValue(c.value),
-                    newValue: (c.value instanceof IdEntity) ? c.value.id : c.value,
-                    oldValue: (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.originalValue
+                    oldDisplayValue: noVal ? "***" : transValue(c.originalValue),
+                    newDisplayValue: noVal ? "***" : transValue(c.value),
+                    newValue: noVal ? "***" : (c.value instanceof IdEntity) ? c.value.id : c.value,
+                    oldValue: noVal ? "***" : (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.originalValue
                 });
             } catch (err) {
                 console.log(c);
@@ -78,13 +81,36 @@ export async function recordChanges<entityType extends IdEntity>(remult: Remult,
                 changedFields: changes.map(x => x.key),
                 changes,
                 entity: self._.metadata.key,
-                relatedId: self.id,
+                relatedId: self._.getId().toString(),
                 relatedName: self.$.find("name").value,
                 userId: remult.user.id,
-                userName: remult.user.name
-
+                userName: remult.user.name,
+                appUrl: remult.requestRefererOnBackend,
+                apiUrl: remult.requestUrlOnBackend
             })
         }
 
+    }
+}
+interface ColumnDeciderArgs<entityType> {
+    excludeColumns?: (e: Fields<entityType>) => FieldRef<any>[],
+    excludeValues?: (e: Fields<entityType>) => FieldRef<any>[]
+}
+export class FieldDecider<entityType>{
+    fields: FieldRef<entityType>[];
+    excludedFields: FieldRef<entityType>[];
+    excludedValues: FieldRef<entityType>[];
+    constructor(remult: Remult, entity: entityType, options: ColumnDeciderArgs<entityType>) {
+        const meta = getEntityRef(entity);
+        if (!options?.excludeColumns)
+            this.excludedFields = [];
+        else
+            this.excludedFields = options.excludeColumns(meta.fields);
+        if (!options?.excludeValues)
+            this.excludedValues = [];
+        else this.excludedValues = options.excludeValues(meta.fields);
+        this.excludedFields.push(...meta.fields.toArray().filter(c => c.metadata.options.serverExpression));
+        this.excludedFields.push(...meta.fields.toArray().filter(c => c.metadata.options.sqlExpression));
+        this.fields = meta.fields.toArray().filter(f => !this.excludedFields.includes(f));
     }
 }

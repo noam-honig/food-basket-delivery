@@ -81,7 +81,7 @@ import { PrintVolunteersController } from "../print-volunteers/print-volunteers.
 import { PromiseThrottle } from "../shared/utils";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Roles } from "../auth/roles";
-import { ChangeLog } from "../change-log/change-log";
+import { ChangeLog, FieldDecider } from "../change-log/change-log";
 const entities = [
     HelpersAndStats,
     Event,
@@ -319,12 +319,14 @@ s.parentNode.insertBefore(b, s);})();
             initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
+                    remult.requestRefererOnBackend = req.headers['referer'].toString();
                     if (req.originalUrl)
                         url = req.originalUrl;
                     else
                         url = req.path;
                 }
                 remult.getSite = () => getSiteFromUrl(url);
+                remult.requestUrlOnBackend = url;
                 if (!remult.isAllowed(Sites.getOrgRole(remult)))
                     remult.setUser(undefined);
                 remult.setDataProvider(dataSource(remult));
@@ -332,24 +334,21 @@ s.parentNode.insertBefore(b, s);})();
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
-                // remult.getSite = () => "test1";
-                // remult.setDataProvider(dataSource(remult));
-                // await InitContext(remult, undefined);
-                // var h = await remult.repo(Helpers).findFirst();
-                // remult.setUser({
-                //     distributionCenter: "dist",
-                //     escortedHelperName: "",
-                //     id: h.id,
-                //     name: "Asdf",
-                //     roles: [Roles.admin],
-                //     theHelperIAmEscortingId: ""
-                // });
+                if (!process.env.DEV_MODE)
+                    return;
+                remult.getSite = () => "test1";
+                remult.setDataProvider(dataSource(remult));
+                await InitContext(remult, undefined);
+                var h = await remult.repo(Helpers).findFirst();
+                remult.setUser({
+                    distributionCenter: "dist",
+                    escortedHelperName: "",
+                    id: h.id,
+                    name: "Asdf",
+                    roles: [Roles.admin],
+                    theHelperIAmEscortingId: ""
+                });
 
-                // console.table(await remult.repo(ChangeLog).find({
-                //     where: {
-                //         changedFields: { $contains: JSON.stringify('name') }
-                //     }
-                // }));
 
             },
             disableAutoApi: Sites.multipleSites,

@@ -19,6 +19,7 @@ import { DateOnlyField } from 'remult/src/remult3';
 import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
 import { UITools } from './init-context';
+import { recordChanges } from '../change-log/change-log';
 
 
 
@@ -312,6 +313,23 @@ export abstract class HelpersBase extends IdEntity {
                 ],
                 excludeValues: [self.$.realStoredPassword]
             });
+            recordChanges(self.remult, self, {
+                excludeColumns: f => [
+                    f.smsDate,
+                    f.createDate,
+                    f.lastSignInDate,
+                    f.reminderSmsDate,
+                    f.totalKm,
+                    f.totalTime,
+                    f.allowedIds,
+                    f.addressApiResult,
+                    f.addressApiResult2,
+                    f.password,
+                    f.shortUrlKey,
+                    f.passwordChangeDate
+                ],
+                excludeValues: f => [f.realStoredPassword]
+            })
         }
 
 

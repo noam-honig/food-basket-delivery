@@ -201,6 +201,8 @@ declare module 'remult' {
         getSettings: () => Promise<import('../manage/ApplicationSettings').ApplicationSettings>
         lang: Language;
         getSite(): string;
+        requestRefererOnBackend?: string;
+        requestUrlOnBackend?: string;
         getOrigin(): string;
     }
     export interface UserInfo {
