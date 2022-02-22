@@ -1,7 +1,13 @@
 
 import { Entity, Field, FieldRef, Fields, FieldType, IdEntity, isBackend, Remult } from "remult";
+import { Roles } from "../auth/roles";
 
-@Entity("changeLog")
+@Entity<ChangeLog>("changeLog", {
+    allowApiRead: Roles.admin,
+    defaultOrderBy: {
+        changeDate: "desc"
+    }
+})
 export class ChangeLog extends IdEntity {
     @Field()
     relatedId: string = '';

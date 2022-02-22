@@ -20,6 +20,7 @@ import { FamilyImage } from '../families/DeiveryImages';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { BusyService, DialogConfig, openDialog } from '@remult/angular';
 import { UpdateFamilyDialogArgs } from '../helpers/init-context';
+import { ChangeLogComponent } from '../change-log/change-log.component';
 
 @Component({
   selector: 'app-update-family-dialog',
@@ -133,7 +134,13 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     openDialog(InputAreaComponent, x => x.args = {
       title: 'פרטי עדכונים עבור ' + f.name,
       ok: () => { },
-      fields
+      fields,
+      buttons: [{
+        text: "הצג שינויים",
+        click: () => openDialog(ChangeLogComponent, x => x.args = {
+          for: this.args.family
+        })
+      }]
     });
   }
   refreshDeliveryStatistics = false;

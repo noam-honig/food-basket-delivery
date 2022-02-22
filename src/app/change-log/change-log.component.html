@@ -1,1 +1,18 @@
-<p>change-log works!</p>
+<mat-dialog-content>
+    <ul *ngIf="changes">
+        <li *ngFor="let e of changes">
+            {{e.userName}}, {{e.$.changeDate.displayValue }}
+            <div *ngFor="let c of e.changes">
+                <strong>{{meta.fields.find(c.key).caption}}</strong>:
+                <del class="old-val">{{c.oldDisplayValue}}</del>
+                <ins>{{c.newDisplayValue}}</ins>
+
+            </div>
+        </li>
+    </ul>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button [mat-dialog-close]>
+        סגור
+    </button>
+</mat-dialog-actions>

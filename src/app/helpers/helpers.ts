@@ -365,8 +365,7 @@ export class Helpers extends HelpersBase {
                 click: () => this.showDeliveryHistory(ui)
             }, {
 
-                text: "sms",
-
+                text: this.remult.lang.smsMessages,
                 click: async () => {
                     this.smsMessages(ui);
                 },
