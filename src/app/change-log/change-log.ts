@@ -114,3 +114,10 @@ export class FieldDecider<entityType>{
         this.fields = meta.fields.toArray().filter(f => !this.excludedFields.includes(f));
     }
 }
+
+/*
+select value->'newValue'->>'address',value from (
+select * from uga.changelog ) as x ,json_array_elements(cast (x.changes as json))
+where value->>'key' ='email'
+order by changeDate desc
+*/
