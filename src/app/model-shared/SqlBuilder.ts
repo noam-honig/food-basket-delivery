@@ -321,8 +321,11 @@ export class SqlBuilder {
         if (query.from.metadata.options.backendPrefilter) {
             where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from.metadata, query.from.metadata.options.backendPrefilter), query.from.metadata, this.remult));
         }
-        if (where.length > 0)
-            result.push(' where ', this.and(...where));
+        if (where.length > 0) {
+            const w = await this.and(...where);
+            if (w)
+                result.push(' where ', w);
+        }
         if (query.groupBy) {
             result.push(' group by ');
             result.push(query.groupBy());
