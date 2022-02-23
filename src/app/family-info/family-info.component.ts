@@ -59,7 +59,7 @@ export class FamilyInfoComponent implements OnInit {
     this.whatToTake = '';
     if (this.f.basketType) {
       toTake.parseComment(this.f.basketType.whatToTake, this.f.quantity);
-      this.whatToTake = toTake.toString(this.userFamilies?.labs ? undefined : ', ');
+      this.whatToTake = toTake.toString(this.userFamilies?.labs||true ? undefined : ', ');
     }
   }
 

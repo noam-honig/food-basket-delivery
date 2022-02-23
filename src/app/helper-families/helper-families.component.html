@@ -58,8 +58,9 @@
       <mat-accordion class="no-print" cdkDropList (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy">
           <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" cdkDrag [cdkDragDisabled]="disableDrag"
-            (click)="deliveryDetails(f,myPanel)">
+            (click)="deliveryDetails(f,myPanel)" (afterExpand)="afterExpand(scrollToTop)">
             <mat-expansion-panel-header>
+              <div #scrollToTop></div>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
                 [latestAssign]="partOfAssign&&f.courierAssingTime?.valueOf()==familyLists.maxAssignTime"

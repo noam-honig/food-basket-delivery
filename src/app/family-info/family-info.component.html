@@ -1,8 +1,12 @@
-<div>
+<div style="display:flex;
+flex-direction:column;">
 
-  <div *ngIf="showStatus()">
-    <h4>{{f.getDeliveryDescription()}}</h4>
-
+  <div *ngIf="showStatus()" style="padding: 16px;
+  margin: 0 -16px;
+  display: flex;
+justify-content: space-between;
+align-items: center;" class="{{f.deliverStatus.getCss(f.courier)}}">
+    <strong>{{f.deliverStatus.caption}}</strong>
 
   </div>
   <div *ngIf="f.courierComments">
@@ -10,128 +14,162 @@
     ({{courierCommentsDateRelativeDate()}})
 
   </div>
+  <div *ngIf="f.courierComments" class="icon-and-text">
+    <!--remember update comment-->
+    <mat-icon>comment</mat-icon>
+    <div>
+      <strong>
+        {{f.courierComments}}
+      </strong>
+      ({{courierCommentsDateRelativeDate()}})
+    </div>
+  </div>
   <div>
-
-    <button mat-raised-button class="cancelAssignButton" color="accent" *ngIf="showFamilyPickedUp(f)"
-      (click)="familiyPickedUp(f)">{{settings.lang.packageWasPickedUp}}</button>
-    <button *ngIf="showCancelAssign(f)" mat-raised-button class=" badButton cancelAssignButton"
-      (click)="cancelAssign(f)">{{settings.lang.cancelAsignment}}</button>
-    <button *ngIf="partOfAssign" mat-raised-button class="cancelAssignButton"
-      (click)=" udpateInfo(f)">{{settings.lang.deliveryDetails}}</button>
-  </div>
-  <a *ngIf="settings.showTzToVolunteer" (click)="showTz()" style="display:block">הצג מספר זהות</a>
-  <a *ngIf="settings.allowVolunteerToSeePreviousActivities" (click)="showHistory()"
-    style="display:block">{{settings.lang.showPreviousActivities}}</a>
-  <ng-container *ngIf="!hideSal">
-    <h4 style="display:inline">{{settings.lang.basket}}</h4> - <span *ngIf="f.quantity>1">{{f.quantity}} X</span> {{f.$.basketType.displayValue}} 
-    <div *ngIf="whatToTake">
-      <strong>{{settings.lang.whatToTake}}: </strong>
-      {{whatToTake}}
+    <div *ngIf="f.deliveryComments" class="icon-and-text">
+      <mat-icon style="color:red">comment</mat-icon>
+      <div>
+        <strong>
+          {{f.deliveryComments}}
+        </strong>
+      </div>
     </div>
-  </ng-container>
-
-  <div *ngIf="f.deliveryComments">
-    <mat-icon color="accent" style="vertical-align: middle">comment</mat-icon>
-    <div class="emphesize-comment">
-      <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments}}
-    </div>
-  </div>
-  <div *ngIf="f.courierBeenHereBefore">
-    <mat-icon color="green" style="vertical-align: middle">repeat</mat-icon>
-    {{settings.lang.repeatFamilyNotice}}
-  </div>
-  <h4>{{settings.lang.address}}</h4>
-  <div class="address-container">
-    <span (click)="navigate(f)">
-      <img src="assets/waze.png" *ngIf="useWaze">
-      <img src="assets/google_maps_icon.png" *ngIf="!useWaze">
-    </span>
-    <div style="flex-grow:1;padding:0 5px;">
-      <ng-container *ngIf="!f.addressOk">
-        <mat-icon style="margin-right:5px" color="accent">warning
-        </mat-icon>
-        {{settings.lang.inacurateAddress}}
-        <br />
-        <br />
-      </ng-container>
-      <a (click)="navigate(f)">
-
-
-
-        <span style="display:block"> {{f.getAddressDescription()}} </span>
-        <ng-container *ngIf="f.floor||f.appartment||f.entrance">
-
-        </ng-container>
-        <ng-container *ngIf="f.entrance">
-          {{f.$.entrance.metadata.caption}} {{f.entrance}}
-        </ng-container>
-        <ng-container *ngIf="f.floor">
-          {{f.$.floor.metadata.caption}} {{f.floor}}
-        </ng-container>
-        <ng-container *ngIf="f.appartment">
-          {{f.$.appartment.metadata.caption}} {{f.appartment}}
-        </ng-container>
-
-
-
-
-      </a>
-      <ng-container *ngIf="f.buildingCode">
-        <div>
-          {{settings.lang.buildingCode}}: <strong class="emphesize-comment"> {{f.buildingCode}}</strong>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="f.addressComment">
-        <div class="emphesize-comment">
-          <strong style="color:red;">{{settings.lang.notice}} </strong> {{f.addressComment}}
-        </div>
-      </ng-container>
+    <div *ngIf="f.courierBeenHereBefore" class="icon-and-text">
+      <mat-icon>repeat</mat-icon>
+      <div>
+        {{settings.lang.repeatFamilyNotice}}
+      </div>
     </div>
 
-    <div class="address-links">
-      <mat-menu #addressMenu="matMenu">
-        <button mat-menu-item (click)="navigate(f,true)">{{settings.lang.navigateWithWaze}}</button>
-        <button mat-menu-item (click)="navigate(f,false)">{{settings.lang.navigateWithGoogleMaps}}</button>
-
-        <button mat-menu-item (click)="f.showOnGovMap()">govmap</button>
-
-        <button mat-menu-item (click)="copyAddress(f)">{{settings.lang.copyAddress}}</button>
-
-
-      </mat-menu>
-
-      <button mat-icon-button [matMenuTriggerFor]="addressMenu" color="primary">
-
-        <mat-icon>explore</mat-icon>
+    <div class="top-button-bar">
+      <button mat-stroked-button color="primary" class="rounded-button" *ngIf="settings.showTzToVolunteer"
+        (click)="showTz()">הצג מספר זהות
       </button>
-
-
+      <button mat-stroked-button color="primary" class="rounded-button"
+        *ngIf="settings.allowVolunteerToSeePreviousActivities"
+        (click)="showHistory()">{{settings.lang.showPreviousActivities}}
+      </button>
+    </div>
+    <div class="top-button-bar" *ngIf="partOfAssign">
+      <button *ngIf="showCancelAssign(f)" mat-stroked-button color="accent" class="rounded-button"
+        (click)="cancelAssign(f)">{{settings.lang.cancelAsignment}}
+        <mat-icon>person_add_disabled</mat-icon>
+      </button>
+      <button mat-flat-button color="primary" *ngIf="showFamilyPickedUp(f)" class="rounded-button"
+        (click)="familiyPickedUp(f)">{{settings.lang.packageWasPickedUp}}</button>
+      <button mat-stroked-button color="primary" class="rounded-button"
+        (click)="udpateInfo(f)">{{settings.lang.deliveryDetails}}
+        <mat-icon>edit</mat-icon>
+      </button>
     </div>
 
   </div>
-  <button mat-raised-button *ngIf="hasImages&&!images" color="primary"
-    (click)="loadImages()">{{settings.lang.loadImages}}</button>
-  <app-images [readonly]="true" [images]="images"></app-images>
+  <div>
+    <h4 style="display:inline">{{settings.lang.basket}}</h4>:
+    <span *ngIf="f.quantity>1">{{f.quantity}} X</span>
+    {{f.$.basketType.displayValue}}
+    <mat-card *ngIf="whatToTake">
+      <span style="    white-space: pre;">{{whatToTake}}</span>
+    </mat-card>
+  </div>
+
+
+  <h4>{{settings.lang.address}}</h4>
+  <mat-card>
+    <div style="display:flex;gap:4px;flex-flow:0 1 0">
+      <span (click)="navigate(f)">
+        <img src="assets/waze.png" *ngIf="useWaze">
+        <img src="assets/google_maps_icon.png" *ngIf="!useWaze">
+      </span>
+      <div style="flex-grow:1;padding:0 5px;">
+        <ng-container *ngIf="!f.addressOk">
+          <mat-icon style="margin-right:5px" color="accent">warning
+          </mat-icon>
+          {{settings.lang.inacurateAddress}}
+          <br />
+          <br />
+        </ng-container>
+        <a (click)="navigate(f)">
+
+
+
+          <span style="display:block"> {{f.getAddressDescription()}} </span>
+          <ng-container *ngIf="f.floor||f.appartment||f.entrance">
+
+          </ng-container>
+          <ng-container *ngIf="f.entrance">
+            {{f.$.entrance.metadata.caption}} {{f.entrance}}
+          </ng-container>
+          <ng-container *ngIf="f.floor">
+            {{f.$.floor.metadata.caption}} {{f.floor}}
+          </ng-container>
+          <ng-container *ngIf="f.appartment">
+            {{f.$.appartment.metadata.caption}} {{f.appartment}}
+          </ng-container>
+        </a>
+
+      </div>
+
+
+      <div class="address-links">
+        <mat-menu #addressMenu="matMenu">
+          <button mat-menu-item (click)="navigate(f,true)">{{settings.lang.navigateWithWaze}}</button>
+          <button mat-menu-item (click)="navigate(f,false)">{{settings.lang.navigateWithGoogleMaps}}</button>
+          <button mat-menu-item (click)="copyAddress(f)">{{settings.lang.copyAddress}}</button>
+        </mat-menu>
+
+        <button mat-icon-button [matMenuTriggerFor]="addressMenu" color="primary">
+
+          <mat-icon>settings</mat-icon>
+        </button>
+
+
+      </div>
+    </div>
+    <div *ngIf="f.buildingCode" class="icon-and-text">
+      <mat-icon>vpn_key</mat-icon>
+      <div>
+        {{settings.lang.buildingCode}}: <strong>
+          {{f.buildingCode}}</strong>
+      </div>
+    </div>
+    <div *ngIf="f.addressComment" class="icon-and-text">
+      <mat-icon> announcement</mat-icon>
+      <strong>
+        {{f.addressComment}}
+      </strong>
+    </div>
+    <a *ngIf="hasImages&&!images" class="icon-and-text" (click)="loadImages()">
+      <mat-icon style="color:inherit"> image</mat-icon>
+      <div>
+        {{settings.lang.loadImages}}
+      </div>
+    </a>
+    <app-images [readonly]="true" [images]="images"></app-images>
+  </mat-card>
+
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer">
     <h4 *ngIf="f.phone1 || f.phone2||f.phone3||f.phone4">{{settings.lang.phones}}:</h4>
-    <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
-      <div *ngIf="phone" class="phone-container">
-        <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-          (click)="sendWhatsapp(phone)" *ngIf=" phone.canSendWhatsapp()">
-          <img src="assets/whatsapp.png">
-        </span>
-        <button mat-mini-fab style="vertical-align: middle" color="primary" (click)="callPhone(phone)">
-          <mat-icon>call</mat-icon>
-        </button>
-        <div>
-          <a (click)="callPhone(phone)">{{phone.displayValue}}</a>
-          <span *ngIf="phone==f.phone1 && f.phone1Description">{{', '+f.phone1Description}}</span>
-          <span *ngIf="phone==f.phone2 && f.phone2Description">{{', '+f.phone2Description}}</span>
-          <span *ngIf="phone==f.phone3 && f.phone3Description">{{', '+f.phone3Description}}</span>
-          <span *ngIf="phone==f.phone4 && f.phone4Description">{{', '+f.phone4Description}}</span>
+    <mat-card>
+      <ng-container *ngFor="let phone of [f.phone1, f.phone2, f.phone3, f.phone4]">
+        <div *ngIf="phone" class="phone-container">
+
+          <button mat-icon-button style="vertical-align: middle" color="primary" (click)="callPhone(phone)">
+            <mat-icon>call</mat-icon>
+          </button>
+          <div style="flex-grow:1">
+            <a (click)="callPhone(phone)">{{phone.displayValue}}</a>
+            <span *ngIf="phone==f.phone1 && f.phone1Description">{{', '+f.phone1Description}}</span>
+            <span *ngIf="phone==f.phone2 && f.phone2Description">{{', '+f.phone2Description}}</span>
+            <span *ngIf="phone==f.phone3 && f.phone3Description">{{', '+f.phone3Description}}</span>
+            <span *ngIf="phone==f.phone4 && f.phone4Description">{{', '+f.phone4Description}}</span>
+          </div>
+          <span mat-icon-button style="vertical-align: middle; cursor: pointer;" color="primary"
+            (click)="sendWhatsapp(phone)" *ngIf=" phone.canSendWhatsapp()">
+            <img src="assets/whatsapp.png">
+          </span>
         </div>
-      </div>
-    </ng-container>
+      </ng-container>
+    </mat-card>
   </ng-container>
   <ng-container *ngIf="settings.usePhoneProxy">
     <div class="phone-container">

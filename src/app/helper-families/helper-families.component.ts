@@ -69,8 +69,14 @@ export class HelperFamiliesComponent implements OnInit {
   trackBy(i: number, f: ActiveFamilyDeliveries) {
     return f.id;
   }
-
+  afterExpand(e: HTMLElement) {
+    e.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
+  }
   deliveryDetails(f: FamilyDeliveries, p: MatExpansionPanel) {
+
     if (this.familyLists.labs) {
       const dialogRef = this.animDialog.open(DeliveryDetailsComponent,
         this.dialog.isScreenSmall() ? {
@@ -177,7 +183,7 @@ export class HelperFamiliesComponent implements OnInit {
     if (!environment.production && false)
       setTimeout(() => {
         if (this.familyLists.toDeliver.length > 0) {
-          this.deliveryDetails(this.familyLists.toDeliver[0], undefined);
+          //this.deliveryDetails(this.familyLists.toDeliver[0], undefined);
         }
       }, 2000);
 
