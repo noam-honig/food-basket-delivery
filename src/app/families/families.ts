@@ -619,13 +619,13 @@ export class Families extends IdEntity {
     translation: l => l.defaultDistributionCenter
   })
   defaultDistributionCenter: DistributionCenters;
-  @CustomColumn(() => customColumnInfo[1], Roles.admin)
+  @CustomColumn(() => customColumnInfo[1], Roles.familyAdmin)
   custom1: string;
-  @CustomColumn(() => customColumnInfo[2], Roles.admin)
+  @CustomColumn(() => customColumnInfo[2], Roles.familyAdmin)
   custom2: string;
-  @CustomColumn(() => customColumnInfo[3], Roles.admin)
+  @CustomColumn(() => customColumnInfo[3], Roles.familyAdmin)
   custom3: string;
-  @CustomColumn(() => customColumnInfo[4], Roles.admin)
+  @CustomColumn(() => customColumnInfo[4], Roles.familyAdmin)
   custom4: string;
 
 

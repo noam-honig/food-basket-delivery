@@ -375,21 +375,21 @@ export class ApplicationSettings extends EntityBase {
   boxes1Name: string;
   @Field({ translation: l => l.boxes2NameCaption })
   boxes2Name: string;
-  @Field({ translation: l => l.customColumn + " 1 " + l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 1 " + l.caption, includeInApi: Roles.familyAdmin })
   familyCustom1Caption: string;
-  @Field({ translation: l => l.customColumn + " 1 " + l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 1 " + l.optionalValues, includeInApi: Roles.familyAdmin })
   familyCustom1Values: string;
-  @Field({ translation: l => l.customColumn + " 2 " + l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 2 " + l.caption, includeInApi: Roles.familyAdmin })
   familyCustom2Caption: string;
-  @Field({ translation: l => l.customColumn + " 2 " + l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 2 " + l.optionalValues, includeInApi: Roles.familyAdmin })
   familyCustom2Values: string;
-  @Field({ translation: l => l.customColumn + " 3 " + l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 3 " + l.caption, includeInApi: Roles.familyAdmin })
   familyCustom3Caption: string;
-  @Field({ translation: l => l.customColumn + " 3 " + l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 3 " + l.optionalValues, includeInApi: Roles.familyAdmin })
   familyCustom3Values: string;
-  @Field({ translation: l => l.customColumn + " 4 " + l.caption, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 4 " + l.caption, includeInApi: Roles.familyAdmin })
   familyCustom4Caption: string;
-  @Field({ translation: l => l.customColumn + " 4 " + l.optionalValues, includeInApi: Roles.admin })
+  @Field({ translation: l => l.customColumn + " 4 " + l.optionalValues, includeInApi: Roles.familyAdmin })
   familyCustom4Values: string;
   @Field<ApplicationSettings>({ serverExpression: (self) => self.remult.authenticated() })
   currentUserIsValidForAppLoadTest: boolean;
