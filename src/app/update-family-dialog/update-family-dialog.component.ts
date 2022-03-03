@@ -274,8 +274,9 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         families.name
       ],
     });
-    this.extraFamilyInfo = this.families.addArea({
-      fields: families => [
+    const families = this.args.family.$;
+    this.extraFamilyInfo = new DataAreaSettings({
+      fields: () => [
         families.groups,
         [families.status, families.familyMembers],
         families.internalComment,
@@ -304,7 +305,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         [families.birthDate
           , {
           caption: 'גיל',
-          getValue: (f) => {
+          getValue: () => {
+            const f = this.args.family;
             if (!f.birthDate) {
               return '';
             }
