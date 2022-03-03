@@ -13,15 +13,17 @@
     <div *ngIf="dialog.dc">
       <p style="text-align: center">{{dialog.dc.name}}
       </p>
-      <p style="text-align: center" *ngIf="dialog.dc.addressHelper.ok">{{dialog.dc.addressHelper.getGeocodeInformation.getAddress()}}</p>
+      <p style="text-align: center" *ngIf="dialog.dc.addressHelper.ok">
+        {{dialog.dc.addressHelper.getGeocodeInformation.getAddress()}}</p>
     </div>
     <h4 *ngIf="remult.user">{{lang.hello}} {{remult.user.name}}</h4>
-    <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()" target="_blank">מדריך למנהל</a>
+    <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()"
+      target="_blank">מדריך למנהל</a>
     <mat-nav-list role="list">
-      <mat-list-item  *ngIf="createNewEventAction.isAllowed()" >
-        <a  matLine (click)="createNewEventAction.show(dialog,settings)" >
-        {{settings.lang.createNewEvent}}
-      </a>
+      <mat-list-item *ngIf="createNewEventAction.isAllowed()">
+        <a matLine (click)="createNewEventAction.show(dialog,settings)">
+          {{settings.lang.createNewEvent}}
+        </a>
       </mat-list-item>
       <mat-divider></mat-divider>
       <ng-container *ngFor="let m of router.config">
@@ -65,7 +67,7 @@
     <div class="app-sidenav-content " style="justify-content: space-between;">
 
 
-      <div class="wrapper" [class.edge-fix]="isEdge">
+      <div [class.wrapper]="!noConfHeaderAndBorders()" [class.edge-fix]="isEdge">
         <router-outlet></router-outlet>
 
       </div>
@@ -76,7 +78,7 @@
       <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
       <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html"
         target="_blank">{{lang.copyright}}</a>
-      
+
     </footer>
   </div>
 </mat-sidenav-container>

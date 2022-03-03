@@ -456,3 +456,8 @@ textarea {
     background-color: rgb(250, 250, 250);
   }
 }
+.mat-drawer-content1 {
+  @media print {
+    overflow: hidden;
+  }
+}
