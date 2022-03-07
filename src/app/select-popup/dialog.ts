@@ -249,7 +249,17 @@ export class DialogService implements UITools {
                     };
                     let x = this;
                     source.addEventListener("authenticate", async function (e) {
-                        await x.busy.donotWait(async () => await ServerEventAuthorizeAction.DoAthorize((<any>e).data.toString()));
+                        try {
+                            await x.busy.donotWait(async () => await ServerEventAuthorizeAction.DoAthorize((<any>e).data.toString()));
+                        } catch (err) {
+                            var m = err.message;
+                            if (!m) {
+                                m = err;
+                            }
+                            if (this.remult)
+                                m += " user:" + JSON.stringify(this.remult.user);
+                            await DialogController.LogWithUser(m)
+                        }
 
                     });
                 });
