@@ -230,6 +230,7 @@ export class DialogService implements UITools {
 
     eventSource: any;/*EventSource*/
     refreshEventListener(enable: boolean) {
+        const self = this;
         if (typeof (window) !== 'undefined') {
             let EventSource: any = window['EventSource'];
             if (enable && typeof (EventSource) !== "undefined") {
@@ -256,7 +257,7 @@ export class DialogService implements UITools {
                             if (!m) {
                                 m = err;
                             }
-                            if (this.remult)
+                            if (self.remult.user)
                                 m += " user:" + JSON.stringify(this.remult.user);
                             await DialogController.LogWithUser(m)
                         }
