@@ -119,7 +119,7 @@ export class SelectFamilyComponent implements OnInit {
     this.search.nativeElement.focus();
   }
   moreFamilies() {
-    this.pageSize += 7;
+    this.families.rowsPerPage *= 2;
     this.getRows();
   }
 
