@@ -18,8 +18,8 @@ export class Groups extends IdEntity {
   valueConverter: {
     toJson: x => x ? x.value : '',
     fromJson: x => new GroupsValue(x),
-    displayValue: x => x.value
   },
+  displayValue: (y,x) => x.value,
   translation: l => l.familyGroup,
   width: '300',
   clickWithTools: async (row, col, ui) => {

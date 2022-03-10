@@ -64,8 +64,8 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                     key: c.metadata.key,
                     oldDisplayValue: noVal ? "***" : transValue(c.originalValue),
                     newDisplayValue: noVal ? "***" : transValue(c.value),
-                    newValue: noVal ? "***" : (c.value instanceof IdEntity) ? c.value.id : c.value,
-                    oldValue: noVal ? "***" : (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.originalValue
+                    newValue: noVal ? "***" : (c.value instanceof IdEntity) ? c.value.id :c.metadata.options.valueConverter.toJson(c.value),
+                    oldValue: noVal ? "***" : (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.metadata.options.valueConverter.toJson(c.originalValue)
                 });
             } catch (err) {
                 console.log(c);

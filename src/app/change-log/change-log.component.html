@@ -4,8 +4,12 @@
             {{e.userName}}, {{e.$.changeDate.displayValue }}
             <div *ngFor="let c of e.changes">
                 <strong>{{meta.fields.find(c.key).caption}}</strong>:
-                <del class="old-val">{{c.oldDisplayValue}}</del>
-                <ins>{{c.newDisplayValue}}</ins>
+                <div style="display: inline-block;">
+                    <del class="old-val">{{c.oldDisplayValue}}</del>
+                </div>
+                <div style="display: inline-block;margin:0 8px">
+                    <ins>{{c.newDisplayValue}}</ins>
+                </div>
 
             </div>
         </li>
