@@ -388,10 +388,8 @@ export class ManageComponent implements OnInit {
         this.settings.$.showHelperComment,
         this.settings.$.routeStrategy,
 
-        this.settings.$.defaultPrefixForExcelImport, 
-           this.settings.$.emailForVolunteerRegistrationNotification,
-         
-        ,
+        this.settings.$.defaultPrefixForExcelImport,
+        this.settings.$.emailForVolunteerRegistrationNotification,
         this.settings.$.redTitleBar,
         this.settings.$.manageEscorts,
         [this.settings.$.familyCustom1Caption, this.settings.$.familyCustom1Values],

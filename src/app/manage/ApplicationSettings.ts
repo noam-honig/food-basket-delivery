@@ -367,12 +367,10 @@ export class ApplicationSettings extends EntityBase {
   })
   @Field<ApplicationSettings>({
     includeInApi: Roles.admin,
-    clickWithTools: (self, col, ui) => {
-      click: async () => {
-        if (await ui.YesNoPromise(use.language.sendTestEmail)) {
-          await self.save();
-          ui.Info(await ManageController.sendTestVolunteerRegistrationNotification())
-        }
+    clickWithTools: async (self, col, ui) => {
+      if (await ui.YesNoPromise(use.language.sendTestEmail)) {
+        await self.save();
+        ui.Info(await ManageController.sendTestVolunteerRegistrationNotification())
       }
     }
   })
