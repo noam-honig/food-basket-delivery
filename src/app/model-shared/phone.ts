@@ -108,6 +108,7 @@ export class Phone {
 }
 export function isPhoneValidForIsrael(input: string) {
   if (input) {
+    input = input.trim();
     let st1 = input.match(/^0(5\d|7\d|[2,3,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/);
     return st1 != null;
   }
