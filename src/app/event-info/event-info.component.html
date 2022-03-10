@@ -16,9 +16,7 @@
             {{e.startTime}}</span><span *ngIf="e.endTime"> -
             {{e.endTime}}</span>
     </span>
-    <div class="space-above">
-        {{e.description}}
-    </div>
+    <div class="space-above" style="white-space: pre-line;">{{e.description}}</div>
     <div *ngIf="e.theAddress" class="space-above">
         <strong>{{settings.lang.address}}</strong>
         <div class="phone-container" style="justify-content: space-between;">

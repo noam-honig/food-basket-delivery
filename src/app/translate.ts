@@ -1293,6 +1293,13 @@ export class Language {
   asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
   familyAdmin = "מנהל משפחות";
   changeLog = "היסטורית שינויים";
+  emailForVolunteerRegistrationNotification = 'דוא"ל לקבלת הודעה כאשר מתנדב נרשם';
+  sendTestEmail = "לשלוח מייל לבדיקה?";
+  
+  hasRegisteredTo = "נרשם ל";
+  thatWillTakePlaceAt = "שיתקיים ב";
+  
+  hasCanceledRegistration = "ביטל את השתתפות ב";
 }
 
 const defaultLang = new Language();

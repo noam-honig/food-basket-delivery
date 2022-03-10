@@ -186,7 +186,7 @@ export class Event extends IdEntity {
     type: EventType = EventType.foodDelivery;
     @Field()
     eventStatus: eventStatus = eventStatus.active;
-    @Field({ translation: l => l.eventDescription })
+    @Field({ translation: l => l.eventDescription, customInput: x => x.textArea() })
     description: string;
     @DateOnlyField<Event>({
         translation: l => l.eventDate,

@@ -31,6 +31,7 @@ import { ValueListFieldType } from 'remult/src/remult3';
 import { GroupsValue } from './groups';
 import { InputTypes } from 'remult/inputTypes';
 import { recordChanges } from '../change-log/change-log';
+import { ManageController } from './manage.controller';
 
 
 
@@ -361,6 +362,22 @@ export class ApplicationSettings extends EntityBase {
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
   @Field()
   donotShowEventsInGeneralList: boolean;
+  @DataControl({
+    clickIcon: 'mark_email_read'
+  })
+  @Field<ApplicationSettings>({
+    includeInApi: Roles.admin,
+    clickWithTools: (self, col, ui) => {
+      click: async () => {
+        if (await ui.YesNoPromise(use.language.sendTestEmail)) {
+          await self.save();
+          ui.Info(await ManageController.sendTestVolunteerRegistrationNotification())
+        }
+      }
+    }
+  })
+  emailForVolunteerRegistrationNotification: string;
+
 
   @Field({
     translation: l => l.defaultStatusType

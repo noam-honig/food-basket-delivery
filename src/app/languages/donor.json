@@ -279,6 +279,10 @@
     "google": "האם אתה בטוח שאתה רוצה לסמן תרומה נאספה ל",
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל"
   },
+  "asCurrentBasket": {
+    "google": "סוג הסל במשלוח הנוכחי",
+    "valueInCode": "סוג הסל במשלוח הנוכחי"
+  },
   "asignAnyDelivery": {
     "google": "שייך משלוח כלשהו",
     "valueInCode": "שייך משלוח כלשהו"
@@ -436,6 +440,10 @@
     "google": "הדגשה",
     "valueInCode": "הדגשה"
   },
+  "border": {
+    "google": "מסגרת",
+    "valueInCode": "מסגרת"
+  },
   "bottomPadding": {
     "google": "שוליים תחתונים",
     "valueInCode": "שוליים תחתונים"
@@ -531,6 +539,10 @@
   "centerAlign": {
     "google": "יישר למרכז",
     "valueInCode": "יישר למרכז"
+  },
+  "changeLog": {
+    "google": "היסטורית שינויים",
+    "valueInCode": "היסטורית שינויים"
   },
   "changeRouteOrder": {
     "google": "שנה סדר מסלול",
@@ -1158,6 +1170,10 @@
     "google": "תוכן אימייל תורם",
     "valueInCode": "תוכן אימייל תורם"
   },
+  "emailForVolunteerRegistrationNotification": {
+    "google": "דוא\"ל לקבלת הודעה כאשר מתנדב נרשם",
+    "valueInCode": "דוא\"ל לקבלת הודעה כאשר מתנדב נרשם"
+  },
   "emailHelperContentCaption": {
     "google": "תוכן אימייל מתנדב",
     "valueInCode": "תוכן אימייל מתנדב"
@@ -1393,6 +1409,10 @@
   "familyAdditionalInfo": {
     "google": "פרטים נוספים",
     "valueInCode": "פרטים נוספים"
+  },
+  "familyAdmin": {
+    "google": "מנהל תורמים",
+    "valueInCode": "מנהל משפחות"
   },
   "familyAlreadyHasAnActiveDelivery": {
     "google": "לתורם זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?",
@@ -1657,6 +1677,14 @@
   "hadProblemBefore": {
     "google": "היתה בעיה בעבר",
     "valueInCode": "היתה בעיה בעבר"
+  },
+  "hasCanceledRegistration": {
+    "google": "ביטל את השתתפות ב",
+    "valueInCode": "ביטל את השתתפות ב"
+  },
+  "hasRegisteredTo": {
+    "google": "נרשם ל",
+    "valueInCode": "נרשם ל"
   },
   "height": {
     "google": "גובה",
@@ -1924,7 +1952,7 @@
   },
   "loadImages": {
     "google": "טען תמונות",
-    "valueInCode": "טען תמונות"
+    "valueInCode": "הצג תמונות"
   },
   "LoginComponent": {
     "google": "כניסה",
@@ -2758,7 +2786,7 @@
   },
   "repeatFamilyNotice": {
     "google": "הייתם אצל התורם הזו גם פעם קודמת",
-    "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת"
+    "valueInCode": "הייתם אצל המשפחה הזו בעבר"
   },
   "replaceBySiteUrl": {
     "google": "יוחלף בכתובת האתר",
@@ -3048,6 +3076,10 @@
     "google": "שלח הודעה לתורם כאשר הסל נמסר",
     "valueInCode": "שלח הודעה למשפחה כאשר הסל נמסר"
   },
+  "sendTestEmail": {
+    "google": "לשלוח מייל לבדיקה?",
+    "valueInCode": "לשלוח מייל לבדיקה?"
+  },
   "sendWhats": {
     "google": "שלח ווטסאפ",
     "valueInCode": "שלח ווטסאפ"
@@ -3218,7 +3250,7 @@
   },
   "showText2OnlyWhenDone": {
     "google": "להציג מלל חופשי 2 רק כאשר המתנדב סיים אל כל הסלים",
-    "valueInCode": "המג הודעה 2 רק אם המתנדב סיים את כל המשלוחים"
+    "valueInCode": "הצג הודעה 2 רק אם המתנדב סיים את כל המשלוחים"
   },
   "showTzToVolunteer": {
     "google": "הצג מספר זהות למתנדב",
@@ -3395,6 +3427,10 @@
   "thankYouForHelp": {
     "google": "תודה על עזרתך",
     "valueInCode": "תודה על עזרתך"
+  },
+  "thatWillTakePlaceAt": {
+    "google": "שיתקיים ב",
+    "valueInCode": "שיתקיים ב"
   },
   "theFamily": {
     "google": "משפחת",
@@ -3706,7 +3742,7 @@
   },
   "volunteerCanUpdateComment": {
     "google": "מתנדב יכול לעדכן לעצמו הערה",
-    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה"
+    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה למתנדב במסך הגדרות אישיות"
   },
   "volunteerCanUpdateDeliveryComment": {
     "google": "מתנדב יכול לעדכן הערה למשלוח",

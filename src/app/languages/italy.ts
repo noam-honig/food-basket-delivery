@@ -961,4 +961,13 @@ export class italy {
   showPreviousActivities = 'Attività precedenti';
   navigateWithGoogleMaps = 'Naviga con Google';
   navigateWithWaze = 'Naviga con WAZE';
+  border = 'telaio';
+  asCurrentBasket = 'Tipo di carrello nella spedizione corrente';
+  familyAdmin = 'Gestore di famiglia';
+  changeLog = 'Storia dei cambiamenti';
+  emailForVolunteerRegistrationNotification = 'Email per la notifica quando un volontario si iscrive';
+  sendTestEmail = "Inviare un'e-mail per la revisione?";
+  hasRegisteredTo = 'facendo domanda per';
+  thatWillTakePlaceAt = 'Da tenere';
+  hasCanceledRegistration = 'Partecipazione annullata';
 }

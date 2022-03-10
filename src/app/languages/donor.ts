@@ -961,4 +961,13 @@ export class donor {
   showPreviousActivities = 'פעילויות קודמות';
   navigateWithGoogleMaps = 'נווט עם גוגל';
   navigateWithWaze = 'נווט עם WAZE';
+  border = 'מסגרת';
+  asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
+  familyAdmin = 'מנהל תורמים';
+  changeLog = 'היסטורית שינויים';
+  emailForVolunteerRegistrationNotification = 'דוא"ל לקבלת הודעה כאשר מתנדב נרשם';
+  sendTestEmail = 'לשלוח מייל לבדיקה?';
+  hasRegisteredTo = 'נרשם ל';
+  thatWillTakePlaceAt = 'שיתקיים ב';
+  hasCanceledRegistration = 'ביטל את השתתפות ב';
 }

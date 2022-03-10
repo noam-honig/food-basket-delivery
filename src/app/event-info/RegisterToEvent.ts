@@ -5,6 +5,7 @@ import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../even
 import { Helpers } from '../helpers/helpers';
 import { InitContext, UITools } from '../helpers/init-context';
 import { CustomColumn, registerQuestionForVolunteers } from '../manage/ApplicationSettings';
+import { ManageController } from '../manage/manage.controller';
 import { Phone } from '../model-shared/phone';
 import { Email } from '../model-shared/types';
 import { Sites } from '../sites/sites';
@@ -224,7 +225,17 @@ export class RegisterToEvent {
             helperInEvent.canceled = true;
             await helperInEvent.save();
         }
-        return (await this.remult.repo(Event).findId(id)).toEventInList(helper);
+        const event = await this.remult.repo(Event).findId(id);
+        try {
+            const l = this.remult.lang;
+            const what = helper.name + " " + (register ? l.hasRegisteredTo : l.hasCanceledRegistration) + " " + event.name
+            ManageController.sendEmailFromHagaiAdmin(what,
+                l.hello + " " + (await this.remult.getSettings()).organisationName + "\r\n\r\n" +
+                what + " " + l.thatWillTakePlaceAt + " " + event.$.eventDate.displayValue, this.remult);
+
+        }
+        catch { }
+        return (event).toEventInList(helper);
     }
 }
 const infoKeyInStorage = "myVolunteerInfo";

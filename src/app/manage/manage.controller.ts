@@ -23,6 +23,58 @@ export class ManageController {
     static async TestSendEmail(to: string, text: string, remult?: Remult) {
         return await EmailSvc.sendMail("test email", text, to, remult);
     }
+    @BackendMethod({ allowed: Roles.admin })
+    static async sendTestVolunteerRegistrationNotification(remult?: Remult) {
+        const subject = 'test';
+        const message = 'test';
+        return ManageController.sendEmailFromHagaiAdmin(subject, message, remult!);
+
+    }
+    static async sendEmailFromHagaiAdmin(subject: string, message: string, remult: Remult) {
+        let settings = await ApplicationSettings.getAsync(remult!);
+        const email = settings.emailForVolunteerRegistrationNotification;
+        if (!email || !email.includes("@"))
+            return "Invalid email";
+
+        var nodemailer = await import('nodemailer');
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: process.env.NOTIFICATION_EMAIL,
+                pass: process.env.NOTIFICATION_EMAIL_PASSWORD
+            }
+        });
+
+        message = "<html><body style='white-space: pre-line;' " +( settings.forWho.args.leftToRight ? '' : 'dir=rtl') + ">" + message + "</body></html>";
+        console.log({message});
+
+        var mailOptions = {
+            from: process.env.NOTIFICATION_EMAIL,
+            to: email,
+            subject: subject,
+            html: message
+        };
+        try {
+            return await new Promise((res, rej) => {
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        rej(error);
+                    } else {
+                        res('Email sent:');
+                    }
+                });
+            });
+
+        }
+        catch (err) {
+            console.log(err);
+            return err.message;
+        }
+    }
+
     @BackendMethod({ allowed: Roles.admin, queue: true })
     static async deleteFamiliesOnServer(remult?: Remult, progress?: ProgressListener) {
 

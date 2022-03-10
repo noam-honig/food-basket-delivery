@@ -961,4 +961,13 @@ export class en {
   showPreviousActivities = 'Previous activities';
   navigateWithGoogleMaps = 'Navigate with Google';
   navigateWithWaze = 'Navigate with WAZE';
+  border = 'frame';
+  asCurrentBasket = 'Basket type in current shipment';
+  familyAdmin = 'Family Manager';
+  changeLog = 'History of changes';
+  emailForVolunteerRegistrationNotification = 'Email for notification when a volunteer signs up';
+  sendTestEmail = 'Send an email for review?';
+  hasRegisteredTo = 'applying for';
+  thatWillTakePlaceAt = 'To be held in';
+  hasCanceledRegistration = 'Canceled participation in';
 }
