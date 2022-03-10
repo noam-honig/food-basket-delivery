@@ -48,8 +48,8 @@ export class ManageController {
             }
         });
 
-        message = "<html><body style='white-space: pre-line;' " +( settings.forWho.args.leftToRight ? '' : 'dir=rtl') + ">" + message + "</body></html>";
-        console.log({message});
+        message = "<html><body style='white-space: pre-line;' " + (settings.forWho.args.leftToRight ? '' : 'dir=rtl') + ">" + message + "</body></html>";
+        console.log({ message });
 
         var mailOptions = {
             from: process.env.NOTIFICATION_EMAIL,
@@ -63,6 +63,7 @@ export class ManageController {
                     if (error) {
                         rej(error);
                     } else {
+                        console.log(remult.getSite() + "/email sent to: " + email);
                         res('Email sent:');
                     }
                 });
