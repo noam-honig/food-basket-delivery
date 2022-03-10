@@ -242,7 +242,11 @@ async function InitSpecificSchema(pool: Pool, s: any) {
     remult.setDataProvider(db);
     await InitRemult(remult);
     if (!initSettings.disableSchemaInit) {
-        await new PostgresSchemaBuilder(db, s).verifyStructureOfAllEntities(remult);
+        const b = new PostgresSchemaBuilder(db, s);
+        const settings = remult.repo(ApplicationSettings);
+        await b.createIfNotExist(settings.metadata);
+        await b.verifyAllColumns(settings.metadata);
+        await b.verifyStructureOfAllEntities(remult);
         await initSchema(schemaPool, s);
     }
     return db;

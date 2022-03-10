@@ -177,39 +177,41 @@ serverInit().then(async (dataSource) => {
     }
 
     async function sendIndex(res: express.Response, req: express.Request) {
-        let remult = await eb.getRemult(req);
+        try {
+            let remult = await eb.getRemult(req);
 
-        let org = Sites.getOrganizationFromContext(remult);
-        if (redirect.includes(org)) {
-            const target = process.env.REDIRECT_TARGET + req.originalUrl;
-            console.log("Redirect ", target);
-            res.redirect(target);
-            return;
-        }
-        if (!Sites.isValidOrganization(org)) {
-            res.redirect('/' + Sites.guestSchema + '/');
-            return;
-        }
-        const index = publicRoot + '/index.html';
+            let org = Sites.getOrganizationFromContext(remult);
+            if (redirect.includes(org)) {
+                const target = process.env.REDIRECT_TARGET + req.originalUrl;
+                console.log("Redirect ", target);
+                res.redirect(target);
+                return;
+            }
+            if (!Sites.isValidOrganization(org)) {
+                res.redirect('/' + Sites.guestSchema + '/');
+                return;
+            }
+            const index = publicRoot + '/index.html';
 
 
-        if (fs.existsSync(index)) {
-            let x = '';
-            let settings = (await ApplicationSettings.getAsync(remult));
-            setLangForSite(Sites.getValidSchemaFromContext(remult), settings.forWho);
-            setSettingsForSite(Sites.getValidSchemaFromContext(remult), settings);
-            x = settings.organisationName;
-            let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
-            let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;
-            if (!key)
-                key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM'//default key to use only for development
-            result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
+            if (fs.existsSync(index)) {
+                let x = '';
 
-            let tagid = 'UA-121891791-1'; // default key for Google Analytics
-            if (settings.isSytemForMlt) {
-                //tagid = 'AW-452581833';
-                result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-452581833');gtag('config', 'UA-174556479-1');");
-                result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
+                let settings = (await ApplicationSettings.getAsync(remult));
+                setLangForSite(Sites.getValidSchemaFromContext(remult), settings.forWho);
+                setSettingsForSite(Sites.getValidSchemaFromContext(remult), settings);
+                x = settings.organisationName;
+                let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
+                let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;
+                if (!key)
+                    key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM'//default key to use only for development
+                result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key);
+
+                let tagid = 'UA-121891791-1'; // default key for Google Analytics
+                if (settings.isSytemForMlt) {
+                    //tagid = 'AW-452581833';
+                    result = result.replace('/*ANOTHER_GTAG_CONFIG*/', "gtag('config', 'AW-452581833');gtag('config', 'UA-174556479-1');");
+                    result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
 <!-- Facebook Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -243,9 +245,9 @@ s.parentNode.insertBefore(b, s);})();
 <img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=2525417&fmt=gif" />
 </noscript>
                 `);
-            }
-            else {
-                result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
+                }
+                else {
+                    result = result.replace(/<!--FACEBOOK_AND_LINKEDIN_PLACEHOLDER-->/g, `
 <!-- Facebook Pixel Code -->
 <script>
   !function(f,b,e,v,n,t,s)
@@ -264,33 +266,38 @@ s.parentNode.insertBefore(b, s);})();
 /></noscript>
 <!-- End Facebook Pixel Code -->
 `
-                );
-            }
-            result = result.replace(/GOOGLE_PIXEL_TAG_ID/g, tagid);
+                    );
+                }
+                result = result.replace(/GOOGLE_PIXEL_TAG_ID/g, tagid);
 
 
-            if (settings.forWho.args.leftToRight) {
-                result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
-            }
-            if (settings.forWho.args.languageCode) {
-                let lang = settings.forWho.args.languageCode;
-                result = result.replace(/&language=iw&/, `&language=${lang}&`)
-                    .replace(/&amp;language=iw&amp;/, `&language=${lang}&`)
-                    .replace(/טוען/g, 'Loading');
-            }
-            if (settings.forWho.args.languageFile) {
-                let lang = settings.forWho.args.languageFile;
-                result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`);
+                if (settings.forWho.args.leftToRight) {
+                    result = result.replace(/<body dir="rtl">/g, '<body dir="ltr">');
+                }
+                if (settings.forWho.args.languageCode) {
+                    let lang = settings.forWho.args.languageCode;
+                    result = result.replace(/&language=iw&/, `&language=${lang}&`)
+                        .replace(/&amp;language=iw&amp;/, `&language=${lang}&`)
+                        .replace(/טוען/g, 'Loading');
+                }
+                if (settings.forWho.args.languageFile) {
+                    let lang = settings.forWho.args.languageFile;
+                    result = result.replace(/document.lang = '';/g, `document.lang = '${lang}';`);
 
+                }
+                if (Sites.multipleSites) {
+                    result = result.replace('"favicon.ico', '"/' + org + '/favicon.ico')
+                        .replace('"/assets/apple-touch-icon.png"', '"/' + org + '/assets/apple-touch-icon.png"');
+                }
+                res.send(result);
             }
-            if (Sites.multipleSites) {
-                result = result.replace('"favicon.ico', '"/' + org + '/favicon.ico')
-                    .replace('"/assets/apple-touch-icon.png"', '"/' + org + '/assets/apple-touch-icon.png"');
+            else {
+                res.send('No Result: ' + req.originalUrl);
             }
-            res.send(result);
         }
-        else {
-            res.send('No Result: ' + req.originalUrl);
+        catch (err) {
+            console.log(err);
+            res.send("Sorry, please try again in a few minutes");
         }
     }
     if (process.env.DISABLE_GEOCODE) {
@@ -607,5 +614,4 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
             res.send(err);
         }
     });
-
 }
