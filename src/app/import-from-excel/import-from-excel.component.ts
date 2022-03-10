@@ -920,7 +920,7 @@ export class ImportFromExcelComponent implements OnInit {
                         }
                     }
                 }
-                if (this.newRows.length > 0) {
+                if (this.newRows.length > 0 && this.settings.lang.languageCode == 'iw') {
                     let suspectAddress = 0;
                     for (const r of this.newRows) {
                         if (!r.address || r.address.match(/[0-9]$/))
