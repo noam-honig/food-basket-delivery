@@ -216,7 +216,7 @@ export class AuthService {
 
             }
             catch {
-                this.signout();
+                //this.signout();
             }
         setTimeout(async () => {
 
