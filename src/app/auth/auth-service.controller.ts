@@ -217,3 +217,4 @@ export interface loginArgs {
 }
 
 export const TIMEOUT_MULTIPLIER_IN_SECONDS = 60;
+export const INVALID_TOKEN_ERROR = 'invalid token';

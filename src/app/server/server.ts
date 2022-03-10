@@ -41,7 +41,7 @@ import { RegisterURL } from "../resgister-url/regsiter-url";
 import { SitesEntity } from "../sites/sites.entity";
 import { SendSmsAction } from "../asign-family/send-sms-action";
 import { AsignFamilyController } from "../asign-family/asign-family.controller";
-import { AuthServiceController } from "../auth/auth-service.controller";
+import { AuthServiceController, INVALID_TOKEN_ERROR } from "../auth/auth-service.controller";
 import { CreateNewEvent } from "../create-new-event/create-new-event";
 import { DeliveryFollowUpController } from "../delivery-follow-up/delivery-follow-up.controller";
 import { DistributionMapController } from "../distribution-map/distribution-map.controller";
@@ -160,6 +160,11 @@ serverInit().then(async (dataSource) => {
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
+    app.use(function (err, req, res, next) {
+        if (err.name === 'UnauthorizedError') {
+            res.status(401).send(INVALID_TOKEN_ERROR);
+        }
+    });
 
     if (!process.env.DEV_MODE)
         app.use(forceHttps);

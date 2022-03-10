@@ -114,6 +114,7 @@ import { AreaDataComponent } from './area-data/area-data.component';
 import { NgDialogAnimationService } from 'ng-dialog-animation';
 import { DeliveryDetailsComponent } from './delivery-details/delivery-details.component';
 import { ChangeLogComponent } from './change-log/change-log.component';
+import { INVALID_TOKEN_ERROR } from './auth/auth-service.controller';
 
 
 
@@ -365,7 +366,11 @@ export function initApp(session: TokenService, settings: SettingsService, remult
 
     }
     catch (err) {
-      console.error('failed to get settings ', err);
+      if (err?.message === INVALID_TOKEN_ERROR) {
+        session.setToken(undefined, true);
+        window.location.reload();
+      } else
+        console.error('failed to get settings ', err);
     }
     return '';
 

@@ -14,7 +14,7 @@ import { Subject } from "rxjs";
 import { DeliveryReceptionComponent } from "../delivery-reception/delivery-reception.component";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { InitContext } from "../helpers/init-context";
-import { AuthServiceController, loginArgs, TIMEOUT_MULTIPLIER_IN_SECONDS } from "./auth-service.controller";
+import { AuthServiceController, INVALID_TOKEN_ERROR, loginArgs, TIMEOUT_MULTIPLIER_IN_SECONDS } from "./auth-service.controller";
 
 
 
@@ -215,8 +215,9 @@ export class AuthService {
                     await this.tokenService.setToken(r, this.remember);
 
             }
-            catch {
-                //this.signout();
+            catch (err) {
+                if (err?.message === INVALID_TOKEN_ERROR)
+                    this.signout();
             }
         setTimeout(async () => {
 
