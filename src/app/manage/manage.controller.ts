@@ -49,7 +49,6 @@ export class ManageController {
         });
 
         message = "<html><body style='white-space: pre-line;' " + (settings.forWho.args.leftToRight ? '' : 'dir=rtl') + ">" + message + "</body></html>";
-        console.log({ message });
 
         var mailOptions = {
             from: process.env.NOTIFICATION_EMAIL,
