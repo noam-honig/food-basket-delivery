@@ -1,6 +1,6 @@
 {
   "name": "hug-moms",
-  "version": "0.9.80",
+  "version": "0.9.81",
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
@@ -125,6 +125,6 @@
   "browser": {
     "jsonwebtoken": false,
     "password-hash": false,
-    "nodemailer":false
+    "nodemailer": false
   }
 }
