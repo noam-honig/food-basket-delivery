@@ -834,7 +834,7 @@ export class en {
   foodParcel = 'Food Parcel';
   updated = 'Updated';
   showFreezed = 'Show frozen';
-  pickupLocation = 'Collecting point';
+  pickupLocation = 'Pickup location';
   activeDeliveries = 'Active deliveries';
   showDeliverySummaryToVolunteerOnFirstSignIn = 'View a delivery summary for a volunteer at first entry';
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'Maximum quantity of products in delivery that an independent volunteer can see';
@@ -891,7 +891,7 @@ export class en {
   DoNotWantProblemStatusText = 'Status text not interested';
   OtherProblemStatusText = 'Text another problem status';
   updateDefaultDistributionCenter = 'Update default distribution list';
-  loadImages = 'Upload photos';
+  loadImages = 'Show photos';
   dido = 'same as above';
   organisationName = 'The organization name';
   printStickers = 'Sticker printing';
@@ -961,4 +961,13 @@ export class en {
   showPreviousActivities = 'Previous activities';
   navigateWithGoogleMaps = 'Navigate with Google';
   navigateWithWaze = 'Navigate with WAZE';
+  border = 'frame';
+  asCurrentBasket = 'Basket type in current shipment';
+  familyAdmin = 'Family Manager';
+  changeLog = 'Log changes';
+  navigate = 'Go';
+  contact = 'contact';
+  dial = 'Call';
+  whatsApp = 'WhatsApp';
+  fullList = 'Full list';
 }

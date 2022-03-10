@@ -349,6 +349,11 @@
     "valueInCode": "האם אתה בטוח שאתה רוצה לסמן נמסר בהצלחה ל",
     "valueInEnglish": "Are you sure you want to mark successfully delivered to"
   },
+  "asCurrentBasket": {
+    "google": "Tipo de cesta en el envío actual",
+    "valueInCode": "סוג הסל במשלוח הנוכחי",
+    "valueInEnglish": "Basket type in current shipment"
+  },
   "asignAnyDelivery": {
     "google": "Asignar cualquier entrega",
     "valueInCode": "שייך משלוח כלשהו",
@@ -544,6 +549,11 @@
     "valueInCode": "הדגשה",
     "valueInEnglish": "emphasis"
   },
+  "border": {
+    "google": "marco",
+    "valueInCode": "מסגרת",
+    "valueInEnglish": "frame"
+  },
   "bottomPadding": {
     "google": "margen inferior",
     "valueInCode": "שוליים תחתונים",
@@ -663,6 +673,11 @@
     "google": "Enderezar al centro",
     "valueInCode": "יישר למרכז",
     "valueInEnglish": "Straighten to the center"
+  },
+  "changeLog": {
+    "google": "Registrar cambios",
+    "valueInCode": "לוג שינויים",
+    "valueInEnglish": "Log changes"
   },
   "changeRouteOrder": {
     "google": "Cambiar el orden de la ruta",
@@ -863,6 +878,11 @@
     "google": "Confirmar contraseña",
     "valueInCode": "אישור סיסמה",
     "valueInEnglish": "Confirm password"
+  },
+  "contact": {
+    "google": "contacto",
+    "valueInCode": "יצירת קשר",
+    "valueInEnglish": "contact"
   },
   "contactPersonName": {
     "google": "contacto",
@@ -1284,6 +1304,11 @@
     "google": "Alguna vez entregado",
     "valueInCode": "נמסרו אי פעם",
     "valueInEnglish": "Ever delivered"
+  },
+  "dial": {
+    "google": "Llamada",
+    "valueInCode": "חיוג",
+    "valueInEnglish": "Call"
   },
   "dialForHelp": {
     "google": "Llamar por ayuda",
@@ -1740,6 +1765,11 @@
     "valueInCode": "פרטים נוספים",
     "valueInEnglish": "More details"
   },
+  "familyAdmin": {
+    "google": "Administrador familiar",
+    "valueInCode": "מנהל משפחות",
+    "valueInEnglish": "Family Manager"
+  },
   "familyAlreadyHasAnActiveDelivery": {
     "google": "Esta familia ya tiene entrega del mismo tipo.",
     "valueInCode": "למשפחה זו כבר קיים משלוח מאותו סוג האם להוסיף עוד אחד?",
@@ -2034,6 +2064,11 @@
     "google": "dirección completa",
     "valueInCode": "כתובת מלאה",
     "valueInEnglish": "full address"
+  },
+  "fullList": {
+    "google": "Lista llena",
+    "valueInCode": "רשימה מלאה",
+    "valueInEnglish": "Full list"
   },
   "GeocodeComponent": {
     "google": "GEOCODE",
@@ -2401,9 +2436,9 @@
     "valueInEnglish": "Load settings"
   },
   "loadImages": {
-    "google": "Subir fotos",
-    "valueInCode": "טען תמונות",
-    "valueInEnglish": "Upload photos"
+    "google": "Mostrar fotos",
+    "valueInCode": "הצג תמונות",
+    "valueInEnglish": "Show photos"
   },
   "LoginComponent": {
     "google": "Registrarse",
@@ -2542,7 +2577,7 @@
   },
   "minutes": {
     "google": "sutileza",
-    "valueInCode": "דקות",
+    "valueInCode": "ד'",
     "valueInEnglish": "minutes"
   },
   "minutesRemaining": {
@@ -2659,6 +2694,11 @@
     "google": "El nombre es muy corto",
     "valueInCode": "השם קצר מידי",
     "valueInEnglish": "The name is too short"
+  },
+  "navigate": {
+    "google": "Ir",
+    "valueInCode": "ניווט",
+    "valueInEnglish": "Go"
   },
   "navigateWithGoogleMaps": {
     "google": "Navegar con Google",
@@ -3066,9 +3106,9 @@
     "valueInEnglish": "Pictures taken by the volunteer"
   },
   "pickupLocation": {
-    "google": "Punto de recogida",
+    "google": "Lugar de recogida",
     "valueInCode": "נקודת איסוף",
-    "valueInEnglish": "Collecting point"
+    "valueInEnglish": "Pickup location"
   },
   "PlaybackComponent": {
     "google": "Un video de distribución",
@@ -3438,7 +3478,7 @@
   },
   "repeatFamilyNotice": {
     "google": "También has estado en esta familia antes",
-    "valueInCode": "הייתם אצל המשפחה הזו גם פעם קודמת",
+    "valueInCode": "הייתם אצל המשפחה הזו בעבר",
     "valueInEnglish": "You've been to this family before too"
   },
   "replaceBySiteUrl": {
@@ -4013,7 +4053,7 @@
   },
   "showText2OnlyWhenDone": {
     "google": "Mostrar texto libre 2 solo cuando el voluntario haya terminado todos los paquetes",
-    "valueInCode": "המג הודעה 2 רק אם המתנדב סיים את כל המשלוחים",
+    "valueInCode": "הצג הודעה 2 רק אם המתנדב סיים את כל המשלוחים",
     "valueInEnglish": "Display free text 2 only when the volunteer has finished all parcels"
   },
   "showTzToVolunteer": {
@@ -4623,7 +4663,7 @@
   },
   "volunteerCanUpdateComment": {
     "google": "Un voluntario puede tomar nota por sí mismo.",
-    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה",
+    "valueInCode": "מתנדב יכול לעדכן לעצמו הערה למתנדב במסך הגדרות אישיות",
     "valueInEnglish": "A volunteer can make a note for himself"
   },
   "volunteerCanUpdateDeliveryComment": {
@@ -4750,6 +4790,11 @@
     "google": "Bienvenido al entorno de",
     "valueInCode": "ברוך הבא לסביבה של",
     "valueInEnglish": "Welcome to the environment of"
+  },
+  "whatsApp": {
+    "google": "WhatsApp",
+    "valueInCode": "וואטסאפ",
+    "valueInEnglish": "WhatsApp"
   },
   "whatToOrder": {
     "google": "¿Qué pedir?",

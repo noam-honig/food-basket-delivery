@@ -357,7 +357,7 @@ export class Language {
   cancelAllAssignments = 'בטל שיוך לכל המשלוחים';
   markAllDeliveriesAsSuccesfull = 'סמן נמסר בהצלחה לכל המשלוחים';
   estimatedTravelTime = 'סה"כ זמן נסיעה מוערך';
-  minutes = 'דקות';
+  minutes = "ד'";
   km = 'ק"מ';
   leftDeliveryNextToHouse = 'השארתי ליד הבית';
   failedDeliveries = 'משלוחים שנתקלתי בבעיה';
@@ -1293,6 +1293,11 @@ export class Language {
   asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
   familyAdmin = "מנהל משפחות";
   changeLog = "לוג שינויים";
+  navigate = "ניווט";
+  contact = "יצירת קשר";
+  dial = "חיוג";
+  whatsApp="וואטסאפ";
+  fullList = "רשימה מלאה";
 }
 
 const defaultLang = new Language();

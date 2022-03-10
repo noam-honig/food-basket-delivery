@@ -961,4 +961,13 @@ export class soldier {
   showPreviousActivities = 'פעילויות קודמות';
   navigateWithGoogleMaps = 'נווט עם גוגל';
   navigateWithWaze = 'נווט עם WAZE';
+  border = 'מסגרת';
+  asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
+  familyAdmin = 'מנהל חיילים';
+  changeLog = 'לוג שינויים';
+  navigate = 'ניווט';
+  contact = 'יצירת קשר';
+  dial = 'חיוג';
+  whatsApp = 'וואטסאפ';
+  fullList = 'רשימה מלאה';
 }

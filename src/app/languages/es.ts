@@ -834,7 +834,7 @@ export class es {
   foodParcel = 'Paquete de comida';
   updated = 'Actualizado';
   showFreezed = 'Mostrar congelado';
-  pickupLocation = 'Punto de recogida';
+  pickupLocation = 'Lugar de recogida';
   activeDeliveries = 'Entregas activas';
   showDeliverySummaryToVolunteerOnFirstSignIn = 'Ver un resumen de entrega de un voluntario en la primera entrada';
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'Cantidad máxima de productos en entrega que un voluntario independiente puede ver';
@@ -891,7 +891,7 @@ export class es {
   DoNotWantProblemStatusText = 'Texto de estado no interesado';
   OtherProblemStatusText = 'Envía un mensaje de texto con el estado de otro problema';
   updateDefaultDistributionCenter = 'Actualizar la lista de distribución predeterminada';
-  loadImages = 'Subir fotos';
+  loadImages = 'Mostrar fotos';
   dido = 'lo mismo que arriba';
   organisationName = 'El nombre de la organización';
   printStickers = 'Impresión de pegatinas';
@@ -961,4 +961,13 @@ export class es {
   showPreviousActivities = 'Actividades anteriores';
   navigateWithGoogleMaps = 'Navegar con Google';
   navigateWithWaze = 'Navega con WAZE';
+  border = 'marco';
+  asCurrentBasket = 'Tipo de cesta en el envío actual';
+  familyAdmin = 'Administrador familiar';
+  changeLog = 'Registrar cambios';
+  navigate = 'Ir';
+  contact = 'contacto';
+  dial = 'Llamada';
+  whatsApp = 'WhatsApp';
+  fullList = 'Lista llena';
 }

@@ -75,6 +75,9 @@ export class HelperFamiliesComponent implements OnInit {
       block: 'start'
     })
   }
+  showBring() {
+    this.dialog.Error(use.language.whatToTake + ":\n" + this.familyLists.whatToTake);
+  }
   deliveryDetails(f: FamilyDeliveries, p: MatExpansionPanel) {
 
     if (this.familyLists.labs) {
