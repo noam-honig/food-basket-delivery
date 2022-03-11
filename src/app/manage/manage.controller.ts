@@ -16,6 +16,7 @@ import { EmailSvc } from '../shared/utils';
 import { Field, } from '../translate';
 import { Phone } from '../model-shared/phone';
 import { DeliveryImage, FamilyImage } from '../families/DeiveryImages';
+import { ChangeLog } from '../change-log/change-log';
 
 
 export class ManageController {
@@ -96,11 +97,12 @@ export class ManageController {
         var db = remult._dataSource as SqlDatabase;
         const sql = new SqlBuilder(remult);
         const fd = await SqlFor(remult.repo(FamilyDeliveries));
-
         const fdi = await SqlFor(remult.repo(DeliveryImage));
         const fi = await SqlFor(remult.repo(FamilyImage));
         await db.execute(await sql.delete(fdi, sql.build(fdi.deliveryId, sql.func(" in", sql.query({ from: fd, select: () => [fd.id], where: () => [fd.where({ family: familyId })] })))));
         await db.execute(await sql.delete(fi, fi.where({ familyId })))
+        const changeLog = await SqlFor(remult.repo(ChangeLog));
+        await db.execute(await sql.delete(changeLog, changeLog.where({ relatedId: familyId })));
 
         const set: [FieldMetadata, any][] = [];
         const fieldsToKeep: select<FamilyDeliveries> = {
