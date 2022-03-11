@@ -92,7 +92,7 @@ export class SqlBuilder {
         }
         return v;
     }
-    eq<T>(a: FieldMetadata<T>, b: T | FieldMetadata<T>) {
+    eq<T>(a: FieldMetadata<T>, b: any | FieldMetadata<any>) { //should have been typed but broke - to fix later
         return this.build(a, ' = ', b);
     }
     eqAny(a: string, b: any) {
