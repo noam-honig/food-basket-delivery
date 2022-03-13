@@ -86,7 +86,7 @@ export class FamilySelfOrderController {
     }
 
     async loadFamily() {
-        let f = await this.remult.repo(Families).findFirst({ shortUrlKey: this.familyUrl, status: FamilyStatus.Active });
+        let f = await Families.getFamilyByShortUrl(this.familyUrl, this.remult);
         if (!f) {
             this.message = "לא נמצא";
             return;

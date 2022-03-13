@@ -457,6 +457,7 @@ textarea {
   }
 }
 
+
 .small-button {
   line-height: 32px;
   .mat-icon {
@@ -467,7 +468,7 @@ textarea {
 
 .icon-and-text {
   display: flex;
-
+  
   .mat-icon {
     :dir(rtl) {
       text-align: end;
@@ -476,7 +477,7 @@ textarea {
     flex-grow: 0;
     flex-shrink: 0;
     line-height: 24px;
-    color: #1380fa;
+    color: #1380FA;
   }
   div {
     flex-grow: 1;

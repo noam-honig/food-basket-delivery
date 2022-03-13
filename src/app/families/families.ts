@@ -1011,6 +1011,9 @@ export class Families extends IdEntity {
       throw "forbidden";
     return remult.repo(FamiliesWithoutUserRestrictions).findId(id);
   }
+  static async getFamilyByShortUrl(url: string, remult: Remult): Promise<Families> {
+    return await remult.repo(FamiliesWithoutUserRestrictions).findFirst({ shortUrlKey: url, status: FamilyStatus.Active })
+  }
 }
 
 
