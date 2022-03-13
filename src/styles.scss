@@ -470,9 +470,6 @@ textarea {
   display: flex;
   
   .mat-icon {
-    :dir(rtl) {
-      text-align: end;
-    }
     font-size: medium;
     flex-grow: 0;
     flex-shrink: 0;
@@ -486,5 +483,12 @@ textarea {
 .mat-drawer-content1 {
   @media print {
     overflow: hidden;
+  }
+}
+body[dir="rtl"] {
+  .icon-and-text {
+    .mat-icon {
+      text-align: end;
+    }
   }
 }
