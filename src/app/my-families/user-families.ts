@@ -13,8 +13,17 @@ import { routeStats, routeStrategy } from "../asign-family/route-strategy";
 import { openDialog } from "@remult/angular";
 import { Roles } from "../auth/roles";
 
-
+const useWazeKey = "useWaze";
 export class UserFamiliesList {
+
+    useWaze: boolean;
+    chooseNavigation(useWaze: boolean) {
+        if (useWaze != this.useWaze) {
+            localStorage.setItem(useWazeKey, JSON.stringify(useWaze));
+            this.useWaze = useWaze;
+        }
+    }
+
     map: MapComponent;
     setMap(map: MapComponent): any {
         this.map = map;
@@ -25,11 +34,17 @@ export class UserFamiliesList {
     startAssignByMap(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: BasketType) {
 
         this.map.loadPotentialAsigment(city, group, distCenter, area, basketType);
-        
+
     }
     forceShowMap = false;
 
-    constructor(private remult: Remult, private settings: ApplicationSettings) { }
+    constructor(private remult: Remult, private settings: ApplicationSettings) {
+        this.useWaze = this.settings.lang.languageCode == 'iw';
+        let x = localStorage.getItem(useWazeKey);
+        if (x != undefined) {
+            this.useWaze = Boolean(JSON.parse(x));
+        }
+    }
     toDeliver: ActiveFamilyDeliveries[] = [];
     delivered: ActiveFamilyDeliveries[] = [];
     problem: ActiveFamilyDeliveries[] = [];

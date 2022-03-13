@@ -22,7 +22,7 @@ import { SendSmsAction } from '../asign-family/send-sms-action';
 import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component';
 import { quantityHelper } from '../families/BasketType';
 import { FamilyInfoController } from './family-info.controller';
-const useWazeKey = "useWaze";
+
 @Component({
   selector: 'app-family-info',
   templateUrl: './family-info.component.html',
@@ -53,11 +53,7 @@ export class FamilyInfoComponent implements OnInit {
     if (this.f) {
       this.hasImages = await this.dialog.donotWait(() => FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id));
     }
-    this.useWaze = this.settings.lang.languageCode == 'iw';
-    let x = localStorage.getItem(useWazeKey);
-    if (x != undefined) {
-      this.useWaze = Boolean(JSON.parse(x));
-    }
+
     this.refreshWhatToTake();
   }
   whatToTake: string = '';
@@ -89,7 +85,7 @@ export class FamilyInfoComponent implements OnInit {
   }
 
 
-  useWaze: boolean;
+
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
     return this.partOfAssign && f.courier && f.deliverStatus == DeliveryStatus.ReadyForDelivery;
@@ -161,23 +157,18 @@ export class FamilyInfoComponent implements OnInit {
     this.assignmentCanceled.emit();
 
   }
-  navigate(f: ActiveFamilyDeliveries, useWaze?: boolean) {
-    if (useWaze === undefined)
-      useWaze = this.useWaze;
-    else if (useWaze != this.useWaze) {
-      localStorage.setItem(useWazeKey, JSON.stringify(useWaze));
-      this.useWaze = useWaze;
-    }
+  navigate(f: ActiveFamilyDeliveries) {
+    
     if (!f.addressOk) {
       this.dialog.YesNoQuestion(use.language.addressNotOkOpenWaze, () => {
-        if (useWaze)
+        if (this.userFamilies.useWaze)
           f.openWaze();
         else
           f.openGoogleMaps();
       });
     }
     else
-      if (useWaze)
+      if (this.userFamilies.useWaze)
         f.openWaze();
       else
         f.openGoogleMaps();

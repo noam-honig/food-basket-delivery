@@ -23,16 +23,7 @@ export class DeliveryDetailsComponent implements OnInit {
       icon: 'comment',
       click: () => this.updateComment()
     },
-    {
-      name: this.settings.lang.navigateWithWaze,
-      click: () => this.famInfo.navigate(this.famInfo.f, true),
-      icon: 'assets/waze.png'
-    },
-    {
-      name: this.settings.lang.navigateWithGoogleMaps,
-      click: () => this.famInfo.navigate(this.famInfo.f, false),
-      icon: "location_on"
-    },
+    
     {
       name: this.settings.lang.copyAddress,
       click: () => this.famInfo.copyAddress(this.famInfo.f),

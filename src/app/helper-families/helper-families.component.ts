@@ -32,7 +32,6 @@ import { moveDeliveriesHelper } from './move-deliveries-helper';
 
 import { trigger, transition, style, animate } from '@angular/animations';
 
-import { MltFamiliesComponent } from '../mlt-families/mlt-families.component';
 
 import { routeStrategy } from '../asign-family/route-strategy';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -44,6 +43,7 @@ import { NgDialogAnimationService } from 'ng-dialog-animation';
 import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component';
 import { assign } from 'remult/assign';
 import { environment } from '../../environments/environment';
+import { Roles } from '../auth/roles';
 
 
 @Component({
@@ -148,6 +148,9 @@ export class HelperFamiliesComponent implements OnInit {
     setTimeout(() => {
       this.visibleSigns.pop();
     }, 1000);
+  }
+  isAdmin() {
+    return this.remult.isAllowed(Roles.distCenterAdmin);
   }
   disableDrag = true;
   toggleReorder() {

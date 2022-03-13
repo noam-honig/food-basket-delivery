@@ -24,8 +24,12 @@
         <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
         <button mat-menu-item (click)="familyLists.toggleLabs()">
           labs</button>
-        <button mat-menu-item (click)="showRouteOnGoogleMaps()">
+        <button mat-menu-item (click)="showRouteOnGoogleMaps()" *ngIf="isAdmin()">
           {{settings.lang.showRouteOnGoogleMaps}}</button>
+        <button mat-menu-item (click)="familyLists.chooseNavigation(true)" *ngIf="!familyLists.useWaze">
+          {{settings.lang.navigateWithWaze}}</button>
+        <button mat-menu-item (click)="familyLists.chooseNavigation(false)" *ngIf="familyLists.useWaze">
+          {{settings.lang.navigateWithGoogleMaps}}</button>
         <button mat-menu-item (click)="setDefaultCourier()"
           *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
 
