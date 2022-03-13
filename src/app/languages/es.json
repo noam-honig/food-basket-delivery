@@ -879,6 +879,11 @@
     "valueInCode": "אישור סיסמה",
     "valueInEnglish": "Confirm password"
   },
+  "contact": {
+    "google": "contacto",
+    "valueInCode": "יצירת קשר",
+    "valueInEnglish": "contact"
+  },
   "contactPersonName": {
     "google": "contacto",
     "valueInCode": "איש קשר",
@@ -1299,6 +1304,11 @@
     "google": "Alguna vez entregado",
     "valueInCode": "נמסרו אי פעם",
     "valueInEnglish": "Ever delivered"
+  },
+  "dial": {
+    "google": "Llamada",
+    "valueInCode": "חיוג",
+    "valueInEnglish": "Call"
   },
   "dialForHelp": {
     "google": "Llamar por ayuda",
@@ -2060,6 +2070,11 @@
     "valueInCode": "כתובת מלאה",
     "valueInEnglish": "full address"
   },
+  "fullList": {
+    "google": "Lista llena",
+    "valueInCode": "רשימה מלאה",
+    "valueInEnglish": "Full list"
+  },
   "GeocodeComponent": {
     "google": "GEOCODE",
     "valueInCode": "GEOCODE",
@@ -2436,9 +2451,9 @@
     "valueInEnglish": "Load settings"
   },
   "loadImages": {
-    "google": "Subir fotos",
+    "google": "Mostrar fotos",
     "valueInCode": "הצג תמונות",
-    "valueInEnglish": "Upload photos"
+    "valueInEnglish": "Show photos"
   },
   "LoginComponent": {
     "google": "Registrarse",
@@ -2577,7 +2592,7 @@
   },
   "minutes": {
     "google": "sutileza",
-    "valueInCode": "דקות",
+    "valueInCode": "ד'",
     "valueInEnglish": "minutes"
   },
   "minutesRemaining": {
@@ -2694,6 +2709,11 @@
     "google": "El nombre es muy corto",
     "valueInCode": "השם קצר מידי",
     "valueInEnglish": "The name is too short"
+  },
+  "navigate": {
+    "google": "Ir",
+    "valueInCode": "ניווט",
+    "valueInEnglish": "Go"
   },
   "navigateWithGoogleMaps": {
     "google": "Navegar con Google",
@@ -3101,9 +3121,9 @@
     "valueInEnglish": "Pictures taken by the volunteer"
   },
   "pickupLocation": {
-    "google": "Punto de recogida",
+    "google": "Lugar de recogida",
     "valueInCode": "נקודת איסוף",
-    "valueInEnglish": "Collecting point"
+    "valueInEnglish": "Pickup location"
   },
   "PlaybackComponent": {
     "google": "Un video de distribución",
@@ -4795,6 +4815,11 @@
     "google": "Bienvenido al entorno de",
     "valueInCode": "ברוך הבא לסביבה של",
     "valueInEnglish": "Welcome to the environment of"
+  },
+  "whatsApp": {
+    "google": "WhatsApp",
+    "valueInCode": "וואטסאפ",
+    "valueInEnglish": "WhatsApp"
   },
   "whatToOrder": {
     "google": "¿Qué pedir?",

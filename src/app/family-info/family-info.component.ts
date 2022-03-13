@@ -42,9 +42,16 @@ export class FamilyInfoComponent implements OnInit {
   @Input() selfPickupScreen = false;
   hasImages = false;
   images: ImageInfo[];
+  phones: { phone: Phone, desc: string }[];
   async ngOnInit() {
+    this.phones = [
+      { phone: this.f.phone1, desc: this.f.phone1Description },
+      { phone: this.f.phone2, desc: this.f.phone2Description },
+      { phone: this.f.phone3, desc: this.f.phone3Description },
+      { phone: this.f.phone4, desc: this.f.phone4Description }
+    ].filter(x => x.phone);
     if (this.f) {
-      this.hasImages = await FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id);
+      this.hasImages = await this.dialog.donotWait(() => FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id));
     }
     this.useWaze = this.settings.lang.languageCode == 'iw';
     let x = localStorage.getItem(useWazeKey);
@@ -59,7 +66,7 @@ export class FamilyInfoComponent implements OnInit {
     this.whatToTake = '';
     if (this.f.basketType) {
       toTake.parseComment(this.f.basketType.whatToTake, this.f.quantity);
-      this.whatToTake = toTake.toString(this.userFamilies?.labs ? undefined : ', ');
+      this.whatToTake = toTake.toString(this.userFamilies?.labs || true ? undefined : ', ');
     }
   }
 

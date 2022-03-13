@@ -65,10 +65,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
             setTimeout(() => {
                 this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter, this.filterArea, this.basketType.basket);
+                setTimeout(() => {
+                    this.assignButton.nativeElement.scrollIntoView({
+                        block:"start",
+                        behavior:"smooth"
+                    });
+                }, 100);
             }, 50);
         }, 50);
 
     }
+    @ViewChild("assignButton",{static:false}) assignButton:ElementRef;
     @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
 
     hasPreferred() {

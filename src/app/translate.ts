@@ -357,7 +357,7 @@ export class Language {
   cancelAllAssignments = 'בטל שיוך לכל המשלוחים';
   markAllDeliveriesAsSuccesfull = 'סמן נמסר בהצלחה לכל המשלוחים';
   estimatedTravelTime = 'סה"כ זמן נסיעה מוערך';
-  minutes = 'דקות';
+  minutes = "ד'";
   km = 'ק"מ';
   leftDeliveryNextToHouse = 'השארתי ליד הבית';
   failedDeliveries = 'משלוחים שנתקלתי בבעיה';
@@ -1292,14 +1292,19 @@ export class Language {
   border = 'מסגרת';
   asCurrentBasket = 'סוג הסל במשלוח הנוכחי';
   familyAdmin = "מנהל משפחות";
+
   changeLog = "היסטורית שינויים";
   emailForVolunteerRegistrationNotification = 'דוא"ל לקבלת הודעה כאשר מתנדב נרשם';
   sendTestEmail = "לשלוח מייל לבדיקה?";
-  
   hasRegisteredTo = "נרשם ל";
   thatWillTakePlaceAt = "שיתקיים ב";
-  
   hasCanceledRegistration = "ביטל את השתתפות ב";
+  navigate = "ניווט";
+  contact = "יצירת קשר";
+  dial = "חיוג";
+  whatsApp = "וואטסאפ";
+  fullList = "רשימה מלאה";
+
 }
 
 const defaultLang = new Language();

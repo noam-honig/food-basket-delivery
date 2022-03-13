@@ -970,4 +970,9 @@ export class donor {
   hasRegisteredTo = 'נרשם ל';
   thatWillTakePlaceAt = 'שיתקיים ב';
   hasCanceledRegistration = 'ביטל את השתתפות ב';
+  navigate = 'ניווט';
+  contact = 'יצירת קשר';
+  dial = 'חיוג';
+  whatsApp = 'וואטסאפ';
+  fullList = 'רשימה מלאה';
 }

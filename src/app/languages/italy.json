@@ -879,6 +879,11 @@
     "valueInCode": "אישור סיסמה",
     "valueInEnglish": "Confirm password"
   },
+  "contact": {
+    "google": "contatto",
+    "valueInCode": "יצירת קשר",
+    "valueInEnglish": "contact"
+  },
   "contactPersonName": {
     "google": "contatto",
     "valueInCode": "איש קשר",
@@ -1299,6 +1304,11 @@
     "google": "mai consegnato",
     "valueInCode": "נמסרו אי פעם",
     "valueInEnglish": "Ever delivered"
+  },
+  "dial": {
+    "google": "Chiamata",
+    "valueInCode": "חיוג",
+    "valueInEnglish": "Call"
   },
   "dialForHelp": {
     "google": "Chiamare per aiuto",
@@ -2060,6 +2070,11 @@
     "valueInCode": "כתובת מלאה",
     "valueInEnglish": "full address"
   },
+  "fullList": {
+    "google": "Lista completa",
+    "valueInCode": "רשימה מלאה",
+    "valueInEnglish": "Full list"
+  },
   "GeocodeComponent": {
     "google": "geocode",
     "valueInCode": "GEOCODE",
@@ -2436,9 +2451,9 @@
     "valueInEnglish": "Load settings"
   },
   "loadImages": {
-    "google": "Caricare foto",
+    "google": "Mostra foto",
     "valueInCode": "הצג תמונות",
-    "valueInEnglish": "Upload photos"
+    "valueInEnglish": "Show photos"
   },
   "LoginComponent": {
     "google": "registrati",
@@ -2577,7 +2592,7 @@
   },
   "minutes": {
     "google": "sottigliezza",
-    "valueInCode": "דקות",
+    "valueInCode": "ד'",
     "valueInEnglish": "minutes"
   },
   "minutesRemaining": {
@@ -2694,6 +2709,11 @@
     "google": "Il nome è troppo corto",
     "valueInCode": "השם קצר מידי",
     "valueInEnglish": "The name is too short"
+  },
+  "navigate": {
+    "google": "andare",
+    "valueInCode": "ניווט",
+    "valueInEnglish": "Go"
   },
   "navigateWithGoogleMaps": {
     "google": "Naviga con Google",
@@ -3101,9 +3121,9 @@
     "valueInEnglish": "Pictures taken by the volunteer"
   },
   "pickupLocation": {
-    "google": "Punto di raccolta",
+    "google": "Posto di raccolta",
     "valueInCode": "נקודת איסוף",
-    "valueInEnglish": "Collecting point"
+    "valueInEnglish": "Pickup location"
   },
   "PlaybackComponent": {
     "google": "Un video di distribuzione",
@@ -4795,6 +4815,11 @@
     "google": "Benvenuti nell'ambiente di",
     "valueInCode": "ברוך הבא לסביבה של",
     "valueInEnglish": "Welcome to the environment of"
+  },
+  "whatsApp": {
+    "google": "WhatsApp",
+    "valueInCode": "וואטסאפ",
+    "valueInEnglish": "WhatsApp"
   },
   "whatToOrder": {
     "google": "Cosa ordinare?",

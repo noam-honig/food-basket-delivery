@@ -25,9 +25,7 @@ export class UserFamiliesList {
     startAssignByMap(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: BasketType) {
 
         this.map.loadPotentialAsigment(city, group, distCenter, area, basketType);
-        setTimeout(() => {
-            this.map.gmapElement.nativeElement.scrollIntoView();
-        }, 100);
+        
     }
     forceShowMap = false;
 
@@ -82,10 +80,20 @@ export class UserFamiliesList {
     showBasketSummary() {
         openDialog(BasketSummaryComponent, x => x.families = this);
     }
-    
+
     getLeftFamiliesDescription() {
+        if (this.toDeliver.length == 0)
+            return "";
+        let r = '';
+        if (this.toDeliver.length == 1) {
+            r = this.settings.lang.oneDeliveryToDistribute;
+        }
+        else
+            r = this.toDeliver.length + ' ' + this.settings.lang.deliveriesToDistribute;
+        return r;
 
-
+    }
+    getBoxes() {
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
@@ -97,13 +105,8 @@ export class UserFamiliesList {
             }
         }
         if (this.toDeliver.length == 0)
-            return this.settings.lang.noDeliveries;
-        let r = '';
-        if (this.toDeliver.length == 1) {
-            r = this.settings.lang.oneDeliveryToDistribute;
-        }
-        else
-            r = this.toDeliver.length + ' ' + this.settings.lang.deliveriesToDistribute;
+            return "";
+
 
         let boxesText = '';
         if (boxes != this.toDeliver.length || boxes2 != 0)
@@ -111,9 +114,7 @@ export class UserFamiliesList {
         if (boxes2 != 0) {
             boxesText += ' ' + this.settings.lang.and + " " + boxes2 + ' ' + BasketType.boxes2Name;
         }
-        if (boxesText != '')
-            r += ' (' + boxesText + ')';
-        return r;
+        return boxesText;
 
     }
     async initForFamilies(helper: HelpersBase, familiesPocoArray: any[]) {

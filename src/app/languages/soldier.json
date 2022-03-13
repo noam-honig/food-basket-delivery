@@ -703,6 +703,10 @@
     "google": "אישור סיסמה",
     "valueInCode": "אישור סיסמה"
   },
+  "contact": {
+    "google": "יצירת קשר",
+    "valueInCode": "יצירת קשר"
+  },
   "contactPersonName": {
     "google": "איש קשר",
     "valueInCode": "איש קשר"
@@ -1038,6 +1042,10 @@
   "delveriesSuccessfulEver": {
     "google": "נמסרו אי פעם",
     "valueInCode": "נמסרו אי פעם"
+  },
+  "dial": {
+    "google": "חיוג",
+    "valueInCode": "חיוג"
   },
   "dialForHelp": {
     "google": "חייג לקבלת עזרה",
@@ -1647,6 +1655,10 @@
     "google": "כתובת מלאה",
     "valueInCode": "כתובת מלאה"
   },
+  "fullList": {
+    "google": "רשימה מלאה",
+    "valueInCode": "רשימה מלאה"
+  },
   "GeocodeComponent": {
     "google": "GEOCODE",
     "valueInCode": "GEOCODE"
@@ -2061,7 +2073,7 @@
   },
   "minutes": {
     "google": "דקות",
-    "valueInCode": "דקות"
+    "valueInCode": "ד'"
   },
   "minutesRemaining": {
     "google": "דקות נשארו",
@@ -2154,6 +2166,10 @@
   "nameIsTooShort": {
     "google": "השם קצר מידי",
     "valueInCode": "השם קצר מידי"
+  },
+  "navigate": {
+    "google": "ניווט",
+    "valueInCode": "ניווט"
   },
   "navigateWithGoogleMaps": {
     "google": "נווט עם גוגל",
@@ -3834,6 +3850,10 @@
   "welcomeTo": {
     "google": "ברוך הבא לסביבה של",
     "valueInCode": "ברוך הבא לסביבה של"
+  },
+  "whatsApp": {
+    "google": "וואטסאפ",
+    "valueInCode": "וואטסאפ"
   },
   "whatToOrder": {
     "google": "מה להזמין?",

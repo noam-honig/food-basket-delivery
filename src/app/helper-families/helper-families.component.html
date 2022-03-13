@@ -3,7 +3,7 @@
 </div>
 
 <mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
-  <mat-card-title>
+  <mat-card-title *ngIf="familyLists.getLeftFamiliesDescription()">
     {{familyLists.getLeftFamiliesDescription()}}
     <div>
       <mat-menu #appMenu="matMenu">
@@ -40,10 +40,22 @@
 
     </div>
   </mat-card-title>
+  <div *ngIf="familyLists.getBoxes()||this.familyLists.whatToTake" class="icon-and-text no-print">
+    <mat-icon>shopping_bag</mat-icon>
+    <div style="display: flex;
+    white-space: nowrap;">
+      <span style="text-overflow: ellipsis;
+      width: 50px;
+      overflow-y: clip;
+      flex-grow: 1;">{{familyLists.getBoxes()}} {{this.familyLists.whatToTake}}</span> <a (click)="showBring()"
+        *ngIf="this.familyLists.whatToTake">{{settings.lang.fullList}}</a>
+    </div>
+  </div>
   <div
-    [class.not-visible]="!(familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies())"
-    class="no-print">
-    {{settings.lang.estimatedTravelTime}} <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
+    *ngIf="familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()"
+    class="icon-and-text no-print">
+    <mat-icon>local_shipping</mat-icon>
+    <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
       {{settings.lang.minutes}},
       {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
         style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
@@ -58,8 +70,9 @@
       <mat-accordion class="no-print" cdkDropList (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy">
           <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" cdkDrag [cdkDragDisabled]="disableDrag"
-            (click)="deliveryDetails(f,myPanel)">
+            (click)="deliveryDetails(f,myPanel)" (afterExpand)="afterExpand(scrollToTop)">
             <mat-expansion-panel-header>
+              <div #scrollToTop></div>
               <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
                 [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
                 [latestAssign]="partOfAssign&&f.courierAssingTime?.valueOf()==familyLists.maxAssignTime"
@@ -75,7 +88,7 @@
                 (assignmentCanceled)="cancelAssign(f)" [userFamilies]="familyLists">
 
 
-                <button mat-raised-button class="myButton" color="accent"
+                <button mat-raised-button class="myButton" color="primary"
                   (click)="deliveredToFamily(f)">{{settings.deliveredButtonText}}</button>
                 <br *ngIf="settings.showLeftThereButton" />
                 <button *ngIf="settings.showLeftThereButton" mat-raised-button class="myButton"
@@ -105,13 +118,7 @@
       </ng-template>
       <app-map #map> </app-map>
     </mat-tab>
-    <mat-tab *ngIf="familyLists.whatToTake">
-      <ng-template mat-tab-label>
-        <mat-icon class="example-tab-icon">shopping_cart</mat-icon>
-        {{settings.lang.whatToTake}}
-      </ng-template>
-      <div style="white-space: pre;">{{familyLists.whatToTake}}</div>
-    </mat-tab>
+
   </mat-tab-group>
 
 </mat-card>

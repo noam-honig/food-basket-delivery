@@ -834,7 +834,7 @@ export class italy {
   foodParcel = 'Pacco alimentare';
   updated = 'Aggiornato';
   showFreezed = 'Mostra congelato';
-  pickupLocation = 'Punto di raccolta';
+  pickupLocation = 'Posto di raccolta';
   activeDeliveries = 'Consegne attive';
   showDeliverySummaryToVolunteerOnFirstSignIn = 'Visualizza un riepilogo della consegna per un volontario al primo ingresso';
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee = 'Quantità massima di prodotti in consegna che un volontario indipendente può vedere';
@@ -891,7 +891,7 @@ export class italy {
   DoNotWantProblemStatusText = 'Testo di stato non interessato';
   OtherProblemStatusText = 'Invia un messaggio a un altro stato di problema';
   updateDefaultDistributionCenter = 'Aggiorna la lista di distribuzione predefinita';
-  loadImages = 'Caricare foto';
+  loadImages = 'Mostra foto';
   dido = 'come sopra';
   organisationName = "Il nome dell'organizzazione";
   printStickers = 'Stampa di adesivi';
@@ -970,4 +970,9 @@ export class italy {
   hasRegisteredTo = 'facendo domanda per';
   thatWillTakePlaceAt = 'Da tenere';
   hasCanceledRegistration = 'Partecipazione annullata';
+  navigate = 'andare';
+  contact = 'contatto';
+  dial = 'Chiamata';
+  whatsApp = 'WhatsApp';
+  fullList = 'Lista completa';
 }

@@ -122,8 +122,8 @@
 
 
 
-        <div class="no-print" style="display:flex;justify-content: center;">
-          <button mat-raised-button color="primary" (click)="assignItem()"
+        <div class="no-print" style="display:flex;justify-content: center;" #assignButton>
+          <button mat-raised-button color="primary" (click)="assignItem()" 
             [disabled]="basketType.unassignedFamilies==0 || assigning"
             style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
             {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft:  familyLists.allFamilies.length>0? settings.lang.asignClosestDelivery:repeatFamilies.length>0&&preferRepeatFamilies&&repeatFamilies.length>0?settings.lang.assignRepeatFamily:helper.preferredDistributionAreaAddress||helper.preferredFinishAddress?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}

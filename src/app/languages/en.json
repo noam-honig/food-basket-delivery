@@ -790,6 +790,10 @@
     "valueInCode": "אישור סיסמה",
     "custom": "Confirm password"
   },
+  "contact": {
+    "google": "contact",
+    "valueInCode": "יצירת קשר"
+  },
   "contactPersonName": {
     "google": "contact",
     "valueInCode": "איש קשר"
@@ -1176,6 +1180,11 @@
   "delveriesSuccessfulEver": {
     "google": "Ever delivered",
     "valueInCode": "נמסרו אי פעם"
+  },
+  "dial": {
+    "google": "dialing",
+    "valueInCode": "חיוג",
+    "custom": "Call"
   },
   "dialForHelp": {
     "google": "Call for help",
@@ -1823,6 +1832,10 @@
     "google": "full address",
     "valueInCode": "כתובת מלאה"
   },
+  "fullList": {
+    "google": "Full list",
+    "valueInCode": "רשימה מלאה"
+  },
   "GeocodeComponent": {
     "google": "GEOCODE",
     "valueInCode": "GEOCODE"
@@ -2136,7 +2149,8 @@
   },
   "loadImages": {
     "google": "Upload photos",
-    "valueInCode": "הצג תמונות"
+    "valueInCode": "הצג תמונות",
+    "custom": "Show photos"
   },
   "LoginComponent": {
     "google": "Entrance",
@@ -2254,7 +2268,7 @@
   },
   "minutes": {
     "google": "minutes",
-    "valueInCode": "דקות"
+    "valueInCode": "ד'"
   },
   "minutesRemaining": {
     "google": "Minutes remained",
@@ -2348,6 +2362,11 @@
   "nameIsTooShort": {
     "google": "The name is too short",
     "valueInCode": "השם קצר מידי"
+  },
+  "navigate": {
+    "google": "Navigation",
+    "valueInCode": "ניווט",
+    "custom": "Go"
   },
   "navigateWithGoogleMaps": {
     "google": "Navigate with Google",
@@ -2691,7 +2710,8 @@
   },
   "pickupLocation": {
     "google": "Collecting point",
-    "valueInCode": "נקודת איסוף"
+    "valueInCode": "נקודת איסוף",
+    "custom": "Pickup location"
   },
   "PlaybackComponent": {
     "google": "A distribution video",
@@ -4134,6 +4154,10 @@
   "welcomeTo": {
     "google": "Welcome to the environment of",
     "valueInCode": "ברוך הבא לסביבה של"
+  },
+  "whatsApp": {
+    "google": "WhatsApp",
+    "valueInCode": "וואטסאפ"
   },
   "whatToOrder": {
     "google": "What to order?",
