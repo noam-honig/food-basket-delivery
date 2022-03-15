@@ -357,7 +357,7 @@ export class Language {
   cancelAllAssignments = 'בטל שיוך לכל המשלוחים';
   markAllDeliveriesAsSuccesfull = 'סמן נמסר בהצלחה לכל המשלוחים';
   estimatedTravelTime = 'סה"כ זמן נסיעה מוערך';
-  minutes = "ד'";
+  minutes = "דקות";
   km = 'ק"מ';
   leftDeliveryNextToHouse = 'השארתי ליד הבית';
   failedDeliveries = 'משלוחים שנתקלתי בבעיה';

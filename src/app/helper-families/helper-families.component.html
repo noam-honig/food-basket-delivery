@@ -44,7 +44,7 @@
 
     </div>
   </mat-card-title>
-  <div *ngIf="familyLists.getBoxes()||this.familyLists.whatToTake" class="icon-and-text no-print">
+  <div *ngIf="familyLists.getBoxes()||this.familyLists.whatToTake" class="icon-and-text no-print" style="max-width:290px">
     <mat-icon>shopping_bag</mat-icon>
     <div style="display: flex;
     white-space: nowrap;">
@@ -58,7 +58,7 @@
   <div
     *ngIf="familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()"
     class="icon-and-text no-print">
-    <mat-icon>local_shipping</mat-icon>
+    <mat-icon>schedule</mat-icon>
     <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
       {{settings.lang.minutes}},
       {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
