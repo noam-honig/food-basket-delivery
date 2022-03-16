@@ -48,10 +48,11 @@
     <mat-icon>shopping_bag</mat-icon>
     <div style="display: flex;
     white-space: nowrap;">
-      <span style="text-overflow: ellipsis;
-      width: 50px;
-      overflow-y: clip;
-      flex-grow: 1;">{{familyLists.getBoxes()}} {{this.familyLists.whatToTake}}</span> <a (click)="showBring()"
+      <div style="text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width:195px;
+     ">{{familyLists.getBoxes()}} {{this.familyLists.whatToTake}}</div> <a (click)="showBring()"
         *ngIf="this.familyLists.whatToTake">{{settings.lang.fullList}}</a>
     </div>
   </div>
