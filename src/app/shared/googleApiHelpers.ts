@@ -68,12 +68,16 @@ export async function GetGeoInformation(address: string, remult: Remult) {
                     console.log('api error:' + g.info.status + ' for ' + address);
                 return g;
 
-            }));
+            })).catch(err => {
+                const message = err?.message.replace(process.env.GOOGLE_GECODE_API_KEY, '****');
+                throw { message };
+            });
             pendingRequests.set(address, r);
             return await r;
 
         }
         catch (err) {
+            pendingRequests.delete(address);
             return new GeocodeInformation({ results: [], status: (await import('../select-popup/extractError')).extractError(err) });
 
         }
