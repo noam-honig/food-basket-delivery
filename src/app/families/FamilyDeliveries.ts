@@ -502,6 +502,7 @@ export class FamilyDeliveries extends IdEntity {
     });
     static isAllowedForUser = Filter.createCustom<FamilyDeliveries>(async (remult) => {
 
+        console.log("here");
         if (!remult.authenticated())
             return { id: [] };
         let result: EntityFilter<FamilyDeliveries>[] = [];
@@ -821,7 +822,8 @@ SqlBuilder.filterTranslators.push({
 });
 
 @Entity<FamilyDeliveries>('ActiveFamilyDeliveries', {
-    backendPrefilter: { ...FamilyDeliveries.active }
+    backendPrefilter: { ...FamilyDeliveries.active },
+    apiPrefilter: FamilyDeliveries.isAllowedForUser()
 
 })
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
