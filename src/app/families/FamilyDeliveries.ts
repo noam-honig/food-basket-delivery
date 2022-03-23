@@ -49,7 +49,7 @@ export class MessageStatus {
     allowApiInsert: false,
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
-    apiPrefilter: FamilyDeliveries.isAllowedForUser(),
+
     saving: async (self) => {
 
         if (self.isNew()) {
@@ -100,7 +100,7 @@ export class MessageStatus {
             }
         }
     }
-})
+}, o => o.apiPrefilter =  FamilyDeliveries.isAllowedForUser())
 export class FamilyDeliveries extends IdEntity {
     getCss(): string {
         return this.deliverStatus.getCss(this.courier);
@@ -821,8 +821,7 @@ SqlBuilder.filterTranslators.push({
 });
 
 @Entity<FamilyDeliveries>('ActiveFamilyDeliveries', {
-    backendPrefilter: { ...FamilyDeliveries.active },
-    apiPrefilter: FamilyDeliveries.isAllowedForUser()
+    backendPrefilter: { ...FamilyDeliveries.active }
 
 })
 export class ActiveFamilyDeliveries extends FamilyDeliveries {

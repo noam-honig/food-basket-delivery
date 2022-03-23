@@ -44,7 +44,8 @@
 
     </div>
   </mat-card-title>
-  <div *ngIf="familyLists.getBoxes()||this.familyLists.whatToTake" class="icon-and-text no-print" style="max-width:290px">
+  <div *ngIf="familyLists.getBoxes()||this.familyLists.whatToTake" class="icon-and-text no-print"
+    style="max-width:290px">
     <mat-icon>shopping_bag</mat-icon>
     <div style="display: flex;
     white-space: nowrap;">
@@ -66,7 +67,8 @@
         style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
 
   </div>
-  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab style="margin:0 -16px">
+  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab style="margin:0 -16px"
+    [style.marginInlineStart]="disableDrag?'':'16px'">
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">toc</mat-icon>
