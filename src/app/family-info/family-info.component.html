@@ -144,6 +144,7 @@ align-items: center;" class="{{f.deliverStatus.getCss(f.courier)}}">
   <ng-container *ngIf="!settings.hideFamilyPhoneFromVolunteer">
     <h4 *ngIf="phones.length>0">{{settings.lang.contact}}</h4>
     <mat-card>
+      
       <ng-container *ngFor="let phone of phones;let first=first">
         <div *ngIf="!first">
           <div style="height:16px"></div>
@@ -152,7 +153,7 @@ align-items: center;" class="{{f.deliverStatus.getCss(f.courier)}}">
         </div>
         <div *ngIf="phone">
           <div style="padding-bottom: 18px;">
-            <span style="display:inline-block" *ngIf="phone.desc">{{phone.desc+','}}&nbsp;</span>
+            <strong *ngIf="first">{{f.name}}, &nbsp;</strong> <span style="display:inline-block" *ngIf="phone.desc">{{phone.desc+','}}&nbsp;</span>
             <a (click)="callPhone(phone.phone)">{{phone.phone.displayValue}}</a>
           </div>
           <div style="display:flex;gap:16px">
