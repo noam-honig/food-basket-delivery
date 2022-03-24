@@ -5,8 +5,9 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
-import { DateValueConverter } from 'remult/valueConverters';
+
 import { familyQueryResult, PlaybackController } from './playback.controller';
+import { ValueConverters } from 'remult';
 
 @Component({
   selector: 'app-playback',
@@ -123,11 +124,11 @@ export class PlaybackComponent implements OnInit {
         prevStep = newStat;
       }
       if (f.courierTime && startStatus != this.statuses.selfPickup) {
-        addTimeLineStep(this.statuses.onTheWay, DateValueConverter.fromJson(f.courierTime));
+        addTimeLineStep(this.statuses.onTheWay, ValueConverters.Date.fromJson(f.courierTime));
       }
       let stat = this.statuses.getBy(f.status, f.courier);
       if (stat != startStatus)
-        addTimeLineStep(stat, DateValueConverter.fromJson(f.statusTime));
+        addTimeLineStep(stat, ValueConverters.Date.fromJson(f.statusTime));
 
     }
     this.map.fitBounds(this.bounds);

@@ -35,7 +35,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
     knowTotalRows: true,
 
     rowsInPage: 100,
-    where: { id: this.deliveriesForPhone }
+    where:()=>( { id: this.deliveriesForPhone })
     , orderBy: { name: "asc" }
     ,
     columnSettings: deliveries => {

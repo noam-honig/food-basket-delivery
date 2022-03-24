@@ -1,6 +1,7 @@
 
-import { Entity, EntityBase, EntityMetadata, EntityRef, Field, FieldRef, Fields, FieldType, getEntityRef, IdEntity, isBackend, Remult } from "remult";
+import { Entity, EntityBase, EntityMetadata, EntityRef, FieldRef, Fields, FieldsRef, FieldType, getEntityRef, IdEntity, isBackend, Remult } from "remult";
 import { Roles } from "../auth/roles";
+import { Field } from "../translate";
 
 @Entity<ChangeLog>("changeLog", {
     allowApiRead: Roles.admin,
@@ -64,7 +65,7 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                     key: c.metadata.key,
                     oldDisplayValue: noVal ? "***" : transValue(c.originalValue),
                     newDisplayValue: noVal ? "***" : transValue(c.value),
-                    newValue: noVal ? "***" : (c.value instanceof IdEntity) ? c.value.id :c.metadata.options.valueConverter.toJson(c.value),
+                    newValue: noVal ? "***" : (c.value instanceof IdEntity) ? c.value.id : c.metadata.options.valueConverter.toJson(c.value),
                     oldValue: noVal ? "***" : (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.metadata.options.valueConverter.toJson(c.originalValue)
                 });
             } catch (err) {
@@ -93,8 +94,8 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
     }
 }
 interface ColumnDeciderArgs<entityType> {
-    excludeColumns?: (e: Fields<entityType>) => FieldRef<any>[],
-    excludeValues?: (e: Fields<entityType>) => FieldRef<any>[]
+    excludeColumns?: (e: FieldsRef<entityType>) => FieldRef<any>[],
+    excludeValues?: (e: FieldsRef<entityType>) => FieldRef<any>[]
 }
 export class FieldDecider<entityType>{
     fields: FieldRef<entityType>[];

@@ -1,6 +1,6 @@
-import { Remult, BackendMethod, SqlDatabase } from 'remult';
+import { Remult, BackendMethod, SqlDatabase, ValueConverters } from 'remult';
 
-import { DateOnlyValueConverter } from 'remult/valueConverters';
+
 
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -16,8 +16,8 @@ export class WeeklyReportMltController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
         let totalPerBasket: { URL: string, basketType: string, total: number, added: number, collected: number, received: number }[] = [];
-        var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
-        var toDateDate = DateOnlyValueConverter.fromJson(toDate);
+        var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
+        var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
         let fd = SqlFor(remult.repo(FamilyDeliveries));
         let u = SqlFor(remult.repo(RegisterURL));
@@ -50,8 +50,8 @@ export class WeeklyReportMltController {
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getVolunteersData(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
-        var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
-        var toDateDate = DateOnlyValueConverter.fromJson(toDate);
+        var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
+        var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
         let h = SqlFor(remult.repo(Helpers));
 
@@ -78,8 +78,8 @@ export class WeeklyReportMltController {
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getDonorsData(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
-        var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
-        var toDateDate = DateOnlyValueConverter.fromJson(toDate);
+        var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
+        var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
         let u = SqlFor(remult.repo(RegisterURL));
         let f = SqlFor(remult.repo(Families));
@@ -105,8 +105,8 @@ export class WeeklyReportMltController {
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getVolunteerAverage(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
-        var fromDateDate = DateOnlyValueConverter.fromJson(fromDate);
-        var toDateDate = DateOnlyValueConverter.fromJson(toDate);
+        var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
+        var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
 
         let f = await SqlFor(remult.repo(FamilyDeliveries));

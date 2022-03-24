@@ -1,11 +1,11 @@
-import { Remult, ValueFilter } from 'remult';
+import { Remult, ValueFilter, getValueList } from 'remult';
 
 import { use, ValueListFieldType } from '../translate';
 
 import { getSettings } from '../manage/ApplicationSettings';
 
 import { DataControl } from '@remult/angular/interfaces';
-import { ValueListValueConverter } from 'remult/valueConverters';
+
 
 
 @DataControl({
@@ -13,7 +13,7 @@ import { ValueListValueConverter } from 'remult/valueConverters';
   , width: '150'
 
 })
-@ValueListFieldType( {
+@ValueListFieldType({
   displayValue: (e, val) => val.caption,
   translation: l => l.deliveryStatus
 })
@@ -73,10 +73,10 @@ export class DeliveryStatus {
     }
   }
   public static resultStatuses() {
-    return new ValueListValueConverter(DeliveryStatus).getOptions().filter(x => x.IsAResultStatus());
+    return getValueList(DeliveryStatus).filter(x => x.IsAResultStatus());
   }
   private static problemStatuses() {
-    return new ValueListValueConverter(DeliveryStatus).getOptions().filter(x => x.isProblem);
+    return getValueList(DeliveryStatus).filter(x => x.isProblem);
   }
 
   static isNotAResultStatus(): ValueFilter<DeliveryStatus> {
@@ -101,7 +101,7 @@ export class DeliveryStatus {
     return [...this.problemStatuses(), DeliveryStatus.Frozen];
   }
   static getOptions(remult: Remult) {
-    let op = new ValueListValueConverter(DeliveryStatus).getOptions();
+    let op = getValueList(DeliveryStatus);
     if (!getSettings(remult).usingSelfPickupModule) {
       op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
     }

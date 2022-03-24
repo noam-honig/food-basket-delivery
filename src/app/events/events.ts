@@ -1,6 +1,6 @@
-import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener } from "remult";
+import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters } from "remult";
 import { DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, RowButton } from '@remult/angular/interfaces';
-import { use, ValueListFieldType, Field, DateOnlyField, IntegerField } from "../translate";
+import { use, ValueListFieldType, Field, Fields } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";
 import { Helpers, HelpersBase } from "../helpers/helpers";
@@ -18,7 +18,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { InputTypes } from "remult/inputTypes";
 
 import * as moment from "moment";
-import { DateOnlyValueConverter } from "remult/valueConverters";
+
 import { messageMerger } from "../edit-custom-message/messageMerger";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
 import { SendBulkSms } from "../helpers/send-bulk-sms";
@@ -188,7 +188,7 @@ export class Event extends IdEntity {
     eventStatus: eventStatus = eventStatus.active;
     @Field({ translation: l => l.eventDescription, customInput: x => x.textArea() })
     description: string;
-    @DateOnlyField<Event>({
+    @Fields.DateOnly<Event>({
         translation: l => l.eventDate,
         validate: (s, c) => {
             if (!c.value || c.value.getFullYear() < 2018)
@@ -202,7 +202,7 @@ export class Event extends IdEntity {
     @Field({ inputType: InputTypes.time, translation: l => l.eventEndTime })
     @DataControl({ width: '110' })
     endTime: string;
-    @IntegerField({ translation: l => l.requiredVolunteers })
+    @Fields.Integer({ translation: l => l.requiredVolunteers })
     requiredVolunteers: number;
     @Field()
     addressApiResult: string;
@@ -259,7 +259,7 @@ export class Event extends IdEntity {
         return getSettings(this.remult).organisationName;
     }
     get eventDateJson() {
-        return DateOnlyValueConverter.toJson(this.eventDate);
+        return ValueConverters.DateOnly.toJson(this.eventDate);
     }
 
     constructor(private remult: Remult) {
@@ -303,7 +303,7 @@ export class Event extends IdEntity {
         let settings = (await remult.getSettings());
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;
-        let date = new InputField<Date>({ caption: settings.lang.eventDate, valueConverter: DateOnlyValueConverter });
+        let date = new InputField<Date>({ caption: settings.lang.eventDate, valueConverter: ValueConverters.DateOnly });
         date.value = new Date();
         await ui.inputAreaDialog({
             title: settings.lang.duplicateEvents,
@@ -612,7 +612,7 @@ export class volunteersInEvent extends IdEntity {
 
             rowsInPage: 50,
             allowUpdate: true,
-            where: { eventId: event.id },
+            where:()=>( { eventId: event.id }),
             orderBy: { registerStatusDate: "desc" },
             knowTotalRows: true,
             numOfColumnsInGrid: 10,
@@ -827,11 +827,11 @@ export const day = 86400000;
 export function eventDisplayDate(e: EventInList, group = false, today: Date = undefined) {
 
     if (e.eventDateJson) {
-        let edd = DateOnlyValueConverter.fromJson(e.eventDateJson);
+        let edd = ValueConverters.DateOnly.fromJson(e.eventDateJson);
         if (!today)
             today = new Date()
-        today = DateOnlyValueConverter.fromJson(DateOnlyValueConverter.toJson(today));
-        let todayJson = DateOnlyValueConverter.toJson(today);
+        today = ValueConverters.DateOnly.fromJson(ValueConverters.DateOnly.toJson(today));
+        let todayJson = ValueConverters.DateOnly.toJson(today);
         let t = today.valueOf();
         let d = edd.valueOf();
         if (d > t - day) {

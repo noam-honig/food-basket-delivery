@@ -1,12 +1,13 @@
 
-import { Entity, Remult, EntityBase, Field, IntegerField } from 'remult';
+import { Entity, Remult, EntityBase } from 'remult';
 import { Roles } from '../auth/roles';
+import { Field, Fields } from '../translate';
 @Entity('ApplicationImages', {
   allowApiRead: Roles.admin,
   allowApiUpdate: Roles.admin
 })
 export class ApplicationImages extends EntityBase {
-  @IntegerField()
+  @Fields.Integer()
   id: number;
   @Field({ caption: "איקון דף base64" })
   base64Icon: string;

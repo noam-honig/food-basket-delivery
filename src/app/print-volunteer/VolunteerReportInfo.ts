@@ -1,5 +1,6 @@
-import { Entity, Field, IdEntity } from 'remult';
+import { Entity, IdEntity } from 'remult';
 import { Roles } from '../auth/roles';
+import { Field } from '../translate';
 import { ReportInfo } from './print-volunteer.component';
 
 

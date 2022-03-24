@@ -20,7 +20,7 @@ import { getLang } from '../sites/sites';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import { HelperGifts } from '../helper-gifts/HelperGifts';
-import { use, Field, IntegerField } from '../translate';
+import { use, Field, Fields } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { BusyService, openDialog } from '@remult/angular';
@@ -324,19 +324,19 @@ export class helperHistoryInfo extends EntityBase {
   phone: Phone;
   @CompanyColumn()
   company: string;
-  @IntegerField({ translation: l => l.deliveries })
+  @Fields.Integer({ translation: l => l.deliveries })
   deliveries: number;
-  @IntegerField({ translation: l => l.delveriesSuccesfull })
+  @Fields.Integer({ translation: l => l.delveriesSuccesfull })
   succesful: number;
-  @IntegerField({ translation: l => l.selfAssigned })
+  @Fields.Integer({ translation: l => l.selfAssigned })
   selfassigned: number;
-  @IntegerField({ translation: l => l.families })
+  @Fields.Integer({ translation: l => l.families })
   families: number;
-  @IntegerField({ translation: l => l.dates })
+  @Fields.Integer({ translation: l => l.dates })
   dates: number;
-  @IntegerField({ caption: 'מתנות שמומשו' })
+  @Fields.Integer({ caption: 'מתנות שמומשו' })
   giftsConsumed: number;
-  @IntegerField({ caption: 'מתנות זמינות' })
+  @Fields.Integer({ caption: 'מתנות זמינות' })
   giftsPending: number;
 
 

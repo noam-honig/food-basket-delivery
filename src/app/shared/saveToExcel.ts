@@ -1,9 +1,9 @@
-import { Entity, Remult, EntityBase, Repository, FieldRef } from 'remult';
+import { Entity, Remult, EntityBase, Repository, FieldRef, ValueConverters } from 'remult';
 import { BusyService } from '@remult/angular';
 
 import { use } from '../translate';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DateOnlyValueConverter } from 'remult/valueConverters';
+
 import { HelpersBase } from '../helpers/helpers';
 import { GridSettings } from '@remult/angular/interfaces';
 import { UITools } from '../helpers/init-context';
@@ -101,13 +101,13 @@ export async function saveToExcel<E extends EntityBase, T extends GridSettings<E
 
 
               if (c.metadata.valueType == Date) {
-                if (c.metadata.valueConverter !== <any>DateOnlyValueConverter) {
-                  addColumn('תאריך ' + c.metadata.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
+                if (c.metadata.valueConverter !== <any>ValueConverters.DateOnly) {
+                  addColumn('תאריך ' + c.metadata.caption, c.value ? ValueConverters.DateOnly.toJson(c.value) : undefined, "d", false);
                   addColumn('שעת ' + c.metadata.caption, c.value ? c.value.getHours().toString() : undefined, "n", false);
                   addColumn('מלא ' + c.metadata.caption, c.displayValue, "s", true);
                 }
                 else
-                  addColumn(c.metadata.caption, c.value ? DateOnlyValueConverter.toJson(c.value) : undefined, "d", false);
+                  addColumn(c.metadata.caption, c.value ? ValueConverters.DateOnly.toJson(c.value) : undefined, "d", false);
               }
               else
                 addColumn(c.metadata.caption, v.toString(), "s", hideColumn(<E>f, c))

@@ -1,4 +1,4 @@
-import { BackendMethod, Controller, Field, Filter, getFields, Remult, SqlDatabase } from "remult";
+import { BackendMethod, Controller, Filter, getFields, Remult, SqlDatabase } from "remult";
 import { FamilyDeliveries } from "../families/FamilyDeliveries";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "./helpers";
@@ -11,6 +11,7 @@ import { messageMerger } from "../edit-custom-message/messageMerger";
 import { Sites } from "../sites/sites";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
 import { UITools } from "./init-context";
+import { Field } from "../translate";
 
 @Controller("SendBulkSms")
 export class SendBulkSms {

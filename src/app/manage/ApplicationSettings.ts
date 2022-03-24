@@ -18,7 +18,7 @@ import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Language, use, TranslationOptions, Field, FieldType, IntegerField, langByCode } from "../translate";
+import { Language, use, TranslationOptions, Field, FieldType, Fields, langByCode } from "../translate";
 
 import { FamilySources } from "../families/FamilySources";
 import { Self } from '@angular/core';
@@ -162,7 +162,7 @@ export class ApplicationSettings extends EntityBase {
     return this.lang.languageCode == 'iw' && !this.isSytemForMlt;
   }
 
-  @IntegerField()
+  @Fields.Integer()
   id: number;
   @Field()
   organisationName: string;
@@ -243,7 +243,7 @@ export class ApplicationSettings extends EntityBase {
   }
   @Field()
   commonQuestions: string;
-  @IntegerField({ allowApiUpdate: false })
+  @Fields.Integer({ allowApiUpdate: false })
   dataStructureVersion: number;
   @Field({ translation: l => l.successButtonSettingName })
   deliveredButtonText: string;
@@ -342,9 +342,9 @@ export class ApplicationSettings extends EntityBase {
   requireConfidentialityApprove: boolean;
   @Field()
   requireComplexPassword: boolean;
-  @IntegerField()
+  @Fields.Integer()
   timeToDisconnect: number;
-  @IntegerField()
+  @Fields.Integer()
   daysToForcePasswordChange: number;
   @Field()
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
@@ -352,13 +352,13 @@ export class ApplicationSettings extends EntityBase {
   showDistCenterAsEndAddressForVolunteer: boolean;
   @Field()
   routeStrategy: routeStrategy;
-  @IntegerField({ translation: l => l.maxDeliveriesBeforeBusy })
+  @Fields.Integer({ translation: l => l.maxDeliveriesBeforeBusy })
   BusyHelperAllowedFreq_nom: number;
-  @IntegerField({ translation: l => l.daysCountForBusy })
+  @Fields.Integer({ translation: l => l.daysCountForBusy })
   BusyHelperAllowedFreq_denom: number;
-  @IntegerField()
+  @Fields.Integer()
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
-  @IntegerField()
+  @Fields.Integer()
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
   @Field()
   donotShowEventsInGeneralList: boolean;

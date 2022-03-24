@@ -1,5 +1,5 @@
 import { DataControl } from '@remult/angular/interfaces';
-import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields } from 'remult';
+import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers } from '../helpers/helpers';
@@ -33,7 +33,7 @@ export class RegisterToEvent {
         field: FieldRef,
         show: () => boolean,
         helperField?: FieldMetadata,
-        getFieldToUpdate: (h: Fields<Helpers>, e: Fields<volunteersInEvent>) => FieldRef
+        getFieldToUpdate: (h: FieldsRef<Helpers>, e: FieldsRef<volunteersInEvent>) => FieldRef
     }[] = [];
     constructor(private remult: Remult) {
 

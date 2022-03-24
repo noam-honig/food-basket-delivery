@@ -1,8 +1,8 @@
-import { BackendMethod, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, Remult, SqlDatabase, ValueConverters } from 'remult';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder"; import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
-import { DateValueConverter } from 'remult/valueConverters';
+
 
 
 export class PlaybackController {
@@ -33,8 +33,8 @@ export class PlaybackController {
                 lng: +x[r.getColumnKeyInResultForIndexInSelect(2)],
                 status: +x[r.getColumnKeyInResultForIndexInSelect(3)],
                 courier: x[r.getColumnKeyInResultForIndexInSelect(4)],
-                courierTime: DateValueConverter.toJson(x[r.getColumnKeyInResultForIndexInSelect(5)]),
-                statusTime: DateValueConverter.toJson(x[r.getColumnKeyInResultForIndexInSelect(6)])
+                courierTime: ValueConverters.Date.toJson(x[r.getColumnKeyInResultForIndexInSelect(5)]),
+                statusTime: ValueConverters.Date.toJson(x[r.getColumnKeyInResultForIndexInSelect(6)])
             } as familyQueryResult;
 
         }) as familyQueryResult[];

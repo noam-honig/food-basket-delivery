@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter } from 'remult';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter, ValueConverters } from 'remult';
 
 import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 
@@ -18,14 +18,14 @@ import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/A
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
 
-import { DateOnlyField, Field, use, Entity, IntegerField } from "../translate";
+import { Fields, Field, use, Entity } from "../translate";
 import { FamilyStatus } from "./FamilyStatus";
 
 import { DistributionCenters } from "../manage/distribution-centers";
 import { getLang } from "../sites/sites";
 
 import { GroupsValue } from "../manage/groups";
-import { DateOnlyValueConverter } from "remult/valueConverters";
+
 import { evil, UITools } from "../helpers/init-context";
 import { recordChanges } from "../change-log/change-log";
 
@@ -212,7 +212,7 @@ export class Families extends IdEntity {
               fd.$.courier
             ],
             ok: async () => {
-              await this.saveAsHistoryEntry(DateOnlyValueConverter.toJson(d.date), fd.basketType, fd.courier);
+              await this.saveAsHistoryEntry(ValueConverters.DateOnly.toJson(d.date), fd.basketType, fd.courier);
               result.reloadData();
             }
           });
@@ -251,7 +251,7 @@ export class Families extends IdEntity {
         return r;
       },
 
-      where: { family: this.id },
+      where: () => ({ family: this.id }),
       orderBy: { deliveryStatusDate: "desc" },
       rowsInPage: 25
 
@@ -267,7 +267,7 @@ export class Families extends IdEntity {
     fd.archive = true;
     await fd.save();
 
-    fd.deliveryStatusDate = DateOnlyValueConverter.fromJson(date);
+    fd.deliveryStatusDate = ValueConverters.DateOnly.fromJson(date);
     await fd.save();
   }
 
@@ -482,11 +482,11 @@ export class Families extends IdEntity {
   })
 
   tz2: string;
-  @IntegerField()
+  @Fields.Integer()
   familyMembers: number;
-  @DateOnlyField()
+  @Fields.DateOnly()
   birthDate: Date;
-  @DateOnlyField<Families>({
+  @Fields.DateOnly<Families>({
 
     sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
@@ -500,7 +500,7 @@ export class Families extends IdEntity {
   nextBirthday: Date
   @Field({ translation: l => l.defaultBasketType })
   basketType: BasketType;
-  @IntegerField({ translation: l => l.defaultQuantity })
+  @Fields.Integer({ translation: l => l.defaultQuantity })
   quantity: number;
   @Field({ includeInApi: true, translation: l => l.familySource })
   familySource: FamilySources;
@@ -555,7 +555,7 @@ export class Families extends IdEntity {
   area: string;
   @Field()
   addressComment: string;
-  @IntegerField()
+  @Fields.Integer()
   postalCode: number;
   @Field({ translation: l => l.defaultDeliveryComment })
   deliveryComments: string;
@@ -610,7 +610,7 @@ export class Families extends IdEntity {
     }
   })
   fixedCourier: HelpersBase;
-  @IntegerField({
+  @Fields.Integer({
     allowApiUpdate: true
   })
   routeOrder: number;
@@ -724,7 +724,7 @@ export class Families extends IdEntity {
       }
   )
   previousDeliveryComment: string;
-  @IntegerField({},
+  @Fields.Integer({},
     (options, remult) =>
       options.sqlExpression = async (selfDefs) => {
         let self = SqlFor(selfDefs);
@@ -1230,7 +1230,7 @@ async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult
 }
 
 class dateInput {
-  @DateOnlyField()
+  @Fields.DateOnly()
   date: Date = new Date();
 }
 @Entity(undefined, {

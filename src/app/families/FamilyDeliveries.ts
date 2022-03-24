@@ -14,7 +14,7 @@ import { YesNo } from "./YesNo";
 
 import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
 
-import { use, FieldType, Field, ValueListFieldType, Entity, QuantityColumn, IntegerField } from "../translate";
+import { use, FieldType, Field, ValueListFieldType, Entity, Fields } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { DataAreaFieldsSetting, DataControl, IDataAreaSettings } from "@remult/angular/interfaces";
@@ -100,7 +100,7 @@ export class MessageStatus {
             }
         }
     }
-}, o => o.apiPrefilter =  FamilyDeliveries.isAllowedForUser())
+}, o => o.apiPrefilter = FamilyDeliveries.isAllowedForUser())
 export class FamilyDeliveries extends IdEntity {
     getCss(): string {
         return this.deliverStatus.getCss(this.courier);
@@ -214,7 +214,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: Roles.admin
     })
     basketType: BasketType;
-    @QuantityColumn({
+    @Fields.Quantity({
         allowApiUpdate: Roles.admin
     })
     @DataControl({ width: '100' })
@@ -250,7 +250,7 @@ export class FamilyDeliveries extends IdEntity {
     courierCommentsDate: Date;
     @Field({ includeInApi: Roles.admin })
     internalDeliveryComment: string;
-    @IntegerField({
+    @Fields.Integer({
         allowApiUpdate: true
     })
     routeOrder: number;
@@ -360,7 +360,7 @@ export class FamilyDeliveries extends IdEntity {
     addressOk: boolean;
     @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false, includeInApi: Roles.distCenterAdmin })
     fixedCourier: HelpersBase;
-    @IntegerField({ allowApiUpdate: false })
+    @Fields.Integer({ allowApiUpdate: false })
     familyMembers: number;
     @Field({
         dbName: 'phone',

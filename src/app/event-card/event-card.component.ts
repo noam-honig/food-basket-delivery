@@ -1,13 +1,13 @@
 import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Remult, Field, getFields } from 'remult';
+import { Remult, getFields } from 'remult';
 import { EventInfoComponent } from '../event-info/event-info.component';
 import { DataAreaSettings, RowButton } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 import { Roles } from '../auth/roles';
-import { use } from '../translate';
+import { use, Field } from '../translate';
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
 const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: undefined };
 @Component({

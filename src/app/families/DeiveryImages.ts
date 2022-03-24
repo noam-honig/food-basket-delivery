@@ -1,7 +1,8 @@
-import { Allow, Remult, Entity, Field, IdEntity, SqlDatabase } from "remult";
+import { Allow, Remult, Entity, IdEntity, SqlDatabase } from "remult";
 import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { Field } from "../translate";
 import { Families } from "./families";
 
 

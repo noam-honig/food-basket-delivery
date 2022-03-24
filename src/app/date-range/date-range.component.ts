@@ -1,11 +1,10 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DataAreaSettings, DataControl, InputField } from '@remult/angular/interfaces';
-import { DateOnlyValueConverter } from 'remult/valueConverters';
-import { Remult, DateOnlyField, getFields } from 'remult';
+import { Remult, getFields } from 'remult';
 
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Field } from '../translate';
+import { Field, Fields } from '../translate';
 var fullDayValue = 24 * 60 * 60 * 1000;
 @Component({
   selector: 'app-date-range',
@@ -17,7 +16,7 @@ export class DateRangeComponent implements OnInit {
   @Input() rangeWeekly: boolean = false;
   @Output() dateChanged = new EventEmitter<void>();
 
-  @DateOnlyField()
+  @Fields.DateOnly()
   @DataControl({
     valueChange: (self) => {
       if (self.toDate.value < self.fromDate.value) {
@@ -26,7 +25,7 @@ export class DateRangeComponent implements OnInit {
     }
   })
   fromDate: Date;
-  @DateOnlyField()
+  @Fields.DateOnly()
   toDate: Date;
   get $() { return getFields(this, this.remult) };
   rangeArea = new DataAreaSettings({

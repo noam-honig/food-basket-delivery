@@ -109,6 +109,8 @@ export class UserFamiliesList {
 
     }
     getBoxes() {
+        if (this.whatToTake)
+            return;
         let boxes = 0;
         let boxes2 = 0;
         for (const iterator of this.toDeliver) {
@@ -124,7 +126,7 @@ export class UserFamiliesList {
 
 
         let boxesText = '';
-        if (boxes != this.toDeliver.length || boxes2 != 0)
+        if ((boxes != this.toDeliver.length || boxes2 != 0))
             boxesText += + boxes + ' ' + BasketType.boxes1Name;
         if (boxes2 != 0) {
             boxesText += ' ' + this.settings.lang.and + " " + boxes2 + ' ' + BasketType.boxes2Name;

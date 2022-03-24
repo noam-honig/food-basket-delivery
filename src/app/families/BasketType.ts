@@ -1,9 +1,6 @@
 
 
-import { FieldOptions, Entity, IdEntity, Allow, IntegerField } from 'remult';
-
-
-import { Remult, } from 'remult';
+import { Entity, IdEntity, Allow, Fields } from 'remult';
 
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
@@ -36,9 +33,9 @@ import { getSettings } from '../manage/ApplicationSettings';
 export class BasketType extends IdEntity {
   @Field({ translation: l => l.basketTypeName })
   name: string;
-  @IntegerField({}, (options) => options.caption = BasketType.boxes1Name)
+  @Fields.Integer({}, (options) => options.caption = BasketType.boxes1Name)
   boxes: number = 1;
-  @IntegerField({}, (options) => options.caption = BasketType.boxes2Name)
+  @Fields.Integer({}, (options) => options.caption = BasketType.boxes2Name)
   boxes2: number = 0;
   @Field({ translation: l => l.whatToTake })
   whatToTake: string = '';
@@ -78,7 +75,7 @@ export class quantityHelper {
     }
   }
   toString(seperator = "\n") {
-    return this.items.map(x => (x.quantity>1?( x.quantity + ' X '):'') + x.name).join(seperator);
+    return this.items.map(x => (x.quantity > 1 ? (x.quantity + ' X ') : '') + x.name).join(seperator);
   }
 }
 

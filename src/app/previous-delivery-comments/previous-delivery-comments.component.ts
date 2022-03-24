@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Remult } from 'remult';
-import { DateValueConverter } from 'remult/valueConverters';
+import { Remult, ValueConverters } from 'remult';
+
 import { PreviousDeliveryController } from './previous-delivery-comments.controller';
 
 @Component({
@@ -20,7 +20,7 @@ export class PreviousDeliveryCommentsComponent implements OnInit {
   ngOnInit(): void {
     PreviousDeliveryController.getHistory(this.args.family).then(r => this.comments = r.map(i => ({
       comment: i.courierComments,
-      date: DateValueConverter.fromJson(i.date)
+      date: ValueConverters.Date.fromJson(i.date)
     })))
   }
 

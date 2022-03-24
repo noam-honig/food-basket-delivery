@@ -7,11 +7,11 @@ import { Helpers, HelpersBase } from "../helpers/helpers";
 import { ActiveFamilyDeliveries, MessageStatus, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
-import { Field } from "../translate";
+import { Field, Fields } from "../translate";
 
 import { DataControl, GridSettings } from "@remult/angular/interfaces";
 
-import { DateOnlyField } from "remult/src/remult3";
+
 import { UITools } from "../helpers/init-context";
 
 @Entity<InRouteHelpers>('in-route-helpers', {
@@ -101,7 +101,7 @@ export class InRouteHelpers extends IdEntity {
 
             columnSettings: hist => [hist.createDate, hist.message, hist.createUser],
 
-            where: { volunteer: h },
+            where: () => ({ volunteer: h }),
             orderBy: { createDate: "desc" },
             rowsInPage: 25
 
@@ -178,7 +178,7 @@ export class InRouteHelpers extends IdEntity {
     internalComment: string;
     @Field({ caption: 'ארגון' })
     company: string;
-    @DateOnlyField({
+    @Fields.DateOnly({
         caption: 'מוקפא עד לתאריך',
     })
     frozenTill: Date;

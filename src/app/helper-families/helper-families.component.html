@@ -53,7 +53,7 @@
       white-space: nowrap;
       overflow: hidden;
       max-width:195px;
-     ">{{familyLists.getBoxes()}} {{this.familyLists.whatToTake}}</div> <a (click)="showBring()"
+     ">{{familyLists.getBoxes()}} {{this.familyLists.whatToTake?.replace('\n',', ')}}</div> <a (click)="showBring()"
         *ngIf="this.familyLists.whatToTake">{{settings.lang.fullList}}</a>
     </div>
   </div>

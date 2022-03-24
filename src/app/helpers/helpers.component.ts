@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Helpers } from './helpers';
 import { Route } from '@angular/router';
-import { Field, getFields } from 'remult';
+import { getFields } from 'remult';
 import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
@@ -15,7 +15,7 @@ import { saveToExcel } from '../shared/saveToExcel';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
-import { use } from '../translate';
+import { use, Field } from '../translate';
 import { getLang } from '../sites/sites';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { SendBulkSms } from './send-bulk-sms';

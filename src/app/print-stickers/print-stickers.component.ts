@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
-import { Field, IdEntity, Remult } from 'remult';
+import { IdEntity, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from './VolunteerReportDefs';
-import { Entity } from '../translate';
+import { Entity, Field } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
 import { assign } from 'remult/assign';
 import { InputTypes } from 'remult/inputTypes';

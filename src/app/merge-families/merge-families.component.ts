@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { DataControlSettings, FieldCollection, getFieldDefinition } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, Fields, FieldRef, FieldMetadata } from 'remult';
+import { Remult, Fields, FieldRef, FieldMetadata, FieldsRef } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService } from '../select-popup/dialog';
@@ -41,7 +41,7 @@ export class MergeFamiliesComponent implements OnInit {
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
-  updateSimilarColumns(getCols: (f: Fields<Families>) => FieldRef<any>[][]) {
+  updateSimilarColumns(getCols: (f: FieldsRef<Families>) => FieldRef<any>[][]) {
     let eCols = getCols(this.family.$);
 
     for (const f of this.families) {

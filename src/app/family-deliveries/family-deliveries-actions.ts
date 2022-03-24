@@ -2,7 +2,7 @@ import { Remult, EntityFilter, Filter } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelpersBase } from "../helpers/helpers";
-import { use, Field, FieldType, QuantityColumn, ValueListFieldType } from "../translate";
+import { use, Field, FieldType, Fields, ValueListFieldType } from "../translate";
 import { getLang } from '../sites/sites';
 import { ActionOnRows, ActionOnRowsArgs } from "../families/familyActionsWiring";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -334,7 +334,7 @@ export class UpdateBasketType extends ActionOnFamilyDeliveries {
 }
 @Controller('updateQuantity')
 export class UpdateQuantity extends ActionOnFamilyDeliveries {
-    @QuantityColumn()
+    @Fields.Quantity()
     quantity: number;
 
     constructor(remult: Remult) {
@@ -386,7 +386,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     useExistingBasket: boolean = true;
     @Field()
     basketType: BasketType;
-    @QuantityColumn()
+    @Fields.Quantity()
     quantity: number;
     @Field()
     helperStrategy: HelperStrategy = HelperStrategy.familyDefault;

@@ -1,5 +1,5 @@
 
-import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, DateOnlyField as origDateOnlyField, ValueListItem, EntityOptions, CaptionTransformer, IntegerField as origIntegerField, Remult } from 'remult';
+import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, ValueListItem, EntityOptions, CaptionTransformer, Remult, Fields as OrigFields } from 'remult';
 import { en } from './languages/en';
 import { es } from './languages/es';
 import { italy } from './languages/italy';
@@ -126,16 +126,19 @@ function adjustSettings(settings: FieldOptions & TranslatedCaption, options: (Fi
   return opts;
 }
 export function Field<entityType = any, valueType = any>(settings?: FieldOptions<entityType, valueType> & TranslatedCaption, ...options: (FieldOptions<entityType, valueType> | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void))[]) {
-  return origField<entityType, valueType>(...adjustSettings(settings, options));
+  return origField<entityType, valueType>(undefined, ...adjustSettings(settings, options));
 }
-export function IntegerField<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
-  return origIntegerField<entityType>(...adjustSettings(settings, options));
-}
-export function QuantityColumn<entityType>(settings?: FieldOptions & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
-  return IntegerField<entityType>({ translation: l => l.quantity, ...settings }, ...options);
-}
-export function DateOnlyField<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
-  return origDateOnlyField<entityType>(...adjustSettings(settings, options));
+
+export class Fields {
+  static Integer<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
+    return OrigFields.Integer<entityType>(...adjustSettings(settings, options));
+  }
+  static Quantity<entityType>(settings?: FieldOptions & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
+    return Fields.Integer<entityType>({ translation: l => l.quantity, ...settings }, ...options);
+  }
+  static DateOnly<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
+    return OrigFields.DateOnly<entityType>(...adjustSettings(settings, options));
+  }
 }
 
 

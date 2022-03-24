@@ -13,9 +13,9 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 
 import { FamilyStatus } from '../families/FamilyStatus';
 
-import { use, Field, FieldType, IntegerField } from '../translate';
+import { use, Field, FieldType, Fields } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { DateOnlyField } from 'remult/src/remult3';
+
 import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
 import { UITools } from './init-context';
@@ -97,9 +97,9 @@ export abstract class HelpersBase extends IdEntity {
     doNotSendSms: boolean = false;
     @CompanyColumn()
     company: string;
-    @IntegerField({ allowApiUpdate: Roles.distCenterAdmin })
+    @Fields.Integer({ allowApiUpdate: Roles.distCenterAdmin })
     totalKm: number;
-    @IntegerField({ allowApiUpdate: Roles.distCenterAdmin })
+    @Fields.Integer({ allowApiUpdate: Roles.distCenterAdmin })
     totalTime: number;
     @Field({ includeInApi: Roles.distCenterAdmin })
     shortUrlKey: string;
@@ -157,7 +157,7 @@ export abstract class HelpersBase extends IdEntity {
         allowApiUpdate: Allow.authenticated,
         includeInApi: Allow.authenticated,
     })
-    @DateOnlyField()
+    @Fields.DateOnly()
     frozenTill: Date;
     @Field({
         allowApiUpdate: Roles.admin,

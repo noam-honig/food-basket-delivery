@@ -1,5 +1,5 @@
-import { BackendMethod, Remult } from 'remult';
-import { DateValueConverter } from 'remult/valueConverters';
+import { BackendMethod, Remult, ValueConverters } from 'remult';
+
 import { Roles } from '../auth/roles';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { getSettings } from '../manage/ApplicationSettings';
@@ -17,7 +17,7 @@ export class PreviousDeliveryController {
                 deliveryStatusDate: "desc"
             }
         })).map(({ deliveryStatusDate, courierComments }) => ({
-            date: DateValueConverter.toJson(deliveryStatusDate),
+            date: ValueConverters.Date.toJson(deliveryStatusDate),
             courierComments
         }))
     }

@@ -1,4 +1,4 @@
-import { Filter, Remult } from "remult";
+import { Filter, Remult, getValueList as gvl } from "remult";
 import { Families } from "./families";
 
 import { BasketType } from "./BasketType";
@@ -10,14 +10,14 @@ import { FamilyStatus } from "./FamilyStatus";
 import { ActionOnRows } from "./familyActionsWiring";
 import { DeliveryStatus } from "./DeliveryStatus";
 import { ActiveFamilyDeliveries } from "./FamilyDeliveries";
-import { use, Field, ValueListFieldType, QuantityColumn } from "../translate";
+import { use, Field, ValueListFieldType, Fields } from "../translate";
 import { getLang } from '../sites/sites';
 import { Controller } from "remult";
 
 import { DataControl, getValueList } from "@remult/angular/interfaces";
 import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
-import { ValueListValueConverter } from "remult/valueConverters";
+
 
 import { controllerRefImpl, getControllerRef } from "remult/src/remult3";
 
@@ -57,7 +57,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     useFamilyQuantity: boolean = true;
     @Field({ translation: l => l.useFamilyMembersAsQuantity })
     useFamilyMembersAsQuantity: boolean;
-    @QuantityColumn()
+    @Fields.Quantity()
     quantity: number;
     @Field({ translation: l => l.useFamilyDistributionList })
     useFamilyDistributionList: boolean = true;
@@ -68,7 +68,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     @Field()
     courier: HelpersBase;
     @Field()
-    @DataControl({ valueList: new ValueListValueConverter(SelfPickupStrategy).getOptions().filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
+    @DataControl({ valueList: gvl(SelfPickupStrategy).filter(x => x != SelfPickupStrategy.byCurrentDelivery) })
     selfPickup: SelfPickupStrategy = SelfPickupStrategy.familyDefault;
     @Field({
         translation: l => l.excludeGroups
@@ -321,7 +321,7 @@ export class UpdateArea extends ActionOnRows<Families> {
 }
 @Controller('UpdateDefaultQuantity')
 export class UpdateQuantity extends ActionOnRows<Families> {
-    @QuantityColumn()
+    @Fields.Quantity()
     quantity: number;
 
     constructor(remult: Remult) {
