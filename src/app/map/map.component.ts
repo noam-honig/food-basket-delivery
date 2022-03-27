@@ -130,18 +130,19 @@ export class MapComponent implements OnInit, OnDestroy {
         if (x == this.lastBounds)
             return;
         this.lastBounds = x;
-        if (this.map && this.bounds.isEmpty()) {
-            this.map.setCenter(this.center);
-        } else {
-            this.map.fitBounds(this.bounds);
-        }
+
 
 
 
         setTimeout(() => {
+            if (this.map && this.bounds.isEmpty()) {
+                this.map.setCenter(this.center);
+            } else {
+                this.map.fitBounds(this.bounds);
+            }
             if (this.map.getZoom() > 17)
                 this.map.setZoom(17);
-        }, 300);
+        }, 100);
     }
     clear() {
         this.dict.forEach(m => {
