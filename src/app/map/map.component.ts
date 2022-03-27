@@ -25,7 +25,7 @@ export class MapComponent implements OnInit, OnDestroy {
     loadedPotentialFamilies: string[] = [];
     async loadPotentialAsigment(city: string, group: string, distCenter: DistributionCenters, area: string, basketType: BasketType) {
 
-        await this.initMap();
+        this.initMap();
 
         let families = await DistributionMapController.GetDeliveriesLocation(true, city, group, distCenter, area, basketType);
         for (const f of this.loadedPotentialFamilies) {
@@ -165,7 +165,7 @@ export class MapComponent implements OnInit, OnDestroy {
         this.prevFamilies = [...families];
         this.hasFamilies = families.length > 0;
 
-        await this.initMap();
+        this.initMap();
         if (this.helper != helper) {
             for (const m of this.helperMarkers) {
                 m.setMap(null);
@@ -265,10 +265,17 @@ export class MapComponent implements OnInit, OnDestroy {
     @ViewChild('gmap', { static: true }) gmapElement: any;
     map: google.maps.Map;
 
-    private async initMap() {
+    private initMap() {
         if (!this.mapInit) {
+            if (!this.center && this.prevFamilies) {
+                let bounds = new google.maps.LatLngBounds();
+                for (const f of this.prevFamilies) {
+                    bounds.extend(f.getDrivingLocation());
+                }
+                this.center = bounds.getCenter();
+            }
             if (!this.center) {
-                var x = (await this.remult.getSettings()).addressHelper.location;
+                var x = this.settings.addressHelper.location;
                 this.center = new google.maps.LatLng(x.lat, x.lng);
             }
             var mapProp: google.maps.MapOptions = {
