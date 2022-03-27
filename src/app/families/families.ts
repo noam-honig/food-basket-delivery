@@ -525,8 +525,11 @@ export class Families extends IdEntity {
   @Field()
   addressApiResult: string;
 
-  @Field()
+  @Field({
+    customInput: c => c.addressInput()
+  })
   @DataControl<Families>({
+
     valueChange: self => {
       self.delayCheckDuplicateFamilies()
       if (!self.address)

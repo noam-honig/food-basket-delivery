@@ -1,0 +1,13 @@
+<div class="full-page" *ngIf="this.f">
+    <app-family-info [f]="d"></app-family-info>
+    <data-area class="area" [settings]="address"></data-area>
+
+    <div style="display:flex;flex-wrap: wrap;gap:8px">
+        <button mat-raised-button color="primary">מעוניינים במשלוח</button>
+        <button mat-raised-button>לא מעוניינים</button>
+        <button mat-raised-button>לא עונים</button>
+        <button mat-raised-button>העבר למנהל</button>
+        <button mat-raised-button>שיחה הבאה</button>
+        <button mat-raised-button>סיים</button>
+    </div>
+</div>

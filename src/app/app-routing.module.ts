@@ -59,6 +59,7 @@ import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.compo
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component';
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 import { getSettings } from '../app/manage/ApplicationSettings';
+import { CallerComponent } from './caller/caller.component';
 
 
 @Injectable()
@@ -145,6 +146,7 @@ export const routes: Routes = [
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
+  { path: 'caller', component: CallerComponent, canActivate: [AdminGuard] },
   { path: 'events', component: OrgEventsComponent },
   UpdateInfoComponent.route,
   LoginComponent.route,
