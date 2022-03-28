@@ -740,6 +740,8 @@ export class FamilyDeliveries extends IdEntity {
     }
 
     checkAllowedForUser(): boolean {
+        if (this.courier?.id == this.remult.user.id)
+            return true;
         return this.distributionCenter.checkAllowedForUser();
     }
     checkNeedsWork() {
