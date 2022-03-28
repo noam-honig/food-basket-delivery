@@ -122,6 +122,8 @@ export class Statuses {
     getBy(statusId: number, courierId: string): statusClass {
         switch (statusId) {
             case DeliveryStatus.ReadyForDelivery.id:
+            case DeliveryStatus.enquireDetails.id:
+            case DeliveryStatus.waitingForAdmin.id:
                 if (courierId)
                     return this.onTheWay;
                 else
