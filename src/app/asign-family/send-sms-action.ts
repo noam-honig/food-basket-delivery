@@ -7,6 +7,7 @@ import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
 import { TranslationOptions } from '../translate';
+import * as FormData from 'form-data';
 export class SendSmsAction {
     static getSuccessMessage(template: string, orgName: string, family: string) {
         return template
@@ -119,6 +120,8 @@ export class SendSmsUtils {
         let un = process.env.SMS_UN;
         let pw = process.env.SMS_PW;
         let accid = process.env.SMS_ACCID;
+        const inforuToken = process.env.INFORU_SMS_TOKEN;
+        let useGlobalSms = !inforuToken;
         var from = settings.isSytemForMlt ? 'Mitchashvim' : 'Hagai';
         if (settings.bulkSmsEnabled) {
             if (settings.smsVirtualPhoneNumber)
@@ -126,30 +129,14 @@ export class SendSmsUtils {
             un = settings.smsUsername;
             pw = settings.smsCredentials.password;
             accid = settings.smsClientNumber;
+            useGlobalSms = true;
         }
-        
+
 
         var t = new Date();
         var date = t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
 
-        var data =
-            '<?xml version="1.0" encoding="utf-8"?>' +
-            '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">' +
-            '<soap12:Body>' +
-            '<sendSmsToRecipients xmlns="apiItnewsletter">' +
-            '<un>' + un + '</un>' +
-            '<pw>' + pw + '</pw>' +
-            '<accid>' + accid + '</accid>' +
-            '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
-            '<t>' + date + '</t>' +
-            '<txtUserCellular>' + from + '</txtUserCellular>' +
-            '<destination>' + phone + '</destination>' +
-            '<txtSMSmessage>' + message + '</txtSMSmessage>' +
-            '<dteToDeliver></dteToDeliver>' +
-            '<txtAddInf>jsnodetest</txtAddInf>' +
-            '</sendSmsToRecipients>' +
-            '</soap12:Body>' +
-            '</soap12:Envelope>';
+
 
 
         const send = async () => {
@@ -185,25 +172,90 @@ export class SendSmsUtils {
                         return r;
                     }
                 } else {
-                    let h = new fetch.Headers();
-                    h.append('Content-Type', 'text/xml; charset=utf-8');
-                    h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients');
-                    let r = await fetch.default('https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx', {
-                        method: 'POST',
-                        headers: h,
-                        body: data
-                    });
+                    message = message.replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&apos;');
 
-                    let res = await r.text();
-                    let orig = res;
-                    let t = '<sendSmsToRecipientsResult>';
-                    let i = res.indexOf(t);
-                    if (i >= 0) {
-                        res = res.substring(i + t.length);
-                        res = res.substring(0, res.indexOf('<'));
+                    if (useGlobalSms) {
+                        let data =
+                            '<?xml version="1.0" encoding="utf-8"?>' +
+                            '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">' +
+                            '<soap12:Body>' +
+                            '<sendSmsToRecipients xmlns="apiItnewsletter">' +
+                            '<un>' + un + '</un>' +
+                            '<pw>' + pw + '</pw>' +
+                            '<accid>' + accid + '</accid>' +
+                            '<sysPW>' + 'itnewslettrSMS' + '</sysPW>' +
+                            '<t>' + date + '</t>' +
+                            '<txtUserCellular>' + from + '</txtUserCellular>' +
+                            '<destination>' + phone + '</destination>' +
+                            '<txtSMSmessage>' + message + '</txtSMSmessage>' +
+                            '<dteToDeliver></dteToDeliver>' +
+                            '<txtAddInf>jsnodetest</txtAddInf>' +
+                            '</sendSmsToRecipients>' +
+                            '</soap12:Body>' +
+                            '</soap12:Envelope>';
+                        let h = new fetch.Headers();
+                        h.append('Content-Type', 'text/xml; charset=utf-8');
+                        h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients');
+                        let r = await fetch.default('https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx', {
+                            method: 'POST',
+                            headers: h,
+                            body: data
+                        });
+
+                        let res = await r.text();
+                        let orig = res;
+                        let t = '<sendSmsToRecipientsResult>';
+                        let i = res.indexOf(t);
+                        if (i >= 0) {
+                            res = res.substring(i + t.length);
+                            res = res.substring(0, res.indexOf('<'));
+                        }
+                        console.log('sms response for:' + schema + ' - ' + res);
+                        return res;
                     }
-                    console.log('sms response for:' + schema + ' - ' + res);
-                    return res;
+                    else {
+                        const data = `
+<Inforu>
+<User>
+<Username>${process.env.INFORU_SMS_USER}</Username>
+<ApiToken>${inforuToken}</ApiToken>
+</User>
+<Content Type="sms">
+<Message>${message}</Message>
+</Content>
+<Recipients>
+<PhoneNumber>${phone}</PhoneNumber>
+</Recipients>
+<Settings>
+<Sender>${from}</Sender>
+</Settings>
+</Inforu>`;
+                        let h = new fetch.Headers();
+                        var formData = new FormData();
+
+                        formData.append("InforuXML", data);
+
+                        let r = await fetch.default('https://api.inforu.co.il/SendMessageXml.ashx', {
+                            method: 'POST',
+                            headers: formData.getHeaders(),
+                            body: formData
+                        });
+
+                        let res = await r.text();
+                        let orig = res;
+                        let t = '<sendSmsToRecipientsResult>';
+                        let i = res.indexOf(t);
+                        if (i >= 0) {
+                            res = res.substring(i + t.length);
+                            res = res.substring(0, res.indexOf('<'));
+                        }
+                        console.log('sms response for:' + schema + ' - ' + res);
+                        return res;
+                    }
                 }
 
             }
