@@ -49,6 +49,10 @@
             {{settings.lang.commentsWritteByVolunteer}}:
             <div class="mat-body-strong">{{args.familyDelivery.courierComments}}</div>
         </div>
+        <div *ngIf="args.familyDelivery?.callerComment" class=" mat-body">
+            {{settings.lang.callerComment}}:
+            <div class="mat-body-strong">{{args.familyDelivery.callerComment}}</div>
+        </div>
     </div>
 </mat-card-title>
 

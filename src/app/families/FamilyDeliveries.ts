@@ -211,11 +211,11 @@ export class FamilyDeliveries extends IdEntity {
 
     @Field({
         //translation: l => l.basketType,
-        allowApiUpdate: Roles.admin
+        allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
     })
     basketType: BasketType;
     @Fields.Quantity({
-        allowApiUpdate: Roles.admin
+        allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
     })
     @DataControl({ width: '100' })
     quantity: number;
@@ -282,12 +282,13 @@ export class FamilyDeliveries extends IdEntity {
     needsWorkDate: Date;
     @Field({
         translation: l => l.commentForVolunteer,
-        allowApiUpdate: Roles.admin
+        allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
     })
     deliveryComments: string;
     @Field({
         translation: l => l.commentForReception,
-        allowApiUpdate: Roles.lab
+        allowApiUpdate: [Roles.lab, Roles.callPerson]
+
     })
     receptionComments: string;
     @Field({
@@ -483,6 +484,21 @@ export class FamilyDeliveries extends IdEntity {
         }
     )
     numOfPhotos: number;
+
+
+    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: Roles.callPerson })
+    caller: HelpersBase;
+    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: Roles.callPerson, customInput: c => c.textArea() })
+    callerComment: string;
+    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: false, allowNull: true })
+    lastCallDate: Date;
+    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: false })
+    callerAssignDate: Date;
+    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: false, dbName: 'callCount' })
+    callCounter: number;
+
+
+
     static customFilter = Filter.createCustom<FamilyDeliveries, {
         city: string,
         group: string,
@@ -508,16 +524,24 @@ export class FamilyDeliveries extends IdEntity {
         let user = (await remult.getCurrentUser());
         if (!remult.isAllowed([Roles.admin, Roles.lab])) {
             result.push(FamilyDeliveries.active);
+            let $or: EntityFilter<FamilyDeliveries>[] = [];
             if (remult.isAllowed(Roles.distCenterAdmin))
-                result.push({ distributionCenter: remult.filterCenterAllowedForUser() });
-            else {
-                if (user.theHelperIAmEscorting)
-                    result.push({ courier: user.theHelperIAmEscorting, visibleToCourier: true });
-                else
-                    result.push({ courier: user, visibleToCourier: true });
-            }
+                $or.push({ distributionCenter: remult.filterCenterAllowedForUser() });
+            if (user.theHelperIAmEscorting)
+                $or.push({ courier: user.theHelperIAmEscorting, visibleToCourier: true });
+            else
+                $or.push({ courier: user, visibleToCourier: true });
+            if (remult.isAllowed(Roles.callPerson))
+                $or.push(FamilyDeliveries.inProgressCallerDeliveries());
+            if ($or)
+                result.push({ $or });
+
         }
         return { $and: result };
+    });
+    static inProgressCallerDeliveries = Filter.createCustom<FamilyDeliveries>(async remult => {
+        return { caller: await remult.getCurrentUser(), deliverStatus: DeliveryStatus.enquireDetails, archive: false }
+
     });
     static readyFilter(city?: string, group?: string, area?: string, basket?: BasketType) {
         return this.customFilter({ city, group, area, basketId: basket?.id })
@@ -810,6 +834,12 @@ export class FamilyDeliveries extends IdEntity {
             this.$.a1, this.$.a2, this.$.a3, this.$.a4,
             this.$.internalDeliveryComment,
             this.$.special,
+            [{ field: this.$.caller, visible: () => getSettings(this.remult).usingCallModule },
+            { field: this.$.callerAssignDate, visible: () => getSettings(this.remult).usingCallModule }],
+            [{ field: this.$.callCounter, visible: () => getSettings(this.remult).usingCallModule },
+            { field: this.$.lastCallDate, visible: () => getSettings(this.remult).usingCallModule }],
+            { field: this.$.callerComment, visible: () => getSettings(this.remult).usingCallModule },
+
         ]
     };
 

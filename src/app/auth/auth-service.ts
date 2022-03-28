@@ -15,6 +15,7 @@ import { DeliveryReceptionComponent } from "../delivery-reception/delivery-recep
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { InitContext } from "../helpers/init-context";
 import { AuthServiceController, INVALID_TOKEN_ERROR, loginArgs, TIMEOUT_MULTIPLIER_IN_SECONDS } from "./auth-service.controller";
+import { CallerComponent } from "../caller/caller.component";
 
 
 
@@ -157,6 +158,8 @@ export class AuthService {
                 this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
             else if (this.remult.isAllowed(Roles.overview))
                 this.routeHelper.navigateToComponent(OverviewComponent);
+            else if (this.remult.isAllowed(Roles.callPerson))
+                this.routeHelper.navigateToComponent(CallerComponent);
             else
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
         }

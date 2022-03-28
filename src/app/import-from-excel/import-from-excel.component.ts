@@ -31,6 +31,7 @@ import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
 import { selectListItem } from '../helpers/init-context';
 import { compareValuesWithRow, excelRowInfo, getColumnDisplayValue, ImportFromExcelController } from './import-from-excel.controller';
 import { Roles } from '../auth/roles';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 @Component({
     selector: 'app-excel-import',
@@ -336,6 +337,7 @@ export class ImportFromExcelComponent implements OnInit {
         let fd = this.remult.repo(ActiveFamilyDeliveries).create();
         fd.basketType = this.defaultBasketType;
         fd.distributionCenter = this.distributionCenter;
+        fd.deliverStatus = this.settings.getDefaultStatus();
         f.status = FamilyStatus.Active;
 
         fd.quantity = 1;
@@ -436,6 +438,8 @@ export class ImportFromExcelComponent implements OnInit {
     @ViewChild("file", { static: true }) fileInput: ElementRef
 
     settingsArea: DataAreaSettings = new DataAreaSettings();
+
+
     async ngOnInit() {
         this.addDelivery = true;
         this.defaultBasketType = await this.remult.defaultBasketType();
@@ -757,6 +761,7 @@ export class ImportFromExcelComponent implements OnInit {
                 let result: DataAreaFieldsSetting<any>[] = [];
                 result = [
                     this.$.addDelivery,
+                    { field: s.$.defaultDeliveryStatusIsEnquireDetails, visible: () => this.addDelivery && s.usingCallModule },
                     { field: this.$.defaultBasketType, visible: () => this.addDelivery && !updateColumns.get(this.fd.basketType) && !updateColumns.get(this.f.basketType) },
                     { field: s.$.excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery, visible: () => this.addDelivery },
                     { field: this.$.compareBasketType, visible: () => this.addDelivery },
@@ -798,6 +803,7 @@ export class ImportFromExcelComponent implements OnInit {
                 }
             }
             updatedColumns.set(this.f.status, true);
+            updatedColumns.set(this.fd.deliverStatus, true);
             this.columnsInCompare = [];
             this.columnsInCompareMemberName = [];
             var laterColumnsInCompare = [];

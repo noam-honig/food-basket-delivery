@@ -20,6 +20,7 @@ import { InputTypes } from 'remult/inputTypes';
 import { EntityFilter } from 'remult';
 import { UITools } from './init-context';
 import { recordChanges } from '../change-log/change-log';
+import { GroupsValue } from '../manage/groups';
 
 
 
@@ -447,6 +448,12 @@ export class Helpers extends HelpersBase {
                 field: self.familyAdmin, width: '160'
             });
         }
+        if (settings.usingCallModule && remult.isAllowed(Roles.admin)) {
+            r.push({
+                field: self.caller, width: '160'
+            });
+            r.push(self.includeGroups, self.excludeGroups);
+        }
         let hadCenter = false;
         if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt) {
             r.push({
@@ -510,7 +517,7 @@ export class Helpers extends HelpersBase {
     }
 
     userRequiresPassword() {
-        return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent;
+        return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller;
     }
     async showDeliveryHistory(ui: UITools) {
         let ctx = this.remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
@@ -776,6 +783,18 @@ export class Helpers extends HelpersBase {
         }
     })
     familyAdmin: boolean;
+    @Field({
+        allowApiUpdate: Roles.admin,
+        includeInApi: Roles.admin
+    })
+    caller: boolean;
+
+    @Field({ translation: l => l.includeGroups })
+    @DataControl<Helpers>({ visible: self => self.caller })
+    includeGroups: GroupsValue;
+    @Field({ translation: l => l.excludeGroups })
+    @DataControl<Helpers>({ visible: self => self.caller })
+    excludeGroups: GroupsValue;
 
     static deliveredPreviously = Filter.createCustom<Helpers,
         { city: string }>(((remult, { city }) => {

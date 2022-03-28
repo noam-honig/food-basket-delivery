@@ -277,6 +277,13 @@ export class ApplicationSettings extends EntityBase {
   _old_for_soliders: boolean;
   @Field({ translation: l => l.enableSelfPickupModule })
   usingSelfPickupModule: boolean;
+  @Field()
+  usingCallModule: boolean;
+  @Field({ includeInApi: Roles.familyAdmin })
+  defaultDeliveryStatusIsEnquireDetails: boolean;
+  getDefaultStatus(): DeliveryStatus {
+    return this.usingCallModule && this.defaultDeliveryStatusIsEnquireDetails ? DeliveryStatus.enquireDetails : DeliveryStatus.ReadyForDelivery;
+  }
 
   get isSytemForMlt() {
     return this.forWho == TranslationOptions.donors;
@@ -602,27 +609,30 @@ export function setCustomColumnInfo(v: customColumnInfo, caption: string, values
   }
 }
 export const settingsForSite = new Map<string, SmallSettings>();
-export function setSettingsForSite(site: string, {
-  usingSelfPickupModule,
-  familySelfOrderEnabled,
-  manageEscorts,
-  requireComplexPassword,
-  forWho,
-  getInternationalPhonePrefix,
-  boxes2Name,
-  boxes1Name,
-  isSytemForMlt,
-  addressHelper,
-  helpPhone,
-  helpText,
-  bulkSmsEnabled,
-  logoUrl,
-  organisationName,
-  hideFamilyPhoneFromVolunteer,
-  allowVolunteerToSeePreviousActivities
+export function setSettingsForSite(site: string, settings: ApplicationSettings) {
+  const {
+    usingSelfPickupModule,
+    familySelfOrderEnabled,
+    manageEscorts,
+    requireComplexPassword,
+    forWho,
+    getInternationalPhonePrefix,
+    boxes2Name,
+    boxes1Name,
+    isSytemForMlt,
+    addressHelper,
+    helpPhone,
+    helpText,
+    bulkSmsEnabled,
+    logoUrl,
+    organisationName,
+    hideFamilyPhoneFromVolunteer,
+    allowVolunteerToSeePreviousActivities,
+    usingCallModule
 
 
-}: ApplicationSettings) {
+
+  } = settings;
   const
     {
       ok,
@@ -633,6 +643,8 @@ export function setSettingsForSite(site: string, {
 
     } = addressHelper;
   settingsForSite.set(site, {
+    defaultStatus: settings.getDefaultStatus(),
+    usingCallModule,
     usingSelfPickupModule,
     familySelfOrderEnabled,
     manageEscorts,
@@ -669,8 +681,10 @@ export function getSettings(remult: Remult): SmallSettings {
   return ApplicationSettings.get(remult);;
 }
 export class SmallSettings {
+  defaultStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
   allowVolunteerToSeePreviousActivities: boolean = false;
   usingSelfPickupModule: boolean = false;
+  usingCallModule: boolean = false;
   familySelfOrderEnabled: boolean = false;
   manageEscorts: boolean = false;
   requireComplexPassword: boolean = false;

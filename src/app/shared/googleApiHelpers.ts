@@ -108,10 +108,6 @@ export class GeocodeCache extends EntityBase {
     googleApiResult: string;
     @DateTimeColumn()
     createDate: Date;
-
-    constructor() {
-        super();
-    }
 }
 
 
@@ -439,5 +435,3 @@ export async function getCurrentLocation(useCurrentLocation: boolean, dialog: Di
     }
     return result;
 }
-
-

@@ -82,6 +82,7 @@ import { PromiseThrottle } from "../shared/utils";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Roles } from "../auth/roles";
 import { ChangeLog, FieldDecider } from "../change-log/change-log";
+import { CallerController } from "../caller/caller.controller";
 const entities = [
     HelpersAndStats,
     Event,
@@ -110,6 +111,7 @@ const entities = [
     FamilyDeliveries
 ];
 const controllers = [
+    CallerController,
     SendSmsAction,
     AsignFamilyController,
     AuthServiceController,
@@ -351,15 +353,21 @@ s.parentNode.insertBefore(b, s);})();
                 remult.getSite = () => "test1";
                 remult.setDataProvider(dataSource(remult));
                 await InitContext(remult, undefined);
-                var h = await remult.repo(Helpers).findFirst();
-                remult.setUser({
-                    distributionCenter: "dist",
-                    escortedHelperName: "",
-                    id: h.id,
-                    name: "Asdf",
-                    roles: [Roles.admin],
-                    theHelperIAmEscortingId: ""
-                });
+                //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
+                if (false) {
+
+                    console.log("---------------------------------------------------------------------------");
+                    var h = await remult.repo(Helpers).findFirst();
+                    console.log("---------------------------------------------------------------------------1");
+                    remult.setUser({
+                        distributionCenter: "dist",
+                        escortedHelperName: "",
+                        id: h.id,
+                        name: "Asdf",
+                        roles: [Roles.admin],
+                        theHelperIAmEscortingId: ""
+                    });
+                }
 
 
             },

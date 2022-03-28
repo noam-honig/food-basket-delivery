@@ -175,6 +175,7 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
             result.roles.push(Roles.admin);
             result.roles.push(Roles.distCenterAdmin);
             result.roles.push(Roles.familyAdmin);
+            result.roles.push(Roles.callPerson);
         }
     }
     if (h.distCenterAdmin) {
@@ -184,6 +185,8 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
         result.roles.push(Roles.familyAdmin);
         result.roles.push(Roles.distCenterAdmin);
     }
+    if (h.caller)
+        result.roles.push(Roles.callPerson);
     if ((await remult.getSettings()).isSytemForMlt) {
         if (h.labAdmin || h.admin)
             result.roles.push(Roles.lab);

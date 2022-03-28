@@ -40,6 +40,7 @@ export class FamilyInfoComponent implements OnInit {
   @Output() assignmentCanceled = new EventEmitter<void>();
   @Input() userFamilies: UserFamiliesList;
   @Input() selfPickupScreen = false;
+  @Input() callerScreen = false;
   hasImages = false;
   images: ImageInfo[];
   phones: { phone: Phone, desc: string }[];
@@ -158,7 +159,7 @@ export class FamilyInfoComponent implements OnInit {
 
   }
   navigate(f: ActiveFamilyDeliveries) {
-    
+
     if (!f.addressOk) {
       this.dialog.YesNoQuestion(use.language.addressNotOkOpenWaze, () => {
         if (this.userFamilies.useWaze)
@@ -198,6 +199,6 @@ export class FamilyInfoComponent implements OnInit {
       return false;
     if (this.selfPickupScreen)
       return true;
-    return this.f.deliverStatus != DeliveryStatus.ReadyForDelivery;
+    return this.f.deliverStatus != DeliveryStatus.ReadyForDelivery && !this.callerScreen;
   }
 }

@@ -115,6 +115,8 @@ import { NgDialogAnimationService } from 'ng-dialog-animation';
 import { DeliveryDetailsComponent } from './delivery-details/delivery-details.component';
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { INVALID_TOKEN_ERROR } from './auth/auth-service.controller';
+import { CallerComponent } from './caller/caller.component';
+
 
 
 
@@ -220,7 +222,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     PreviousDeliveryCommentsComponent,
     AreaDataComponent,
     DeliveryDetailsComponent,
-    ChangeLogComponent
+    ChangeLogComponent,
+    CallerComponent
 
 
   ],

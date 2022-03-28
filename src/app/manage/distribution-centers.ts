@@ -69,6 +69,7 @@ export class DistributionCenters extends IdEntity {
   isFrozen: boolean;
   @Field()
   archive: boolean;
+  
   createUser: HelpersBase;
 
 

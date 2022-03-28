@@ -1,0 +1,29 @@
+<div *ngIf="this.d">
+    <h3>{{d.name}}</h3>
+    <div *ngFor="let phone of famInfo.phones">
+        <button color="primary" mat-flat-button (click)="famInfo.callPhone(phone.phone)" class="small-button"
+            style="margin: 8px;">
+            <mat-icon>call</mat-icon> {{settings.lang.dial}}
+        </button>
+        <span style="display:inline-block" *ngIf="phone.desc">{{phone.desc+','}}&nbsp;</span>
+        <a (click)="famInfo.callPhone(phone.phone)">{{phone.phone.displayValue}}</a>
+        <mat-divider></mat-divider>
+    </div>
+    <app-family-info [f]="d" [callerScreen]="true" #famInfo></app-family-info>
+    <div style="display:flex;flex-wrap: wrap;gap:8px;margin:8px">
+        <button mat-raised-button color="primary" (click)="updateFamilyInfo()">עדכון פרטי משפחה</button>
+    </div>
+    <H4>האם מעוניינים במשלוח?</H4>
+    <div style="display:flex;flex-wrap: wrap;gap:8px;margin:8px">
+        <button mat-raised-button (click)="interested()" color="primary">כן</button>
+        <button mat-raised-button (click)="notInterested()">לא</button>
+        <button mat-raised-button (click)="toAdmin()">העבר למנהל</button>
+
+    </div>
+
+    <!-- <data-area class="area" [settings]="address"></data-area> -->
+</div>
+<div style="display:flex;flex-wrap: wrap;gap:8px">
+    <button mat-raised-button (click)="nextCall()">שיחה הבאה</button>
+    <button mat-raised-button *ngIf="this.d" (click)="done()">סיים</button>
+</div>
