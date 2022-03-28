@@ -208,7 +208,12 @@ export async function compareValuesWithRow(remult: Remult, info: excelRowInfo, w
         distributionCenter: distCenter,
         deliverStatus: DeliveryStatus.isNotAResultStatus(),
         basketType: compareBasketType ? basketType : undefined
-    }, { createIfNotFound: true });
+    });
+    if (!fd) {
+        fd = ef.createDelivery(distCenter);;
+        if (compareBasketType)
+            basketType = basketType;
+    }
     for (const columnMemberName of columnsInCompareMemeberName) {
         let upd = info.values[columnMemberName];
         if (!upd) {

@@ -25,7 +25,7 @@ import { SelfPickupComponent } from './self-pickup/self-pickup.component';
 
 import { DeliveryHistoryComponent } from './delivery-history/delivery-history.component';
 
-import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, SignedInAndNotOverviewGuard, EventListGuard, FamilyAdminGuard } from './auth/guards';
+import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, SignedInAndNotOverviewGuard, EventListGuard, FamilyAdminGuard, CallModuleGuard } from './auth/guards';
 import { Roles } from './auth/roles';
 import { AuthenticatedGuard } from '@remult/angular';
 import { Remult } from 'remult';
@@ -146,7 +146,7 @@ export const routes: Routes = [
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
-  { path: 'caller', component: CallerComponent, canActivate: [AdminGuard] },
+  { path: 'caller', component: CallerComponent, canActivate: [CallModuleGuard], data: { name: "טלפונים לבירור פרטים" } },
   { path: 'events', component: OrgEventsComponent },
   UpdateInfoComponent.route,
   LoginComponent.route,
@@ -167,7 +167,7 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }, AdminGuard, FamilyAdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, MltOnlyGuard,
-    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard]
+    MltAdminGuard, SignedInAndNotOverviewGuard, EventListGuard, CallModuleGuard]
 
 })
 

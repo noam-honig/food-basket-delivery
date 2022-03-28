@@ -318,13 +318,6 @@ export class ManageComponent implements OnInit {
       this.settings.$.askVolunteerForLocationOnDelivery,
       this.settings.$.askVolunteerForAPhotoToHelp,
       this.settings.$.questionForVolunteerWhenUploadingPhoto
-
-
-
-
-
-
-
     ]
   });
   settings2Messages = new DataAreaSettings({
@@ -377,6 +370,8 @@ export class ManageComponent implements OnInit {
         this.settings.$.donotShowEventsInGeneralList,
         this.settings.$.defaultStatusType,
         this.settings.$.usingSelfPickupModule,
+        this.settings.$.usingCallModule,
+        { field: this.settings.$.defaultDeliveryStatusIsEnquireDetails, visible: () => this.settings.usingCallModule },
         this.settings.$.volunteerCanUpdateComment,
 
         this.settings.$.allowVolunteerToSeePreviousActivities,

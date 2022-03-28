@@ -34,6 +34,8 @@ export class DeliveryStatus {
     }
     return false;
   }
+  static enquireDetails: DeliveryStatus = new DeliveryStatus(-10, use.language.enquireDetails);
+  static waitingForAdmin: DeliveryStatus = new DeliveryStatus(-5, use.language.waitingForAdmin);
   static ReadyForDelivery: DeliveryStatus = new DeliveryStatus(0, use.language.readyForDelivery);
   static SelfPickup: DeliveryStatus = new DeliveryStatus(2, !use ? '' : use.language.selfPickup);
   static Frozen: DeliveryStatus = new DeliveryStatus(9, !use ? '' : use.language.frozen);
@@ -103,8 +105,11 @@ export class DeliveryStatus {
   static getOptions(remult: Remult) {
     let op = getValueList(DeliveryStatus);
     if (!getSettings(remult).usingSelfPickupModule) {
-      op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id && x.id != DeliveryStatus.SuccessPickedUp.id);
+      op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id &&
+        x.id != DeliveryStatus.SuccessPickedUp.id);
     }
+    if (!getSettings(remult).usingCallModule)
+      op = op.filter(x => x.id != DeliveryStatus.enquireDetails.id && x.id != DeliveryStatus.waitingForAdmin.id);
     if (!getSettings(remult).isSytemForMlt) {
       op = op.filter(x =>
         x.id != DeliveryStatus.FailedNotReady.id &&

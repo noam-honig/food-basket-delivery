@@ -5,8 +5,11 @@ import { DialogService } from '../dialog';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { DataAreaSettings, IDataAreaSettings } from '@remult/angular/interfaces';
 import { button, InputAreaArgs } from '../../helpers/init-context';
+import { DialogConfig } from '@remult/angular';
 
-
+@DialogConfig({
+  maxWidth:''
+})
 @Component({
   selector: 'app-input-area',
   templateUrl: './input-area.component.html',

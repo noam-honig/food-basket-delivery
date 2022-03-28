@@ -119,6 +119,7 @@ import { CallerComponent } from './caller/caller.component';
 
 
 
+
 var site = Sites.initOnBrowserAndReturnAngularBaseHref();
 
 export class MyHammerConfig extends HammerGestureConfig {

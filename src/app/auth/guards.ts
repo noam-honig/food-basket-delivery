@@ -43,6 +43,16 @@ export class OverviewGuard extends AuthenticatedGuard {
     }
 }
 
+@Injectable()
+export class CallModuleGuard extends AuthenticatedGuard {
+
+
+    isAllowed() {
+
+        return Roles.callPerson;
+    }
+}
+
 
 
 

@@ -162,6 +162,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       showTotal: true,
       rule: {},
       stats: [
+        this.stats.enquireDetails,
+        this.stats.waitForAdmin,
         this.stats.ready,
         this.stats.special,
         this.stats.selfPickup,
@@ -606,7 +608,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.familyMembers,
         { field: deliveries.messageStatus, width: '130' },
         deliveries.receptionComments,
-        deliveries.numOfPhotos
+        deliveries.numOfPhotos,
+        deliveries.caller,
+        deliveries.callerComment,
+        deliveries.callerAssignDate,
+        deliveries.lastCallDate
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
         if (getCustomColumnVisible(c)) {

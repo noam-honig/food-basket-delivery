@@ -16,7 +16,8 @@ import { Field } from '../translate';
 
 export class FamilyDeliveryStats {
     constructor(private remult: Remult) { }
-
+    enquireDetails = new FamilyDeliveresStatistics(getLang(this.remult).enquireDetails, { deliverStatus: DeliveryStatus.enquireDetails }, colors.orange);
+    waitForAdmin = new FamilyDeliveresStatistics(getLang(this.remult).waitingForAdmin, { deliverStatus: DeliveryStatus.waitingForAdmin }, colors.orange);
     ready = new FamilyDeliveresStatistics(getLang(this.remult).unAsigned,
         {
             special: { "!=": YesNo.Yes },

@@ -13,7 +13,7 @@ import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, 
 import { Helpers, HelpersBase } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
-import { ApplicationSettings, CustomColumn, customColumnInfo } from "../manage/ApplicationSettings";
+import { ApplicationSettings, CustomColumn, customColumnInfo, getSettings } from "../manage/ApplicationSettings";
 
 import * as fetch from 'node-fetch';
 import { Roles } from "../auth/roles";
@@ -50,8 +50,8 @@ declare type factoryFor<T> = {
 
 @Entity<Families>("Families", {
   translation: l => l.families,
-  allowApiRead: Roles.familyAdmin,
-  allowApiUpdate: Roles.familyAdmin,
+  allowApiRead: [Roles.familyAdmin, Roles.callPerson],
+  allowApiUpdate: [Roles.familyAdmin, Roles.callPerson],
   allowApiDelete: false,
   allowApiInsert: Roles.familyAdmin,
 
@@ -393,7 +393,7 @@ export class Families extends IdEntity {
     fd.quantity = this.quantity;
     fd.deliveryComments = this.deliveryComments;
     fd.courier = this.fixedCourier;
-    fd.deliverStatus = this.defaultSelfPickup ? DeliveryStatus.SelfPickup : DeliveryStatus.ReadyForDelivery;
+    fd.deliverStatus = this.defaultSelfPickup ? DeliveryStatus.SelfPickup : getSettings(this.remult).defaultStatus;
     this.updateDelivery(fd);
     return fd;
   }
@@ -466,7 +466,7 @@ export class Families extends IdEntity {
 
   @Field({
     translation: l => l.socialSecurityNumber,
-
+    includeInApi: Roles.familyAdmin
   })
   @DataControl<Families>({
     valueChange: self => self.delayCheckDuplicateFamilies(),
@@ -475,6 +475,7 @@ export class Families extends IdEntity {
   tz: string;
   @Field({
     translation: l => l.spouceSocialSecurityNumber,
+    includeInApi: Roles.familyAdmin
 
   })
   @DataControl<Families>({
@@ -502,7 +503,7 @@ export class Families extends IdEntity {
   basketType: BasketType;
   @Fields.Integer({ translation: l => l.defaultQuantity })
   quantity: number;
-  @Field({ includeInApi: true, translation: l => l.familySource })
+  @Field({ translation: l => l.familySource, includeInApi: Roles.familyAdmin })
   familySource: FamilySources;
   @Field({ translation: l => l.familyHelpContact })
   socialWorker: string;
@@ -510,19 +511,19 @@ export class Families extends IdEntity {
   socialWorkerPhone1: Phone;
   @Field({ translation: l => l.familyHelpPhone2 })
   socialWorkerPhone2: Phone;
-  @Field()
+  @Field({ includeInApi: Roles.familyAdmin })
   groups: GroupsValue = new GroupsValue('');
-  @Field({ translation: l => l.specialAsignment })
+  @Field({ translation: l => l.specialAsignment, includeInApi: Roles.familyAdmin })
   special: YesNo;
   @Field()
   defaultSelfPickup: boolean;
-  @Field({ translation: l => l.familyUniqueId })
+  @Field({ translation: l => l.familyUniqueId, includeInApi: Roles.familyAdmin })
   iDinExcel: string;
   @Field({
-    customInput: c => c.textArea()
+    customInput: c => c.textArea(), includeInApi: Roles.familyAdmin
   })
   internalComment: string;
-  @Field()
+  @Field({ includeInApi: Roles.familyAdmin })
   addressApiResult: string;
 
   @Field({
@@ -598,9 +599,9 @@ export class Families extends IdEntity {
   email: Email;
   @Field()
   status: FamilyStatus = FamilyStatus.Active;
-  @ChangeDateColumn({ translation: l => l.statusChangeDate })
+  @ChangeDateColumn({ translation: l => l.statusChangeDate, includeInApi: Roles.familyAdmin })
   statusDate: Date;
-  @Field({ translation: l => l.statusChangeUser, allowApiUpdate: false })
+  @Field({ translation: l => l.statusChangeUser, allowApiUpdate: false, includeInApi: Roles.familyAdmin })
   statusUser: HelpersBase;
   @Field({
     translation: l => l.defaultVolunteer,
@@ -614,12 +615,12 @@ export class Families extends IdEntity {
   })
   fixedCourier: HelpersBase;
   @Fields.Integer({
-    allowApiUpdate: true
+    allowApiUpdate: true, includeInApi: Roles.familyAdmin
   })
   routeOrder: number;
   @Field({
     allowApiUpdate: Roles.admin,
-    translation: l => l.defaultDistributionCenter
+    translation: l => l.defaultDistributionCenter, includeInApi: Roles.familyAdmin
   })
   defaultDistributionCenter: DistributionCenters;
   @CustomColumn(() => customColumnInfo[1], Roles.familyAdmin)
@@ -704,14 +705,14 @@ export class Families extends IdEntity {
   }
 
 
-  @Field({},
+  @Field({ includeInApi: Roles.familyAdmin },
     (options, remult) =>
       options.sqlExpression = (self) => {
         return dbNameFromLastDelivery(self, remult, fde => fde.deliverStatus, "prevStatus");
       }
   )
   previousDeliveryStatus: DeliveryStatus;
-  @ChangeDateColumn({},
+  @ChangeDateColumn({ includeInApi: Roles.familyAdmin },
     (options, remult) =>
       options.sqlExpression = (self) => {
         return dbNameFromLastDelivery(self, remult, fde => fde.deliveryStatusDate, "prevDate");
@@ -788,13 +789,13 @@ export class Families extends IdEntity {
 
 
 
-  @ChangeDateColumn()
+  @ChangeDateColumn({ includeInApi: Roles.familyAdmin })
   createDate: Date;
-  @Field({ allowApiUpdate: false, translation: l => l.createUser })
+  @Field({ allowApiUpdate: false, translation: l => l.createUser, includeInApi: Roles.familyAdmin })
   createUser: HelpersBase;
-  @ChangeDateColumn()
+  @ChangeDateColumn({ includeInApi: Roles.familyAdmin })
   lastUpdateDate: Date;
-  @Field({ allowApiUpdate: false })
+  @Field({ allowApiUpdate: false, includeInApi: Roles.familyAdmin })
   lastUpdateUser: HelpersBase;
   @Field({ includeInApi: Roles.distCenterAdmin })
   shortUrlKey: string;
@@ -855,6 +856,8 @@ export class Families extends IdEntity {
     if (this._disableAutoDuplicateCheck)
       return;
     if (isBackend())
+      return;
+    if (!this.remult.isAllowed(Roles.familyAdmin))
       return;
     if (!this.tzDelay)
       this.tzDelay = new delayWhileTyping(1000);
@@ -1003,11 +1006,25 @@ export class Families extends IdEntity {
 
     if (!remult.authenticated())
       return { id: [] };
-    let result: EntityFilter<Families>[] = [];
-    if (!remult.isAllowed([Roles.admin])) {
-      result.push({ defaultDistributionCenter: remult.filterCenterAllowedForUser() });
+    if (remult.isAllowed(Roles.admin))
+      return {};
+
+    let $or: EntityFilter<Families>[] = [];
+    if (remult.isAllowed(Roles.familyAdmin)) {
+      $or.push({ defaultDistributionCenter: remult.filterCenterAllowedForUser() });
     }
-    return { $and: result };
+    if (remult.isAllowed(Roles.callPerson)) {
+      $or.push({
+        id: (await remult.repo(FamilyDeliveries).find({
+          where: (await import("./FamilyDeliveries")).FamilyDeliveries.inProgressCallerDeliveries()
+        })).map(x => x.family)
+      });
+    }
+
+    if (!$or) {
+      return { id: [] };
+    }
+    return { $or };
   });
   static getSpecificFamilyWithoutUserRestrictionsBackendOnly(id: string, remult: Remult) {
     if (!isBackend())

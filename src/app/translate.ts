@@ -1307,7 +1307,14 @@ export class Language {
   dial = "חיוג";
   whatsApp = "וואטסאפ";
   fullList = "רשימה מלאה";
-
+  usingCallModule = 'הפעל מודול טלפנים לבירור פרטים';
+  enquireDetails = 'בירור פרטים';
+  waitingForAdmin = 'ממתין למנהל';
+  caller = 'טלפן';
+  callerComment = 'הערת טלפן';
+  callerAssignDate = 'תאריך שיוך לטלפן';
+  callCounter = "נסיונות התקשרות";
+  defaultDeliveryStatusIsEnquireDetails = 'בירור פרטים כסטטוס ברירת מחדל למשלוחים';
 }
 
 const defaultLang = new Language();
