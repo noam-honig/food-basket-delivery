@@ -45,7 +45,7 @@
     "@remult/angular": "^0.13.6",
     "@types/form-data": "^2.5.0",
     "angular2-qrcode": "^2.0.3",
-    "aws-sdk": "^2.683.0",
+    "aws-sdk": "^2.814.0",
     "body-parser": "^1.19.0",
     "chart.js": "^2.8.0",
     "compression": "^1.7.4",
