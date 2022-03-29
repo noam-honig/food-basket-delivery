@@ -66,7 +66,7 @@
     "ng-dialog-animation": "^9.0.4",
     "ng2-charts": "^2.4.0",
     "ngx-pagination": "^4.1.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "nodemailer": "^6.6.1",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
