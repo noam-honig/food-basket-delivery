@@ -483,11 +483,11 @@ export class Families extends IdEntity {
   })
 
   tz2: string;
-  @Fields.Integer()
+  @Fields.integer()
   familyMembers: number;
-  @Fields.DateOnly()
+  @Fields.dateOnly()
   birthDate: Date;
-  @Fields.DateOnly<Families>({
+  @Fields.dateOnly<Families>({
 
     sqlExpression: () => "(select cast(birthDate + ((extract(year from age(birthDate)) + 1) * interval '1' year) as date) as nextBirthday)",
     allowApiUpdate: false,
@@ -501,7 +501,7 @@ export class Families extends IdEntity {
   nextBirthday: Date
   @Field({ translation: l => l.defaultBasketType })
   basketType: BasketType;
-  @Fields.Integer({ translation: l => l.defaultQuantity })
+  @Fields.integer({ translation: l => l.defaultQuantity })
   quantity: number;
   @Field({ translation: l => l.familySource, includeInApi: Roles.familyAdmin })
   familySource: FamilySources;
@@ -559,7 +559,7 @@ export class Families extends IdEntity {
   area: string;
   @Field()
   addressComment: string;
-  @Fields.Integer()
+  @Fields.integer()
   postalCode: number;
   @Field({ translation: l => l.defaultDeliveryComment })
   deliveryComments: string;
@@ -614,7 +614,7 @@ export class Families extends IdEntity {
     }
   })
   fixedCourier: HelpersBase;
-  @Fields.Integer({
+  @Fields.integer({
     allowApiUpdate: true, includeInApi: Roles.familyAdmin
   })
   routeOrder: number;
@@ -728,7 +728,7 @@ export class Families extends IdEntity {
       }
   )
   previousDeliveryComment: string;
-  @Fields.Integer({},
+  @Fields.integer({},
     (options, remult) =>
       options.sqlExpression = async (selfDefs) => {
         let self = SqlFor(selfDefs);
@@ -1250,7 +1250,7 @@ async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult
 }
 
 class dateInput {
-  @Fields.DateOnly()
+  @Fields.dateOnly()
   date: Date = new Date();
 }
 @Entity(undefined, {

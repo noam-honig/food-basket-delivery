@@ -324,19 +324,19 @@ export class helperHistoryInfo extends EntityBase {
   phone: Phone;
   @CompanyColumn()
   company: string;
-  @Fields.Integer({ translation: l => l.deliveries })
+  @Fields.integer({ translation: l => l.deliveries })
   deliveries: number;
-  @Fields.Integer({ translation: l => l.delveriesSuccesfull })
+  @Fields.integer({ translation: l => l.delveriesSuccesfull })
   succesful: number;
-  @Fields.Integer({ translation: l => l.selfAssigned })
+  @Fields.integer({ translation: l => l.selfAssigned })
   selfassigned: number;
-  @Fields.Integer({ translation: l => l.families })
+  @Fields.integer({ translation: l => l.families })
   families: number;
-  @Fields.Integer({ translation: l => l.dates })
+  @Fields.integer({ translation: l => l.dates })
   dates: number;
-  @Fields.Integer({ caption: 'מתנות שמומשו' })
+  @Fields.integer({ caption: 'מתנות שמומשו' })
   giftsConsumed: number;
-  @Fields.Integer({ caption: 'מתנות זמינות' })
+  @Fields.integer({ caption: 'מתנות זמינות' })
   giftsPending: number;
 
 

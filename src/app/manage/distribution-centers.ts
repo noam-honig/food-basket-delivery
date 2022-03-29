@@ -5,7 +5,7 @@ import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
-import { DataControl, getValueList } from "@remult/angular/interfaces";
+import { DataControl, getEntityValueList } from "@remult/angular/interfaces";
 import { use, FieldType, Field } from "../translate";
 
 
@@ -69,7 +69,7 @@ export class DistributionCenters extends IdEntity {
   isFrozen: boolean;
   @Field()
   archive: boolean;
-  
+
   createUser: HelpersBase;
 
 
@@ -108,7 +108,7 @@ export class DistributionCenters extends IdEntity {
     return (await ApplicationSettings.getAsync(this.remult)).addressHelper.getGeocodeInformation;
   }
   static async getValueList(remult: Remult, showAllOptions = false) {
-    let r = await getValueList<DistributionCenters>(remult.repo(DistributionCenters), {
+    let r = await getEntityValueList<DistributionCenters>(remult.repo(DistributionCenters), {
       where: { archive: false }
     })
     if (showAllOptions) {

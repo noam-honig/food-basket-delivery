@@ -162,7 +162,7 @@ export class ApplicationSettings extends EntityBase {
     return this.lang.languageCode == 'iw' && !this.isSytemForMlt;
   }
 
-  @Fields.Integer()
+  @Fields.integer()
   id: number;
   @Field()
   organisationName: string;
@@ -243,7 +243,7 @@ export class ApplicationSettings extends EntityBase {
   }
   @Field()
   commonQuestions: string;
-  @Fields.Integer({ allowApiUpdate: false })
+  @Fields.integer({ allowApiUpdate: false })
   dataStructureVersion: number;
   @Field({ translation: l => l.successButtonSettingName })
   deliveredButtonText: string;
@@ -349,9 +349,9 @@ export class ApplicationSettings extends EntityBase {
   requireConfidentialityApprove: boolean;
   @Field()
   requireComplexPassword: boolean;
-  @Fields.Integer()
+  @Fields.integer()
   timeToDisconnect: number;
-  @Fields.Integer()
+  @Fields.integer()
   daysToForcePasswordChange: number;
   @Field()
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean;
@@ -359,13 +359,13 @@ export class ApplicationSettings extends EntityBase {
   showDistCenterAsEndAddressForVolunteer: boolean;
   @Field()
   routeStrategy: routeStrategy;
-  @Fields.Integer({ translation: l => l.maxDeliveriesBeforeBusy })
+  @Fields.integer({ translation: l => l.maxDeliveriesBeforeBusy })
   BusyHelperAllowedFreq_nom: number;
-  @Fields.Integer({ translation: l => l.daysCountForBusy })
+  @Fields.integer({ translation: l => l.daysCountForBusy })
   BusyHelperAllowedFreq_denom: number;
-  @Fields.Integer()
+  @Fields.integer()
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number;
-  @Fields.Integer()
+  @Fields.integer()
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number;
   @Field()
   donotShowEventsInGeneralList: boolean;

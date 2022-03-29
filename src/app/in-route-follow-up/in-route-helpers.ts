@@ -178,7 +178,7 @@ export class InRouteHelpers extends IdEntity {
     internalComment: string;
     @Field({ caption: 'ארגון' })
     company: string;
-    @Fields.DateOnly({
+    @Fields.dateOnly({
         caption: 'מוקפא עד לתאריך',
     })
     frozenTill: Date;

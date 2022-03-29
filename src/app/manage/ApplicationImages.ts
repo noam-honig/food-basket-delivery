@@ -7,7 +7,7 @@ import { Field, Fields } from '../translate';
   allowApiUpdate: Roles.admin
 })
 export class ApplicationImages extends EntityBase {
-  @Fields.Integer()
+  @Fields.integer()
   id: number;
   @Field({ caption: "איקון דף base64" })
   base64Icon: string;

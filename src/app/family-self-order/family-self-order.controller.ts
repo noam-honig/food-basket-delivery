@@ -1,4 +1,4 @@
-import { DataAreaSettings, DataControl, getValueList } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControl, getEntityValueList } from '@remult/angular/interfaces';
 import { BackendMethod, Controller, getFields, Remult } from 'remult';
 import { BasketType } from '../families/BasketType';
 import { Families } from '../families/families';
@@ -19,7 +19,7 @@ export class FamilySelfOrderController {
 
     @Field({ caption: 'סוג מזון' })
     @DataControl({
-        valueList: async (remult: Remult) => getValueList(remult.repo(BasketType))
+        valueList: async (remult: Remult) => getEntityValueList(remult.repo(BasketType))
     })
     basket: string;
 

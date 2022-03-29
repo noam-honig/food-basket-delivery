@@ -16,7 +16,7 @@ export class DateRangeComponent implements OnInit {
   @Input() rangeWeekly: boolean = false;
   @Output() dateChanged = new EventEmitter<void>();
 
-  @Fields.DateOnly()
+  @Fields.dateOnly()
   @DataControl({
     valueChange: (self) => {
       if (self.toDate.value < self.fromDate.value) {
@@ -25,7 +25,7 @@ export class DateRangeComponent implements OnInit {
     }
   })
   fromDate: Date;
-  @Fields.DateOnly()
+  @Fields.dateOnly()
   toDate: Date;
   get $() { return getFields(this, this.remult) };
   rangeArea = new DataAreaSettings({

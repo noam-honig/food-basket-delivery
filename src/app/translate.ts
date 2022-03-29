@@ -130,14 +130,14 @@ export function Field<entityType = any, valueType = any>(settings?: FieldOptions
 }
 
 export class Fields {
-  static Integer<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
-    return OrigFields.Integer<entityType>(...adjustSettings(settings, options));
+  static integer<entityType = any>(settings?: FieldOptions<entityType, number> & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
+    return OrigFields.integer<entityType>(...adjustSettings(settings, options));
   }
-  static Quantity<entityType>(settings?: FieldOptions & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
-    return Fields.Integer<entityType>({ translation: l => l.quantity, ...settings }, ...options);
+  static quantity<entityType>(settings?: FieldOptions & TranslatedCaption, ...options: (FieldOptions<entityType, number> | ((options: FieldOptions<entityType, number>, remult: Remult) => void))[]) {
+    return Fields.integer<entityType>({ translation: l => l.quantity, ...settings }, ...options);
   }
-  static DateOnly<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
-    return OrigFields.DateOnly<entityType>(...adjustSettings(settings, options));
+  static dateOnly<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
+    return OrigFields.dateOnly<entityType>(...adjustSettings(settings, options));
   }
 }
 

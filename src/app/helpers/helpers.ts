@@ -98,9 +98,9 @@ export abstract class HelpersBase extends IdEntity {
     doNotSendSms: boolean = false;
     @CompanyColumn()
     company: string;
-    @Fields.Integer({ allowApiUpdate: Roles.distCenterAdmin })
+    @Fields.integer({ allowApiUpdate: Roles.distCenterAdmin })
     totalKm: number;
-    @Fields.Integer({ allowApiUpdate: Roles.distCenterAdmin })
+    @Fields.integer({ allowApiUpdate: Roles.distCenterAdmin })
     totalTime: number;
     @Field({ includeInApi: Roles.distCenterAdmin })
     shortUrlKey: string;
@@ -158,7 +158,7 @@ export abstract class HelpersBase extends IdEntity {
         allowApiUpdate: Allow.authenticated,
         includeInApi: Allow.authenticated,
     })
-    @Fields.DateOnly()
+    @Fields.dateOnly()
     frozenTill: Date;
     @Field({
         allowApiUpdate: Roles.admin,

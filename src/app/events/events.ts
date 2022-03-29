@@ -188,7 +188,7 @@ export class Event extends IdEntity {
     eventStatus: eventStatus = eventStatus.active;
     @Field({ translation: l => l.eventDescription, customInput: x => x.textArea() })
     description: string;
-    @Fields.DateOnly<Event>({
+    @Fields.dateOnly<Event>({
         translation: l => l.eventDate,
         validate: (s, c) => {
             if (!c.value || c.value.getFullYear() < 2018)
@@ -202,7 +202,7 @@ export class Event extends IdEntity {
     @Field({ inputType: InputTypes.time, translation: l => l.eventEndTime })
     @DataControl({ width: '110' })
     endTime: string;
-    @Fields.Integer({ translation: l => l.requiredVolunteers })
+    @Fields.integer({ translation: l => l.requiredVolunteers })
     requiredVolunteers: number;
     @Field()
     addressApiResult: string;

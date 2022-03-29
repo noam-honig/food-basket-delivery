@@ -5,7 +5,7 @@ import { Entity, IdEntity, Allow, Fields } from 'remult';
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
 import { getLang } from '../sites/sites';
-import { DataControl, getValueList } from '@remult/angular/interfaces';
+import { DataControl, getEntityValueList } from '@remult/angular/interfaces';
 import { getSettings } from '../manage/ApplicationSettings';
 
 
@@ -18,7 +18,7 @@ import { getSettings } from '../manage/ApplicationSettings';
   translation: l => l.basketType
 })
 @DataControl({
-  valueList: remult => getValueList(remult.repo(BasketType)),
+  valueList: remult => getEntityValueList(remult.repo(BasketType)),
   width: '100'
 })
 @Entity<BasketType>("BasketType", {
@@ -33,9 +33,9 @@ import { getSettings } from '../manage/ApplicationSettings';
 export class BasketType extends IdEntity {
   @Field({ translation: l => l.basketTypeName })
   name: string;
-  @Fields.Integer({}, (options) => options.caption = BasketType.boxes1Name)
+  @Fields.integer({}, (options) => options.caption = BasketType.boxes1Name)
   boxes: number = 1;
-  @Fields.Integer({}, (options) => options.caption = BasketType.boxes2Name)
+  @Fields.integer({}, (options) => options.caption = BasketType.boxes2Name)
   boxes2: number = 0;
   @Field({ translation: l => l.whatToTake })
   whatToTake: string = '';

@@ -14,7 +14,7 @@ import { use, Field, ValueListFieldType, Fields } from "../translate";
 import { getLang } from '../sites/sites';
 import { Controller } from "remult";
 
-import { DataControl, getValueList } from "@remult/angular/interfaces";
+import { DataControl, getEntityValueList } from "@remult/angular/interfaces";
 import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 
@@ -57,7 +57,7 @@ export class NewDelivery extends ActionOnRows<Families> {
     useFamilyQuantity: boolean = true;
     @Field({ translation: l => l.useFamilyMembersAsQuantity })
     useFamilyMembersAsQuantity: boolean;
-    @Fields.Quantity()
+    @Fields.quantity()
     quantity: number;
     @Field({ translation: l => l.useFamilyDistributionList })
     useFamilyDistributionList: boolean = true;
@@ -174,7 +174,7 @@ export class updateGroup extends ActionOnRows<Families> {
         translation: l => l.familyGroup
     })
     @DataControl({
-        valueList: async remult => (await getValueList<Groups>(remult.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
+        valueList: async remult => (await getEntityValueList<Groups>(remult.repo(Groups), { idField: x => x.fields.name, captionField: x => x.fields.name })).map(({ id, caption }) => ({ id, caption }))
     })
     group: string;
     @Field()
@@ -321,7 +321,7 @@ export class UpdateArea extends ActionOnRows<Families> {
 }
 @Controller('UpdateDefaultQuantity')
 export class UpdateQuantity extends ActionOnRows<Families> {
-    @Fields.Quantity()
+    @Fields.quantity()
     quantity: number;
 
     constructor(remult: Remult) {

@@ -214,7 +214,7 @@ export class FamilyDeliveries extends IdEntity {
         allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
     })
     basketType: BasketType;
-    @Fields.Quantity({
+    @Fields.quantity({
         allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
     })
     @DataControl({ width: '100' })
@@ -250,7 +250,7 @@ export class FamilyDeliveries extends IdEntity {
     courierCommentsDate: Date;
     @Field({ includeInApi: Roles.admin })
     internalDeliveryComment: string;
-    @Fields.Integer({
+    @Fields.integer({
         allowApiUpdate: true
     })
     routeOrder: number;
@@ -361,7 +361,7 @@ export class FamilyDeliveries extends IdEntity {
     addressOk: boolean;
     @Field({ translation: l => l.defaultVolunteer, allowApiUpdate: false, includeInApi: Roles.distCenterAdmin })
     fixedCourier: HelpersBase;
-    @Fields.Integer({ allowApiUpdate: false })
+    @Fields.integer({ allowApiUpdate: false })
     familyMembers: number;
     @Field({
         dbName: 'phone',

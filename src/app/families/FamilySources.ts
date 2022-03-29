@@ -4,11 +4,11 @@ import { Phone } from "../model-shared/phone";
 import { Remult, IdEntity, Entity, Allow } from 'remult';
 import { Roles } from "../auth/roles";
 
-import { DataControl, getValueList } from "@remult/angular/interfaces";
+import { DataControl, getEntityValueList } from "@remult/angular/interfaces";
 import { use, Field, FieldType } from "../translate";
 
 @DataControl({
-  valueList: remult => getValueList(remult.repo(FamilySources))
+  valueList: remult => getEntityValueList(remult.repo(FamilySources))
 })
 @FieldType<FamilySources>({
   valueConverter: {

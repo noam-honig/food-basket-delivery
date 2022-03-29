@@ -13,7 +13,7 @@ import { FamilyStatus } from "../families/FamilyStatus";
 import { SelfPickupStrategy } from "../families/familyActions";
 import { getSettings } from "../manage/ApplicationSettings";
 import { Controller } from "remult";
-import { DataAreaFieldsSetting, DataControl, getValueList, InputField } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, DataControl, getEntityValueList, InputField } from "@remult/angular/interfaces";
 
 import { getFields } from "remult";
 
@@ -86,7 +86,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     @Field({ translation: l => l.basketType })
     @DataControl({
         valueList: async (remult) => {
-            let r = await getValueList(remult.repo(BasketType));
+            let r = await getEntityValueList(remult.repo(BasketType));
             r.splice(0, 0, { id: asCurrentBasket, caption: use.language.asCurrentBasket })
             return r;
         }
@@ -334,7 +334,7 @@ export class UpdateBasketType extends ActionOnFamilyDeliveries {
 }
 @Controller('updateQuantity')
 export class UpdateQuantity extends ActionOnFamilyDeliveries {
-    @Fields.Quantity()
+    @Fields.quantity()
     quantity: number;
 
     constructor(remult: Remult) {
@@ -386,7 +386,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     useExistingBasket: boolean = true;
     @Field()
     basketType: BasketType;
-    @Fields.Quantity()
+    @Fields.quantity()
     quantity: number;
     @Field()
     helperStrategy: HelperStrategy = HelperStrategy.familyDefault;
