@@ -75,7 +75,7 @@ export class quantityHelper {
     }
   }
   toString(seperator = "\n") {
-    return this.items.map(x => (x.quantity > 1 ? (x.quantity + ' X ') : '') + x.name).join(seperator);
+    return this.items.map(x => (x.quantity + ' X ') + x.name).join(seperator);
   }
 }
 
