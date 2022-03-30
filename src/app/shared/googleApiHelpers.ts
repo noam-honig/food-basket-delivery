@@ -161,13 +161,12 @@ export class GeocodeInformation {
         return undefined;
     }
     location(): Location {
+
         if (!this.ok())
             return { lat: 32.0922212, lng: 34.8731951 };
         return this.info.results[0].geometry.location;
     }
-    getlonglat() {
-        return toLongLat(this.location());
-    }
+    
     getCity() {
         if (this.ok())
             return getCity(this.info.results[0].address_components);
@@ -375,7 +374,7 @@ export class AddressHelper {
         return this.getGeocodeInformation.getCity();
     }
     get getlonglat() {
-        return this.getGeocodeInformation.getlonglat();
+        return toLongLat(this.location);
     }
 
     constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
@@ -391,7 +390,7 @@ export class AddressHelper {
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
     openWaze() {
-        window.open('waze://?ll=' + this.getGeocodeInformation.getlonglat() + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
+        window.open('waze://?ll=' + this.getlonglat + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
     }
 
     get getGeocodeInformation() {
@@ -404,6 +403,13 @@ export class AddressHelper {
         return this.getGeocodeInformation.ok();
     }
     get location() {
+        if (isGpsAddress(this.addressColumn().value)) {
+            var j = this.addressColumn().value.split(',');
+            return {
+                lat: +j[0],
+                lng: +j[1]
+            } as Location;
+        }
         return this.getGeocodeInformation.location();
     }
 }

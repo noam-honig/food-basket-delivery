@@ -699,7 +699,7 @@ export class FamilyDeliveries extends IdEntity {
 
 
     getDrivingLocation(): Location {
-        if (this.drivingLatitude != 0)
+        if (this.drivingLatitude != 0&&false)
             return {
                 lat: this.drivingLatitude,
                 lng: this.drivingLongitude

@@ -3,6 +3,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { CustomComponentArgs, CustomDataComponent } from '@remult/angular/interfaces';
 
 import { FieldRef } from 'remult';
+import { parseAddress, parseUrlInAddress } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getAddress, Location, getCity, GeocodeResult } from '../shared/googleApiHelpers';
 
@@ -23,6 +24,14 @@ export class AddressInputComponent implements AfterViewInit, CustomDataComponent
   }
   initAddressAutoComplete = false;
   destroyMe: google.maps.MapsEventListener;
+  checkInput() {
+    var x = parseUrlInAddress(this.field.value);
+    if (x != this.field.value) {
+      setTimeout(() => {
+        this.field.value = x;
+      }, 50);
+    }
+  }
 
   @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
   initAddress(consumer: (x: {

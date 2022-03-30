@@ -257,6 +257,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       if (this.args.familyId)
         this.args.family = await this.remult.repo(Families).findFirst({ id: this.args.familyId });
     }
+    const { addressLongitude, addressLatitude, drivingLatitude, drivingLongitude, addressHelper } = this.args.family;
+    console.log({ addressLatitude, addressLongitude, drivingLatitude, drivingLongitude, loc: addressHelper.location });
     if (this.args.familyDelivery)
       this.delivery = this.args.familyDelivery;
     if (this.args.userCanUpdateButDontSave)

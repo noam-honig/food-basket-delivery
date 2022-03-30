@@ -13,16 +13,17 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
   templateUrl: './preview-family.component.html',
   styleUrls: ['./preview-family.component.scss']
 })
-@DialogConfig({minWidth:350})
+@DialogConfig({ minWidth: 350 })
 export class PreviewFamilyComponent implements OnInit {
 
-  familyLists = new UserFamiliesList(this.remult,this.settings);
+  familyLists = new UserFamiliesList(this.remult, this.settings);
   public argsFamily: ActiveFamilyDeliveries;
   constructor(public remult: Remult, private dialogRef: MatDialogRef<any>
-  ,public settings:ApplicationSettings) { }
+    , public settings: ApplicationSettings) { }
   async ngOnInit() {
 
     this.familyLists.toDeliver = [this.argsFamily];
+    this.familyLists.helper = await this.remult.getCurrentUser();
 
 
 

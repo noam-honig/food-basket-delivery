@@ -107,6 +107,12 @@ export class DistributionCenters extends IdEntity {
       return this.addressHelper.getGeocodeInformation;
     return (await ApplicationSettings.getAsync(this.remult)).addressHelper.getGeocodeInformation;
   }
+  async getRouteStartLocation() {
+
+    if (this.addressApiResult && this.address && this.addressHelper.ok)
+      return this.addressHelper.location;
+    return (await ApplicationSettings.getAsync(this.remult)).addressHelper.location;
+  }
   static async getValueList(remult: Remult, showAllOptions = false) {
     let r = await getEntityValueList<DistributionCenters>(remult.repo(DistributionCenters), {
       where: { archive: false }

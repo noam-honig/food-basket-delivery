@@ -173,9 +173,9 @@ export class MapComponent implements OnInit, OnDestroy {
             }
             let start: Location;
             if (families.length > 0)
-                start = (await families[0].distributionCenter.getRouteStartGeo()).location();
+                start = (await families[0].distributionCenter.getRouteStartLocation());
             else if (this.dialog.distCenter)
-                start = (await this.dialog.distCenter.getRouteStartGeo()).location();
+                start = (await this.dialog.distCenter.getRouteStartLocation());
             else start = this.settings.addressHelper.location;
             this.helperMarkers = [];
 
