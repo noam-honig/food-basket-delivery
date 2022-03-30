@@ -210,9 +210,10 @@ export async function compareValuesWithRow(remult: Remult, info: excelRowInfo, w
         basketType: compareBasketType ? basketType : undefined
     });
     if (!fd) {
-        fd = ef.createDelivery(distCenter);;
+        fd = ef.createDelivery(distCenter);
         if (compareBasketType)
             basketType = basketType;
+        fd.deliverStatus = undefined;
     }
     for (const columnMemberName of columnsInCompareMemeberName) {
         let upd = info.values[columnMemberName];
