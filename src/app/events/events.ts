@@ -249,6 +249,9 @@ export class Event extends IdEntity {
     )
     confirmedVolunteers: number;
 
+    @Field()
+    specificUrl: string = '';
+
     get eventLogo() {
         return getSettings(this.remult).logoUrl;
     }
@@ -324,7 +327,8 @@ export class Event extends IdEntity {
                             address: current.address,
                             phone1: current.phone1,
                             phone1Description: current.phone1Description,
-                            distributionCenter: current.distributionCenter
+                            distributionCenter: current.distributionCenter,
+                            specificUrl: current.specificUrl
                         });
                         r.push(e);
 
@@ -369,7 +373,8 @@ export class Event extends IdEntity {
             { field: e.distributionCenter, visible: () => ui.hasManyCenters },
             e.address,
             e.phone1,
-            e.phone1Description
+            e.phone1Description,
+            e.specificUrl
         ];
         return r;
     }
@@ -612,7 +617,7 @@ export class volunteersInEvent extends IdEntity {
 
             rowsInPage: 50,
             allowUpdate: true,
-            where:()=>( { eventId: event.id }),
+            where: () => ({ eventId: event.id }),
             orderBy: { registerStatusDate: "desc" },
             knowTotalRows: true,
             numOfColumnsInGrid: 10,

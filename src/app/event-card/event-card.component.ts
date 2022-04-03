@@ -9,6 +9,8 @@ import { DialogService } from '../select-popup/dialog';
 import { Roles } from '../auth/roles';
 import { use, Field } from '../translate';
 import { getCurrentLocation, GetDistanceBetween, Location } from '../shared/googleApiHelpers';
+import { Sites } from '../sites/sites';
+import * as copy from 'copy-to-clipboard';
 const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: undefined };
 @Component({
   selector: 'app-event-card',
@@ -39,6 +41,14 @@ export class EventCardComponent implements OnInit {
         this.events = this.events.filter(x => x != e);
         this.refresh();
       }
+    },
+    {
+      name: 'Copy specific url',
+      click: async e => {
+        copy(window.origin + '/' + Sites.getOrganizationFromContext(this.remult) + '/events/' + e.specificUrl);
+        this.dialog.Info(this.settings.lang.linkCopied);
+      },
+      visible: e => !!e.specificUrl
     }
   ];
   getStatus(e: EventInList) {

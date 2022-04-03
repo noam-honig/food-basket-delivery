@@ -42,7 +42,7 @@ export class OrgEventsController {
 
 
             if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
-                let items = await OrgEventsController.getEvents(phone, c);
+                let items = await OrgEventsController.getEvents(phone, '', c);
                 r.push(...items.map(i => ({ ...i, site: org })));
             }
 
@@ -51,15 +51,16 @@ export class OrgEventsController {
     }
 
     @BackendMethod({ allowed: true })
-    static async getEvents(phone: string, remult?: Remult): Promise<EventInList[]> {
+    static async getEvents(phone: string, specificUrl?: string, remult?: Remult): Promise<EventInList[]> {
 
-
+        if (!specificUrl)
+            specificUrl = '';
         let helper: HelpersBase = (await remult.getCurrentUser());
         if (!helper && phone)
             helper = await remult.repo(Helpers).findFirst({ phone: new Phone(phone) });
         return Promise.all((await remult.repo(Event).find({
             orderBy: { eventDate: "asc", startTime: "asc" },
-            where: { eventStatus: eventStatus.active, eventDate: { ">=": new Date() } }
+            where: { eventStatus: eventStatus.active, eventDate: { ">=": new Date() }, specificUrl }
         })).map(async e => await e.toEventInList(helper)));
     }
 }

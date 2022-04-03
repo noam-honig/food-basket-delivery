@@ -8,6 +8,7 @@ import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DialogService } from '../select-popup/dialog';
 import { OrgEventsController } from './org-events.controller';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-org-events',
@@ -16,7 +17,7 @@ import { OrgEventsController } from './org-events.controller';
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private remult: Remult, public settings: ApplicationSettings, private dialog: DialogService) {
+  constructor(private remult: Remult, public settings: ApplicationSettings, private dialog: DialogService, private route: ActivatedRoute) {
 
   }
   isGuest = Sites.getOrganizationFromContext(this.remult) == Sites.guestSchema;
@@ -36,6 +37,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     if (this.isAdmin())
       return
+      
 
     let sites = (new URL(document.location.href)).searchParams.get("sites");
     this.unObserve = await RegisterToEvent.volunteerInfoChanged.dispatcher.observe(async () => {
@@ -44,7 +46,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
         this.events = await OrgEventsController.getAllEvents(RegisterToEvent.volunteerInfo.phone, sites);
       }
       else
-        this.events = await OrgEventsController.getEvents(RegisterToEvent.volunteerInfo.phone);
+        this.events = await OrgEventsController.getEvents(RegisterToEvent.volunteerInfo.phone,this.route.snapshot.params['id']);
     })
   }
 

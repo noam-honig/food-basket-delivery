@@ -14,3 +14,4 @@ address varchar default '' not null
 distributionCenter varchar default '' not null
 phone1 varchar default '' not null
 phone1Description varchar default '' not null
+specificUrl varchar default '' not null

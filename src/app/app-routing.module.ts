@@ -148,6 +148,7 @@ export const routes: Routes = [
   MyFamiliesComponent.route,
   { path: 'caller', component: CallerComponent, canActivate: [CallModuleGuard], data: { name: "טלפונים לבירור פרטים" } },
   { path: 'events', component: OrgEventsComponent },
+  { path: 'events/:id', component: OrgEventsComponent },
   UpdateInfoComponent.route,
   LoginComponent.route,
   { path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard] },
