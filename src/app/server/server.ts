@@ -12,7 +12,7 @@ import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeocodeCache, GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
-import { preparePostgresQueueStorage } from "remult/postgres";
+import { PostgresSchemaBuilder, preparePostgresQueueStorage } from "remult/postgres";
 import * as forceHttps from 'express-force-https';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
@@ -83,6 +83,9 @@ import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Roles } from "../auth/roles";
 import { ChangeLog, FieldDecider } from "../change-log/change-log";
 import { CallerController } from "../caller/caller.controller";
+import { allEntities } from "remult/src/context";
+import { postgresColumnSyntax } from 'remult/postgres/postgresColumnSyntax';
+
 const entities = [
     HelpersAndStats,
     Event,
@@ -353,6 +356,19 @@ s.parentNode.insertBefore(b, s);})();
                 remult.getSite = () => "test1";
                 remult.setDataProvider(dataSource(remult));
                 await InitContext(remult, undefined);
+                const path = './db-structure/';
+                for (const entity of allEntities) {
+                    let meta = remult.repo(entity).metadata;
+                    const db = await meta.getDbName();
+                    if (!db.includes('select ')) {
+                        let s = 'create table ' + db;
+                        for (const f of meta.fields.toArray()) {
+                            if (!f.options.sqlExpression)
+                                s += '\n' + await postgresColumnSyntax(f, await f.getDbName());
+                        }
+                        fs.writeFileSync(path + meta.key + '.sql', s);
+                    }
+                }
                 //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
                 if (false) {
 

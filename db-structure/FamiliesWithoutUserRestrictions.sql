@@ -1,0 +1,60 @@
+create table families
+id varchar default '' not null
+name varchar default '' not null
+tz varchar default '' not null
+tz2 varchar default '' not null
+familyMembers integer default 0 not null
+birthDate date
+basketType varchar default '' not null
+quantity integer default 0 not null
+familySource varchar default '' not null
+socialWorker varchar default '' not null
+socialWorkerPhone1 varchar default '' not null
+socialWorkerPhone2 varchar default '' not null
+groups varchar default '' not null
+special integer default 0 not null
+defaultSelfPickup boolean default false not null
+iDinExcel varchar default '' not null
+internalComment varchar default '' not null
+addressApiResult varchar default '' not null
+address varchar default '' not null
+floor varchar default '' not null
+appartment varchar default '' not null
+entrance varchar default '' not null
+buildingCode varchar default '' not null
+city varchar default '' not null
+area varchar default '' not null
+addressComment varchar default '' not null
+postalCode integer default 0 not null
+deliveryComments varchar default '' not null
+phone varchar default '' not null
+phone1Description varchar default '' not null
+phone2 varchar default '' not null
+phone2Description varchar default '' not null
+phone3 varchar default '' not null
+phone3Description varchar default '' not null
+phone4 varchar default '' not null
+phone4Description varchar default '' not null
+email varchar default '' not null
+status integer default 0 not null
+statusDate timestamp
+statusUser varchar default '' not null
+fixedCourier varchar default '' not null
+routeOrder integer default 0 not null
+defaultDistributionCenter varchar default '' not null
+custom1 varchar default '' not null
+custom2 varchar default '' not null
+custom3 varchar default '' not null
+custom4 varchar default '' not null
+addressLongitude numeric default 0 not null
+addressLatitude numeric default 0 not null
+drivingLongitude numeric default 0 not null
+drivingLatitude numeric default 0 not null
+addressByGoogle varchar default '' not null
+autoCompleteResult varchar default '' not null
+addressOk boolean default false not null
+createDate timestamp
+createUser varchar default '' not null
+lastUpdateDate timestamp
+lastUpdateUser varchar default '' not null
+shortUrlKey varchar default '' not null
