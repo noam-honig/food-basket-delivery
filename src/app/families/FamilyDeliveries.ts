@@ -12,7 +12,7 @@ import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { YesNo } from "./YesNo";
 
-import { Location, toLongLat, isGpsAddress } from '../shared/googleApiHelpers';
+import { Location, toLongLat, isGpsAddress, openWaze } from '../shared/googleApiHelpers';
 
 import { use, FieldType, Field, ValueListFieldType, Entity, Fields } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
@@ -699,7 +699,7 @@ export class FamilyDeliveries extends IdEntity {
 
 
     getDrivingLocation(): Location {
-        if (this.drivingLatitude != 0&&false)
+        if (this.drivingLatitude != 0 && false)
             return {
                 lat: this.drivingLatitude,
                 lng: this.drivingLongitude
@@ -711,14 +711,9 @@ export class FamilyDeliveries extends IdEntity {
             }
     }
     openWaze() {
-        if (isDesktop())
-            window.open('https://waze.com/ul?ll=' + this.getDrivingLocation() + "&q=" + encodeURI(this.address) + 'export &navigate=yes', '_blank');
-        else
-            try {
-                location.href = 'waze://?ll=' + toLongLat(this.getDrivingLocation()) + "&q=" + encodeURI(this.address) + '&navigate=yes';
-            } catch (err) {
-                console.log(err);
-            }
+        const toLocation = toLongLat(this.getDrivingLocation());
+        const address = this.address;
+        openWaze(toLocation, address);
     }
     openGoogleMaps() {
         window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.addressByGoogle, '_blank');
@@ -863,6 +858,8 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 }
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
+
+
 
 function logChanged(remult: Remult, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {

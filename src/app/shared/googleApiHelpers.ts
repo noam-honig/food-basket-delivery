@@ -8,6 +8,7 @@ import * as geometry from 'spherical-geometry-js';
 
 import { DialogService } from '../select-popup/dialog';
 import { DateTimeColumn } from '../model-shared/types';
+import { isDesktop } from './utils';
 
 
 
@@ -166,7 +167,7 @@ export class GeocodeInformation {
             return { lat: 32.0922212, lng: 34.8731951 };
         return this.info.results[0].geometry.location;
     }
-    
+
     getCity() {
         if (this.ok())
             return getCity(this.info.results[0].address_components);
@@ -390,7 +391,7 @@ export class AddressHelper {
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
     openWaze() {
-        window.open('waze://?ll=' + this.getlonglat + "&q=" + encodeURI(this.addressColumn().value) + '&navigate=yes');
+        openWaze(this.getlonglat, this.addressColumn().value);
     }
 
     get getGeocodeInformation() {
@@ -440,4 +441,15 @@ export async function getCurrentLocation(useCurrentLocation: boolean, dialog: Di
 
     }
     return result;
+}
+export function openWaze(longLat: string, address: string) {
+    if (isDesktop())
+        window.open('https://waze.com/ul?ll=' + longLat + "&q=" + encodeURI(address) + '&navigate=yes', '_blank');
+
+    else
+        try {
+            location.href = 'waze://?ll=' + longLat + /*"&q=" + encodeURI(this.address) +*/ '&navigate=yes';
+        } catch (err) {
+            console.log(err);
+        }
 }

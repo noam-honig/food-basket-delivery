@@ -9,6 +9,7 @@ import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../even
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
 import { DialogService } from '../select-popup/dialog';
+import { openWaze } from '../shared/googleApiHelpers';
 import { getLang } from '../sites/sites';
 import { RegisterToEvent } from './RegisterToEvent';
 
@@ -29,7 +30,7 @@ export class EventInfoComponent implements OnInit {
     return eventDisplayDate(this.e);
   }
   openWaze() {
-    window.open('waze://?ll=' + this.e.longLat + "&q=" + encodeURI(this.e.theAddress) + '&navigate=yes');
+    openWaze(this.e.longLat, this.e.theAddress);
   }
   openGoogleMap() {
     window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.remult).languageCode, '_blank');

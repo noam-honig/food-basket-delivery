@@ -12,7 +12,7 @@ import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, 
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
 
-import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper } from "../shared/googleApiHelpers";
+import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper, openWaze } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo, getSettings } from "../manage/ApplicationSettings";
 
 import * as fetch from 'node-fetch';
@@ -655,11 +655,11 @@ export class Families extends IdEntity {
     }
     this.addressOk = !geo.partialMatch();
     this.addressByGoogle = geo.getAddress();
-    this.addressLongitude =this.addressHelper.location.lng;
+    this.addressLongitude = this.addressHelper.location.lng;
     this.addressLatitude = this.addressHelper.location.lat;
     this.drivingLatitude = this.addressHelper.getGeocodeInformation.location().lat;
     this.drivingLongitude = this.addressHelper.getGeocodeInformation.location().lng;
-   
+
   }
 
   async setPostalCodeServerOnly() {
@@ -800,9 +800,7 @@ export class Families extends IdEntity {
 
 
   openWaze() {
-
-    //window.open('https://waze.com/ul?ll=' + this.getGeocodeInformation().getlonglat() + "&q=" + encodeURI(this.address.value) + 'export &navigate=yes', '_blank');
-    window.open('waze://?ll=' + this.addressHelper.getlonglat + "&q=" + encodeURI(this.address) + '&navigate=yes');
+    this.addressHelper.openWaze();
   }
   openGoogleMaps() {
     window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.address, '_blank');
