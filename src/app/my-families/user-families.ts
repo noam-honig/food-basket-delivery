@@ -216,7 +216,7 @@ export class UserFamiliesList {
             this.refreshRoute({});
         }
         const q = new quantityHelper();
-        this.toDeliver.forEach(d => q.parseComment(d?.basketType?.whatToTake));
+        this.toDeliver.forEach(d => q.parseComment(d?.basketType?.whatToTake,d.quantity));
         this.whatToTake = q.toString();
         if (this.toDeliver.length == 0)
             this.prevRouteStats = undefined;
