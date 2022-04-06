@@ -45,12 +45,7 @@ export class FamilyInfoComponent implements OnInit {
   images: ImageInfo[];
   phones: { phone: Phone, desc: string }[];
   async ngOnInit() {
-    this.phones = [
-      { phone: this.f.phone1, desc: this.f.phone1Description },
-      { phone: this.f.phone2, desc: this.f.phone2Description },
-      { phone: this.f.phone3, desc: this.f.phone3Description },
-      { phone: this.f.phone4, desc: this.f.phone4Description }
-    ].filter(x => x.phone);
+    this.initPhones();
     if (this.f) {
       this.hasImages = await this.dialog.donotWait(() => FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id));
     }
@@ -58,6 +53,15 @@ export class FamilyInfoComponent implements OnInit {
     this.refreshWhatToTake();
   }
   whatToTake: string = '';
+  initPhones() {
+    this.phones = [
+      { phone: this.f.phone1, desc: this.f.phone1Description },
+      { phone: this.f.phone2, desc: this.f.phone2Description },
+      { phone: this.f.phone3, desc: this.f.phone3Description },
+      { phone: this.f.phone4, desc: this.f.phone4Description }
+    ].filter(x => x.phone);
+  }
+
   private refreshWhatToTake() {
     let toTake = new quantityHelper();
     this.whatToTake = '';
