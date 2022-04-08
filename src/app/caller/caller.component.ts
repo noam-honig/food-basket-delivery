@@ -78,8 +78,6 @@ export class CallerComponent implements OnInit {
   }
   async loadCall() {
     this.d = await this.remult.repo(ActiveFamilyDeliveries).findFirst(ActiveFamilyDeliveries.inProgressCallerDeliveries());
-    if (this.famInfo)
-      this.famInfo.initPhones();
   }
 
   async updateFamilyInfo() {

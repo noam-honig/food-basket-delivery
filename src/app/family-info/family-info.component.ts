@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, NgZone } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, NgZone, OnChanges, SimpleChanges } from '@angular/core';
 
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
@@ -28,10 +28,13 @@ import { FamilyInfoController } from './family-info.controller';
   templateUrl: './family-info.component.html',
   styleUrls: ['./family-info.component.scss']
 })
-export class FamilyInfoComponent implements OnInit {
+export class FamilyInfoComponent implements OnInit,OnChanges {
 
   constructor(private dialog: DialogService, public remult: Remult, public settings: ApplicationSettings, private zone: NgZone) {
 
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.initPhones();
   }
   @Input() f: ActiveFamilyDeliveries;
   @Input() showHelp = false;
@@ -44,6 +47,7 @@ export class FamilyInfoComponent implements OnInit {
   hasImages = false;
   images: ImageInfo[];
   phones: { phone: Phone, desc: string }[];
+  
   async ngOnInit() {
     this.initPhones();
     if (this.f) {
