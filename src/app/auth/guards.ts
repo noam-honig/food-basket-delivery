@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Roles } from './roles';
+import { getSettings } from '../manage/ApplicationSettings';
 
 @Injectable()
 export class AdminGuard extends AuthenticatedGuard {
@@ -49,7 +50,7 @@ export class CallModuleGuard extends AuthenticatedGuard {
 
     isAllowed() {
 
-        return Roles.callPerson;
+        return Roles.callPerson && getSettings(this.remult).usingCallModule;
     }
 }
 
