@@ -980,8 +980,10 @@ export class Language {
   volunteerCanUpdateDeliveryComment = "מתנדב יכול לעדכן הערה למשלוח";
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'דואל';
-  preferredDistributionArea = 'כתובת לאזור חלוקה';
+  preferredDistributionAreaAddress = 'כתובת לאזור חלוקה';
+  preferredDistributionAreaAddressCity = 'עיר לאזור חלוקה';
   preferredFinishAddress = 'כתובת לסיום המסלול';
+  preferredFinishAddressCity = 'עיר לסיום המסלול';
   doesNotExist = "לא קיים";
   questionAddToApplication = "האם להוסיף";
   customSmsMessage = 'הודעת SMS מותאמת';

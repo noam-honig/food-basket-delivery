@@ -2592,7 +2592,7 @@
   },
   "minutes": {
     "google": "sutileza",
-    "valueInCode": "ד'",
+    "valueInCode": "דקות",
     "valueInEnglish": "minutes"
   },
   "minutesRemaining": {
@@ -3164,11 +3164,6 @@
     "google": "Preferencias",
     "valueInCode": "העדפות",
     "valueInEnglish": "Preferences"
-  },
-  "preferredDistributionArea": {
-    "google": "Dirección de área de distribución preferida",
-    "valueInCode": "כתובת לאזור חלוקה",
-    "valueInEnglish": "Preferred distribution area address"
   },
   "preferredFinishAddress": {
     "google": "Dirección para finalizar la ruta",

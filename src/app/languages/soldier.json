@@ -483,6 +483,22 @@
     "google": "לפי מרחק",
     "valueInCode": "לפי מרחק"
   },
+  "callCounter": {
+    "google": "נסיונות התקשרות",
+    "valueInCode": "נסיונות התקשרות"
+  },
+  "caller": {
+    "google": "טלפן",
+    "valueInCode": "טלפן"
+  },
+  "callerAssignDate": {
+    "google": "תאריך שיוך לטלפן",
+    "valueInCode": "תאריך שיוך לטלפן"
+  },
+  "callerComment": {
+    "google": "הערת טלפן",
+    "valueInCode": "הערת טלפן"
+  },
   "callEscort": {
     "google": "התקשר למלווה",
     "valueInCode": "התקשר למלווה"
@@ -798,6 +814,10 @@
   "defaultDeliveryComment": {
     "google": "הערה ברירת מחדל למתנדב",
     "valueInCode": "הערה ברירת מחדל למתנדב"
+  },
+  "defaultDeliveryStatusIsEnquireDetails": {
+    "google": "בירור פרטים כסטטוס ברירת מחדל למשלוחים",
+    "valueInCode": "בירור פרטים כסטטוס ברירת מחדל למשלוחים"
   },
   "defaultDistributionCenter": {
     "google": "רשימת חלוקה ברירת מחדל",
@@ -1202,6 +1222,10 @@
   "endsOnDistributionCenter": {
     "google": "סיים במרכז החלוקה",
     "valueInCode": "סיים במרכז החלוקה"
+  },
+  "enquireDetails": {
+    "google": "בירור פרטים",
+    "valueInCode": "בירור פרטים"
   },
   "enterFirstTime": {
     "google": "מכיוון שלא מוגדרת לך סיסמה עדיין - אנא הכנס בפעם הראשונה, על ידי הקלדת מספר הטלפון שלך ללא סיסמה ולחיצה על הכפתור \"כניסה\". המערכת תבקש שתגדיר סיסמה וזו תהיה סיסמתך.\\n  בהצלחה",
@@ -2073,7 +2097,7 @@
   },
   "minutes": {
     "google": "דקות",
-    "valueInCode": "ד'"
+    "valueInCode": "דקות"
   },
   "minutesRemaining": {
     "google": "דקות נשארו",
@@ -2531,13 +2555,21 @@
     "google": "העדפות",
     "valueInCode": "העדפות"
   },
-  "preferredDistributionArea": {
+  "preferredDistributionAreaAddress": {
     "google": "כתובת לאזור חלוקה",
     "valueInCode": "כתובת לאזור חלוקה"
+  },
+  "preferredDistributionAreaAddressCity": {
+    "google": "עיר לאזור חלוקה",
+    "valueInCode": "עיר לאזור חלוקה"
   },
   "preferredFinishAddress": {
     "google": "כתובת לסיום המסלול",
     "valueInCode": "כתובת לסיום המסלול"
+  },
+  "preferredFinishAddressCity": {
+    "google": "עיר לסיום המסלול",
+    "valueInCode": "עיר לסיום המסלול"
   },
   "previewVolunteerScreen": {
     "google": "הדגם תצוגת מתנדב",
@@ -2562,6 +2594,10 @@
   "previousDeliverySummary": {
     "google": "סיכום משלוח קודם",
     "valueInCode": "סיכום משלוח קודם"
+  },
+  "previousValue": {
+    "google": "הערך הקודם",
+    "valueInCode": "הערך הקודם"
   },
   "printStickers": {
     "google": "הדפסת מדבקות",
@@ -3727,6 +3763,10 @@
     "google": "משתמש לא נמצא או סיסמה שגויה",
     "valueInCode": "משתמש לא נמצא או סיסמה שגויה"
   },
+  "usingCallModule": {
+    "google": "הפעל מודול טלפנים לבירור פרטים",
+    "valueInCode": "הפעל מודול טלפנים לבירור פרטים"
+  },
   "valueAlreadyExistsFor": {
     "google": "ערך כבר קיים למשפחת",
     "valueInCode": "ערך כבר קיים למשפחת"
@@ -3826,6 +3866,10 @@
   "voluntreeHelpPhones": {
     "google": "טלפונים לעזרה למתנדב",
     "valueInCode": "טלפונים לעזרה למתנדב"
+  },
+  "waitingForAdmin": {
+    "google": "ממתין למנהל",
+    "valueInCode": "ממתין למנהל"
   },
   "wantToVolnteerMore": {
     "google": "רוצה להתנדב עוד?",

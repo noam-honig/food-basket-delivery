@@ -109,7 +109,7 @@ export class RegisterToEvent {
     socialSecurityNumber: string = '';
     @Field()
     email: Email = new Email('');
-    @Field({ translation: l => l.preferredDistributionArea, customInput: c => c.addressInput() })
+    @Field({ translation: l => l.preferredDistributionAreaAddress, customInput: c => c.addressInput() })
     preferredDistributionAreaAddress: string = '';
     @Field({
 

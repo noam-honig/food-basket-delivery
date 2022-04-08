@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   confirmEula: boolean;
   @Field({ translation: l => l.volunteerName })
   name: string;
-  @Field({ translation: l => l.preferredDistributionArea })
+  @Field({ translation: l => l.preferredDistributionAreaAddress })
   preferredDistributionArea: string;
   @Field({ translation: l => l.rememberMeOnThisDevice })
   remember: boolean;

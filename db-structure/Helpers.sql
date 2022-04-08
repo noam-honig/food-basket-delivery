@@ -24,8 +24,10 @@ socialSecurityNumber varchar default '' not null
 email varchar default '' not null
 addressApiResult varchar default '' not null
 preferredDistributionAreaAddress varchar default '' not null
+preferredDistributionAreaAddressCity varchar default '' not null
 addressApiResult2 varchar default '' not null
 preferredDistributionAreaAddress2 varchar default '' not null
+preferredFinishAddressCity varchar default '' not null
 password varchar default '' not null
 createDate timestamp
 passwordChangeDate timestamp

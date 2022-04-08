@@ -653,8 +653,10 @@ export class italy {
   volunteerCanUpdateDeliveryComment = 'Un volontario può aggiornare una nota per la consegna';
   volunteerCanUpdatePreferredDistributionAddress = "Un volontario può aggiornare un'area di divisione preferita";
   email = 'e-mail';
-  preferredDistributionArea = 'Indirizzo area di distribuzione preferita';
+  preferredDistributionAreaAddress = 'preferredDistributionAreaAddress';
+  preferredDistributionAreaAddressCity = 'preferredDistributionAreaAddressCity';
   preferredFinishAddress = 'Indirizzo per terminare il percorso';
+  preferredFinishAddressCity = 'preferredFinishAddressCity';
   doesNotExist = 'Non esiste';
   questionAddToApplication = 'Aggiungi';
   customSmsMessage = 'SMS personalizzati';
@@ -975,4 +977,13 @@ export class italy {
   dial = 'Chiamata';
   whatsApp = 'WhatsApp';
   fullList = 'Lista completa';
+  usingCallModule = 'usingCallModule';
+  enquireDetails = 'enquireDetails';
+  waitingForAdmin = 'waitingForAdmin';
+  caller = 'caller';
+  callerComment = 'callerComment';
+  callerAssignDate = 'callerAssignDate';
+  callCounter = 'callCounter';
+  defaultDeliveryStatusIsEnquireDetails = 'defaultDeliveryStatusIsEnquireDetails';
+  previousValue = 'previousValue';
 }

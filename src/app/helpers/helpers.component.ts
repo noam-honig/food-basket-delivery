@@ -261,7 +261,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.settings.isSytemForMlt)
         this.numOfColsInGrid += 6;
 
-      return Helpers.selectColumns(helpers, this.remult);
+      return [...Helpers.selectColumns(helpers, this.remult), helpers.preferredDistributionAreaAddressCity, helpers.preferredFinishAddressCity];
     },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name),
 

@@ -653,8 +653,10 @@ export class soldier {
   volunteerCanUpdateDeliveryComment = 'מתנדב יכול לעדכן הערה למשלוח';
   volunteerCanUpdatePreferredDistributionAddress = 'מתנדב יכול לעדכן אזור חלוקה מועדף';
   email = 'דואל';
-  preferredDistributionArea = 'כתובת לאזור חלוקה';
+  preferredDistributionAreaAddress = 'כתובת לאזור חלוקה';
+  preferredDistributionAreaAddressCity = 'עיר לאזור חלוקה';
   preferredFinishAddress = 'כתובת לסיום המסלול';
+  preferredFinishAddressCity = 'עיר לסיום המסלול';
   doesNotExist = 'לא קיים';
   questionAddToApplication = 'האם להוסיף';
   customSmsMessage = 'הודעת SMS מותאמת';
@@ -975,4 +977,13 @@ export class soldier {
   dial = 'חיוג';
   whatsApp = 'וואטסאפ';
   fullList = 'רשימה מלאה';
+  usingCallModule = 'הפעל מודול טלפנים לבירור פרטים';
+  enquireDetails = 'בירור פרטים';
+  waitingForAdmin = 'ממתין למנהל';
+  caller = 'טלפן';
+  callerComment = 'הערת טלפן';
+  callerAssignDate = 'תאריך שיוך לטלפן';
+  callCounter = 'נסיונות התקשרות';
+  defaultDeliveryStatusIsEnquireDetails = 'בירור פרטים כסטטוס ברירת מחדל למשלוחים';
+  previousValue = 'הערך הקודם';
 }

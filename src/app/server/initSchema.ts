@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { SqlDatabase, FieldMetadata, Remult } from 'remult';
+import { SqlDatabase, FieldMetadata, Remult, ControllerBase } from 'remult';
 
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -14,6 +14,8 @@ import { Language, TranslationOptions } from '../translate';
 import { Sites, getLang, setLangForSite } from '../sites/sites';
 import { InitContext } from '../helpers/init-context';
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
+import { Helpers } from '../helpers/helpers';
+import { Roles } from '../auth/roles';
 
 
 export async function initSchema(pool1: PostgresPool, org: string) {
@@ -60,6 +62,11 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
     let l = getLang(remult);
+    remult.setUser({
+        id: "version_update",
+        name: "version_update",
+        roles: [Roles.admin]
+    });
     if (settings.isNew()) {
         settings.id = 1;
         settings.organisationName = l.defaultOrgName;;
@@ -481,6 +488,20 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 לביטול השתתפות השב לא
 להסרה מהרשימה השב הסר`;
         await settings.save();
+    });
+    await version(43, async () => {
+        for await (const helper of remult.repo(Helpers).query({
+            where: {
+                $or: [
+                    { preferredDistributionAreaAddress: { "!=": '' } },
+                    { preferredFinishAddress: { "!=": '' } }
+                ]
+            }
+        })) {
+            helper.preferredDistributionAreaAddressHelper.updateCityColumn();
+            helper.preferredFinishAddressHelper.updateCityColumn();
+            await helper.save();
+        }
     });
 
 

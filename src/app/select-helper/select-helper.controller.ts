@@ -40,11 +40,11 @@ export class SelectHelperController {
             });
             if (h.preferredDistributionAreaAddressHelper.ok) {
                 let theH = helpers.get(h.id);
-                check(theH, h.preferredDistributionAreaAddressHelper.location, getLang(remult).preferredDistributionArea + ": " + h.preferredDistributionAreaAddress);
+                check(theH, h.preferredDistributionAreaAddressHelper.location, getLang(remult).preferredDistributionAreaAddress + ": " + h.preferredDistributionAreaAddress);
             }
             if (h.preferredFinishAddressHelper.ok) {
                 let theH = helpers.get(h.id);
-                check(theH, h.preferredFinishAddressHelper.location, getLang(remult).preferredDistributionArea + ": " + h.preferredFinishAddress);
+                check(theH, h.preferredFinishAddressHelper.location, getLang(remult).preferredFinishAddress + ": " + h.preferredFinishAddress);
             }
         }
 

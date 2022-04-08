@@ -308,6 +308,8 @@ export abstract class HelpersBase extends IdEntity {
                     self.$.allowedIds,
                     self.$.addressApiResult,
                     self.$.addressApiResult2,
+                    self.$.preferredDistributionAreaAddressCity,
+                    self.$.preferredFinishAddressCity,
                     self.$.password,
                     self.$.shortUrlKey,
                     self.$.passwordChangeDate
@@ -325,6 +327,8 @@ export abstract class HelpersBase extends IdEntity {
                     f.allowedIds,
                     f.addressApiResult,
                     f.addressApiResult2,
+                    f.preferredDistributionAreaAddressCity,
+                    f.preferredFinishAddressCity,
                     f.password,
                     f.shortUrlKey,
                     f.passwordChangeDate
@@ -612,11 +616,14 @@ export class Helpers extends HelpersBase {
     email: Email;
     @Field()
     addressApiResult: string;
-    @Field({ translation: l => l.preferredDistributionArea, customInput: i => i.addressInput() })
+    @Field({ customInput: i => i.addressInput() })
     preferredDistributionAreaAddress: string;
     preferredDistributionAreaAddressHelper = new AddressHelper(this.remult,
         () => this.$.preferredDistributionAreaAddress,
-        () => this.$.addressApiResult);
+        () => this.$.addressApiResult,
+        () => this.$.preferredDistributionAreaAddressCity);
+    @Field()
+    preferredDistributionAreaAddressCity: string;
 
 
     async setAsDefaultVolunteerToDeliveries(deliveries: import("../families/FamilyDeliveries").FamilyDeliveries[], ui: UITools) {
@@ -704,7 +711,9 @@ export class Helpers extends HelpersBase {
         dbName: 'preferredDistributionAreaAddress2', customInput: i => i.addressInput()
     })
     preferredFinishAddress: string;
-    preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2);
+    preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2, () => this.$.preferredFinishAddressCity);
+    @Field()
+    preferredFinishAddressCity: string;
 
     @Field<Helpers>({
         inputType: InputTypes.password,

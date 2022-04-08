@@ -378,7 +378,7 @@ export class AddressHelper {
         return toLongLat(this.location);
     }
 
-    constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>) {
+    constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>, private cityColumn: () => FieldRef<any, string> = undefined) {
 
 
     }
@@ -386,10 +386,18 @@ export class AddressHelper {
         if (this.addressColumn().valueChanged() || !this.ok) {
             let geo = await GetGeoInformation(this.addressColumn().value, this.remult);
             this.apiResultColumn().value = geo.saveToString();
+            this.updateCityColumn(geo);
         }
     }
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
+    updateCityColumn(geo?: GeocodeInformation) {
+        if (!geo)
+            geo = this.getGeocodeInformation;
+        if (this.cityColumn)
+            this.cityColumn().value = geo.getCity();
+    }
+
     openWaze() {
         openWaze(this.getlonglat, this.addressColumn().value);
     }

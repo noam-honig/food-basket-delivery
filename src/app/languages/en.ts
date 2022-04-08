@@ -653,8 +653,10 @@ export class en {
   volunteerCanUpdateDeliveryComment = 'A volunteer can update a note for delivery';
   volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
   email = 'eMail';
-  preferredDistributionArea = 'Preferred distribution area address';
+  preferredDistributionAreaAddress = 'preferredDistributionAreaAddress';
+  preferredDistributionAreaAddressCity = 'preferredDistributionAreaAddressCity';
   preferredFinishAddress = 'Address to end the route';
+  preferredFinishAddressCity = 'preferredFinishAddressCity';
   doesNotExist = 'Does not exist';
   questionAddToApplication = 'Do add';
   customSmsMessage = 'Personalized SMS';
@@ -975,4 +977,13 @@ export class en {
   dial = 'Call';
   whatsApp = 'WhatsApp';
   fullList = 'Full list';
+  usingCallModule = 'usingCallModule';
+  enquireDetails = 'enquireDetails';
+  waitingForAdmin = 'waitingForAdmin';
+  caller = 'caller';
+  callerComment = 'callerComment';
+  callerAssignDate = 'callerAssignDate';
+  callCounter = 'callCounter';
+  defaultDeliveryStatusIsEnquireDetails = 'defaultDeliveryStatusIsEnquireDetails';
+  previousValue = 'previousValue';
 }

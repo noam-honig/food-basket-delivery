@@ -2268,7 +2268,7 @@
   },
   "minutes": {
     "google": "minutes",
-    "valueInCode": "ד'"
+    "valueInCode": "דקות"
   },
   "minutesRemaining": {
     "google": "Minutes remained",
@@ -2744,10 +2744,6 @@
   "preferences": {
     "google": "Preferences",
     "valueInCode": "העדפות"
-  },
-  "preferredDistributionArea": {
-    "google": "Preferred distribution area address",
-    "valueInCode": "כתובת לאזור חלוקה"
   },
   "preferredFinishAddress": {
     "google": "Address to end the route",

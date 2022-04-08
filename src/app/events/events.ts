@@ -539,7 +539,7 @@ export class volunteersInEvent extends IdEntity {
     )
 
     succesfulDeliveries: number;
-    @Field({
+    @Field<volunteersInEvent>({
         translation: l => l.email
     },
         (options, remult) =>
@@ -555,6 +555,66 @@ export class volunteersInEvent extends IdEntity {
             }
     )
     helperEmail: string;
+    @Field<volunteersInEvent>({
+    },
+        (options, remult) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(remult);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(remult.repo(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.preferredDistributionAreaAddress],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
+    preferredDistributionAreaAddress: string;
+    @Field<volunteersInEvent>({
+    },
+        (options, remult) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(remult);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(remult.repo(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.preferredFinishAddress],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
+    preferredFinishAddress: string;
+    @Field<volunteersInEvent>({
+    },
+        (options, remult) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(remult);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(remult.repo(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.preferredDistributionAreaAddressCity],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
+    preferredDistributionAreaAddressCity: string;
+    @Field<volunteersInEvent>({
+    },
+        (options, remult) =>
+            options.sqlExpression = async (selfDefs) => {
+                let sql = new SqlBuilder(remult);
+                let self = SqlFor(selfDefs);
+                let h = SqlFor(remult.repo(Helpers));
+                return sql.columnInnerSelect(self, {
+                    from: h,
+                    select: () => [h.preferredFinishAddressCity],
+                    where: () => [sql.eq(h.id, self.helper)]
+                });
+            }
+    )
+    preferredFinishAddressCity: string;
     @Field({},
         (options, remult) =>
             options.sqlExpression = async (selfDefs) => {
@@ -656,8 +716,11 @@ export class volunteersInEvent extends IdEntity {
                 ev.cancelUser,
                 ev.a1, ev.a2, ev.a3, ev.a4,
                 ev.confirmed,
-                ev.volunteerComment
-
+                ev.volunteerComment,
+                ev.preferredDistributionAreaAddress,
+                ev.preferredFinishAddress,
+                ev.preferredDistributionAreaAddressCity,
+                ev.preferredFinishAddressCity
             ],
             rowCssClass: v => {
                 if (v.canceled)
