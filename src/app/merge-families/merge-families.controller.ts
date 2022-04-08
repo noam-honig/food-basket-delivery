@@ -1,7 +1,8 @@
 import { Families } from '../families/families';
 import { Remult, BackendMethod } from 'remult';
 import { Roles } from '../auth/roles';
-import { FamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
+import { DeliveryStatus } from '../families/DeliveryStatus';
 
 
 
@@ -18,6 +19,19 @@ export class MergeFamiliesController {
                 await fd.save();
             }
             await (await remult.repo(Families).findId(oldId)).delete();
+        }
+        let first = true;
+        for (let d of await remult.repo(ActiveFamilyDeliveries).find({
+            where: {
+                family: newFamily.id,
+                deliverStatus: DeliveryStatus.isNotAResultStatus(),
+                courier: null
+            }
+        })) {
+            if (first)
+                first = false;
+            else await d.delete();
+
         }
     }
 }
