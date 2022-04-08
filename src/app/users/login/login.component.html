@@ -31,9 +31,7 @@
           <div *ngIf="loginState==passwordState">
             <data-area [settings]="passwordArea"></data-area>
           </div>
-          <div *ngIf="loginState==newUserState">
-            <data-area [settings]="nameArea"></data-area>
-          </div>
+
           <div *ngIf="loginState==updatePasswordAndEulaState">
             {{this.loginResult.requiredToSetPasswordReason}}
             <data-area [settings]="setPasswordArea"></data-area>

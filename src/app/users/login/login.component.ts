@@ -47,8 +47,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     translation: l => l.IConfirmEula
   })
   confirmEula: boolean;
-  @Field({ translation: l => l.volunteerName })
-  name: string;
+  
   @Field({ translation: l => l.preferredDistributionAreaAddress })
   preferredDistributionArea: string;
   @Field({ translation: l => l.rememberMeOnThisDevice })
@@ -60,9 +59,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     fields: () => [this.$.phone, this.$.remember]
   });
   get $() { return getFields(this, this.remult) }
-  nameArea = new DataAreaSettings({
-    fields: () => [this.$.name]
-  });
+  
   setPasswordArea = new DataAreaSettings({
     fields: () => [
       { field: this.$.newPassword, visible: () => this.loginResult.requiredToSetPassword },
