@@ -72,9 +72,9 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   getAddressDescription() {
     let f = this.families.currentRow;
-    if (f.$.address.valueChanged())
+    if (!f.$.address.valueChanged())
       return f.getAddressDescription();
-    return f.$.address.originalValue;
+    return f.$.address.originalValue + ' (' + this.settings.lang.previousValue + ')';
   }
 
   addressOpen() {

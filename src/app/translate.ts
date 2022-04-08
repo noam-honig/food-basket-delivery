@@ -1315,6 +1315,7 @@ export class Language {
   callerAssignDate = 'תאריך שיוך לטלפן';
   callCounter = "נסיונות התקשרות";
   defaultDeliveryStatusIsEnquireDetails = 'בירור פרטים כסטטוס ברירת מחדל למשלוחים';
+  previousValue = 'הערך הקודם';
 }
 
 const defaultLang = new Language();
