@@ -56,8 +56,8 @@ export async function buildLanguageFiles() {
 
     for (const lang of [
         TranslationOptions.southAfrica,
-        TranslationOptions.chile,
-        TranslationOptions.italy,
+        //TranslationOptions.chile,
+        //TranslationOptions.italy,
         TranslationOptions.donors,
         TranslationOptions.soldiers,
     ]) {

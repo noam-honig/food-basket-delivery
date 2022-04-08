@@ -1,8 +1,6 @@
 
 import { Entity as origEntity, FieldOptions, Field as origField, FieldType as origFieldType, ValueListFieldType as origValueListFieldType, ValueListItem, EntityOptions, CaptionTransformer, Remult, Fields as OrigFields } from 'remult';
 import { en } from './languages/en';
-import { es } from './languages/es';
-import { italy } from './languages/italy';
 import { getLang, Sites } from './sites/sites';
 import { donor } from './languages/donor';
 import { soldier } from './languages/soldier';
@@ -256,8 +254,8 @@ export class TranslationOptions {
     bounds: new myBounds(6.7499552751, 36.619987291, 18.4802470232, 47.1153931748),
     googleMapCountry: 'IT',
     leftToRight: true,
-    languageCode: 'it',
-    languageFile: 'italy',
+    languageCode: 'en',
+    languageFile: 'en',
     internationalPrefixForSmsAndAws: '+39',
     basedOnLang: 'en'
   });
@@ -265,8 +263,8 @@ export class TranslationOptions {
     bounds: new myBounds(-75.6443953112, -55.61183, -66.95992, -17.5800118954),
     googleMapCountry: 'CL',
     leftToRight: true,
-    languageFile: 'es',
-    languageCode: 'es',
+    languageFile: 'en',
+    languageCode: 'en',
     basedOnLang: 'en'
   });
   TranslateOption() {
@@ -1340,8 +1338,8 @@ function addLang(key: string, lang: any, defaultHebrew?: boolean) {
   langMap.set(key, lang);
 }
 addLang('en', new en());
-addLang('es', new es());
-addLang('italy', new italy());
+//addLang('es', new es());
+//addLang('italy', new italy());
 addLang('donor', new donor(), true);
 addLang('soldier', new soldier(), true);
 export function langByCode(lang: string) {
