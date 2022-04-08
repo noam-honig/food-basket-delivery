@@ -395,7 +395,7 @@ export class AddressHelper {
         if (!geo)
             geo = this.getGeocodeInformation;
         if (this.cityColumn)
-            this.cityColumn().value = geo.getCity();
+            this.cityColumn().value = geo.getCity()||'';
     }
 
     openWaze() {
