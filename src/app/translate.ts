@@ -798,7 +798,8 @@ export class Language {
   saveVolunteerInfo = 'שמירת פרטי מתנדב:';
   adminRequireToSetPassword = 'אתה מוגדר כמנהל אך לא מוגדרת עבורך סיסמה. כדי להשתמש ביכולות הניהול חובה להגן על הפרטים עם סיסמה.';
   indieRequireToSetPassword = 'מתנדב עצמאי מחוייב בסיסמא לכניסה למערכת';
-  userNotFoundOrWrongPassword = "משתמש לא נמצא או סיסמה שגויה";
+  WrongPassword = "סיסמה שגויה";
+  userNotFound = "משתמש לא נמצא";
   fromDate = 'מתאריך';
   toDate = 'עד תאריך';
   shouldSendSmsTo = 'האם לשלוח הודעת SMS ל';

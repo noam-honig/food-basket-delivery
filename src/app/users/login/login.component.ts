@@ -17,7 +17,6 @@ import { use, Field } from '../../translate';
 import { InputTypes } from 'remult/inputTypes';
 import { NotAuthenticatedGuard } from '@remult/angular';
 import { loginResult } from '../../auth/auth-service.controller';
-import { LoginController } from './login.controller';
 
 @Component({
   selector: 'app-login',
@@ -114,17 +113,16 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }, this.remember);
     if (prev.requiredToSignEULA)
       this.loginResult.requiredToSignEULA = true;
-    if (this.loginResult.newUser) {
-      this.setState(this.newUserState);
+    if (this.loginResult.invalidUser) {
+      this.dialog.Error(this.settings.lang.userNotFound);
       return;
     }
-
     if (this.loginResult.needPasswordToLogin) {
       this.setState(this.passwordState);
       return;
     }
     if (this.loginResult.invalidPassword) {
-      this.dialog.Error(this.settings.lang.userNotFoundOrWrongPassword);
+      this.dialog.Error(this.settings.lang.WrongPassword);
       if (this.loginState != this.passwordState) {
         this.setState(this.phoneState);
         this.stepper.previous();
@@ -186,18 +184,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
     this.doLogin();
   });
-  newUserState = new loginState(async () => {
-    try {
-      await LoginController.registerNewUser(this.phone.thePhone, this.name);
-      this.doLogin();
 
-    }
-    catch (err) {
-      this.dialog.exception(this.settings.lang.register, err);
-      this.resetPasswords();
-      this.loginState = this.phoneState;
-    }
-  });
   private resetPasswords() {
     this.newPassword = '';
     this.confirmPassword = '';

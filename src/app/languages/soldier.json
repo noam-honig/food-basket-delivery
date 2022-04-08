@@ -3759,9 +3759,9 @@
     "google": "מספר סלים ברירת מחדל",
     "valueInCode": "מספר סלים ברירת מחדל"
   },
-  "userNotFoundOrWrongPassword": {
-    "google": "משתמש לא נמצא או סיסמה שגויה",
-    "valueInCode": "משתמש לא נמצא או סיסמה שגויה"
+  "userNotFound": {
+    "google": "משתמש לא נמצא",
+    "valueInCode": "משתמש לא נמצא"
   },
   "usingCallModule": {
     "google": "הפעל מודול טלפנים לבירור פרטים",
@@ -3930,6 +3930,10 @@
   "wrongCodeWordProcessAborted": {
     "google": "מילת קוד שגויה - התהליך מופסק",
     "valueInCode": "מילת קוד שגויה - התהליך מופסק"
+  },
+  "WrongPassword": {
+    "google": "סיסמה שגויה",
+    "valueInCode": "סיסמה שגויה"
   },
   "yes": {
     "google": "כן",

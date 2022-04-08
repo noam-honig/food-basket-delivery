@@ -520,8 +520,8 @@ export class Helpers extends HelpersBase {
         return r;
     }
 
-    userRequiresPassword() {
-        return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller;
+    userRequiresPassword(remult: Remult) {
+        return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller && getSettings(remult).usingCallModule;
     }
     async showDeliveryHistory(ui: UITools) {
         let ctx = this.remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);

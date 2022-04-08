@@ -477,7 +477,8 @@ export class es {
   saveVolunteerInfo = 'Guardar detalles del voluntario:';
   adminRequireToSetPassword = 'Usted es un usuario administrador sin una contraseña requerida definida. Establezca una contraseña en la siguiente pantalla de detalles del usuario.';
   indieRequireToSetPassword = 'Se requiere un voluntario independiente para ingresar al sistema con una contraseña';
-  userNotFoundOrWrongPassword = 'Usuario no encontrado o contraseña incorrecta';
+  WrongPassword = 'Contraseña incorrecta';
+  userNotFound = 'Usuario no encontrado';
   fromDate = 'Con fecha de';
   toDate = 'Hasta';
   shouldSendSmsTo = 'Enviar un mensaje de texto a';
@@ -653,10 +654,10 @@ export class es {
   volunteerCanUpdateDeliveryComment = 'Un voluntario puede actualizar una nota para la entrega.';
   volunteerCanUpdatePreferredDistributionAddress = 'Un voluntario puede actualizar un área de división preferida';
   email = 'correo electrónico';
-  preferredDistributionAreaAddress = 'preferredDistributionAreaAddress';
-  preferredDistributionAreaAddressCity = 'preferredDistributionAreaAddressCity';
+  preferredDistributionAreaAddress = 'Dirección del área de distribución';
+  preferredDistributionAreaAddressCity = 'Ciudad a área de subdivisión';
   preferredFinishAddress = 'Dirección para finalizar la ruta';
-  preferredFinishAddressCity = 'preferredFinishAddressCity';
+  preferredFinishAddressCity = 'Ciudad para finalizar la ruta';
   doesNotExist = 'No existe';
   questionAddToApplication = 'Agregar';
   customSmsMessage = 'SMS personalizado';
@@ -977,13 +978,13 @@ export class es {
   dial = 'Llamada';
   whatsApp = 'WhatsApp';
   fullList = 'Lista llena';
-  usingCallModule = 'usingCallModule';
-  enquireDetails = 'enquireDetails';
-  waitingForAdmin = 'waitingForAdmin';
-  caller = 'caller';
-  callerComment = 'callerComment';
-  callerAssignDate = 'callerAssignDate';
-  callCounter = 'callCounter';
-  defaultDeliveryStatusIsEnquireDetails = 'defaultDeliveryStatusIsEnquireDetails';
-  previousValue = 'previousValue';
+  usingCallModule = 'Activa un módulo telefónico para conocer los detalles';
+  enquireDetails = 'Aclaración de detalles';
+  waitingForAdmin = 'esperando al gerente';
+  caller = 'Teléfono';
+  callerComment = 'nota telefonica';
+  callerAssignDate = 'Fecha de asociación del teléfono';
+  callCounter = 'intentos de llamar';
+  defaultDeliveryStatusIsEnquireDetails = 'Aclarar detalles como estado predeterminado para envíos';
+  previousValue = 'Valor anterior';
 }

@@ -68,7 +68,6 @@ import { donorForm } from "../register-donor/register-donor.controller";
 import { SelectCompanyController } from "../select-company/select-company.controller";
 import { SelectHelperController } from "../select-helper/select-helper.controller";
 import { SiteOverviewController } from "../site-overview/site-overview.controller";
-import { LoginController } from "../users/login/login.controller";
 import { WeeklyReportMltController } from "../weekly-report-mlt/weekly-report-mlt.controller";
 import { DeliveryHistoryController } from "../delivery-history/delivery-history.controller";
 import { NewDelivery } from "../families/familyActions";
@@ -145,7 +144,6 @@ const controllers = [
     SelectCompanyController,
     SelectHelperController,
     SiteOverviewController,
-    LoginController,
     WeeklyReportMltController,
     DeliveryHistoryController,
     NewDelivery,

@@ -543,6 +543,22 @@
     "google": "By distance",
     "valueInCode": "לפי מרחק"
   },
+  "callCounter": {
+    "google": "Attempts to call",
+    "valueInCode": "נסיונות התקשרות"
+  },
+  "caller": {
+    "google": "Phone",
+    "valueInCode": "טלפן"
+  },
+  "callerAssignDate": {
+    "google": "Phone association date",
+    "valueInCode": "תאריך שיוך לטלפן"
+  },
+  "callerComment": {
+    "google": "Phone note",
+    "valueInCode": "הערת טלפן"
+  },
   "callEscort": {
     "google": "Call the lender",
     "valueInCode": "התקשר למלווה",
@@ -896,6 +912,10 @@
     "google": "Default note for volunteer",
     "valueInCode": "הערה ברירת מחדל למתנדב",
     "custom": "Default Comment for Volunteer"
+  },
+  "defaultDeliveryStatusIsEnquireDetails": {
+    "google": "Clarify details as default status for shipments",
+    "valueInCode": "בירור פרטים כסטטוס ברירת מחדל למשלוחים"
   },
   "defaultDistributionCenter": {
     "google": "Default distribution list",
@@ -1348,6 +1368,10 @@
     "google": "Start at the farthest address and end at a distribution center",
     "valueInCode": "סיים במרכז החלוקה",
     "custom": "End at the distribution center"
+  },
+  "enquireDetails": {
+    "google": "Clarification of details",
+    "valueInCode": "בירור פרטים"
   },
   "enterFirstTime": {
     "google": "Because you do not have a password set yet - please enter for the first time, by typing in your phone number without a password and clicking the \"Login\" button. The system will ask you to set a password and that will be your password.\\n  Successfully",
@@ -2745,9 +2769,21 @@
     "google": "Preferences",
     "valueInCode": "העדפות"
   },
+  "preferredDistributionAreaAddress": {
+    "google": "Address for distribution area",
+    "valueInCode": "כתובת לאזור חלוקה"
+  },
+  "preferredDistributionAreaAddressCity": {
+    "google": "City to subdivision area",
+    "valueInCode": "עיר לאזור חלוקה"
+  },
   "preferredFinishAddress": {
     "google": "Address to end the route",
     "valueInCode": "כתובת לסיום המסלול"
+  },
+  "preferredFinishAddressCity": {
+    "google": "City to end the route",
+    "valueInCode": "עיר לסיום המסלול"
   },
   "previewVolunteerScreen": {
     "google": "The volunteer display model",
@@ -2773,6 +2809,10 @@
   "previousDeliverySummary": {
     "google": "Previous delivery summary",
     "valueInCode": "סיכום משלוח קודם"
+  },
+  "previousValue": {
+    "google": "Previous value",
+    "valueInCode": "הערך הקודם"
   },
   "printStickers": {
     "google": "Sticker printing",
@@ -4019,9 +4059,13 @@
     "valueInCode": "מספר סלים ברירת מחדל",
     "custom": "Default Quantity"
   },
-  "userNotFoundOrWrongPassword": {
-    "google": "User not found or password incorrect",
-    "valueInCode": "משתמש לא נמצא או סיסמה שגויה"
+  "userNotFound": {
+    "google": "No user found",
+    "valueInCode": "משתמש לא נמצא"
+  },
+  "usingCallModule": {
+    "google": "Activate a telephone module to find out details",
+    "valueInCode": "הפעל מודול טלפנים לבירור פרטים"
   },
   "valueAlreadyExistsFor": {
     "google": "Value already exists for the family",
@@ -4126,6 +4170,10 @@
     "google": "Phones for volunteer help",
     "valueInCode": "טלפונים לעזרה למתנדב"
   },
+  "waitingForAdmin": {
+    "google": "Waiting for manager",
+    "valueInCode": "ממתין למנהל"
+  },
   "wantToVolnteerMore": {
     "google": "Want to volunteer more?",
     "valueInCode": "רוצה להתנדב עוד?"
@@ -4186,6 +4234,10 @@
   "wrongCodeWordProcessAborted": {
     "google": "Wrong code word - process stopped",
     "valueInCode": "מילת קוד שגויה - התהליך מופסק"
+  },
+  "WrongPassword": {
+    "google": "Incorrect password",
+    "valueInCode": "סיסמה שגויה"
   },
   "yes": {
     "google": "Yes",

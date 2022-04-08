@@ -477,7 +477,8 @@ export class en {
   saveVolunteerInfo = 'Saving volunteer details:';
   adminRequireToSetPassword = 'You are a manager user without a required password defined. Please set a password in the following user details screen.';
   indieRequireToSetPassword = 'An independent volunteer is required to enter the system with a password';
-  userNotFoundOrWrongPassword = 'User not found or password incorrect';
+  WrongPassword = 'Incorrect password';
+  userNotFound = 'No user found';
   fromDate = 'Dated';
   toDate = 'Until';
   shouldSendSmsTo = 'Send a text message to';
@@ -653,10 +654,10 @@ export class en {
   volunteerCanUpdateDeliveryComment = 'A volunteer can update a note for delivery';
   volunteerCanUpdatePreferredDistributionAddress = 'A volunteer can update a preferred division area';
   email = 'eMail';
-  preferredDistributionAreaAddress = 'preferredDistributionAreaAddress';
-  preferredDistributionAreaAddressCity = 'preferredDistributionAreaAddressCity';
+  preferredDistributionAreaAddress = 'Address for distribution area';
+  preferredDistributionAreaAddressCity = 'City to subdivision area';
   preferredFinishAddress = 'Address to end the route';
-  preferredFinishAddressCity = 'preferredFinishAddressCity';
+  preferredFinishAddressCity = 'City to end the route';
   doesNotExist = 'Does not exist';
   questionAddToApplication = 'Do add';
   customSmsMessage = 'Personalized SMS';
@@ -977,13 +978,13 @@ export class en {
   dial = 'Call';
   whatsApp = 'WhatsApp';
   fullList = 'Full list';
-  usingCallModule = 'usingCallModule';
-  enquireDetails = 'enquireDetails';
-  waitingForAdmin = 'waitingForAdmin';
-  caller = 'caller';
-  callerComment = 'callerComment';
-  callerAssignDate = 'callerAssignDate';
-  callCounter = 'callCounter';
-  defaultDeliveryStatusIsEnquireDetails = 'defaultDeliveryStatusIsEnquireDetails';
-  previousValue = 'previousValue';
+  usingCallModule = 'Activate a telephone module to find out details';
+  enquireDetails = 'Clarification of details';
+  waitingForAdmin = 'Waiting for manager';
+  caller = 'Phone';
+  callerComment = 'Phone note';
+  callerAssignDate = 'Phone association date';
+  callCounter = 'Attempts to call';
+  defaultDeliveryStatusIsEnquireDetails = 'Clarify details as default status for shipments';
+  previousValue = 'Previous value';
 }

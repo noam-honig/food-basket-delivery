@@ -5,7 +5,7 @@ import { Allow, BackendMethod, Remult, UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
-import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { Phone } from "../model-shared/phone";
 
 export class AuthServiceController {
@@ -21,7 +21,7 @@ export class AuthServiceController {
             let userIsOk = false;
             if (remult.user && JSON.stringify(remult.user.roles) == JSON.stringify(info.roles) && remult.user.id == info.id)
                 userIsOk = true;
-            if (!h.realStoredPassword && !h.userRequiresPassword())
+            if (!h.realStoredPassword && !h.userRequiresPassword(remult))
                 userIsOk = true;
 
 
@@ -48,7 +48,7 @@ export class AuthServiceController {
         let settings = (await remult.getSettings());
         let h = await remult.repo(Helpers).findFirst({ phone: new Phone(args.phone) });
         if (!h) {
-            r.newUser = true;
+            r.invalidUser = true;
             return r;
         }
 
@@ -105,7 +105,7 @@ export class AuthServiceController {
 
 
 
-        if (h.userRequiresPassword()) {
+        if (h.userRequiresPassword(remult)) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
@@ -185,7 +185,7 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
         result.roles.push(Roles.familyAdmin);
         result.roles.push(Roles.distCenterAdmin);
     }
-    if (h.caller)
+    if (h.caller && getSettings(remult).usingCallModule)
         result.roles.push(Roles.callPerson);
     if ((await remult.getSettings()).isSytemForMlt) {
         if (h.labAdmin || h.admin)
@@ -206,10 +206,10 @@ export interface loginResult {
     authToken?: string,
     needPasswordToLogin?: boolean,
     invalidPassword?: boolean,
+    invalidUser?: boolean,
     requiredToSetPassword?: boolean,
     requiredToSetPasswordReason?: string,
-    requiredToSignEULA?: boolean,
-    newUser?: boolean
+    requiredToSignEULA?: boolean
 }
 export interface loginArgs {
     phone: string,

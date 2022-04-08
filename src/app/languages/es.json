@@ -604,6 +604,26 @@
     "valueInCode": "לפי מרחק",
     "valueInEnglish": "By distance"
   },
+  "callCounter": {
+    "google": "intentos de llamar",
+    "valueInCode": "נסיונות התקשרות",
+    "valueInEnglish": "Attempts to call"
+  },
+  "caller": {
+    "google": "Teléfono",
+    "valueInCode": "טלפן",
+    "valueInEnglish": "Phone"
+  },
+  "callerAssignDate": {
+    "google": "Fecha de asociación del teléfono",
+    "valueInCode": "תאריך שיוך לטלפן",
+    "valueInEnglish": "Phone association date"
+  },
+  "callerComment": {
+    "google": "nota telefonica",
+    "valueInCode": "הערת טלפן",
+    "valueInEnglish": "Phone note"
+  },
   "callEscort": {
     "google": "Llamada escort",
     "valueInCode": "התקשר למלווה",
@@ -998,6 +1018,11 @@
     "google": "Comentario predeterminado para voluntario",
     "valueInCode": "הערה ברירת מחדל למתנדב",
     "valueInEnglish": "Default Comment for Volunteer"
+  },
+  "defaultDeliveryStatusIsEnquireDetails": {
+    "google": "Aclarar detalles como estado predeterminado para envíos",
+    "valueInCode": "בירור פרטים כסטטוס ברירת מחדל למשלוחים",
+    "valueInEnglish": "Clarify details as default status for shipments"
   },
   "defaultDistributionCenter": {
     "google": "Lista de distribución predeterminada",
@@ -1504,6 +1529,11 @@
     "google": "Terminar en el centro de distribución.",
     "valueInCode": "סיים במרכז החלוקה",
     "valueInEnglish": "End at the distribution center"
+  },
+  "enquireDetails": {
+    "google": "Aclaración de detalles",
+    "valueInCode": "בירור פרטים",
+    "valueInEnglish": "Clarification of details"
   },
   "enterFirstTime": {
     "google": "Debido a que aún no tiene una contraseña establecida, ingrese por primera vez, ingrese su número de teléfono sin contraseña y haga clic en el botón \"Iniciar sesión\". El sistema le pedirá que establezca una contraseña y esa será su contraseña.\\n  Exitosamente",
@@ -3165,10 +3195,25 @@
     "valueInCode": "העדפות",
     "valueInEnglish": "Preferences"
   },
+  "preferredDistributionAreaAddress": {
+    "google": "Dirección del área de distribución",
+    "valueInCode": "כתובת לאזור חלוקה",
+    "valueInEnglish": "Address for distribution area"
+  },
+  "preferredDistributionAreaAddressCity": {
+    "google": "Ciudad a área de subdivisión",
+    "valueInCode": "עיר לאזור חלוקה",
+    "valueInEnglish": "City to subdivision area"
+  },
   "preferredFinishAddress": {
     "google": "Dirección para finalizar la ruta",
     "valueInCode": "כתובת לסיום המסלול",
     "valueInEnglish": "Address to end the route"
+  },
+  "preferredFinishAddressCity": {
+    "google": "Ciudad para finalizar la ruta",
+    "valueInCode": "עיר לסיום המסלול",
+    "valueInEnglish": "City to end the route"
   },
   "previewVolunteerScreen": {
     "google": "El modelo de exhibición de voluntarios",
@@ -3199,6 +3244,11 @@
     "google": "Resumen de entrega anterior",
     "valueInCode": "סיכום משלוח קודם",
     "valueInEnglish": "Previous delivery summary"
+  },
+  "previousValue": {
+    "google": "Valor anterior",
+    "valueInCode": "הערך הקודם",
+    "valueInEnglish": "Previous value"
   },
   "printStickers": {
     "google": "Impresión de pegatinas",
@@ -4651,10 +4701,15 @@
     "valueInCode": "מספר סלים ברירת מחדל",
     "valueInEnglish": "Default Quantity"
   },
-  "userNotFoundOrWrongPassword": {
-    "google": "Usuario no encontrado o contraseña incorrecta",
-    "valueInCode": "משתמש לא נמצא או סיסמה שגויה",
-    "valueInEnglish": "User not found or password incorrect"
+  "userNotFound": {
+    "google": "Usuario no encontrado",
+    "valueInCode": "משתמש לא נמצא",
+    "valueInEnglish": "No user found"
+  },
+  "usingCallModule": {
+    "google": "Activa un módulo telefónico para conocer los detalles",
+    "valueInCode": "הפעל מודול טלפנים לבירור פרטים",
+    "valueInEnglish": "Activate a telephone module to find out details"
   },
   "valueAlreadyExistsFor": {
     "google": "El valor ya existe para la familia.",
@@ -4781,6 +4836,11 @@
     "valueInCode": "טלפונים לעזרה למתנדב",
     "valueInEnglish": "Phones for volunteer help"
   },
+  "waitingForAdmin": {
+    "google": "esperando al gerente",
+    "valueInCode": "ממתין למנהל",
+    "valueInEnglish": "Waiting for manager"
+  },
   "wantToVolnteerMore": {
     "google": "¿Quiere ser voluntario más?",
     "valueInCode": "רוצה להתנדב עוד?",
@@ -4855,6 +4915,11 @@
     "google": "Palabra de código incorrecta: proceso detenido",
     "valueInCode": "מילת קוד שגויה - התהליך מופסק",
     "valueInEnglish": "Wrong code word - process stopped"
+  },
+  "WrongPassword": {
+    "google": "Contraseña incorrecta",
+    "valueInCode": "סיסמה שגויה",
+    "valueInEnglish": "Incorrect password"
   },
   "yes": {
     "google": "si",
