@@ -122,3 +122,10 @@ select * from uga.changelog ) as x ,json_array_elements(cast (x.changes as json)
 where value->>'key' ='email'
 order by changeDate desc
 */
+
+/*
+select changedate,username,relatedname, value->>'key',value->>'newDisplayValue' thenew,value->>'oldDisplayValue' theold,value from (
+select * from atbh.changelog ) as x ,json_array_elements(cast (x.changes as json))
+where value->>'key' ='address' or value->>'key' ='name'
+order by changeDate desc
+*/
