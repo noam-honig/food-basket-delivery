@@ -27,6 +27,21 @@ export class CallerController {
             lastId = fd.id;
             await fd.save();
         }
+
+        const tenMinutesAgo = new Date();
+        tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+        for (const fd of await repo.find({
+            where: {
+                deliverStatus: DeliveryStatus.enquireDetails, archive: false,
+                caller: { "!=": null },
+                callerAssignDate: { "<": tenMinutesAgo }
+
+            }
+        })) {
+            fd.caller = null;
+            await fd.save();
+        }
+
         const where: EntityFilter<ActiveFamilyDeliveries> = {
             id: { $ne: lastId },
             deliverStatus: DeliveryStatus.enquireDetails,

@@ -486,7 +486,7 @@ export class FamilyDeliveries extends IdEntity {
     numOfPhotos: number;
 
 
-    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: Roles.callPerson })
+    @Field({ includeInApi: Roles.callPerson, allowApiUpdate: Roles.callPerson, translation: l => l.caller })
     caller: HelpersBase;
     @Field({ includeInApi: Roles.callPerson, allowApiUpdate: Roles.callPerson, customInput: c => c.textArea() })
     callerComment: string;
