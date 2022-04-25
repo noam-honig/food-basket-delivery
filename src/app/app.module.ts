@@ -116,6 +116,7 @@ import { DeliveryDetailsComponent } from './delivery-details/delivery-details.co
 import { ChangeLogComponent } from './change-log/change-log.component';
 import { INVALID_TOKEN_ERROR } from './auth/auth-service.controller';
 import { CallerComponent } from './caller/caller.component';
+import { SelectFamilyForCallerComponent } from './select-family-for-caller/select-family-for-caller.component';
 
 
 
@@ -223,7 +224,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     AreaDataComponent,
     DeliveryDetailsComponent,
     ChangeLogComponent,
-    CallerComponent
+    CallerComponent,
+    SelectFamilyForCallerComponent
 
 
   ],

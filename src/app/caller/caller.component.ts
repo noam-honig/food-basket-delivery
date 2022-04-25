@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { openDialog } from '@remult/angular';
 import { DataAreaSettings } from '@remult/angular/interfaces';
 import { FieldRef, Remult } from 'remult';
-import { async } from 'rxjs/internal/scheduler/async';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { SelectFamilyForCallerComponent } from '../select-family-for-caller/select-family-for-caller.component';
 import { DialogService } from '../select-popup/dialog';
 import { CallerController } from './caller.controller';
 
@@ -37,6 +38,14 @@ export class CallerComponent implements OnInit {
   async done() {
     await this.controller.releaseCurrentFamily();
     this.d = undefined;
+  }
+  search() {
+    openDialog(SelectFamilyForCallerComponent, x => x.args = {
+      onSelect: async f => {
+        await this.controller.selectFamily(f);
+        await this.loadCall();
+      }
+    });
   }
   async interested() {
     if (await this.dialog.YesNoPromise("האם לעדכן כמעוניינים ולעבור למשפחה הבאה?")) {

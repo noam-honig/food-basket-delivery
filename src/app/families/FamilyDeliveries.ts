@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Remult, IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter } from 'remult';
+import { Remult, IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -854,7 +854,19 @@ SqlBuilder.filterTranslators.push({
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 
+    static filterPhone = Filter.createCustom<ActiveFamilyDeliveries, string>((remult, phone) => {
+        return SqlDatabase.customFilter(async (x) => {
+            var phoneParam = x.addParameterAndReturnSqlToken(phone);
+            var sql = new SqlBuilder(remult);
+            var fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
+            let filter = [];
+            for (const col of [fd.phone1, fd.phone2, fd.phone3, fd.phone4]) {
+                filter.push(sql.and(sql.build(sql.extractNumberChars(col), ' like ', "'%'||", sql.extractNumberChars(phoneParam), "||'%'"), sql.build(sql.extractNumber(phoneParam), ' <> ', 0)))
+            }
+            x.sql = await sql.or(...filter)
 
+        });
+    });
 }
 
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
@@ -868,7 +880,3 @@ function logChanged(remult: Remult, col: FieldRef<any>, dateCol: FieldRef<any, D
         wasChanged();
     }
 }
-
-
-
-

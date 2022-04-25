@@ -2,9 +2,22 @@ import { BackendMethod, Controller, EntityFilter, Remult, SqlDatabase } from "re
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
+import { Helpers } from "../helpers/helpers";
+import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 
 @Controller("caller")
 export class CallerController {
+    @BackendMethod({ allowed: Roles.callPerson })
+    async selectFamily(f: CallerFamilyInfo) {
+        this.releaseCurrentFamily();
+        const fd = await this.remult.repo(ActiveFamilyDeliveries).findId(f.deliveryId);
+        if (fd && fd.deliverStatus == DeliveryStatus.enquireDetails) {
+            fd.caller = await this.remult.getCurrentUser();
+            fd.callerAssignDate = new Date();
+            await fd.save();
+        }
+
+    }
     constructor(private remult: Remult) {
 
     }
@@ -52,25 +65,7 @@ export class CallerController {
         const helper = await this.remult.getCurrentUser();
         async function findDelivery(where: EntityFilter<ActiveFamilyDeliveries>) {
             for await (const fd of repo.query({ where, orderBy: { lastCallDate: "asc" } })) {
-                let match = true;
-                if (helper.includeGroups?.hasAny()) {
-                    match = false;
-                    for (let g of helper.includeGroups.listGroups()) {
-                        if (fd.groups.selected(g.trim())) {
-                            match = true;
-                        }
-
-                    }
-                }
-                if (helper.excludeGroups?.hasAny()) {
-                    for (let g of helper.excludeGroups.listGroups()) {
-                        if (fd.groups.selected(g.trim())) {
-                            match = false;
-                        }
-
-                    }
-                }
-                if (match)
+                if (groupMatches(helper, fd))
                     return fd;
             }
         }
@@ -95,4 +90,47 @@ export class CallerController {
         await fd.save();
         return true;
     }
+    @BackendMethod({ allowed: Roles.callPerson, blockUser: false })
+    async findFamily(search: string): Promise<CallerFamilyInfo[]> {
+        if (search.trim().length < 2)
+            return [];
+        const helper = await this.remult.getCurrentUser();
+        return (await this.remult.repo(ActiveFamilyDeliveries).find({
+            where: {
+                deliverStatus: DeliveryStatus.enquireDetails,
+                $or: [ActiveFamilyDeliveries.filterPhone(search), {
+                    name: { $contains: search }
+                }]
+            }
+        })).filter((x) => groupMatches(helper, x)).filter((x, i) => i < 30)
+            .map(fd => ({ deliveryId: fd.id, name: fd.name, phone: [fd.phone1, fd.phone2, fd.phone3, fd.phone4].filter(x => x).map(x => x.displayValue).join(', ') }));
+
+    }
+}
+export interface CallerFamilyInfo {
+    deliveryId: string;
+    name: string;
+    phone: string;
+}
+
+function groupMatches(helper: Helpers, fd: ActiveFamilyDeliveries) {
+    let match = true;
+    if (helper.includeGroups?.hasAny()) {
+        match = false;
+        for (let g of helper.includeGroups.listGroups()) {
+            if (fd.groups.selected(g.trim())) {
+                match = true;
+            }
+
+        }
+    }
+    if (helper.excludeGroups?.hasAny()) {
+        for (let g of helper.excludeGroups.listGroups()) {
+            if (fd.groups.selected(g.trim())) {
+                match = false;
+            }
+
+        }
+    }
+    return match;
 }

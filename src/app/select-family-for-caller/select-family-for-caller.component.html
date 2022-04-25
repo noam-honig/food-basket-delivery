@@ -1,0 +1,23 @@
+<div mat-dialog-content>
+    <form (submit)="selectFirst()">
+        <mat-form-field>
+            <input matInput [(ngModel)]="searchString" [ngModelOptions]="{standalone: true}" placeholder="שם או טלפון"
+                autocomplete="off" (input)="doSearch()">
+        </mat-form-field>
+    </form>
+    <mat-nav-list role="list" *ngIf="families">
+        <ng-container *ngFor="let o of families">
+            <mat-list-item role="listitem" style="height:36px" (click)="select(o)">
+                <div mat-line>{{o.name}}</div>
+                <div mat-line>{{o.phone}}</div>
+
+            </mat-list-item>
+            <mat-divider></mat-divider>
+        </ng-container>
+    </mat-nav-list>
+</div>
+<div mat-dialog-actions>
+    <button mat-icon-button mat-dialog-close>
+        <mat-icon>clear</mat-icon>
+    </button>
+</div>

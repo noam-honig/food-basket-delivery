@@ -24,7 +24,7 @@ import { volunteersInEvent, Event, eventStatus } from "../events/events";
 import { remultExpress } from "remult/server/expressBridge";
 import { DataApi } from "remult/src/data-api";
 import { OverviewController } from "../overview/overview.controller";
-import { FamilyDeliveries } from "../families/FamilyDeliveries";
+import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { HelpersAndStats } from "../delivery-follow-up/HelpersAndStats";
 import { BasketType } from "../families/BasketType";
 import { DeliveryImage, FamilyImage } from "../families/DeiveryImages";
@@ -382,6 +382,7 @@ s.parentNode.insertBefore(b, s);})();
                         theHelperIAmEscortingId: ""
                     });
                 }
+               // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
 
 
             },

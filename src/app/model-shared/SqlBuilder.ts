@@ -20,6 +20,9 @@ export class SqlBuilder {
     extractNumber(from: any): any {
         return this.build("NULLIF(regexp_replace(", from, ", '\\D','','g'), '')::numeric");
     }
+    extractNumberChars(from: any): any {
+        return this.build("NULLIF(regexp_replace(", from, ", '\\D','','g'), '')");
+    }
 
     str(val: string): string {
         if (val == undefined)
