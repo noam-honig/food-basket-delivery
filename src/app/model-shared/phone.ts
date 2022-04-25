@@ -26,6 +26,9 @@ export class Phone {
   constructor(public thePhone: string) {
 
   }
+  isUrl() {
+    return this.thePhone.startsWith('http');
+  }
   call() {
     window.location.href = "tel:" + this.thePhone;
   }
