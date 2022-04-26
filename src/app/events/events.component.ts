@@ -35,7 +35,7 @@ export class EventsComponent implements OnInit {
     allowInsert: this.remult.isAllowed(Roles.admin),
 
 
-    rowsInPage: 25,
+    rowsInPage: 100,
     where: () => {
       let aWeekAgo = new Date();
       aWeekAgo.setDate(aWeekAgo.getDate() - 7);
