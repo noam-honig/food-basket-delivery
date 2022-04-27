@@ -60,6 +60,7 @@ import { IncomingMessagesComponent } from './incoming-messages/incoming-messages
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component';
 import { getSettings } from '../app/manage/ApplicationSettings';
 import { CallerComponent } from './caller/caller.component';
+import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component';
 
 
 @Injectable()
@@ -124,6 +125,7 @@ export const routes: Routes = [
 
   DeliveryHistoryComponent.route,
   { path: 'playback', component: PlaybackComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true } },
+  { path: 'fix-address', component: AdjustGeocodeComponent, canActivate: [AdminGuard], data: { hide: true } },
   { path: 'print-volunteers', component: PrintVolunteersComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true } },
   { path: 'print-stickers', component: PrintStickersComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true, noConfHeaderAndBorders: true } },
   { path: 'print-volunteer', component: PrintVolunteerComponent, canActivate: [AdminGuard], data: { hide: true, noBar: true, noConfHeaderAndBorders: true } },

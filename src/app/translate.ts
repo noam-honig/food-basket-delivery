@@ -777,6 +777,7 @@ export class Language {
   checkAddress = 'בדוק כתובת';
   showOnGovMap = 'הצג ב govmap';
   showOnGoogleMap = 'הצג בגוגל MAPS';
+  updateGoogle = 'עדכן את גוגל';
   openWaze = 'פתח WAZE';
   badAddressTitle = 'שים לב, כתובת לא מדוייקת';
   badAddressHelpStart = 'גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת';

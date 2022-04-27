@@ -13,7 +13,7 @@ import { DialogService } from '../select-popup/dialog';
 
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { ShowOnMapComponent } from '../show-on-map/show-on-map.component';
-import { isGpsAddress, Location } from '../shared/googleApiHelpers';
+import { AdjustGeocode, isGpsAddress, Location } from '../shared/googleApiHelpers';
 import { AddressInputComponent } from '../address-input/address-input.component';
 import { ImageInfo } from '../images/images.component';
 import { FamilyImage } from '../families/DeiveryImages';
@@ -240,6 +240,11 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         this.args.family.addressByGoogle = "יתעדכן בשמירה";
       }
     });
+  }
+  async editOnGoogle() {
+    await this.families.currentRow.save();
+    let c = new AdjustGeocode(this.remult);
+    await c.edit(this.dialog, this.families.currentRow.address, () => this.families.currentRow._.reload());
   }
   images: ImageInfo[] = [];
   async ngOnInit() {

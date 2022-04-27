@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Remult, FieldRef, EntityBase } from 'remult';
+import { UrlBuilder, Entity, Remult, FieldRef, EntityBase, Controller, Fields, BackendMethod, ControllerBase } from 'remult';
 import { Field } from '../translate';
 
 
@@ -9,6 +9,10 @@ import * as geometry from 'spherical-geometry-js';
 import { DialogService } from '../select-popup/dialog';
 import { DateTimeColumn } from '../model-shared/types';
 import { isDesktop } from './utils';
+import { Roles } from '../auth/roles';
+import { getLang } from '../sites/sites';
+import { UITools } from '../helpers/init-context';
+
 
 
 
@@ -97,10 +101,9 @@ export async function GetGeoInformation(address: string, remult: Remult) {
 
 
 
-@Entity(undefined, {
+@Entity('geocodeCache', {
     dbName: "GeocodeCache",
-    allowApiRead: false,
-    allowApiCrud: false
+    allowApiCrud: Roles.admin
 })
 export class GeocodeCache extends EntityBase {
     @Field()
@@ -116,6 +119,9 @@ export class GeocodeInformation {
     constructor(public info: GeocodeResult = null) {
         if (!this.info)
             this.info = { results: [], status: 'none' };
+    }
+    openGoogleMaps(remult: Remult) {
+        window.open('https://maps.google.com/maps?q=' + toLongLat(this.location()) + '&hl=' + getLang(remult).languageCode, '_blank');
     }
     getAddress() {
         if (!this.ok())
@@ -384,18 +390,22 @@ export class AddressHelper {
     }
     async updateApiResultIfChanged() {
         if (this.addressColumn().valueChanged() || !this.ok) {
-            let geo = await GetGeoInformation(this.addressColumn().value, this.remult);
-            this.apiResultColumn().value = geo.saveToString();
-            this.updateCityColumn(geo);
+            await this.updateApiResult();
         }
     }
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
+    async updateApiResult() {
+        let geo = await GetGeoInformation(this.addressColumn().value, this.remult);
+        this.apiResultColumn().value = geo.saveToString();
+        this.updateCityColumn(geo);
+    }
+
     updateCityColumn(geo?: GeocodeInformation) {
         if (!geo)
             geo = this.getGeocodeInformation;
         if (this.cityColumn)
-            this.cityColumn().value = geo.getCity()||'';
+            this.cityColumn().value = geo.getCity() || '';
     }
 
     openWaze() {
@@ -460,4 +470,103 @@ export function openWaze(longLat: string, address: string) {
         } catch (err) {
             console.log(err);
         }
+}
+
+@Controller("adjust-geocode")
+export class AdjustGeocode extends ControllerBase {
+
+    @Fields.string()
+    originalAddress = '';
+    @Fields.string({ caption: 'עיר' })
+    city = '';
+    @Fields.string({ caption: 'כתובת' })
+    address = '';
+    @Fields.string({ caption: 'מיקום' })
+    location = '';
+    @BackendMethod({ allowed: Roles.admin })
+    async updateGeocode() {
+        const g = await this.remult.repo(GeocodeCache).findId(this.originalAddress);
+        var geo = GeocodeInformation.fromString(g.googleApiResult);
+        let r = geo.info.results[0];
+        if (!r) {
+            geo.info.results.push(r = {
+                types: [], address_components: [], formatted_address: '', geometry: {
+                    location: { lat: 0, lng: 0 },
+                    location_type: '',
+                    viewport: undefined,
+
+                },
+                partial_match: false,
+                place_id: ''
+            });
+        }
+        r.types[0] = 'establishment';
+        r.partial_match = false;
+        r.formatted_address = this.address;
+        let sp = this.location.toString().split(',')
+        r.geometry.location.lat = +sp[0];
+        r.geometry.location.lng = +sp[1];
+
+        let c = r.address_components.find(x => x.types[0] == "locality" || x.types[0] == "postal_town");
+        if (!c) {
+            r.address_components.push(c = {
+                long_name: '', short_name: '', types: ["locality"]
+            })
+        }
+        c.long_name = this.city;
+        geo.info.status = "OK";
+        geo.info['manual_adjustment'] = true;
+
+        g.googleApiResult = geo.saveToString();
+        console.log(geo.getCity());
+
+        await g.save();
+
+        let i = 0;
+        for await (const f of this.remult.repo((await import('../families/families')).Families).query({ where: { address: this.originalAddress } })) {
+            await f.reloadGeoCoding();
+            await f.save();
+            i++;
+        }
+        for await (const f of this.remult.repo((await import('../events/events')).Event).query({ where: { address: this.originalAddress } })) {
+            await f.addressHelper.updateApiResult();
+            await f.save();
+            i++;
+        }
+        for await (const f of this.remult.repo((await import('../manage/distribution-centers')).DistributionCenters).query({ where: { address: this.originalAddress } })) {
+            await f.addressHelper.updateApiResult();
+            await f.save();
+            i++;
+        }
+        for await (const f of this.remult.repo((await import('../helpers/helpers')).Helpers).query({ where: { preferredDistributionAreaAddress: this.originalAddress } })) {
+            await f.preferredDistributionAreaAddressHelper.updateApiResult();
+            await f.save();
+            i++;
+        }
+        for await (const f of this.remult.repo((await import('../helpers/helpers')).Helpers).query({ where: { preferredFinishAddress: this.originalAddress } })) {
+            await f.preferredFinishAddressHelper.updateApiResult();
+            await f.save();
+            i++;
+        }
+
+        return i;
+    }
+
+    async edit(ui: UITools, address: string, onSave: VoidFunction) {
+        this.originalAddress = address;
+        const g = await this.remult.repo(GeocodeCache).findId(address);
+        var geo = GeocodeInformation.fromString(g.googleApiResult);
+        this.address = geo.getAddress();
+        this.city = geo.getCity();
+        this.location = toLongLat(geo.location());
+
+        await ui.inputAreaDialog({
+            buttons: [{ text: 'מפה', click: () => geo.openGoogleMaps(this.remult) }],
+            fields: [{ field: this.$.originalAddress, readonly: true }, this.$.location, this.$.city, this.$.address],
+            ok: async () => {
+                ui.Info("עודכנו " + await this.updateGeocode() + " כתובות");
+                onSave();
+            }, cancel: () => { },
+        });
+    }
 }
