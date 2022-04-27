@@ -553,7 +553,7 @@ export class AdjustGeocode extends ControllerBase {
     }
 
     async edit(ui: UITools, address: string, onSave: VoidFunction) {
-        this.originalAddress = address;
+        this.originalAddress = address.trim();
         const g = await this.remult.repo(GeocodeCache).findId(address);
         var geo = GeocodeInformation.fromString(g.googleApiResult);
         this.address = geo.getAddress();
