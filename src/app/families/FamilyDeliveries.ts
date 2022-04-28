@@ -762,7 +762,7 @@ export class FamilyDeliveries extends IdEntity {
     }) {
 
 
-        let showFamilyDetails = this.remult.isAllowed(Roles.admin);
+        let showFamilyDetails = this.remult.isAllowed(Roles.familyAdmin);
         if (showFamilyDetails) {
             let f = await this.remult.repo(Families).findId(this.family);
             if (f) {
