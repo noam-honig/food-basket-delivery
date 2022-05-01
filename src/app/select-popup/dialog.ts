@@ -257,8 +257,10 @@ export class DialogService implements UITools {
                             if (!m) {
                                 m = err;
                             }
-                            if (self.remult.user)
-                                m += " user:" + JSON.stringify(this.remult.user);
+                            try {
+                                if (self.remult.user)
+                                    m += " user:" + JSON.stringify(this.remult.user);
+                            } catch { }
                             await DialogController.LogWithUser(m)
                         }
 
