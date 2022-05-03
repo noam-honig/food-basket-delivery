@@ -1,5 +1,7 @@
-<h3 matDialogHeader>{{args.title}}</h3>
-
+<div  matDialogHeader style="display:flex;justify-content: space-between;">
+  <div class="mat-title">{{args.title}}</div>
+  <app-dots-menu *ngIf="args.menu" [buttons]="args.menu"></app-dots-menu>
+</div>
 <mat-dialog-content>
   <div class="help-text" *ngIf="args.helpText">
     {{args.helpText}}
