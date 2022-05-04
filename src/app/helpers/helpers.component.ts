@@ -132,7 +132,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
         openDialog(InputAreaComponent, x => x.args = {
           title: use.language.sendMessageToInviteVolunteers,
           helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
-          fields: [c.$.city, c.$.limit],
+          fields: [c.$.city, c.$.limit, c.$.hours],
           ok: async () => {
             c.sendBulkDialog(this.dialog, this.helpers.currentRow);
           },
