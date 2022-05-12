@@ -5,7 +5,7 @@ import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Helpers } from '../helpers/helpers';
+import { Helpers, HelpersBase } from '../helpers/helpers';
 import { UITools } from '../helpers/init-context';
 import { getSettings } from '../manage/ApplicationSettings';
 import { use } from '../translate';
@@ -158,6 +158,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
 
 
     let r: any[] = [];
+    let lastVolunteer: HelpersBase;
+    let indexInVolunteer = 1;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
       where: {
         deliverStatus: [DeliveryStatus.ReadyForDelivery, DeliveryStatus.SelfPickup],
@@ -165,6 +167,13 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       },
       orderBy: { deliverStatus: "asc", courier: "desc", routeOrder: "asc" }
     })) {
+      if (lastVolunteer != fd.courier) {
+        lastVolunteer = fd.courier;
+        indexInVolunteer = 0;
+
+      }
+      indexInVolunteer++;
+      fd.routeOrder = indexInVolunteer;
       let f = await remult.repo(Families).findId(fd.family);
       let o = d.buildObject(fd.id, { fd, f });
       r.push(o);

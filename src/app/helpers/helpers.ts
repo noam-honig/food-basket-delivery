@@ -386,14 +386,39 @@ export class Helpers extends HelpersBase {
             buttons: [{
                 text: settings.lang.deliveries,
                 click: () => this.showDeliveryHistory(ui)
-            }, {
+            }],
+            menu: [
+            {
+                name: this.remult.lang.volunteerOpportunities,
+                click: async () => {
+                    ui.gridDialog({
+                        settings: new GridSettings(this.remult.repo((await import('../events/events')).Event),
+                            {
+                                knowTotalRows: true,
+                                orderBy: {
+                                    eventDate: "desc"
+                                },
+                                columnSettings: e => [e.name, e.eventDate, e.type],
+                                where: {
+                                    id: (await this.remult.repo((await import('../events/events')).volunteersInEvent).find({
+                                        where: {
+                                            helper:this,
+                                            canceled: false
+                                        }
+                                    })).map(ve => ve.eventId)
+                                },
 
-                text: this.remult.lang.smsMessages,
+
+                            }),
+                        title: this.remult.lang.volunteerOpportunities+" - "+this.name
+
+                    });
+                }
+            },{
+                name: this.remult.lang.smsMessages,
                 click: async () => {
                     this.smsMessages(ui);
-                },
-
-
+                }
             }]
 
         });

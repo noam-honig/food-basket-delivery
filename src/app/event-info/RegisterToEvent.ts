@@ -9,7 +9,7 @@ import { ManageController } from '../manage/manage.controller';
 import { Phone } from '../model-shared/phone';
 import { Email } from '../model-shared/types';
 import { Sites } from '../sites/sites';
-import { Field } from '../translate';
+import { Field, use } from '../translate';
 
 
 function storedInfo(): VolunteerInfo {
@@ -18,7 +18,8 @@ function storedInfo(): VolunteerInfo {
         return JSON.parse(r);
     return {
         phone: '',
-        name: ''
+        name: '',
+        lastName: ''
     }
 }
 
@@ -53,6 +54,7 @@ export class RegisterToEvent {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
+            this.lastName = RegisterToEvent.volunteerInfo.lastName || '';
             let h = (await this.remult.getCurrentUser())
             if (h) {
                 this.socialSecurityNumber = h.socialSecurityNumber;
@@ -94,6 +96,10 @@ export class RegisterToEvent {
         }
     })
     name: string;
+    @Field<RegisterToEvent>({
+        caption: use.language.lastName
+    })
+    lastName: string;
     @Field({ translation: l => l.rememberMeOnThisDevice })
     rememberMeOnThisDevice: boolean;
 
@@ -137,7 +143,8 @@ export class RegisterToEvent {
             await ui.inputAreaDialog({
                 title: lang.register,
                 helpText: lang.registerHelpText,
-                fields: [{ field: this.$.name, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice],
+                fields: [{ field: this.$.name, visible: () => !this.remult.authenticated() },
+                { field: this.$.lastName, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice],
                 cancel: () => { },
                 ok: async () => {
 
@@ -148,7 +155,7 @@ export class RegisterToEvent {
                     let refresh = false;
                     if (this.phone.thePhone != RegisterToEvent.volunteerInfo.phone)
                         refresh = true;
-                    RegisterToEvent.volunteerInfo = { phone: this.phone.thePhone, name: this.name };
+                    RegisterToEvent.volunteerInfo = { phone: this.phone.thePhone, name: this.name, lastName: this.lastName };
                     if (this.rememberMeOnThisDevice)
                         localStorage.setItem(infoKeyInStorage, JSON.stringify(RegisterToEvent.volunteerInfo));
                     if (refresh)
@@ -195,7 +202,7 @@ export class RegisterToEvent {
                 createIfNotFound: register
             });
             if (helper.isNew()) {
-                helper.name = this.name;
+                helper.name = (this.name + ' ' + this.lastName).trim();
                 await helper.save();
             }
             this.remult.setUser({
@@ -242,5 +249,6 @@ const infoKeyInStorage = "myVolunteerInfo";
 interface VolunteerInfo {
     phone: string;
     name: string;
+    lastName: string;
 }
 

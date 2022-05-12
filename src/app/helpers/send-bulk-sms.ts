@@ -101,6 +101,8 @@ export class SendBulkSms {
     city: string = '';
     @Field({ caption: "הגבלת מספר הודעות" })
     limit: number = 100;
+    @Field({ caption: 'הגבלת שעות משליחה קודמת' })
+    hours: number = 48;
 
     @BackendMethod({ allowed: Roles.admin })
     private async sendSingleMessage(helperId: string) {
@@ -180,8 +182,7 @@ export class SendBulkSms {
     }
     private yesterdayMorning() {
         let twoDaysAgo = new Date();
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
-        twoDaysAgo.setHours(0);
+        twoDaysAgo.setHours(twoDaysAgo.getHours() - this.hours);
         return twoDaysAgo;
     }
 

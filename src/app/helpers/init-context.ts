@@ -97,7 +97,8 @@ export interface InputAreaArgs {
     ok: () => void,
     cancel?: () => void,
     validate?: () => Promise<void>,
-    buttons?: button[]
+    buttons?: button[],
+    menu?:RowButton<any>[]
 }
 export interface UpdateFamilyDialogArgs {
     family?: import('../families/families').Families,
