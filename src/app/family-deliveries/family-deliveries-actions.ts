@@ -225,7 +225,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
                 }
             },
             forEach: async f => {
-                if (getSettings(remult).isSytemForMlt || !(this.status == DeliveryStatus.Frozen && f.deliverStatus != DeliveryStatus.ReadyForDelivery)) {
+                if (getSettings(remult).isSytemForMlt || !(this.status == DeliveryStatus.Frozen && f.deliverStatus != DeliveryStatus.ReadyForDelivery && f.deliverStatus != DeliveryStatus.enquireDetails)) {
                     f.deliverStatus = this.status;
                     if (this.deleteExistingComment) {
                         f.internalDeliveryComment = '';
