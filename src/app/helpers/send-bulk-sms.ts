@@ -139,14 +139,14 @@ export class SendBulkSms {
                 }), helpers.metadata, this.remult),
 
                 await sql.build(helpers.id, " not in (", sql.query({
-                    select: () => [fd.courier],
+                    select: () => [sql.build('distinct ', fd.courier)],
                     from: fd,
                     where: () => [fd.where({
                         archive: false
                     })]
                 }), ")"),
                 await sql.build(helpers.id, " not in (", sql.query({
-                    select: () => [f.fixedCourier],
+                    select: () => [sql.build('distinct ',f.fixedCourier)],
                     from: f
                 }), ")"),
                 await sql.build(helpers.id, " not in (", sql.query({
@@ -161,7 +161,7 @@ export class SendBulkSms {
                     }), ")")]
                 }), ")"),
                 await sql.build(helpers.id, " not in (", sql.query({
-                    select: () => [message.volunteer],
+                    select: () => [sql.build('distinct ',message.volunteer)],
                     from: message,
                     where: async () => [message.where({
                         createDate: { ">": twoDaysAgo }

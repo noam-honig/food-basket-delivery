@@ -838,7 +838,7 @@ export class Helpers extends HelpersBase {
                 let helpers = SqlFor(remult.repo(Helpers));
                 let sql = new SqlBuilder(remult);
                 c.sql = await sql.build(helpers.id, " in (", sql.query({
-                    select: () => [fd.courier],
+                    select: () => [sql.build('distinct ',fd.courier)],
                     from: fd,
                     where: () => [fd.where({
                         archive: true,
