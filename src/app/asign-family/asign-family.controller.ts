@@ -544,6 +544,36 @@ export class AsignFamilyController {
             await fd.save();
         }
     }
+    @BackendMethod({ allowed: Roles.distCenterAdmin, blockUser: false })
+    static async getHelperStats(id: string, remult?: Remult, db?: SqlDatabase) {
+        const sql = new SqlBuilder(remult);
+        var fd = SqlFor(remult.repo(FamilyDeliveries));
+        const result = await db.execute(await sql.query({
+            select: () => [
+                "count(*) deliveries",
+                sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),
+                sql.build("min (", fd.deliveryStatusDate, ") startDate")
+            ],
+            from: fd,
+            where: () => [fd.where({
+                courier: { $id: id },
+                deliverStatus: DeliveryStatus.resultStatuses()
+            })]
+        }));
+        const r = result.rows[0];
+        console.log(r);
+        if (r.deliveries) {
+            const d = new Date(r.startdate);
+            console.log({
+                d,
+                m: d.getMonth(),
+                y: d.getFullYear()
+            })
+            return "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3".replace("$1", r.deliveries).replace("$2", r.dates)
+                .replace("$3", (d.getMonth() + 1) + "/" + (d.getFullYear() - 2000));
+        }
+        else return '';
+    }
 }
 export interface BasketInfo {
     name: string;

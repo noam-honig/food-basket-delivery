@@ -67,15 +67,15 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 this.familyLists.startAssignByMap(this.filterCity, this.filterGroup, this.dialog.distCenter, this.filterArea, this.basketType.basket);
                 setTimeout(() => {
                     this.assignButton.nativeElement.scrollIntoView({
-                        block:"start",
-                        behavior:"smooth"
+                        block: "start",
+                        behavior: "smooth"
                     });
                 }, 100);
             }, 50);
         }, 50);
 
     }
-    @ViewChild("assignButton",{static:false}) assignButton:ElementRef;
+    @ViewChild("assignButton", { static: false }) assignButton: ElementRef;
     @ViewChild("helperFamilies", { static: false }) helperFamilies: HelperFamiliesComponent;
 
     hasPreferred() {
@@ -123,6 +123,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
+    helperStats = '';
     async initHelper(helper: HelpersBase) {
         let other = helper.theHelperIAmEscorting;
         if (other) {
@@ -136,6 +137,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 this.clearHelperInfo();
             return;
         }
+        if (!helper.isNew())
+            AsignFamilyController.getHelperStats(helper.id).then(stats => this.helperStats = stats);
+        else
+            this.helperStats = '';
         this.helper = await helper.getHelper();
         this.initArea();
         this.phone = this.helper.phone.thePhone;

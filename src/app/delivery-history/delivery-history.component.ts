@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Remult,  EntityBase, getFields } from 'remult';
+import { Remult, EntityBase, getFields } from 'remult';
 import { Phone } from "../model-shared/phone";
 import { Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -23,8 +23,9 @@ import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { use, Field, Fields } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 import { DeliveryHistoryController } from './delivery-history.controller';
+import { PlaybackComponent } from '../playback/playback.component';
 
 
 
@@ -67,46 +68,47 @@ export class DeliveryHistoryComponent implements OnInit {
     this.destroyHelper.destroy();
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService) {
+  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService, private routeHelper: RouteHelperService) {
     this.helperStorage = new InMemoryDataProvider();
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
     let stam = new Remult();
     stam.setDataProvider(this.helperStorage);
     this.helperInfo = new GridSettings(stam.repo(helperHistoryInfo), {
       allowSelection: true,
-      numOfColumnsInGrid: (this.settings.isSytemForMlt ? 10 : 7),
-      gridButtons: [{
-        name: this.settings.lang.exportToExcel,
-        visible: () => this.remult.isAllowed(Roles.admin),
-        click: async () => {
-          await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.dialog, (d: helperHistoryInfo, c) => c == d.$.courier);
-        }
-      },
-      {
-        name: 'הענק מתנה',
-        visible: () => this.settings.isSytemForMlt && this.remult.isAllowed(Roles.admin),
-        click: async () => {
-          let rows = this.helperInfo.selectedRows;
-
-          if (rows.length == 0) {
-            this.dialog.Error('לא נבחרו מתנדבים');
-            return;
-          }
-
-          if (await openDialog(YesNoQuestionComponent, q => q.args = {
-            question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
-          }, q => q.yes)) {
-            if (await remult.repo(HelperGifts).count({ assignedToHelper: null }) >= rows.length) {
-              for (const h of rows) {
-                await HelperGifts.assignGift(h.courier);
-              }
-              this.refresh();
-            } else {
-              this.dialog.Error('אין מספיק מתנות לחלוקה');
-            }
+      numOfColumnsInGrid: (this.settings.isSytemForMlt ? 12 : 9),
+      gridButtons: [
+        {
+          name: this.settings.lang.exportToExcel,
+          visible: () => this.remult.isAllowed(Roles.admin),
+          click: async () => {
+            await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.dialog, (d: helperHistoryInfo, c) => c == d.$.courier);
           }
         },
-      }
+        {
+          name: 'הענק מתנה',
+          visible: () => this.settings.isSytemForMlt && this.remult.isAllowed(Roles.admin),
+          click: async () => {
+            let rows = this.helperInfo.selectedRows;
+
+            if (rows.length == 0) {
+              this.dialog.Error('לא נבחרו מתנדבים');
+              return;
+            }
+
+            if (await openDialog(YesNoQuestionComponent, q => q.args = {
+              question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
+            }, q => q.yes)) {
+              if (await remult.repo(HelperGifts).count({ assignedToHelper: null }) >= rows.length) {
+                for (const h of rows) {
+                  await HelperGifts.assignGift(h.courier);
+                }
+                this.refresh();
+              } else {
+                this.dialog.Error('אין מספיק מתנות לחלוקה');
+              }
+            }
+          },
+        }
       ],
       rowButtons: [
         {
@@ -155,6 +157,14 @@ export class DeliveryHistoryComponent implements OnInit {
           {
             field: h.dates,
             width: '75'
+          },
+          {
+            field: h.firstDelivery,
+            width: '75'
+          },
+          {
+            field: h.lastDelivery,
+            width: '75'
           }];
         if (settings.isSytemForMlt) {
           r.push(
@@ -196,6 +206,8 @@ export class DeliveryHistoryComponent implements OnInit {
       x.selfassigned = +x.selfassigned;
       x.giftsConsumed = +x.consumed;
       x.giftsPending = +x.pending;
+      x.firstDelivery = x.first;
+      x.lastDelivery = x.last;
       return x;
     });
     rows.splice(0, rows.length, ...x);
@@ -206,6 +218,10 @@ export class DeliveryHistoryComponent implements OnInit {
   deliveries = new GridSettings(this.remult.repo(FamilyDeliveries), {
     rowCssClass: d => d.getCss(),
     gridButtons: [{
+      name: 'playback',
+      click: () => this.routeHelper.navigateToComponent(PlaybackComponent)
+
+    }, {
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
@@ -338,6 +354,10 @@ export class helperHistoryInfo extends EntityBase {
   giftsConsumed: number;
   @Fields.integer({ caption: 'מתנות זמינות' })
   giftsPending: number;
+  @Field({ translation: l => l.firstDelivery })
+  firstDelivery: string;
+  @Field({ translation: l => l.lastDelivery })
+  lastDelivery: string;
 
 
 }

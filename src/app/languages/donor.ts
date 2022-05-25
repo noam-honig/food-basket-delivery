@@ -458,6 +458,7 @@ export class donor {
   checkAddress = 'בדוק כתובת';
   showOnGovMap = 'הצג ב govmap';
   showOnGoogleMap = 'הצג בגוגל MAPS';
+  updateGoogle = 'עדכן את גוגל';
   openWaze = 'פתח WAZE';
   badAddressTitle = 'שים לב, כתובת לא מדוייקת';
   badAddressHelpStart = 'גוגל לא הצליח למצוא את הכתובת בצורה מדוייקת';
@@ -987,4 +988,5 @@ export class donor {
   callCounter = 'נסיונות התקשרות';
   defaultDeliveryStatusIsEnquireDetails = 'בירור פרטים כסטטוס ברירת מחדל למשלוחים';
   previousValue = 'הערך הקודם';
+  helperStatsText = 'השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3';
 }

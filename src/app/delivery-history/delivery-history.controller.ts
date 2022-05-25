@@ -59,20 +59,26 @@ export class DeliveryHistoryController {
                     from: hg,
                     where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.getDbName())]
                 })
-                , "deliveries", "dates", "families", "succesful", "selfassigned"], " from (",
+                , "deliveries", "dates", "families", "succesful", "selfassigned", "first", "last"], " from (",
                 await sql.build("select ", [
                     fd.courier,
                     "count(*) deliveries",
                     sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),
                     sql.build("count (distinct ", fd.family, ") families"),
                     sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(fd.where({ deliverStatus: DeliveryStatus.isSuccess() })), ' then 1 else 0 end) selfassigned'),
-                    sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isSuccess() })], then: 1 }], 0), ') succesful')],
+                    sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isSuccess() })], then: 1 }], 0), ') succesful'),
+                    sql.build(sql.func('to_char', sql.func("min", fd.deliveryStatusDate), "'YY-MM'"), ' first'),
+                    sql.build(sql.func('to_char', sql.func("max", fd.deliveryStatusDate), "'YY-MM'"), ' last')],
                     ' from ', fd,
                     ' where ', sql.and(r))
 
                 + await sql.build(' group by ', fd.courier), ") x");
 
-        return (await db.execute(queryText)).rows;
+        return ((await db.execute((queryText))).rows);
 
     }
+}
+function log(x: any) {
+    console.log(x);
+    return x;
 }

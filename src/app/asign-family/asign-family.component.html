@@ -46,6 +46,7 @@
     class="help no-print">{{settings.lang.asignVideoHelp}}</a>
   <div *ngIf="helper&&helper. name&&helper.name.length>=2">
     <mat-card class="no-print">
+      
       <mat-card-title>
         {{settings.lang.asignDeliveriesTo}} {{helper.name}}
         <div>
@@ -61,6 +62,7 @@
           </button>
         </div>
       </mat-card-title>
+      <mat-card-subtitle *ngIf="helperStats"> 👍 {{helperStats}} </mat-card-subtitle>
       <mat-card-content>
 
         <div class="filter-div">

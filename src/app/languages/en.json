@@ -1922,6 +1922,11 @@
     "google": "Volunteers",
     "valueInCode": "מתנדבים"
   },
+  "helperStatsText": {
+    "google": "Complete $ 1 shipments on $ 2 dates from $ 3",
+    "valueInCode": "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3",
+    "custom": "Completed $1 deliveries on $2 dates since $3"
+  },
   "helpName": {
     "google": "alternative name",
     "valueInCode": "שם לעזרה"
@@ -3988,6 +3993,10 @@
   "updateFamilyStatus": {
     "google": "Update family status",
     "valueInCode": "עדכן סטטוס משפחה"
+  },
+  "updateGoogle": {
+    "google": "Update Google",
+    "valueInCode": "עדכן את גוגל"
   },
   "updateInfo": {
     "google": "Update details",

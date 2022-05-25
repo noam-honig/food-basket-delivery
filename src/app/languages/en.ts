@@ -458,6 +458,7 @@ export class en {
   checkAddress = 'Check address';
   showOnGovMap = 'View in govmap';
   showOnGoogleMap = 'View on Google Maps';
+  updateGoogle = 'Update Google';
   openWaze = 'Open WAZE';
   badAddressTitle = 'Please note, inaccurate address';
   badAddressHelpStart = 'Google Maps did not find an accurate address';
@@ -987,4 +988,5 @@ export class en {
   callCounter = 'Attempts to call';
   defaultDeliveryStatusIsEnquireDetails = 'Clarify details as default status for shipments';
   previousValue = 'Previous value';
+  helperStatsText = 'Completed $1 deliveries on $2 dates since $3';
 }
