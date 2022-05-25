@@ -562,7 +562,7 @@ export class AsignFamilyController {
         }));
         const r = result.rows[0];
         console.log(r);
-        if (r.deliveries) {
+        if (r.deliveries > 0) {
             const d = new Date(r.startdate);
             console.log({
                 d,

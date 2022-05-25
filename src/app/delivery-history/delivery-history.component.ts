@@ -206,8 +206,8 @@ export class DeliveryHistoryComponent implements OnInit {
       x.selfassigned = +x.selfassigned;
       x.giftsConsumed = +x.consumed;
       x.giftsPending = +x.pending;
-      x.firstDelivery = x.first;
-      x.lastDelivery = x.last;
+      x.firstDelivery = x.firstd;
+      x.lastDelivery = x.lastd;
       return x;
     });
     rows.splice(0, rows.length, ...x);

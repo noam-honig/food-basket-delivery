@@ -59,7 +59,7 @@ export class DeliveryHistoryController {
                     from: hg,
                     where: () => [sql.build(hg.assignedToHelper, "=", fd.courier.getDbName())]
                 })
-                , "deliveries", "dates", "families", "succesful", "selfassigned", "first", "last"], " from (",
+                , "deliveries", "dates", "families", "succesful", "selfassigned", "firstd", "lastd"], " from (",
                 await sql.build("select ", [
                     fd.courier,
                     "count(*) deliveries",
@@ -67,8 +67,8 @@ export class DeliveryHistoryController {
                     sql.build("count (distinct ", fd.family, ") families"),
                     sql.build('sum (case when ', sql.eq(fd.courierAssignUser, fd.courier), ' and ', sql.and(fd.where({ deliverStatus: DeliveryStatus.isSuccess() })), ' then 1 else 0 end) selfassigned'),
                     sql.build('sum (', sql.case([{ when: [fd.where({ deliverStatus: DeliveryStatus.isSuccess() })], then: 1 }], 0), ') succesful'),
-                    sql.build(sql.func('to_char', sql.func("min", fd.deliveryStatusDate), "'YY-MM'"), ' first'),
-                    sql.build(sql.func('to_char', sql.func("max", fd.deliveryStatusDate), "'YY-MM'"), ' last')],
+                    sql.build(sql.func('to_char', sql.func("min", fd.deliveryStatusDate), "'YY-MM'"), ' firstd'),
+                    sql.build(sql.func('to_char', sql.func("max", fd.deliveryStatusDate), "'YY-MM'"), ' lastd')],
                     ' from ', fd,
                     ' where ', sql.and(r))
 
