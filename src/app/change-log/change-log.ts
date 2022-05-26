@@ -58,7 +58,7 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                 if (c.metadata.options.displayValue)
                     transValue = val => c.metadata.options.displayValue!(self, val);
                 else if (c.metadata.options.valueConverter.displayValue)
-                    transValue = val => c.metadata.options.valueConverter.displayValue(val);
+                    transValue = val => val === null ? null : val === undefined ? undefined : c.metadata.options.valueConverter.displayValue(val);
                 else if (c.metadata.valueType === Boolean)
                     transValue = val => val ? "V" : "X";
 
@@ -71,7 +71,7 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                     oldValue: noVal ? "***" : (c.originalValue instanceof IdEntity) ? c.originalValue.id : c.metadata.options.valueConverter.toJson(c.originalValue)
                 });
             } catch (err) {
-                console.log(c);
+                console.log("Change log failure", { err, c });
                 throw err;
 
             }
