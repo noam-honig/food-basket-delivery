@@ -42,7 +42,7 @@ export class CallerController {
         }
 
         const tenMinutesAgo = new Date();
-        tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+        tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 45);
         for (const fd of await repo.find({
             where: {
                 deliverStatus: DeliveryStatus.enquireDetails, archive: false,
