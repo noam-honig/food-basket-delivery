@@ -50,7 +50,7 @@ export class CallModuleGuard extends AuthenticatedGuard {
 
     isAllowed() {
 
-        return Roles.callPerson && getSettings(this.remult).usingCallModule;
+        return this.remult.isAllowed(Roles.callPerson) && getSettings(this.remult).usingCallModule;
     }
 }
 

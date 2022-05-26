@@ -561,14 +561,9 @@ export class AsignFamilyController {
             })]
         }));
         const r = result.rows[0];
-        console.log(r);
+        
         if (r.deliveries > 0) {
             const d = new Date(r.startdate);
-            console.log({
-                d,
-                m: d.getMonth(),
-                y: d.getFullYear()
-            })
             return "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3".replace("$1", r.deliveries).replace("$2", r.dates)
                 .replace("$3", (d.getMonth() + 1) + "/" + (d.getFullYear() - 2000));
         }

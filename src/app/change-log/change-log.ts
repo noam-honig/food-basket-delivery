@@ -57,6 +57,8 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                 let transValue = (val: any) => val;
                 if (c.metadata.options.displayValue)
                     transValue = val => c.metadata.options.displayValue!(self, val);
+                else if (c.metadata.options.valueConverter.displayValue)
+                    transValue = val => c.metadata.options.valueConverter.displayValue(val);
                 else if (c.metadata.valueType === Boolean)
                     transValue = val => val ? "V" : "X";
 
@@ -83,7 +85,7 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                 changes,
                 entity: self._.metadata.key,
                 relatedId: self._.getId().toString(),
-                relatedName: self.$.find("name")?.value,
+                relatedName: self.$.find("name")?.originalValue,
                 userId: remult.user.id,
                 userName: remult.user.name,
                 appUrl: remult.requestRefererOnBackend,
