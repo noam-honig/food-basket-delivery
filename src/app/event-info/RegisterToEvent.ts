@@ -225,7 +225,7 @@ export class RegisterToEvent {
                 }
             }
             await helper.save();
-            console.log(helperInEvent.$.toArray().filter(x => x.valueChanged()).map(({ value, originalValue, ...f }) => ({ key: f.metadata.key, value, originalValue })));
+            //console.log(helperInEvent.$.toArray().filter(x => x.valueChanged()).map(({ value, originalValue, ...f }) => ({ key: f.metadata.key, value, originalValue })));
             await helperInEvent.save();
         }
         else {
