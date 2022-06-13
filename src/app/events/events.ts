@@ -930,3 +930,23 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
     if (group)
         return use.language.past;
 }
+
+
+/*
+
+select  (select name from helpers where id=helper) helperName,
+  (select phone from helpers where id=helper) helperName,
+times,
+lastTime
+from (
+select 
+ helper,count(*) times,max(createDate) lastTime
+from volunteersInEvent 
+where eventId in (select id from events where type='packaging' and eventStatus=9 )
+	and canceled=false
+group by helper) as x
+where helper not in (select id from helpers where doNotSendSms=true)
+ and helper not in (select helper from volunteersInEvent where eventId in (select id from events where eventStatus=0))
+order by 3 desc
+
+*/

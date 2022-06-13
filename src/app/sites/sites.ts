@@ -136,3 +136,15 @@ SELECT
     '')))[1]::text::int AS rows_n 
 FROM tbl ORDER BY 3 DESC;
 */
+
+/*
+select organisationname,(select min (createdate) from test.helpers) createDate,
+(select max (deliverystatusDate) from test.familyDeliveries) lastDeliveryStatus,
+(select count(*) from test.familyDeliveries)  allDeliveries,
+(select count(*) from test.familyDeliveries where deliverStatus >= 10)  doneDeliveries,
+(select name from test.helpers  where phone not in ('0507330590','0523307014','+972507330590') order by createdate limit 1) first_admin,
+(select phone from test.helpers  where phone not in ('0507330590','0523307014','+972507330590') order by createdate limit 1) first_adminPhone
+from test.applicationSettings
+
+
+*/
