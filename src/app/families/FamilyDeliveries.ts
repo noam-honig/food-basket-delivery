@@ -421,7 +421,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     )
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt || c.isAllowed(Roles.admin)) })
+    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt || c.isAllowed(Roles.familyAdmin)) })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
@@ -523,7 +523,8 @@ export class FamilyDeliveries extends IdEntity {
         let result: EntityFilter<FamilyDeliveries>[] = [];
         let user = (await remult.getCurrentUser());
         if (!remult.isAllowed([Roles.admin, Roles.lab])) {
-            result.push(FamilyDeliveries.active);
+            if (!remult.isAllowed(Roles.familyAdmin))
+                result.push(FamilyDeliveries.active);
             let $or: EntityFilter<FamilyDeliveries>[] = [];
             if (remult.isAllowed(Roles.distCenterAdmin))
                 $or.push({ distributionCenter: remult.filterCenterAllowedForUser() });
