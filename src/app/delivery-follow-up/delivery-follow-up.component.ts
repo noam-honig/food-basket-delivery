@@ -19,6 +19,8 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getLang } from '../sites/sites';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { DeliveryFollowUpController, helperFollowupInfo } from './delivery-follow-up.controller';
+import { Roles } from '../auth/roles';
+import { MessageTemplate } from '../edit-custom-message/messageMerger';
 
 
 
@@ -94,6 +96,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     this.refreshStats();
 
   }
+  admin() {
+    return this.remult.isAllowed(Roles.admin);
+  }
   helpers: helperFollowupInfo[] = [];
   async sendSmsToAll() {
     if (await this.dialog.YesNoPromise(this.settings.lang.shouldSendSmsTo + " " + this.stats.notOutYet.value + " " + this.settings.lang.volunteers + "?")) {
@@ -107,6 +112,42 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       });
       this.refresh();
     }
+  }
+  async sendAttendanceReminderSms() {
+    const message = await this.remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
+    let h = this.helpers.filter(h => !h.smsWasSent);
+    if (h.length == 0) {
+      this.dialog.messageDialog("נשלח כבר SMS עם קישור לכולם");
+      return;
+    }
+    this.dialog.editCustomMessageDialog({
+      helpText: 'פעולה זו תשלח הודעה למתנדבים אשר טרם נשלח להם SMS עם קישור - כדי להזכיר להם להגיע לארוע החלוקה - אך עדיין לשמור אותם מסומנים כטרם קיבלו SMS ' ,
+      title: getLang(this.remult).sendAttendanceReminder+' - '+ h.length,
+      message: DeliveryFollowUpController.createMessage(h[0], this.remult),
+      templateText: message.template,
+      buttons: [
+        {
+          name: 'שמור הודעה',
+          click: async ({ templateText }) => {
+            message.template = templateText;
+            await message.save();
+            this.dialog.Info("העדכון נשמר")
+          }
+        }, {
+          name: "שלח הודעה",
+          click: async ({ templateText, close }) => {
+
+            if (await this.dialog.YesNoPromise(`לשלוח הודעה ל ${h.length} מתנדבים?`)) {
+              message.template = templateText;
+              await message.save();
+              let result = await DeliveryFollowUpController.sendAttendanceReminder(h.map(h => h.id));
+              this.dialog.Info(result);
+              close();
+            }
+          }
+        }
+      ]
+    });
   }
   stats = new DeliveryStats(this.remult);
   updateChart() {

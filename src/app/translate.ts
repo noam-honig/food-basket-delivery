@@ -672,7 +672,7 @@ export class Language {
   updateDeliveryFailure = 'עדכן אי מסירה';
   all = 'כולם';
   searchVolunteer = 'חיפוש מתנדב';
-  sendSmsToAllVolunteersThatDidntGetOne = 'שלח הודעת SMS למתנדבים שטרם קיבלו';
+  sendSmsToAllVolunteersThatDidntGetOne = 'שלח הודעת SMS עם קישור למתנדבים שטרם קיבלו';
   completed = 'הושלמו';
   notDelivered = 'לא נמסרו';
   left = 'יצא';

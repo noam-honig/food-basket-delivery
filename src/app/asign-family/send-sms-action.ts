@@ -140,6 +140,10 @@ export class SendSmsUtils {
 
 
         const send = async () => {
+            if (false) {
+                console.log({ phone, message });
+                return;
+            }
             try {
                 let prefix = settings.forWho.args.internationalPrefixForSmsAndAws;
                 if (!prefix)

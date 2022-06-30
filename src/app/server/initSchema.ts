@@ -508,6 +508,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         const message = await remult.repo(MessageTemplate).findId("attendanceReminder", { createIfNotFound: true });
         message.template = 'הי !מתנדב!, מזכירים את ההתנדבות שתואמה להיום, בהוקרה !ארגון!';
     });
+    await version(45, async () => {
+        const message = await remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
+        message.template = 'הי !מתנדב!, מזכירים את ההתנדבות שתואמה להיום, בהוקרה !ארגון!';
+    });
 
 
 

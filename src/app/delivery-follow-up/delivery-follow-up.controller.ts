@@ -5,10 +5,13 @@ import { Helpers } from '../helpers/helpers';
 import { Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { DistributionCenters } from '../manage/distribution-centers';
-import {  FamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { relativeDateName } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { messageMerger, MessageTemplate } from '../edit-custom-message/messageMerger';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
+import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 export class DeliveryFollowUpController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
@@ -61,6 +64,23 @@ export class DeliveryFollowUpController {
             };
             return res;
         });
+    }
+    @BackendMethod({ allowed: Roles.admin })
+    static async sendAttendanceReminder(ids: string[], remult?: Remult) {
+        const message = await remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
+        for (const h of await remult.repo(Helpers).find({ where: { id: ids } })) {
+            await new SendSmsUtils().sendSms(h.phone.thePhone,
+                DeliveryFollowUpController.createMessage(h, remult).merge(message.template), remult, h, {});
+        }
+        return "נשלחו " + ids.length + " הודעות";
+    }
+    static createMessage(volunteer: { name: string }, remult: Remult
+    ) {
+        return new messageMerger([
+            { token: "מתנדב", caption: "שם המתנדב", value: volunteer.name },
+
+            { token: "ארגון", value: getSettings(remult).organisationName },
+        ]);
     }
 }
 
