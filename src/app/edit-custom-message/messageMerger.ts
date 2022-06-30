@@ -1,3 +1,5 @@
+import { Entity, EntityBase, Fields, IdEntity } from "remult";
+import { Roles } from "../auth/roles";
 
 export class messageMerger {
     constructor(public tokens: {
@@ -20,3 +22,11 @@ export class messageMerger {
 
 }
 
+
+@Entity("messageTemplates", { allowApiCrud: Roles.admin })
+export class MessageTemplate extends EntityBase {
+    @Fields.string()
+    id = '';
+    @Fields.string()
+    template = '';
+}

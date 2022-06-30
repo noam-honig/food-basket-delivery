@@ -19,7 +19,7 @@ import { InputTypes } from "remult/inputTypes";
 
 import * as moment from "moment";
 
-import { messageMerger } from "../edit-custom-message/messageMerger";
+import { messageMerger, MessageTemplate } from "../edit-custom-message/messageMerger";
 import { SendSmsUtils } from "../asign-family/send-sms-action";
 import { SendBulkSms } from "../helpers/send-bulk-sms";
 import { UITools } from "../helpers/init-context";
@@ -167,6 +167,34 @@ export class Event extends IdEntity {
                 if (!v.helper.doNotSendSms) {
                     await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
                         this.createMessage(v).merge(settings.confirmEventParticipationMessage),
+                        remult, v.helper, {
+                        eventId: this.id
+                    });
+                    i++;
+
+                }
+        }
+        return "נשלחו " + i + " הודעות";
+    }
+    @BackendMethod({ allowed: Roles.admin, queue: true })
+    async sendParticipationReminderMessageMessage(remult?: Remult, progress?: ProgressListener) {
+        let settings = await ApplicationSettings.getAsync(remult);
+        if (!settings.bulkSmsEnabled)
+            throw "אינך רשאי לשלוח הודעות לקבוצה";
+        const message = await remult.repo(MessageTemplate).findId("attendanceReminder", { createIfNotFound: true });
+        let i = 0;
+        for await (const v of remult.repo(volunteersInEvent).query({
+            progress,
+            where: {
+                eventId: this.id,
+                canceled: false,
+            }
+        }
+        )) {
+            if (v.helper)
+                if (!v.helper.doNotSendSms) {
+                    await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
+                        this.createMessage(v).merge(message.template),
                         remult, v.helper, {
                         eventId: this.id
                     });
@@ -770,6 +798,43 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
+                    name: getLang(remult).sendAttendanceReminder,
+                    visible: () => getSettings(remult).bulkSmsEnabled && gridSettings.currentRow,
+                    click: async () => {
+                        const message = await remult.repo(MessageTemplate).findId("attendanceReminder", { createIfNotFound: true });
+
+
+                        ui.editCustomMessageDialog({
+                            helpText: 'פעולה זו תשלח הודעה לכל מתנדבי הארוע',
+                            title: getLang(remult).sendAttendanceReminder,
+                            message: event.createMessage(gridSettings.currentRow),
+                            templateText: message.template,
+                            buttons: [
+                                {
+                                    name: 'שמור הודעה',
+                                    click: async ({ templateText }) => {
+                                        message.template = templateText;
+                                        await message.save();
+                                        ui.Info("העדכון נשמר")
+                                    }
+                                }, {
+                                    name: "שלח הודעה",
+                                    click: async ({ templateText, close }) => {
+                                        let count = gridSettings.totalRows;
+                                        if (await ui.YesNoPromise("לשלוח הודעה לכל המתנדבים שנרשמו?")) {
+                                            message.template = templateText;
+                                            await message.save();
+                                            let result = await event.sendParticipationReminderMessageMessage();
+                                            ui.Info(result);
+                                            close();
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                },
+                {
                     name: getLang(remult).exportToExcel,
                     click: async () => {
                         saveToExcel((await remult.getSettings()), remult.repo(volunteersInEvent), gridSettings, use.language.volunteersRegisteredTo + " " + event.name, ui,
@@ -943,7 +1008,7 @@ select
  helper,count(*) times,max(createDate) lastTime
 from volunteersInEvent 
 where eventId in (select id from events where type='packaging' and eventStatus=9 )
-	and canceled=false
+    and canceled=false
 group by helper) as x
 where helper not in (select id from helpers where doNotSendSms=true)
  and helper not in (select helper from volunteersInEvent where eventId in (select id from events where eventStatus=0))

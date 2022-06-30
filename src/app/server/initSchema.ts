@@ -16,6 +16,7 @@ import { InitContext } from '../helpers/init-context';
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
 import { Helpers } from '../helpers/helpers';
 import { Roles } from '../auth/roles';
+import { MessageTemplate } from '../edit-custom-message/messageMerger';
 
 
 export async function initSchema(pool1: PostgresPool, org: string) {
@@ -502,6 +503,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             helper.preferredFinishAddressHelper.updateCityColumn();
             await helper.save();
         }
+    });
+    await version(44, async () => {
+        const message = await remult.repo(MessageTemplate).findId("attendanceReminder", { createIfNotFound: true });
+        message.template = 'הי !מתנדב!, מזכירים את ההתנדבות שתואמה להיום, בהוקרה !ארגון!';
     });
 
 

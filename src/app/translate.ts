@@ -1254,6 +1254,7 @@ export class Language {
   smsMessages = "הודעות SMS";
   when = "מתי";
   sendRequestConfirmSms = "שליחת הודעת SMS לאישור הגעה";
+  sendAttendanceReminder = 'שליחת הודעת SMS תזכורת לקראת חלוקה';
   sendSelfOrderLink = "שליחת קישור להזמנה עצמית";
   whatToOrder = "מה להזמין?";
   smsProviderConfiguration = "הגדרות ספק SMS";
@@ -1318,7 +1319,7 @@ export class Language {
   callCounter = "נסיונות התקשרות";
   defaultDeliveryStatusIsEnquireDetails = 'בירור פרטים כסטטוס ברירת מחדל למשלוחים';
   previousValue = 'הערך הקודם';
-  helperStatsText =  "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3";
+  helperStatsText = "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3";
   firstDelivery = 'משלוח ראשון';
   lastDelivery = 'משלוח אחרון';
 }
