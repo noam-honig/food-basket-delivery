@@ -193,6 +193,8 @@ export class Event extends IdEntity {
         )) {
             if (v.helper)
                 if (!v.helper.doNotSendSms) {
+                    if (v.assignedDeliveries > 0 && v.lastAssignTime < v.helper.smsDate)
+                        continue;
                     await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
                         this.createMessage(v).merge(message.template),
                         remult, v.helper, {
