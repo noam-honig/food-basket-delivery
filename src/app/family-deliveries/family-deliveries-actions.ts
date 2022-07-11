@@ -118,7 +118,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                 let f = await this.remult.repo(Families).findId(fd.family);
                 if (f) {
                     if (this.byCurrentCourier) {
-                        if (fd.courier)
+                //        if (fd.courier)
                             f.fixedCourier = fd.courier;
                     }
                     if (this.basketType) {
