@@ -100,7 +100,10 @@ export class donorForm {
         this.remult.setUser({
             id: 'WIX',
             name: 'WIX',
-            roles: []
+            roles: [],
+            distributionCenter: "",
+            escortedHelperName: undefined,
+            theHelperIAmEscortingId: undefined
         });
         let f = this.remult.repo(Families).create();
         f.name = this.name;

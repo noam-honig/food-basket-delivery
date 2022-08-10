@@ -66,7 +66,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     remult.setUser({
         id: "version_update",
         name: "version_update",
-        roles: [Roles.admin]
+        roles: [Roles.admin],
+        distributionCenter: "",
+        escortedHelperName: undefined,
+        theHelperIAmEscortingId: undefined
     });
     if (settings.isNew()) {
         settings.id = 1;

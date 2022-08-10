@@ -208,7 +208,8 @@ export class RegisterToEvent {
             this.remult.setUser({
                 id: helper.id,
                 name: helper.name,
-                roles: []
+                roles: [],
+                theHelperIAmEscortingId: undefined, distributionCenter: '', escortedHelperName: ""
             });
         }
         let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({ eventId: id, helper }, {

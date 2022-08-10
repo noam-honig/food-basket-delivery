@@ -388,38 +388,38 @@ export class Helpers extends HelpersBase {
                 click: () => this.showDeliveryHistory(ui)
             }],
             menu: [
-            {
-                name: this.remult.lang.volunteerOpportunities,
-                click: async () => {
-                    ui.gridDialog({
-                        settings: new GridSettings(this.remult.repo((await import('../events/events')).Event),
-                            {
-                                knowTotalRows: true,
-                                orderBy: {
-                                    eventDate: "desc"
-                                },
-                                columnSettings: e => [e.name, e.eventDate, e.type],
-                                where: {
-                                    id: (await this.remult.repo((await import('../events/events')).volunteersInEvent).find({
-                                        where: {
-                                            helper:this,
-                                            canceled: false
-                                        }
-                                    })).map(ve => ve.eventId)
-                                },
+                {
+                    name: this.remult.lang.volunteerOpportunities,
+                    click: async () => {
+                        ui.gridDialog({
+                            settings: new GridSettings(this.remult.repo((await import('../events/events')).Event),
+                                {
+                                    knowTotalRows: true,
+                                    orderBy: {
+                                        eventDate: "desc"
+                                    },
+                                    columnSettings: e => [e.name, e.eventDate, e.type],
+                                    where: {
+                                        id: (await this.remult.repo((await import('../events/events')).volunteersInEvent).find({
+                                            where: {
+                                                helper: this,
+                                                canceled: false
+                                            }
+                                        })).map(ve => ve.eventId)
+                                    },
 
 
-                            }),
-                        title: this.remult.lang.volunteerOpportunities+" - "+this.name
+                                }),
+                            title: this.remult.lang.volunteerOpportunities + " - " + this.name
 
-                    });
-                }
-            },{
-                name: this.remult.lang.smsMessages,
-                click: async () => {
-                    this.smsMessages(ui);
-                }
-            }]
+                        });
+                    }
+                }, {
+                    name: this.remult.lang.smsMessages,
+                    click: async () => {
+                        this.smsMessages(ui);
+                    }
+                }]
 
         });
     }
@@ -713,7 +713,10 @@ export class Helpers extends HelpersBase {
         this.remult.setUser({
             id: 'WIX',
             name: 'WIX',
-            roles: []
+            roles: [],
+            distributionCenter: "",
+            escortedHelperName: undefined,
+            theHelperIAmEscortingId: undefined
         });
         await this.save();
 
@@ -838,7 +841,7 @@ export class Helpers extends HelpersBase {
                 let helpers = SqlFor(remult.repo(Helpers));
                 let sql = new SqlBuilder(remult);
                 c.sql = await sql.build(helpers.id, " in (", sql.query({
-                    select: () => [sql.build('distinct ',fd.courier)],
+                    select: () => [sql.build('distinct ', fd.courier)],
                     from: fd,
                     where: () => [fd.where({
                         archive: true,
