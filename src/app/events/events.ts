@@ -281,8 +281,12 @@ export class Event extends IdEntity {
 
     @Field()
     specificUrl: string = '';
+    @Field()
+    imageUrl: string = '';
 
     get eventLogo() {
+        if (this.imageUrl)
+            return this.imageUrl;
         return getSettings(this.remult).logoUrl;
     }
     get location() {
@@ -404,7 +408,8 @@ export class Event extends IdEntity {
             e.address,
             e.phone1,
             e.phone1Description,
-            e.specificUrl
+            e.specificUrl,
+            e.imageUrl
         ];
         return r;
     }
