@@ -84,6 +84,7 @@ import { ChangeLog, FieldDecider } from "../change-log/change-log";
 import { CallerController } from "../caller/caller.controller";
 import { allEntities } from "remult/src/context";
 import { postgresColumnSyntax } from 'remult/postgres/postgresColumnSyntax';
+import { Callers } from "../manage-callers/callers";
 
 const entities = [
     HelpersAndStats,
@@ -110,7 +111,8 @@ const entities = [
     GeocodeCache,
     SitesEntity,
     Families,
-    FamilyDeliveries
+    FamilyDeliveries,
+    Callers
 ];
 const controllers = [
     CallerController,

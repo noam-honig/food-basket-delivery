@@ -258,13 +258,13 @@ export class ApplicationSettings extends EntityBase {
   @Field()
   OtherProblemStatusText: string;
 
-  @Field({ translation: l => l.freeText1ForVolunteer })
+  @Field({ translation: l => l.freeText1ForVolunteer, customInput: x => x.textArea() })
   message1Text: string;
   @Field({ translation: l => l.urlFreeText1 })
   message1Link: string;
   @Field({ translation: l => l.showText1OnlyWhenDone })
   message1OnlyWhenDone: boolean;
-  @Field({ translation: l => l.freeText2ForVolunteer })
+  @Field({ translation: l => l.freeText2ForVolunteer, customInput: x => x.textArea() })
   message2Text: string;
   @Field({ translation: l => l.urlFreeText2 })
   message2Link: string;
@@ -279,6 +279,10 @@ export class ApplicationSettings extends EntityBase {
   usingSelfPickupModule: boolean;
   @Field()
   usingCallModule: boolean;
+  @Field({ caption:"הנחיה בראש המסך", customInput: x => x.textArea() })
+  callModuleMessageText: string;
+  @Field({ caption:"כתובת אינטרנט להנחיה בראש המסך"})
+  callModuleMessageLink: string;
   @Field({ includeInApi: Roles.familyAdmin })
   defaultDeliveryStatusIsEnquireDetails: boolean;
   getDefaultStatus(): DeliveryStatus {

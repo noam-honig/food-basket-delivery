@@ -23,6 +23,7 @@ import { messageMerger, MessageTemplate } from "../edit-custom-message/messageMe
 import { SendSmsUtils } from "../asign-family/send-sms-action";
 import { SendBulkSms } from "../helpers/send-bulk-sms";
 import { UITools } from "../helpers/init-context";
+import { Callers } from "../manage-callers/callers";
 
 
 
@@ -839,6 +840,13 @@ export class volunteersInEvent extends IdEntity {
                                 }
                             ]
                         });
+                    }
+                },
+                {
+                    name: 'סמן את כל המתנדבים כטלפנים',
+                    visible: () => settings.usingCallModule,
+                    click: async () => {
+                        ui.Info(await Callers.updateEventVolunteerAsCallers(event.id))
                     }
                 },
                 {

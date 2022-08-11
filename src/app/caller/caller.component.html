@@ -1,3 +1,13 @@
+<div style="    display: flex;
+justify-content: space-between;
+">
+
+    <span style="white-space: pre-line;"
+        *ngIf="!settings.callModuleMessageLink">{{settings.callModuleMessageText}}</span>
+    <a style="white-space: pre-line;" *ngIf="settings.callModuleMessageLink" [href]="settings.callModuleMessageLink"
+        target="_blank">{{settings.callModuleMessageText}}</a>
+    <app-dots-menu [buttons]="menu" *ngIf="isAdmin()"></app-dots-menu>
+</div>
 <div *ngIf="this.d">
     <h3>{{d.name}}</h3>
     <div *ngFor="let phone of famInfo.phones">
@@ -28,4 +38,7 @@
     <button mat-raised-button (click)="nextCall()">שיחה הבאה</button>
     <button mat-raised-button *ngIf="this.d" (click)="done()">סיים</button>
     <button mat-raised-button (click)="search()">חיפוש משפחה</button>
+</div>
+<div *ngIf="this.caller">
+    השלמת {{caller.callsCompleted}} שיחות<span *ngIf="caller.callQuota"> מתוך {{caller.callQuota}} </span>
 </div>

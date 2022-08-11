@@ -410,7 +410,7 @@ export class Language {
   showHelperCompany = 'הצג ארגון למתנדב';
   hideHelperCompany = 'הסתר ארגון למתנדב';
   volunteerPhoneNumber = 'מספר הטלפון של המתנדב';
-  assignHelpText = 'אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך';
+  assignHelpText = 'אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך. לחיפוש לפי שם לחצי על - ';
   asignVideoHelp = 'לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן';
   asignDeliveriesTo = 'שיוך משלוחים ל';
   familyGroups = 'קבוצות שיוך משפחה';
@@ -1322,6 +1322,7 @@ export class Language {
   helperStatsText = "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3";
   firstDelivery = 'משלוח ראשון';
   lastDelivery = 'משלוח אחרון';
+  callQuota = "מכסת שיחות";
 }
 
 

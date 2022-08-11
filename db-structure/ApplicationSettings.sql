@@ -37,6 +37,8 @@ forWho integer default 0 not null
 forSoldiers boolean default false not null
 usingSelfPickupModule boolean default false not null
 usingCallModule boolean default false not null
+callModuleMessageText varchar default '' not null
+callModuleMessageLink varchar default '' not null
 defaultDeliveryStatusIsEnquireDetails boolean default false not null
 showCompanies boolean default false not null
 manageEscorts boolean default false not null
