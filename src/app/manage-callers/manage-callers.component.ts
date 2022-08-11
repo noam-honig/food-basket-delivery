@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from '@remult/angular/interfaces';
 import { Remult } from 'remult';
+import { DialogService } from '../select-popup/dialog';
 import { Callers } from './callers';
 
 @Component({
@@ -10,10 +11,41 @@ import { Callers } from './callers';
 })
 export class ManageCallersComponent implements OnInit {
 
-  constructor(private remult: Remult) { }
+  constructor(private remult: Remult, private ui: DialogService) { }
 
   grid = new GridSettings(this.remult.repo(Callers), {
     allowUpdate: true,
+    allowSelection: true,
+    gridButtons: [{
+      name: "הוסף",
+      click: async () => {
+        this.ui.selectHelper({
+
+          onSelect: async hb => {
+            const h = await hb.getHelper();
+            h.caller = true;
+            await h.save();
+            this.grid.reloadData();
+          }
+        })
+
+      },
+
+    }, {
+      name: "הסר",
+      click: async () => {
+        this.ui.doWhileShowingBusy(async () => {
+          const items = this.grid.selectedRows;
+          if (items.length == 0)
+            items.push(this.grid.currentRow);
+          for (const h of items) {
+            h.caller = false;
+            await h.save();
+          }
+          this.grid.reloadData();
+        })
+      }
+    }],
     columnSettings: x => [
       x.name,
       x.callQuota,
