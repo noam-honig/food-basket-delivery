@@ -976,7 +976,7 @@ export const allOrgsDate = '9999-12-31';
 export function eventDisplayDate(e: EventInList, group = false, today: Date = undefined) {
 
     if (e.eventDateJson) {
-        if (e.eventDateJson = allOrgsDate)
+        if (e.eventDateJson === allOrgsDate)
             return 'כלל הארגונים';
         let edd = ValueConverters.DateOnly.fromJson(e.eventDateJson);
         if (!today)
