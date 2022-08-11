@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import { Remult } from 'remult';
 import { Roles } from '../auth/roles';
 
-import { Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
+import { allOrgsDate, Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
 import { DialogService } from '../select-popup/dialog';
@@ -31,6 +31,9 @@ export class EventInfoComponent implements OnInit {
   }
   openWaze() {
     openWaze(this.e.longLat, this.e.theAddress);
+  }
+  isGeneralEvent(){
+    return this.e.eventDateJson==allOrgsDate;
   }
   openGoogleMap() {
     window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.remult).languageCode, '_blank');

@@ -41,8 +41,8 @@
                                 <strong style="font-size: small;">
                                     {{e.orgName}}
                                 </strong>
-                                <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}, {{e.type.caption}} </span>
-                                <div (click)="eventDetails(e)">
+                                <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}<span *ngIf="!isGeneralEvent(e)">, {{e.type.caption}} </span></span>
+                                <div (click)="eventDetails(e)" *ngIf="!isGeneralEvent(e)">
                                     <strong>{{displayDate(e)}}</strong><span *ngIf="e.startTime">,
                                         {{e.startTime}}</span><span *ngIf="e.endTime"> -
                                         {{e.endTime}}</span>

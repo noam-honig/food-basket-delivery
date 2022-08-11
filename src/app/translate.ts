@@ -1164,7 +1164,7 @@ export class Language {
   wrongCodeWordProcessAborted = "מילת קוד שגויה - התהליך מופסק";
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
-
+  show = "הצג";
   updated = "עודכנו";
   showFreezed = 'הצג מוקפאים';
   pickupLocation = "נקודת איסוף";
@@ -1198,7 +1198,7 @@ export class Language {
   cancelDate = "מועד ביטול השתתפות";
   lastUpdate = "מועד עדכון";
   fromGeneralList = "נרשם דרך הרשימה הכללית";
-  donotShowEventsInGeneralList = "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים";
+  donotShowEventsInGeneralList = "הסר מרשימת הארגונים הכללית";
   wantToVolnteerMore = "רוצה להתנדב עוד?";
   registerStatusDate = "תאריך סטטוס רישום";
   delveriesSuccessfulEver = "נמסרו אי פעם";
@@ -1323,6 +1323,8 @@ export class Language {
   firstDelivery = 'משלוח ראשון';
   lastDelivery = 'משלוח אחרון';
   callQuota = "מכסת שיחות";
+  descriptionInOrganizationList = "תאור ברשימת הארגונים הכללית";
+  phoneInOrganizationList = "טלפון ברשימת הארגונים הכללית";
 }
 
 

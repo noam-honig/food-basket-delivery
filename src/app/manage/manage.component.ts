@@ -29,6 +29,8 @@ import { use } from '../translate';
 import { MyFamiliesComponent } from '../my-families/my-families.component';
 import { ManageController, SendTestSms } from './manage.controller';
 import { ChangeLogComponent } from '../change-log/change-log.component';
+import { EventInfoComponent } from '../event-info/event-info.component';
+import { OrgEventsController } from '../org-events/org-events.controller';
 
 @Component({
   selector: 'app-manage',
@@ -245,17 +247,16 @@ export class ManageComponent implements OnInit {
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   });
   settingsArea = new DataAreaSettings({
-
-
-
     fields: () => [
       this.settings.$.organisationName,
       this.settings.$.address,
       {
         caption: 'כתובת כפי שגוגל הבין',
         getValue: s => this.settings.addressHelper.getGeocodeInformation.getAddress()
-      }
-
+      },
+      this.settings.$.donotShowEventsInGeneralList,
+      { visible: () => !this.settings.donotShowEventsInGeneralList, field: this.settings.$.descriptionInOrganizationList },
+      { visible: () => !this.settings.donotShowEventsInGeneralList, field: this.settings.$.phoneInOrganizationList }
     ]
   });
   settingsMore = new DataAreaSettings({
@@ -367,7 +368,6 @@ export class ManageComponent implements OnInit {
         this.settings.$.hideFamilyPhoneFromVolunteer,
         this.settings.$.showOnlyLastNamePartToVolunteer,
         this.settings.$.showTzToVolunteer,
-        this.settings.$.donotShowEventsInGeneralList,
         this.settings.$.defaultStatusType,
         this.settings.$.usingSelfPickupModule,
         this.settings.$.usingCallModule,
@@ -675,7 +675,16 @@ export class ManageComponent implements OnInit {
   }
 
 
-
+  showGeneralListing() {
+    openDialog(EventInfoComponent, x => x.e = OrgEventsController.createOrgEvent({
+      addressHelper: this.settings.addressHelper,
+      descriptionInOrganizationList: this.settings.descriptionInOrganizationList,
+      logoUrl: this.settings.logoUrl,
+      organisationName: this.settings.organisationName,
+      phoneInOrganizationList: this.settings.phoneInOrganizationList?.thePhone,
+      phoneInOrganizationListDisplay: this.settings.phoneInOrganizationList?.displayValue
+    }, ""));
+  }
 
 }
 

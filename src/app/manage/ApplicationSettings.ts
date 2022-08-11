@@ -258,6 +258,11 @@ export class ApplicationSettings extends EntityBase {
   @Field()
   OtherProblemStatusText: string;
 
+  @Field({ translation: l => l.descriptionInOrganizationList, customInput: x => x.textArea() })
+  descriptionInOrganizationList: string;
+  @Field({ translation: l => l.phoneInOrganizationList })
+  phoneInOrganizationList: Phone;
+
   @Field({ translation: l => l.freeText1ForVolunteer, customInput: x => x.textArea() })
   message1Text: string;
   @Field({ translation: l => l.urlFreeText1 })
@@ -279,9 +284,9 @@ export class ApplicationSettings extends EntityBase {
   usingSelfPickupModule: boolean;
   @Field()
   usingCallModule: boolean;
-  @Field({ caption:"הנחיה בראש המסך", customInput: x => x.textArea() })
+  @Field({ caption: "הנחיה בראש המסך", customInput: x => x.textArea() })
   callModuleMessageText: string;
-  @Field({ caption:"כתובת אינטרנט להנחיה בראש המסך"})
+  @Field({ caption: "כתובת אינטרנט להנחיה בראש המסך" })
   callModuleMessageLink: string;
   @Field({ includeInApi: Roles.familyAdmin })
   defaultDeliveryStatusIsEnquireDetails: boolean;
@@ -632,8 +637,10 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     organisationName,
     hideFamilyPhoneFromVolunteer,
     allowVolunteerToSeePreviousActivities,
-    usingCallModule
-
+    usingCallModule,
+    phoneInOrganizationList,
+    descriptionInOrganizationList,
+    donotShowEventsInGeneralList
 
 
   } = settings;
@@ -671,7 +678,11 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     logoUrl,
     organisationName,
     hideFamilyPhoneFromVolunteer,
-    allowVolunteerToSeePreviousActivities
+    allowVolunteerToSeePreviousActivities,
+    descriptionInOrganizationList,
+    donotShowEventsInGeneralList,
+    phoneInOrganizationList: phoneInOrganizationList?.thePhone,
+    phoneInOrganizationListDisplay: phoneInOrganizationList?.displayValue
   });
 }
 export function getSettings(remult: Remult): SmallSettings {
@@ -704,6 +715,11 @@ export class SmallSettings {
   logoUrl: string = '';
   organisationName: string = '';
   hideFamilyPhoneFromVolunteer: boolean = false;
+  donotShowEventsInGeneralList: boolean = false;
+  descriptionInOrganizationList: string = '';
+  phoneInOrganizationList: string = '';
+  phoneInOrganizationListDisplay: string = '';
+
 }
 export class SmallAdressHelper {
   ok: boolean = false;
