@@ -302,6 +302,7 @@ export class ManageComponent implements OnInit {
       this.settings.$.message2Text,
       this.settings.$.message2Link,
       this.settings.$.message2OnlyWhenDone,
+      this.settings.$.hideVolunteerVideo,
 
       this.settings.$.showDistCenterAsEndAddressForVolunteer,
       this.settings.$.volunteerCanUpdateDeliveryComment,

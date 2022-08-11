@@ -35,6 +35,7 @@ message1OnlyWhenDone boolean default false not null
 message2Text varchar default '' not null
 message2Link varchar default '' not null
 message2OnlyWhenDone boolean default false not null
+hideVolunteerVideo boolean default false not null
 forWho integer default 0 not null
 forSoldiers boolean default false not null
 usingSelfPickupModule boolean default false not null

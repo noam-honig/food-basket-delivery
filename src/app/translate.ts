@@ -1325,6 +1325,7 @@ export class Language {
   callQuota = "מכסת שיחות";
   descriptionInOrganizationList = "תאור ברשימת הארגונים הכללית";
   phoneInOrganizationList = "טלפון ברשימת הארגונים הכללית";
+  hideVolunteerVideo = "הסר סרטון הדרכה למתנדב";
 }
 
 

@@ -159,7 +159,7 @@ export class ApplicationSettings extends EntityBase {
     return r;
   }
   showVideo() {
-    return this.lang.languageCode == 'iw' && !this.isSytemForMlt;
+    return this.lang.languageCode == 'iw' && !this.isSytemForMlt && !this.hideVolunteerVideo;
   }
 
   @Fields.integer()
@@ -275,6 +275,8 @@ export class ApplicationSettings extends EntityBase {
   message2Link: string;
   @Field({ translation: l => l.showText2OnlyWhenDone })
   message2OnlyWhenDone: boolean;
+  @Field({ translation: l => l.hideVolunteerVideo })
+  hideVolunteerVideo: boolean;
   @Field()
   forWho: TranslationOptions = TranslationOptions.Families;
   get lang() { return langByCode(this.forWho.args.languageFile); }

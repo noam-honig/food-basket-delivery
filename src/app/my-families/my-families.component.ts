@@ -14,6 +14,7 @@ import { AuthService } from '../auth/auth-service';
 import { Event } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/guards';
 import { OrgEventsComponent } from '../org-events/org-events.component';
+import { Roles } from '../auth/roles';
 
 
 
@@ -42,6 +43,47 @@ export class MyFamiliesComponent implements OnInit {
     if (this.familyLists.distCenter.address)
       return this.familyLists.distCenter.addressHelper;
     return this.settings.addressHelper
+  }
+  editSettings() {
+    const s = this.settings.$;
+    this.dialog.inputAreaDialog({
+      title: this.settings.lang.preferences,
+      fields: [
+        this.settings.$.message1Text,
+        this.settings.$.message1Link,
+        this.settings.$.message1OnlyWhenDone,
+        this.settings.$.message2Text,
+        this.settings.$.message2Link,
+        this.settings.$.message2OnlyWhenDone,
+        this.settings.$.hideVolunteerVideo,
+        this.settings.$.messageForDoneDelivery,
+
+        this.settings.$.showDistCenterAsEndAddressForVolunteer,
+        this.settings.$.deliveredButtonText,
+        this.settings.$.commentForSuccessDelivery,
+        this.settings.$.showLeftThereButton,
+        this.settings.$.commentForSuccessLeft,
+        this.settings.$.problemButtonText,
+        this.settings.$.commentForProblem,
+
+        [this.settings.$.questionForVolunteer1Caption, this.settings.$.questionForVolunteer1Values],
+        [this.settings.$.questionForVolunteer2Caption, this.settings.$.questionForVolunteer2Values],
+        [this.settings.$.questionForVolunteer3Caption, this.settings.$.questionForVolunteer3Values],
+        [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values],
+        this.settings.$.askVolunteerForLocationOnDelivery,
+        this.settings.$.askVolunteerForAPhotoToHelp,
+        this.settings.$.questionForVolunteerWhenUploadingPhoto,
+        this.settings.$.AddressProblemStatusText,
+        this.settings.$.NotHomeProblemStatusText,
+        this.settings.$.DoNotWantProblemStatusText,
+        this.settings.$.OtherProblemStatusText
+      ],
+      ok: () => this.settings.save(),
+      cancel: () => this.settings._.undoChanges()
+    });
+  }
+  isAdmin() {
+    return this.remult.isAllowed(Roles.admin);
   }
   async ngOnInit() {
 
