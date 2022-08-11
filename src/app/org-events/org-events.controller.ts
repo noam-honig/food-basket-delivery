@@ -1,4 +1,4 @@
-import { allOrgsDate, Event, EventType } from '../events/events';
+import {  Event, EventType } from '../events/events';
 
 import { BackendMethod, Remult, SqlDatabase } from 'remult';
 import { EventInList, eventStatus } from '../events/events';
@@ -8,6 +8,7 @@ import { Sites } from '../sites/sites';
 import { createSiteContext } from '../helpers/init-context';
 import { setSettingsForSite, settingsForSite, SmallAdressHelper, SmallSettings } from '../manage/ApplicationSettings';
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder';
+import { VolunteerNeedType } from '../manage/VolunteerNeedType';
 
 
 
@@ -27,7 +28,7 @@ export class OrgEventsController {
         for (const org of schemas) {
             const s = settingsForSite.get(org);
             if (s) {
-                if (!s.donotShowEventsInGeneralList)
+                if (s.volunteerNeedStatus.includeInList)
                     r.push(OrgEventsController.createOrgEvent(s, org));
                 if (query != '')
                     query += ' union all ';
@@ -45,7 +46,7 @@ export class OrgEventsController {
             setSettingsForSite(org, settings);
 
 
-            if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
+            if (settings.volunteerNeedStatus?.includeInList && !settings.forWho.args.leftToRight) {
                 let items = await OrgEventsController.getEvents(phone, '', c);
                 r.push(...items.map(i => ({ ...i, site: org })));
             }
@@ -60,13 +61,15 @@ export class OrgEventsController {
         logoUrl: string,
         organisationName: string,
         phoneInOrganizationList: string,
-        phoneInOrganizationListDisplay: string
+        phoneInOrganizationListDisplay: string,
+        volunteerNeedStatus: VolunteerNeedType
     }, org: string): EventInList {
+
         return {
             city: s.addressHelper.getCity,
             description: s.descriptionInOrganizationList,
             endTime: '',
-            eventDateJson: allOrgsDate,
+            eventDateJson:  s.volunteerNeedStatus.jsonDate,
             id: org,
             eventLogo: s.logoUrl,
             location: s.addressHelper.location,

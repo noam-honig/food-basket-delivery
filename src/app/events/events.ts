@@ -24,6 +24,7 @@ import { SendSmsUtils } from "../asign-family/send-sms-action";
 import { SendBulkSms } from "../helpers/send-bulk-sms";
 import { UITools } from "../helpers/init-context";
 import { Callers } from "../manage-callers/callers";
+import { VolunteerNeedType } from "../manage/VolunteerNeedType";
 
 
 
@@ -972,12 +973,14 @@ export interface EventInList {
 }
 
 export const day = 86400000;
-export const allOrgsDate = '9999-12-31';
+
 export function eventDisplayDate(e: EventInList, group = false, today: Date = undefined) {
 
     if (e.eventDateJson) {
-        if (e.eventDateJson === allOrgsDate)
-            return 'כלל הארגונים';
+        if (e.eventDateJson === VolunteerNeedType.holidays.jsonDate)
+            return 'ארגונים המחלקים בחגים';
+        if (e.eventDateJson === VolunteerNeedType.allYear.jsonDate)
+            return 'ארגונים המחלקים כל השנה';
         let edd = ValueConverters.DateOnly.fromJson(e.eventDateJson);
         if (!today)
             today = new Date()

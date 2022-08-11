@@ -32,6 +32,7 @@ import { GroupsValue } from './groups';
 import { InputTypes } from 'remult/inputTypes';
 import { recordChanges } from '../change-log/change-log';
 import { ManageController } from './manage.controller';
+import { VolunteerNeedType } from './VolunteerNeedType';
 
 
 
@@ -262,6 +263,8 @@ export class ApplicationSettings extends EntityBase {
   descriptionInOrganizationList: string;
   @Field({ translation: l => l.phoneInOrganizationList })
   phoneInOrganizationList: Phone;
+  @Field({ caption: "צריכים מתנדבים" })
+  volunteerNeedStatus: VolunteerNeedType = VolunteerNeedType.none;
 
   @Field({ translation: l => l.freeText1ForVolunteer, customInput: x => x.textArea() })
   message1Text: string;
@@ -642,7 +645,7 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     usingCallModule,
     phoneInOrganizationList,
     descriptionInOrganizationList,
-    donotShowEventsInGeneralList
+    volunteerNeedStatus
 
 
   } = settings;
@@ -682,7 +685,7 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     hideFamilyPhoneFromVolunteer,
     allowVolunteerToSeePreviousActivities,
     descriptionInOrganizationList,
-    donotShowEventsInGeneralList,
+    volunteerNeedStatus,
     phoneInOrganizationList: phoneInOrganizationList?.thePhone,
     phoneInOrganizationListDisplay: phoneInOrganizationList?.displayValue
   });
@@ -717,7 +720,7 @@ export class SmallSettings {
   logoUrl: string = '';
   organisationName: string = '';
   hideFamilyPhoneFromVolunteer: boolean = false;
-  donotShowEventsInGeneralList: boolean = false;
+  volunteerNeedStatus: VolunteerNeedType = VolunteerNeedType.none;
   descriptionInOrganizationList: string = '';
   phoneInOrganizationList: string = '';
   phoneInOrganizationListDisplay: string = '';
@@ -751,3 +754,4 @@ export function validateSmsContent(entity: any, c: FieldRef<string, any>) {
   if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
     c.error = this.lang.mustIncludeUrlKeyError;
 }
+

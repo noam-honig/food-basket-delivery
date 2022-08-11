@@ -29,6 +29,7 @@ DoNotWantProblemStatusText varchar default '' not null
 OtherProblemStatusText varchar default '' not null
 descriptionInOrganizationList varchar default '' not null
 phoneInOrganizationList varchar default '' not null
+volunteerNeedStatus varchar default '' not null
 message1Text varchar default '' not null
 message1Link varchar default '' not null
 message1OnlyWhenDone boolean default false not null

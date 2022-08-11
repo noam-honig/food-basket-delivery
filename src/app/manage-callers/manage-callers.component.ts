@@ -14,6 +14,7 @@ export class ManageCallersComponent implements OnInit {
   constructor(private remult: Remult, private ui: DialogService) { }
 
   grid = new GridSettings(this.remult.repo(Callers), {
+    knowTotalRows: true,
     allowUpdate: true,
     allowSelection: true,
     gridButtons: [{

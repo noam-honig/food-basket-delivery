@@ -1,4 +1,4 @@
-import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus, allOrgsDate } from '../events/events';
+import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Remult, getFields } from 'remult';
@@ -52,7 +52,7 @@ export class EventCardComponent implements OnInit {
     }
   ];
   isGeneralEvent(e: EventInList) {
-    return e.eventDateJson == allOrgsDate;
+    return e.eventDateJson.startsWith("999");
   }
   getStatus(e: EventInList) {
     if (e instanceof Event)

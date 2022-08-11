@@ -254,9 +254,9 @@ export class ManageComponent implements OnInit {
         caption: 'כתובת כפי שגוגל הבין',
         getValue: s => this.settings.addressHelper.getGeocodeInformation.getAddress()
       },
-      this.settings.$.donotShowEventsInGeneralList,
-      { visible: () => !this.settings.donotShowEventsInGeneralList, field: this.settings.$.descriptionInOrganizationList },
-      { visible: () => !this.settings.donotShowEventsInGeneralList, field: this.settings.$.phoneInOrganizationList }
+      this.settings.$.volunteerNeedStatus,
+      { visible: () => this.hasGeneralListing(), field: this.settings.$.descriptionInOrganizationList },
+      { visible: () => this.hasGeneralListing(), field: this.settings.$.phoneInOrganizationList }
     ]
   });
   settingsMore = new DataAreaSettings({
@@ -674,10 +674,14 @@ export class ManageComponent implements OnInit {
     openDialog(ChangeLogComponent, x => x.args = { for: this.settings })
 
   }
+  hasGeneralListing() {
+    return this.settings.volunteerNeedStatus?.includeInList;
+  }
 
 
   showGeneralListing() {
     openDialog(EventInfoComponent, x => x.e = OrgEventsController.createOrgEvent({
+      volunteerNeedStatus:this.settings.volunteerNeedStatus,
       addressHelper: this.settings.addressHelper,
       descriptionInOrganizationList: this.settings.descriptionInOrganizationList,
       logoUrl: this.settings.logoUrl,
