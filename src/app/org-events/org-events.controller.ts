@@ -1,4 +1,4 @@
-import {  Event, EventType } from '../events/events';
+import { Event, EventType } from '../events/events';
 
 import { BackendMethod, Remult, SqlDatabase } from 'remult';
 import { EventInList, eventStatus } from '../events/events';
@@ -46,7 +46,7 @@ export class OrgEventsController {
             setSettingsForSite(org, settings);
 
 
-            if (settings.volunteerNeedStatus?.includeInList && !settings.forWho.args.leftToRight) {
+            if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
                 let items = await OrgEventsController.getEvents(phone, '', c);
                 r.push(...items.map(i => ({ ...i, site: org })));
             }
@@ -69,7 +69,7 @@ export class OrgEventsController {
             city: s.addressHelper.getCity,
             description: s.descriptionInOrganizationList,
             endTime: '',
-            eventDateJson:  s.volunteerNeedStatus.jsonDate,
+            eventDateJson: s.volunteerNeedStatus.jsonDate,
             id: org,
             eventLogo: s.logoUrl,
             location: s.addressHelper.location,
