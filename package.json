@@ -75,7 +75,7 @@
     "remult": "^0.13.12",
     "rxjs": "~6.5.3",
     "spherical-geometry-js": "^2.0.0",
-    "twilio": "^3.48.1",
+    "twilio": "^3.80.1",
     "uuid": "^3.3.2",
     "web-animations-js": "^2.3.2",
     "xlsx": "^0.17.0",
