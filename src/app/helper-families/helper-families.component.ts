@@ -35,13 +35,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 import { routeStrategy } from '../asign-family/route-strategy';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { PromiseThrottle } from '../shared/utils';
+import { assign, PromiseThrottle } from '../shared/utils';
 import { DeliveryInList, HelperFamiliesController } from './helper-families.controller';
 import { MltFamiliesController } from '../mlt-families/mlt-families.controller';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { NgDialogAnimationService } from 'ng-dialog-animation';
 import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component';
-import { assign } from 'remult/assign';
 import { environment } from '../../environments/environment';
 import { Roles } from '../auth/roles';
 

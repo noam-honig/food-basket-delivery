@@ -29,7 +29,6 @@ import { routeStrategy } from '../asign-family/route-strategy';
 
 import { ValueListFieldType } from 'remult/src/remult3';
 import { GroupsValue } from './groups';
-import { InputTypes } from 'remult/inputTypes';
 import { recordChanges } from '../change-log/change-log';
 import { ManageController } from './manage.controller';
 
@@ -478,7 +477,7 @@ export class ApplicationSettings extends EntityBase {
   smsClientNumber: string;
   @Field({ includeInApi: Roles.admin })
   smsUsername: string;
-  @Field<ApplicationSettings>({ includeInApi: Roles.admin, inputType: InputTypes.password, serverExpression: (self) => self.smsCredentials?.password ? "****" : '' })
+  @Field<ApplicationSettings>({ includeInApi: Roles.admin, inputType: "password", serverExpression: (self) => self.smsCredentials?.password ? "****" : '' })
   smsPasswordInput: string;
   @Field({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string;

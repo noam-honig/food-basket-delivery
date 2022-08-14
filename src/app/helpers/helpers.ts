@@ -16,7 +16,7 @@ import { FamilyStatus } from '../families/FamilyStatus';
 import { use, Field, FieldType, Fields } from '../translate';
 import { DistributionCenters } from '../manage/distribution-centers';
 
-import { InputTypes } from 'remult/inputTypes';
+
 import { EntityFilter } from 'remult';
 import { UITools } from './init-context';
 import { recordChanges } from '../change-log/change-log';
@@ -744,7 +744,7 @@ export class Helpers extends HelpersBase {
     preferredFinishAddressCity: string;
 
     @Field<Helpers>({
-        inputType: InputTypes.password,
+        inputType: "password",
         serverExpression: (self) => self.realStoredPassword ? Helpers.emptyPassword : ''
     })
     password: string;

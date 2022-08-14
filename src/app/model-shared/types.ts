@@ -7,7 +7,7 @@ import { EmailSvc, isDesktop } from '../shared/utils';
 import { isDate } from 'util';
 import { DataControl } from '@remult/angular/interfaces';
 import { filterHelper } from 'remult/src/filter/filter-interfaces';
-import { InputTypes } from 'remult/inputTypes';
+
 import { SqlBuilder } from './SqlBuilder';
 
 
@@ -28,7 +28,7 @@ import { SqlBuilder } from './SqlBuilder';
   click: (x, col) => window.open('mailto:' + col.displayValue),
   allowClick: (x, col) => !!col.displayValue,
   clickIcon: 'email',
-  inputType: InputTypes.email,
+  inputType: "email",
   width: '250',
 })
 export class Email {

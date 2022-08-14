@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
 import { Remult } from 'remult';
-import { InputTypes } from 'remult/inputTypes';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../print-stickers/VolunteerReportDefs';

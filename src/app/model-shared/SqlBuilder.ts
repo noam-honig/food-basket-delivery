@@ -1,5 +1,5 @@
 import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, Remult, EntityFilter } from 'remult';
-import { CustomSqlFilterBuilder, CustomSqlFilterObject } from 'remult/src/filter/filter-consumer-bridge-to-sql-request';
+
 import { FilterConsumer } from 'remult/src/filter/filter-interfaces';
 
 import { InitContext } from '../helpers/init-context';

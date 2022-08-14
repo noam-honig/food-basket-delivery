@@ -14,7 +14,6 @@ import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/phone";
 import { use, Field } from '../../translate';
-import { InputTypes } from 'remult/inputTypes';
 import { NotAuthenticatedGuard } from '@remult/angular';
 import { loginResult } from '../../auth/auth-service.controller';
 
@@ -30,17 +29,17 @@ export class LoginComponent implements OnInit, AfterViewInit {
   phone: Phone;
   @Field({
     translation: l => l.password,
-    inputType: InputTypes.password
+    inputType: "password"
   })
   password: string;
   @Field({
     translation: l => l.password,
-    inputType: InputTypes.password
+    inputType: "password"
   })
   newPassword: string;
   @Field({
     translation: l => l.confirmPassword,
-    inputType: InputTypes.password
+    inputType: "password"
   })
   confirmPassword: string;
   @Field({

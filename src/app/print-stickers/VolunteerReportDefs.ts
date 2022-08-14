@@ -1,6 +1,5 @@
 import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, Remult } from 'remult';
 import { ClassType } from 'remult/classType';
-import { InputTypes } from 'remult/inputTypes';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
@@ -205,18 +204,18 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     caption: this.remult.lang.fieldProperties,
     props: [
       new SizeProperty("font-size", this.remult.lang.fontSize, "px"),
-      new Property("bold", this.remult.lang.bold, InputTypes.checkbox, (v, s) => {
+      new Property("bold", this.remult.lang.bold, "checkbox", (v, s) => {
         if (v)
           s["font-weight"] = "bold";
       }),
-      new Property("align-center", this.remult.lang.centerAlign, InputTypes.checkbox, (v, s) => {
+      new Property("align-center", this.remult.lang.centerAlign, "checkbox", (v, s) => {
         if (v)
           s["text-align"] = "center";
       }),
       new Property('color', this.remult.lang.color, 'color'),
       new Property(this.textBeforeKey, this.remult.lang.textBefore, '', () => { }),
       new Property(this.textAfterKey, this.remult.lang.textAfter, '', () => { }),
-      new Property("inline", this.remult.lang.sameLine, InputTypes.checkbox, (v, s) => {
+      new Property("inline", this.remult.lang.sameLine, "checkbox", (v, s) => {
         if (v)
           s["display"] = "inline";
       })
@@ -251,7 +250,7 @@ export class Property {
 }
 export class SizeProperty extends Property {
   constructor(public key: string, public caption: string, uom = 'mm') {
-    super(key, caption, InputTypes.number, (val, style) => style[key] = val + uom);
+    super(key, caption, "number", (val, style) => style[key] = val + uom);
   }
 }
 

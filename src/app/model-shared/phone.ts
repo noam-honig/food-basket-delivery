@@ -1,6 +1,5 @@
 import { DataControl } from "@remult/angular/interfaces";
 import { Remult, FieldRef } from "remult";
-import { InputTypes } from "remult/inputTypes";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FieldType, translationConfig } from "../translate";
@@ -10,13 +9,13 @@ import { FieldType, translationConfig } from "../translate";
     toJson: x => x ? x.thePhone : '',
     fromJson: x => x ? new Phone(x) : null
   },
-  inputType: InputTypes.tel
+  inputType: "tel"
 }, (options, remult) => options.displayValue = (e, x) => x && getSettings(remult).forWho?.formatPhone(x.thePhone))
 @DataControl<any, Phone>({
   click: (e, x) => window.open('tel:' + x.displayValue),
   allowClick: (e, x) => !!x.displayValue,
   clickIcon: 'phone',
-  inputType: InputTypes.tel,
+  inputType: "tel",
 })
 export class Phone {
 

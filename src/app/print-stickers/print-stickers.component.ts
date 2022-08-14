@@ -5,9 +5,10 @@ import { Roles } from '../auth/roles';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from './VolunteerReportDefs';
 import { Entity, Field } from '../translate';
 import { VolunteerReportDefs } from './VolunteerReportDefs';
-import { assign } from 'remult/assign';
-import { InputTypes } from 'remult/inputTypes';
+
+
 import { DialogService } from '../select-popup/dialog';
+import { assign } from '../shared/utils';
 
 
 
@@ -42,7 +43,7 @@ export class PrintStickersComponent implements OnInit {
       })),
       new SizeProperty('width', this.remult.lang.width),
       ...getMarginsH(), ...getMarginsV(),
-      new Property(this.borderKey, this.remult.lang.border, InputTypes.checkbox, (val, s) => {
+      new Property(this.borderKey, this.remult.lang.border, "checkbox", (val, s) => {
 
       })
     ],

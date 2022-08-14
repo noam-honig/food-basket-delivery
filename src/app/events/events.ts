@@ -15,7 +15,6 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { AddressHelper, Location } from "../shared/googleApiHelpers";
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { InputTypes } from "remult/inputTypes";
 
 import * as moment from "moment";
 
@@ -226,10 +225,10 @@ export class Event extends IdEntity {
         }
     })
     eventDate: Date = new Date();
-    @Field({ inputType: InputTypes.time, translation: l => l.eventTime })
+    @Field({ inputType: "time", translation: l => l.eventTime })
     @DataControl({ width: '110' })
     startTime: string;
-    @Field({ inputType: InputTypes.time, translation: l => l.eventEndTime })
+    @Field({ inputType: "time", translation: l => l.eventEndTime })
     @DataControl({ width: '110' })
     endTime: string;
     @Fields.integer({ translation: l => l.requiredVolunteers })

@@ -68,3 +68,9 @@ export class EmailSvc {
   static sendMail: (subject: string, message: string, email: string, remult: Remult) => Promise<boolean>;
 
 }
+
+export function assign<T>(item: T, valuesToSet: Partial<T>): T {
+  if (valuesToSet)
+    Object.assign(item, valuesToSet);
+  return item;
+}
