@@ -24,7 +24,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { volunteersInEvent, Event } from '../events/events';
-import { allEntities } from 'remult/src/context';
+
 
 
 
@@ -151,11 +151,11 @@ async function buildDocs() {
     
     var s = "## Data Model\n Here's a detailed list of all the entities used in the rest api";
     let list: any[] = [Families, FamilyDeliveries, Helpers, Event, volunteersInEvent, ApplicationSettings];
-    for (const iterator of allEntities) {
-        if (!list.includes(iterator) && iterator)
-            list.push(iterator);
+    // for (const iterator of allEntities) {
+    //     if (!list.includes(iterator) && iterator)
+    //         list.push(iterator);
 
-    }
+    // }
 
 
     for (const type of list) {

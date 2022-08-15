@@ -1,4 +1,4 @@
-import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, Remult, EntityFilter } from 'remult';
+import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, Remult, EntityFilter, CustomSqlFilterObject, CustomSqlFilterBuilder } from 'remult';
 
 import { FilterConsumer } from 'remult/src/filter/filter-interfaces';
 

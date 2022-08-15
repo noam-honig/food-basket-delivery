@@ -67,7 +67,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
 
     }
 )
-export abstract class HelpersBase extends IdEntity {
+export class HelpersBase extends IdEntity {
 
     getHelper(): Promise<Helpers> {
         return this.remult.repo(Helpers).findId(this.id);

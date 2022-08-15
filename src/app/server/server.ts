@@ -2,7 +2,6 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import { ApplicationImages } from "../manage/ApplicationImages";
 import * as express from 'express';
-import { registerEntitiesOnServer, registerActionsOnServer } from 'remult/server';
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
@@ -21,8 +20,7 @@ import { Helpers, HelpersBase } from "../helpers/helpers";
 import { Phone } from "../model-shared/phone";
 import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
-import { remultExpress } from "remult/server/expressBridge";
-import { DataApi } from "remult/src/data-api";
+
 import { OverviewController } from "../overview/overview.controller";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { HelpersAndStats } from "../delivery-follow-up/HelpersAndStats";
@@ -82,8 +80,9 @@ import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Roles } from "../auth/roles";
 import { ChangeLog, FieldDecider } from "../change-log/change-log";
 import { CallerController } from "../caller/caller.controller";
-import { allEntities } from "remult/src/context";
-import { postgresColumnSyntax } from 'remult/postgres/postgresColumnSyntax';
+
+import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
+import { remultExpress } from "remult/remult-express";
 
 const entities = [
     HelpersAndStats,
@@ -110,7 +109,8 @@ const entities = [
     GeocodeCache,
     SitesEntity,
     Families,
-    FamilyDeliveries
+    FamilyDeliveries,
+    ActiveFamilyDeliveries
 ];
 const controllers = [
     CallerController,
@@ -152,10 +152,11 @@ const controllers = [
     DialogController,
     ServerEventAuthorizeAction,
     ShipmentAssignScreenController,
-    PrintVolunteersController
+    PrintVolunteersController,
+    OverviewController
 ];
 
-DataApi.defaultGetLimit = 500;
+
 let publicRoot = 'hagai';
 if (!fs.existsSync(publicRoot + '/index.html'))
     publicRoot = 'dist/' + publicRoot;
@@ -180,6 +181,11 @@ serverInit().then(async (dataSource) => {
     }
 
     async function sendIndex(res: express.Response, req: express.Request) {
+        if (req.headers.accept?.includes("json")) {
+            res.status(404).json("missing route: " + req.originalUrl);
+            return;
+        }
+
         try {
             let remult = await eb.getRemult(req);
 
@@ -313,7 +319,7 @@ s.parentNode.insertBefore(b, s);})();
 
 
     if (!process.env.DISABLE_SERVER_EVENTS) {
-        let serverEvents = new ServerEvents(app, () => eb);
+        let serverEvents = new ServerEvents(app, (req) => eb.getRemult(req));
 
 
         let lastMessage = new Date();
@@ -330,6 +336,8 @@ s.parentNode.insertBefore(b, s);})();
     let eb = remultExpress(
 
         {
+            entities,
+            controllers,
             logApiEndPoints: process.env.logUrls == "true",
             initRequest: async (remult, req) => {
                 let url = '';
@@ -355,8 +363,10 @@ s.parentNode.insertBefore(b, s);})();
                 remult.setDataProvider(dataSource(remult));
                 await InitContext(remult, undefined);
                 const path = './db-structure/';
-                for (const entity of allEntities) {
-                    let meta = remult.repo(entity).metadata;
+                for (const entity of entities) {
+                    let meta = remult.repo(entity as {
+                        new(...args: any[]): any;
+                    }).metadata;
                     const db = await meta.getDbName();
                     if (!db.includes('select ')) {
                         let s = 'create table ' + db;
@@ -382,11 +392,11 @@ s.parentNode.insertBefore(b, s);})();
                         theHelperIAmEscortingId: ""
                     });
                 }
-               // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
+                // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
 
 
             },
-            disableAutoApi: Sites.multipleSites,
+            rootPath: '/*/api',
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
 
@@ -394,27 +404,11 @@ s.parentNode.insertBefore(b, s);})();
 
     if (Sites.multipleSites) {
 
-        let area = eb.addArea('/*/api');
-        registerActionsOnServer(area);
-        registerEntitiesOnServer(area);
+
         registerImageUrls(app, (req) => eb.getRemult(req), '/*');
 
 
-        OverviewController.createSchemaApi = async schema => {
-            let stack: [] = app._router.stack;
-            stack.splice(stack.length - 1, 1);
 
-
-            app.use('/*', async (req, res) => {
-                await sendIndex(res, req);
-            });
-
-        };
-        {
-            let area = eb.addArea('/' + Sites.guestSchema + '/api');
-            registerActionsOnServer(area);
-            registerEntitiesOnServer(area);
-        }
     }
     else {
         registerImageUrls(app, eb.getRemult, '');
@@ -461,7 +455,10 @@ s.parentNode.insertBefore(b, s);})();
                         remult.setUser({
                             id: com.volunteer.id,
                             name: com.volunteer.name,
-                            roles: []
+                            roles: [],
+                            distributionCenter: undefined,
+                            escortedHelperName: undefined,
+                            theHelperIAmEscortingId: undefined
                         });
                         if (com.message == "כן" || com.message == "לא") {
 
