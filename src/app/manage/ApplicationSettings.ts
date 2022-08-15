@@ -31,6 +31,7 @@ import { ValueListFieldType } from 'remult/src/remult3';
 import { GroupsValue } from './groups';
 import { recordChanges } from '../change-log/change-log';
 import { ManageController } from './manage.controller';
+import { VolunteerNeedType } from './VolunteerNeedType';
 
 
 
@@ -158,7 +159,7 @@ export class ApplicationSettings extends EntityBase {
     return r;
   }
   showVideo() {
-    return this.lang.languageCode == 'iw' && !this.isSytemForMlt;
+    return this.lang.languageCode == 'iw' && !this.isSytemForMlt && !this.hideVolunteerVideo;
   }
 
   @Fields.integer()
@@ -257,18 +258,27 @@ export class ApplicationSettings extends EntityBase {
   @Field()
   OtherProblemStatusText: string;
 
-  @Field({ translation: l => l.freeText1ForVolunteer })
+  @Field({ translation: l => l.descriptionInOrganizationList, customInput: x => x.textArea() })
+  descriptionInOrganizationList: string;
+  @Field({ translation: l => l.phoneInOrganizationList })
+  phoneInOrganizationList: Phone;
+  @Field({ caption: "צריכים מתנדבים" })
+  volunteerNeedStatus: VolunteerNeedType = VolunteerNeedType.none;
+
+  @Field({ translation: l => l.freeText1ForVolunteer, customInput: x => x.textArea() })
   message1Text: string;
   @Field({ translation: l => l.urlFreeText1 })
   message1Link: string;
   @Field({ translation: l => l.showText1OnlyWhenDone })
   message1OnlyWhenDone: boolean;
-  @Field({ translation: l => l.freeText2ForVolunteer })
+  @Field({ translation: l => l.freeText2ForVolunteer, customInput: x => x.textArea() })
   message2Text: string;
   @Field({ translation: l => l.urlFreeText2 })
   message2Link: string;
   @Field({ translation: l => l.showText2OnlyWhenDone })
   message2OnlyWhenDone: boolean;
+  @Field({ translation: l => l.hideVolunteerVideo })
+  hideVolunteerVideo: boolean;
   @Field()
   forWho: TranslationOptions = TranslationOptions.Families;
   get lang() { return langByCode(this.forWho.args.languageFile); }
@@ -278,6 +288,10 @@ export class ApplicationSettings extends EntityBase {
   usingSelfPickupModule: boolean;
   @Field()
   usingCallModule: boolean;
+  @Field({ caption: "הנחיה בראש המסך", customInput: x => x.textArea() })
+  callModuleMessageText: string;
+  @Field({ caption: "כתובת אינטרנט להנחיה בראש המסך" })
+  callModuleMessageLink: string;
   @Field({ includeInApi: Roles.familyAdmin })
   defaultDeliveryStatusIsEnquireDetails: boolean;
   getDefaultStatus(): DeliveryStatus {
@@ -627,8 +641,10 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     organisationName,
     hideFamilyPhoneFromVolunteer,
     allowVolunteerToSeePreviousActivities,
-    usingCallModule
-
+    usingCallModule,
+    phoneInOrganizationList,
+    descriptionInOrganizationList,
+    volunteerNeedStatus
 
 
   } = settings;
@@ -666,7 +682,11 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     logoUrl,
     organisationName,
     hideFamilyPhoneFromVolunteer,
-    allowVolunteerToSeePreviousActivities
+    allowVolunteerToSeePreviousActivities,
+    descriptionInOrganizationList,
+    volunteerNeedStatus,
+    phoneInOrganizationList: phoneInOrganizationList?.thePhone,
+    phoneInOrganizationListDisplay: phoneInOrganizationList?.displayValue
   });
 }
 export function getSettings(remult: Remult): SmallSettings {
@@ -699,6 +719,11 @@ export class SmallSettings {
   logoUrl: string = '';
   organisationName: string = '';
   hideFamilyPhoneFromVolunteer: boolean = false;
+  volunteerNeedStatus: VolunteerNeedType = VolunteerNeedType.none;
+  descriptionInOrganizationList: string = '';
+  phoneInOrganizationList: string = '';
+  phoneInOrganizationListDisplay: string = '';
+
 }
 export class SmallAdressHelper {
   ok: boolean = false;
@@ -728,3 +753,4 @@ export function validateSmsContent(entity: any, c: FieldRef<string, any>) {
   if (c.value && c.value.indexOf("!אתר!") < 0 && c.value.indexOf("!URL!") < 0)
     c.error = this.lang.mustIncludeUrlKeyError;
 }
+

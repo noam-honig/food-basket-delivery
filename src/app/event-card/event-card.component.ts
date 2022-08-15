@@ -51,6 +51,9 @@ export class EventCardComponent implements OnInit {
       visible: e => !!e.specificUrl
     }
   ];
+  isGeneralEvent(e: EventInList) {
+    return e.eventDateJson.startsWith("999");
+  }
   getStatus(e: EventInList) {
     if (e instanceof Event)
       if (e.eventStatus != eventStatus.active)

@@ -5,27 +5,31 @@
             <h3 class="no-print">{{settings.lang.hello}} {{user.name}}</h3>
             <H4 *ngIf="user.escortedHelperName">{{settings.lang.escoring}} {{user.escortedHelperName}}</H4>
         </div>
-
-        <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit()" color="primary">
-            <mat-icon>refresh</mat-icon>
-        </button>
+        <div>
+            <button mat-mini-fab style="margin-bottom:5px" (click)="editSettings()" *ngIf="isAdmin()" color="primary">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-mini-fab style="margin-bottom:5px" (click)="ngOnInit()" color="primary">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
     </div>
     <div>
         <a href="https://youtu.be/PHwTzaQN87g" target="_blank" class="no-print"
             *ngIf="settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
         <ng-container
             *ngIf="settings.message1Text&&( !settings.message1OnlyWhenDone || familyLists.toDeliver.length==0)">
-            <a href="{{settings.message1Link}}" target="_blank" class="no-print" *ngIf="settings.message1Link"
-                style="display: block">{{settings.message1Text}}</a>
-            <div *ngIf="!settings.message1Link">
+            <a style="white-space: pre-line;" href="{{settings.message1Link}}" target="_blank" class="no-print"
+                *ngIf="settings.message1Link" style="display: block">{{settings.message1Text}}</a>
+            <div style="white-space: pre-line;" *ngIf="!settings.message1Link">
                 {{settings.message1Text}}
             </div>
         </ng-container>
         <ng-container
             *ngIf="settings.message2Text&&(!settings.message2OnlyWhenDone || familyLists.toDeliver.length==0)">
-            <a href="{{settings.message2Link}}" target="_blank" class="no-print" *ngIf="settings.message2Link"
-                style="display: block">{{settings.message2Text}}</a>
-            <div *ngIf="!settings.message2Link">
+            <a style="white-space: pre-line;" href="{{settings.message2Link}}" target="_blank" class="no-print"
+                *ngIf="settings.message2Link" style="display: block">{{settings.message2Text}}</a>
+            <div style="white-space: pre-line;" *ngIf="!settings.message2Link">
                 {{settings.message2Text}}
             </div>
         </ng-container>
@@ -41,8 +45,9 @@
 
             </div>
             <div>
-                <button mat-flat-button color="primary" class="small-button"><svg width="16" height="16" (click)="addressHelper().openWaze()"
-                        viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <button mat-flat-button color="primary" class="small-button"><svg width="16" height="16"
+                        (click)="addressHelper().openWaze()" viewBox="0 0 16 16" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M15.6928 6.30219C16.1465 8.98531 14.7259 11.5497 12.1562 12.8062C12.5625 13.8719 11.7687 15 10.6462 15C10.2326 14.9997 9.83488 14.8407 9.53504 14.5558C9.2352 14.2709 9.05609 13.8818 9.03464 13.4688C8.83339 13.4747 7.02839 13.4688 6.64933 13.4487C6.64076 13.6608 6.59049 13.8691 6.50137 14.0618C6.41226 14.2544 6.28605 14.4276 6.12997 14.5714C5.97389 14.7152 5.791 14.8269 5.59174 14.9C5.39248 14.9731 5.18077 15.0063 4.9687 14.9975C3.91058 14.955 3.15777 13.9088 3.49995 12.875C2.33714 12.4653 1.23308 11.7853 0.386828 10.6625C-0.019422 10.1225 0.371828 9.35625 1.03808 9.35625C2.48527 9.35625 2.04495 7.66344 2.38652 5.91062C2.96245 2.975 6.03495 1 9.00277 1C12.2053 1 15.1637 3.20844 15.6928 6.30219ZM11.6721 12.1337C12.9846 11.5344 14.2137 10.3616 14.6812 8.94188C15.9462 5.09531 12.6765 1.81687 9.00277 1.81687C6.39495 1.81687 3.68027 3.54875 3.18808 6.06687C2.89027 7.59531 3.34433 10.1716 1.03964 10.1716C1.81902 11.2062 2.86245 11.8159 3.9687 12.1731C4.73933 11.4919 5.96464 11.6897 6.46339 12.6213C6.90777 12.6525 8.93808 12.6581 9.21027 12.6469C9.32017 12.4322 9.47676 12.2448 9.66854 12.0986C9.86031 11.9523 10.0824 11.8509 10.3185 11.8017C10.5546 11.7524 10.7988 11.7567 11.033 11.8142C11.2672 11.8717 11.4856 11.9809 11.6721 12.1337ZM6.40995 5.84781C6.40995 4.76219 7.9987 4.76188 7.9987 5.84781C7.9987 6.93375 6.40995 6.93344 6.40995 5.84781ZM10.0528 5.84781C10.0528 4.76219 11.6421 4.76188 11.6421 5.84781C11.6421 6.93375 10.0528 6.93375 10.0528 5.84781ZM6.2212 8.05688C6.1137 7.5275 6.91433 7.36375 7.02183 7.89406L7.0237 7.90281C7.15308 8.57219 7.95652 9.27781 9.02745 9.24875C10.1425 9.21937 10.879 8.55469 11.0309 7.91219C11.1703 7.41062 11.9246 7.58844 11.8268 8.09969C11.6634 8.79281 10.8515 10.0372 8.9687 10.0653C7.63902 10.0653 6.4412 9.19531 6.22183 8.0575L6.2212 8.05688Z"
                             fill="white" />

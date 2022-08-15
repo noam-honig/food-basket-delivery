@@ -61,6 +61,7 @@ import { FamilySelfOrderComponent } from './family-self-order/family-self-order.
 import { getSettings } from '../app/manage/ApplicationSettings';
 import { CallerComponent } from './caller/caller.component';
 import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component';
+import { ManageCallersComponent } from './manage-callers/manage-callers.component';
 
 
 @Injectable()
@@ -149,6 +150,7 @@ export const routes: Routes = [
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
   MyFamiliesComponent.route,
   { path: 'caller', component: CallerComponent, canActivate: [CallModuleGuard], data: { name: "טלפונים לבירור פרטים" } },
+  { path: 'manage-callers', component: ManageCallersComponent, canActivate: [CallModuleGuard, AdminGuard], data: { name: "ניהול טלפנים", hide: true } },
   { path: 'events', component: OrgEventsComponent },
   { path: 'events/:id', component: OrgEventsComponent },
   UpdateInfoComponent.route,

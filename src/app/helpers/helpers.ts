@@ -481,7 +481,7 @@ export class Helpers extends HelpersBase {
             r.push({
                 field: self.caller, width: '160'
             });
-            r.push(self.includeGroups, self.excludeGroups);
+            r.push(self.callQuota, self.includeGroups, self.excludeGroups);
         }
         let hadCenter = false;
         if (remult.isAllowed(Roles.lab) && settings.isSytemForMlt) {
@@ -832,6 +832,9 @@ export class Helpers extends HelpersBase {
     @Field({ translation: l => l.excludeGroups })
     @DataControl<Helpers>({ visible: self => self.caller })
     excludeGroups: GroupsValue;
+    @Fields.integer({ translation: l => l.callQuota })
+    @DataControl<Helpers>({ visible: self => self.caller,width:'70' })
+    callQuota: number;
 
     static deliveredPreviously = Filter.createCustom<Helpers,
         { city: string }>(((remult, { city }) => {
@@ -942,7 +945,6 @@ export class Helpers extends HelpersBase {
 
 
 }
-
 
 
 

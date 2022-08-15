@@ -11,8 +11,8 @@
         <img class="event-image" [src]="e.eventLogo">
     </div>
     <strong>{{e.orgName}}</strong>
-    <span>{{e.city}}, {{e.type.caption}}</span>
-    <span>{{displayDate()}}<span *ngIf="e.startTime">,
+    <span>{{e.city}}<span *ngIf="!isGeneralEvent()">, {{e.type.caption}}</span></span>
+    <span *ngIf="!isGeneralEvent()">{{displayDate()}}<span *ngIf="e.startTime">,
             {{e.startTime}}</span><span *ngIf="e.endTime"> -
             {{e.endTime}}</span>
     </span>
@@ -65,7 +65,7 @@
 justify-content: space-between;">
     <div>
         <button mat-raised-button color="primary"
-            *ngIf="!e.registeredToEvent && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)"
+            *ngIf="!e.registeredToEvent && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)&&!isGeneralEvent()"
             (click)="reg.registerToEvent(e,dialog)">{{settings.lang.illBeThere}}
         </button>
         <span mat-raised-button color="primary"

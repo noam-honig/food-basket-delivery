@@ -23,6 +23,9 @@
 
 
             <data-area [settings]="settingsArea"></data-area>
+            <button mat-raised-button *ngIf="hasGeneralListing()" (click)="showGeneralListing()">
+                {{settings.lang.show}}
+            </button>
             <mat-card>
                 <mat-card-title>
                     {{settings.lang.defaultHelpPhone}}

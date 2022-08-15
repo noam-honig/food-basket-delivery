@@ -83,6 +83,8 @@ import { CallerController } from "../caller/caller.controller";
 
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
 import { remultExpress } from "remult/remult-express";
+import { Callers } from "../manage-callers/callers";
+
 
 const entities = [
     HelpersAndStats,
@@ -110,7 +112,8 @@ const entities = [
     SitesEntity,
     Families,
     FamilyDeliveries,
-    ActiveFamilyDeliveries
+    ActiveFamilyDeliveries,
+    Callers
 ];
 const controllers = [
     CallerController,
