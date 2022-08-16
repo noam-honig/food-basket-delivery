@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, NgZone, OnChanges, Simp
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -28,9 +28,9 @@ import { FamilyInfoController } from './family-info.controller';
   templateUrl: './family-info.component.html',
   styleUrls: ['./family-info.component.scss']
 })
-export class FamilyInfoComponent implements OnInit,OnChanges {
-
-  constructor(private dialog: DialogService, public remult: Remult, public settings: ApplicationSettings, private zone: NgZone) {
+export class FamilyInfoComponent implements OnInit, OnChanges {
+  remult = remult;
+  constructor(private dialog: DialogService, public settings: ApplicationSettings, private zone: NgZone) {
 
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -47,7 +47,7 @@ export class FamilyInfoComponent implements OnInit,OnChanges {
   hasImages = false;
   images: ImageInfo[];
   phones: { phone: Phone, desc: string }[];
-  
+
   async ngOnInit() {
     this.initPhones();
     if (this.f) {
@@ -90,7 +90,7 @@ export class FamilyInfoComponent implements OnInit,OnChanges {
     });
   }
   courierCommentsDateRelativeDate() {
-    return relativeDateName(this.remult, { d: this.f.courierCommentsDate })
+    return relativeDateName(remult, { d: this.f.courierCommentsDate })
   }
 
 
@@ -126,10 +126,10 @@ export class FamilyInfoComponent implements OnInit,OnChanges {
   }
 
   async labSelfReception(d: ActiveFamilyDeliveries) {
-    if (await this.dialog.YesNoPromise(getLang(this.remult).shouldArchiveDelivery)) {
+    if (await this.dialog.YesNoPromise(getLang(remult).shouldArchiveDelivery)) {
       {
         d.archive = true;
-        d.distributionCenter = await this.remult.state.getUserDistributionCenter();
+        d.distributionCenter = await remult.context.getUserDistributionCenter();
         d.deliverStatus = DeliveryStatus.Success;
         await d.save();
       }
@@ -153,7 +153,7 @@ export class FamilyInfoComponent implements OnInit,OnChanges {
     col?.call();
   }
   async sendWhatsapp(phone: Phone) {
-    phone.sendWhatsapp(this.remult, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
+    phone.sendWhatsapp(remult, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
   }
 
 

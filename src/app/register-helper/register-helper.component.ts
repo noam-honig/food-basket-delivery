@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
@@ -17,12 +17,12 @@ declare var fbq;
   styleUrls: ['./register-helper.component.scss']
 })
 export class RegisterHelperComponent implements OnInit {
-  constructor(private dialog: DialogService, private remult: Remult, private settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private settings: ApplicationSettings) { }
 
   refer: string = null;
   isDone = false;
 
-  helper = this.remult.repo(Helpers).create();
+  helper = remult.repo(Helpers).create();
 
   area = new DataAreaSettings({
     fields: () => [

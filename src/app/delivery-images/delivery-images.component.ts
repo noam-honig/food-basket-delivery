@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Remult, IdEntity } from 'remult';
+import { Remult, IdEntity, remult } from 'remult';
 import { FamilyImage } from '../families/DeiveryImages';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ImageInfo } from '../images/images.component';
@@ -13,14 +13,14 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 })
 export class DeliveryImagesComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private remult: Remult) { }
+  constructor(public settings: ApplicationSettings) { }
   args: FamilyDeliveries
 
   images: myImageInfo[];
 
   async ngOnInit() {
     this.images = await this.args.loadVolunteerImages();
-    let familyImages = await this.remult.repo(FamilyImage).find({
+    let familyImages = await remult.repo(FamilyImage).find({
       where: {
         familyId: this.args.family,
         imageInDeliveryId: this.images.map(x => x.entity.id)
@@ -37,7 +37,7 @@ export class DeliveryImagesComponent implements OnInit {
       i.imageInFamily = undefined;
     }
     else {
-      i.imageInFamily = await this.remult.repo(FamilyImage).create({
+      i.imageInFamily = await remult.repo(FamilyImage).create({
         familyId: this.args.family,
         imageInDeliveryId: i.entity.id,
         image: i.image

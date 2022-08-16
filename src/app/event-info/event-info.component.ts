@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output } from '@angular/core';
 import { BusyService } from '@remult/angular';
 import { EventEmitter } from 'events';
 
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import {  Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
@@ -22,7 +22,7 @@ import { RegisterToEvent } from './RegisterToEvent';
 })
 export class EventInfoComponent implements OnInit {
 
-  constructor(public settings: ApplicationSettings, private remult: Remult, public dialog: DialogService, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, public dialog: DialogService, private busy: BusyService) { }
   @Output() phoneChanged = new EventEmitter();
   @Input()
   e: EventInList;
@@ -37,11 +37,11 @@ export class EventInfoComponent implements OnInit {
     return this.e.eventDateJson.startsWith("999");
   }
   openGoogleMap() {
-    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(this.remult).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(remult).languageCode, '_blank');
   }
-  reg = new RegisterToEvent(this.remult);
+  reg = new RegisterToEvent(remult);
   isAdmin() {
-    return this.remult.isAllowed(Roles.admin);
+    return remult.isAllowed(Roles.admin);
   }
 
   ngOnInit(): void {
@@ -53,6 +53,6 @@ export class EventInfoComponent implements OnInit {
 
 
   sendWhatsapp(phone: string) {
-    Phone.sendWhatsappToPhone(phone, '', this.remult);
+    Phone.sendWhatsappToPhone(phone, '', remult);
   }
 }

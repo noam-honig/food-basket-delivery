@@ -10,7 +10,7 @@ import { PrintVolunteersController, volunteer } from './print-volunteers.control
 })
 export class PrintVolunteersComponent implements OnInit {
 
-  constructor(private remult: Remult, private busy: BusyService) { }
+  constructor(private busy: BusyService) { }
   volunteers: volunteer[] = [];
   total: number = 0;
   ngOnInit() {

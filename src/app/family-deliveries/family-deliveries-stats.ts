@@ -15,10 +15,9 @@ import { Field } from '../translate';
 
 
 export class FamilyDeliveryStats {
-    constructor(private remult: Remult) { }
-    enquireDetails = new FamilyDeliveresStatistics(getLang(this.remult).enquireDetails, { deliverStatus: DeliveryStatus.enquireDetails }, colors.orange);
-    waitForAdmin = new FamilyDeliveresStatistics(getLang(this.remult).waitingForAdmin, { deliverStatus: DeliveryStatus.waitingForAdmin }, colors.orange);
-    ready = new FamilyDeliveresStatistics(getLang(this.remult).unAsigned,
+    enquireDetails = new FamilyDeliveresStatistics(getLang(remult).enquireDetails, { deliverStatus: DeliveryStatus.enquireDetails }, colors.orange);
+    waitForAdmin = new FamilyDeliveresStatistics(getLang(remult).waitingForAdmin, { deliverStatus: DeliveryStatus.waitingForAdmin }, colors.orange);
+    ready = new FamilyDeliveresStatistics(getLang(remult).unAsigned,
         {
             special: { "!=": YesNo.Yes },
             $and: [
@@ -26,19 +25,19 @@ export class FamilyDeliveryStats {
             ]
         }
         , colors.yellow);
-    selfPickup = new FamilyDeliveresStatistics(getLang(this.remult).selfPickup, { deliverStatus: DeliveryStatus.SelfPickup }, colors.orange);
-    special = new FamilyDeliveresStatistics(getLang(this.remult).specialUnasigned,
+    selfPickup = new FamilyDeliveresStatistics(getLang(remult).selfPickup, { deliverStatus: DeliveryStatus.SelfPickup }, colors.orange);
+    special = new FamilyDeliveresStatistics(getLang(remult).specialUnasigned,
         {
             special: YesNo.Yes,
             $and: [FamilyDeliveries.readyFilter()]
         }
         , colors.orange);
 
-    onTheWay = new FamilyDeliveresStatistics(getLang(this.remult).onTheWay, FamilyDeliveries.onTheWayFilter(), colors.blue);
-    delivered = new FamilyDeliveresStatistics(getLang(this.remult).delveriesSuccesfull, { deliverStatus: DeliveryStatus.isSuccess() }, colors.green);
-    problem = new FamilyDeliveresStatistics(getLang(this.remult).problems, { deliverStatus: DeliveryStatus.isProblem() }, colors.red);
-    frozen = new FamilyDeliveresStatistics(getLang(this.remult).frozens, { deliverStatus: DeliveryStatus.Frozen }, colors.gray);
-    needWork = new FamilyDeliveresStatistics(getLang(this.remult).requireFollowUp, { needsWork: true }, colors.yellow);
+    onTheWay = new FamilyDeliveresStatistics(getLang(remult).onTheWay, FamilyDeliveries.onTheWayFilter(), colors.blue);
+    delivered = new FamilyDeliveresStatistics(getLang(remult).delveriesSuccesfull, { deliverStatus: DeliveryStatus.isSuccess() }, colors.green);
+    problem = new FamilyDeliveresStatistics(getLang(remult).problems, { deliverStatus: DeliveryStatus.isProblem() }, colors.red);
+    frozen = new FamilyDeliveresStatistics(getLang(remult).frozens, { deliverStatus: DeliveryStatus.Frozen }, colors.gray);
+    needWork = new FamilyDeliveresStatistics(getLang(remult).requireFollowUp, { needsWork: true }, colors.yellow);
 
 
     async getData(distCenter: DistributionCenters) {
@@ -50,7 +49,7 @@ export class FamilyDeliveryStats {
             }
         }
         await Promise.all(r.baskets.map(async b => {
-            b.basket = await this.remult.repo(BasketType).findId(b.id);
+            b.basket = await remult.repo(BasketType).findId(b.id);
         }))
         return r;
     }
@@ -71,7 +70,7 @@ export class FamilyDeliveryStats {
                 selfPickup: number,
             }[], cities: []
         };
-        let stats = new FamilyDeliveryStats(remult);
+        let stats = new FamilyDeliveryStats();
         let pendingStats = [];
         for (let s in stats) {
             let x = stats[s];
@@ -94,7 +93,7 @@ export class FamilyDeliveryStats {
 
             ],
             from: f,
-            where: () => [f.where({ distributionCenter: remult.state.filterDistCenter(distCenter) })]
+            where: () => [f.where({ distributionCenter: remult.context.filterDistCenter(distCenter) })]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -133,7 +132,7 @@ export class FamilyDeliveryStats {
             pendingStats.push(
                 remult.repo(CitiesStatsPerDistCenter).find({
                     orderBy: { families: "desc" },
-                    where: { distributionCenter: remult.state.filterDistCenter(distCenter) }
+                    where: { distributionCenter: remult.context.filterDistCenter(distCenter) }
 
                 }).then(cities => {
                     result.cities = cities.map(x => {
@@ -162,7 +161,7 @@ export class FamilyDeliveresStatistics {
     async saveTo(distCenter: DistributionCenters, data: any, remult: Remult) {
         try {
 
-            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.state.filterDistCenter(distCenter), $and: [this.rule] }).then(c => this.value = c);
+            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.context.filterDistCenter(distCenter), $and: [this.rule] }).then(c => this.value = c);
         }
         catch (err) {
             console.error(this.name, err);
@@ -189,7 +188,7 @@ export interface groupStats {
             where: () => [
                 f.where({
                     deliverStatus: DeliveryStatus.ReadyForDelivery,
-                    distributionCenter: remult.state.filterCenterAllowedForUser()
+                    distributionCenter: remult.context.filterCenterAllowedForUser()
                 }),
                 sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', f.city, ') as result')
@@ -212,7 +211,7 @@ export class CitiesStats {
             from: f,
             where: () => [f.where({
                 deliverStatus: DeliveryStatus.ReadyForDelivery,
-                distributionCenter: remult.state.filterCenterAllowedForUser()
+                distributionCenter: remult.context.filterCenterAllowedForUser()
             }),
             sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')

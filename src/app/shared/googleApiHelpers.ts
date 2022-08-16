@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Remult, FieldRef, EntityBase, Controller, Fields, BackendMethod, ControllerBase } from 'remult';
+import { UrlBuilder, Entity, Remult, FieldRef, EntityBase, Controller, Fields, BackendMethod, ControllerBase, remult } from 'remult';
 import { Field } from '../translate';
 
 
@@ -384,7 +384,7 @@ export class AddressHelper {
         return toLongLat(this.location);
     }
 
-    constructor(private remult: Remult, private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>, private cityColumn: () => FieldRef<any, string> = undefined) {
+    constructor(private addressColumn: () => FieldRef<any, string>, private apiResultColumn: () => FieldRef<any, string>, private cityColumn: () => FieldRef<any, string> = undefined) {
 
 
     }
@@ -396,7 +396,7 @@ export class AddressHelper {
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
     async updateApiResult() {
-        let geo = await GetGeoInformation(this.addressColumn().value, this.remult);
+        let geo = await GetGeoInformation(this.addressColumn().value, remult);
         this.apiResultColumn().value = geo.saveToString();
         this.updateCityColumn(geo);
     }
@@ -485,7 +485,7 @@ export class AdjustGeocode extends ControllerBase {
     location = '';
     @BackendMethod({ allowed: Roles.admin })
     async updateGeocode() {
-        const g = await this.remult.repo(GeocodeCache).findId(this.originalAddress);
+        const g = await remult.repo(GeocodeCache).findId(this.originalAddress);
         var geo = GeocodeInformation.fromString(g.googleApiResult);
         let r = geo.info.results[0];
         if (!r) {
@@ -523,27 +523,27 @@ export class AdjustGeocode extends ControllerBase {
         await g.save();
 
         let i = 0;
-        for await (const f of this.remult.repo((await import('../families/families')).Families).query({ where: { address: this.originalAddress } })) {
+        for await (const f of remult.repo((await import('../families/families')).Families).query({ where: { address: this.originalAddress } })) {
             await f.reloadGeoCoding();
             await f.save();
             i++;
         }
-        for await (const f of this.remult.repo((await import('../events/events')).Event).query({ where: { address: this.originalAddress } })) {
+        for await (const f of remult.repo((await import('../events/events')).Event).query({ where: { address: this.originalAddress } })) {
             await f.addressHelper.updateApiResult();
             await f.save();
             i++;
         }
-        for await (const f of this.remult.repo((await import('../manage/distribution-centers')).DistributionCenters).query({ where: { address: this.originalAddress } })) {
+        for await (const f of remult.repo((await import('../manage/distribution-centers')).DistributionCenters).query({ where: { address: this.originalAddress } })) {
             await f.addressHelper.updateApiResult();
             await f.save();
             i++;
         }
-        for await (const f of this.remult.repo((await import('../helpers/helpers')).Helpers).query({ where: { preferredDistributionAreaAddress: this.originalAddress } })) {
+        for await (const f of remult.repo((await import('../helpers/helpers')).Helpers).query({ where: { preferredDistributionAreaAddress: this.originalAddress } })) {
             await f.preferredDistributionAreaAddressHelper.updateApiResult();
             await f.save();
             i++;
         }
-        for await (const f of this.remult.repo((await import('../helpers/helpers')).Helpers).query({ where: { preferredFinishAddress: this.originalAddress } })) {
+        for await (const f of remult.repo((await import('../helpers/helpers')).Helpers).query({ where: { preferredFinishAddress: this.originalAddress } })) {
             await f.preferredFinishAddressHelper.updateApiResult();
             await f.save();
             i++;
@@ -554,14 +554,14 @@ export class AdjustGeocode extends ControllerBase {
 
     async edit(ui: UITools, address: string, onSave: VoidFunction) {
         this.originalAddress = address.trim();
-        const g = await this.remult.repo(GeocodeCache).findId(address);
+        const g = await remult.repo(GeocodeCache).findId(address);
         var geo = GeocodeInformation.fromString(g.googleApiResult);
         this.address = geo.getAddress();
         this.city = geo.getCity();
         this.location = toLongLat(geo.location());
 
         await ui.inputAreaDialog({
-            buttons: [{ text: 'מפה', click: () => geo.openGoogleMaps(this.remult) }],
+            buttons: [{ text: 'מפה', click: () => geo.openGoogleMaps(remult) }],
             fields: [{ field: this.$.originalAddress, readonly: true }, this.$.location, this.$.city, this.$.address],
             ok: async () => {
                 ui.Info("עודכנו " + await this.updateGeocode() + " כתובות");

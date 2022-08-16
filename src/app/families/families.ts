@@ -68,11 +68,11 @@ declare type factoryFor<T> = {
         await self.reloadGeoCoding();
       }
       if (!self.defaultDistributionCenter)
-        self.defaultDistributionCenter = await self.remult.state.findClosestDistCenter(self.addressHelper.location);
-      if (!self.remult.isAllowed(Roles.admin)) {
-        self.defaultDistributionCenter = await self.remult.state.getUserDistributionCenter()
+        self.defaultDistributionCenter = await remult.context.findClosestDistCenter(self.addressHelper.location);
+      if (!remult.isAllowed(Roles.admin)) {
+        self.defaultDistributionCenter = await remult.context.getUserDistributionCenter()
       }
-      let currentUser = (await self.remult.state.getCurrentUser());
+      let currentUser = (await remult.context.getCurrentUser());
       if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
         self.routeOrder = 0;
       if (self.isNew()) {
@@ -92,7 +92,7 @@ declare type factoryFor<T> = {
 
 
       if (self.sharedColumns().find(x => x.value != x.originalValue) || [self.$.basketType, self.$.quantity, self.$.deliveryComments, self.$.defaultSelfPickup].find(x => x.valueChanged())) {
-        for await (const fd of await self.remult.repo(FamilyDeliveries).find({
+        for await (const fd of await remult.repo(FamilyDeliveries).find({
           where: {
             family: self.id,
             archive: false,
@@ -121,10 +121,10 @@ declare type factoryFor<T> = {
     else if (!isBackend()) {
       let statusChangedOutOfActive = self.$.status.valueChanged() && self.status != FamilyStatus.Active;
       if (statusChangedOutOfActive) {
-        let activeDeliveries = self.remult.repo(ActiveFamilyDeliveries).query({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
+        let activeDeliveries = remult.repo(ActiveFamilyDeliveries).query({ where: { family: self.id, deliverStatus: DeliveryStatus.isNotAResultStatus() } });
         if (await activeDeliveries.count() > 0) {
           if (await evil.YesNoPromise(
-            getLang(self.remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(self.remult).deliveries_ShouldWeDeleteThem
+            getLang(remult).thisFamilyHas + " " + (await activeDeliveries.count()) + " " + getLang(remult).deliveries_ShouldWeDeleteThem
           )) {
             for await (const d of activeDeliveries) {
               await d.delete();
@@ -134,7 +134,7 @@ declare type factoryFor<T> = {
         }
       }
     }
-    recordChanges(self.remult, self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
+    recordChanges(remult, self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
   },
   backendPrefilter: () => {
     if (remult.isAllowed(Roles.admin))
@@ -172,7 +172,7 @@ export class Families extends IdEntity {
     let gridDialogSettings = await this.deliveriesGridSettings(args);
 
     args.ui.gridDialog({
-      title: getLang(this.remult).deliveriesFor + ' ' + this.name,
+      title: getLang(remult).deliveriesFor + ' ' + this.name,
       stateName: 'deliveries-for-family',
       settings: gridDialogSettings,
 
@@ -184,7 +184,7 @@ export class Families extends IdEntity {
     });
   }
   public async deliveriesGridSettings(args: { ui: UITools, settings: ApplicationSettings }) {
-    let result: GridSettings<import("./FamilyDeliveries").FamilyDeliveries> = new GridSettings(this.remult.repo(FamilyDeliveries), {
+    let result: GridSettings<import("./FamilyDeliveries").FamilyDeliveries> = new GridSettings(remult.repo(FamilyDeliveries), {
       numOfColumnsInGrid: 7,
 
       rowCssClass: fd => fd.getCss(),
@@ -198,7 +198,7 @@ export class Families extends IdEntity {
       }, {
 
         name: use.language.addHistoricalDelivery,
-        visible: () => this.remult.isAllowed(Roles.admin),
+        visible: () => remult.isAllowed(Roles.admin),
         click: async () => {
           var fd = this.createDelivery(null);
           var d = new dateInput();
@@ -226,7 +226,7 @@ export class Families extends IdEntity {
           })
         },
         ...(await import("../family-deliveries/getDeliveryGridButtons")).getDeliveryGridButtons({
-          remult: this.remult,
+          remult: remult,
           refresh: () => result.reloadData(),
           deliveries: () => result,
           ui: args.ui,
@@ -277,7 +277,7 @@ export class Families extends IdEntity {
     if (!args)
       args = {};
     if (!args.doNotCheckIfHasExistingDeliveries) {
-      let hasExisting = await this.remult.repo(ActiveFamilyDeliveries).count({ family: this.id, deliverStatus: DeliveryStatus.isNotAResultStatus() });
+      let hasExisting = await remult.repo(ActiveFamilyDeliveries).count({ family: this.id, deliverStatus: DeliveryStatus.isNotAResultStatus() });
       if (hasExisting > 0) {
         if (await ui.YesNoPromise(settings.lang.familyHasExistingDeliveriesDoYouWantToViewThem)) {
           this.showDeliveryHistoryDialog({ ui, settings });
@@ -289,7 +289,7 @@ export class Families extends IdEntity {
     let newDelivery = this.createDelivery(this.defaultDistributionCenter ? this.defaultDistributionCenter : await ui.getDistCenter(this.addressHelper.location));
     let arciveCurrentDelivery = new InputField<boolean>({
       valueType: Boolean,
-      caption: getLang(this.remult).archiveCurrentDelivery,
+      caption: getLang(remult).archiveCurrentDelivery,
       defaultValue: () => true
     });
     if (args.copyFrom != undefined) {
@@ -298,7 +298,7 @@ export class Families extends IdEntity {
     }
     let selfPickup = new InputField<boolean>({
       valueType: Boolean,
-      caption: getLang(this.remult).familySelfPickup,
+      caption: getLang(remult).familySelfPickup,
       defaultValue: () => this.defaultSelfPickup
     });
     if (args.copyFrom) {
@@ -321,15 +321,15 @@ export class Families extends IdEntity {
 
     await ui.inputAreaDialog({
       fields,
-      title: getLang(this.remult).newDeliveryFor + this.name,
+      title: getLang(remult).newDeliveryFor + this.name,
       validate: async () => {
         let count = await newDelivery.duplicateCount();
         if (count > 0) {
-          if (await ui.YesNoPromise(getLang(this.remult).familyAlreadyHasAnActiveDelivery)) {
+          if (await ui.YesNoPromise(getLang(remult).familyAlreadyHasAnActiveDelivery)) {
             return;
           }
           else {
-            throw getLang(this.remult).notOk;
+            throw getLang(remult).notOk;
           }
         }
       },
@@ -345,7 +345,7 @@ export class Families extends IdEntity {
         }
         if (args.aDeliveryWasAdded)
           await args.aDeliveryWasAdded(newId);
-        ui.Info(getLang(this.remult).deliveryCreatedSuccesfully);
+        ui.Info(getLang(remult).deliveryCreatedSuccesfully);
       }
       , cancel: () => { }
 
@@ -364,7 +364,7 @@ export class Families extends IdEntity {
     if (f) {
 
       if (!distCenter)
-        distCenter = await remult.state.findClosestDistCenter(f.addressHelper.location);
+        distCenter = await remult.context.findClosestDistCenter(f.addressHelper.location);
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;
@@ -383,7 +383,7 @@ export class Families extends IdEntity {
 
   }
   createDelivery(distCenter: DistributionCenters) {
-    let fd = this.remult.repo(FamilyDeliveries).create();
+    let fd = remult.repo(FamilyDeliveries).create();
     fd.family = this.id;
     fd.distributionCenter = distCenter ? distCenter : this.defaultDistributionCenter;
     fd.special = this.special;
@@ -391,7 +391,7 @@ export class Families extends IdEntity {
     fd.quantity = this.quantity;
     fd.deliveryComments = this.deliveryComments;
     fd.courier = this.fixedCourier;
-    fd.deliverStatus = this.defaultSelfPickup ? DeliveryStatus.SelfPickup : getSettings(this.remult).defaultStatus;
+    fd.deliverStatus = this.defaultSelfPickup ? DeliveryStatus.SelfPickup : getSettings(remult).defaultStatus;
     this.updateDelivery(fd);
     return fd;
   }
@@ -432,7 +432,7 @@ export class Families extends IdEntity {
   }
   getAddressDescription() {
     if (this.isGpsAddress()) {
-      return getLang(this.remult).gpsLocationNear + ' ' + this.addressByGoogle;
+      return getLang(remult).gpsLocationNear + ' ' + this.addressByGoogle;
 
     }
     return this.address;
@@ -446,9 +446,6 @@ export class Families extends IdEntity {
 
   __disableGeocoding = false;
 
-  constructor(private remult: Remult) {
-    super();
-  }
   disableChangeLogging = false;
   _suppressLastUpdateDuringSchemaInit = false;
 
@@ -540,7 +537,7 @@ export class Families extends IdEntity {
   })
 
   address: string;
-  addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
+  addressHelper = new AddressHelper(() => this.$.address, () => this.$.addressApiResult);
 
 
   @Field()
@@ -641,7 +638,7 @@ export class Families extends IdEntity {
         geo = new GeocodeInformation(result.result);
     }
     if (geo == undefined && !this.__disableGeocoding)
-      geo = await GetGeoInformation(this.address, this.remult);
+      geo = await GetGeoInformation(this.address, remult);
     if (geo == undefined) {
       geo = new GeocodeInformation();
     }
@@ -798,10 +795,10 @@ export class Families extends IdEntity {
     this.addressHelper.openWaze();
   }
   openGoogleMaps() {
-    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(this.remult).languageCode + '&query=' + this.address, '_blank');
+    window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(remult).languageCode + '&query=' + this.address, '_blank');
   }
   showOnGoogleMaps() {
-    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getlonglat + '&hl=' + getLang(this.remult).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.addressHelper.getlonglat + '&hl=' + getLang(remult).languageCode, '_blank');
   }
   showOnGovMap() {
     window.open('https://www.govmap.gov.il/?q=' + this.address + '&z=10', '_blank');
@@ -846,7 +843,7 @@ export class Families extends IdEntity {
       return;
     if (isBackend())
       return;
-    if (!this.remult.isAllowed(Roles.familyAdmin))
+    if (!remult.isAllowed(Roles.familyAdmin))
       return;
     if (!this.tzDelay)
       this.tzDelay = new delayWhileTyping(1000);
@@ -887,7 +884,7 @@ export class Families extends IdEntity {
     this.$.name.error = undefined;
     let foundExactName = false;
     for (const d of this.duplicateFamilies) {
-      let errorText = getLang(this.remult).valueAlreadyExistsFor + ' "' + d.name + '" ' + getLang(this.remult).atAddress + ' ' + d.address;
+      let errorText = getLang(remult).valueAlreadyExistsFor + ' "' + d.name + '" ' + getLang(remult).atAddress + ' ' + d.address;
       if (d.tz)
         this.$.tz.error = errorText;
       if (d.tz2)
@@ -907,10 +904,10 @@ export class Families extends IdEntity {
           foundExactName = true;
       }
     }
-    Phone.validatePhone(this.$.phone1, this.remult);
-    Phone.validatePhone(this.$.phone2, this.remult);
-    Phone.validatePhone(this.$.phone3, this.remult);
-    Phone.validatePhone(this.$.phone4, this.remult);
+    Phone.validatePhone(this.$.phone1, remult);
+    Phone.validatePhone(this.$.phone2, remult);
+    Phone.validatePhone(this.$.phone3, remult);
+    Phone.validatePhone(this.$.phone4, remult);
 
 
   }
@@ -1000,7 +997,7 @@ export class Families extends IdEntity {
 
     let $or: EntityFilter<Families>[] = [];
     if (remult.isAllowed(Roles.familyAdmin)) {
-      $or.push({ defaultDistributionCenter: remult.state.filterCenterAllowedForUser() });
+      $or.push({ defaultDistributionCenter: remult.context.filterCenterAllowedForUser() });
     }
     if (remult.isAllowed(Roles.callPerson)) {
       $or.push({

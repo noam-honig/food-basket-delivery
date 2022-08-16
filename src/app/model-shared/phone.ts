@@ -42,7 +42,7 @@ export class Phone {
   static toJson(x: Phone): string {
     return x ? x.thePhone : '';
   }
-  static fixPhoneInput(s: string, remult: Remult) {
+  static fixPhoneInput(s: string) {
     if (!s)
       return s;
     let orig = s.trim();
@@ -61,7 +61,7 @@ export class Phone {
   }
 
   static sendWhatsappToPhone(phone: string, smsMessage: string, remult: Remult, test = false) {
-    phone = Phone.fixPhoneInput(phone, remult);
+    phone = Phone.fixPhoneInput(phone);
     if (phone.startsWith('0')) {
       phone = getSettings(remult).getInternationalPhonePrefix + phone.substr(1);
     }

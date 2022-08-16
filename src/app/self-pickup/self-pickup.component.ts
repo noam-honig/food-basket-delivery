@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { BusyService } from '@remult/angular';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -27,7 +27,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   };
 
   constructor(private busy: BusyService
-    , private remult: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
+    , private dialog: DialogService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.families.reloadData();
     }, this.destroyHelper);
@@ -38,7 +38,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = '';
   showAllFamilies = false;
-  families = new GridSettings(this.remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 7;
 
   async doFilter() {
@@ -49,7 +49,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
     await this.families.get({
       where: {
         name: { $contains: this.searchString },
-        distributionCenter: this.remult.state.filterDistCenter(this.dialog.distCenter),
+        distributionCenter: remult.context.filterDistCenter(this.dialog.distCenter),
         deliverStatus: !this.showAllFamilies ? DeliveryStatus.SelfPickup : undefined
       },
       orderBy: { name: "asc" },

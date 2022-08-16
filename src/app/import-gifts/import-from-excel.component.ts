@@ -10,7 +10,7 @@ import { use } from '../translate';
 })
 export class GeneralImportFromExcelComponent implements OnInit {
 
-  constructor(private remult: Remult, private busy: BusyService, private dialog: MatDialogRef<any>) { }
+  constructor(private busy: BusyService, private dialog: MatDialogRef<any>) { }
 
   ngOnInit() {
 

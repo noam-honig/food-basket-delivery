@@ -18,7 +18,7 @@ export class SendSmsAction {
     static async SendSms(h: HelpersBase, reminder: Boolean) {
 
         try {
-            await SendSmsAction.generateMessage(remult, h, remult.state.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
+            await SendSmsAction.generateMessage(remult, h, remult.context.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
 
                 await new SendSmsUtils().sendSms(phone, message, remult, h);
                 await SendSmsAction.documentHelperMessage(reminder, h, remult, "SMS");
@@ -80,7 +80,7 @@ export class SendSmsAction {
     public static async getSenderPhone(remult: Remult) {
         let sender = (await ApplicationSettings.getAsync(remult)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
-            sender = (await remult.state.getCurrentUser()).phone.thePhone;
+            sender = (await remult.context.getCurrentUser()).phone.thePhone;
         }
         return sender;
     }

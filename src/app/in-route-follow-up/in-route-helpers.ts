@@ -28,7 +28,7 @@ import { UITools } from "../helpers/init-context";
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [f.where({ distributionCenter: remult.state.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
+                where: () => [f.where({ distributionCenter: remult.context.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
             }
         }
         let comInnerSelect = (col: FieldMetadata, toCol: FieldMetadata) => {
@@ -76,16 +76,16 @@ import { UITools } from "../helpers/init-context";
 })
 export class InRouteHelpers extends IdEntity {
     async helper() {
-        return this.remult.repo(Helpers).findId(this.id);
+        return remult.repo(Helpers).findId(this.id);
     }
     async showHistory(ui: UITools) {
         let h = await this.helper();
-        const settings = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+        const settings = new GridSettings(remult.repo(HelperCommunicationHistory), {
             numOfColumnsInGrid: 6,
             knowTotalRows: true,
             rowButtons: [
                 {
-                    name: getLang(this.remult).editComment,
+                    name: getLang(remult).editComment,
                     click: async (r) => {
                         ui.inputAreaDialog({
                             title: 'ערוך הערה',
@@ -126,7 +126,7 @@ export class InRouteHelpers extends IdEntity {
     }
 
     async showAssignment(ui: UITools) {
-        let h = await this.remult.repo(Helpers).findId(this.id);
+        let h = await remult.repo(Helpers).findId(this.id);
         await ui.helperAssignment(h);
         this._.reload();
 
@@ -134,7 +134,7 @@ export class InRouteHelpers extends IdEntity {
     @Field({ translation: l => l.volunteerName })
     name: string;
     relativeDate(val: Date) {
-        return relativeDateName(this.remult, { d: val });
+        return relativeDateName(remult, { d: val });
     }
     @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),
@@ -197,7 +197,7 @@ export class InRouteHelpers extends IdEntity {
     saving: async (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = (await self.remult.state.getCurrentUser());
+            self.createUser = (await self.remult.context.getCurrentUser());
         }
     }
 })

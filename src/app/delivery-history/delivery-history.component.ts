@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Remult, EntityBase, getFields } from 'remult';
+import { Remult, EntityBase, getFields, remult } from 'remult';
 import { Phone } from "../model-shared/phone";
 import { Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -47,7 +47,7 @@ export class DeliveryHistoryComponent implements OnInit {
   onlyDone: boolean = true;
   @Field({ translation: l => l.showOnlyArchivedDeliveries })
   onlyArchived: boolean = false;
-  get $() { return getFields(this, this.remult) }
+  get $() { return getFields(this, remult) }
   rangeArea = new DataAreaSettings({
     fields: () => {
       return [this.$.onlyDone, this.$.onlyArchived]
@@ -68,7 +68,7 @@ export class DeliveryHistoryComponent implements OnInit {
     this.destroyHelper.destroy();
   }
   helperStorage: InMemoryDataProvider;
-  constructor(private remult: Remult, private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService, private routeHelper: RouteHelperService) {
+  constructor(private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService, private routeHelper: RouteHelperService) {
     this.helperStorage = new InMemoryDataProvider();
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
     let stam = new Remult();
@@ -79,14 +79,14 @@ export class DeliveryHistoryComponent implements OnInit {
       gridButtons: [
         {
           name: this.settings.lang.exportToExcel,
-          visible: () => this.remult.isAllowed(Roles.admin),
+          visible: () => remult.isAllowed(Roles.admin),
           click: async () => {
             await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.dialog, (d: helperHistoryInfo, c) => c == d.$.courier);
           }
         },
         {
           name: 'הענק מתנה',
-          visible: () => this.settings.isSytemForMlt && this.remult.isAllowed(Roles.admin),
+          visible: () => this.settings.isSytemForMlt && remult.isAllowed(Roles.admin),
           click: async () => {
             let rows = this.helperInfo.selectedRows;
 
@@ -114,13 +114,13 @@ export class DeliveryHistoryComponent implements OnInit {
         {
           name: this.settings.lang.deliveries,
           click: async x => {
-            let h = await this.remult.repo(Helpers).findId(x.courier);
+            let h = await remult.repo(Helpers).findId(x.courier);
             h.showDeliveryHistory(this.dialog);
           },
         },
         {
           name: 'הענק מתנה',
-          visible: () => this.settings.isSytemForMlt && this.remult.isAllowed(Roles.admin),
+          visible: () => this.settings.isSytemForMlt && remult.isAllowed(Roles.admin),
           click: async x => {
             await HelperGifts.assignGift(x.courier);
             this.refresh();
@@ -197,7 +197,7 @@ export class DeliveryHistoryComponent implements OnInit {
 
     var x = await DeliveryHistoryController.getHelperHistoryInfo(this.dateRange.fromDate, this.dateRange.toDate, this.dialog.distCenter, this.onlyDone, this.onlyArchived);
 
-    let rows: any[] = this.helperStorage.rows[(await this.remult.repo(helperHistoryInfo).metadata.getDbName())];
+    let rows: any[] = this.helperStorage.rows[(await remult.repo(helperHistoryInfo).metadata.getDbName())];
     x = x.map(x => {
       x.deliveries = +x.deliveries;
       x.dates = +x.dates;
@@ -215,7 +215,7 @@ export class DeliveryHistoryComponent implements OnInit {
   }
 
   mltColumns: DataControlInfo<FamilyDeliveries>[] = [];
-  deliveries = new GridSettings(this.remult.repo(FamilyDeliveries), {
+  deliveries = new GridSettings(remult.repo(FamilyDeliveries), {
     rowCssClass: d => d.getCss(),
     gridButtons: [{
       name: 'playback',
@@ -225,7 +225,7 @@ export class DeliveryHistoryComponent implements OnInit {
       name: this.settings.lang.exportToExcel,
       click: async () => {
         let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-        await saveToExcel(this.settings, this.remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.dialog, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+        await saveToExcel(this.settings, remult.repo(FamilyDeliveries), this.deliveries, this.settings.lang.deliveries, this.dialog, (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
           async (f, addColumn) => {
             await f.basketType?.addBasketTypes(f.quantity, addColumn);
             f.addStatusExcelColumn(addColumn);
@@ -233,10 +233,10 @@ export class DeliveryHistoryComponent implements OnInit {
               await f.addFamilyInfoToExcelFile(addColumn);
           }, async deliveries => {
             if (includeFamilyInfo) {
-              await FamilyDeliveries.loadFamilyInfoForExcepExport(this.remult, deliveries);
+              await FamilyDeliveries.loadFamilyInfoForExcepExport(remult, deliveries);
             }
           });
-      }, visible: () => this.remult.isAllowed(Roles.admin)
+      }, visible: () => remult.isAllowed(Roles.admin)
     }],
     columnSettings: d => {
       let r: DataControlInfo<FamilyDeliveries>[] = [
@@ -301,19 +301,19 @@ export class DeliveryHistoryComponent implements OnInit {
             ui: this.dialog
           });
         }
-        , textInMenu: () => getLang(this.remult).deliveryDetails
+        , textInMenu: () => getLang(remult).deliveryDetails
       },
       {
         name: '',
         icon: 'replay',
         showInLine: true,
-        visible: x => (x.archive) && this.remult.isAllowed(Roles.admin),
+        visible: x => (x.archive) && remult.isAllowed(Roles.admin),
         click: async fd => {
           fd.archive = false;
           await fd.save();
           this.refresh();
         }
-        , textInMenu: () => getLang(this.remult).revertArchive
+        , textInMenu: () => getLang(remult).revertArchive
       }
     ]
   });

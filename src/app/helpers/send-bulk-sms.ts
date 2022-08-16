@@ -1,4 +1,4 @@
-import { BackendMethod, Controller, Filter, getFields, Remult, SqlDatabase } from "remult";
+import { BackendMethod, Controller, Filter, getFields, remult, Remult, SqlDatabase } from "remult";
 import { FamilyDeliveries } from "../families/FamilyDeliveries";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "./helpers";
@@ -44,7 +44,7 @@ export class SendBulkSms {
                             if (!await ui.YesNoPromise("המתנדב ביקש לא לקבל הודעות, האם לשלוח בכל זאת?"))
                                 return;
                         }
-                        if (await this.remult.repo(HelperCommunicationHistory).count({
+                        if (await remult.repo(HelperCommunicationHistory).count({
                             volunteer: h,
                             createDate: { ">=": this.yesterdayMorning() }
                         }) > 0) {
@@ -59,7 +59,7 @@ export class SendBulkSms {
                     messageCount: 1
                 })
             },
-            visible: () => this.remult.isAllowed(Roles.admin) && getSettings(this.remult).bulkSmsEnabled
+            visible: () => remult.isAllowed(Roles.admin) && getSettings(remult).bulkSmsEnabled
         }
     }
 
@@ -77,7 +77,7 @@ export class SendBulkSms {
     
     בתודה !ארגון!
     להסרה השב "הסר"`;
-        let settings = (await this.remult.state.getSettings());
+        let settings = (await remult.context.getSettings());
         await ui.editCustomMessageDialog({
             message: this.buildMessage(currentHelper.name, settings),
             templateText: settings.inviteVolunteersMessage || defaultMessage,
@@ -106,13 +106,13 @@ export class SendBulkSms {
 
     @BackendMethod({ allowed: Roles.admin })
     private async sendSingleMessage(helperId: string) {
-        let helper = await this.remult.repo(Helpers).findId(helperId);
-        let settings = await ApplicationSettings.getAsync(this.remult);
+        let helper = await remult.repo(Helpers).findId(helperId);
+        let settings = await ApplicationSettings.getAsync(remult);
         if (!settings.bulkSmsEnabled)
             throw ("Forbidden");
         let message = this.buildMessage(helper.name, settings).merge(settings.inviteVolunteersMessage);
         if (true)
-            await new SendSmsUtils().sendSms(helper.phone.thePhone, message, this.remult, helper);
+            await new SendSmsUtils().sendSms(helper.phone.thePhone, message, remult, helper);
 
         else
             console.log(message);
@@ -120,14 +120,14 @@ export class SendBulkSms {
 
     get $() { return getFields(this) }
     async getVolunteers() {
-        let db = this.remult._dataSource as SqlDatabase;
-        let sql = new SqlBuilder(this.remult);
-        let helpers = SqlFor(this.remult.repo(Helpers));
-        let fd = SqlFor(this.remult.repo(FamilyDeliveries));
-        let f = SqlFor(this.remult.repo(Families));
-        let events = SqlFor(this.remult.repo(Event))
-        let ve = SqlFor(this.remult.repo(volunteersInEvent));
-        let message = SqlFor(this.remult.repo(HelperCommunicationHistory));
+        let db = remult._dataSource as SqlDatabase;
+        let sql = new SqlBuilder(remult);
+        let helpers = SqlFor(remult.repo(Helpers));
+        let fd = SqlFor(remult.repo(FamilyDeliveries));
+        let f = SqlFor(remult.repo(Families));
+        let events = SqlFor(remult.repo(Event))
+        let ve = SqlFor(remult.repo(volunteersInEvent));
+        let message = SqlFor(remult.repo(HelperCommunicationHistory));
         let twoDaysAgo = this.yesterdayMorning();
         let q = await sql.query({
             from: helpers,
@@ -136,7 +136,7 @@ export class SendBulkSms {
                 await Filter.translateCustomWhere(helpers.where({
                     archive: false, doNotSendSms: false, isFrozen: false,
                     $and: [this.city && Helpers.deliveredPreviously({ city: this.city })]
-                }), helpers.metadata, this.remult),
+                }), helpers.metadata, remult),
 
                 await sql.build(helpers.id, " not in (", sql.query({
                     select: () => [sql.build('distinct ', fd.courier)],
@@ -189,7 +189,7 @@ export class SendBulkSms {
     buildMessage(name: string, settings: ApplicationSettings) {
         return new messageMerger([
             { token: 'מתנדב', caption: "שם המתנדב", value: name },
-            { token: 'קישור', caption: 'קישור לרישום', value: this.remult.state.getSettings() + '/' + Sites.getOrganizationFromContext(this.remult) + '/events' },
+            { token: 'קישור', caption: 'קישור לרישום', value: remult.context.getSettings() + '/' + Sites.getOrganizationFromContext(remult) + '/events' },
             { token: 'ארגון', caption: "שם הארגון", value: settings.organisationName },
             { token: 'עיר', value: this.city },
 

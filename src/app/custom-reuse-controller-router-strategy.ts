@@ -1,5 +1,5 @@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from "@angular/router";
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { Injectable } from "@angular/core";
 
 @Injectable()
@@ -36,7 +36,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
-        this.remult.clearAllCache();
+        remult.clearAllCache();
         if (!!route.routeConfig) {
             let h = this.handlers[route.routeConfig.path];
             if (h) {

@@ -1,5 +1,5 @@
 import { DataControl } from '@remult/angular/interfaces';
-import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef } from 'remult';
+import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef, remult } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers } from '../helpers/helpers';
@@ -49,13 +49,13 @@ export class RegisterToEvent {
         if (this.inited)
             return;
         this.inited = true;
-        let s = (await this.remult.state.getSettings());
+        let s = (await remult.context.getSettings());
         if (!actionInfo.runningOnServer) {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
             this.lastName = RegisterToEvent.volunteerInfo.lastName || '';
-            let h = (await this.remult.state.getCurrentUser())
+            let h = (await remult.context.getCurrentUser())
             if (h) {
                 this.socialSecurityNumber = h.socialSecurityNumber;
                 this.email = h.email;
@@ -80,7 +80,7 @@ export class RegisterToEvent {
         valueType: Phone,
         validate: (e, c) => {
             if (!e.remult.authenticated()) {
-                c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone, e.remult))
+                c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone))
                 Phone.validatePhone(c, e.remult, true);
             }
 
@@ -91,7 +91,7 @@ export class RegisterToEvent {
         caption: "שם",
         validate: (e, name) => {
             if (!e.remult.authenticated()) {
-                Validators.required(e, name, e.remult.state.lang.nameIsTooShort)
+                Validators.required(e, name, e.remult.context.lang.nameIsTooShort)
             }
         }
     })
@@ -124,7 +124,7 @@ export class RegisterToEvent {
     })
     preferredFinishAddress: string = '';
 
-    get $() { return getFields(this, this.remult); }
+    get $() { return getFields(this, remult); }
     async registerToEvent(e: EventInList, ui: UITools) {
         ui.trackVolunteer("register-event:" + e.site);
         await this.init();
@@ -132,19 +132,19 @@ export class RegisterToEvent {
         this.a2 = '';
         this.a3 = '';
         this.a4 = '';
-        let lang = this.remult.state.lang;
+        let lang = remult.context.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
-        let currentHelper = (await this.remult.state.getCurrentUser());
-        if (this.remult.authenticated()) {
+        let currentHelper = (await remult.context.getCurrentUser());
+        if (remult.authenticated()) {
             this.phone = currentHelper.phone;
             this.name = currentHelper.name;
         }
-        if (!this.remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
+        if (!remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
             await ui.inputAreaDialog({
                 title: lang.register,
                 helpText: lang.registerHelpText,
-                fields: [{ field: this.$.name, visible: () => !this.remult.authenticated() },
-                { field: this.$.lastName, visible: () => !this.remult.authenticated() }, { field: this.$.phone, visible: () => !this.remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice],
+                fields: [{ field: this.$.name, visible: () => !remult.authenticated() },
+                { field: this.$.lastName, visible: () => !remult.authenticated() }, { field: this.$.phone, visible: () => !remult.authenticated() }, ...this.questions.filter(x => x.show()).map(x => ({ field: x.field, click: null })), this.$.rememberMeOnThisDevice],
                 cancel: () => { },
                 ok: async () => {
 
@@ -186,38 +186,38 @@ export class RegisterToEvent {
         await this.init();
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
-            this.remult = new Remult();
-            this.remult.setDataProvider(dp);
-            Sites.setSiteToContext(this.remult, site);
-            await InitContext(this.remult);
+
+            remult.setDataProvider(dp);
+            Sites.setSiteToContext(remult, site);
+            await InitContext(remult);
         }
         let helper: Helpers;
-        if (this.remult.authenticated()) {
-            helper = await this.remult.repo(Helpers).findId(this.remult.user.id);
+        if (remult.authenticated()) {
+            helper = await remult.repo(Helpers).findId(remult.user.id);
         }
         else {
-            helper = await this.remult.repo(Helpers).findFirst({ phone: this.phone }, {
+            helper = await remult.repo(Helpers).findFirst({ phone: this.phone }, {
                 createIfNotFound: register
             });
             if (helper.isNew()) {
                 helper.name = (this.name + ' ' + this.lastName).trim();
                 await helper.save();
             }
-            this.remult.setUser({
+            remult.setUser({
                 id: helper.id,
                 name: helper.name,
                 roles: [],
                 theHelperIAmEscortingId: undefined, distributionCenter: '', escortedHelperName: ""
             });
         }
-        let helperInEvent = await this.remult.repo(volunteersInEvent).findFirst({ eventId: id, helper }, {
+        let helperInEvent = await remult.repo(volunteersInEvent).findFirst({ eventId: id, helper }, {
             createIfNotFound: register
         });
         if (register) {
             helperInEvent.canceled = false;
             helperInEvent.fromGeneralList = !!site;
             for (const q of this.questions.filter(q => q.show())) {
-                if (q.field.displayValue || this.remult.authenticated()) {
+                if (q.field.displayValue || remult.authenticated()) {
                     let target = q.getFieldToUpdate(helper.$, helperInEvent.$);
                     if (target)
                         target.value = q.field.value;
@@ -231,13 +231,13 @@ export class RegisterToEvent {
             helperInEvent.canceled = true;
             await helperInEvent.save();
         }
-        const event = await this.remult.repo(Event).findId(id);
+        const event = await remult.repo(Event).findId(id);
         try {
-            const l = this.remult.state.lang;
+            const l = remult.context.lang;
             const what = helper.name + " " + (register ? l.hasRegisteredTo : l.hasCanceledRegistration) + " " + event.name
             ManageController.sendEmailFromHagaiAdmin(what,
-                l.hello + " " + (await this.remult.state.getSettings()).organisationName + "\r\n\r\n" +
-                what + " " + l.thatWillTakePlaceAt + " " + event.$.eventDate.displayValue, this.remult);
+                l.hello + " " + (await remult.context.getSettings()).organisationName + "\r\n\r\n" +
+                what + " " + l.thatWillTakePlaceAt + " " + event.$.eventDate.displayValue, remult);
 
         }
         catch { }

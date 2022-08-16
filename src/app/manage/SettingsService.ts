@@ -1,4 +1,4 @@
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { translationConfig } from "../translate";
 import { Injectable } from '@angular/core';
@@ -10,13 +10,13 @@ import { ApplicationSettings, setSettingsForSite, PhoneOption, RemovedFromListEx
 
 @Injectable()
 export class SettingsService {
-  constructor(private remult: Remult, private http: HttpClient) {
+  constructor(private http: HttpClient) {
   }
   instance: ApplicationSettings;
   async init() {
 
-    this.instance = await ApplicationSettings.getAsync(this.remult);
-    setSettingsForSite(Sites.getValidSchemaFromContext(this.remult), this.instance);
+    this.instance = await ApplicationSettings.getAsync(remult);
+    setSettingsForSite(Sites.getValidSchemaFromContext(remult), this.instance);
 
     translationConfig.forWho = () => this.instance.forWho;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;

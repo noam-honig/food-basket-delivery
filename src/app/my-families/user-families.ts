@@ -3,7 +3,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType, quantityHelper } from "../families/BasketType";
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
@@ -38,7 +38,7 @@ export class UserFamiliesList {
     }
     forceShowMap = false;
 
-    constructor(private remult: Remult, private settings: ApplicationSettings) {
+    constructor(private settings: ApplicationSettings) {
         this.useWaze = this.settings.lang.languageCode == 'iw';
         let x = localStorage.getItem(useWazeKey);
         if (x != undefined) {
@@ -136,7 +136,7 @@ export class UserFamiliesList {
     }
     async initForFamilies(helper: HelpersBase, familiesPocoArray: any[]) {
         this.initHelper(helper);
-        let newFamilies = await Promise.all(familiesPocoArray.map(x => this.remult.repo(ActiveFamilyDeliveries).fromJson(x)));
+        let newFamilies = await Promise.all(familiesPocoArray.map(x => remult.repo(ActiveFamilyDeliveries).fromJson(x)));
         newFamilies.push(...this.delivered);
         newFamilies.push(...this.problem);
         this.allFamilies = newFamilies;
@@ -151,10 +151,10 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
-            this.allFamilies = await this.remult.repo(ActiveFamilyDeliveries).find({
+            this.allFamilies = await remult.repo(ActiveFamilyDeliveries).find({
                 where: {
                     courier: this.helper,
-                    visibleToCourier: !this.settings.isSytemForMlt && !this.remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
+                    visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
 
                 }, orderBy: {
                     deliverStatus: "asc",

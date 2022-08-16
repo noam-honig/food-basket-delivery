@@ -1,5 +1,5 @@
 import { DataAreaSettings, DataControl, getEntityValueList } from '@remult/angular/interfaces';
-import { BackendMethod, Controller, getFields, Remult } from 'remult';
+import { BackendMethod, Controller, getFields, remult, Remult } from 'remult';
 import { BasketType } from '../families/BasketType';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -70,7 +70,7 @@ export class FamilySelfOrderController {
         if (!f)
             return;
         let fd = f.createDelivery(undefined);
-        fd.basketType = await this.remult.repo(BasketType).findId(this.basket);
+        fd.basketType = await remult.repo(BasketType).findId(this.basket);
         fd.deliveryComments = '';
 
         for (const what of [this.titulim, this.gerber ? "גרבר" : "", this.daisa ? "דיסה" : "", this.comment]) {
@@ -86,12 +86,12 @@ export class FamilySelfOrderController {
     }
 
     async loadFamily() {
-        let f = await Families.getFamilyByShortUrl(this.familyUrl, this.remult);
+        let f = await Families.getFamilyByShortUrl(this.familyUrl, remult);
         if (!f) {
             this.message = "לא נמצא";
             return;
         }
-        if (await this.remult.repo(ActiveFamilyDeliveries).count({ family: f.id })) {
+        if (await remult.repo(ActiveFamilyDeliveries).count({ family: f.id })) {
             this.message = "המשלוח כבר מעודכן במערכת, לשינוי נא ליצור קשר טלפוני";
             return;
         }

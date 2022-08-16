@@ -26,7 +26,7 @@ export class ShipmentAssignScreenController {
 
         //remove busy helpers
         {
-            let settings = (await remult.state.getSettings());
+            let settings = (await remult.context.getSettings());
             let fd = SqlFor(remult.repo(FamilyDeliveries));
             let sql = new SqlBuilder(remult);
             let busyLimitdate = new Date();

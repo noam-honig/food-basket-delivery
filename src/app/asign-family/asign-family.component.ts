@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-import { FieldRef, EntityFilter } from 'remult';
+import { FieldRef, EntityFilter, remult } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -56,7 +56,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
 
     canSeeCenter() {
-        return this.remult.isAllowed(Roles.admin);
+        return remult.isAllowed(Roles.admin);
     }
     assignOnMap() {
         this.familyLists.forceShowMap = true;
@@ -100,18 +100,18 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
     async searchPhone() {
         this.clearHelperInfo(false);
-        let cleanPhone = Phone.fixPhoneInput(this.phone, this.remult);
+        let cleanPhone = Phone.fixPhoneInput(this.phone);
 
         if (this.isValidPhone()) {
             this.phone = cleanPhone;
             let thisPhone = new Phone(this.phone);
             await this.busy.donotWait(async () => {
 
-                let helper = await this.remult.repo(Helpers).findFirst({ phone: thisPhone });
+                let helper = await remult.repo(Helpers).findFirst({ phone: thisPhone });
                 if (helper) {
                     this.initHelper(helper);
                 } else if (this.phone == cleanPhone) {
-                    helper = this.remult.repo(Helpers).create();
+                    helper = remult.repo(Helpers).create();
                     helper.phone = thisPhone;
                     this.initHelper(helper);
                 }
@@ -119,7 +119,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         }
     }
     isValidPhone() {
-        let cleanPhone = Phone.fixPhoneInput(this.phone, this.remult);
+        let cleanPhone = Phone.fixPhoneInput(this.phone);
 
         return (cleanPhone.length == 10 || cleanPhone.startsWith('+') && cleanPhone.length > 11);
     }
@@ -151,7 +151,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             Helpers.addToRecent(helper);
             await this.refreshList();
             if (helper.leadHelper && this.familyLists.toDeliver.length == 0) {
-                new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(helper.leadHelper, this.familyLists.helper, false
+                new moveDeliveriesHelper(this.settings, this.dialog, () => this.familyLists.reload()).move(helper.leadHelper, this.familyLists.helper, false
                     , this.settings.lang.for + " \"" + this.familyLists.helper.name + "\" " + this.settings.lang.isDefinedAsLeadVolunteerOf + " \"" + helper.leadHelper.name + "\".")
             }
         }
@@ -198,7 +198,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 onSelect: async h => {
                     if (h) {
                         await this.verifyHelperExistance();
-                        new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false, '', true)
+                        new moveDeliveriesHelper(this.settings, this.dialog, () => this.familyLists.reload()).move(h, this.familyLists.helper, false, '', true)
                     }
                 }
             });
@@ -234,10 +234,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         await this.busy.donotWait(async () => {
             let groups: Promise<GroupsStats[]>;
             if (!this.dialog.distCenter) {
-                groups = this.remult.repo(GroupsStatsForAllDeliveryCenters).find({ where: { familiesCount: { ">": 0 } }, limit: 1000 });
+                groups = remult.repo(GroupsStatsForAllDeliveryCenters).find({ where: { familiesCount: { ">": 0 } }, limit: 1000 });
             }
             else
-                groups = this.remult.repo(GroupsStatsPerDistributionCenter).find({
+                groups = remult.repo(GroupsStatsPerDistributionCenter).find({
                     where: {
                         familiesCount: { ">": 0 },
                         distCenter: this.dialog.filterDistCenter()
@@ -259,7 +259,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.baskets = [this.allBaskets];
             this.baskets.push(...await Promise.all(r.baskets.map(async x => ({
                 ...x,
-                basket: await this.remult.repo(BasketType).findId(x.id)
+                basket: await remult.repo(BasketType).findId(x.id)
             }))));
             this.allBaskets.unassignedFamilies = 0;
             let found = false;
@@ -281,7 +281,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             this.areas = r.areas;
-            if (this.filterArea != getLang(this.remult).allRegions && !this.areas.find(x => x.name == this.filterArea)) {
+            if (this.filterArea != getLang(remult).allRegions && !this.areas.find(x => x.name == this.filterArea)) {
 
                 this.areas.push({ name: this.filterArea, unassignedFamilies: 0 });
             }
@@ -313,7 +313,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.familyLists.initForHelper(this.helper), this.refreshBaskets()]);
 
     }
-    familyLists = new UserFamiliesList(this.remult, this.settings);
+    familyLists = new UserFamiliesList(this.settings);
     filterGroup = '';
     groups: GroupsStats[] = [];
     trackGroup(a, g: GroupsStats) {
@@ -368,7 +368,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             onSelect: async h => {
                 if (h) {
                     this.clearHelperInfo(false);
-                    this.initHelper(await this.remult.repo(Helpers).findId(h.id));
+                    this.initHelper(await remult.repo(Helpers).findId(h.id));
                 }
                 else {
                     this.clearHelperInfo();
@@ -384,7 +384,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.destroyHelper.destroy();
     }
 
-    constructor(public dialog: DialogService, private remult: Remult, public busy: BusyService, public settings: ApplicationSettings) {
+    constructor(public dialog: DialogService, public busy: BusyService, public settings: ApplicationSettings) {
         this.dialog.onDistCenterChange(() => this.refreshBaskets(), this.destroyHelper);
 
     }
@@ -397,7 +397,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         this.initArea();
         this.familyLists.userClickedOnFamilyOnMap =
             async families => {
-                families = await (await this.remult.repo(ActiveFamilyDeliveries).find({ where: { id: families, $and: [FamilyDeliveries.readyFilter()] } })).map(x => x.id);
+                families = await (await remult.repo(ActiveFamilyDeliveries).find({ where: { id: families, $and: [FamilyDeliveries.readyFilter()] } })).map(x => x.id);
                 if (families.length == 1)
                     await this.assignFamilyBasedOnIdFromMap(families[0]);
                 else if (families.length > 1) {
@@ -428,7 +428,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     numOfBaskets: number = 1;
     private async assignFamilyBasedOnIdFromMap(familyId: string) {
         await this.busy.donotWait(async () => {
-            let f = await this.remult.repo(ActiveFamilyDeliveries).findId(familyId, { useCache: false });
+            let f = await remult.repo(ActiveFamilyDeliveries).findId(familyId, { useCache: false });
             if (f && f.deliverStatus == DeliveryStatus.ReadyForDelivery && !f.courier) {
                 this.performSpecificFamilyAssignment(f, 'assign based on map');
             }
@@ -467,7 +467,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                         await this.busy.doWhileShowingBusy(async () => {
                             this.dialog.analytics('More families in same address');
                             for (const id of x.familiesInSameAddress) {
-                                let f = await this.remult.repo(ActiveFamilyDeliveries).findFirst({ id, $and: [FamilyDeliveries.readyFilter()] });
+                                let f = await remult.repo(ActiveFamilyDeliveries).findFirst({ id, $and: [FamilyDeliveries.readyFilter()] });
                                 f.courier = this.helper;
                                 await f.save();
                             }

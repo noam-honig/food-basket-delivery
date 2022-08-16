@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult } from 'remult';
+import { remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -36,21 +36,21 @@ export class VolunteerCrossAssignComponent implements OnInit {
   }
 
   async showAssignment(rh: helperInfo) {
-    let h = await this.remult.repo(Helpers).findId(rh.id);
+    let h = await remult.repo(Helpers).findId(rh.id);
     openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async helperDetails(rh: helperInfo) {
-    let h = await this.remult.repo(Helpers).findId(rh.id);
+    let h = await remult.repo(Helpers).findId(rh.id);
     h.displayEditDialog(this.dialog);
 
   }
 
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+      for (const fd of await remult.repo(ActiveFamilyDeliveries).find({
         where: { $and: [FamilyDeliveries.readyFilter()], id: f.deliveries.map(x => x.id) }
       })) {
-        fd.courier = await this.remult.repo(Helpers).findId(h.id);
+        fd.courier = await remult.repo(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -61,9 +61,9 @@ export class VolunteerCrossAssignComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this.remult.repo(Helpers).findId(f.assignedHelper.id);
+    let helper = await remult.repo(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+      for (const fd of await remult.repo(ActiveFamilyDeliveries).find({
         where: { courier: helper, id: f.deliveries.map(x => x.id) }
       })) {
         fd.courier = null;
@@ -85,12 +85,12 @@ export class VolunteerCrossAssignComponent implements OnInit {
     this.openHelpers.set(forHelper, !this.openHelpers.get(forHelper));
   }
   async sendSmsToAll() {
-    var x = new DeliveryFollowUpComponent(this.busy, this.remult, this.dialog, this.settings);
+    var x = new DeliveryFollowUpComponent(this.busy, this.dialog, this.settings);
     await x.refreshStats();
     x.sendSmsToAll();
 
   }
-  constructor(private remult: Remult, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) { }
+  constructor(private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) { }
   data: data;
   helpers: helperInfo[] = [];
   async ngOnInit() {

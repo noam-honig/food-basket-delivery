@@ -15,7 +15,7 @@ export class moveDeliveriesHelperController {
     @BackendMethod({ allowed: Roles.admin })
     static async moveDeliveriesBetweenVolunteers(deliveries: string[], to: HelpersBase) {
         let t = new PromiseThrottle(10);
-        let settings = (await remult.state.getSettings());
+        let settings = (await remult.context.getSettings());
         let i = 0;
         let toHasDeliveries = (await remult.repo(ActiveFamilyDeliveries).count({ courier: to })) > 0;
 

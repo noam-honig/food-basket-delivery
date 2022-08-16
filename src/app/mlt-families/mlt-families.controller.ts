@@ -15,17 +15,17 @@ export class MltFamiliesController {
 
             let fd = await remult.repo(ActiveFamilyDeliveries).findId(id);
             if (fd.courier && fd.deliverStatus == DeliveryStatus.ReadyForDelivery) {//in case the delivery was already assigned to someone else
-                fd.courier = (await remult.state.getCurrentUser());
+                fd.courier = (await remult.context.getCurrentUser());
                 await fd.save();
             }
         }
     }
     @BackendMethod({ allowed: Allow.authenticated })
   static async changeDestination(newDestinationId: DistributionCenters) {
-    let s = (await remult.state.getSettings());
+    let s = (await remult.context.getSettings());
     if (!s.isSytemForMlt)
       throw "not allowed";
-    for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: (await remult.state.getCurrentUser()) } })) {
+    for (const fd of await remult.repo(ActiveFamilyDeliveries).find({ where: { courier: (await remult.context.getCurrentUser()) } })) {
       fd.distributionCenter = newDestinationId;
       await fd.save();
     }

@@ -18,7 +18,7 @@ import { dateRange, OverviewController, overviewResult, siteItem } from './overv
 })
 export class OverviewComponent implements OnInit {
 
-  constructor(private remult: Remult, private dialog: DialogService, private busy: BusyService) { }
+  constructor(private dialog: DialogService, private busy: BusyService) { }
   overview: overviewResult;
   sortBy: string;
   progress = 0;

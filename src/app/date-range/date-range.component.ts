@@ -27,7 +27,7 @@ export class DateRangeComponent implements OnInit {
   fromDate: Date;
   @Fields.dateOnly()
   toDate: Date;
-  get $() { return getFields(this, this.remult) };
+  get $() { return getFields(this) };
   rangeArea = new DataAreaSettings({
     fields: () => [[this.$.fromDate, this.$.toDate]],
   });

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { BusyService, DialogConfig } from '@remult/angular';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -40,7 +40,7 @@ export class SelectHelperComponent implements OnInit {
 
   }
   async addHelper() {
-    let h = this.remult.repo(Helpers).create({ name: this.searchString });;
+    let h = remult.repo(Helpers).create({ name: this.searchString });;
     await h.displayEditDialog(this.dialog);
     if (!h.isNew()) {
       this.select({
@@ -54,7 +54,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(null);
   }
   isMlt() {
-    return getSettings(this.remult).isSytemForMlt;
+    return getSettings(remult).isSytemForMlt;
   }
 
   close() {
@@ -96,7 +96,7 @@ export class SelectHelperComponent implements OnInit {
   async getHelpers() {
 
     await this.busy.donotWait(async () => {
-      this.filteredHelpers = mapHelpers(await this.remult.repo(HelpersAndStats).find({
+      this.filteredHelpers = mapHelpers(await remult.repo(HelpersAndStats).find({
         orderBy: { name: "asc" },
         where: {
           name: { $contains: this.searchString },
@@ -129,7 +129,7 @@ export class SelectHelperComponent implements OnInit {
     let helper: HelpersBase = null;
     if (h) {
       if (!h.helper)
-        h.helper = await this.remult.repo(Helpers).findId(h.helperId);
+        h.helper = await remult.repo(Helpers).findId(h.helperId);
       helper = h.helper;
     }
     this.args.onSelect(helper);

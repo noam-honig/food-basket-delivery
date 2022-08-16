@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
@@ -19,7 +19,7 @@ import { DataAreaSettings } from '@remult/angular/interfaces';
 })
 export class AssignEscortComponent implements OnInit {
 
-  constructor(private remult: Remult, private dialog: DialogService, private settings: ApplicationSettings) { }
+  constructor(private dialog: DialogService, private settings: ApplicationSettings) { }
   @ViewChild("phoneInput", { static: false }) phoneInput: ElementRef;
   async ngOnInit() {
     if (!environment.production) {
@@ -33,13 +33,13 @@ export class AssignEscortComponent implements OnInit {
     this.clearHelperInfo(false);
 
     if (this.phone.length == 10) {
-      let h = await this.remult.repo(HelpersAndStats).findFirst({ phone: new Phone(this.phone) });
+      let h = await remult.repo(HelpersAndStats).findFirst({ phone: new Phone(this.phone) });
       if (h) {
 
         this.initHelper(h);
       }
       else {
-        let h = this.remult.repo(Helpers).create();
+        let h = remult.repo(Helpers).create();
         h.phone = new Phone(this.phone);
         this.initHelper(h);
       }
@@ -49,7 +49,7 @@ export class AssignEscortComponent implements OnInit {
   async assignForDriver(driver: HelpersAndStats) {
       await this.helper.save();
 
-    let h = await this.remult.repo(Helpers).findFirst({ id: driver.id });
+    let h = await remult.repo(Helpers).findFirst({ id: driver.id });
     h.escort = await this.helper.getHelper();
     await h.save();
     if (await openDialog(YesNoQuestionComponent, x => x.args = { question: 'האם גם לשלוח SMS ל' + this.helper.name }, x => x.yes)) {
@@ -71,7 +71,7 @@ export class AssignEscortComponent implements OnInit {
   async clearEscort() {
     this.alreadyEscortingDriver.escort = null;
     await this.alreadyEscortingDriver.save();
-    let h = await this.remult.repo(HelpersAndStats).findFirst({ id: this.helper.id });
+    let h = await remult.repo(HelpersAndStats).findFirst({ id: this.helper.id });
     this.clearHelperInfo();
     this.initHelper(h);
 
@@ -84,7 +84,7 @@ export class AssignEscortComponent implements OnInit {
       if (h instanceof HelpersAndStats)
         assignedFamilies = h.deliveriesInProgress;
       else
-        assignedFamilies = await (await this.remult.repo(HelpersAndStats).findFirst({ id: h.id })).deliveriesInProgress
+        assignedFamilies = await (await remult.repo(HelpersAndStats).findFirst({ id: h.id })).deliveriesInProgress
       if (assignedFamilies > 0) {
         await openDialog(YesNoQuestionComponent, x =>
           x.args = {
@@ -116,7 +116,7 @@ export class AssignEscortComponent implements OnInit {
     if (this.helper.theHelperIAmEscorting) {
       this.alreadyEscortingDriver = this.helper.theHelperIAmEscorting;
     } else {
-      this.optionalDrivers = await this.remult.repo(HelpersAndStats).find({
+      this.optionalDrivers = await remult.repo(HelpersAndStats).find({
         where: {
           needEscort: true,
           escort: null,

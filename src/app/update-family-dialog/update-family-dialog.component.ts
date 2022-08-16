@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
 import { DataAreaFieldsSetting, DataAreaSettings, GridSettings } from '@remult/angular/interfaces';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -36,11 +36,9 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   constructor(
     private dialogRef: MatDialogRef<any>,
 
-    private remult: Remult,
     public settings: ApplicationSettings,
     public dialog: DialogService,
     private cd: ChangeDetectorRef,
-    private zone: NgZone,
     public busy: BusyService
 
   ) {
@@ -152,7 +150,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   confirmed = false;
   async confirm() {
     if (!this.families.currentRow.defaultDistributionCenter && this.onMapLocation)
-      this.families.currentRow.defaultDistributionCenter = await this.remult.state.findClosestDistCenter(this.onMapLocation);
+      this.families.currentRow.defaultDistributionCenter = await remult.context.findClosestDistCenter(this.onMapLocation);
     if (this.delivery) {
       let d = this.delivery;
       if (d.changeRequireStatsRefresh())
@@ -170,7 +168,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this.remult.repo(FamilyImage).create({
+        await remult.repo(FamilyImage).create({
           familyId: this.args.family.id, image: image.image
         }).save();
       }
@@ -195,7 +193,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
       aDeliveryWasAdded: async (id) => {
         if (this.delivery)
           this.refreshDeliveryStatistics = true;
-        this.delivery = await this.remult.repo(ActiveFamilyDeliveries).findId(id);
+        this.delivery = await remult.repo(ActiveFamilyDeliveries).findId(id);
       }
     });
   }
@@ -205,16 +203,16 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
 
-  families = new GridSettings(this.remult.repo(Families), { allowUpdate: true });
+  families = new GridSettings(remult.repo(Families), { allowUpdate: true });
 
   delivery: ActiveFamilyDeliveries;
 
   async showDuplicate(dup: duplicateFamilyInfo) {
-    let f = await this.remult.repo(Families).findId(dup.id);
+    let f = await remult.repo(Families).findId(dup.id);
     openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
-    return displayDupInfo(info, this.remult);
+    return displayDupInfo(info, remult);
   }
 
 
@@ -243,14 +241,14 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
   async editOnGoogle() {
     await this.families.currentRow.save();
-    let c = new AdjustGeocode(this.remult);
+    let c = new AdjustGeocode(remult);
     await c.edit(this.dialog, this.families.currentRow.address, () => this.families.currentRow._.reload());
   }
   images: ImageInfo[] = [];
   async ngOnInit() {
     if (!this.args.familyDelivery) {
       if (this.args.deliveryId) {
-        this.args.familyDelivery = await this.remult.repo(FamilyDeliveries).findFirst({ id: this.args.deliveryId });
+        this.args.familyDelivery = await remult.repo(FamilyDeliveries).findFirst({ id: this.args.deliveryId });
         this.args.familyId = this.args.familyDelivery.family;
       }
 
@@ -260,7 +258,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         this.args.familyId = this.args.familyDelivery.family;
       }
       if (this.args.familyId)
-        this.args.family = await this.remult.repo(Families).findFirst({ id: this.args.familyId });
+        this.args.family = await remult.repo(Families).findFirst({ id: this.args.familyId });
     }
     const { addressLongitude, addressLatitude, drivingLatitude, drivingLongitude, addressHelper } = this.args.family;
     console.log({ addressLatitude, addressLongitude, drivingLatitude, drivingLongitude, loc: addressHelper.location });
@@ -271,7 +269,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
 
 
     this.families.currentRow = this.args.family;
-    this.images = await (await this.remult.repo(FamilyImage).find({ where: { familyId: this.args.family.id } })).map(i => ({
+    this.images = await (await remult.repo(FamilyImage).find({ where: { familyId: this.args.family.id } })).map(i => ({
       image: i.image,
       entity: i
     } as ImageInfo));
@@ -380,7 +378,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
 
   sendWhatsApp() {
-    sendWhatsappToFamily(this.args.family, this.remult);
+    sendWhatsappToFamily(this.args.family, remult);
   }
   canSendWhatsApp() {
     return canSendWhatsapp(this.args.family);

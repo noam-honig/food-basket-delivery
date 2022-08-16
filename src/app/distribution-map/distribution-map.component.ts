@@ -7,7 +7,7 @@ import { polygonContains } from '../shared/googleApiHelpers';
 
 import { Route } from '@angular/router';
 
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
 import { BusyService } from '@remult/angular';
@@ -34,7 +34,7 @@ import { deliveryOnMap, DistributionMapController, infoOnMap, statusClass, Statu
 })
 export class DistributionMap implements OnInit, OnDestroy {
   showChart = true;
-  constructor(private remult: Remult, private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private dialog: DialogService, busy: BusyService, public settings: ApplicationSettings) {
 
     dialog.onStatusChange(() => {
       busy.donotWait(async () => {
@@ -67,13 +67,13 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   buttons: GridButton[] = [
     ...[
-      new UpdateAreaForDeliveries(this.remult),
-      new UpdateDistributionCenter(this.remult),
-      new UpdateCourier(this.remult),
-      new updateGroupForDeliveries(this.remult),
-      new NewDelivery(this.remult),
-      new UpdateDeliveriesStatus(this.remult),
-      new DeleteDeliveries(this.remult)
+      new UpdateAreaForDeliveries(remult),
+      new UpdateDistributionCenter(remult),
+      new UpdateCourier(remult),
+      new updateGroupForDeliveries(remult),
+      new NewDelivery(remult),
+      new UpdateDeliveriesStatus(remult),
+      new DeleteDeliveries(remult)
     ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
       ui: this.dialog,
@@ -204,7 +204,7 @@ export class DistributionMap implements OnInit, OnDestroy {
     defaultValue: () => use.language.allRegions,
     valueChange: () => this.refreshDeliveries(),
 
-    valueList: async () => this.remult.isAllowed(Roles.admin) ? await Families.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))]) : []
+    valueList: async () => remult.isAllowed(Roles.admin) ? await Families.getAreas().then(areas => [{ caption: use.language.allRegions, id: use.language.allRegions }, ...areas.map(x => ({ caption: x.area + ' - ' + x.count, id: x.area }))]) : []
 
   });
   area = new DataAreaSettings();
@@ -213,7 +213,7 @@ export class DistributionMap implements OnInit, OnDestroy {
   async refreshDeliveries() {
     let allInAlll = false;
     let deliveries: deliveryOnMap[];
-    if (this.remult.isAllowed(Roles.overview)) {
+    if (remult.isAllowed(Roles.overview)) {
       this.overviewMap = true;
       deliveries = await DistributionMapController.GetLocationsForOverview();
       allInAlll = true;
@@ -245,7 +245,7 @@ export class DistributionMap implements OnInit, OnDestroy {
 
         if (!allInAlll)
           google.maps.event.addListener(familyOnMap.marker, 'click', async () => {
-            let fd = await this.remult.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
+            let fd = await remult.repo(ActiveFamilyDeliveries).findId(familyOnMap.id);
             await fd.showDetailsDialog({
               onSave: async () => {
                 familyOnMap.marker.setMap(null);

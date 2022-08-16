@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
 import { GridSettings } from '@remult/angular/interfaces';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
 import { DialogService } from '../select-popup/dialog';
 
@@ -12,9 +12,9 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class IncomingMessagesComponent implements OnInit {
 
-  constructor(private remult: Remult, private dialog: DialogService, private busy: BusyService) { }
+  constructor(private dialog: DialogService, private busy: BusyService) { }
   showAll = true;
-  grid = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+  grid = new GridSettings(remult.repo(HelperCommunicationHistory), {
     where: () => ({ incoming: !this.showAll ? true : undefined }),
     knowTotalRows: true,
     columnSettings: com => [
@@ -30,7 +30,7 @@ export class IncomingMessagesComponent implements OnInit {
     ],
     rowButtons: [{
 
-      textInMenu: this.remult.state.lang.volunteerInfo,
+      textInMenu: remult.context.lang.volunteerInfo,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
         h.displayEditDialog(this.dialog);
@@ -39,7 +39,7 @@ export class IncomingMessagesComponent implements OnInit {
 
     }, {
 
-      textInMenu: this.remult.state.lang.smsMessages,
+      textInMenu: remult.context.lang.smsMessages,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
         h.smsMessages(this.dialog);
@@ -48,7 +48,7 @@ export class IncomingMessagesComponent implements OnInit {
 
     },
     {
-      textInMenu: this.remult.state.lang.customSmsMessage,
+      textInMenu: remult.context.lang.customSmsMessage,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
         h.sendSmsToCourier(this.dialog);
@@ -57,7 +57,7 @@ export class IncomingMessagesComponent implements OnInit {
 
     }],
     gridButtons: [{
-      name: this.remult.state.lang.showOnlyIncoming, click: () => {
+      name: remult.context.lang.showOnlyIncoming, click: () => {
         this.showAll = !this.showAll;
         this.grid.reloadData();
       }

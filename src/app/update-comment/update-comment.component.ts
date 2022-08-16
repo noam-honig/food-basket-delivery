@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 
 import { DialogService } from '../select-popup/dialog';
@@ -93,7 +93,7 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
       if (image.deleted && image.entity)
         await image.entity.delete();
       if (!image.deleted && !image.entity) {
-        await this.remult.repo(DeliveryImage).create({
+        await remult.repo(DeliveryImage).create({
           deliveryId: this.args.family.id, image: image.image
         }).save();
         this.args.family.needsWork = true;

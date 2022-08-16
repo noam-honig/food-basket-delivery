@@ -7,8 +7,8 @@ import { DialogService } from './select-popup/dialog';
 import { ApplicationSettings } from './manage/ApplicationSettings';
 import { SettingsService } from "./manage/SettingsService";
 import { FamiliesComponent } from './families/families.component';
-import { Remult } from 'remult';
-import { RouteHelperService, BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { remult, Remult } from 'remult';
+import { RouteHelperService, BusyService, openDialog, SelectValueDialogComponent, RemultAngularPluginsService } from '@remult/angular';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
 
@@ -26,8 +26,9 @@ import { CreateNewEvent } from './create-new-event/create-new-event';
 })
 export class AppComponent {
   isAdmin() {
-    return this.remult.isAllowed(Roles.admin);
+    return remult.isAllowed(Roles.admin);
   }
+  remult = remult;
   lang: Language;
   isEdge = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent);
   constructor(
@@ -36,7 +37,7 @@ export class AppComponent {
     public activeRoute: ActivatedRoute,
     public dialog: DialogService,
     public helper: RouteHelperService,
-    public remult: Remult,
+
     public settings: ApplicationSettings,
     private busy: BusyService
   ) {
@@ -49,7 +50,7 @@ export class AppComponent {
 
   }
 
-  createNewEventAction = new CreateNewEvent(this.remult);
+  createNewEventAction = new CreateNewEvent(remult);
 
 
 
@@ -73,7 +74,7 @@ export class AppComponent {
   }
   prevLogoUrl = '';
   getLogo() {
-    let result = ApplicationSettings.get(this.remult).logoUrl;
+    let result = ApplicationSettings.get(remult).logoUrl;
     if (result) {
       this.prevLogoUrl = result;
     }
@@ -90,7 +91,7 @@ export class AppComponent {
       if (this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
         return this.activeRoute.snapshot.firstChild.data.name;
     }
-    return ApplicationSettings.get(this.remult).organisationName;
+    return ApplicationSettings.get(remult).organisationName;
   }
   toolbarColor = 'primary';
   showConfidentialityApproveInPrint() {
@@ -104,13 +105,13 @@ export class AppComponent {
     return this.activeRoute?.firstChild?.snapshot?.routeConfig?.data?.noConfHeaderAndBorders
   }
   showSideBar() {
-    if (!this.remult.authenticated())
+    if (!remult.authenticated())
       return false;
     if (this.activeRoute?.firstChild?.snapshot?.routeConfig?.data?.noBar) {
       return false;
 
     }
-    if (this.settings.isSytemForMlt && !this.remult.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
+    if (this.settings.isSytemForMlt && !remult.isAllowed([Roles.admin, Roles.lab, Roles.distCenterAdmin]))
       return false;
     return true;
   }

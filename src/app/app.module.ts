@@ -92,7 +92,7 @@ import { RegisterURLComponent } from './resgister-url/regsiter-url.component';
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component';
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component';
 import { MltFamiliesComponent } from './mlt-families/mlt-families.component';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component';
 import { Helpers } from './helpers/helpers';
 import { ImagesComponent } from './images/images.component';
@@ -311,31 +311,36 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: TokenService, settings: SettingsService, remult: Remult, http: HttpClient) {
+export function initApp(session: TokenService, settings: SettingsService, injectedRemult: Remult, http: HttpClient) {
   Remult.setDefaultHttpProvider(http);
   return async () => {
     try {
       try {
-        remult.state.getSite = () => getSiteFromUrl(window.location.pathname)
+        injectedRemult.context.getSite = () => getSiteFromUrl(window.location.pathname)
         await session.loadUserInfo();
-        await remult.userChange.observe(async () => {
-          await InitContext(remult);
+        await injectedRemult.userChange.observe(async () => {
+          await InitContext(injectedRemult);
           if (settings.instance)
             await settings.instance._.reload();
 
         });
       } catch {
         session.setToken(undefined, true);
-        await remult.userChange.observe(async () => {
-          await InitContext(remult);
+        await injectedRemult.userChange.observe(async () => {
+          await InitContext(injectedRemult);
           if (settings.instance)
             await settings.instance._.reload();
 
         });
-        console.error("Failed ti init existing user");
+        console.error("Failed to init existing user");
       }
-      remult.state.getOrigin = () => window.location.origin;
+      injectedRemult.context.getOrigin = () => window.location.origin;
+      for (const key in injectedRemult.context) {
+        if (Object.prototype.hasOwnProperty.call(injectedRemult.context, key)) {
+          remult.context[key] = injectedRemult.context[key];
 
+        }
+      }
       await settings.init();
 
       var s = settings.instance;

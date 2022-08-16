@@ -1,4 +1,4 @@
-import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions } from "remult";
+import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions, remult } from "remult";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
@@ -43,7 +43,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
             args.onEnd = async () => { };
         }
         if (!args.dialogColumns)
-            args.dialogColumns = async x => [...getFields(this, this.remult)];
+            args.dialogColumns = async x => [...getFields(this, remult)];
         if (!args.validateInComponent)
             args.validateInComponent = async x => { };
         if (!args.additionalWhere) {
@@ -52,13 +52,13 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
     }
-    get $() { return getFields<this>(this, this.remult) };
+    get $() { return getFields<this>(this) };
 
     gridButton(component: actionDialogNeeds<T>) {
         return {
             name: this.args.title,
             visible: () => {
-                let r = this.remult.isAllowed(this.args.allowed);
+                let r = remult.isAllowed(this.args.allowed);
                 if (!r)
                     return false;
                 if (this.args.visible) {
@@ -82,9 +82,9 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                     },
                     ok: async () => {
-                        let groupName = this.remult.repo(this.entity).metadata.caption;
+                        let groupName = remult.repo(this.entity).metadata.caption;
                         let where = await this.composeWhere(component.userWhere);
-                        let count = await this.remult.repo(this.entity).count(where)
+                        let count = await remult.repo(this.entity).count(where)
                         if (await component.ui.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
                             let r = await this.internalForTestingCallTheServer({
                                 count,
@@ -114,7 +114,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
         let r = await this.execute({
             count: info.count,
-            packedWhere: Filter.entityFilterToJson(this.remult.repo(this.entity).metadata, info.where),
+            packedWhere: Filter.entityFilterToJson(remult.repo(this.entity).metadata, info.where),
         }, p);
 
         return r;
@@ -127,15 +127,15 @@ export abstract class ActionOnRows<T extends IdEntity>  {
     @BackendMethod<ActionOnRows<any>>({ allowed: (remult, self) => remult.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
         await this.serialHelper?.deserializeOnServer();
-        let where: EntityFilter<T> = await this.composeWhere(Filter.entityFilterFromJson(this.remult.repo(this.entity).metadata, info.packedWhere));
+        let where: EntityFilter<T> = await this.composeWhere(Filter.entityFilterFromJson(remult.repo(this.entity).metadata, info.packedWhere));
 
-        let count = await this.remult.repo(this.entity).count(where);
+        let count = await remult.repo(this.entity).count(where);
         if (count != info.count) {
-            console.log({ count, packCount: info.count, name: this.remult.repo(this.entity).metadata.caption });
+            console.log({ count, packCount: info.count, name: remult.repo(this.entity).metadata.caption });
             throw "ארעה שגיאה אנא נסה שוב";
         }
         let i = 0;
-        let r = await pagedRowsIterator<T>(this.remult.repo(this.entity), {
+        let r = await pagedRowsIterator<T>(remult.repo(this.entity), {
             where,
             orderBy: this.args.orderBy,
             forEachRow: async (f) => {
@@ -147,9 +147,9 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + this.remult.repo(this.entity).metadata.caption + " " + getLang(this.remult).updated;
+        let message = this.args.title + ": " + r + " " + remult.repo(this.entity).metadata.caption + " " + getLang(remult).updated;
 
-        await Families.SendMessageToBrowsers(message, this.remult, '');
+        await Families.SendMessageToBrowsers(message, remult, '');
         return r;
     }
 

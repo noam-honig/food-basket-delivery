@@ -14,7 +14,7 @@ import { Families } from "./families";
     }),
     saving: async self => {
         if (self.isNew())
-            self.uploadingVolunteer = (await remult.state.getCurrentUser())
+            self.uploadingVolunteer = (await remult.context.getCurrentUser())
     }
 })
 export class DeliveryImage extends IdEntity {

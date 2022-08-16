@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { GridSettings } from '@remult/angular/interfaces';
-import { EntityFilter, EntityOrderBy } from 'remult';
+import { EntityFilter, EntityOrderBy, remult } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Filter } from 'remult';
 import { Remult } from 'remult';
@@ -29,9 +29,9 @@ export class SelectFamilyComponent implements OnInit {
     allowSelectAll?: boolean
   };
   @ViewChild("search", { static: true }) search: ElementRef;
-  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, private remult: Remult, public settings: ApplicationSettings) { }
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>, public settings: ApplicationSettings) { }
   searchString: string = '';
-  families = new GridSettings(this.remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
+  families = new GridSettings(remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
   pageSize = 30;
   showAll = false;
   selectFirst() {
@@ -70,7 +70,7 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: {
-        distributionCenter: this.remult.state.filterDistCenter(this.args.distCenter),
+        distributionCenter: remult.context.filterDistCenter(this.args.distCenter),
         name: this.args.selectStreet ? undefined : { $contains: this.searchString },
         address: this.args.selectStreet ? { $contains: this.searchString } : undefined,
         $and: [!this.showAll ? this.args.where : undefined]

@@ -80,16 +80,16 @@ export class NewDelivery extends ActionOnRows<Families> {
             validate: async () => {
 
                 if (!this.useFamilyDistributionList && !this.distributionCenter) {
-                    this.$.distributionCenter.error = getLang(this.remult).mustSelectDistributionList;
+                    this.$.distributionCenter.error = getLang(remult).mustSelectDistributionList;
                     throw this.$.distributionCenter.error;
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType = await this.remult.state.defaultBasketType();
+                this.basketType = await remult.context.defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.ui.distCenter;
                 if (!this.distributionCenter)
-                    this.distributionCenter = await remult.state.defaultDistributionCenter();
+                    this.distributionCenter = await remult.context.defaultDistributionCenter();
                 return [
                     this.$.useFamilyBasket,
                     { field: this.$.basketType, visible: () => !this.useFamilyBasket },
@@ -210,7 +210,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 
     constructor(remult: Remult) {
         super(remult, Families, {
-            help: () => getLang(this.remult).updateStatusHelp,
+            help: () => getLang(remult).updateStatusHelp,
             dialogColumns: async () => {
                 if (!this.status)
                     this.status = FamilyStatus.Active;
@@ -236,7 +236,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
                     f.internalComment += this.comment;
                 }
                 if (f.status != FamilyStatus.Active && (this.archiveFinshedDeliveries || this.deletePendingDeliveries)) {
-                    for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query({ where: { family: f.id } })) {
+                    for await (const fd of remult.repo(ActiveFamilyDeliveries).query({ where: { family: f.id } })) {
                         if (fd.deliverStatus.IsAResultStatus()) {
                             if (this.archiveFinshedDeliveries) {
                                 fd.archive = true;
@@ -283,7 +283,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
                 {
                     f.defaultSelfPickup = this.selfPickup;
                     if (this.updateExistingDeliveries) {
-                        for await (const fd of this.remult.repo(ActiveFamilyDeliveries).query({
+                        for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
                             where: {
                                 family: f.id,
                                 deliverStatus: DeliveryStatus.isNotAResultStatus()

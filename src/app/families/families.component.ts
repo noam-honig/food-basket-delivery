@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { EntityFilter } from 'remult';
+import { EntityFilter, remult } from 'remult';
 
 import { Families, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
@@ -53,13 +53,13 @@ import { ChangeLogComponent } from '../change-log/change-log.component';
 export class FamiliesComponent implements OnInit {
 
 
-    test = new NewDelivery(this.remult);
+    test = new NewDelivery(remult);
     limit = 25;
 
 
     showHoverButton: boolean = false;
-
-    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public remult: Remult, public settings: ApplicationSettings) {
+    remult = remult;
+    constructor(public dialog: DialogService, private san: DomSanitizer, public busy: BusyService, public settings: ApplicationSettings) {
 
     }
 
@@ -72,8 +72,8 @@ export class FamiliesComponent implements OnInit {
 
         });
     }
-    isAdmin = this.remult.isAllowed(Roles.admin);
-    canAdd = this.remult.isAllowed(Roles.familyAdmin);
+    isAdmin = remult.isAllowed(Roles.admin);
+    canAdd = remult.isAllowed(Roles.familyAdmin);
 
     resetRow() {
         var focus: Families;
@@ -87,7 +87,7 @@ export class FamiliesComponent implements OnInit {
             this.families.setCurrentRow(focus);
     }
     quickAdd() {
-        let family = this.remult.repo(Families).create();
+        let family = remult.repo(Families).create();
         family.name = this.searchString;
         this.dialog.updateFamilyDialog({
             family,
@@ -170,9 +170,9 @@ export class FamiliesComponent implements OnInit {
         this.searchString = '';
         this.doSearch();
     }
-    stats = new Stats(this.remult);
+    stats = new Stats();
     async saveToExcel() {
-        await saveFamiliesToExcel(this.remult, this.families, this.dialog, this.settings.lang.families);
+        await saveFamiliesToExcel(remult, this.families, this.dialog, this.settings.lang.families);
     }
 
 
@@ -183,7 +183,7 @@ export class FamiliesComponent implements OnInit {
     addressProblemColumns: DataControlInfo<Families>[];
     addressByGoogle: DataControlInfo<Families>;
 
-    families: GridSettings<Families> = new GridSettings(this.remult.repo(Families), {
+    families: GridSettings<Families> = new GridSettings(remult.repo(Families), {
         allowUpdate: true,
         allowInsert: this.canAdd,
 
@@ -191,7 +191,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = await this.remult.state.defaultBasketType();
+                f.basketType = await remult.context.defaultBasketType();
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {
@@ -360,16 +360,16 @@ export class FamiliesComponent implements OnInit {
                 click: () => this.showChart = !this.showChart
             },
             ...[
-                new NewDelivery(this.remult),
-                new updateGroup(this.remult),
-                new UpdateArea(this.remult),
-                new UpdateStatus(this.remult),
-                new UpdateSelfPickup(this.remult),
-                new UpdateDefaultVolunteer(this.remult),
-                new UpdateDefaultDistributionList(this.remult),
-                new UpdateBasketType(this.remult),
-                new UpdateQuantity(this.remult),
-                new UpdateFamilySource(this.remult)
+                new NewDelivery(remult),
+                new updateGroup(remult),
+                new UpdateArea(remult),
+                new UpdateStatus(remult),
+                new UpdateSelfPickup(remult),
+                new UpdateDefaultVolunteer(remult),
+                new UpdateDefaultDistributionList(remult),
+                new UpdateBasketType(remult),
+                new UpdateQuantity(remult),
+                new UpdateFamilySource(remult)
             ].map(x => x.gridButton(
                 {
                     afterAction: async () => await this.refresh(),
@@ -417,7 +417,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.sendWhatsAppToFamily,
                 click: f =>
-                    sendWhatsappToFamily(f, this.remult)
+                    sendWhatsappToFamily(f, remult)
                 ,
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
@@ -433,7 +433,7 @@ export class FamiliesComponent implements OnInit {
                     }
                     let message = new messageMerger([
                         { token: 'משפחה', value: f.name },
-                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: this.remult.state.getSettings() + '/' + this.remult.state.getSite() + '/fso/' + f.shortUrlKey },
+                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: remult.context.getSettings() + '/' + remult.context.getSite() + '/fso/' + f.shortUrlKey },
                         { token: 'ארגון', value: this.settings.organisationName }
                     ]);
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
@@ -446,7 +446,7 @@ export class FamiliesComponent implements OnInit {
                             click: async () => {
                                 this.settings.familySelfOrderMessage = edit.args.templateText;
                                 await this.settings.save();
-                                sendWhatsappToFamily(f, this.remult, undefined, message.merge(edit.args.templateText))
+                                sendWhatsappToFamily(f, remult, undefined, message.merge(edit.args.templateText))
                             }
                         }]
 
@@ -463,7 +463,7 @@ export class FamiliesComponent implements OnInit {
             },
             {
                 name: use.language.changeLog,
-                visible: h => this.remult.isAllowed(Roles.admin),
+                visible: h => remult.isAllowed(Roles.admin),
                 click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
             }
         ]
@@ -749,7 +749,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, ui: UITools, name) {
-    await saveToExcel<Families, GridSettings<Families>>((await remult.state.getSettings()), remult.repo(Families), gs, name, ui, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>((await remult.context.getSettings()), remult.repo(Families), gs, name, ui, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation;
         let street = f.address;
         let house = '';

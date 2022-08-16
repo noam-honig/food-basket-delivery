@@ -88,8 +88,8 @@ export async function recordChanges<entityType extends EntityBase>(remult: Remul
                 relatedName: self.$.find("name")?.originalValue,
                 userId: remult.user.id,
                 userName: remult.user.name,
-                appUrl: remult.state.requestRefererOnBackend,
-                apiUrl: remult.state.requestUrlOnBackend
+                appUrl: remult.context.requestRefererOnBackend,
+                apiUrl: remult.context.requestUrlOnBackend
             })
         }
 

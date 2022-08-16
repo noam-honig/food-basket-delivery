@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
-import { IdEntity, Remult } from 'remult';
+import { IdEntity, remult, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from './VolunteerReportDefs';
 import { Entity, Field } from '../translate';
@@ -19,14 +19,15 @@ import { assign } from '../shared/utils';
 })
 export class PrintStickersComponent implements OnInit {
 
-  constructor(public remult: Remult, private dialog: DialogService) { }
-  defs = new VolunteerReportDefs(this.remult, this.dialog);
+  constructor(private dialog: DialogService) { }
+  remult = remult;
+  defs = new VolunteerReportDefs(remult, this.dialog);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;
   borderKey = '@border';
   pageProps: ElementProps = {
-    caption: this.remult.state.lang.pageProperties, props: [
+    caption: remult.context.lang.pageProperties, props: [
       ...getMarginsH()]
 
   };
@@ -36,14 +37,14 @@ export class PrintStickersComponent implements OnInit {
     return '';
   }
   stickerProps: ElementProps = {
-    caption: this.remult.state.lang.labelProperties, props: [
-      new Property('height', this.remult.state.lang.height, 'number', (val, s) => assign(s, {
+    caption: remult.context.lang.labelProperties, props: [
+      new Property('height', remult.context.lang.height, 'number', (val, s) => assign(s, {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),
-      new SizeProperty('width', this.remult.state.lang.width),
+      new SizeProperty('width', remult.context.lang.width),
       ...getMarginsH(), ...getMarginsV(),
-      new Property(this.borderKey, this.remult.state.lang.border, "checkbox", (val, s) => {
+      new Property(this.borderKey, remult.context.lang.border, "checkbox", (val, s) => {
 
       })
     ],
@@ -100,13 +101,13 @@ export class PrintStickersComponent implements OnInit {
 
   async ngOnInit() {
     this.data = await VolunteerReportDefs.getStickerData();
-    this.row = await this.remult.repo(StickerInfo).findFirst({ key: "stickers" }, { useCache: false, createIfNotFound: true });
+    this.row = await remult.repo(StickerInfo).findFirst({ key: "stickers" }, { useCache: false, createIfNotFound: true });
     this.report = this.row.info;
     if (!this.report) {
       this.report = {
         controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }, {
           fieldKey: 'basketType', propertyValues: {
-            [this.defs.textBeforeKey]: this.remult.state.lang.basketType + ": "
+            [this.defs.textBeforeKey]: remult.context.lang.basketType + ": "
           }
         }, { fieldKey: 'deliveryComments', propertyValues: { 'bold': 'true' } }],
         page: {},

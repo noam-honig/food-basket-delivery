@@ -1,7 +1,7 @@
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { Remult } from "remult";
+import { remult, Remult } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
@@ -10,11 +10,11 @@ import { SelectFamilyComponent } from "../select-family/select-family.component"
 import { moveDeliveriesHelperController } from "./move-deliveries-helper.controller";
 
 export class moveDeliveriesHelper {
-    constructor(private remult: Remult, private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
+    constructor(private settings: ApplicationSettings, private dialog: DialogService, private reload: () => Promise<void>) { }
 
     async move(from: HelpersBase, to: HelpersBase, showToHelperAssignmentWhenDone: boolean, extraMessage = '', allowSelect = false) {
 
-        let deliveries = await this.remult.repo(ActiveFamilyDeliveries).find({
+        let deliveries = await remult.repo(ActiveFamilyDeliveries).find({
             where: { courier: from, deliverStatus: DeliveryStatus.ReadyForDelivery },
             limit: 1000
         });

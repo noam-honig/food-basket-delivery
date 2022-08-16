@@ -11,7 +11,7 @@ import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { use } from '../translate';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -150,7 +150,7 @@ export class HelperFamiliesComponent implements OnInit {
     }, 1000);
   }
   isAdmin() {
-    return this.remult.isAllowed(Roles.distCenterAdmin);
+    return remult.isAllowed(Roles.distCenterAdmin);
   }
   disableDrag = true;
   toggleReorder() {
@@ -185,7 +185,7 @@ export class HelperFamiliesComponent implements OnInit {
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
   currentUser: Helpers;
   async ngOnInit() {
-    this.currentUser = await this.busy.donotWait(async () => await this.remult.state.getCurrentUser());
+    this.currentUser = await this.busy.donotWait(async () => await remult.context.getCurrentUser());
     if (!environment.production && false)
       setTimeout(() => {
         if (this.familyLists.toDeliver.length > 0) {
@@ -227,7 +227,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   reminderSmsRelativeDate() {
-    return relativeDateName(this.remult, { d: this.familyLists.helper.reminderSmsDate });
+    return relativeDateName(remult, { d: this.familyLists.helper.reminderSmsDate });
   }
 
 
@@ -357,7 +357,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    await new moveDeliveriesHelper(this.remult, this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true, '', true);
+    await new moveDeliveriesHelper(this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true, '', true);
 
   }
 
@@ -381,7 +381,7 @@ export class HelperFamiliesComponent implements OnInit {
       if (this.familyLists.helper.leadHelper) {
         this.otherDependentVolunteers.push(this.familyLists.helper.leadHelper);
       }
-      this.otherDependentVolunteers.push(...await this.remult.repo(Helpers).find({ where: { leadHelper: this.familyLists.helper } }));
+      this.otherDependentVolunteers.push(...await remult.repo(Helpers).find({ where: { leadHelper: this.familyLists.helper } }));
     });
   }
   otherDependentVolunteers: HelpersBase[] = [];
@@ -501,7 +501,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async sendWhatsapp() {
-    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, this.remult);
+    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, remult);
     await this.updateMessageSent("Whatsapp");
   }
   print() {
@@ -519,7 +519,7 @@ export class HelperFamiliesComponent implements OnInit {
   prepareMessage(reminder: boolean) {
     this.isReminderMessage = reminder;
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(this.remult, this.familyLists.helper, window.origin, reminder, this.remult.user.name, async (phone, message, sender, link) => {
+      await SendSmsAction.generateMessage(remult, this.familyLists.helper, window.origin, reminder, remult.user.name, async (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
         this.smsLink = link;
@@ -545,7 +545,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async updateMessageSent(type: string) {
 
-    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, this.remult, type);
+    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, remult, type);
   }
   async copyMessage() {
     copy(this.smsMessage);
@@ -595,7 +595,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
       if (endOnDist)
         url += "/" + encodeURI((this.routeStart).getAddress());
-      window.open(url + "?hl=" + getLang(this.remult).languageCode, '_blank');
+      window.open(url + "?hl=" + getLang(remult).languageCode, '_blank');
     }
     //window.open(url,'_blank');
   }

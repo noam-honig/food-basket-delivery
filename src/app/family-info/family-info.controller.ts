@@ -30,7 +30,7 @@ export class FamilyInfoController {
             if (!fd.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 throw "אינך רשאי לחייג למשפחה זו";
 
-            cleanPhone = Phone.fixPhoneInput(fd.phone1.thePhone, remult);
+            cleanPhone = Phone.fixPhoneInput(fd.phone1.thePhone);
             if (!cleanPhone) return { error: "למשפחה זו לא מעודכן טלפון" };
             if (cleanPhone.startsWith('0'))
                 cleanPhone = cleanPhone.substring(1);

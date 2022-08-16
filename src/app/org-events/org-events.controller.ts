@@ -42,7 +42,7 @@ export class OrgEventsController {
 
             let c = await createSiteContext(org);
 
-            let settings = await c.state.getSettings();
+            let settings = await c.context.getSettings();
             setSettingsForSite(org, settings);
 
 
@@ -94,7 +94,7 @@ export class OrgEventsController {
 
         if (!specificUrl)
             specificUrl = '';
-        let helper: HelpersBase = (await remult.state.getCurrentUser());
+        let helper: HelpersBase = (await remult.context.getCurrentUser());
         if (!helper && phone)
             helper = await remult.repo(Helpers).findFirst({ phone: new Phone(phone) });
         return Promise.all((await remult.repo(Event).find({

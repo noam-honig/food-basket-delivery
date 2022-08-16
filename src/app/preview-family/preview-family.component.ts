@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { DialogConfig } from '@remult/angular';
 
 import { MatDialogRef } from '@angular/material/dialog';
@@ -16,14 +16,14 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 @DialogConfig({ minWidth: 350 })
 export class PreviewFamilyComponent implements OnInit {
 
-  familyLists = new UserFamiliesList(this.remult, this.settings);
+  familyLists = new UserFamiliesList( this.settings);
   public argsFamily: ActiveFamilyDeliveries;
   constructor(public remult: Remult, private dialogRef: MatDialogRef<any>
     , public settings: ApplicationSettings) { }
   async ngOnInit() {
 
     this.familyLists.toDeliver = [this.argsFamily];
-    this.familyLists.helper = await this.remult.state.getCurrentUser();
+    this.familyLists.helper = await remult.context.getCurrentUser();
 
 
 

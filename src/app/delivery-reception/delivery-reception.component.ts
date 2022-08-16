@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { DataControlInfo, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
@@ -27,7 +27,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   urlParams = new URLSearchParams(window.location.search);
   deliveriesForPhone: string[] = [];
 
-  deliveries = new GridSettings(this.remult.repo(FamilyDeliveries), {
+  deliveries = new GridSettings(remult.repo(FamilyDeliveries), {
     allowUpdate: false,
     numOfColumnsInGrid: 3,
     rowCssClass: f => f.getCss(),
@@ -84,18 +84,18 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         icon: 'done_all',
         showInLine: true,
         click: async d => {
-          if (await this.dialog.YesNoPromise(getLang(this.remult).shouldArchiveDelivery)) {
+          if (await this.dialog.YesNoPromise(getLang(remult).shouldArchiveDelivery)) {
             {
               d.archive = true;
 
-              d.distributionCenter = await this.remult.state.getUserDistributionCenter();
+              d.distributionCenter = await remult.context.getUserDistributionCenter();
               d.deliverStatus = DeliveryStatus.Success;
               await d.save();
               await this.refreshFamilyGrid();
             }
           }
         }
-        , textInMenu: () => getLang(this.remult).receptionDone
+        , textInMenu: () => getLang(remult).receptionDone
       },
       {
         name: '',
@@ -103,10 +103,10 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         showInLine: true,
         click: async d => {
           d.deliverStatus = DeliveryStatus.FailedOther;
-          d.distributionCenter = await this.remult.state.getUserDistributionCenter();
+          d.distributionCenter = await remult.context.getUserDistributionCenter();
           this.editComment(d);
         }
-        , textInMenu: () => getLang(this.remult).notDelivered
+        , textInMenu: () => getLang(remult).notDelivered
       }
     ]
   });
@@ -114,7 +114,6 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
   phone = new InputField<string>({ caption: "טלפון של תורם או מתנדב", inputType: 'tel' });
 
   constructor(
-    private remult: Remult,
     public dialog: DialogService,
     private busy: BusyService,
     private route: ActivatedRoute
@@ -131,10 +130,10 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   private editComment(d: FamilyDeliveries) {
     openDialog(InputAreaComponent, x => x.args = {
-      title: getLang(this.remult).commentForReception,
+      title: getLang(remult).commentForReception,
       validate: async () => {
         if (d.receptionComments == '')
-          throw getLang(this.remult).updateComment;
+          throw getLang(remult).updateComment;
       },
       ok: () => {
         d.save();

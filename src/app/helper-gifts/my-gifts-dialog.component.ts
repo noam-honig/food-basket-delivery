@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -21,16 +21,15 @@ export class MyGiftsDialogComponent implements OnInit {
   };
 
   constructor(
-    private remult: Remult,
     public settings: ApplicationSettings
   ) { }
 
   async ngOnInit() {
     this.giftsUsed = 0;
     this.giftsAvailable = 0;
-    let helper = await this.remult.repo(Helpers).findId(this.args.helperId);
+    let helper = await remult.repo(Helpers).findId(this.args.helperId);
     this.theGifts =
-      await this.remult.repo(HelperGifts).find({ where: { assignedToHelper: helper } }).then(
+      await remult.repo(HelperGifts).find({ where: { assignedToHelper: helper } }).then(
         gifts => {
           return gifts.map(x => {
             if (x.wasConsumed)
@@ -40,7 +39,7 @@ export class MyGiftsDialogComponent implements OnInit {
             return {
               giftID: x.id,
               giftUrl: x.giftURL,
-              dateGranted: relativeDateName(this.remult, { d: x.dateGranted }),
+              dateGranted: relativeDateName(remult, { d: x.dateGranted }),
               wasConsumed: x.wasConsumed,
               wasClicked: x.wasClicked
             }
@@ -50,7 +49,7 @@ export class MyGiftsDialogComponent implements OnInit {
   }
 
   async giftUsed(gitfID) {
-    await this.remult.repo(HelperGifts).findId(gitfID).then(
+    await remult.repo(HelperGifts).findId(gitfID).then(
       async gift => {
         gift.wasConsumed = true;
         await gift.save();
@@ -60,7 +59,7 @@ export class MyGiftsDialogComponent implements OnInit {
   }
 
   async useTheGift(gitfID) {
-    await this.remult.repo(HelperGifts).findId(gitfID).then(
+    await remult.repo(HelperGifts).findId(gitfID).then(
       async gift => {
         gift.wasClicked = true;
         await gift.save();

@@ -99,7 +99,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     dict = new Map<string, google.maps.Marker>();
     disableMapBoundsRefrest = 0;
-    constructor(private remult: Remult, private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
+    constructor(private busy: BusyService, private settings: ApplicationSettings, private dialog: DialogService) {
         this.mediaMatcher.addListener((mql) => {
             if (mql.matches) {
                 let x = this.gmapElement.nativeElement.offsetWidth;

@@ -62,7 +62,7 @@ export class eventStatus {
         if (isBackend()) {
             await self.addressHelper.updateApiResultIfChanged();
             if (self.distributionCenter == null)
-                self.distributionCenter = await self.remult.state.defaultDistributionCenter();
+                self.distributionCenter = await self.remult.context.defaultDistributionCenter();
         }
     },
     apiPrefilter: () => ({
@@ -118,14 +118,14 @@ export class Event extends IdEntity {
     async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
         if (!helper)
             return false;
-        return !!(await this.remult.repo(volunteersInEvent).findFirst({
+        return !!(await remult.repo(volunteersInEvent).findFirst({
             helper,
             eventId: this.id,
             canceled: false
         }))
     }
     @Field<Event>({
-        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await self.remult.state.getCurrentUser()))
+        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await self.remult.context.getCurrentUser()))
     })
     registeredToEvent: boolean;
 
@@ -137,14 +137,14 @@ export class Event extends IdEntity {
             { token: "תאריך", caption: "מועד הארוע", value: eventDisplayDate(this) },
             { token: "משעה", value: this.startTime },
             { token: "עד שעה", value: this.endTime },
-            { token: "ארגון", value: getSettings(this.remult).organisationName },
+            { token: "ארגון", value: getSettings(remult).organisationName },
         ]);
     }
 
     async showVolunteers(ui: UITools) {
-        if (this.remult.isAllowed(Roles.admin))
+        if (remult.isAllowed(Roles.admin))
             await this.save();
-        await volunteersInEvent.displayVolunteer({ remult: this.remult, event: this, ui })
+        await volunteersInEvent.displayVolunteer({ remult: remult, event: this, ui })
         await this._.reload();
     }
 
@@ -209,7 +209,7 @@ export class Event extends IdEntity {
 
     @Field<Event>({
         translation: l => l.eventName,
-        validate: (s, c) => Validators.required(s, c, s.remult.state.lang.nameIsTooShort)
+        validate: (s, c) => Validators.required(s, c, s.remult.context.lang.nameIsTooShort)
     })
     name: string;
     @Field()
@@ -222,7 +222,7 @@ export class Event extends IdEntity {
         translation: l => l.eventDate,
         validate: (s, c) => {
             if (!c.value || c.value.getFullYear() < 2018)
-                c.error = s.remult.state.lang.invalidDate;
+                c.error = s.remult.context.lang.invalidDate;
         }
     })
     eventDate: Date = new Date();
@@ -238,7 +238,7 @@ export class Event extends IdEntity {
     addressApiResult: string;
     @Field({ translation: l => l.address })
     address: string;
-    addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
+    addressHelper = new AddressHelper(() => this.$.address, () => this.$.addressApiResult);
     @Field<Event>({
         allowApiUpdate: Roles.admin
     })
@@ -284,13 +284,13 @@ export class Event extends IdEntity {
     get eventLogo() {
         if (this.imageUrl)
             return this.imageUrl;
-        return getSettings(this.remult).logoUrl;
+        return getSettings(remult).logoUrl;
     }
     get location() {
         return this.getAddress()?.location;
     }
     get orgName() {
-        return getSettings(this.remult).organisationName;
+        return getSettings(remult).organisationName;
     }
     get eventDateJson() {
         return ValueConverters.DateOnly.toJson(this.eventDate);
@@ -334,7 +334,7 @@ export class Event extends IdEntity {
         ];
     }
     static async duplicateEvent(remult: Remult, ui: UITools, events: Event[], done: (createdEvents: Event[]) => void) {
-        let settings = (await remult.state.getSettings());
+        let settings = (await remult.context.getSettings());
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;
         let date = new InputField<Date>({ caption: settings.lang.eventDate, valueConverter: ValueConverters.DateOnly });
@@ -415,14 +415,14 @@ export class Event extends IdEntity {
             return this.phone1Description;
         if (this.distributionCenter.phone1?.thePhone)
             return this.distributionCenter.phone1Description;
-        return getSettings(this.remult).helpText;
+        return getSettings(remult).helpText;
     }
     getPhone(): Phone {
         if (this.phone1?.thePhone)
             return this.phone1;
         if (this.distributionCenter.phone1?.thePhone)
             return this.distributionCenter.phone1;
-        return getSettings(this.remult).helpPhone;
+        return getSettings(remult).helpPhone;
     }
     get thePhone() {
         return this.getPhone()?.thePhone;
@@ -440,7 +440,7 @@ export class Event extends IdEntity {
             return this.addressHelper;
         if (this.distributionCenter?.addressHelper.ok)
             return this.distributionCenter.addressHelper;
-        return getSettings(this.remult).addressHelper;
+        return getSettings(remult).addressHelper;
     }
     get city() {
         if (this.getAddress().ok)
@@ -472,10 +472,10 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
     saving: async (self) => {
         if (self.isNew() && isBackend()) {
             self.createDate = new Date();
-            self.createUser = (await remult.state.getCurrentUser());
+            self.createUser = (await remult.context.getCurrentUser());
         }
         if (self.canceled && self.$.canceled.valueChanged()) {
-            self.cancelUser = (await remult.state.getCurrentUser());
+            self.cancelUser = (await remult.context.getCurrentUser());
 
         }
         if (self.isNew() || self.$.canceled.valueChanged())
@@ -680,7 +680,7 @@ export class volunteersInEvent extends IdEntity {
         ui: UITools
 
     }) {
-        const settings = await remult.state.getSettings();
+        const settings = await remult.context.getSettings();
         const gridSettings = new GridSettings<volunteersInEvent>(remult.repo(volunteersInEvent), {
 
             rowsInPage: 50,
@@ -824,7 +824,7 @@ export class volunteersInEvent extends IdEntity {
                 {
                     name: getLang(remult).exportToExcel,
                     click: async () => {
-                        saveToExcel((await remult.state.getSettings()), remult.repo(volunteersInEvent), gridSettings, use.language.volunteersRegisteredTo + " " + event.name, ui,
+                        saveToExcel((await remult.context.getSettings()), remult.repo(volunteersInEvent), gridSettings, use.language.volunteersRegisteredTo + " " + event.name, ui,
                             (e, c) => c == e.$.id || c == e.$.eventId || c == e.$.helperName || c == e.$.helperPhone)
                     }
                 }

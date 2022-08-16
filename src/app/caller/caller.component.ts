@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { DataAreaSettings, RowButton } from '@remult/angular/interfaces';
-import { FieldRef, Remult } from 'remult';
+import { FieldRef, remult, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
@@ -39,16 +39,16 @@ export class CallerComponent implements OnInit {
     }
   }];
   isAdmin() {
-    return this.remult.isAllowed(Roles.admin);
+    return remult.isAllowed(Roles.admin);
   }
-  constructor(private remult: Remult, public settings: ApplicationSettings, private dialog: DialogService, private routeHelper: RouteHelperService) { }
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private routeHelper: RouteHelperService) { }
   d: ActiveFamilyDeliveries;
   address: DataAreaSettings;
-  controller = new CallerController(this.remult);
+  controller = new CallerController();
   @ViewChild("famInfo") famInfo: FamilyInfoComponent;
   ngOnInit(): void {
     this.loadCall();
-    this.dialog.donotWait(async () => this.caller = await this.remult.repo(Callers).findId(this.remult.user.id));
+    this.dialog.donotWait(async () => this.caller = await remult.repo(Callers).findId(remult.user.id));
   }
   caller: Callers;
   async nextCall() {
@@ -112,14 +112,14 @@ export class CallerComponent implements OnInit {
     })
   }
   async loadCall() {
-    this.d = await this.remult.repo(ActiveFamilyDeliveries).findFirst(ActiveFamilyDeliveries.inProgressCallerDeliveries());
+    this.d = await remult.repo(ActiveFamilyDeliveries).findFirst(ActiveFamilyDeliveries.inProgressCallerDeliveries());
     if (this.caller)
       this.dialog.donotWait(async () =>
         this.caller = await this.caller._.reload());
   }
 
   async updateFamilyInfo() {
-    const fam = await this.remult.repo(Families).findId(this.d.family);
+    const fam = await remult.repo(Families).findId(this.d.family);
     const f = fam.$;
     function visible(ref: FieldRef, arr: FieldRef[]) {
       return arr.map(f => ({ field: f, visible: () => ref.value || arr.find(f => f.value) }));

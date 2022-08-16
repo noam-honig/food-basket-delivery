@@ -33,7 +33,7 @@ export class FamilyDeliveriesController {
                 result.push(x);
                 pendingStats.push(remult.repo(ActiveFamilyDeliveries).count({
                     groups: { $contains: x.name },
-                    distributionCenter: remult.state.filterDistCenter(dist),
+                    distributionCenter: remult.context.filterDistCenter(dist),
                     $and: [readyOnly ? FamilyDeliveries.readyFilter() : undefined]
                 }).then(r => x.totalReady = r));
 

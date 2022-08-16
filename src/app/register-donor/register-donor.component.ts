@@ -1,6 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { isPhoneValidForIsrael } from "../model-shared/phone";
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
@@ -23,7 +23,7 @@ declare var fbq;
 export class RegisterDonorComponent implements OnInit {
   static MinQuantity = 10;
 
-  constructor(private dialog: DialogService, private remult: Remult, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
+  constructor(private dialog: DialogService, private settings: ApplicationSettings, public activeRoute: ActivatedRoute) { }
 
   showCCMessage(): boolean {
     if (this.activeRoute.routeConfig.data && this.activeRoute.routeConfig.data.isCC)
@@ -33,7 +33,7 @@ export class RegisterDonorComponent implements OnInit {
 
   refer: string = null;
   isDone = false;
-  donor = new donorForm(this.remult);
+  donor = new donorForm(remult);
   area = new DataAreaSettings({
     fields: () =>
       [

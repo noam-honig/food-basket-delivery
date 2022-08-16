@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "../model-shared/phone";
-import { Remult, Controller, getFields, Validators } from 'remult';
+import { Remult, Controller, getFields, Validators, remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -36,7 +36,7 @@ export class donorForm {
     constructor(private remult: Remult) {
 
     }
-    get $() { return getFields(this, this.remult) }
+    get $() { return getFields(this, remult) }
     @Field({
         caption: "שם מלא",
         validate: Validators.required.withMessage("אנא הזן ערך")
@@ -94,10 +94,10 @@ export class donorForm {
 
     @BackendMethod({ allowed: true })
     async createDonor() {
-        let settings = await ApplicationSettings.getAsync(this.remult);
+        let settings = await ApplicationSettings.getAsync(remult);
         if (!settings.isSytemForMlt)
             throw "Not Allowed";
-        this.remult.setUser({
+        remult.setUser({
             id: 'WIX',
             name: 'WIX',
             roles: [],
@@ -105,7 +105,7 @@ export class donorForm {
             escortedHelperName: undefined,
             theHelperIAmEscortingId: undefined
         });
-        let f = this.remult.repo(Families).create();
+        let f = remult.repo(Families).create();
         f.name = this.name;
         if (!this.address)
             this.address = '';
@@ -113,7 +113,7 @@ export class donorForm {
         f.phone1 = this.phone;
         f.email = this.email;
         f.custom1 = this.docref;
-        f.familySource = await this.remult.repo(FamilySources).findId(this.donationType);
+        f.familySource = await remult.repo(FamilySources).findId(this.donationType);
 
         await f.save();
         var quantity = 0;
@@ -155,7 +155,7 @@ export class donorForm {
             let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText,
                 settings.organisationName, f.name, '', '', '');
             try {
-                await f.email.Send(settings.lang.thankYouForDonation, message, this.remult);
+                await f.email.Send(settings.lang.thankYouForDonation, message, remult);
             } catch (err) {
                 console.error('send mail', err);
             }

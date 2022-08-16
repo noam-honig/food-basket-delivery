@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult } from 'remult';
+import { remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
@@ -51,15 +51,15 @@ export class ShipmentAssignScreenComponent implements OnInit {
   }
 
   async showAssignment(rh: relevantHelper) {
-    let h = await this.remult.repo(Helpers).findId(rh.helper.id);
+    let h = await remult.repo(Helpers).findId(rh.helper.id);
     openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
   }
   async assignHelper(h: helperInfo, f: familyInfo) {
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+      for (const fd of await remult.repo(ActiveFamilyDeliveries).find({
         where: { $and: [FamilyDeliveries.readyFilter()], id: f.deliveries.map(x => x.id) }
       })) {
-        fd.courier = await this.remult.repo(Helpers).findId(h.id);
+        fd.courier = await remult.repo(Helpers).findId(h.id);
         await fd.save();
       }
     });
@@ -69,9 +69,9 @@ export class ShipmentAssignScreenComponent implements OnInit {
 
   }
   async cancelAssignHelper(f: familyInfo) {
-    let helper = await this.remult.repo(Helpers).findId(f.assignedHelper.id);
+    let helper = await remult.repo(Helpers).findId(f.assignedHelper.id);
     await this.busy.doWhileShowingBusy(async () => {
-      for (const fd of await this.remult.repo(ActiveFamilyDeliveries).find({
+      for (const fd of await remult.repo(ActiveFamilyDeliveries).find({
         where: { courier: helper, id: f.deliveries.map(x => x.id) }
       })) {
         fd.courier = null;
@@ -90,7 +90,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
       onSelect: async selectedHelper => {
         let h = this.data.helpers[selectedHelper.id];
         if (!h) {
-          h = ShipmentAssignScreenController.helperInfoFromHelper(await this.remult.repo(Helpers).findId(selectedHelper.id));;
+          h = ShipmentAssignScreenController.helperInfoFromHelper(await remult.repo(Helpers).findId(selectedHelper.id));;
           this.data[h.id] = h;
         }
         this.assignHelper(h, f);
@@ -107,7 +107,7 @@ export class ShipmentAssignScreenComponent implements OnInit {
   togglerShowHelper(forFamily: familyInfo) {
     this.openFamilies.set(forFamily, !this.openFamilies.get(forFamily));
   }
-  constructor(private remult: Remult, private busy: BusyService, private settings: ApplicationSettings) { }
+  constructor(private busy: BusyService, private settings: ApplicationSettings) { }
   data: data;
   families: familyInfo[] = [];
   async ngOnInit() {

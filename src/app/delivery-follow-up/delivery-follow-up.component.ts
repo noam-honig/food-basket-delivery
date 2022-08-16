@@ -7,7 +7,7 @@ import { BusyService, openDialog } from '@remult/angular';
 import { Helpers } from '../helpers/helpers';
 
 
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { distCenterAdminGuard } from '../auth/guards';
 
 import { Route } from '@angular/router';
@@ -34,16 +34,16 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     path: 'delivery-follow-up', component: DeliveryFollowUpComponent, canActivate: [distCenterAdminGuard]
   }
   async deliveryDetails(c: helperFollowupInfo) {
-    let h = await this.remult.repo(Helpers).findId(c.id);
+    let h = await remult.repo(Helpers).findId(c.id);
     await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
     this.refresh();
   }
 
-  familyLists = new UserFamiliesList(this.remult, this.settings);
+  familyLists = new UserFamiliesList(this.settings);
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
-    let h = await this.remult.repo(Helpers).findId(c.id);
+    let h = await remult.repo(Helpers).findId(c.id);
     if (!h) {//if there is a row with an invalid helper id - I want it to at least work
       h.id = c.id;
     }
@@ -97,7 +97,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   }
   admin() {
-    return this.remult.isAllowed(Roles.admin);
+    return remult.isAllowed(Roles.admin);
   }
   helpers: helperFollowupInfo[] = [];
   async sendSmsToAll() {
@@ -106,7 +106,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
         for (const h of this.helpers) {
           if (!h.smsWasSent) {
-            await SendSmsAction.SendSms(await this.remult.repo(Helpers).findId(h.id), false);
+            await SendSmsAction.SendSms(await remult.repo(Helpers).findId(h.id), false);
           }
         }
       });
@@ -114,16 +114,16 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     }
   }
   async sendAttendanceReminderSms() {
-    const message = await this.remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
+    const message = await remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
     let h = this.helpers.filter(h => !h.smsWasSent);
     if (h.length == 0) {
       this.dialog.messageDialog("נשלח כבר SMS עם קישור לכולם");
       return;
     }
     this.dialog.editCustomMessageDialog({
-      helpText: 'פעולה זו תשלח הודעה למתנדבים אשר טרם נשלח להם SMS עם קישור - כדי להזכיר להם להגיע לארוע החלוקה - אך עדיין לשמור אותם מסומנים כטרם קיבלו SMS ' ,
-      title: getLang(this.remult).sendAttendanceReminder+' - '+ h.length,
-      message: DeliveryFollowUpController.createMessage(h[0], this.remult),
+      helpText: 'פעולה זו תשלח הודעה למתנדבים אשר טרם נשלח להם SMS עם קישור - כדי להזכיר להם להגיע לארוע החלוקה - אך עדיין לשמור אותם מסומנים כטרם קיבלו SMS ',
+      title: getLang(remult).sendAttendanceReminder + ' - ' + h.length,
+      message: DeliveryFollowUpController.createMessage(h[0], remult),
       templateText: message.template,
       buttons: [
         {
@@ -149,9 +149,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       ]
     });
   }
-  stats = new DeliveryStats(this.remult);
+  stats = new DeliveryStats();
   updateChart() {
-    this.stats = new DeliveryStats(this.remult);
+    this.stats = new DeliveryStats();
 
     for (const h of this.helpers) {
       this.stats.process(h);
@@ -187,7 +187,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private busy: BusyService, private remult: Remult, private dialog: DialogService, public settings: ApplicationSettings) {
+  constructor(private busy: BusyService, private dialog: DialogService, public settings: ApplicationSettings) {
 
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
   }
@@ -217,14 +217,11 @@ export class DeliveryStats {
       }
     }
   }
-  constructor(private remult: Remult) {
-
-  }
-  notOutYet = new DeliveryStatistic(getLang(this.remult).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
-  onTheWay = new DeliveryStatistic(getLang(this.remult).onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
-  smsNotOpenedYet = new DeliveryStatistic(getLang(this.remult).smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
-  delivered = new DeliveryStatistic(getLang(this.remult).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
-  problem = new DeliveryStatistic(getLang(this.remult).problems, f => f.problem > 0, colors.red);
+  notOutYet = new DeliveryStatistic(getLang(remult).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
+  onTheWay = new DeliveryStatistic(getLang(remult).onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
+  smsNotOpenedYet = new DeliveryStatistic(getLang(remult).smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
+  delivered = new DeliveryStatistic(getLang(remult).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
+  problem = new DeliveryStatistic(getLang(remult).problems, f => f.problem > 0, colors.red);
 }
 export class DeliveryStatistic {
   constructor(public name: string, public rule: (f: helperFollowupInfo) => boolean, public color: string) {

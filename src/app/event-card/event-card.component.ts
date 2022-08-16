@@ -1,7 +1,7 @@
 import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Remult, getFields } from 'remult';
+import { Remult, getFields, remult } from 'remult';
 import { EventInfoComponent } from '../event-info/event-info.component';
 import { DataAreaSettings, RowButton } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
@@ -18,13 +18,13 @@ const AllTypes = { id: 'asdfaetfsafads', caption: 'כל הסוגים', count: un
   styleUrls: ['./event-card.component.scss']
 })
 export class EventCardComponent implements OnInit {
-  constructor(public settings: ApplicationSettings, private remult: Remult, private dialog: DialogService, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private busy: BusyService) { }
   @Input() listOptions: RowButton<any>[] = [];
   menuOptions: RowButton<Event>[] = [
     {
       name: use.language.duplicateEvents,
       click: (e) => {
-        Event.duplicateEvent(this.remult, this.dialog, [e], (newEvents) => {
+        Event.duplicateEvent(remult, this.dialog, [e], (newEvents) => {
           if (e.eventStatus == eventStatus.archive) {
             this.events = this.events.filter(x => x != e);
           }
@@ -45,7 +45,7 @@ export class EventCardComponent implements OnInit {
     {
       name: 'Copy specific url',
       click: async e => {
-        copy(window.origin + '/' + Sites.getOrganizationFromContext(this.remult) + '/events/' + e.specificUrl);
+        copy(window.origin + '/' + Sites.getOrganizationFromContext(remult) + '/events/' + e.specificUrl);
         this.dialog.Info(this.settings.lang.linkCopied);
       },
       visible: e => !!e.specificUrl
@@ -61,7 +61,7 @@ export class EventCardComponent implements OnInit {
     return '';
   }
   isAdmin() {
-    return this.remult.isAllowed(Roles.distCenterAdmin);
+    return remult.isAllowed(Roles.distCenterAdmin);
   }
   dates: dateEvents[] = [];
   cities: { id: string, count: number, caption: string }[] = [];
@@ -154,7 +154,7 @@ export class EventCardComponent implements OnInit {
   get events() {
     return this._events;
   }
-  get $() { return getFields(this, this.remult) }
+  get $() { return getFields(this, remult) }
 
   ngOnInit(): void {
 
@@ -190,7 +190,7 @@ export class EventCardComponent implements OnInit {
   }
 
   adminVolunteers(e: EventInList) {
-    if (this.remult.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
+    if (remult.isAllowed(Roles.distCenterAdmin) && e.registeredVolunteers != undefined)
 
       if (e.requiredVolunteers)
         return e.registeredVolunteers + '/' + e.requiredVolunteers + ' ' + this.settings.lang.volunteers;

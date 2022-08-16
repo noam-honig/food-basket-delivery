@@ -152,7 +152,7 @@ export class HelperFamiliesController {
     }
     @BackendMethod({ allowed: Allow.authenticated })
     static async sendSuccessMessageToFamily(deliveryId: string) {
-        var settings = (await remult.state.getSettings());
+        var settings = (await remult.context.getSettings());
         if (!settings.allowSendSuccessMessageOption)
             return;
         if (!settings.sendSuccessMessageToFamily)
@@ -168,7 +168,7 @@ export class HelperFamiliesController {
             return;
         if (!fd.phone1.canSendWhatsapp())
             return;
-        let phone = Phone.fixPhoneInput(fd.phone1.thePhone, remult);
+        let phone = Phone.fixPhoneInput(fd.phone1.thePhone);
         if (phone.length != 10) {
             console.log(phone + " doesn't match sms structure");
             return;

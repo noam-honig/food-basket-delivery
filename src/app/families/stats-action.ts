@@ -26,14 +26,11 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    constructor(private remult: Remult) {
-
-    }
-    outOfList = new FaimilyStatistics(getLang(this.remult).removedFromList, { status: FamilyStatus.RemovedFromList }, colors.gray);
-    frozen = new FaimilyStatistics(getLang(this.remult).frozen, { status: FamilyStatus.Frozen }, colors.orange);
-    toDelete = new FaimilyStatistics(getLang(this.remult).toDelete, { status: FamilyStatus.ToDelete }, colors.red);
-    active = new FaimilyStatistics(getLang(this.remult).active, { status: FamilyStatus.Active }, colors.green);
-    problem = new FaimilyStatistics(getLang(this.remult).adderssProblems, { status: FamilyStatus.Active, addressOk: false, defaultSelfPickup: false }, colors.orange);
+    outOfList = new FaimilyStatistics(getLang(remult).removedFromList, { status: FamilyStatus.RemovedFromList }, colors.gray);
+    frozen = new FaimilyStatistics(getLang(remult).frozen, { status: FamilyStatus.Frozen }, colors.orange);
+    toDelete = new FaimilyStatistics(getLang(remult).toDelete, { status: FamilyStatus.ToDelete }, colors.red);
+    active = new FaimilyStatistics(getLang(remult).active, { status: FamilyStatus.Active }, colors.green);
+    problem = new FaimilyStatistics(getLang(remult).adderssProblems, { status: FamilyStatus.Active, addressOk: false, defaultSelfPickup: false }, colors.orange);
 
     async getData(distCenter: DistributionCenters) {
         let r = await Stats.getFamilyStats(distCenter?.id);
@@ -48,7 +45,7 @@ export class Stats {
     @BackendMethod({ allowed: Roles.familyAdmin })
     static async getFamilyStats(distCenter: string) {
         let result = { data: {}, groups: [] as groupStats[] };
-        let stats = new Stats(remult);
+        let stats = new Stats();
         let pendingStats = [];
         for (let s in stats) {
             let x = stats[s];

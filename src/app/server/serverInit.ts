@@ -108,65 +108,16 @@ export async function serverInit() {
             }
         }
         Sites.initOnServer();
-        if (Sites.multipleSites) {
-            if (!initSettings.disableSchemaInit) {
-                await verifySchemaExistance(pool, Sites.guestSchema);
-            }
-            let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
-            let remult = new Remult();
-            let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
-            remult.setDataProvider(dp)
-            await InitRemult(remult);
 
-            let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
-            if (!initSettings.disableSchemaInit) {
-                for (const entity of <ClassType<any>[]>[
-                    ApplicationSettings,
-                    ApplicationImages,
-                    Helpers,
-                    SitesEntity,
-                    DistributionCenters
-                ]) {
-
-                    await builder.createIfNotExist(remult.repo(entity).metadata);
-                    await builder.verifyAllColumns(remult.repo(entity).metadata);
-                }
-
-            }
-            await SitesEntity.completeInit(remult);
-            let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
-            if (settings.isNew()) {
-                settings.organisationName = "מערכת חלוקה";
-                settings.id = 1;
-                await settings.save();
-            } else {
-
-                if (settings.organisationName == "מערכת חלוקה") {
-                    settings.organisationName = "חגי - אפליקציה לחלוקת מזון"
-                }
-                settings.logoUrl = '/assets/apple-touch-icon.png';
-                if (settings._.wasChanged())
-                    await settings.save();
-            }
-
-            InitSchemas(pool);
-
-            Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
-            return (y: Remult) => {
+        Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
+        return {
+            dataSource: (y: Remult) => {
                 let org = Sites.getValidSchemaFromContext(y);
 
                 return new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
-            };
-        }
-        else {
-            let db = new SqlDatabase(new PostgresDataProvider(pool));
-            let remult = new Remult();
-            remult.setDataProvider(db);
-            await InitRemult(remult);
-            await new PostgresSchemaBuilder(db).verifyStructureOfAllEntities(remult);
-            await initSchema(pool, '');
-            return y => db;
-        }
+            },
+            initDatabase: () => initDatabase(pool, InitSchemas)
+        };
 
 
 
@@ -234,6 +185,51 @@ export async function serverInit() {
         }
     }
 }
+async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<void>) {
+
+    if (!initSettings.disableSchemaInit) {
+        await verifySchemaExistance(pool, Sites.guestSchema);
+    }
+    let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
+    let remult = new Remult();
+    let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
+    remult.setDataProvider(dp);
+    await InitRemult(remult);
+
+    let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
+    if (!initSettings.disableSchemaInit) {
+        for (const entity of <ClassType<any>[]>[
+            ApplicationSettings,
+            ApplicationImages,
+            Helpers,
+            SitesEntity,
+            DistributionCenters
+        ]) {
+
+            await builder.createIfNotExist(remult.repo(entity).metadata);
+            await builder.verifyAllColumns(remult.repo(entity).metadata);
+        }
+
+    }
+    await SitesEntity.completeInit(remult);
+    let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
+    if (settings.isNew()) {
+        settings.organisationName = "מערכת חלוקה";
+        settings.id = 1;
+        await settings.save();
+    } else {
+
+        if (settings.organisationName == "מערכת חלוקה") {
+            settings.organisationName = "חגי - אפליקציה לחלוקת מזון";
+        }
+        settings.logoUrl = '/assets/apple-touch-icon.png';
+        if (settings._.wasChanged())
+            await settings.save();
+    }
+
+    InitSchemas(pool);
+}
+
 async function InitSpecificSchema(pool: Pool, s: any) {
     await verifySchemaExistance(pool, s);
     let schemaPool = new PostgresSchemaWrapper(pool, s);

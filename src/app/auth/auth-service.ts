@@ -3,7 +3,7 @@ import { Injectable, NgZone } from "@angular/core";
 import { DialogService } from "../select-popup/dialog";
 
 import { openDialog, RouteHelperService } from '@remult/angular';
-import { Remult, UserInfo } from 'remult';
+import { remult, Remult, UserInfo } from 'remult';
 
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
@@ -30,7 +30,7 @@ export class TokenService {
     }
     keyInStorage: string;
     async loadUserInfo() {
-        let org = Sites.getOrganizationFromContext(this.remult);
+        let org = Sites.getOrganizationFromContext(remult);
         this.keyInStorage = "authorization/" + org;
         let token = sessionStorage.getItem(this.keyInStorage);
         if (!token)
@@ -43,6 +43,7 @@ export class TokenService {
         if (token) {
             user = await AuthService.decodeJwt(token);
 
+            await InitContext(remult, user);
             await InitContext(this.remult, user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
@@ -54,8 +55,10 @@ export class TokenService {
             localStorage.removeItem(this.keyInStorage);
         }
 
-        if (toCompare(user) != toCompare(this.remult.user))
+        if (toCompare(user) != toCompare(remult.user)) {
+            await remult.setUser(user);
             await this.remult.setUser(user);
+        }
 
     }
 }
@@ -113,13 +116,13 @@ export class AuthService {
         }
 
 
-        if (!settings.currentUserIsValidForAppLoadTest && this.remult.authenticated()) {
+        if (!settings.currentUserIsValidForAppLoadTest && remult.authenticated()) {
             this.signout();
 
         }
         if (dialog)
             remult.userChange.observe(() => {
-                dialog.refreshEventListener(this.remult.isAllowed(Roles.distCenterAdmin));
+                dialog.refreshEventListener(remult.isAllowed(Roles.distCenterAdmin));
                 dialog.refreshFamiliesAndDistributionCenters();
             });
 
@@ -128,7 +131,7 @@ export class AuthService {
         this.inactiveTimeout();
         this.serverTokenRenewal();
         this.userInactive.subscribe(() => {
-            if (this.remult.authenticated()) {
+            if (remult.authenticated()) {
                 this.dialog.Error(this.settings.lang.sessionExpiredPleaseRelogin);
                 this.signout();
 
@@ -147,18 +150,18 @@ export class AuthService {
         }
         if (loginResponse.authToken) {
             await this.tokenService.setToken(loginResponse.authToken, remember);
-            this.dialog.analytics('login ' + (this.remult.isAllowed(Roles.admin) ? 'delivery admin' : ''));
+            this.dialog.analytics('login ' + (remult.isAllowed(Roles.admin) ? 'delivery admin' : ''));
             if (this.failedSmsSignInPhone) {
                 this.failedSmsSignInPhone = null;
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
             }
-            else if (this.remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
+            else if (remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
                 this.routeHelper.navigateToComponent((await import("../asign-family/asign-family.component")).AsignFamilyComponent);
-            else if (this.remult.isAllowed(Roles.lab))
+            else if (remult.isAllowed(Roles.lab))
                 this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
-            else if (this.remult.isAllowed(Roles.overview))
+            else if (remult.isAllowed(Roles.overview))
                 this.routeHelper.navigateToComponent(OverviewComponent);
-            else if (this.remult.isAllowed(Roles.callPerson))
+            else if (remult.isAllowed(Roles.callPerson))
                 this.routeHelper.navigateToComponent(CallerComponent);
             else
                 this.routeHelper.navigateToComponent((await import("../my-families/my-families.component")).MyFamiliesComponent);
@@ -190,7 +193,7 @@ export class AuthService {
 
     async signout() {
         await this.tokenService.setToken(undefined, true);
-        this.remult.clearAllCache();
+        remult.clearAllCache();
         setTimeout(async () => {
             this.zone.run(async () =>
                 this.routeHelper.navigateToComponent((await import("../users/login/login.component")).LoginComponent));
@@ -209,7 +212,7 @@ export class AuthService {
         let renewPeriod = this.settings.timeToDisconnect;
         if (renewPeriod == 0)
             renewPeriod = 5;
-        if (this.remult.authenticated())
+        if (remult.authenticated())
             try {
                 let r = await AuthServiceController.renewToken();
                 if (!r)

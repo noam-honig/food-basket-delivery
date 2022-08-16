@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { siteItem, dateRange } from '../overview/overview.controller';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Remult } from 'remult';
+import { remult } from 'remult';
 import { Phone } from '../model-shared/phone';
 import { Manager, SiteOverviewController } from './site-overview.controller';
 import { messageMerger } from '../edit-custom-message/messageMerger';
@@ -14,7 +14,7 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class SiteOverviewComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<any>, private remult: Remult, private ui: DialogService) { }
+  constructor(public dialogRef: MatDialogRef<any>, private ui: DialogService) { }
   args: {
     site: siteItem,
     statistics: dateRange[]
@@ -33,7 +33,7 @@ export class SiteOverviewComponent implements OnInit {
       message = "הי !שם!\n";
 
 
-    Phone.sendWhatsappToPhone(m.phone, this.createMessage(m).merge(message), this.remult, true);
+    Phone.sendWhatsappToPhone(m.phone, this.createMessage(m).merge(message), remult, true);
   }
   createMessage(m: Manager) {
     return new messageMerger([

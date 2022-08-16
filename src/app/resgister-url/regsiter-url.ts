@@ -1,4 +1,4 @@
-import { FieldMetadata, Remult, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "remult";
+import { FieldMetadata, Remult, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { getDb, SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "../helpers/helpers";
@@ -21,7 +21,7 @@ export class RegisterURL extends IdEntity {
 
     urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
-        return this.remult.repo(RegisterURL).findFirst({ URL: { $contains: s } });
+        return remult.repo(RegisterURL).findFirst({ URL: { $contains: s } });
     }
 
     @BackendMethod({ allowed: Roles.admin })

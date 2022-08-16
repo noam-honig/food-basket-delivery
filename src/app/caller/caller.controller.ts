@@ -1,4 +1,4 @@
-import { BackendMethod, Controller, EntityFilter, Remult, SqlDatabase } from "remult";
+import { BackendMethod, Controller, EntityFilter, remult, Remult, SqlDatabase } from "remult";
 import { Roles } from "../auth/roles";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
@@ -10,20 +10,18 @@ export class CallerController {
     @BackendMethod({ allowed: Roles.callPerson })
     async selectFamily(f: CallerFamilyInfo) {
         this.releaseCurrentFamily();
-        const fd = await this.remult.repo(ActiveFamilyDeliveries).findId(f.deliveryId);
+        const fd = await remult.repo(ActiveFamilyDeliveries).findId(f.deliveryId);
         if (fd && fd.deliverStatus == DeliveryStatus.enquireDetails) {
-            fd.caller = await this.remult.state.getCurrentUser();
+            fd.caller = await remult.context.getCurrentUser();
             fd.callerAssignDate = new Date();
             await fd.save();
         }
 
     }
-    constructor(private remult: Remult) {
-
-    }
+ 
     @BackendMethod({ allowed: Roles.callPerson })
     async releaseCurrentFamily() {
-        const repo = this.remult.repo(ActiveFamilyDeliveries);
+        const repo = remult.repo(ActiveFamilyDeliveries);
         for (const fd of await repo.find({ where: FamilyDeliveries.inProgressCallerDeliveries() })) {
             fd.caller = null;
             await fd.save();
@@ -31,7 +29,7 @@ export class CallerController {
     }
     @BackendMethod({ allowed: Roles.callPerson })
     async nextCall() {
-        const repo = this.remult.repo(ActiveFamilyDeliveries);
+        const repo = remult.repo(ActiveFamilyDeliveries);
         let lastId = '';
         for (const fd of await repo.find({ where: FamilyDeliveries.inProgressCallerDeliveries() })) {
             fd.callCounter++;
@@ -62,7 +60,7 @@ export class CallerController {
             caller: null,
 
         };
-        const helper = await this.remult.state.getCurrentUser();
+        const helper = await remult.context.getCurrentUser();
         async function findDelivery(where: EntityFilter<ActiveFamilyDeliveries>) {
             for await (const fd of repo.query({ where, orderBy: { lastCallDate: "asc" } })) {
                 if (groupMatches(helper, fd))
@@ -85,7 +83,7 @@ export class CallerController {
         }
         if (!fd)
             return false;
-        fd.caller = await this.remult.state.getCurrentUser();
+        fd.caller = await remult.context.getCurrentUser();
         fd.callerAssignDate = new Date();
         await fd.save();
         return true;
@@ -94,8 +92,8 @@ export class CallerController {
     async findFamily(search: string): Promise<CallerFamilyInfo[]> {
         if (search.trim().length < 2)
             return [];
-        const helper = await this.remult.state.getCurrentUser();
-        return (await this.remult.repo(ActiveFamilyDeliveries).find({
+        const helper = await remult.context.getCurrentUser();
+        return (await remult.repo(ActiveFamilyDeliveries).find({
             where: {
                 deliverStatus: DeliveryStatus.enquireDetails,
                 $or: [ActiveFamilyDeliveries.filterPhone(search), {

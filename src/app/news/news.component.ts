@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Remult, EntityFilter } from 'remult';
+import { Remult, EntityFilter, remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';
@@ -31,7 +31,7 @@ import { DeliveryImagesComponent } from '../delivery-images/delivery-images.comp
 })
 export class NewsComponent implements OnInit, OnDestroy {
     isAdmin() {
-        return this.remult.isAllowed(Roles.admin);
+        return remult.isAllowed(Roles.admin);
     }
     static needsWorkRoute: Route = {
         path: 'needsWork', component: NewsComponent, canActivate: [distCenterAdminGuard]
@@ -45,7 +45,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         openDialog(DeliveryImagesComponent, x => x.args = n);
     }
 
-    constructor(private dialog: DialogService, private remult: Remult, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
+    constructor(private dialog: DialogService, private busy: BusyService, public filters: NewsFilterService, private activatedRoute: ActivatedRoute, public settings: ApplicationSettings) {
         dialog.onStatusChange(() => this.refresh(), this.destroyHelper);
         dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
 
@@ -84,14 +84,14 @@ export class NewsComponent implements OnInit, OnDestroy {
             this.filters.setToNeedsWork();
         }
         this.refresh();
-        this.familySources.push(...(await this.remult.repo(FamilySources).find({ orderBy: { name: "asc" } })).map(x => { return { id: x.id, name: x.name } as familySource }));
+        this.familySources.push(...(await remult.repo(FamilySources).find({ orderBy: { name: "asc" } })).map(x => { return { id: x.id, name: x.name } as familySource }));
 
     }
     newsRows = 50;
     async refresh() {
 
         this.busy.donotWait(async () => {
-            this.news = await this.remult.repo(FamilyDeliveries).find({
+            this.news = await remult.repo(FamilyDeliveries).find({
                 where:  {
                     distributionCenter:this.dialog.filterDistCenter(),
                     $and:[

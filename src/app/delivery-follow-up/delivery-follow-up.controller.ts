@@ -39,7 +39,7 @@ export class DeliveryFollowUpController {
             ],
             where: () => [sql.eq(fd.archive, false), fd.where({
                 courier: { "!=": null },
-                distributionCenter: remult.state.filterDistCenter(distCenter)
+                distributionCenter: remult.context.filterDistCenter(distCenter)
             })],
 
         })).replace(/distributionCenter/g, 'fd.distributionCenter'), ' group by ', [fd.courier, h.name, h.phone, h.smsDate, h.eventComment, h.lastSignInDate], ' order by '

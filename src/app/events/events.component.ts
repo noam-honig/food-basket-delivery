@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { EntityFilter, Remult } from 'remult';
+import { EntityFilter, remult, Remult } from 'remult';
 import { GridSettings, RowButton } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { Event, eventStatus } from './events';
@@ -27,12 +27,12 @@ export class EventsComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroyHelper.destroy();
   }
-  constructor(private remult: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
+  constructor(public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) {
     dialog.onDistCenterChange(() => this.events.reloadData(), this.destroyHelper);
   }
-  events: GridSettings<Event> = new GridSettings<Event>(this.remult.repo(Event), {
-    allowUpdate: this.remult.isAllowed(Roles.admin),
-    allowInsert: this.remult.isAllowed(Roles.admin),
+  events: GridSettings<Event> = new GridSettings<Event>(remult.repo(Event), {
+    allowUpdate: remult.isAllowed(Roles.admin),
+    allowInsert: remult.isAllowed(Roles.admin),
 
 
     rowsInPage: 100,
@@ -59,7 +59,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          await Event.duplicateEvent(this.remult, this.dialog, this.events.selectedRows, () => {
+          await Event.duplicateEvent(remult, this.dialog, this.events.selectedRows, () => {
             this.events.reloadData();
             this.events.selectedRows.splice(0);
           });
@@ -132,7 +132,7 @@ export class EventsComponent implements OnInit {
     new columnOrderAndWidthSaver(this.events).load('events-component');
   }
   copyLink() {
-    copy(window.origin + '/' + Sites.getOrganizationFromContext(this.remult) + '/events');
+    copy(window.origin + '/' + Sites.getOrganizationFromContext(remult) + '/events');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
   @ViewChild(EventCardComponent) card: EventCardComponent;

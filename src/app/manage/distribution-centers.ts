@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, Allow, isBackend, EntityFilter } from "remult";
+import { IdEntity, Remult, Entity, Allow, isBackend, EntityFilter, remult } from "remult";
 import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -40,10 +40,6 @@ import { use, FieldType, Field } from "../translate";
   }
 })
 export class DistributionCenters extends IdEntity {
-  constructor(private remult: Remult) {
-    super();
-  }
-
   @Field({ translation: l => l.distributionCenterName })
   name: string;
   @Field({ translation: l => l.distributionCenterUniqueId })
@@ -54,7 +50,7 @@ export class DistributionCenters extends IdEntity {
     translation: l => l.deliveryCenterAddress, customInput: i => i.addressInput()
   })
   address: string;
-  addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
+  addressHelper = new AddressHelper(() => this.$.address, () => this.$.addressApiResult);
   @Field({ translation: l => l.distributionCenterComment })
   comments: string;
   @Field({ translation: l => l.phone1 })
@@ -85,7 +81,7 @@ export class DistributionCenters extends IdEntity {
 
 
   matchesCurrentUser() {
-    return this.id == (this.remult.user).distributionCenter;
+    return this.id == (remult.user).distributionCenter;
   }
 
   async SendMessageToBrowser(message: string, remult: Remult) {
@@ -95,23 +91,23 @@ export class DistributionCenters extends IdEntity {
 
 
   checkAllowedForUser() {
-    if (this.remult.isAllowed(Roles.admin)) {
+    if (remult.isAllowed(Roles.admin)) {
       return true;
-    } else if (this.remult.isAllowed(Roles.distCenterAdmin))
-      return (this.remult.user).distributionCenter == this.id;
+    } else if (remult.isAllowed(Roles.distCenterAdmin))
+      return (remult.user).distributionCenter == this.id;
     return false;
   }
   async getRouteStartGeo() {
 
     if (this.addressApiResult && this.address && this.addressHelper.ok)
       return this.addressHelper.getGeocodeInformation;
-    return (await ApplicationSettings.getAsync(this.remult)).addressHelper.getGeocodeInformation;
+    return (await ApplicationSettings.getAsync(remult)).addressHelper.getGeocodeInformation;
   }
   async getRouteStartLocation() {
 
     if (this.addressApiResult && this.address && this.addressHelper.ok)
       return this.addressHelper.location;
-    return (await ApplicationSettings.getAsync(this.remult)).addressHelper.location;
+    return (await ApplicationSettings.getAsync(remult)).addressHelper.location;
   }
   static async getValueList(remult: Remult, showAllOptions = false) {
     let r = await getEntityValueList<DistributionCenters>(remult.repo(DistributionCenters), {

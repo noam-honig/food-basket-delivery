@@ -16,14 +16,14 @@ export class DeliveryDetailsComponent implements OnInit {
 
   constructor(private dialog: DialogService, public remult: Remult, public settings: ApplicationSettings, private zone: NgZone, public ref: MatDialogRef<any>) {
   }
-  famInfo = new FamilyInfoComponent(this.dialog, this.remult, this.settings, this.zone);
+  famInfo = new FamilyInfoComponent(this.dialog, this.settings, this.zone);
   buttons: RowButton<any>[] = [
     {
       name: this.settings.lang.updateComment,
       icon: 'comment',
       click: () => this.updateComment()
     },
-    
+
     {
       name: this.settings.lang.copyAddress,
       click: () => this.famInfo.copyAddress(this.famInfo.f),

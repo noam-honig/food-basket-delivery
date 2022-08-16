@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, EntityFilter, Filter } from 'remult';
+import { Remult, EntityFilter, Filter, remult } from 'remult';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';
@@ -23,7 +23,7 @@ import { Roles } from '../auth/roles';
 })
 export class InRouteFollowUpComponent implements OnInit {
 
-  constructor(private remult: Remult, public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
+  constructor(public settings: ApplicationSettings, private busy: BusyService, private dialog: DialogService) { }
 
   searchString: string = '';
   clearSearch() {
@@ -31,14 +31,14 @@ export class InRouteFollowUpComponent implements OnInit {
     this.helpers.reloadData();
   }
 
-  helpers = new GridSettings(this.remult.repo(InRouteHelpers), {
+  helpers = new GridSettings(remult.repo(InRouteHelpers), {
     where: () => ({ name: { $contains: this.searchString }, $and: [this.currentOption.where] }),
     rowsInPage: 25,
     knowTotalRows: true,
     numOfColumnsInGrid: 99,
     gridButtons: [{
       name: use.language.exportToExcel,
-      click: () => saveToExcel(this.settings, this.remult.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.dialog)
+      click: () => saveToExcel(this.settings, remult.repo(InRouteHelpers), this.helpers, "מתנדבים בדרך", this.dialog)
     }],
     rowCssClass: x => {
       if ((!x.seenFirstAssign) && (!x.lastCommunicationDate || x.lastCommunicationDate < daysAgo(3)))
@@ -73,7 +73,7 @@ export class InRouteFollowUpComponent implements OnInit {
               click: () => h.showAssignment(this.dialog)
             }
           ],
-          settings: new GridSettings(this.remult.repo(ActiveFamilyDeliveries), {
+          settings: new GridSettings(remult.repo(ActiveFamilyDeliveries), {
             numOfColumnsInGrid: 7,
             knowTotalRows: true,
             rowCssClass: fd => fd.getCss(),
@@ -120,13 +120,13 @@ export class InRouteFollowUpComponent implements OnInit {
     {
       name: use.language.volunteerInfo,
       click: async s => {
-        let h = await this.remult.repo(Helpers).findId(s.id);
+        let h = await remult.repo(Helpers).findId(s.id);
         h.displayEditDialog(this.dialog);
       }
     },
     {
       name: use.language.freezeHelper,
-      visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt,
+      visible: () => remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt,
       click: async h => this.editFreezeDate(h)
     },]
   });
@@ -175,7 +175,7 @@ export class InRouteFollowUpComponent implements OnInit {
     openDialog(InputAreaComponent, x => x.args = {
       title: use.language.freezeHelper,
       ok: async () => {
-        let helper = await this.remult.repo(Helpers).findId(h.id);
+        let helper = await remult.repo(Helpers).findId(h.id);
         helper.frozenTill = h.frozenTill;
         helper.internalComment = h.internalComment;
         await helper.save();

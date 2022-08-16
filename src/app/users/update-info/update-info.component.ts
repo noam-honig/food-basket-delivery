@@ -6,7 +6,7 @@ import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { InputField, GridSettings, DataAreaSettings } from '@remult/angular/interfaces';
 import { Route } from '@angular/router';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { AuthenticatedGuard, RouteHelperService } from '@remult/angular';
 
@@ -21,7 +21,6 @@ import { AuthenticatedGuard, RouteHelperService } from '@remult/angular';
 export class UpdateInfoComponent implements OnInit, AfterViewInit {
   constructor(private dialog: DialogService,
     private auth: AuthService,
-    private remult: Remult,
     public sessionManager: AuthService,
     public settings: ApplicationSettings,
     private helper: RouteHelperService) {
@@ -45,7 +44,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
 
   async ngOnInit() {
-    this.h = await this.remult.state.getCurrentUser();
+    this.h = await remult.context.getCurrentUser();
     await this.h._.reload();
     if (!this.h.password)
       this.confirmPassword.value = '';

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from '@remult/angular/interfaces';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Callers } from './callers';
 
@@ -11,9 +11,9 @@ import { Callers } from './callers';
 })
 export class ManageCallersComponent implements OnInit {
 
-  constructor(private remult: Remult, private ui: DialogService) { }
+  constructor(private ui: DialogService) { }
 
-  grid = new GridSettings(this.remult.repo(Callers), {
+  grid = new GridSettings(remult.repo(Callers), {
     knowTotalRows: true,
     allowUpdate: true,
     allowSelection: true,

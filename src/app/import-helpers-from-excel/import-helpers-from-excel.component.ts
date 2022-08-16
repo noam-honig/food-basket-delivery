@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FieldMetadata, FieldsMetadata, FieldRef } from 'remult';
+import { FieldMetadata, FieldsMetadata, FieldRef, remult } from 'remult';
 import { Remult } from 'remult';
 
 import { DialogService } from '../select-popup/dialog';
@@ -20,7 +20,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
 
-  constructor(private remult: Remult, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
+  constructor(private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
 
   }
 
@@ -127,7 +127,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
   async updateCol(i: excelRowInfo, col: FieldMetadata) {
-    await ImportHelpersFromExcelController.actualUpdateCol(i, col.key, this.remult);
+    await ImportHelpersFromExcelController.actualUpdateCol(i, col.key, remult);
   }
 
   async clearColumnUpdate(i: excelRowInfo, col: FieldMetadata) {
@@ -232,7 +232,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   }
 
   async readLine(row: number): Promise<excelRowInfo> {
-    let f = this.remult.repo(Helpers).create();
+    let f = remult.repo(Helpers).create();
 
 
     let helper = new columnUpdateHelper();
@@ -251,7 +251,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       s.what();
     }
 
-    f.phone = new Phone(Phone.fixPhoneInput(f.phone?.thePhone, this.remult));
+    f.phone = new Phone(Phone.fixPhoneInput(f.phone?.thePhone));
 
 
     let info: excelRowInfo = {
@@ -307,7 +307,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       } else
         col.inputValue = val;
     }
-    this.helper = this.remult.repo(Helpers).metadata.fields;
+    this.helper = remult.repo(Helpers).metadata.fields;
     if (false) {
       try {
         this.errorRows = JSON.parse(sessionStorage.getItem("errorRowsHelpers"));

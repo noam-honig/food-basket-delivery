@@ -5,7 +5,7 @@ import { AuthService } from '../../auth/auth-service';
 import { Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Remult, getFields } from 'remult';
+import { Remult, getFields, remult } from 'remult';
 import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
 
 import { Sites } from '../../sites/sites';
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     translation: l => l.IConfirmEula
   })
   confirmEula: boolean;
-  
+
   @Field({ translation: l => l.preferredDistributionAreaAddress })
   preferredDistributionArea: string;
   @Field({ translation: l => l.rememberMeOnThisDevice })
@@ -57,8 +57,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
   phoneArea = new DataAreaSettings({
     fields: () => [this.$.phone, this.$.remember]
   });
-  get $() { return getFields(this, this.remult) }
-  
+  get $() { return getFields(this) }
+
   setPasswordArea = new DataAreaSettings({
     fields: () => [
       { field: this.$.newPassword, visible: () => this.loginResult.requiredToSetPassword },
@@ -69,7 +69,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
-    private remult: Remult,
     public settings: ApplicationSettings
   ) { }
   ngAfterViewInit(): void {
@@ -88,7 +87,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
 
   }
-  isguest = Sites.getOrganizationFromContext(this.remult) == Sites.guestSchema;
+  isguest = Sites.getOrganizationFromContext(remult) == Sites.guestSchema;
   @ViewChild("stepper", { static: false }) stepper: MatStepper;
   @ViewChild("passwordForm", { static: false }) passwordForm: ElementRef;
   @ViewChild("phoneForm", { static: false }) phoneForm: ElementRef;
@@ -135,7 +134,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
 
   phoneState = new loginState(async () => {
-    this.phone = new Phone((await import('../../model-shared/phone')).Phone.fixPhoneInput(this.phone.thePhone, this.remult));
+    this.phone = new Phone((await import('../../model-shared/phone')).Phone.fixPhoneInput(this.phone.thePhone));
     if (!this.phone || this.phone.thePhone.length < 10) {
       this.dialog.Error(this.settings.lang.invalidPhoneNumber);
       return;
@@ -165,7 +164,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
         return;
       }
-      validatePasswordColumn(this.remult, this.$.newPassword);
+      validatePasswordColumn(remult, this.$.newPassword);
       if (this.$.newPassword.error) {
         this.resetPasswords();
         this.dialog.Error(this.$.newPassword.error);
@@ -198,7 +197,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   }
   getLogo() {
-    return ApplicationSettings.get(this.remult).logoUrl;
+    return ApplicationSettings.get(remult).logoUrl;
   }
   login() {
 
@@ -207,7 +206,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   orgName() {
-    return ApplicationSettings.get(this.remult).organisationName;
+    return ApplicationSettings.get(remult).organisationName;
   }
 }
 

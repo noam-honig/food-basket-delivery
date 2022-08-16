@@ -12,8 +12,8 @@ import { CallerController, CallerFamilyInfo } from '../caller/caller.controller'
 export class SelectFamilyForCallerComponent implements OnInit {
 
 
-  constructor(private remult: Remult, private busy: BusyService, private dialogRef: MatDialogRef<any>) { }
-  controller = new CallerController(this.remult);
+  constructor(private busy: BusyService, private dialogRef: MatDialogRef<any>) { }
+  controller = new CallerController();
   families: CallerFamilyInfo[] = [];
   ngOnInit() {
     this.loadFamilies();

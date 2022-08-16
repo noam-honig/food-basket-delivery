@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -55,7 +55,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   canSelectDonors() {
-    return this.remult.isAllowed(Roles.indie) && this.getFamilies('toDeliver').length < this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself;
+    return remult.isAllowed(Roles.indie) && this.getFamilies('toDeliver').length < this.settings.MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself;
   }
 
   myQRCode() {
@@ -63,13 +63,13 @@ export class MltFamiliesComponent implements OnInit {
   }
 
 
-  constructor(public settings: ApplicationSettings, private dialog: DialogService, private remult: Remult, private busy: BusyService) { }
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private busy: BusyService) { }
   @Input() comp: MyFamiliesComponent;
   get familyLists() {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.thisHelper = (await this.remult.state.getCurrentUser());
+    this.thisHelper = (await remult.context.getCurrentUser());
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.thisHelper);
     this.myPhoneNumber = this.thisHelper.phone;
     this.userFrozenTill = this.thisHelper?.frozenTill?.displayValue;
@@ -105,8 +105,8 @@ export class MltFamiliesComponent implements OnInit {
 
   async countFamilies() {
     let consumed: string[] = []
-    let list: FamilyDeliveries[] = await this.remult.repo(FamilyDeliveries).find(
-      { where: { courier: (await this.remult.state.getCurrentUser()), deliverStatus: DeliveryStatus.isSuccess() } })
+    let list: FamilyDeliveries[] = await remult.repo(FamilyDeliveries).find(
+      { where: { courier: (await remult.context.getCurrentUser()), deliverStatus: DeliveryStatus.isSuccess() } })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -132,7 +132,7 @@ export class MltFamiliesComponent implements OnInit {
 
   async showMyGifts() {
     openDialog(MyGiftsDialogComponent, x => x.args = {
-      helperId: this.remult.user.id
+      helperId: remult.user.id
     });
   }
 
@@ -211,7 +211,7 @@ export class MltFamiliesComponent implements OnInit {
   }
 
   async getClosestDistCenters() {
-    let distCenters = await this.remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
+    let distCenters = await remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
     distCenters = distCenters.filter(x => x.addressHelper.ok);
     let volunteerLocation: Location = undefined;
     try {

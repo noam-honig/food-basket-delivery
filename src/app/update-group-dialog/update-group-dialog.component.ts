@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { Groups, GroupsValue } from '../manage/groups';
 import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { UpdateGroupArgs } from '../helpers/init-context';
 
 export class UpdateGroupDialogComponent implements OnInit {
 
-  constructor(private remult: Remult, private dialog: DialogService,
+  constructor(private dialog: DialogService,
     private dialogRef: MatDialogRef<any>, public settings: ApplicationSettings) {
 
 
@@ -32,7 +32,7 @@ export class UpdateGroupDialogComponent implements OnInit {
 
   availableGroups: Groups[] = [];
   async ngOnInit() {
-    this.availableGroups = await this.remult.repo(Groups).find({ limit: 1000 });
+    this.availableGroups = await remult.repo(Groups).find({ limit: 1000 });
   }
 
   groups = new InputField<GroupsValue>({ valueType: GroupsValue });

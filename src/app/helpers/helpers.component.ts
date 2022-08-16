@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Helpers } from './helpers';
 import { Route } from '@angular/router';
-import { getFields } from 'remult';
+import { getFields, remult } from 'remult';
 import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
@@ -28,7 +28,8 @@ import { ChangeLogComponent } from '../change-log/change-log.component';
   styleUrls: ['./helpers.component.css']
 })
 export class HelpersComponent implements OnInit, OnDestroy {
-  constructor(private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings) {
+  remult = remult;
+  constructor(private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings) {
     this.dialog.onDistCenterChange(async () => {
       this.helpers.reloadData();
     }, this.destroyHelper);
@@ -57,7 +58,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
   showDeleted = false;
   searchString: string = '';
   numOfColsInGrid = 4;
-  helpers = new GridSettings(this.remult.repo(Helpers), {
+  helpers = new GridSettings(remult.repo(Helpers), {
     allowDelete: false,
     allowInsert: true,
     allowUpdate: true,
@@ -87,14 +88,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
     {
       name: use.language.exportToExcel,
       click: async () => {
-        await saveToExcel(this.settings, this.remult.repo(Helpers), this.helpers, use.language.volunteer, this.dialog, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
+        await saveToExcel(this.settings, remult.repo(Helpers), this.helpers, use.language.volunteer, this.dialog, (d: Helpers, c) => c == d.$.id || c == d.$.password || c == d.$.totalKm || c == d.$.totalTime || c == d.$.smsDate || c == d.$.reminderSmsDate || c == d.$.realStoredPassword || c == d.$.shortUrlKey || c == d.$.admin, undefined,
           async (h, addColumn) => {
             addColumn(use.language.city, h.preferredDistributionAreaAddressHelper.getGeocodeInformation.getCity(), 's');
             addColumn(use.language.city + "2", h.preferredFinishAddressHelper.getGeocodeInformation.getCity(), 's');
 
           });
       }
-      , visible: () => this.remult.isAllowed(Roles.admin)
+      , visible: () => remult.isAllowed(Roles.admin)
     },
 
     {
@@ -112,7 +113,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
           this.helpers.reloadData();
         }
       },
-      visible: () => this.settings.showHelperComment && this.remult.isAllowed(Roles.admin)
+      visible: () => this.settings.showHelperComment && remult.isAllowed(Roles.admin)
 
     },
     {
@@ -123,12 +124,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
           this.helpers.reloadData();
         }
       },
-      visible: () => this.remult.isAllowed(Roles.admin)
+      visible: () => remult.isAllowed(Roles.admin)
     },
     {
       name: use.language.sendMessageToInviteVolunteers,
       click: async () => {
-        let c = new SendBulkSms(this.remult);
+        let c = new SendBulkSms(remult);
         openDialog(InputAreaComponent, x => x.args = {
           title: use.language.sendMessageToInviteVolunteers,
           helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
@@ -139,14 +140,14 @@ export class HelpersComponent implements OnInit, OnDestroy {
           cancel: () => { }
         });
       },
-      visible: () => this.remult.isAllowed(Roles.admin) && this.settings.bulkSmsEnabled
+      visible: () => remult.isAllowed(Roles.admin) && this.settings.bulkSmsEnabled
     }
 
       // , {
       //   name: 'temp',
       //   click: async () => {
       //     for (let index = 0; index < 70; index++) {
-      //       await this.remult.repo(Helpers).create({
+      //       await remult.repo(Helpers).create({
       //         name: 'name ' + index, phone: new Phone('05073330' + index)
       //       }).save();
 
@@ -175,7 +176,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: this.settings.lang.sendWhats,
-        click: h => h.phone.sendWhatsapp(this.remult),
+        click: h => h.phone.sendWhatsapp(remult),
         icon: 'textsms'
       },
       {
@@ -190,7 +191,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.dialog.Info(use.language.passwordWasReset);
           });
         },
-        visible: h => (this.remult.isAllowed(Roles.admin) || !h.admin)
+        visible: h => (remult.isAllowed(Roles.admin) || !h.admin)
       },
       {
         name: use.language.invalidatePassword,
@@ -200,7 +201,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             this.dialog.Info(use.language.passwordInvalidated);
           });
         },
-        visible: h => ((this.remult.isAllowed(Roles.admin) || !h.admin) && this.settings.daysToForcePasswordChange > 0)
+        visible: h => ((remult.isAllowed(Roles.admin) || !h.admin) && this.settings.daysToForcePasswordChange > 0)
       },
       {
         name: use.language.sendInviteBySms,
@@ -212,18 +213,18 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: use.language.freezeHelper,
-        visible: () => this.remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt,
+        visible: () => remult.isAllowed(Roles.admin) && this.settings.isSytemForMlt,
         click: async h => this.editFreezeDate(h)
       },
       {
         textInMenu: h => h.archive ? use.language.unDeleteHelper : use.language.archiveHelper,
-        visible: () => this.remult.isAllowed(Roles.admin),
+        visible: () => remult.isAllowed(Roles.admin),
         click: async h => {
           if (h.archive)
             await h.reactivate();
           else {
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
-              question: getLang(this.remult).areYouSureYouWantToDelete + ' ' + h.name + '?'
+              question: getLang(remult).areYouSureYouWantToDelete + ' ' + h.name + '?'
             }, q => q.yes)) {
               await h.deactivate();
               this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
@@ -238,9 +239,9 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await h.showDeliveryHistory(this.dialog);
         }
       },
-      new SendBulkSms(this.remult).sendSingleHelperButton(this.dialog), {
+      new SendBulkSms(remult).sendSingleHelperButton(this.dialog), {
         name: use.language.changeLog,
-        visible: h => this.remult.isAllowed(Roles.admin),
+        visible: h => remult.isAllowed(Roles.admin),
         click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
       }
     ],
@@ -256,12 +257,12 @@ export class HelpersComponent implements OnInit, OnDestroy {
     ,
     columnSettings: helpers => {
       this.numOfColsInGrid = 4;
-      if (this.remult.isAllowed(Roles.admin))
+      if (remult.isAllowed(Roles.admin))
         this.numOfColsInGrid++;
       if (this.settings.isSytemForMlt)
         this.numOfColsInGrid += 6;
 
-      return [...Helpers.selectColumns(helpers, this.remult), helpers.preferredDistributionAreaAddressCity, helpers.preferredFinishAddressCity];
+      return [...Helpers.selectColumns(helpers, remult), helpers.preferredDistributionAreaAddressCity, helpers.preferredFinishAddressCity];
     },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name),
 
@@ -286,7 +287,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   private editFreezeDate(h: Helpers) {
     openDialog(InputAreaComponent, x => x.args = {
-      title: getLang(this.remult).freezeHelper,
+      title: getLang(remult).freezeHelper,
       ok: () => {
         h.save();
       },
@@ -313,7 +314,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   async ngOnInit() {
-    let s = await ApplicationSettings.getAsync(this.remult);
+    let s = await ApplicationSettings.getAsync(remult);
     this.helpers.columns.numOfColumnsInGrid = this.numOfColsInGrid;
     new columnOrderAndWidthSaver(this.helpers).load('helpers');
 

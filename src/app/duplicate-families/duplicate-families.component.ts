@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Remult, FieldMetadata, getFields } from 'remult';
+import { Remult, FieldMetadata, getFields, remult } from 'remult';
 import { DataAreaSettings, DataControl, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { Families } from '../families/families';
@@ -36,9 +36,9 @@ export class DuplicateFamiliesComponent implements OnInit {
   @Field({ translation: l => l.socialSecurityNumber })
   @DataControl<DuplicateFamiliesComponent>({ valueChange: (self) => self.ngOnInit() })
   tz: boolean = false;
-  get $() { return getFields(this, this.remult) }
+  get $() { return getFields(this, remult) }
   area = new DataAreaSettings({ fields: () => [[this.$.address, this.$.name, this.$.phone, this.$.tz, this.$.onlyActive]] });
-  constructor(private remult: Remult, private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
+  constructor(private dialog: DialogService, public settings: ApplicationSettings, private busy: BusyService) {
 
   }
   duplicateFamilies: duplicateFamilies[] = [];
@@ -80,7 +80,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         text: this.settings.lang.mergeFamilies,
         click: async () => { await this.mergeFamilies(x); }
       }],
-      settings: new GridSettings(this.remult.repo(Families), {
+      settings: new GridSettings(remult.repo(Families), {
         columnSettings: f => {
           let r = [
             f.name,
@@ -107,7 +107,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         numOfColumnsInGrid: 6,
 
         gridButtons: [
-          ...[new UpdateStatus(this.remult), new updateGroup(this.remult)].map(a => a.gridButton(
+          ...[new UpdateStatus(remult), new updateGroup(remult)].map(a => a.gridButton(
             {
               afterAction: async () => await x.args.settings.reloadData(),
               ui: this.dialog,
@@ -120,11 +120,11 @@ export class DuplicateFamiliesComponent implements OnInit {
               await this.mergeFamilies(x);
 
             },
-            visible: () => this.remult.isAllowed(Roles.admin) && (x.args.settings.selectedRows.length > 1 || x.args.settings.totalRows < 10)
+            visible: () => remult.isAllowed(Roles.admin) && (x.args.settings.selectedRows.length > 1 || x.args.settings.totalRows < 10)
           }, {
             name: this.settings.lang.exportToExcel,
             click: async () => {
-              await saveFamiliesToExcel(this.remult, x.args.settings, this.dialog, this.settings.lang.families)
+              await saveFamiliesToExcel(remult, x.args.settings, this.dialog, this.settings.lang.families)
             }
           }],
         allowSelection: true,

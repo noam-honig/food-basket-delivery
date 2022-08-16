@@ -19,7 +19,7 @@ import { UITools } from "../helpers/init-context";
     saving: async (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
-            self.userCreated = (await remult.state.getCurrentUser());
+            self.userCreated = (await remult.context.getCurrentUser());
         }
         else {
             if (self.$.giftURL.valueChanged()) {
@@ -32,7 +32,7 @@ import { UITools } from "../helpers/init-context";
             }
             if (self.$.assignedToHelper.valueChanged() && self.assignedToHelper) {
                 self.dateGranted = new Date();
-                self.assignedByUser = (await remult.state.getCurrentUser());
+                self.assignedByUser = (await remult.context.getCurrentUser());
                 self.wasConsumed = false;
                 self.wasClicked = false;
             }
@@ -78,8 +78,8 @@ export class HelperGifts extends IdEntity {
     @BackendMethod({ allowed: Roles.admin })
     static async assignGift(helperId: string) {
         let helper = await remult.repo(Helpers).findId(helperId);
-        if (await remult.repo(HelperGifts).count({ assignedToHelper: (await remult.state.getCurrentUser()) }) > 0) {
-            let g = await remult.repo(HelperGifts).findFirst({ assignedToHelper: (await remult.state.getCurrentUser()) });
+        if (await remult.repo(HelperGifts).count({ assignedToHelper: (await remult.context.getCurrentUser()) }) > 0) {
+            let g = await remult.repo(HelperGifts).findFirst({ assignedToHelper: (await remult.context.getCurrentUser()) });
             if (g) {
                 g.assignedToHelper = helper;
                 g.wasConsumed = false;

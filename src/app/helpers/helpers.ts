@@ -69,10 +69,10 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
 export class HelpersBase extends IdEntity {
 
     getHelper(): Promise<Helpers> {
-        return this.remult.repo(Helpers).findId(this.id);
+        return remult.repo(Helpers).findId(this.id);
     }
     isCurrentUser(): boolean {
-        return this.id == this.remult.user.id;
+        return this.id == remult.user.id;
     }
 
     constructor(protected remult: Remult) {
@@ -237,7 +237,7 @@ export class HelpersBase extends IdEntity {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = await self.remult.state.getUserDistributionCenter();
+                                self.distributionCenter = await self.remult.context.getUserDistributionCenter();
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -274,9 +274,9 @@ export class HelpersBase extends IdEntity {
 
                 self.admin = true;
             }
-            self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone, self.remult));
+            self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone));
             if (!self._disableDuplicateCheck)
-                await Validators.unique(self, self.$.phone, self.remult.state.lang?.alreadyExist);
+                await Validators.unique(self, self.$.phone, self.remult.context.lang?.alreadyExist);
             if (self.isNew())
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -285,7 +285,7 @@ export class HelpersBase extends IdEntity {
             if (self.$.escort.valueChanged()) {
                 let h = self.escort;
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = (await self.remult.state.getCurrentUser());
+                    self.$.escort.originalValue.theHelperIAmEscorting = (await self.remult.context.getCurrentUser());
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -358,7 +358,7 @@ export class Helpers extends HelpersBase {
         return this;
     }
     async displayEditDialog(ui: UITools) {
-        let settings = (await this.remult.state.getSettings());
+        let settings = (await remult.context.getSettings());
         await ui.inputAreaDialog({
             title: this.isNew() ? settings.lang.newVolunteers : this.name,
             ok: async () => {
@@ -369,15 +369,15 @@ export class Helpers extends HelpersBase {
                     this.phone = new Phone('');
                 }
                 this.$.phone.error = '';
-                this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone, this.remult))
-                Phone.validatePhone(this.$.phone, this.remult, true);
+                this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone))
+                Phone.validatePhone(this.$.phone, remult, true);
                 if (this.$.phone.error)
                     throw this.$.phone.error;
             },
             cancel: () => {
                 this._.undoChanges();
             },
-            fields: Helpers.selectColumns(this._.repository.metadata.fields, this.remult).map(map => ({
+            fields: Helpers.selectColumns(this._.repository.metadata.fields, remult).map(map => ({
                 ...map,
                 field: this.$.find(map.field ? map.field as any : map)
             })),
@@ -387,10 +387,10 @@ export class Helpers extends HelpersBase {
             }],
             menu: [
                 {
-                    name: this.remult.state.lang.volunteerOpportunities,
+                    name: remult.context.lang.volunteerOpportunities,
                     click: async () => {
                         ui.gridDialog({
-                            settings: new GridSettings(this.remult.repo((await import('../events/events')).Event),
+                            settings: new GridSettings(remult.repo((await import('../events/events')).Event),
                                 {
                                     knowTotalRows: true,
                                     orderBy: {
@@ -398,7 +398,7 @@ export class Helpers extends HelpersBase {
                                     },
                                     columnSettings: e => [e.name, e.eventDate, e.type],
                                     where: {
-                                        id: (await this.remult.repo((await import('../events/events')).volunteersInEvent).find({
+                                        id: (await remult.repo((await import('../events/events')).volunteersInEvent).find({
                                             where: {
                                                 helper: this,
                                                 canceled: false
@@ -408,12 +408,12 @@ export class Helpers extends HelpersBase {
 
 
                                 }),
-                            title: this.remult.state.lang.volunteerOpportunities + " - " + this.name
+                            title: remult.context.lang.volunteerOpportunities + " - " + this.name
 
                         });
                     }
                 }, {
-                    name: this.remult.state.lang.smsMessages,
+                    name: remult.context.lang.smsMessages,
                     click: async () => {
                         this.smsMessages(ui);
                     }
@@ -422,7 +422,7 @@ export class Helpers extends HelpersBase {
         });
     }
     async addCommunicationHistoryDialog(ui: UITools, defaultMessage = '', onSave: VoidFunction = () => { }) {
-        let hist = this.remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create({
+        let hist = remult.repo((await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory).create({
             volunteer: this,
             message: defaultMessage
         });
@@ -547,7 +547,7 @@ export class Helpers extends HelpersBase {
         return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller && getSettings(remult).usingCallModule;
     }
     async showDeliveryHistory(ui: UITools) {
-        let ctx = this.remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
+        let ctx = remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
         const settings = new GridSettings(ctx, {
             numOfColumnsInGrid: 7,
             knowTotalRows: true,
@@ -641,7 +641,7 @@ export class Helpers extends HelpersBase {
     addressApiResult: string;
     @Field({ customInput: i => i.addressInput() })
     preferredDistributionAreaAddress: string;
-    preferredDistributionAreaAddressHelper = new AddressHelper(this.remult,
+    preferredDistributionAreaAddressHelper = new AddressHelper(
         () => this.$.preferredDistributionAreaAddress,
         () => this.$.addressApiResult,
         () => this.$.preferredDistributionAreaAddressCity);
@@ -660,14 +660,14 @@ export class Helpers extends HelpersBase {
                     continue;
                 ids.push(fd.family);
                 i++;
-                let f = await this.remult.repo((await import('../families/families')).Families).findId(fd.family);
+                let f = await remult.repo((await import('../families/families')).Families).findId(fd.family);
                 f.fixedCourier = fd.courier;
                 f.routeOrder = fd.routeOrder;
                 await f.save();
             }
         });
 
-        let otherFamilies = await this.remult.repo((await import('../families/families')).Families).find({
+        let otherFamilies = await remult.repo((await import('../families/families')).Families).find({
             where: {
                 fixedCourier: this,
                 status: FamilyStatus.Active,
@@ -705,10 +705,10 @@ export class Helpers extends HelpersBase {
             this.$.phone.error = "טלפון לא תקין";
             throw this.$.phone.error;
         }
-        let settings = await ApplicationSettings.getAsync(this.remult);
+        let settings = await ApplicationSettings.getAsync(remult);
         if (!settings.isSytemForMlt)
             throw "Not Allowed";
-        this.remult.setUser({
+        remult.setUser({
             id: 'WIX',
             name: 'WIX',
             roles: [],
@@ -721,10 +721,10 @@ export class Helpers extends HelpersBase {
 
         if (settings.registerHelperReplyEmailText && settings.registerHelperReplyEmailText != '') {
             let message = (await import('../asign-family/send-sms-action')).SendSmsAction.getMessage(settings.registerHelperReplyEmailText,
-                settings.organisationName, '', this.name, this.remult.user.name, '');
+                settings.organisationName, '', this.name, remult.user.name, '');
 
             try {
-                await this.email.Send(settings.lang.thankYouForHelp, message, this.remult);
+                await this.email.Send(settings.lang.thankYouForHelp, message, remult);
             } catch (err) {
                 console.error('send mail', err);
             }
@@ -737,7 +737,7 @@ export class Helpers extends HelpersBase {
         dbName: 'preferredDistributionAreaAddress2', customInput: i => i.addressInput()
     })
     preferredFinishAddress: string;
-    preferredFinishAddressHelper = new AddressHelper(this.remult, () => this.$.preferredFinishAddress, () => this.$.addressApiResult2, () => this.$.preferredFinishAddressCity);
+    preferredFinishAddressHelper = new AddressHelper( () => this.$.preferredFinishAddress, () => this.$.addressApiResult2, () => this.$.preferredFinishAddressCity);
     @Field()
     preferredFinishAddressCity: string;
 
@@ -882,10 +882,10 @@ export class Helpers extends HelpersBase {
         let result: import('../events/events').volunteersInEvent[] = [];
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        for (const event of await this.remult.repo(events.Event).find({
+        for (const event of await remult.repo(events.Event).find({
             where: { eventStatus: events.eventStatus.active, eventDate: { ">=": yesterday } }
         })) {
-            for (const v of await this.remult.repo(events.volunteersInEvent).find({
+            for (const v of await remult.repo(events.volunteersInEvent).find({
                 where: { helper: this, eventId: event.id }
             })) {
                 result.push(v);
@@ -897,15 +897,15 @@ export class Helpers extends HelpersBase {
         let h = this;
         const comment = new InputField<string>({
             customInput: c => c.textArea(),
-            caption: this.remult.state.lang.sendMessageToVolunteer,
-            defaultValue: () => this.remult.state.lang.hello + ' ' + h.name + '\n' + message
+            caption: remult.context.lang.sendMessageToVolunteer,
+            defaultValue: () => remult.context.lang.hello + ' ' + h.name + '\n' + message
         });
         ui.inputAreaDialog({
             ok: async () => {
                 ui.Info(await Helpers.SendCustomMessageToCourier(this, comment.value));
             },
             fields: [comment],
-            title: this.remult.state.lang.sendMessageToVolunteer + ' ' + h.name,
+            title: remult.context.lang.sendMessageToVolunteer + ' ' + h.name,
         });
     }
     @BackendMethod({ allowed: Roles.admin })
@@ -915,7 +915,7 @@ export class Helpers extends HelpersBase {
     }
     async smsMessages(ui: UITools) {
         const HelperCommunicationHistory = (await import('../in-route-follow-up/in-route-helpers')).HelperCommunicationHistory;
-        const settings = new GridSettings(this.remult.repo(HelperCommunicationHistory), {
+        const settings = new GridSettings(remult.repo(HelperCommunicationHistory), {
             where: {
                 volunteer: this
             },
@@ -931,13 +931,13 @@ export class Helpers extends HelpersBase {
         ui.gridDialog({
             settings,
             buttons: [{
-                text: this.remult.state.lang.customSmsMessage,
+                text: remult.context.lang.customSmsMessage,
                 click: () => {
                     this.sendSmsToCourier(ui);
                     settings.reloadData();
                 }
             }],
-            title: this.remult.state.lang.smsMessages + " " + this.name
+            title: remult.context.lang.smsMessages + " " + this.name
         });
     }
 

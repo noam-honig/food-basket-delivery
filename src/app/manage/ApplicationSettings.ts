@@ -73,7 +73,7 @@ export class RemovedFromListExcelImportStrategy {
         }
       }
       if (self.helpPhone)
-        self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone, self.remult));
+        self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone));
       if (self.forWho)
         setLangForSite(Sites.getValidSchemaFromContext(self.remult), self.forWho);
       setSettingsForSite(Sites.getValidSchemaFromContext(self.remult), self);
@@ -201,7 +201,7 @@ export class ApplicationSettings extends EntityBase {
   addressApiResult: string;
   @Field({ translation: l => l.deliveryCenterAddress, customInput: i => i.addressInput() })
   address: string;
-  addressHelper = new AddressHelper(this.remult, () => this.$.address, () => this.$.addressApiResult);
+  addressHelper = new AddressHelper(() => this.$.address, () => this.$.addressApiResult);
   @Field({ translation: l => l.successMessageColumnName })
   commentForSuccessDelivery: string;
   @Field({ translation: l => l.leftByDoorMessageColumnName })

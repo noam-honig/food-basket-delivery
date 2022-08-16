@@ -1,6 +1,6 @@
 import { Injectable, NgZone, ErrorHandler, Component } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Remult, getFields, IdFilter, Repository, FieldRef, FieldMetadata } from 'remult';
+import { Remult, getFields, IdFilter, Repository, FieldRef, FieldMetadata, remult } from 'remult';
 
 
 import { DataAreaSettings, DataControl, DataControlInfo, DataControlSettings, GridSettings, IDataSettings } from '@remult/angular/interfaces';
@@ -34,7 +34,7 @@ export class DialogService implements UITools {
 
 
     filterDistCenter(): IdFilter<DistributionCenters> {
-        return this.remult.state.filterDistCenter(this.distCenter);
+        return remult.context.filterDistCenter(this.distCenter);
     }
     async exception(title: string, err: any): Promise<void> {
 
@@ -81,7 +81,7 @@ export class DialogService implements UITools {
     statusRefreshThrottle = new myThrottle(1000);
 
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private remult: Remult, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
         evil.YesNoPromise = (message) => this.YesNoPromise(message);
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
@@ -157,7 +157,7 @@ export class DialogService implements UITools {
         if (!value) {
             value = 1;
         }
-        let cat = Sites.getOrganizationFromContext(this.remult);
+        let cat = Sites.getOrganizationFromContext(remult);
         if (!cat)
             cat = '';
         gtag('event', action, {
@@ -171,7 +171,7 @@ export class DialogService implements UITools {
         if (!value) {
             value = 1;
         }
-        let cat = Sites.getOrganizationFromContext(this.remult);
+        let cat = Sites.getOrganizationFromContext(remult);
         if (!cat)
             cat = '';
         gtag('event', action, {
@@ -185,8 +185,8 @@ export class DialogService implements UITools {
         if (this.distCenter != null)
             return this.distCenter;
         if (!this.allCenters)
-            this.allCenters = await this.remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
-        return this.remult.state.findClosestDistCenter(loc, this.allCenters);
+            this.allCenters = await remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
+        return remult.context.findClosestDistCenter(loc, this.allCenters);
 
     }
     private allCenters: DistributionCenters[];
@@ -196,7 +196,7 @@ export class DialogService implements UITools {
         valueList: remult => DistributionCenters.getValueList(remult, true),
         valueChange: async self => {
 
-            if (self.remult.authenticated()) {
+            if (remult.authenticated()) {
                 self.refreshDistCenter.next();
             }
         }
@@ -207,21 +207,21 @@ export class DialogService implements UITools {
     hasManyCenters = false;
     canSeeCenter() {
         var dist = '';
-        if (this.remult.user)
-            dist = (this.remult.user).distributionCenter;
-        return this.remult.isAllowed(Roles.admin) && this.hasManyCenters;
+        if (remult.user)
+            dist = (remult.user).distributionCenter;
+        return remult.isAllowed(Roles.admin) && this.hasManyCenters;
     }
     dc: DistributionCenters;
-    get $() { return getFields(this, this.remult) }
+    get $() { return getFields(this, remult) }
     async refreshCanSeeCenter() {
         this.hasManyCenters = false;
         this.distCenterArea = undefined;
         this.dc = undefined;
 
-        if (this.remult.isAllowed(Roles.distCenterAdmin) && !this.remult.isAllowed(Roles.admin))
-            this.remult.repo(DistributionCenters).findId((this.remult.user).distributionCenter).then(x => this.dc = x);
-        if (this.remult.isAllowed(Roles.admin)) {
-            this.hasManyCenters = await this.remult.repo(DistributionCenters).count({ archive: false }) > 1;
+        if (remult.isAllowed(Roles.distCenterAdmin) && !remult.isAllowed(Roles.admin))
+            remult.repo(DistributionCenters).findId((remult.user).distributionCenter).then(x => this.dc = x);
+        if (remult.isAllowed(Roles.admin)) {
+            this.hasManyCenters = await remult.repo(DistributionCenters).count({ archive: false }) > 1;
             this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });
             if (!this.hasManyCenters)
                 this.distCenter = null;
@@ -258,8 +258,8 @@ export class DialogService implements UITools {
                                 m = err;
                             }
                             try {
-                                if (self.remult.user)
-                                    m += " user:" + JSON.stringify(this.remult.user);
+                                if (remult.user)
+                                    m += " user:" + JSON.stringify(remult.user);
                             } catch { }
                             await DialogController.LogWithUser(m)
                         }
@@ -333,8 +333,8 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorString = error.toString();
         this.lastErrorTime = new Date().valueOf();
         try {
-            var s = await this.remult.repo((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
-            if (s && this.remult.authenticated() && !s.currentUserIsValidForAppLoadTest) {
+            var s = await remult.repo((await import('../manage/ApplicationSettings')).ApplicationSettings).findId(1);
+            if (s && remult.authenticated() && !s.currentUserIsValidForAppLoadTest) {
                 let AuthService = (await import("../auth/auth-service")).AuthService;
                 AuthService.doSignOut();
                 this.dialog.Error(s.lang.sessionExpiredPleaseRelogin);
@@ -345,7 +345,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         catch (err) {
 
         }
-        if (this.remult.authenticated()) {
+        if (remult.authenticated()) {
             if (showing)
                 return;
             showing = true;

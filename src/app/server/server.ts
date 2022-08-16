@@ -163,7 +163,7 @@ const controllers = [
 let publicRoot = 'hagai';
 if (!fs.existsSync(publicRoot + '/index.html'))
     publicRoot = 'dist/' + publicRoot;
-serverInit().then(async (dataSource) => {
+serverInit().then(async ({dataSource,initDatabase}) => {
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
@@ -345,24 +345,25 @@ s.parentNode.insertBefore(b, s);})();
             initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
-                    remult.state.requestRefererOnBackend = req.headers['referer']?.toString();
+                    remult.context.requestRefererOnBackend = req.headers['referer']?.toString();
                     if (req.originalUrl)
                         url = req.originalUrl;
                     else
                         url = req.path;
                 }
-                remult.state.getSite = () => getSiteFromUrl(url);
-                remult.state.requestUrlOnBackend = url;
+                remult.context.getSite = () => getSiteFromUrl(url);
+                remult.context.requestUrlOnBackend = url;
                 if (!remult.isAllowed(Sites.getOrgRole(remult)))
                     remult.setUser(undefined);
                 remult.setDataProvider(dataSource(remult));
-                remult.state.getOrigin = () => req.headers['origin'] as string;
+                remult.context.getOrigin = () => req.headers['origin'] as string;
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
+                await initDatabase();
                 if (!process.env.DEV_MODE)
                     return;
-                remult.state.getSite = () => "test1";
+                remult.context.getSite = () => "test1";
                 remult.setDataProvider(dataSource(remult));
                 await InitContext(remult, undefined);
                 const path = './db-structure/';

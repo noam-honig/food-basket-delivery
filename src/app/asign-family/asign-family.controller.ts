@@ -43,7 +43,7 @@ export class AsignFamilyController {
                 $and: [
                     additionalWhere,
                     FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea, basket),
-                    { distributionCenter: remult.state.filterDistCenter(distCenter) }
+                    { distributionCenter: remult.context.filterDistCenter(distCenter) }
                 ],
             });
         };
@@ -57,7 +57,7 @@ export class AsignFamilyController {
 
         if (helper) {
             let r = await db.execute(await sql.build('select ', f.id, ' from ', f, ' where ', fd.where({
-                distributionCenter: remult.state.filterDistCenter(distCenter),
+                distributionCenter: remult.context.filterDistCenter(distCenter),
                 special: YesNo.No,
                 $and: [
                     ActiveFamilyDeliveries.active,
@@ -89,7 +89,7 @@ export class AsignFamilyController {
         } else {
             for await (let c of remult.repo(CitiesStatsPerDistCenter).query({
                 orderBy: { city: "asc" },
-                where: { distributionCenter: remult.state.filterDistCenter(distCenter) }
+                where: { distributionCenter: remult.context.filterDistCenter(distCenter) }
             })) {
                 var ci = {
                     name: c.city,
@@ -112,7 +112,7 @@ export class AsignFamilyController {
             ],
             from: f,
             where: () => [f.where({
-                distributionCenter: remult.state.filterDistCenter(distCenter),
+                distributionCenter: remult.context.filterDistCenter(distCenter),
                 $and: [FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, undefined, basket)]
             })]
         }), ' group by ', f.area, ' order by ', f.area)));
@@ -132,7 +132,7 @@ export class AsignFamilyController {
             ],
             from: f,
             where: () => [f.where({
-                distributionCenter: remult.state.filterDistCenter(distCenter),
+                distributionCenter: remult.context.filterDistCenter(distCenter),
                 $and: [FamilyDeliveries.readyFilter(info.filterCity, info.filterGroup, info.filterArea)]
             })]
         }), ' group by ', f.basketType));
@@ -255,7 +255,7 @@ export class AsignFamilyController {
         }
         const buildWhere: EntityFilter<FamilyDeliveries> = {
             special: { "!=": YesNo.Yes },
-            distributionCenter: remult.state.filterDistCenter(distCenter),
+            distributionCenter: remult.context.filterDistCenter(distCenter),
             basketType: basketType ? basketType : undefined,
             $and: [FamilyDeliveries.readyFilter(info.city, info.group, info.area)]
         }
@@ -316,7 +316,7 @@ export class AsignFamilyController {
                     where: {
                         addressLongitude: fqr.lng,
                         addressLatitude: fqr.lat,
-                        distributionCenter: remult.state.filterDistCenter(distCenter),
+                        distributionCenter: remult.context.filterDistCenter(distCenter),
                         $and: [
                             buildWhere
                         ]
@@ -499,7 +499,7 @@ export class AsignFamilyController {
             from: fd,
             select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
             where: () => [fd.where({
-                distributionCenter: remult.state.filterDistCenter(distCenter),
+                distributionCenter: remult.context.filterDistCenter(distCenter),
                 ...FamilyDeliveries.readyFilter(args.filterCity, args.filterGroup, args.filterArea, basket)
             })],
             groupBy: () => [fd.addressLatitude, fd.addressLongitude],

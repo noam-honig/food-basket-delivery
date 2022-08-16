@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { DataControlSettings, FieldCollection, getFieldDefinition } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, Fields, FieldRef, FieldMetadata, FieldsRef } from 'remult';
+import { Remult, Fields, FieldRef, FieldMetadata, FieldsRef, remult } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService } from '../select-popup/dialog';
@@ -30,14 +30,14 @@ function phoneDigits(val: Phone | string) {
 })
 
 export class MergeFamiliesComponent implements OnInit {
-
-  constructor(public remult: Remult, private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
+  remult=remult;
+  constructor( private dialogRef: MatDialogRef<any>, public dialog: DialogService, public settings: ApplicationSettings, public busy: BusyService) { }
   families: Families[] = [];
   family: Families;
   async ngOnInit() {
     this.families.sort((a, b) => b.createDate.valueOf() - a.createDate.valueOf());
     this.families.sort((a, b) => a.status.id - b.status.id);
-    this.family = await this.remult.repo(Families).findId(this.families[0].id);
+    this.family = await remult.repo(Families).findId(this.families[0].id);
     this.family._disableAutoDuplicateCheck = true;
     this.rebuildCompare(true);
   }
@@ -99,7 +99,7 @@ export class MergeFamiliesComponent implements OnInit {
     }
 
     for (const c of this.family.$) {
-      if (c.metadata.options.allowApiUpdate === undefined || this.remult.isAllowedForInstance(this.family, c.metadata.options.allowApiUpdate)) {
+      if (c.metadata.options.allowApiUpdate === undefined || remult.isAllowedForInstance(this.family, c.metadata.options.allowApiUpdate)) {
         switch (c) {
           case this.family.$.addressApiResult:
           case this.family.$.addressLatitude:
@@ -164,7 +164,7 @@ export class MergeFamiliesComponent implements OnInit {
       await MergeFamiliesController.mergeFamilies(this.families.map(x => x.id));
       this.merged = true;
       this.dialogRef.close();
-      let deliveries = await this.remult.repo(ActiveFamilyDeliveries).count({ family: this.family.id, deliverStatus: DeliveryStatus.isNotAResultStatus() })
+      let deliveries = await remult.repo(ActiveFamilyDeliveries).count({ family: this.family.id, deliverStatus: DeliveryStatus.isNotAResultStatus() })
       if (deliveries > 0) {
 
         await this.family.showDeliveryHistoryDialog({

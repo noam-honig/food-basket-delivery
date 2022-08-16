@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Remult, Unobserve } from 'remult';
+import { remult, Remult, Unobserve } from 'remult';
 import { EventInList } from '../events/events';
 import { RegisterToEvent } from '../event-info/RegisterToEvent';
 import { Sites } from '../sites/sites';
@@ -17,12 +17,12 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class OrgEventsComponent implements OnInit, OnDestroy {
 
-  constructor(private remult: Remult, public settings: ApplicationSettings, private dialog: DialogService, private route: ActivatedRoute) {
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private route: ActivatedRoute) {
 
   }
-  isGuest = Sites.getOrganizationFromContext(this.remult) == Sites.guestSchema;
+  isGuest = Sites.getOrganizationFromContext(remult) == Sites.guestSchema;
   getLogo() {
-    return ApplicationSettings.get(this.remult).logoUrl;
+    return ApplicationSettings.get(remult).logoUrl;
 
   }
   ngOnDestroy(): void {
@@ -31,7 +31,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   }
   unObserve: Unobserve;
   isAdmin() {
-    return this.remult.isAllowed(Roles.distCenterAdmin);
+    return remult.isAllowed(Roles.distCenterAdmin);
   }
   events: EventInList[] = [];
   async ngOnInit() {

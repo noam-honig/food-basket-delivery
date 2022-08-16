@@ -63,7 +63,7 @@ export class ManageController {
                     if (error) {
                         rej(error);
                     } else {
-                        console.log(remult.state.getSite() + "/email sent to: " + email);
+                        console.log(remult.context.getSite() + "/email sent to: " + email);
                         res('Email sent:');
                     }
                 });
@@ -132,10 +132,10 @@ export class SendTestSms extends ControllerBase {
     message: string;
     @BackendMethod({ allowed: Roles.admin })
     async sendTestMessage() {
-        let settings = await ApplicationSettings.getAsync(this.remult);
+        let settings = await ApplicationSettings.getAsync(remult);
         if (!settings.bulkSmsEnabled)
             throw "can only use this with bulk sms enabled";
-        return await new SendSmsUtils().sendSms(this.phone, this.message, this.remult, undefined);
+        return await new SendSmsUtils().sendSms(this.phone, this.message, remult, undefined);
     }
 
 }

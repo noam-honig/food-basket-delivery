@@ -83,7 +83,7 @@ export class SqlBuilder {
         let f = e as Filter;
         if (f && f.__applyToConsumer) {
             for (const t of SqlBuilder.filterTranslators) {
-                f = await t.translate(this.remult, f);
+                f = await t.translate(remult, f);
             }
             let bridge = new FilterConsumerBridgeToSqlRequest(new myDummySQLCommand());
             bridge._addWhere = false;
@@ -284,7 +284,7 @@ export class SqlBuilder {
         return this.build(...result);
     }
     constructor(private remult: Remult) {
-        if (remult && !remult.state.getSite)
+        if (remult && !remult.context.getSite)
             InitContext(remult);
 
     }
@@ -322,7 +322,7 @@ export class SqlBuilder {
             where.push(...await query.where());
         }
         if (query.from.metadata.options.backendPrefilter) {
-            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from.metadata, query.from.metadata.options.backendPrefilter), query.from.metadata, this.remult));
+            where.push(await Filter.translateCustomWhere(await Filter.fromEntityFilter(query.from.metadata, query.from.metadata.options.backendPrefilter), query.from.metadata, remult));
         }
         if (where.length > 0) {
             const w = await this.and(...where);

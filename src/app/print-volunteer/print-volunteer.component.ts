@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../print-stickers/VolunteerReportDefs';
@@ -41,9 +41,9 @@ export class PrintVolunteerComponent implements OnInit {
     return 'none';
   }
   pageProps: ElementProps = {
-    caption: this.remult.state.lang.pageProperties, props: [
+    caption: this.remult.context.lang.pageProperties, props: [
       ...getMarginsH(), {
-        caption: this.remult.state.lang.newPageForEachVolunteer,
+        caption: this.remult.context.lang.newPageForEachVolunteer,
         inputType: "checkbox",
         key: this.newPageKey
       }]
@@ -51,7 +51,7 @@ export class PrintVolunteerComponent implements OnInit {
   };
 
   columnProps: ElementProps = {
-    caption: this.remult.state.lang.columnProperties, props: [
+    caption: this.remult.context.lang.columnProperties, props: [
       ...this.defs.fieldProps.props
     ]
 
@@ -66,7 +66,7 @@ export class PrintVolunteerComponent implements OnInit {
   addColumn() {
     this.report.columns.push({
       controls: [],
-      propertyValues: { [this.defs.textBeforeKey]: this.remult.state.lang.newColumn }
+      propertyValues: { [this.defs.textBeforeKey]: remult.context.lang.newColumn }
     })
     this.editColumn(this.report.columns[this.report.columns.length - 1]);
 
@@ -76,7 +76,7 @@ export class PrintVolunteerComponent implements OnInit {
   editColumn(c: ReportColumn) {
     this.currentProps = this.columnProps;
     this.currentProps.values = c.propertyValues;
-    this.currentProps.caption = this.remult.state.lang.columnProperties + ': ' + c.propertyValues[this.defs.textBeforeKey];
+    this.currentProps.caption = remult.context.lang.columnProperties + ': ' + c.propertyValues[this.defs.textBeforeKey];
     this.currentColumn = c;
     this.currentControlList = c.controls;
 
@@ -131,7 +131,7 @@ export class PrintVolunteerComponent implements OnInit {
       }
       deliveries.push(d);
     }
-    this.row = await this.remult.repo(VolunteerReportInfo).findFirst({ key: "volunteerReport" }, { useCache: false, createIfNotFound: true });
+    this.row = await remult.repo(VolunteerReportInfo).findFirst({ key: "volunteerReport" }, { useCache: false, createIfNotFound: true });
     this.report = this.row.info;
     if (!this.report) {
       this.report = {
