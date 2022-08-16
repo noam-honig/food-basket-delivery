@@ -13,8 +13,6 @@ import { Route } from '@angular/router';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-import { Remult } from 'remult';
-
 import { BasketType } from '../families/BasketType';
 
 import { Phone } from "../model-shared/phone";

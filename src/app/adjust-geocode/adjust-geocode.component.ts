@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from '@remult/angular/interfaces';
 import { Button } from 'protractor';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdjustGeocode, GeocodeCache, GeocodeInformation, toLongLat } from '../shared/googleApiHelpers';
 import { getLang } from '../sites/sites';

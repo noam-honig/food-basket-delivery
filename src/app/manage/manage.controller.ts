@@ -135,7 +135,7 @@ export class SendTestSms extends ControllerBase {
         let settings = await ApplicationSettings.getAsync(remult);
         if (!settings.bulkSmsEnabled)
             throw "can only use this with bulk sms enabled";
-        return await new SendSmsUtils().sendSms(this.phone, this.message, remult, undefined);
+        return await new SendSmsUtils().sendSms(this.phone, this.message,  undefined);
     }
 
 }

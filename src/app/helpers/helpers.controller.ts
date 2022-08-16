@@ -51,7 +51,7 @@ export class HelpersController {
         if (!hasPassword) {
             message += getLang(remult).enterFirstTime
         }
-        await new SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
+        await new SendSmsUtils().sendSms(h.phone.thePhone, message, h);
         return getLang(remult).inviteSentSuccesfully
     }
 

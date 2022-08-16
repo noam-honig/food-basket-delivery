@@ -175,7 +175,7 @@ export class HelperFamiliesController {
         }
 
 
-        await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name), remult, undefined, { familyId: fd.family });
+        await new SendSmsUtils().sendSms(phone, SendSmsAction.getSuccessMessage(settings.successMessageText, settings.organisationName, fd.name),  undefined, { familyId: fd.family });
     }
 }
 export interface DeliveryInList {

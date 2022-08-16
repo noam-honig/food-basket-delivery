@@ -8,8 +8,6 @@ import { HelpersBase } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
-import { Remult } from 'remult';
-
 import { BasketType } from '../families/BasketType';
 
 import { getDb, SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
@@ -173,7 +171,7 @@ export class AsignFamilyController {
 
         if (!strategy)
             throw "Invalid Strategy";
-        let r = await optimizeRoute(await helper.getHelper(), existingFamilies, remult, !args.doNotUseGoogle, strategy, args.volunteerLocation);
+        let r = await optimizeRoute(await helper.getHelper(), existingFamilies, !args.doNotUseGoogle, strategy, args.volunteerLocation);
         r.families = r.families.filter(f => f.checkAllowedForUser());
         r.families = await Promise.all(r.families.map(x => x._.toApiJson()));
         return r;
@@ -488,14 +486,12 @@ export class AsignFamilyController {
         filterCity: string,
         filterGroup: string,
         filterArea: string
-    },
-        remult?: Remult,
-        db?: SqlDatabase
+    }
     ) {
         var sql = new SqlBuilder(remult);
         var fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
-        let result = await db.execute(await sql.query({
+        let result = await getDb().execute(await sql.query({
             from: fd,
             select: () => [sql.columnWithAlias(sql.max('address'), 'address'), sql.sumWithAlias(fd.quantity, "quantity"), sql.build("string_agg(", fd.id, "::text, ',') ids")],
             where: () => [fd.where({

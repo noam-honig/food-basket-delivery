@@ -70,7 +70,7 @@ export class DeliveryFollowUpController {
         const message = await remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
         for (const h of await remult.repo(Helpers).find({ where: { id: ids } })) {
             await new SendSmsUtils().sendSms(h.phone.thePhone,
-                DeliveryFollowUpController.createMessage(h, remult).merge(message.template), remult, h, {});
+                DeliveryFollowUpController.createMessage(h, remult).merge(message.template),  h, {});
         }
         return "נשלחו " + ids.length + " הודעות";
     }

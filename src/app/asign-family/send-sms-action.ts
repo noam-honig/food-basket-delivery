@@ -2,7 +2,6 @@ import { BackendMethod, remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
-import { Remult } from 'remult';
 import { Roles } from "../auth/roles";
 import { Sites } from '../sites/sites';
 import { getLang } from '../sites/sites';
@@ -18,10 +17,10 @@ export class SendSmsAction {
     static async SendSms(h: HelpersBase, reminder: Boolean) {
 
         try {
-            await SendSmsAction.generateMessage(remult, h, remult.context.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
+            await SendSmsAction.generateMessage(h, remult.context.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {
 
-                await new SendSmsUtils().sendSms(phone, message, remult, h);
-                await SendSmsAction.documentHelperMessage(reminder, h, remult, "SMS");
+                await new SendSmsUtils().sendSms(phone, message, h);
+                await SendSmsAction.documentHelperMessage(reminder, h, "SMS");
             });
         }
         catch (err) {
@@ -32,7 +31,7 @@ export class SendSmsAction {
 
 
 
-    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, remult: Remult, type: string) {
+    public static async documentHelperMessage(reminder: Boolean, hi: HelpersBase, type: string) {
         let h = await hi.getHelper();
         if (reminder)
             h.reminderSmsDate = new Date();
@@ -41,12 +40,12 @@ export class SendSmsAction {
         await h.save();
     }
 
-    static async generateMessage(ds: Remult, helperIn: HelpersBase, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
+    static async generateMessage(helperIn: HelpersBase, origin: string, reminder: Boolean, senderName: string, then: (phone: string, message: string, sender: string, url: string) => Promise<void>) {
         let helper = await helperIn.getHelper();
         if (!origin) {
             throw 'Couldnt determine origin for sms';
         }
-        let org = Sites.getOrganizationFromContext(ds);
+        let org = Sites.getOrganizationFromContext(remult);
         if (org.length > 0) {
             origin = origin + '/' + org;
         }
@@ -56,7 +55,7 @@ export class SendSmsAction {
                 await helper.save();
             }
             let message = '';
-            let settings = await ApplicationSettings.getAsync(ds);
+            let settings = await ApplicationSettings.getAsync(remult);
             if (reminder) {
                 message = settings.reminderSmsText;
 
@@ -65,19 +64,19 @@ export class SendSmsAction {
 
                 message = settings.smsText;
                 if (!message || message.trim().length == 0) {
-                    message = getLang(ds).defaultSmsText;
+                    message = getLang(remult).defaultSmsText;
                 }
             }
             let url = origin + '/x/' + helper.shortUrlKey;
             message = SendSmsAction.getMessage(message, settings.organisationName, '', helper.name, senderName, url);
-            let sender = await SendSmsAction.getSenderPhone(ds);
+            let sender = await SendSmsAction.getSenderPhone();
 
             await then(helper.phone.thePhone, message, sender, url);
             var x = 1 + 1;
 
         }
     }
-    public static async getSenderPhone(remult: Remult) {
+    public static async getSenderPhone() {
         let sender = (await ApplicationSettings.getAsync(remult)).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
             sender = (await remult.context.getCurrentUser()).phone.thePhone;
@@ -111,7 +110,7 @@ export class SendSmsUtils {
 
     static twilioSendSms: (to: string, body: string, forWho: TranslationOptions) => Promise<any>;
 
-    async sendSms(phone: string, message: string, remult: Remult, helper: HelpersBase, info?: {
+    async sendSms(phone: string, message: string, helper: HelpersBase, info?: {
         familyId?: string,
         eventId?: string
     }) {

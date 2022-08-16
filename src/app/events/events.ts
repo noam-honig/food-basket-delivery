@@ -167,7 +167,7 @@ export class Event extends IdEntity {
                 if (!v.helper.doNotSendSms) {
                     await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
                         this.createMessage(v).merge(settings.confirmEventParticipationMessage),
-                        remult, v.helper, {
+                         v.helper, {
                         eventId: this.id
                     });
                     i++;
@@ -197,7 +197,7 @@ export class Event extends IdEntity {
                         continue;
                     await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
                         this.createMessage(v).merge(message.template),
-                        remult, v.helper, {
+                         v.helper, {
                         eventId: this.id
                     });
                     i++;

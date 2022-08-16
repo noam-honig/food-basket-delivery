@@ -317,6 +317,7 @@ export function initApp(session: TokenService, settings: SettingsService, inject
     try {
       try {
         injectedRemult.context.getSite = () => getSiteFromUrl(window.location.pathname)
+        remult.context.getSite = () => getSiteFromUrl(window.location.pathname)
         await session.loadUserInfo();
         await injectedRemult.userChange.observe(async () => {
           await InitContext(injectedRemult);
