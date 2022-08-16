@@ -1,5 +1,5 @@
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Remult, BackendMethod, SqlDatabase } from 'remult';
+import { Remult, BackendMethod, SqlDatabase, remult } from 'remult';
 
 import { getSettings } from '../manage/ApplicationSettings';
 import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
@@ -9,7 +9,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { relativeDateName } from '../model-shared/types';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { getLang } from '../sites/sites';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 
@@ -17,7 +17,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 
 export class SelectHelperController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string, remult?: Remult, db?: SqlDatabase) {
+    static async getHelpersByLocation(deliveryLocation: Location, selectDefaultVolunteer: boolean, familyId: string) {
         let helpers = new Map<string, helperInList>();
 
 
@@ -57,7 +57,7 @@ export class SelectHelperController {
 
 
 
-            for (const d of (await db.execute(await sql.query({
+            for (const d of (await getDb().execute(await sql.query({
                 from: afd,
                 where: () => [afd.where({ courier: { "!=": null }, deliverStatus: DeliveryStatus.isNotAResultStatus() })],
                 select: async () => [
@@ -86,7 +86,7 @@ export class SelectHelperController {
             let limitDate = new Date();
             limitDate.setDate(limitDate.getDate() - (await remult.state.getSettings()).BusyHelperAllowedFreq_denom);
 
-            for (const d of (await db.execute(await sql1.query({
+            for (const d of (await getDb().execute(await sql1.query({
                 from: fd,
                 where: () => [
                     fd.where({
@@ -112,7 +112,7 @@ export class SelectHelperController {
         } else {
 
             let afd = SqlFor(remult.repo(Families));
-            for (const d of (await db.execute(await sql.query({
+            for (const d of (await getDb().execute(await sql.query({
                 from: afd,
                 where: () => [afd.where({ fixedCourier: { "!=": null }, status: FamilyStatus.Active })],
                 select: () => [

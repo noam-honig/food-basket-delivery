@@ -4,9 +4,9 @@ import { YesNo } from "./YesNo";
 import { FamilySources } from "./FamilySources";
 import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter, ValueConverters } from 'remult';
+import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter, ValueConverters, remult } from 'remult';
 
 import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 
@@ -135,21 +135,19 @@ declare type factoryFor<T> = {
       }
     }
     recordChanges(self.remult, self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
+  },
+  backendPrefilter: () => {
+    if (remult.isAllowed(Roles.admin))
+      return undefined;
+    return Families.isAllowedForUser();
   }
-},
-  (options, remult) =>
-    options.backendPrefilter = (self: Families) => {
-      if (remult.isAllowed(Roles.admin))
-        return undefined;
-      return Families.isAllowedForUser();
-    }
-)
+})
 export class Families extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
-  static async getDefaultVolunteers(remult?: Remult, db?: SqlDatabase) {
+  static async getDefaultVolunteers(remult?: Remult) {
     var sql = new SqlBuilder(remult);
     let f = SqlFor(remult.repo(Families));
-    let r = await db.execute(await sql.query({
+    let r = await getDb().execute(await sql.query({
       from: f,
       select: () => [f.fixedCourier, 'count (*) as count'],
       where: () => [f.where({ status: FamilyStatus.Active })],
@@ -361,7 +359,7 @@ export class Families extends IdEntity {
     selfPickup: boolean,
     deliverStatus?: DeliveryStatus,
     archive?: boolean
-  }, remult?: Remult) {
+  }) {
     let f = await remult.repo(Families).findId(familyId);
     if (f) {
 
@@ -701,43 +699,40 @@ export class Families extends IdEntity {
   }
 
 
-  @Field({ includeInApi: Roles.familyAdmin },
-    (options, remult) =>
-      options.sqlExpression = (self) => {
-        return dbNameFromLastDelivery(self, remult, fde => fde.deliverStatus, "prevStatus");
-      }
-  )
+  @Field({
+    includeInApi: Roles.familyAdmin,
+    sqlExpression: (self) => {
+      return dbNameFromLastDelivery(self, remult, fde => fde.deliverStatus, "prevStatus");
+    }
+  })
   previousDeliveryStatus: DeliveryStatus;
-  @ChangeDateColumn({ includeInApi: Roles.familyAdmin },
-    (options, remult) =>
-      options.sqlExpression = (self) => {
-        return dbNameFromLastDelivery(self, remult, fde => fde.deliveryStatusDate, "prevDate");
-      }
-  )
+  @ChangeDateColumn({
+    includeInApi: Roles.familyAdmin,
+    sqlExpression: (self) => {
+      return dbNameFromLastDelivery(self, remult, fde => fde.deliveryStatusDate, "prevDate");
+    }
+  })
   previousDeliveryDate: Date;
   @Field<Families>({
-    translation: l => l.previousDeliveryNotes
-  },
-    (options, remult) =>
-      options.sqlExpression = (self) => {
-        return dbNameFromLastDelivery(self, remult, fde => fde.courierComments, "prevComment");
-      }
-  )
+    translation: l => l.previousDeliveryNotes,
+    sqlExpression: (self) => {
+      return dbNameFromLastDelivery(self, remult, fde => fde.courierComments, "prevComment");
+    }
+  })
   previousDeliveryComment: string;
-  @Fields.integer({},
-    (options, remult) =>
-      options.sqlExpression = async (selfDefs) => {
-        let self = SqlFor(selfDefs);
-        let fd = SqlFor(remult.repo(FamilyDeliveries));
-        let sql = new SqlBuilder(remult);
-        return sql.columnCount(self, {
-          from: fd,
-          where: () => [sql.eq(fd.family, self.id),
-          fd.where({ archive: false, deliverStatus: DeliveryStatus.isNotAResultStatus() })]
-        });
+  @Fields.integer({
+    sqlExpression: async (selfDefs) => {
+      let self = SqlFor(selfDefs);
+      let fd = SqlFor(remult.repo(FamilyDeliveries));
+      let sql = new SqlBuilder(remult);
+      return sql.columnCount(self, {
+        from: fd,
+        where: () => [sql.eq(fd.family, self.id),
+        fd.where({ archive: false, deliverStatus: DeliveryStatus.isNotAResultStatus() })]
+      });
 
-      }
-  )
+    }
+  })
   numOfActiveReadyDeliveries: number;
   @Field()
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
@@ -862,10 +857,10 @@ export class Families extends IdEntity {
 
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getAreas(remult?: Remult, db?: SqlDatabase): Promise<{ area: string, count: number }[]> {
+  static async getAreas(remult?: Remult): Promise<{ area: string, count: number }[]> {
     var sql = new SqlBuilder(remult);
     let f = SqlFor(remult.repo(Families));
-    let r = await db.execute(await sql.query({
+    let r = await getDb().execute(await sql.query({
       from: f,
       select: () => [f.area, 'count (*) as count'],
       where: () => [f.where({ status: FamilyStatus.Active })],
@@ -920,7 +915,7 @@ export class Families extends IdEntity {
 
   }
   @BackendMethod({ allowed: Roles.familyAdmin, blockUser: false })
-  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string, remult?: Remult, db?: SqlDatabase) {
+  static async checkDuplicateFamilies(name: string, tz: string, tz2: string, phone1: string, phone2: string, phone3: string, phone4: string, id: string, exactName: boolean = false, address: string) {
     let result: duplicateFamilyInfo[] = [];
 
     var sql = new SqlBuilder(remult);
@@ -943,7 +938,7 @@ export class Families extends IdEntity {
         nameCol = await sql.build('trim(', f.name, ') like  ', sql.str('%' + name.trim() + '%'));
 
 
-    let sqlResult = await db.execute(await sql.query({
+    let sqlResult = await getDb().execute(await sql.query({
       select: () => [f.id,
       f.name,
       f.address,

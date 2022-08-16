@@ -126,7 +126,7 @@ export class donorForm {
                     comment: '',
                     quantity: q,
                     selfPickup: isSelfDeliver,
-                }, self.remult);
+                });
             }
         }
         if (this.computerAge === undefined || this.computerAge.isNew)
@@ -146,7 +146,7 @@ export class donorForm {
                 comment: '',
                 quantity: 1,
                 selfPickup: false
-            }, this.remult);
+            });
         }
 
 

@@ -182,11 +182,11 @@ export const evil: {
 }
 
 
-export async function createSiteContext(site: string, original: Remult) {
+export async function createSiteContext(site: string) {
     let dp = Sites.getDataProviderForOrg(site);
     let c = new Remult();
     c.setDataProvider(dp);
-    Sites.setSiteToContext(c, site, original);
+    Sites.setSiteToContext(c, site);
     await InitContext(c, undefined);
     return c;
 }

@@ -1,4 +1,4 @@
-import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
+import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, remult } from 'remult';
 import { DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -58,15 +58,14 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
 @Entity<HelpersBase>("HelpersBase", {
     dbName: "Helpers",
     allowApiCrud: false,
-    allowApiRead: Allow.authenticated
-},
-    (options, remult) => options.apiPrefilter = {
+    allowApiRead: Allow.authenticated,
+    apiPrefilter: () => ({
         id: !remult.authenticated() ? [] :
             remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? undefined :
                 [remult.user.id, remult.user.theHelperIAmEscortingId]
 
-    }
-)
+    })
+})
 export class HelpersBase extends IdEntity {
 
     getHelper(): Promise<Helpers> {
@@ -166,13 +165,13 @@ export class HelpersBase extends IdEntity {
         translation: l => l.helperInternalComment
     })
     internalComment: string;
-    @Field<Helpers>({}, (options, remult) => options.
-        sqlExpression = async (selfDefs) => {
+    @Field<Helpers>({
+        sqlExpression: async (selfDefs) => {
             let sql = new SqlBuilder(remult);
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
         }
-    )
+    })
     isFrozen: boolean;
 
 
@@ -338,13 +337,12 @@ export class HelpersBase extends IdEntity {
         }
 
 
-    }
-}, (options, remult) =>
-    options.apiPrefilter = {
+    },
+    apiPrefilter: () => ({
         id: !remult.authenticated() ? [] : undefined,
         allowedIds: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? { $contains: remult.user.id } : undefined
-    }
-)
+    })
+})
 
 export class Helpers extends HelpersBase {
 
@@ -612,13 +610,13 @@ export class Helpers extends HelpersBase {
 
         super(remult);
     }
-    @Field<Helpers>({},
-        (options, remult) => options.sqlExpression = async (selfDefs) => {
+    @Field<Helpers>({
+        sqlExpression: async (selfDefs) => {
             let self = SqlFor(selfDefs);
             let sql = new SqlBuilder(remult);
             return sql.build(self.id, ' || ', self.escort, ' || ', self.theHelperIAmEscorting);
         }
-    )
+    })
     allowedIds: string;
 
 
@@ -833,7 +831,7 @@ export class Helpers extends HelpersBase {
     @DataControl<Helpers>({ visible: self => self.caller })
     excludeGroups: GroupsValue;
     @Fields.integer({ translation: l => l.callQuota })
-    @DataControl<Helpers>({ visible: self => self.caller,width:'70' })
+    @DataControl<Helpers>({ visible: self => self.caller, width: '70' })
     callQuota: number;
 
     static deliveredPreviously = Filter.createCustom<Helpers,
@@ -911,7 +909,7 @@ export class Helpers extends HelpersBase {
         });
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async SendCustomMessageToCourier(h: HelpersBase, message: string, remult?: Remult) {
+    static async SendCustomMessageToCourier(h: HelpersBase, message: string) {
         return await new (await (import('../asign-family/send-sms-action'))).SendSmsUtils().sendSms(h.phone.thePhone, message, remult, h);
 
     }

@@ -1,4 +1,4 @@
-import { BackendMethod } from 'remult';
+import { BackendMethod, remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { HelpersBase } from '../helpers/helpers';
 import * as fetch from 'node-fetch';
@@ -15,7 +15,7 @@ export class SendSmsAction {
             .replace('!משפחה!', family);
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async SendSms(h: HelpersBase, reminder: Boolean, remult?: Remult) {
+    static async SendSms(h: HelpersBase, reminder: Boolean) {
 
         try {
             await SendSmsAction.generateMessage(remult, h, remult.state.getOrigin(), reminder, remult.user.name, async (phone, message, sender) => {

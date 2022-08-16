@@ -1,4 +1,4 @@
-import { BackendMethod, SqlDatabase } from 'remult';
+import { BackendMethod, remult, SqlDatabase } from 'remult';
 
 import { Helpers } from '../helpers/helpers';
 
@@ -7,7 +7,7 @@ import { Roles } from '../auth/roles';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { relativeDateName } from '../model-shared/types';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { messageMerger, MessageTemplate } from '../edit-custom-message/messageMerger';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
@@ -15,13 +15,13 @@ import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 export class DeliveryFollowUpController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async helpersStatus(distCenter: DistributionCenters, remult?: Remult, db?: SqlDatabase) {
+    static async helpersStatus(distCenter: DistributionCenters) {
         let fd = SqlFor(remult.repo(FamilyDeliveries));
 
         let h = SqlFor(remult.repo(Helpers));
         var sql = new SqlBuilder(remult);
         sql.addEntity(fd, 'fd');
-        let r = await db.execute(log(await sql.build((await sql.query({
+        let r = await getDb().execute(log(await sql.build((await sql.query({
             from: fd,
             outerJoin: () => [{ to: h, on: () => [sql.eq(fd.courier, h.id)] }],
             select: () => [
@@ -66,7 +66,7 @@ export class DeliveryFollowUpController {
         });
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async sendAttendanceReminder(ids: string[], remult?: Remult) {
+    static async sendAttendanceReminder(ids: string[]) {
         const message = await remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
         for (const h of await remult.repo(Helpers).find({ where: { id: ids } })) {
             await new SendSmsUtils().sendSms(h.phone.thePhone,

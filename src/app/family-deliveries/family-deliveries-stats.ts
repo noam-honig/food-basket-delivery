@@ -1,11 +1,11 @@
 
-import { Filter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter } from "remult";
+import { Filter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
 import { FamilyDeliveries, ActiveFamilyDeliveries, MessageStatus } from "../families/FamilyDeliveries";
 
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionCenters } from "../manage/distribution-centers";
 
@@ -55,7 +55,7 @@ export class FamilyDeliveryStats {
         return r;
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters, remult?: Remult, db?: SqlDatabase) {
+    static async getFamilyDeliveryStatsFromServer(distCenter: DistributionCenters) {
         let result = {
             data: {}, baskets: [] as {
                 id: string,
@@ -84,7 +84,7 @@ export class FamilyDeliveryStats {
 
         let sql = new SqlBuilder(remult);
         sql.addEntity(f, "FamilyDeliveries")
-        let baskets = await db.execute(await sql.build(sql.query({
+        let baskets = await getDb().execute(await sql.build(sql.query({
             select: () => [f.basketType,
             sql.build('sum (', sql.case([{ when: [f.where(FamilyDeliveries.readyAndSelfPickup())], then: f.quantity }], 0), ') a'),
             sql.build('sum (', f.quantity, ') b'),
@@ -178,8 +178,8 @@ export interface groupStats {
 
 }
 
-@Entity<CitiesStats>(undefined, {}, (options, remult) =>
-    options.sqlExpression = async (self) => {
+@Entity<CitiesStats>(undefined, {
+    sqlExpression: async (self) => {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(remult);
 
@@ -194,7 +194,7 @@ export interface groupStats {
                 sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', f.city, ') as result')
     }
-)
+})
 export class CitiesStats {
     @Field()
     city: string;
@@ -202,9 +202,8 @@ export class CitiesStats {
     deliveries: number;
 }
 @Entity<CitiesStatsPerDistCenter>('citiesStatsPerDistCenter', {
-    allowApiRead: false
-}, (options, remult) =>
-    options.sqlExpression = async (self) => {
+    allowApiRead: false,
+    sqlExpression: async (self) => {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder(remult);
 
@@ -217,7 +216,8 @@ export class CitiesStats {
             }),
             sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')
-    })
+    }
+})
 
 export class CitiesStatsPerDistCenter extends EntityBase {
     @Field()

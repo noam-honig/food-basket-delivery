@@ -1,7 +1,7 @@
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 
-import { Remult, BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase } from 'remult';
+import { Remult, BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase, remult } from 'remult';
 
 import { Roles } from '../auth/roles';
 
@@ -21,7 +21,7 @@ import { ChangeLog } from '../change-log/change-log';
 
 export class ManageController {
     @BackendMethod({ allowed: Roles.admin })
-    static async TestSendEmail(to: string, text: string, remult?: Remult) {
+    static async TestSendEmail(to: string, text: string) {
         return await EmailSvc.sendMail("test email", text, to, remult);
     }
     @BackendMethod({ allowed: Roles.admin })

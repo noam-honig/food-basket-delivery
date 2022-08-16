@@ -1,4 +1,4 @@
-import { BackendMethod, SqlDatabase, Allow } from 'remult';
+import { BackendMethod, SqlDatabase, Allow, remult } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
@@ -14,7 +14,7 @@ import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
 import { Roles } from '../auth/roles';
 import { pagedRowsIterator } from '../families/familyActionsWiring';
 
-import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Sites, getLang } from '../sites/sites';
 
@@ -28,7 +28,7 @@ import { selectListItem } from '../helpers/init-context';
 
 export class HelperFamiliesController {
     @BackendMethod({ allowed: Roles.indie })
-    static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean, remult?: Remult, db?: SqlDatabase) {
+    static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean) {
         if (!getSettings(remult).isSytemForMlt)
             throw "not allowed";
         let result: selectListItem<DeliveryInList>[] = [];
@@ -39,7 +39,7 @@ export class HelperFamiliesController {
         let settings = await ApplicationSettings.getAsync(remult);
         let privateDonation = selfAssign ? (await remult.repo(FamilySources).findFirst({ name: 'תרומה פרטית' })) : null;
 
-        for (const r of (await db.execute(await sql.query({
+        for (const r of (await getDb().execute(await sql.query({
             select: () => [
                 fd.addressLatitude,
                 fd.addressLongitude,
@@ -115,7 +115,7 @@ export class HelperFamiliesController {
         return result;
     };
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async cancelAssignAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
+    static async cancelAssignAllForHelperOnServer(helper: HelpersBase) {
         let dist: DistributionCenters = null;
         await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
             where: {
@@ -132,7 +132,7 @@ export class HelperFamiliesController {
         await dist.SendMessageToBrowser(getLang(remult).cancelAssignmentForHelperFamilies, remult);
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async okAllForHelperOnServer(helper: HelpersBase, remult?: Remult) {
+    static async okAllForHelperOnServer(helper: HelpersBase) {
         let dist: DistributionCenters = null;
 
         await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
@@ -151,7 +151,7 @@ export class HelperFamiliesController {
             await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, remult);
     }
     @BackendMethod({ allowed: Allow.authenticated })
-    static async sendSuccessMessageToFamily(deliveryId: string, remult?: Remult) {
+    static async sendSuccessMessageToFamily(deliveryId: string) {
         var settings = (await remult.state.getSettings());
         if (!settings.allowSendSuccessMessageOption)
             return;

@@ -1,7 +1,7 @@
 
 import { Helpers } from './helpers';
 
-import { BackendMethod } from 'remult';
+import { BackendMethod, remult } from 'remult';
 import { Remult } from 'remult';
 
 import { Roles } from '../auth/roles';
@@ -17,7 +17,7 @@ import { getLang } from '../sites/sites';
 export class HelpersController {
 
     @BackendMethod({ allowed: Roles.admin })
-    static async resetPassword(helperId: string, remult?: Remult) {
+    static async resetPassword(helperId: string) {
 
         await remult.repo(Helpers).query({ where: { id: helperId } }).forEach(async h => {
             h.realStoredPassword = '';
@@ -25,7 +25,7 @@ export class HelpersController {
         });
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async invalidatePassword(helperId: string, remult?: Remult) {
+    static async invalidatePassword(helperId: string) {
 
         await remult.repo(Helpers).query({ where: { id: helperId } }).forEach(async h => {
             h.passwordChangeDate = new Date(1901, 1, 1);
@@ -34,7 +34,7 @@ export class HelpersController {
     }
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async sendInvite(helperId: string, remult?: Remult) {
+    static async sendInvite(helperId: string) {
         let h = await remult.repo(Helpers).findId(helperId);
         if (!h)
             return getLang(remult).unfitForInvite;

@@ -1,4 +1,4 @@
-import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata, Allow, isBackend } from 'remult';
+import { BackendMethod, Allowed, EntityBase, FieldRef, FieldMetadata, Allow, isBackend, remult } from 'remult';
 import { DataControl } from '@remult/angular/interfaces';
 export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowed) {
   return (target, key) => {
@@ -134,7 +134,7 @@ export class ApplicationSettings extends EntityBase {
 
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static async getPhoneOptions(deliveryId: string, remult?: Remult) {
+  static async getPhoneOptions(deliveryId: string) {
     let ActiveFamilyDeliveries = await (await import('../families/FamilyDeliveries')).ActiveFamilyDeliveries;
     let d = await remult.repo(ActiveFamilyDeliveries).findFirst({ id: deliveryId, $and: [ActiveFamilyDeliveries.isAllowedForUser()] });
     if (!d)

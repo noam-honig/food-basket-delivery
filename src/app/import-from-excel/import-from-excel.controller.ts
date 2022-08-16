@@ -1,4 +1,4 @@
-import { BackendMethod, SqlDatabase, EntityFilter, FieldRef } from 'remult';
+import { BackendMethod, SqlDatabase, EntityFilter, FieldRef, remult } from 'remult';
 
 import { Remult } from 'remult';
 
@@ -21,7 +21,7 @@ import { PromiseThrottle } from '../shared/utils';
 
 export class ImportFromExcelController {
     @BackendMethod({ allowed: Roles.familyAdmin })
-    static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean, remult?: Remult) {
+    static async insertRows(rowsToInsert: excelRowInfo[], createDelivery: boolean) {
         let t = new PromiseThrottle(10);
         for (const r of rowsToInsert) {
             let f = remult.repo(Families).create();
@@ -55,7 +55,7 @@ export class ImportFromExcelController {
 
     }
     @BackendMethod({ allowed: Roles.familyAdmin })
-    static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, remult?: Remult) {
+    static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean) {
         for (const r of rowsToUpdate) {
             await ImportFromExcelController.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.state.getSettings()));
         }
@@ -115,7 +115,7 @@ export class ImportFromExcelController {
         return r;
     }
     @BackendMethod({ allowed: Roles.familyAdmin })
-    static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean, remult?: Remult, db?: SqlDatabase) {
+    static async checkExcelInput(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], compareBasketType: boolean) {
         let result: serverCheckResults = {
             errorRows: [],
             identicalRows: [],
@@ -152,7 +152,7 @@ export class ImportFromExcelController {
                     await findDuplicate({ tz: info.tz });
 
                 if (info.duplicateFamilyInfo.length == 0) {
-                    info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address, remult, db);
+                    info.duplicateFamilyInfo = await Families.checkDuplicateFamilies(info.name, info.tz, info.tz2, info.phone1ForDuplicateCheck, info.phone2ForDuplicateCheck, info.phone3ForDuplicateCheck, info.phone4ForDuplicateCheck, undefined, true, info.address);
                     if (info.duplicateFamilyInfo.length > 1) {
                         if (info.duplicateFamilyInfo.find(f => f.nameDup && f.sameAddress)) {
                             info.duplicateFamilyInfo = info.duplicateFamilyInfo.filter(f => !onlyNameMatch(f)

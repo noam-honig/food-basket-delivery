@@ -1,4 +1,4 @@
-import { Remult, BackendMethod, SqlDatabase, ValueConverters } from 'remult';
+import { Remult, BackendMethod, SqlDatabase, ValueConverters, remult } from 'remult';
 
 
 
@@ -8,13 +8,13 @@ import { Families } from '../families/families';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { Helpers } from '../helpers/helpers';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { RegisterURL, urlDbOperator } from '../resgister-url/regsiter-url';
 
 
 export class WeeklyReportMltController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getEquipmentStatusTotals(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
+    static async getEquipmentStatusTotals(fromDate?: string, toDate?: string) {
         let totalPerBasket: { URL: string, basketType: string, total: number, added: number, collected: number, received: number }[] = [];
         var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
         var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
@@ -43,13 +43,13 @@ export class WeeklyReportMltController {
             where: () => ['true']
         }), ' group by cube(', fd.basketType, ', ', u.prettyName, ')');
 
-        let baskets = await db.execute(q);
+        let baskets = await getDb().execute(q);
         return baskets.rows;
     }
 
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getVolunteersData(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
+    static async getVolunteersData(fromDate?: string, toDate?: string) {
         var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
         var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
@@ -72,12 +72,12 @@ export class WeeklyReportMltController {
         }), ' group by cube(', u.prettyName, ')'
         );
 
-        return (await db.execute(q)).rows;
+        return (await getDb().execute(q)).rows;
     }
 
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getDonorsData(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
+    static async getDonorsData(fromDate?: string, toDate?: string) {
         var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
         var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
@@ -99,12 +99,12 @@ export class WeeklyReportMltController {
         }), ' group by cube(', u.prettyName, ')'
         );
 
-        return (await db.execute(q)).rows;
+        return (await getDb().execute(q)).rows;
     }
 
 
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getVolunteerAverage(fromDate?: string, toDate?: string, remult?: Remult, db?: SqlDatabase) {
+    static async getVolunteerAverage(fromDate?: string, toDate?: string) {
         var fromDateDate = ValueConverters.DateOnly.fromJson(fromDate);
         var toDateDate = ValueConverters.DateOnly.fromJson(toDate);
 
@@ -113,7 +113,7 @@ export class WeeklyReportMltController {
 
         let sql = new SqlBuilder(remult);
         sql.addEntity(f, "FamilyDeliveries")
-        let deliveries = await db.execute(await sql.build(sql.query({
+        let deliveries = await getDb().execute(await sql.build(sql.query({
             select: () => [f.courier,
             sql.build('count (distinct ', f.family, ') total'),
             ],

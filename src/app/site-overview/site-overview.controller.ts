@@ -10,8 +10,8 @@ import { Phone } from '../model-shared/phone';
 
 export class SiteOverviewController {
     @BackendMethod({ allowed: Roles.overview })
-    static async siteInfo(site: string, remult?: Remult): Promise<Manager[]> {
-        let c = await createSiteContext(site, remult);
+    static async siteInfo(site: string): Promise<Manager[]> {
+        let c = await createSiteContext(site);
         return (await c.repo(Helpers).find({ where: { admin: true }, orderBy: { lastSignInDate: "desc" } })).map(
             ({ name, phone, lastSignInDate }) => ({
                 name, phone: phone?.thePhone, lastSignInDate

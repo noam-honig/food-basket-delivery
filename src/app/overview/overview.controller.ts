@@ -1,4 +1,4 @@
-import { Remult, BackendMethod, Entity, SqlDatabase, ProgressListener } from 'remult';
+import { Remult, BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -14,7 +14,7 @@ import { InitContext } from '../helpers/init-context';
 import { Phone } from '../model-shared/phone';
 export class OverviewController {
     @BackendMethod({ allowed: Roles.overview, queue: true })
-    static async getOverview(full: boolean, remult?: Remult, progress?: ProgressListener) {
+    static async getOverview(full: boolean, progress?: ProgressListener) {
         let today = new Date();
         let onTheWay = "בדרך";
         let inEvent = "באירוע";
@@ -164,11 +164,11 @@ export class OverviewController {
     }
 
     @BackendMethod({ allowed: Roles.overview })
-    static async createSchema(id: string, name: string, address: string, manager: string, phone: string, remult?: Remult): Promise<{
+    static async createSchema(id: string, name: string, address: string, manager: string, phone: string): Promise<{
         ok: boolean,
         errorText: string
     }> {
-        let r = await OverviewController.validateNewSchema(id, remult);
+        let r = await OverviewController.validateNewSchema(id);
         if (r) {
             return {
                 ok: false,
@@ -183,7 +183,7 @@ export class OverviewController {
             let otherContext = new Remult();
             otherContext.setDataProvider(db);
             otherContext.setUser(remult.user);
-            Sites.setSiteToContext(otherContext, id, remult);
+            Sites.setSiteToContext(otherContext, id);
             await InitContext(otherContext);
             {
                 let h = await otherContext.repo(Helpers).create();
@@ -224,7 +224,7 @@ export class OverviewController {
     static createSchemaApi = async (id: string) => { };
 
     @BackendMethod({ allowed: Roles.overview })
-    static async validateNewSchema(id: string, remult?: Remult) {
+    static async validateNewSchema(id: string) {
         let x = await remult.repo(SitesEntity).findId(id);
         if (x) {
             return "מזהה כבר קיים";

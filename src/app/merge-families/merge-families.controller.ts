@@ -1,5 +1,5 @@
 import { Families } from '../families/families';
-import { Remult, BackendMethod } from 'remult';
+import { Remult, BackendMethod, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -8,7 +8,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 
 export class MergeFamiliesController {
     @BackendMethod({ allowed: Roles.admin })
-    static async mergeFamilies(ids: string[], remult?: Remult) {
+    static async mergeFamilies(ids: string[]) {
         let id = ids.splice(0, 1)[0];
         let newFamily = await remult.repo(Families).findId(id);
 

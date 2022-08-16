@@ -1,4 +1,4 @@
-import { BackendMethod, EntityFilter } from 'remult';
+import { BackendMethod, EntityFilter, remult } from 'remult';
 import { Filter } from 'remult';
 import { Families } from "./families";
 import { Remult } from 'remult';
@@ -46,7 +46,7 @@ export class Stats {
         return r;
     }
     @BackendMethod({ allowed: Roles.familyAdmin })
-    static async getFamilyStats(distCenter: string, remult?: Remult) {
+    static async getFamilyStats(distCenter: string) {
         let result = { data: {}, groups: [] as groupStats[] };
         let stats = new Stats(remult);
         let pendingStats = [];

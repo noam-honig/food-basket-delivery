@@ -1,7 +1,7 @@
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { Remult, BackendMethod } from "remult";
+import { Remult, BackendMethod, remult } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
@@ -13,7 +13,7 @@ import { SelectFamilyComponent } from "../select-family/select-family.component"
 
 export class moveDeliveriesHelperController {
     @BackendMethod({ allowed: Roles.admin })
-    static async moveDeliveriesBetweenVolunteers(deliveries: string[], to: HelpersBase, remult?: Remult) {
+    static async moveDeliveriesBetweenVolunteers(deliveries: string[], to: HelpersBase) {
         let t = new PromiseThrottle(10);
         let settings = (await remult.state.getSettings());
         let i = 0;

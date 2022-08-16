@@ -1,6 +1,6 @@
 import { FieldMetadata, Remult, Entity, IdEntity, BackendMethod, SqlDatabase, SqlResult } from "remult";
 import { Roles } from "../auth/roles";
-import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "../helpers/helpers";
 import { Families } from "../families/families";
 import { Field } from '../translate';
@@ -25,7 +25,7 @@ export class RegisterURL extends IdEntity {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async loadUrlsFromTables(remult?: Remult, db?: SqlDatabase) {
+    static async loadUrlsFromTables(remult?: Remult) {
 
         let h = SqlFor(remult.repo(Helpers));
         let f = SqlFor(remult.repo(Families));
@@ -40,7 +40,7 @@ export class RegisterURL extends IdEntity {
                 outerJoin: () => [{ to: u, on: () => [sql.build(field, ' like textcat(textcat(\'%\',', u.URL, '),\'%\')')] }],
                 where: () => [sql.build(u.URL, ' is null')]
             })
-            let r = (await db.execute(q));
+            let r = (await getDb().execute(q));
             r.rows.forEach(x => urls.push(x.url));
         }
 

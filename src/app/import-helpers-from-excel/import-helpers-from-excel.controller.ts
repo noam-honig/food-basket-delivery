@@ -1,4 +1,4 @@
-import { FieldRef, BackendMethod } from 'remult';
+import { FieldRef, BackendMethod, remult } from 'remult';
 import { Remult } from 'remult';
 
 import { Roles } from '../auth/roles';
@@ -8,7 +8,7 @@ import { Phone } from "../model-shared/phone";
 
 export class ImportHelpersFromExcelController {
     @BackendMethod({ allowed: Roles.admin })
-    static async insertHelperRows(rowsToInsert: excelRowInfo[], remult?: Remult) {
+    static async insertHelperRows(rowsToInsert: excelRowInfo[]) {
         for (const r of rowsToInsert) {
             let f = remult.repo(Helpers).create();
             for (const val in r.values) {
@@ -19,7 +19,7 @@ export class ImportHelpersFromExcelController {
 
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, remult?: Remult) {
+    static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string) {
         for (const r of rowsToUpdate) {
             await ImportHelpersFromExcelController.actualUpdateCol(r, columnMemberName, remult);
         }
@@ -39,7 +39,7 @@ export class ImportHelpersFromExcelController {
         c.existingValue = f.$[colMemberName].inputValue;
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[], remult?: Remult) {
+    static async checkExcelInputHelpers(excelRowInfo: excelRowInfo[], columnsInCompareMemeberName: string[]) {
         let result: serverCheckResults = {
             errorRows: [],
             identicalRows: [],

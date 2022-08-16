@@ -1,4 +1,4 @@
-import { Remult, Entity, IdEntity, BackendMethod, Allow } from "remult";
+import { Remult, Entity, IdEntity, BackendMethod, Allow, remult } from "remult";
 import { DataControl, GridSettings } from '@remult/angular/interfaces';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
@@ -12,12 +12,11 @@ import { UITools } from "../helpers/init-context";
 @Entity<HelperGifts>("HelperGifts", {
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
-    allowApiInsert: Roles.admin
-}, (options, remult) => {
-    options.apiPrefilter = {
+    allowApiInsert: Roles.admin,
+    apiPrefilter: () => ({
         assignedToHelper: !remult.isAllowed(Roles.admin) ? { $id: [remult.user.id] } : undefined
-    };
-    options.saving = async (self) => {
+    }),
+    saving: async (self) => {
         if (self.isNew()) {
             self.dateCreated = new Date();
             self.userCreated = (await remult.state.getCurrentUser());
@@ -77,7 +76,7 @@ export class HelperGifts extends IdEntity {
 
 
     @BackendMethod({ allowed: Roles.admin })
-    static async assignGift(helperId: string, remult?: Remult) {
+    static async assignGift(helperId: string) {
         let helper = await remult.repo(Helpers).findId(helperId);
         if (await remult.repo(HelperGifts).count({ assignedToHelper: (await remult.state.getCurrentUser()) }) > 0) {
             let g = await remult.repo(HelperGifts).findFirst({ assignedToHelper: (await remult.state.getCurrentUser()) });
@@ -93,7 +92,7 @@ export class HelperGifts extends IdEntity {
         throw new Error('אין מתנות לחלוקה');
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async importUrls(urls: string[], remult?: Remult) {
+    static async importUrls(urls: string[]) {
         for (const url of urls) {
             let g = await remult.repo(HelperGifts).findFirst({ giftURL: { $contains: url.trim() } });
             if (!g) {
@@ -104,13 +103,13 @@ export class HelperGifts extends IdEntity {
         }
     }
     @BackendMethod({ allowed: true })
-    static async getMyPendingGiftsCount(h: Helpers, remult?: Remult) {
+    static async getMyPendingGiftsCount(h: Helpers) {
         let gifts = await remult.repo(HelperGifts).find({ where: { assignedToHelper: h, wasConsumed: false } });
         return gifts.length;
     }
 
     @BackendMethod({ allowed: true })
-    static async getMyFirstGiftURL(h: HelpersBase, remult?: Remult) {
+    static async getMyFirstGiftURL(h: HelpersBase) {
         let gifts = await remult.repo(HelperGifts).find({
             where: { assignedToHelper: h, wasConsumed: false },
             limit: 100

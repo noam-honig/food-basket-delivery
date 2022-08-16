@@ -1,4 +1,4 @@
-import { BackendMethod, Remult, ValueConverters } from 'remult';
+import { BackendMethod, remult, Remult, ValueConverters } from 'remult';
 
 import { Roles } from '../auth/roles';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -7,7 +7,7 @@ import { getSettings } from '../manage/ApplicationSettings';
 
 export class PreviousDeliveryController {
     @BackendMethod({ allowed: r => getSettings(r).allowVolunteerToSeePreviousActivities })
-    static async getHistory(family: string, remult?: Remult) {
+    static async getHistory(family: string) {
         return (await remult.repo(FamilyDeliveries).find({
             where: {
                 family: [family],

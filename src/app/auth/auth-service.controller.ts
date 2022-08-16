@@ -1,7 +1,7 @@
 
 import { extractError } from "../select-popup/extractError";
 import { Helpers } from "../helpers/helpers";
-import { Allow, BackendMethod, Remult, UserInfo } from 'remult';
+import { Allow, BackendMethod, remult, Remult, UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
@@ -10,7 +10,7 @@ import { Phone } from "../model-shared/phone";
 
 export class AuthServiceController {
     @BackendMethod({ allowed: true })
-    static async loginFromSms(key: string, remult?: Remult) {
+    static async loginFromSms(key: string) {
 
         let r: LoginResponse = { valid: false };
         let h = await remult.repo(Helpers).findFirst({ shortUrlKey: key });
@@ -42,7 +42,7 @@ export class AuthServiceController {
         return r;
     }
     @BackendMethod({ allowed: true })
-    static async login(args: loginArgs, remult?: Remult): Promise<loginResult> {
+    static async login(args: loginArgs): Promise<loginResult> {
 
         let r: loginResult = {};
         let settings = (await remult.state.getSettings());

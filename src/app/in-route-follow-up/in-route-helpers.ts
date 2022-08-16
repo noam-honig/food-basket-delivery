@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FieldMetadata } from "remult";
+import { IdEntity, Remult, Entity, FieldMetadata, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { DateTimeColumn, relativeDateName, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -16,9 +16,8 @@ import { UITools } from "../helpers/init-context";
 
 @Entity<InRouteHelpers>('in-route-helpers', {
     allowApiRead: Roles.admin,
-    defaultOrderBy: { minAssignDate: "asc" }
-},
-    (options, remult) => options.sqlExpression = async (self) => {
+    defaultOrderBy: { minAssignDate: "asc" },
+    sqlExpression: async (self) => {
         let sql = new SqlBuilder(remult);
 
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
@@ -74,7 +73,7 @@ import { UITools } from "../helpers/init-context";
                 }), ')')]
             }), ') result ) result');
     }
-)
+})
 export class InRouteHelpers extends IdEntity {
     async helper() {
         return this.remult.repo(Helpers).findId(this.id);

@@ -20,7 +20,7 @@ import * as chart from 'chart.js';
 import { Stats, FaimilyStatistics, colors } from './stats-action';
 
 import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent } from '../custom-reuse-controller-router-strategy';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Route } from '@angular/router';
 
@@ -53,10 +53,10 @@ import { UITools } from '../helpers/init-context';
 
 export class FamiliesController {
     @BackendMethod({ allowed: Roles.admin })
-    static async getCities(remult?: Remult, db?: SqlDatabase): Promise<{ city: string, count: number }[]> {
+    static async getCities(remult?: Remult): Promise<{ city: string, count: number }[]> {
         var sql = new SqlBuilder(remult);
         let f = SqlFor(remult.repo(Families));
-        let r = await db.execute(await sql.query({
+        let r = await getDb().execute(await sql.query({
             from: f,
             select: () => [f.city, 'count (*) as count'],
             where: () => [f.where({ status: FamilyStatus.Active })],

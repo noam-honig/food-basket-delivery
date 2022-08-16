@@ -186,11 +186,9 @@ export class RegisterToEvent {
         await this.init();
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
-
-            let orig = this.remult;
             this.remult = new Remult();
             this.remult.setDataProvider(dp);
-            Sites.setSiteToContext(this.remult, site, orig);
+            Sites.setSiteToContext(this.remult, site);
             await InitContext(this.remult);
         }
         let helper: Helpers;

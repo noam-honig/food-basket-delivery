@@ -1,13 +1,13 @@
-import { BackendMethod, Remult, SqlDatabase, ValueConverters } from 'remult';
+import { BackendMethod, remult, Remult, SqlDatabase, ValueConverters } from 'remult';
 import { Roles } from '../auth/roles';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder"; import { DeliveryStatus } from '../families/DeliveryStatus';
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder"; import { DeliveryStatus } from '../families/DeliveryStatus';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 
 export class PlaybackController {
     @BackendMethod({ allowed: Roles.admin })
-    static async GetTimeline(fromDateDate: Date, toDateDate: Date, remult?: Remult, db?: SqlDatabase) {
+    static async GetTimeline(fromDateDate: Date, toDateDate: Date) {
         let f = SqlFor(remult.repo(FamilyDeliveries));
 
 
@@ -16,7 +16,7 @@ export class PlaybackController {
 
         let sql = new SqlBuilder(remult);
         sql.addEntity(f, "Families");
-        let r = (await db.execute(await sql.query({
+        let r = (await getDb().execute(await sql.query({
             select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],
             from: f,
             where: () => {

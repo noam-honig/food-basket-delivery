@@ -1,4 +1,4 @@
-import { Remult, Entity, EntityBase } from 'remult';
+import { Remult, Entity, EntityBase, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DistributionCenters } from './distribution-centers';
@@ -10,9 +10,8 @@ import { GroupsStats } from './manage.component';
 
 @Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
   allowApiRead: Roles.distCenterAdmin,
-  defaultOrderBy: { name: "asc" }
-},
-  (options, remult) => options.sqlExpression = async (self) => {
+  defaultOrderBy: { name: "asc" },
+  sqlExpression: async (self) => {
     let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
     let g = SqlFor(remult.repo(Groups));
     let d = SqlFor(remult.repo(DistributionCenters));
@@ -33,7 +32,8 @@ import { GroupsStats } from './manage.component';
         from: g,
         crossJoin: () => [d],
       });
-  })
+  }
+})
 export class GroupsStatsPerDistributionCenter extends EntityBase implements GroupsStats {
   @Field()
   name: string;

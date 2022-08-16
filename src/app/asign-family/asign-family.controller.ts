@@ -1,5 +1,5 @@
 import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
-import { BackendMethod, SqlDatabase, Allow, EntityFilter, ProgressListener } from 'remult';
+import { BackendMethod, SqlDatabase, Allow, EntityFilter, ProgressListener, remult } from 'remult';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { YesNo } from "../families/YesNo";
@@ -12,7 +12,7 @@ import { Remult } from 'remult';
 
 import { BasketType } from '../families/BasketType';
 
-import { SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlDefs, SqlFor } from "../model-shared/SqlBuilder";
 import { Roles } from '../auth/roles';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
@@ -27,8 +27,8 @@ import { optimizeRoute, routeStats, routeStrategy } from './route-strategy';
 
 export class AsignFamilyController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo, remult?: Remult, db?: SqlDatabase): Promise<GetBasketStatusActionResponse> {
-
+    static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo): Promise<GetBasketStatusActionResponse> {
+        const db = remult._dataSource as SqlDatabase;
         let result: GetBasketStatusActionResponse = {
             baskets: [],
             cities: [],
@@ -153,7 +153,7 @@ export class AsignFamilyController {
         return result;
     }
     @BackendMethod({ allowed: Allow.authenticated, blockUser: false })
-    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy, remult?: Remult) {
+    static async RefreshRoute(helper: HelpersBase, args: refreshRouteArgs, strategy?: routeStrategy) {
 
         if (!remult.isAllowed(Roles.distCenterAdmin)) {
             if (!helper.isCurrentUser()) {
@@ -179,7 +179,7 @@ export class AsignFamilyController {
         return r;
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin, queue: false })
-    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, remult?: Remult, db?: SqlDatabase, progress?: ProgressListener) {
+    static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, progress?: ProgressListener) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
             families: [],
@@ -267,7 +267,7 @@ export class AsignFamilyController {
             let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
             let sql = new SqlBuilder(remult);
             sql.addEntity(f, 'Families');
-            let r = (await db.execute(await sql.query({
+            let r = (await getDb().execute(await sql.query({
                 select: () => [sql.build('distinct ', [f.addressLatitude, f.addressLongitude])],
                 from: f,
                 where: async () => {
@@ -521,7 +521,7 @@ export class AsignFamilyController {
     static async assignMultipleFamilies(helper: HelpersBase, args: {
         ids: string[],
         quantity: number,
-    }, remult?: Remult) {
+    }) {
         let familyDeliveries = await remult.repo(ActiveFamilyDeliveries).find({
             where: { id: args.ids, ...FamilyDeliveries.readyFilter() }
         });
@@ -545,10 +545,10 @@ export class AsignFamilyController {
         }
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin, blockUser: false })
-    static async getHelperStats(id: string, remult?: Remult, db?: SqlDatabase) {
+    static async getHelperStats(id: string) {
         const sql = new SqlBuilder(remult);
         var fd = SqlFor(remult.repo(FamilyDeliveries));
-        const result = await db.execute(await sql.query({
+        const result = await getDb().execute(await sql.query({
             select: () => [
                 "count(*) deliveries",
                 sql.build("count (distinct date (", fd.courierAssingTime, ")) dates"),
@@ -561,7 +561,7 @@ export class AsignFamilyController {
             })]
         }));
         const r = result.rows[0];
-        
+
         if (r.deliveries > 0) {
             const d = new Date(r.startdate);
             return "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3".replace("$1", r.deliveries).replace("$2", r.dates)

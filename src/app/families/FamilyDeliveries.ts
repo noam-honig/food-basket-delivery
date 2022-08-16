@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Remult, IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase } from 'remult';
+import { Remult, IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase, remult } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -109,7 +109,7 @@ export class FamilyDeliveries extends IdEntity {
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })
-    static async getFamilyImages(family: string, delivery: string, remult?: Remult): Promise<ImageInfo[]> {
+    static async getFamilyImages(family: string, delivery: string): Promise<ImageInfo[]> {
         if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
             if (d.courier?.id != (await remult.state.getCurrentUser())?.id)
@@ -122,7 +122,7 @@ export class FamilyDeliveries extends IdEntity {
     @BackendMethod<FamilyDeliveries>({
         allowed: Allow.authenticated
     })
-    static async hasFamilyImages(family: string, delivery: string, remult?: Remult): Promise<boolean> {
+    static async hasFamilyImages(family: string, delivery: string): Promise<boolean> {
         if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
             if (d.courier?.id != (await remult.state.getCurrentUser())?.id)
@@ -199,14 +199,12 @@ export class FamilyDeliveries extends IdEntity {
     family: string;
     @Field({
         allowApiUpdate: false,
-        translation: l => l.familyName
-    },
-        (options, remult) =>
-            options.sqlExpression = async (entity) => {
-                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.state.getSettings())?.showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
-                return r;
-            }
-    )
+        translation: l => l.familyName,
+        sqlExpression: async (entity) => {
+            let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.state.getSettings())?.showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+            return r;
+        }
+    })
     name: string;
 
     @Field({
@@ -405,8 +403,8 @@ export class FamilyDeliveries extends IdEntity {
     })
     phone4Description: string;
 
-    @Field({}, (options, remult) =>
-        options.sqlExpression = async (self) => {
+    @Field({
+        sqlExpression: async (self) => {
             var sql = new SqlBuilder(remult);
 
             var fd = SqlFor(remult.repo(FamilyDeliveries));
@@ -419,7 +417,7 @@ export class FamilyDeliveries extends IdEntity {
                     ' where ', sql.and(sql.not(sql.eq(fd.id, f.id)), sql.eq(fd.family, f.family), sql.eq(fd.courier, f.courier), fd.where({ deliverStatus: DeliveryStatus.isAResultStatus() })), ")")
             }], false), 'courierBeenHereBefore');
         }
-    )
+    })
     courierBeenHereBefore: boolean;
     @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt || c.isAllowed(Roles.familyAdmin)) })
     archive: boolean;
@@ -427,17 +425,17 @@ export class FamilyDeliveries extends IdEntity {
     archiveDate: Date;
     @Field({ includeInApi: Roles.admin, translation: l => l.archiveUser })
     archiveUser: HelpersBase;
-    @Field({}, (options, remult) => options.
-        sqlExpression = async (selfDefs) => {
+    @Field({
+        sqlExpression: async (selfDefs) => {
             var sql = new SqlBuilder(remult);
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.gtAny(self.deliveryStatusDate, 'current_date -1'), self.where({ deliverStatus: DeliveryStatus.ReadyForDelivery }))], then: true }], false);
 
         }
-    )
+    })
     visibleToCourier: boolean;
-    @Field({}, (options, remult) => options.
-        sqlExpression = async (self) => {
+    @Field({
+        sqlExpression: async (self) => {
             var sql = new SqlBuilder(remult);
 
             var helper = SqlFor(remult.repo(Helpers));
@@ -458,7 +456,7 @@ export class FamilyDeliveries extends IdEntity {
                     , " from ", await helper.metadata.getDbName(), " as h where ", sql.eq(helper.id, f.courier), "), " + MessageStatus.noVolunteer.id + ")")
             }], MessageStatus.noVolunteer.id);
         }
-    )
+    })
     messageStatus: MessageStatus;
     @CustomColumn(() => questionForVolunteers[1])
     a1: string;
@@ -470,9 +468,8 @@ export class FamilyDeliveries extends IdEntity {
     a4: string;
 
     @Field({
-        includeInApi: Roles.admin
-    },
-        (options, remult) => options.sqlExpression = async (selfDefs) => {
+        includeInApi: Roles.admin,
+        sqlExpression: async (selfDefs) => {
             let self = SqlFor(selfDefs);
             let images = SqlFor(remult.repo(DeliveryImage));
             let sql = new SqlBuilder(remult);
@@ -482,7 +479,7 @@ export class FamilyDeliveries extends IdEntity {
             });
 
         }
-    )
+    })
     numOfPhotos: number;
 
 

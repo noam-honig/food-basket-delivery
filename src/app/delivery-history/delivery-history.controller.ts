@@ -1,5 +1,5 @@
-import { Remult, SqlDatabase } from 'remult';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { remult, Remult, SqlDatabase } from 'remult';
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 
@@ -13,7 +13,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 
 export class DeliveryHistoryController {
     @BackendMethod({ allowed: Roles.admin })
-    static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean, remult?: Remult, db?: SqlDatabase) {
+    static async getHelperHistoryInfo(fromDate: Date, toDate: Date, distCenter: DistributionCenters, onlyDone: boolean, onlyArchived: boolean) {
 
 
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
@@ -74,7 +74,7 @@ export class DeliveryHistoryController {
 
                 + await sql.build(' group by ', fd.courier), ") x");
 
-        return ((await db.execute((queryText))).rows);
+        return ((await getDb().execute((queryText))).rows);
 
     }
 }

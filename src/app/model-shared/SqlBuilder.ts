@@ -1,4 +1,4 @@
-import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, Remult, EntityFilter, CustomSqlFilterObject, CustomSqlFilterBuilder } from 'remult';
+import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, Remult, EntityFilter, CustomSqlFilterObject, CustomSqlFilterBuilder, remult, SqlDatabase } from 'remult';
 
 import { FilterConsumer } from 'remult/src/filter/filter-interfaces';
 
@@ -599,4 +599,7 @@ export class FilterConsumerBridgeToSqlRequest implements FilterConsumer {
             }
         })());
     }
+}
+export function getDb() {
+    return remult._dataSource as SqlDatabase;
 }

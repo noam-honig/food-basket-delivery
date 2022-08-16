@@ -5,13 +5,13 @@ import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeli
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Location } from '../shared/googleApiHelpers';
 import { relativeDateName } from '../model-shared/types';
-import { getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, getValueFromResult, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { BasketType } from '../families/BasketType';
 
 export class ShipmentAssignScreenController {
 
     @BackendMethod({ allowed: Roles.admin })
-    static async getShipmentAssignInfo(remult?: Remult, db?: SqlDatabase) {
+    static async getShipmentAssignInfo(remult?: Remult) {
         let result: data = {
             helpers: {},
             unAssignedFamilies: {}
@@ -33,7 +33,7 @@ export class ShipmentAssignScreenController {
             busyLimitdate.setDate(busyLimitdate.getDate() - settings.BusyHelperAllowedFreq_denom);
 
 
-            for (let busy of (await db.execute(await sql.query({
+            for (let busy of (await getDb().execute(await sql.query({
                 select: () => [fd.courier],
                 from: fd,
                 where: () => [fd.where({ deliverStatus: DeliveryStatus.isAResultStatus(), deliveryStatusDate: { ">": busyLimitdate } })],
@@ -48,7 +48,7 @@ export class ShipmentAssignScreenController {
             let sql = new SqlBuilder(remult);
 
             let fd = SqlFor(remult.repo(FamilyDeliveries));
-            for (let r of (await db.execute(await sql.query({
+            for (let r of (await getDb().execute(await sql.query({
                 select: () => [sql.build("distinct ", fd.courier), fd.family],
                 from: fd,
                 where: () => [fd.where({ deliverStatus: DeliveryStatus.isProblem(), courier: { "!=": null } })]
@@ -67,7 +67,7 @@ export class ShipmentAssignScreenController {
             let sql = new SqlBuilder(remult);
             let h = SqlFor(remult.repo(Helpers));
             let fd = SqlFor(remult.repo(FamilyDeliveries));
-            for (let helper of (await db.execute(await sql.query({
+            for (let helper of (await getDb().execute(await sql.query({
                 select: () => [h.id],
                 from: h,
                 where: () => [sql.build(h.id, ' not in (', sql.query({
@@ -87,7 +87,7 @@ export class ShipmentAssignScreenController {
             let sql = new SqlBuilder(remult);
             let fd = await SqlFor(remult.repo(ActiveFamilyDeliveries));
 
-            let sqlResult = await db.execute(
+            let sqlResult = await getDb().execute(
                 await sql.query({
                     select: () => [
                         fd.family,

@@ -1,6 +1,6 @@
 
 import { extractError } from "../select-popup/extractError";
-import { Remult, BackendMethod, Allow, SqlDatabase } from 'remult';
+import { Remult, BackendMethod, Allow, SqlDatabase, remult } from 'remult';
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -15,7 +15,7 @@ import { Families } from '../families/families';
 export class FamilyInfoController {
     static createPhoneProxyOnServer: (phone1: string, phone2: string) => Promise<{ phone: string, session: string }>;
     @BackendMethod({ allowed: Allow.authenticated })
-    static async privateCall(deliveryId: string, remult?: Remult): Promise<{
+    static async privateCall(deliveryId: string): Promise<{
         phone?: string,
         error?: string
     }> {
@@ -56,7 +56,7 @@ export class FamilyInfoController {
 
     }
     @BackendMethod({ allowed: Allow.authenticated })
-    static async ShowFamilyTz(deliveryId: string, remult?: Remult) {
+    static async ShowFamilyTz(deliveryId: string) {
         let s = await ApplicationSettings.getAsync(remult);
         if (!s.showTzToVolunteer)
             return "";

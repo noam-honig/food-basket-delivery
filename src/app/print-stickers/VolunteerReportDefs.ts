@@ -1,4 +1,4 @@
-import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, Remult } from 'remult';
+import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, remult, Remult } from 'remult';
 import { ClassType } from 'remult/classType';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -139,7 +139,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     });
   }
   @BackendMethod({ allowed: Roles.admin })
-  static async getStickerData(filterVolunteer?: string, remult?: Remult) {
+  static async getStickerData(filterVolunteer?: string) {
     let d = new VolunteerReportDefs(remult, undefined);
     let lastCourier = null;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
@@ -151,7 +151,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     })) {
       if (fd.courier != lastCourier) {
         lastCourier = fd.courier;
-        await (await import("../asign-family/asign-family.controller")).AsignFamilyController.RefreshRoute(fd.courier, {}, undefined, remult);
+        await (await import("../asign-family/asign-family.controller")).AsignFamilyController.RefreshRoute(fd.courier, {});
       }
     }
 

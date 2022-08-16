@@ -1,6 +1,6 @@
-import { EntityFilter, Remult, SqlDatabase } from 'remult';
+import { EntityFilter, remult, Remult, SqlDatabase } from 'remult';
 import { BackendMethod } from 'remult';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { colors } from '../families/stats-action';
 import { YesNo } from '../families/YesNo';
@@ -17,12 +17,12 @@ import { BasketType } from '../families/BasketType';
 
 export class DistributionMapController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType, remult?: Remult, db?: SqlDatabase) {
+    static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType) {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let h = SqlFor(remult.repo(Helpers));
         let sql = new SqlBuilder(remult);
         sql.addEntity(f, "FamilyDeliveries");
-        let r = (await db.execute(await sql.query({
+        let r = (await getDb().execute(await sql.query({
             select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
             sql.columnInnerSelect(f, {
                 from: h,

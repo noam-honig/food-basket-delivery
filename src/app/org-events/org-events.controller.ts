@@ -1,20 +1,20 @@
 import { Event, EventType } from '../events/events';
 
-import { BackendMethod, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, remult, Remult, SqlDatabase } from 'remult';
 import { EventInList, eventStatus } from '../events/events';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Phone } from '../model-shared/phone';
 import { Sites } from '../sites/sites';
 import { createSiteContext } from '../helpers/init-context';
 import { setSettingsForSite, settingsForSite, SmallAdressHelper, SmallSettings } from '../manage/ApplicationSettings';
-import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder';
+import { getDb, SqlBuilder, SqlFor } from '../model-shared/SqlBuilder';
 import { VolunteerNeedType } from '../manage/VolunteerNeedType';
 
 
 
 export class OrgEventsController {
     @BackendMethod({ allowed: true })
-    static async getAllEvents(phone: string, sitesFilter: string, remult?: Remult, db?: SqlDatabase): Promise<EventInList[]> {
+    static async getAllEvents(phone: string, sitesFilter: string): Promise<EventInList[]> {
         let r: EventInList[] = [];
         let sql = new SqlBuilder(remult);
         let e = SqlFor(remult.repo(Event));
@@ -36,18 +36,18 @@ export class OrgEventsController {
                     " where ", [e.where({ eventStatus: eventStatus.active, eventDate: { ">=": new Date() } })]);
             }
         }
-        let sites = (await db.execute(' select distinct site from (' + query + ') x')).rows.map(x => x.site);
+        let sites = (await getDb().execute(' select distinct site from (' + query + ') x')).rows.map(x => x.site);
 
         for (const org of sites) {
 
-            let c = await createSiteContext(org, remult);
+            let c = await createSiteContext(org);
 
             let settings = await c.state.getSettings();
             setSettingsForSite(org, settings);
 
 
             if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
-                let items = await OrgEventsController.getEvents(phone, '', c);
+                let items = await OrgEventsController.getEvents(phone, '');
                 r.push(...items.map(i => ({ ...i, site: org })));
             }
 
@@ -90,7 +90,7 @@ export class OrgEventsController {
     }
 
     @BackendMethod({ allowed: true })
-    static async getEvents(phone: string, specificUrl?: string, remult?: Remult): Promise<EventInList[]> {
+    static async getEvents(phone: string, specificUrl?: string): Promise<EventInList[]> {
 
         if (!specificUrl)
             specificUrl = '';

@@ -1,4 +1,4 @@
-import { BackendMethod, Remult } from "remult";
+import { BackendMethod, remult, Remult } from "remult";
 
 export class DialogController {
     @BackendMethod({ allowed: true })
@@ -6,7 +6,7 @@ export class DialogController {
         console.log(s);
     }
     @BackendMethod({ allowed: true })
-    static async LogWithUser(s: string, remult?: Remult) {
+    static async LogWithUser(s: string) {
         console.log({ message: s, user: remult.user});
     }
 }

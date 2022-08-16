@@ -1,7 +1,7 @@
 
 import { Roles } from '../auth/roles';
 
-import { Remult, BackendMethod, SqlDatabase } from 'remult';
+import { Remult, BackendMethod, SqlDatabase, remult } from 'remult';
 
 import { groupStats } from './family-deliveries-stats';
 
@@ -9,7 +9,7 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 
 import { Helpers } from '../helpers/helpers';
 
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Groups } from '../manage/groups';
 
@@ -18,7 +18,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 
 export class FamilyDeliveriesController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
-    static async getGroups(dist: DistributionCenters, readyOnly = false, remult?: Remult) {
+    static async getGroups(dist: DistributionCenters, readyOnly = false) {
         let pendingStats = [];
         let result: groupStats[] = [];
         await remult.repo(Groups).find({
@@ -43,7 +43,7 @@ export class FamilyDeliveriesController {
         return result;
     }
     @BackendMethod({ allowed: Roles.lab })
-    static async getDeliveriesByPhone(phoneNumIn: string, remult?: Remult, db?: SqlDatabase) {
+    static async getDeliveriesByPhone(phoneNumIn: string) {
         let phoneNum = new Phone(phoneNumIn);
         let sql1 = new SqlBuilder(remult);
 
@@ -51,7 +51,7 @@ export class FamilyDeliveriesController {
         let result: string[] = [];
         let courier = await (await remult.repo(Helpers).findFirst({ phone: phoneNum }));
 
-        for (const d of (await db.execute(await sql1.query({
+        for (const d of (await getDb().execute(await sql1.query({
             from: fd,
             where: () => [
                 (courier != undefined ? fd.where({ courier, $and: [FamilyDeliveries.active] }) :

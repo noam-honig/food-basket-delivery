@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters } from "remult";
+import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters, remult } from "remult";
 import { DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, RowButton } from '@remult/angular/interfaces';
 import { use, ValueListFieldType, Field, Fields } from "../translate";
 import { getLang } from '../sites/sites';
@@ -64,12 +64,11 @@ export class eventStatus {
             if (self.distributionCenter == null)
                 self.distributionCenter = await self.remult.state.defaultDistributionCenter();
         }
-    }
-},
-    (options, remult) =>
-        options.apiPrefilter = {
-            eventStatus: !remult.isAllowed(Roles.admin) ? eventStatus.active : undefined
-        }
+    },
+    apiPrefilter: () => ({
+        eventStatus: !remult.isAllowed(Roles.admin) ? eventStatus.active : undefined
+    })
+}
 )
 export class Event extends IdEntity {
     async toEventInList(helper: HelpersBase): Promise<EventInList> {
@@ -250,34 +249,31 @@ export class Event extends IdEntity {
     @Field({ translation: l => l.phone1Description })
     phone1Description: string;
     @Field({
-        translation: l => l.attendingVolunteers
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                var vie = SqlFor(remult.repo(volunteersInEvent));
-                let self = SqlFor(selfDefs);
-                var sql = new SqlBuilder(remult);
-                return sql.columnCount(self, {
-                    from: vie,
-                    where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false })]
-                })
-            }
+        translation: l => l.attendingVolunteers,
+        sqlExpression: async (selfDefs) => {
+            var vie = SqlFor(remult.repo(volunteersInEvent));
+            let self = SqlFor(selfDefs);
+            var sql = new SqlBuilder(remult);
+            return sql.columnCount(self, {
+                from: vie,
+                where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false })]
+            })
+        }
+    }
     )
     registeredVolunteers: number;
     @Field({
-        translation: l => l.confirmedVolunteers
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                var vie = SqlFor(remult.repo(volunteersInEvent));
-                let self = SqlFor(selfDefs);
-                var sql = new SqlBuilder(remult);
-                return sql.columnCountWithAs(self, {
-                    from: vie,
-                    where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false, confirmed: true })]
-                }, "confirmed")
-            }
-    )
+        translation: l => l.confirmedVolunteers,
+        sqlExpression: async (selfDefs) => {
+            var vie = SqlFor(remult.repo(volunteersInEvent));
+            let self = SqlFor(selfDefs);
+            var sql = new SqlBuilder(remult);
+            return sql.columnCountWithAs(self, {
+                from: vie,
+                where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false, confirmed: true })]
+            }, "confirmed")
+        }
+    })
     confirmedVolunteers: number;
 
     @Field()
@@ -469,25 +465,23 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
 }
 @Entity<volunteersInEvent>('volunteersInEvent', {
     allowApiCrud: Allow.authenticated,
-    allowApiDelete: false
-},
-    (options, remult) => {
-        options.apiPrefilter = {
-            helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? { $id: [remult.user.id] } : undefined
-        };
-        options.saving = async (self) => {
-            if (self.isNew() && isBackend()) {
-                self.createDate = new Date();
-                self.createUser = (await remult.state.getCurrentUser());
-            }
-            if (self.canceled && self.$.canceled.valueChanged()) {
-                self.cancelUser = (await remult.state.getCurrentUser());
-
-            }
-            if (self.isNew() || self.$.canceled.valueChanged())
-                self.registerStatusDate = new Date();
+    allowApiDelete: false,
+    apiPrefilter: () => ({
+        helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? { $id: [remult.user.id] } : undefined
+    }),
+    saving: async (self) => {
+        if (self.isNew() && isBackend()) {
+            self.createDate = new Date();
+            self.createUser = (await remult.state.getCurrentUser());
         }
-    })
+        if (self.canceled && self.$.canceled.valueChanged()) {
+            self.cancelUser = (await remult.state.getCurrentUser());
+
+        }
+        if (self.isNew() || self.$.canceled.valueChanged())
+            self.registerStatusDate = new Date();
+    }
+})
 export class volunteersInEvent extends IdEntity {
     @Field()
     eventId: string;
@@ -495,65 +489,57 @@ export class volunteersInEvent extends IdEntity {
     helper: HelpersBase;
 
     @Field<volunteersInEvent>({
-        translation: l => l.volunteerName
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.name],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        translation: l => l.volunteerName,
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.name],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     helperName: string;
 
     @Field<volunteersInEvent>({
-        translation: l => l.volunteerComment
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.eventComment],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        translation: l => l.volunteerComment,
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.eventComment],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     volunteerComment: string;
     @Field({
-        translation: l => l.volunteerPhoneNumber
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.phone],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        translation: l => l.volunteerPhoneNumber,
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.phone],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     helperPhone: Phone;
     @Field({
-        translation: l => l.deliveriesAssigned
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let d = SqlFor(remult.repo(ActiveFamilyDeliveries));
-                return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
-            }
-    )
+        translation: l => l.deliveriesAssigned,
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let d = SqlFor(remult.repo(ActiveFamilyDeliveries));
+            return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
+        }
+    })
     assignedDeliveries: number;
 
     @Field({ allowApiUpdate: Roles.distCenterAdmin, translation: l => l.confirmed })
@@ -563,117 +549,103 @@ export class volunteersInEvent extends IdEntity {
     canceled: boolean;
 
     @Field({
-        translation: l => l.delveriesSuccessfulEver
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let d = SqlFor(remult.repo(FamilyDeliveries));
-                return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), d.where({ deliverStatus: DeliveryStatus.isSuccess() })] }, 'succesfulDeliveries')
-            }
-    )
+        translation: l => l.delveriesSuccessfulEver,
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let d = SqlFor(remult.repo(FamilyDeliveries));
+            return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), d.where({ deliverStatus: DeliveryStatus.isSuccess() })] }, 'succesfulDeliveries')
+        }
+    })
 
     succesfulDeliveries: number;
     @Field<volunteersInEvent>({
-        translation: l => l.email
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.email],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        translation: l => l.email,
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.email],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     helperEmail: string;
     @Field<volunteersInEvent>({
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.preferredDistributionAreaAddress],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.preferredDistributionAreaAddress],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     preferredDistributionAreaAddress: string;
     @Field<volunteersInEvent>({
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.preferredFinishAddress],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.preferredFinishAddress],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     preferredFinishAddress: string;
     @Field<volunteersInEvent>({
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.preferredDistributionAreaAddressCity],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.preferredDistributionAreaAddressCity],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     preferredDistributionAreaAddressCity: string;
     @Field<volunteersInEvent>({
-    },
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.preferredFinishAddressCity],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.preferredFinishAddressCity],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     preferredFinishAddressCity: string;
-    @Field({},
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let h = SqlFor(remult.repo(Helpers));
-                return sql.columnInnerSelect(self, {
-                    from: h,
-                    select: () => [h.smsDate],
-                    where: () => [sql.eq(h.id, self.helper)]
-                });
-            }
-    )
+    @Field({
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let h = SqlFor(remult.repo(Helpers));
+            return sql.columnInnerSelect(self, {
+                from: h,
+                select: () => [h.smsDate],
+                where: () => [sql.eq(h.id, self.helper)]
+            });
+        }
+    })
     lastSmsTime: Date;
-    @Field({},
-        (options, remult) =>
-            options.sqlExpression = async (selfDefs) => {
-                let sql = new SqlBuilder(remult);
-                let self = SqlFor(selfDefs);
-                let d = SqlFor(remult.repo(FamilyDeliveries));
-                return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
-            }
-    )
+    @Field({
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder(remult);
+            let self = SqlFor(selfDefs);
+            let d = SqlFor(remult.repo(FamilyDeliveries));
+            return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
+        }
+    })
     lastAssignTime: Date;
     @Field({ translation: l => l.duplicateForNextEvent })
     duplicateToNextEvent: boolean;

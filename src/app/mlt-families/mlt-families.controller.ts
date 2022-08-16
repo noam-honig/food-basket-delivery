@@ -1,5 +1,5 @@
 
-import { Remult, BackendMethod, Allow } from 'remult';
+import { Remult, BackendMethod, Allow, remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -10,7 +10,7 @@ import { DistributionCenters } from '../manage/distribution-centers';
 
 export class MltFamiliesController {
     @BackendMethod({ allowed: Roles.indie })
-    static async assignFamilyDeliveryToIndie(deliveryIds: string[], remult?: Remult) {
+    static async assignFamilyDeliveryToIndie(deliveryIds: string[]) {
         for (const id of deliveryIds) {
 
             let fd = await remult.repo(ActiveFamilyDeliveries).findId(id);
@@ -21,7 +21,7 @@ export class MltFamiliesController {
         }
     }
     @BackendMethod({ allowed: Allow.authenticated })
-  static async changeDestination(newDestinationId: DistributionCenters, remult?: Remult) {
+  static async changeDestination(newDestinationId: DistributionCenters) {
     let s = (await remult.state.getSettings());
     if (!s.isSytemForMlt)
       throw "not allowed";

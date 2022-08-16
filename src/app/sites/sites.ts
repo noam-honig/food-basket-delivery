@@ -68,7 +68,7 @@ export class Sites {
             return Sites.guestSchema;
         }
     }
-    static setSiteToContext(c: Remult, site: string, origContext: Remult) {
+    static setSiteToContext(c: Remult, site: string) {
         c.state.getSite = () => site;
     }
 

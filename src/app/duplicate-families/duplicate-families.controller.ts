@@ -1,7 +1,7 @@
 
-import { BackendMethod, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, remult, Remult, SqlDatabase } from 'remult';
 
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -12,7 +12,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 export class DuplicateFamiliesController {
     @BackendMethod({ allowed: true })
-    static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }, remult?: Remult, db?: SqlDatabase) {
+    static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }) {
         if (!compare.address && !compare.name && !compare.phone && !compare.tz)
             throw "some column needs to be selected for compare";
         let sql = new SqlBuilder(remult);
@@ -79,7 +79,7 @@ export class DuplicateFamiliesController {
 
 
 
-        return (await db.execute(q)).rows.map(x => ({
+        return (await getDb().execute(q)).rows.map(x => ({
             address: x['address'],
             name: x['name'],
             phone: getSettings(remult).forWho.formatPhone(x['phone']),
