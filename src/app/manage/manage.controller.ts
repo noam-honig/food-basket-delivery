@@ -63,7 +63,7 @@ export class ManageController {
                     if (error) {
                         rej(error);
                     } else {
-                        console.log(remult.getSite() + "/email sent to: " + email);
+                        console.log(remult.state.getSite() + "/email sent to: " + email);
                         res('Email sent:');
                     }
                 });

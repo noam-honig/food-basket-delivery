@@ -50,37 +50,37 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     super(remult);
     this.fields.push({
       key: 'name',
-      caption: remult.lang.familyName,
+      caption: remult.state.lang.familyName,
       build: ({ fd }) => (fd.courier ? fd.routeOrder + ". " : "") + fd.name
     });
     this.fields.push({
       key: this.helperPhoneKey,
-      caption: remult.lang.volunteerPhoneNumber,
+      caption: remult.state.lang.volunteerPhoneNumber,
       build: ({ fd }) => (fd.courier ? fd.courier?.phone?.displayValue : "")
     });
     this.fields.push({
       key: this.helperCommentKey,
-      caption: remult.lang.volunteerComment,
+      caption: remult.state.lang.volunteerComment,
       build: ({ fd }) => (fd.courier ? fd.courier?.eventComment : "")
     });
     this.fields.push({
       key: 'address',
-      caption: remult.lang.fullAddress,
+      caption: remult.state.lang.fullAddress,
       build: ({ fd }) => fd.getAddressDescription() +
         (fd.entrance ? ", " + fd.$.entrance.metadata.caption + ": " + fd.entrance : '') +
         (fd.floor ? ", " + fd.$.floor.metadata.caption + ": " + fd.floor : '') +
         (fd.appartment ? ", " + fd.$.appartment.metadata.caption + ": " + fd.appartment : '') +
         (fd.buildingCode ? ", " + fd.$.buildingCode.metadata.caption + ": " + fd.buildingCode : '') +
-        (fd.addressComment ? ", " + remult.lang.notice + ": " + fd.addressComment : '')
+        (fd.addressComment ? ", " + remult.state.lang.notice + ": " + fd.addressComment : '')
     });
     this.fields.push({
       key: 'basketType',
-      caption: remult.lang.basketType,
+      caption: remult.state.lang.basketType,
       build: ({ fd }) => (fd.quantity > 1 ? fd.quantity + " X " : "") + fd.$.basketType.displayValue
     });
     this.fields.push({
       key: 'deliveryComments',
-      caption: remult.lang.commentForVolunteer,
+      caption: remult.state.lang.commentForVolunteer,
       build: ({ fd }) => fd.$.deliveryComments.displayValue
     });
     this.fields.push({
@@ -201,21 +201,21 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   helperPhoneKey = "helperPhone";
   helperCommentKey = "helperComment";
   fieldProps: ElementProps = {
-    caption: this.remult.lang.fieldProperties,
+    caption: this.remult.state.lang.fieldProperties,
     props: [
-      new SizeProperty("font-size", this.remult.lang.fontSize, "px"),
-      new Property("bold", this.remult.lang.bold, "checkbox", (v, s) => {
+      new SizeProperty("font-size", this.remult.state.lang.fontSize, "px"),
+      new Property("bold", this.remult.state.lang.bold, "checkbox", (v, s) => {
         if (v)
           s["font-weight"] = "bold";
       }),
-      new Property("align-center", this.remult.lang.centerAlign, "checkbox", (v, s) => {
+      new Property("align-center", this.remult.state.lang.centerAlign, "checkbox", (v, s) => {
         if (v)
           s["text-align"] = "center";
       }),
-      new Property('color', this.remult.lang.color, 'color'),
-      new Property(this.textBeforeKey, this.remult.lang.textBefore, '', () => { }),
-      new Property(this.textAfterKey, this.remult.lang.textAfter, '', () => { }),
-      new Property("inline", this.remult.lang.sameLine, "checkbox", (v, s) => {
+      new Property('color', this.remult.state.lang.color, 'color'),
+      new Property(this.textBeforeKey, this.remult.state.lang.textBefore, '', () => { }),
+      new Property(this.textAfterKey, this.remult.state.lang.textAfter, '', () => { }),
+      new Property("inline", this.remult.state.lang.sameLine, "checkbox", (v, s) => {
         if (v)
           s["display"] = "inline";
       })
@@ -227,7 +227,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     if (!c.propertyValues)
       c.propertyValues = {};
     this.fieldProps.values = c.propertyValues;
-    this.fieldProps.caption = this.remult.lang.fieldProperties + ": " + this.fields.find(x => x.key == c.fieldKey)?.caption;
+    this.fieldProps.caption = this.remult.state.lang.fieldProperties + ": " + this.fields.find(x => x.key == c.fieldKey)?.caption;
     this.fieldProps.control = c;
   }
 }

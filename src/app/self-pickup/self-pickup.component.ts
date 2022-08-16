@@ -49,7 +49,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
     await this.families.get({
       where: {
         name: { $contains: this.searchString },
-        distributionCenter: this.remult.filterDistCenter(this.dialog.distCenter),
+        distributionCenter: this.remult.state.filterDistCenter(this.dialog.distCenter),
         deliverStatus: !this.showAllFamilies ? DeliveryStatus.SelfPickup : undefined
       },
       orderBy: { name: "asc" },

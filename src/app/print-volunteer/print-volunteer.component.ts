@@ -41,9 +41,9 @@ export class PrintVolunteerComponent implements OnInit {
     return 'none';
   }
   pageProps: ElementProps = {
-    caption: this.remult.lang.pageProperties, props: [
+    caption: this.remult.state.lang.pageProperties, props: [
       ...getMarginsH(), {
-        caption: this.remult.lang.newPageForEachVolunteer,
+        caption: this.remult.state.lang.newPageForEachVolunteer,
         inputType: "checkbox",
         key: this.newPageKey
       }]
@@ -51,7 +51,7 @@ export class PrintVolunteerComponent implements OnInit {
   };
 
   columnProps: ElementProps = {
-    caption: this.remult.lang.columnProperties, props: [
+    caption: this.remult.state.lang.columnProperties, props: [
       ...this.defs.fieldProps.props
     ]
 
@@ -66,7 +66,7 @@ export class PrintVolunteerComponent implements OnInit {
   addColumn() {
     this.report.columns.push({
       controls: [],
-      propertyValues: { [this.defs.textBeforeKey]: this.remult.lang.newColumn }
+      propertyValues: { [this.defs.textBeforeKey]: this.remult.state.lang.newColumn }
     })
     this.editColumn(this.report.columns[this.report.columns.length - 1]);
 
@@ -76,7 +76,7 @@ export class PrintVolunteerComponent implements OnInit {
   editColumn(c: ReportColumn) {
     this.currentProps = this.columnProps;
     this.currentProps.values = c.propertyValues;
-    this.currentProps.caption = this.remult.lang.columnProperties + ': ' + c.propertyValues[this.defs.textBeforeKey];
+    this.currentProps.caption = this.remult.state.lang.columnProperties + ': ' + c.propertyValues[this.defs.textBeforeKey];
     this.currentColumn = c;
     this.currentControlList = c.controls;
 

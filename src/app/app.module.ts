@@ -119,6 +119,7 @@ import { CallerComponent } from './caller/caller.component';
 import { SelectFamilyForCallerComponent } from './select-family-for-caller/select-family-for-caller.component';
 import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component';
 import { ManageCallersComponent } from './manage-callers/manage-callers.component';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -273,7 +274,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     },
     {
       provide: APP_INITIALIZER,
-      deps: [TokenService, SettingsService, Remult],
+      deps: [TokenService, SettingsService, Remult, HttpClient],
       useFactory: initApp,
       multi: true,
 
@@ -310,12 +311,12 @@ export class MyHammerConfig extends HammerGestureConfig {
 export class AppModule { }
 
 
-export function initApp(session: TokenService, settings: SettingsService, remult: Remult) {
+export function initApp(session: TokenService, settings: SettingsService, remult: Remult, http: HttpClient) {
+  Remult.setDefaultHttpProvider(http);
   return async () => {
-
     try {
       try {
-        remult.getSite = () => getSiteFromUrl(window.location.pathname)
+        remult.state.getSite = () => getSiteFromUrl(window.location.pathname)
         await session.loadUserInfo();
         await remult.userChange.observe(async () => {
           await InitContext(remult);
@@ -333,7 +334,7 @@ export function initApp(session: TokenService, settings: SettingsService, remult
         });
         console.error("Failed ti init existing user");
       }
-      remult.getOrigin = () => window.location.origin;
+      remult.state.getOrigin = () => window.location.origin;
 
       await settings.init();
 

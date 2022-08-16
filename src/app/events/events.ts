@@ -62,7 +62,7 @@ export class eventStatus {
         if (isBackend()) {
             await self.addressHelper.updateApiResultIfChanged();
             if (self.distributionCenter == null)
-                self.distributionCenter = await self.remult.defaultDistributionCenter();
+                self.distributionCenter = await self.remult.state.defaultDistributionCenter();
         }
     }
 },
@@ -126,7 +126,7 @@ export class Event extends IdEntity {
         }))
     }
     @Field<Event>({
-        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await self.remult.getCurrentUser()))
+        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await self.remult.state.getCurrentUser()))
     })
     registeredToEvent: boolean;
 
@@ -210,7 +210,7 @@ export class Event extends IdEntity {
 
     @Field<Event>({
         translation: l => l.eventName,
-        validate: (s, c) => Validators.required(s, c, s.remult.lang.nameIsTooShort)
+        validate: (s, c) => Validators.required(s, c, s.remult.state.lang.nameIsTooShort)
     })
     name: string;
     @Field()
@@ -223,7 +223,7 @@ export class Event extends IdEntity {
         translation: l => l.eventDate,
         validate: (s, c) => {
             if (!c.value || c.value.getFullYear() < 2018)
-                c.error = s.remult.lang.invalidDate;
+                c.error = s.remult.state.lang.invalidDate;
         }
     })
     eventDate: Date = new Date();
@@ -338,7 +338,7 @@ export class Event extends IdEntity {
         ];
     }
     static async duplicateEvent(remult: Remult, ui: UITools, events: Event[], done: (createdEvents: Event[]) => void) {
-        let settings = (await remult.getSettings());
+        let settings = (await remult.state.getSettings());
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;
         let date = new InputField<Date>({ caption: settings.lang.eventDate, valueConverter: ValueConverters.DateOnly });
@@ -478,10 +478,10 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
         options.saving = async (self) => {
             if (self.isNew() && isBackend()) {
                 self.createDate = new Date();
-                self.createUser = (await remult.getCurrentUser());
+                self.createUser = (await remult.state.getCurrentUser());
             }
             if (self.canceled && self.$.canceled.valueChanged()) {
-                self.cancelUser = (await remult.getCurrentUser());
+                self.cancelUser = (await remult.state.getCurrentUser());
 
             }
             if (self.isNew() || self.$.canceled.valueChanged())
@@ -708,7 +708,7 @@ export class volunteersInEvent extends IdEntity {
         ui: UITools
 
     }) {
-        const settings = await remult.getSettings();
+        const settings = await remult.state.getSettings();
         const gridSettings = new GridSettings<volunteersInEvent>(remult.repo(volunteersInEvent), {
 
             rowsInPage: 50,
@@ -852,7 +852,7 @@ export class volunteersInEvent extends IdEntity {
                 {
                     name: getLang(remult).exportToExcel,
                     click: async () => {
-                        saveToExcel((await remult.getSettings()), remult.repo(volunteersInEvent), gridSettings, use.language.volunteersRegisteredTo + " " + event.name, ui,
+                        saveToExcel((await remult.state.getSettings()), remult.repo(volunteersInEvent), gridSettings, use.language.volunteersRegisteredTo + " " + event.name, ui,
                             (e, c) => c == e.$.id || c == e.$.eventId || c == e.$.helperName || c == e.$.helperPhone)
                     }
                 }

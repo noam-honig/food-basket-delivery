@@ -85,11 +85,11 @@ export class NewDelivery extends ActionOnRows<Families> {
                 }
             },
             dialogColumns: async (component) => {
-                this.basketType = await this.remult.defaultBasketType();
+                this.basketType = await this.remult.state.defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.ui.distCenter;
                 if (!this.distributionCenter)
-                    this.distributionCenter = await remult.defaultDistributionCenter();
+                    this.distributionCenter = await remult.state.defaultDistributionCenter();
                 return [
                     this.$.useFamilyBasket,
                     { field: this.$.basketType, visible: () => !this.useFamilyBasket },

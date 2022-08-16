@@ -69,7 +69,7 @@ export class MltFamiliesComponent implements OnInit {
     return this.comp.familyLists;
   }
   async ngOnInit() {
-    this.thisHelper = (await this.remult.getCurrentUser());
+    this.thisHelper = (await this.remult.state.getCurrentUser());
     this.giftCount = await HelperGifts.getMyPendingGiftsCount(this.thisHelper);
     this.myPhoneNumber = this.thisHelper.phone;
     this.userFrozenTill = this.thisHelper?.frozenTill?.displayValue;
@@ -106,7 +106,7 @@ export class MltFamiliesComponent implements OnInit {
   async countFamilies() {
     let consumed: string[] = []
     let list: FamilyDeliveries[] = await this.remult.repo(FamilyDeliveries).find(
-      { where: { courier: (await this.remult.getCurrentUser()), deliverStatus: DeliveryStatus.isSuccess() } })
+      { where: { courier: (await this.remult.state.getCurrentUser()), deliverStatus: DeliveryStatus.isSuccess() } })
     let result = 0;
     for (const f of list) {
       if (!consumed.includes(f.family)) {

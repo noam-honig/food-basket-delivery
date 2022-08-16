@@ -717,7 +717,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             }
           }
           const field = new InputField<string>({
-            customInput: c => c.textArea(), caption: this.remult.lang.whatToOrder,
+            customInput: c => c.textArea(), caption: this.remult.state.lang.whatToOrder,
             defaultValue: () => items.toString() + "\n---------------\n" + parcels.toString()
           });
           this.dialog.inputAreaDialog({

@@ -33,7 +33,7 @@ export class AuthServiceController {
                 await h.save();
                 return {
                     valid: true,
-                    authToken: await buildToken(info, (await remult.getSettings())),
+                    authToken: await buildToken(info, (await remult.state.getSettings())),
                     requirePassword: false
                 } as LoginResponse
             }
@@ -45,7 +45,7 @@ export class AuthServiceController {
     static async login(args: loginArgs, remult?: Remult): Promise<loginResult> {
 
         let r: loginResult = {};
-        let settings = (await remult.getSettings());
+        let settings = (await remult.state.getSettings());
         let h = await remult.repo(Helpers).findFirst({ phone: new Phone(args.phone) });
         if (!h) {
             r.invalidUser = true;
@@ -146,7 +146,7 @@ export class AuthServiceController {
         let newInfo = await buildHelperUserInfo(h, remult);
 
 
-        return buildToken(newInfo, (await remult.getSettings()));
+        return buildToken(newInfo, (await remult.state.getSettings()));
 
     }
 
@@ -187,7 +187,7 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
     }
     if (h.caller && getSettings(remult).usingCallModule)
         result.roles.push(Roles.callPerson);
-    if ((await remult.getSettings()).isSytemForMlt) {
+    if ((await remult.state.getSettings()).isSytemForMlt) {
         if (h.labAdmin || h.admin)
             result.roles.push(Roles.lab);
         if (h.isIndependent || h.admin || h.distCenterAdmin)

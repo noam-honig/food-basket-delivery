@@ -84,7 +84,7 @@ export class SelectHelperController {
             let fd = SqlFor(remult.repo(FamilyDeliveries));
 
             let limitDate = new Date();
-            limitDate.setDate(limitDate.getDate() - (await remult.getSettings()).BusyHelperAllowedFreq_denom);
+            limitDate.setDate(limitDate.getDate() - (await remult.state.getSettings()).BusyHelperAllowedFreq_denom);
 
             for (const d of (await db.execute(await sql1.query({
                 from: fd,
@@ -106,7 +106,7 @@ export class SelectHelperController {
                 if (h) {
                     h.lastCompletedDeliveryString = relativeDateName(remult, { d: d.delivery_date });
                     h.totalRecentDeliveries = d.count;
-                    h.isBusyVolunteer = (h.totalRecentDeliveries > (await remult.getSettings()).BusyHelperAllowedFreq_nom) ? "busyVolunteer" : "";
+                    h.isBusyVolunteer = (h.totalRecentDeliveries > (await remult.state.getSettings()).BusyHelperAllowedFreq_nom) ? "busyVolunteer" : "";
                 }
             }
         } else {

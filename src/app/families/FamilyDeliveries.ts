@@ -54,9 +54,9 @@ export class MessageStatus {
 
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = (await self.remult.getCurrentUser());
+            self.createUser = (await self.remult.state.getCurrentUser());
             self.deliveryStatusDate = new Date();
-            self.deliveryStatusUser = (await self.remult.getCurrentUser());
+            self.deliveryStatusUser = (await self.remult.state.getCurrentUser());
         }
         if (self.quantity < 1)
             self.quantity = 1;
@@ -112,7 +112,7 @@ export class FamilyDeliveries extends IdEntity {
     static async getFamilyImages(family: string, delivery: string, remult?: Remult): Promise<ImageInfo[]> {
         if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
-            if (d.courier?.id != (await remult.getCurrentUser())?.id)
+            if (d.courier?.id != (await remult.state.getCurrentUser())?.id)
                 return [];
         }
         let r = (await remult.repo(FamilyImage).find({ where: { familyId: family } })).map(({ image }) => ({ image } as ImageInfo));
@@ -125,7 +125,7 @@ export class FamilyDeliveries extends IdEntity {
     static async hasFamilyImages(family: string, delivery: string, remult?: Remult): Promise<boolean> {
         if (!Roles.distCenterAdmin) {
             let d = await remult.repo(FamilyDeliveries).findId(delivery);
-            if (d.courier?.id != (await remult.getCurrentUser())?.id)
+            if (d.courier?.id != (await remult.state.getCurrentUser())?.id)
                 return false;
         }
         let r = (await remult.repo(FamilyImage).count({ familyId: family })) > 0;
@@ -203,7 +203,7 @@ export class FamilyDeliveries extends IdEntity {
     },
         (options, remult) =>
             options.sqlExpression = async (entity) => {
-                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.getSettings())?.showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
+                let r = remult.isAllowed(Roles.distCenterAdmin) || !(await remult.state.getSettings())?.showOnlyLastNamePartToVolunteer ? undefined : "regexp_replace(name, '^.* ', '')";
                 return r;
             }
     )
@@ -509,10 +509,10 @@ export class FamilyDeliveries extends IdEntity {
         return {
             deliverStatus: DeliveryStatus.ReadyForDelivery,
             courier: null,
-            distributionCenter: remult.filterCenterAllowedForUser(),
+            distributionCenter: remult.state.filterCenterAllowedForUser(),
             groups: group ? { $contains: group } : undefined,
             city: city ? city : undefined,
-            area: area !== undefined && area != remult.lang.allRegions ? area : undefined,
+            area: area !== undefined && area != remult.state.lang.allRegions ? area : undefined,
             basketType: basket != null ? basket : undefined
         }
     });
@@ -521,13 +521,13 @@ export class FamilyDeliveries extends IdEntity {
         if (!remult.authenticated())
             return { id: [] };
         let result: EntityFilter<FamilyDeliveries>[] = [];
-        let user = (await remult.getCurrentUser());
+        let user = (await remult.state.getCurrentUser());
         if (!remult.isAllowed([Roles.admin, Roles.lab])) {
             if (!remult.isAllowed(Roles.familyAdmin))
                 result.push(FamilyDeliveries.active);
             let $or: EntityFilter<FamilyDeliveries>[] = [];
             if (remult.isAllowed(Roles.distCenterAdmin))
-                $or.push({ distributionCenter: remult.filterCenterAllowedForUser() });
+                $or.push({ distributionCenter: remult.state.filterCenterAllowedForUser() });
             if (user.theHelperIAmEscorting)
                 $or.push({ courier: user.theHelperIAmEscorting, visibleToCourier: true });
             else
@@ -541,7 +541,7 @@ export class FamilyDeliveries extends IdEntity {
         return { $and: result };
     });
     static inProgressCallerDeliveries = Filter.createCustom<FamilyDeliveries>(async remult => {
-        return { caller: await remult.getCurrentUser(), deliverStatus: DeliveryStatus.enquireDetails, archive: false }
+        return { caller: await remult.state.getCurrentUser(), deliverStatus: DeliveryStatus.enquireDetails, archive: false }
 
     });
     static readyFilter(city?: string, group?: string, area?: string, basket?: BasketType) {

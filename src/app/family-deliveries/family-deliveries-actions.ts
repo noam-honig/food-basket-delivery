@@ -411,7 +411,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     constructor(remult: Remult) {
         super(remult, {
             dialogColumns: async (component) => {
-                this.basketType = await this.remult.defaultBasketType();
+                this.basketType = await this.remult.state.defaultBasketType();
                 this.quantity = 1;
                 this.distributionCenter = component.ui.distCenter;
                 this.useCurrentDistributionCenter = component.ui.distCenter == null;

@@ -11,7 +11,7 @@ export class PreviousDeliveryController {
         return (await remult.repo(FamilyDeliveries).find({
             where: {
                 family: [family],
-                courier: remult.isAllowed(Roles.admin) ? undefined : await remult.getCurrentUser()
+                courier: remult.isAllowed(Roles.admin) ? undefined : await remult.state.getCurrentUser()
             },
             orderBy: {
                 deliveryStatusDate: "desc"

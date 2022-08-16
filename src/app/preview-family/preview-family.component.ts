@@ -23,7 +23,7 @@ export class PreviewFamilyComponent implements OnInit {
   async ngOnInit() {
 
     this.familyLists.toDeliver = [this.argsFamily];
-    this.familyLists.helper = await this.remult.getCurrentUser();
+    this.familyLists.helper = await this.remult.state.getCurrentUser();
 
 
 

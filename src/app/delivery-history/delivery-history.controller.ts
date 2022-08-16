@@ -26,7 +26,7 @@ export class DeliveryHistoryController {
 
         let r = fd.where({
             deliveryStatusDate: { ">=": fromDate, "<": toDate },
-            distributionCenter: remult.filterDistCenter(distCenter),
+            distributionCenter: remult.state.filterDistCenter(distCenter),
             deliverStatus: onlyDone ? DeliveryStatus.isAResultStatus() : undefined,
             archive: onlyArchived ? true : undefined
         });

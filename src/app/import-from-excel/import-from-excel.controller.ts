@@ -43,7 +43,7 @@ export class ImportFromExcelController {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
                     if (getSettings(remult).isSytemForMlt) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
+                        fd.distributionCenter = await remult.state.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
                 }
@@ -57,7 +57,7 @@ export class ImportFromExcelController {
     @BackendMethod({ allowed: Roles.familyAdmin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean, remult?: Remult) {
         for (const r of rowsToUpdate) {
-            await ImportFromExcelController.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.getSettings()));
+            await ImportFromExcelController.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.state.getSettings()));
         }
         return rowsToUpdate;
     }
@@ -91,7 +91,7 @@ export class ImportFromExcelController {
                 if (c == col) {
                     fd._disableMessageToUsers = true;
                     if (settings.isSytemForMlt) {
-                        fd.distributionCenter = await remult.findClosestDistCenter(f.addressHelper.location);
+                        fd.distributionCenter = await remult.state.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
                     break;

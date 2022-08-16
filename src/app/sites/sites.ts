@@ -69,13 +69,13 @@ export class Sites {
         }
     }
     static setSiteToContext(c: Remult, site: string, origContext: Remult) {
-        c.getSite = () => site;
+        c.state.getSite = () => site;
     }
 
     static getOrganizationFromContext(y: Remult) {
         if (!Sites.multipleSites)
             return '';
-        return y.getSite();
+        return y.state.getSite();
     }
     static getOrgRole(y: Remult) {
         return 'org:' + Sites.getOrganizationFromContext(y);

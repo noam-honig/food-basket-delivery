@@ -191,7 +191,7 @@ export class FamiliesComponent implements OnInit {
         numOfColumnsInGrid: 5,
         enterRow: async f => {
             if (f.isNew()) {
-                f.basketType = await this.remult.defaultBasketType();
+                f.basketType = await this.remult.state.defaultBasketType();
                 f.quantity = 1;
                 f.special = YesNo.No;
             } else {
@@ -433,7 +433,7 @@ export class FamiliesComponent implements OnInit {
                     }
                     let message = new messageMerger([
                         { token: 'משפחה', value: f.name },
-                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: this.remult.getOrigin() + '/' + this.remult.getSite() + '/fso/' + f.shortUrlKey },
+                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: this.remult.state.getSettings() + '/' + this.remult.state.getSite() + '/fso/' + f.shortUrlKey },
                         { token: 'ארגון', value: this.settings.organisationName }
                     ]);
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
@@ -749,7 +749,7 @@ interface statsOnTab {
 
 }
 export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, ui: UITools, name) {
-    await saveToExcel<Families, GridSettings<Families>>((await remult.getSettings()), remult.repo(Families), gs, name, ui, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
+    await saveToExcel<Families, GridSettings<Families>>((await remult.state.getSettings()), remult.repo(Families), gs, name, ui, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation;
         let street = f.address;
         let house = '';

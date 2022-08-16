@@ -68,11 +68,11 @@ declare type factoryFor<T> = {
         await self.reloadGeoCoding();
       }
       if (!self.defaultDistributionCenter)
-        self.defaultDistributionCenter = await self.remult.findClosestDistCenter(self.addressHelper.location);
+        self.defaultDistributionCenter = await self.remult.state.findClosestDistCenter(self.addressHelper.location);
       if (!self.remult.isAllowed(Roles.admin)) {
-        self.defaultDistributionCenter = await self.remult.getUserDistributionCenter()
+        self.defaultDistributionCenter = await self.remult.state.getUserDistributionCenter()
       }
-      let currentUser = (await self.remult.getCurrentUser());
+      let currentUser = (await self.remult.state.getCurrentUser());
       if (self.$.fixedCourier.valueChanged() && !self.fixedCourier)
         self.routeOrder = 0;
       if (self.isNew()) {
@@ -366,7 +366,7 @@ export class Families extends IdEntity {
     if (f) {
 
       if (!distCenter)
-        distCenter = await remult.findClosestDistCenter(f.addressHelper.location);
+        distCenter = await remult.state.findClosestDistCenter(f.addressHelper.location);
       let fd = f.createDelivery(distCenter);
       fd.basketType = basketType;
       fd.quantity = settings.quantity;
@@ -1005,7 +1005,7 @@ export class Families extends IdEntity {
 
     let $or: EntityFilter<Families>[] = [];
     if (remult.isAllowed(Roles.familyAdmin)) {
-      $or.push({ defaultDistributionCenter: remult.filterCenterAllowedForUser() });
+      $or.push({ defaultDistributionCenter: remult.state.filterCenterAllowedForUser() });
     }
     if (remult.isAllowed(Roles.callPerson)) {
       $or.push({

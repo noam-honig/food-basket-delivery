@@ -34,7 +34,7 @@ export class DistributionMapController {
 
             where: () => {
 
-                let where: EntityFilter<ActiveFamilyDeliveries>[] = [{ distributionCenter: remult.filterDistCenter(distCenter) }];
+                let where: EntityFilter<ActiveFamilyDeliveries>[] = [{ distributionCenter: remult.state.filterDistCenter(distCenter) }];
                 if (area !== undefined && area !== null && area != getLang(remult).allRegions) {
                     where.push({ area: area });
                 }

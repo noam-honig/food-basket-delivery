@@ -345,24 +345,24 @@ s.parentNode.insertBefore(b, s);})();
             initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
-                    remult.requestRefererOnBackend = req.headers['referer']?.toString();
+                    remult.state.requestRefererOnBackend = req.headers['referer']?.toString();
                     if (req.originalUrl)
                         url = req.originalUrl;
                     else
                         url = req.path;
                 }
-                remult.getSite = () => getSiteFromUrl(url);
-                remult.requestUrlOnBackend = url;
+                remult.state.getSite = () => getSiteFromUrl(url);
+                remult.state.requestUrlOnBackend = url;
                 if (!remult.isAllowed(Sites.getOrgRole(remult)))
                     remult.setUser(undefined);
                 remult.setDataProvider(dataSource(remult));
-                remult.getOrigin = () => req.headers['origin'] as string;
+                remult.state.getOrigin = () => req.headers['origin'] as string;
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
                 if (!process.env.DEV_MODE)
                     return;
-                remult.getSite = () => "test1";
+                remult.state.getSite = () => "test1";
                 remult.setDataProvider(dataSource(remult));
                 await InitContext(remult, undefined);
                 const path = './db-structure/';

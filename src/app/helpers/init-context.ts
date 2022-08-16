@@ -20,10 +20,10 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     if (user === undefined)
         user = remult.user;
     let defaultBasketType: BasketType;
-    remult.getSettings = () => ApplicationSettings.getAsync(remult);
-    remult.getUserDistributionCenter = () => remult.repo(DistributionCenters).findId(remult.user.distributionCenter);
-    remult.getCurrentUser = () => remult.repo(Helpers).findId(remult.user.id);
-    remult.defaultBasketType = async () => {
+    remult.state.getSettings = () => ApplicationSettings.getAsync(remult);
+    remult.state.getUserDistributionCenter = () => remult.repo(DistributionCenters).findId(remult.user.distributionCenter);
+    remult.state.getCurrentUser = () => remult.repo(Helpers).findId(remult.user.id);
+    remult.state.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
         await remult.repo(BasketType).find({ orderBy: { id: 'asc' }, limit: 1 }).then(y => {
@@ -32,10 +32,10 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         });
         return defaultBasketType;
     }
-    remult.defaultDistributionCenter = async () =>
+    remult.state.defaultDistributionCenter = async () =>
         (await remult.repo(DistributionCenters).findFirst(DistributionCenters.isActive))
 
-    remult.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
+    remult.state.findClosestDistCenter = async (loc: Location, centers?: DistributionCenters[]) => {
         let result: DistributionCenters;
         let dist: number;
         if (!centers)
@@ -49,7 +49,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         }
         return result;
     }
-    remult.filterCenterAllowedForUser = () => {
+    remult.state.filterCenterAllowedForUser = () => {
         if (!remult.authenticated())
             return [];
         else if (remult.isAllowed(Roles.admin)) {
@@ -58,17 +58,17 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
             return { $id: [remult.user.distributionCenter] };
 
     }
-    remult.filterDistCenter = (distCenter): IdFilter<DistributionCenters> => {
+    remult.state.filterDistCenter = (distCenter): IdFilter<DistributionCenters> => {
 
         if (distCenter == null) {
-            return remult.filterCenterAllowedForUser();
+            return remult.state.filterCenterAllowedForUser();
         } else {
             if (remult.isAllowed(Roles.admin) || distCenter.id == remult.user.distributionCenter)
                 return distCenter;
         }
         return [];
     }
-    remult.lang = getLang(remult);
+    remult.state.lang = getLang(remult);
 }
 export interface selectListItem<itemType = any> {
     name: string,
@@ -98,7 +98,7 @@ export interface InputAreaArgs {
     cancel?: () => void,
     validate?: () => Promise<void>,
     buttons?: button[],
-    menu?:RowButton<any>[]
+    menu?: RowButton<any>[]
 }
 export interface UpdateFamilyDialogArgs {
     family?: import('../families/families').Families,
@@ -191,7 +191,7 @@ export async function createSiteContext(site: string, original: Remult) {
     return c;
 }
 declare module 'remult' {
-    export interface Remult {
+    export interface RemultState {
         getCurrentUser: () => Promise<Helpers>;
         getUserDistributionCenter: () => Promise<DistributionCenters>;
         defaultBasketType: () => Promise<BasketType>;

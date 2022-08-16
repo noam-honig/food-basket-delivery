@@ -94,7 +94,7 @@ export class FamilyDeliveryStats {
 
             ],
             from: f,
-            where: () => [f.where({ distributionCenter: remult.filterDistCenter(distCenter) })]
+            where: () => [f.where({ distributionCenter: remult.state.filterDistCenter(distCenter) })]
         }), ' group by ', f.basketType));
         for (const r of baskets.rows) {
             let basketId = r[baskets.getColumnKeyInResultForIndexInSelect(0)];
@@ -133,7 +133,7 @@ export class FamilyDeliveryStats {
             pendingStats.push(
                 remult.repo(CitiesStatsPerDistCenter).find({
                     orderBy: { families: "desc" },
-                    where: { distributionCenter: remult.filterDistCenter(distCenter) }
+                    where: { distributionCenter: remult.state.filterDistCenter(distCenter) }
 
                 }).then(cities => {
                     result.cities = cities.map(x => {
@@ -162,7 +162,7 @@ export class FamilyDeliveresStatistics {
     async saveTo(distCenter: DistributionCenters, data: any, remult: Remult) {
         try {
 
-            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.filterDistCenter(distCenter), $and: [this.rule] }).then(c => this.value = c);
+            data[this.name] = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.state.filterDistCenter(distCenter), $and: [this.rule] }).then(c => this.value = c);
         }
         catch (err) {
             console.error(this.name, err);
@@ -189,7 +189,7 @@ export interface groupStats {
             where: () => [
                 f.where({
                     deliverStatus: DeliveryStatus.ReadyForDelivery,
-                    distributionCenter: remult.filterCenterAllowedForUser()
+                    distributionCenter: remult.state.filterCenterAllowedForUser()
                 }),
                 sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', f.city, ') as result')
@@ -213,7 +213,7 @@ export class CitiesStats {
             from: f,
             where: () => [f.where({
                 deliverStatus: DeliveryStatus.ReadyForDelivery,
-                distributionCenter: remult.filterCenterAllowedForUser()
+                distributionCenter: remult.state.filterCenterAllowedForUser()
             }),
             sql.eq(f.courier, '\'\'')]
         })).replace('as result', 'as '), ' group by ', [f.city, f.distributionCenter], ') as result')

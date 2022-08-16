@@ -70,7 +70,7 @@ export class SelectFamilyComponent implements OnInit {
 
     await this.families.get({
       where: {
-        distributionCenter: this.remult.filterDistCenter(this.args.distCenter),
+        distributionCenter: this.remult.state.filterDistCenter(this.args.distCenter),
         name: this.args.selectStreet ? undefined : { $contains: this.searchString },
         address: this.args.selectStreet ? { $contains: this.searchString } : undefined,
         $and: [!this.showAll ? this.args.where : undefined]

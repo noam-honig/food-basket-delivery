@@ -185,7 +185,7 @@ export class HelperFamiliesComponent implements OnInit {
   @ViewChild("theTab", { static: false }) tab: MatTabGroup;
   currentUser: Helpers;
   async ngOnInit() {
-    this.currentUser = await this.busy.donotWait(async () => await this.remult.getCurrentUser());
+    this.currentUser = await this.busy.donotWait(async () => await this.remult.state.getCurrentUser());
     if (!environment.production && false)
       setTimeout(() => {
         if (this.familyLists.toDeliver.length > 0) {

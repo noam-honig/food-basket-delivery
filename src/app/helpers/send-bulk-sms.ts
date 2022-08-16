@@ -77,7 +77,7 @@ export class SendBulkSms {
     
     בתודה !ארגון!
     להסרה השב "הסר"`;
-        let settings = (await this.remult.getSettings());
+        let settings = (await this.remult.state.getSettings());
         await ui.editCustomMessageDialog({
             message: this.buildMessage(currentHelper.name, settings),
             templateText: settings.inviteVolunteersMessage || defaultMessage,
@@ -189,7 +189,7 @@ export class SendBulkSms {
     buildMessage(name: string, settings: ApplicationSettings) {
         return new messageMerger([
             { token: 'מתנדב', caption: "שם המתנדב", value: name },
-            { token: 'קישור', caption: 'קישור לרישום', value: this.remult.getOrigin() + '/' + Sites.getOrganizationFromContext(this.remult) + '/events' },
+            { token: 'קישור', caption: 'קישור לרישום', value: this.remult.state.getSettings() + '/' + Sites.getOrganizationFromContext(this.remult) + '/events' },
             { token: 'ארגון', caption: "שם הארגון", value: settings.organisationName },
             { token: 'עיר', value: this.city },
 

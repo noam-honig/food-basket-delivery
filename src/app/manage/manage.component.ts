@@ -413,7 +413,7 @@ export class ManageComponent implements OnInit {
         click: async () => {
           await this.settings.save()
           var message = new SendTestSms(this.remult);
-          message.phone = (await this.remult.getCurrentUser()).phone.thePhone;
+          message.phone = (await this.remult.state.getCurrentUser()).phone.thePhone;
           message.message = this.testSms();
           openDialog(InputAreaComponent, x => x.args = {
             fields: message.$.toArray(),

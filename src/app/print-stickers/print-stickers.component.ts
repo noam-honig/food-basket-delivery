@@ -26,7 +26,7 @@ export class PrintStickersComponent implements OnInit {
   row: StickerInfo;
   borderKey = '@border';
   pageProps: ElementProps = {
-    caption: this.remult.lang.pageProperties, props: [
+    caption: this.remult.state.lang.pageProperties, props: [
       ...getMarginsH()]
 
   };
@@ -36,14 +36,14 @@ export class PrintStickersComponent implements OnInit {
     return '';
   }
   stickerProps: ElementProps = {
-    caption: this.remult.lang.labelProperties, props: [
-      new Property('height', this.remult.lang.height, 'number', (val, s) => assign(s, {
+    caption: this.remult.state.lang.labelProperties, props: [
+      new Property('height', this.remult.state.lang.height, 'number', (val, s) => assign(s, {
         'height': val + 'mm',
         'max-height': val + 'mm'
       })),
-      new SizeProperty('width', this.remult.lang.width),
+      new SizeProperty('width', this.remult.state.lang.width),
       ...getMarginsH(), ...getMarginsV(),
-      new Property(this.borderKey, this.remult.lang.border, "checkbox", (val, s) => {
+      new Property(this.borderKey, this.remult.state.lang.border, "checkbox", (val, s) => {
 
       })
     ],
@@ -106,7 +106,7 @@ export class PrintStickersComponent implements OnInit {
       this.report = {
         controls: [{ fieldKey: 'name', propertyValues: { 'bold': 'true' } }, { fieldKey: "address" }, {
           fieldKey: 'basketType', propertyValues: {
-            [this.defs.textBeforeKey]: this.remult.lang.basketType + ": "
+            [this.defs.textBeforeKey]: this.remult.state.lang.basketType + ": "
           }
         }, { fieldKey: 'deliveryComments', propertyValues: { 'bold': 'true' } }],
         page: {},

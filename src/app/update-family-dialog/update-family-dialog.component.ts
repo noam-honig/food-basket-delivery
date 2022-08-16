@@ -152,7 +152,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   confirmed = false;
   async confirm() {
     if (!this.families.currentRow.defaultDistributionCenter && this.onMapLocation)
-      this.families.currentRow.defaultDistributionCenter = await this.remult.findClosestDistCenter(this.onMapLocation);
+      this.families.currentRow.defaultDistributionCenter = await this.remult.state.findClosestDistCenter(this.onMapLocation);
     if (this.delivery) {
       let d = this.delivery;
       if (d.changeRequireStatsRefresh())

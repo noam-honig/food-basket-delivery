@@ -30,7 +30,7 @@ function log(s: string) {
             let helperFamilies = (where: () => any[]) => {
                 return {
                     from: f,
-                    where: () => [f.where({ distributionCenter: remult.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
+                    where: () => [f.where({ distributionCenter: remult.state.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
                 }
             }
             return sql.entityDbName({

@@ -16,7 +16,7 @@ import { Families } from "./families";
         };
         options.saving = async self => {
             if (self.isNew())
-                self.uploadingVolunteer = (await remult.getCurrentUser())
+                self.uploadingVolunteer = (await remult.state.getCurrentUser())
         }
 
     })

@@ -284,7 +284,7 @@ export class SqlBuilder {
         return this.build(...result);
     }
     constructor(private remult: Remult) {
-        if (remult && !remult.getSite)
+        if (remult && !remult.state.getSite)
             InitContext(remult);
 
     }

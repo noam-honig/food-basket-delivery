@@ -442,10 +442,10 @@ export class ImportFromExcelComponent implements OnInit {
 
     async ngOnInit() {
         this.addDelivery = true;
-        this.defaultBasketType = await this.remult.defaultBasketType();
+        this.defaultBasketType = await this.remult.state.defaultBasketType();
         this.distributionCenter = this.dialog.distCenter;
         if (this.distributionCenter == null)
-            this.distributionCenter = await this.remult.defaultDistributionCenter();
+            this.distributionCenter = await this.remult.state.defaultDistributionCenter();
 
 
 

@@ -34,7 +34,7 @@ export class DialogService implements UITools {
 
 
     filterDistCenter(): IdFilter<DistributionCenters> {
-        return this.remult.filterDistCenter(this.distCenter);
+        return this.remult.state.filterDistCenter(this.distCenter);
     }
     async exception(title: string, err: any): Promise<void> {
 
@@ -186,7 +186,7 @@ export class DialogService implements UITools {
             return this.distCenter;
         if (!this.allCenters)
             this.allCenters = await this.remult.repo(DistributionCenters).find({ where: DistributionCenters.isActive });
-        return this.remult.findClosestDistCenter(loc, this.allCenters);
+        return this.remult.state.findClosestDistCenter(loc, this.allCenters);
 
     }
     private allCenters: DistributionCenters[];

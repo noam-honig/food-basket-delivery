@@ -29,7 +29,7 @@ import { UITools } from "../helpers/init-context";
         let helperFamilies = (where: () => any[]) => {
             return {
                 from: f,
-                where: () => [f.where({ distributionCenter: remult.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
+                where: () => [f.where({ distributionCenter: remult.state.filterCenterAllowedForUser() }), sql.eq(f.courier, h.id), ...where()]
             }
         }
         let comInnerSelect = (col: FieldMetadata, toCol: FieldMetadata) => {
@@ -198,7 +198,7 @@ export class InRouteHelpers extends IdEntity {
     saving: async (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = (await self.remult.getCurrentUser());
+            self.createUser = (await self.remult.state.getCurrentUser());
         }
     }
 })

@@ -49,13 +49,13 @@ export class RegisterToEvent {
         if (this.inited)
             return;
         this.inited = true;
-        let s = (await this.remult.getSettings());
+        let s = (await this.remult.state.getSettings());
         if (!actionInfo.runningOnServer) {
 
             this.phone = new Phone(RegisterToEvent.volunteerInfo.phone);
             this.name = RegisterToEvent.volunteerInfo.name;
             this.lastName = RegisterToEvent.volunteerInfo.lastName || '';
-            let h = (await this.remult.getCurrentUser())
+            let h = (await this.remult.state.getCurrentUser())
             if (h) {
                 this.socialSecurityNumber = h.socialSecurityNumber;
                 this.email = h.email;
@@ -91,7 +91,7 @@ export class RegisterToEvent {
         caption: "שם",
         validate: (e, name) => {
             if (!e.remult.authenticated()) {
-                Validators.required(e, name, e.remult.lang.nameIsTooShort)
+                Validators.required(e, name, e.remult.state.lang.nameIsTooShort)
             }
         }
     })
@@ -132,9 +132,9 @@ export class RegisterToEvent {
         this.a2 = '';
         this.a3 = '';
         this.a4 = '';
-        let lang = this.remult.lang;
+        let lang = this.remult.state.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
-        let currentHelper = (await this.remult.getCurrentUser());
+        let currentHelper = (await this.remult.state.getCurrentUser());
         if (this.remult.authenticated()) {
             this.phone = currentHelper.phone;
             this.name = currentHelper.name;
@@ -235,10 +235,10 @@ export class RegisterToEvent {
         }
         const event = await this.remult.repo(Event).findId(id);
         try {
-            const l = this.remult.lang;
+            const l = this.remult.state.lang;
             const what = helper.name + " " + (register ? l.hasRegisteredTo : l.hasCanceledRegistration) + " " + event.name
             ManageController.sendEmailFromHagaiAdmin(what,
-                l.hello + " " + (await this.remult.getSettings()).organisationName + "\r\n\r\n" +
+                l.hello + " " + (await this.remult.state.getSettings()).organisationName + "\r\n\r\n" +
                 what + " " + l.thatWillTakePlaceAt + " " + event.$.eventDate.displayValue, this.remult);
 
         }

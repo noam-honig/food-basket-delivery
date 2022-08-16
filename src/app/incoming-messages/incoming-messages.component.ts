@@ -30,7 +30,7 @@ export class IncomingMessagesComponent implements OnInit {
     ],
     rowButtons: [{
 
-      textInMenu: this.remult.lang.volunteerInfo,
+      textInMenu: this.remult.state.lang.volunteerInfo,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
         h.displayEditDialog(this.dialog);
@@ -39,7 +39,7 @@ export class IncomingMessagesComponent implements OnInit {
 
     }, {
 
-      textInMenu: this.remult.lang.smsMessages,
+      textInMenu: this.remult.state.lang.smsMessages,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
         h.smsMessages(this.dialog);
@@ -48,7 +48,7 @@ export class IncomingMessagesComponent implements OnInit {
 
     },
     {
-      textInMenu: this.remult.lang.customSmsMessage,
+      textInMenu: this.remult.state.lang.customSmsMessage,
       click: async (com) => {
         const h = await com.volunteer.getHelper();
         h.sendSmsToCourier(this.dialog);
@@ -57,7 +57,7 @@ export class IncomingMessagesComponent implements OnInit {
 
     }],
     gridButtons: [{
-      name: this.remult.lang.showOnlyIncoming, click: () => {
+      name: this.remult.state.lang.showOnlyIncoming, click: () => {
         this.showAll = !this.showAll;
         this.grid.reloadData();
       }
