@@ -25,14 +25,14 @@ export class ManageController {
         return await EmailSvc.sendMail("test email", text, to, remult);
     }
     @BackendMethod({ allowed: Roles.admin })
-    static async sendTestVolunteerRegistrationNotification(remult?: Remult) {
+    static async sendTestVolunteerRegistrationNotification() {
         const subject = 'test';
         const message = 'test';
-        return ManageController.sendEmailFromHagaiAdmin(subject, message, remult!);
+        return ManageController.sendEmailFromHagaiAdmin(subject, message);
 
     }
-    static async sendEmailFromHagaiAdmin(subject: string, message: string, remult: Remult) {
-        let settings = await ApplicationSettings.getAsync(remult!);
+    static async sendEmailFromHagaiAdmin(subject: string, message: string) {
+        let settings = await ApplicationSettings.getAsync();
         const email = settings.emailForVolunteerRegistrationNotification;
         if (!email || !email.includes("@"))
             return "Invalid email";
@@ -77,7 +77,7 @@ export class ManageController {
     }
 
     @BackendMethod({ allowed: Roles.admin, queue: true })
-    static async deleteFamiliesOnServer(remult?: Remult, progress?: ProgressListener) {
+    static async deleteFamiliesOnServer(progress?: ProgressListener) {
 
 
         let i = 0;
@@ -95,7 +95,7 @@ export class ManageController {
     }
     static async clearDataFromFamilyDeliveries(familyId: string, remult: Remult) {
         var db = remult._dataSource as SqlDatabase;
-        const sql = new SqlBuilder(remult);
+        const sql = new SqlBuilder();
         const fd = await SqlFor(remult.repo(FamilyDeliveries));
         const fdi = await SqlFor(remult.repo(DeliveryImage));
         const fi = await SqlFor(remult.repo(FamilyImage));
@@ -132,10 +132,10 @@ export class SendTestSms extends ControllerBase {
     message: string;
     @BackendMethod({ allowed: Roles.admin })
     async sendTestMessage() {
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         if (!settings.bulkSmsEnabled)
             throw "can only use this with bulk sms enabled";
-        return await new SendSmsUtils().sendSms(this.phone, this.message,  undefined);
+        return await new SendSmsUtils().sendSms(this.phone, this.message, undefined);
     }
 
 }

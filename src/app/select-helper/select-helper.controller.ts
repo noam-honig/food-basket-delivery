@@ -40,15 +40,15 @@ export class SelectHelperController {
             });
             if (h.preferredDistributionAreaAddressHelper.ok) {
                 let theH = helpers.get(h.id);
-                check(theH, h.preferredDistributionAreaAddressHelper.location, getLang(remult).preferredDistributionAreaAddress + ": " + h.preferredDistributionAreaAddress);
+                check(theH, h.preferredDistributionAreaAddressHelper.location, getLang().preferredDistributionAreaAddress + ": " + h.preferredDistributionAreaAddress);
             }
             if (h.preferredFinishAddressHelper.ok) {
                 let theH = helpers.get(h.id);
-                check(theH, h.preferredFinishAddressHelper.location, getLang(remult).preferredFinishAddress + ": " + h.preferredFinishAddress);
+                check(theH, h.preferredFinishAddressHelper.location, getLang().preferredFinishAddress + ": " + h.preferredFinishAddress);
             }
         }
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         if (!selectDefaultVolunteer) {
 
             /* ----    calculate active deliveries and distances    ----*/
@@ -73,13 +73,13 @@ export class SelectHelperController {
                         h.assignedDeliveries = 1;
                     else
                         h.assignedDeliveries++;
-                    if (!getSettings(remult).isSytemForMlt)
-                        check(h, { lat: d.lat, lng: d.lng }, getLang(remult).delivery + ": " + d.address);
+                    if (!getSettings().isSytemForMlt)
+                        check(h, { lat: d.lat, lng: d.lng }, getLang().delivery + ": " + d.address);
                 }
             }
 
             /*  ---------- calculate completed deliveries and "busy" status -------------*/
-            let sql1 = new SqlBuilder(remult);
+            let sql1 = new SqlBuilder();
 
             let fd = SqlFor(remult.repo(FamilyDeliveries));
 
@@ -128,7 +128,7 @@ export class SelectHelperController {
                     else
                         h.fixedFamilies++;
 
-                    check(h, { lat: d.lat, lng: d.lng }, getLang(remult).family + ": " + d.address);
+                    check(h, { lat: d.lat, lng: d.lng }, getLang().family + ": " + d.address);
                 }
             }
         }

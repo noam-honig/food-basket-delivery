@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { Filter, BackendMethod, SqlDatabase, EntityFilter } from 'remult';
+import { Filter, BackendMethod, SqlDatabase, EntityFilter, remult } from 'remult';
 
 import { Families, AreaColumn, sendWhatsappToFamily, canSendWhatsapp } from './families';
 
@@ -53,8 +53,8 @@ import { UITools } from '../helpers/init-context';
 
 export class FamiliesController {
     @BackendMethod({ allowed: Roles.admin })
-    static async getCities(remult?: Remult): Promise<{ city: string, count: number }[]> {
-        var sql = new SqlBuilder(remult);
+    static async getCities(): Promise<{ city: string, count: number }[]> {
+        var sql = new SqlBuilder();
         let f = SqlFor(remult.repo(Families));
         let r = await getDb().execute(await sql.query({
             from: f,

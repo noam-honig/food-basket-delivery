@@ -20,9 +20,9 @@ export class FamilyInfoController {
         error?: string
     }> {
         let cleanPhone = '';
-        let reqInfo = Sites.getOrganizationFromContext(remult) + "/proxy/" + remult.user.id + " => " + deliveryId;
+        let reqInfo = Sites.getOrganizationFromContext() + "/proxy/" + remult.user.id + " => " + deliveryId;
         try {
-            let settings = await ApplicationSettings.getAsync(remult);
+            let settings = await ApplicationSettings.getAsync();
             if (!settings.usePhoneProxy)
                 throw "פרוקסי לא מופעל לסביבה זו";
             let fd = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);
@@ -57,7 +57,7 @@ export class FamilyInfoController {
     }
     @BackendMethod({ allowed: Allow.authenticated })
     static async ShowFamilyTz(deliveryId: string) {
-        let s = await ApplicationSettings.getAsync(remult);
+        let s = await ApplicationSettings.getAsync();
         if (!s.showTzToVolunteer)
             return "";
         var d = await remult.repo(ActiveFamilyDeliveries).findId(deliveryId);

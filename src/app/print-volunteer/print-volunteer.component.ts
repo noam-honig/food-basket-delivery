@@ -29,9 +29,9 @@ import { VolunteerReportInfo } from './VolunteerReportInfo';
 })
 export class PrintVolunteerComponent implements OnInit {
 
-
-  constructor(public remult: Remult, private dialog: DialogService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
-  defs = new VolunteerReportDefs(this.remult, this.dialog);
+  remult = remult;
+  constructor( private dialog: DialogService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
+  defs = new VolunteerReportDefs( this.dialog);
   report: ReportInfo;
   row: VolunteerReportInfo;
   readonly newPageKey = '@newPageKey';
@@ -41,9 +41,9 @@ export class PrintVolunteerComponent implements OnInit {
     return 'none';
   }
   pageProps: ElementProps = {
-    caption: this.remult.context.lang.pageProperties, props: [
+    caption: remult.context.lang.pageProperties, props: [
       ...getMarginsH(), {
-        caption: this.remult.context.lang.newPageForEachVolunteer,
+        caption: remult.context.lang.newPageForEachVolunteer,
         inputType: "checkbox",
         key: this.newPageKey
       }]
@@ -51,7 +51,7 @@ export class PrintVolunteerComponent implements OnInit {
   };
 
   columnProps: ElementProps = {
-    caption: this.remult.context.lang.columnProperties, props: [
+    caption: remult.context.lang.columnProperties, props: [
       ...this.defs.fieldProps.props
     ]
 

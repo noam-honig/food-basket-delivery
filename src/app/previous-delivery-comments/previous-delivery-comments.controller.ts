@@ -6,7 +6,7 @@ import { getSettings } from '../manage/ApplicationSettings';
 
 
 export class PreviousDeliveryController {
-    @BackendMethod({ allowed: r => getSettings(r).allowVolunteerToSeePreviousActivities })
+    @BackendMethod({ allowed: r => getSettings().allowVolunteerToSeePreviousActivities })
     static async getHistory(family: string) {
         return (await remult.repo(FamilyDeliveries).find({
             where: {

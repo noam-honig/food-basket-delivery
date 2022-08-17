@@ -126,7 +126,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   }
 
   async labSelfReception(d: ActiveFamilyDeliveries) {
-    if (await this.dialog.YesNoPromise(getLang(remult).shouldArchiveDelivery)) {
+    if (await this.dialog.YesNoPromise(getLang().shouldArchiveDelivery)) {
       {
         d.archive = true;
         d.distributionCenter = await remult.context.getUserDistributionCenter();

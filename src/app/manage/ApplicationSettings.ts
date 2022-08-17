@@ -75,10 +75,10 @@ export class RemovedFromListExcelImportStrategy {
       if (self.helpPhone)
         self.helpPhone = new Phone(Phone.fixPhoneInput(self.helpPhone.thePhone));
       if (self.forWho)
-        setLangForSite(Sites.getValidSchemaFromContext(self.remult), self.forWho);
-      setSettingsForSite(Sites.getValidSchemaFromContext(self.remult), self);
-      logChanges(self._, self.remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest, self.$.smsCredentials, self.$.smsPasswordInput] });
-      recordChanges(self.remult, self, {
+        setLangForSite(Sites.getValidSchemaFromContext(), self.forWho);
+      setSettingsForSite(Sites.getValidSchemaFromContext(), self);
+      logChanges(self._, remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest, self.$.smsCredentials, self.$.smsPasswordInput] });
+      recordChanges(remult, self, {
         excludeColumns: s => [s.currentUserIsValidForAppLoadTest, s.smsPasswordInput],
         excludeValues: s => [s.smsCredentials]
       });
@@ -142,7 +142,7 @@ export class ApplicationSettings extends EntityBase {
     let Families = await (await import('../families/families')).Families;
     let family = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family, remult);
     let r: phoneOption[] = [];
-    let settings = await ApplicationSettings.getAsync(remult);
+    let settings = await ApplicationSettings.getAsync();
     for (const x of settings.getPhoneStrategy()) {
       if (x.option) {
         await x.option.build({
@@ -426,7 +426,7 @@ export class ApplicationSettings extends EntityBase {
   familyCustom4Caption: string;
   @Field({ translation: l => l.customColumn + " 4 " + l.optionalValues, includeInApi: Roles.familyAdmin })
   familyCustom4Values: string;
-  @Field<ApplicationSettings>({ serverExpression: (self) => self.remult.authenticated() })
+  @Field<ApplicationSettings>({ serverExpression: (self) => remult.authenticated() })
   currentUserIsValidForAppLoadTest: boolean;
   @Field({ translation: l => l.questionForVolunteer + " 1 " + l.caption })
   questionForVolunteer1Caption: string;
@@ -506,18 +506,12 @@ export class ApplicationSettings extends EntityBase {
   allowVolunteerToSeePreviousActivities: boolean;
 
 
-
-
-  constructor(private remult: Remult) {
-    super()
-  }
-
   static get(remult: Remult) {
 
-    return getSettings(remult);
+    return getSettings();
 
   }
-  static async getAsync(remult: Remult): Promise<ApplicationSettings> {
+  static async getAsync(): Promise<ApplicationSettings> {
     return (await remult.repo(ApplicationSettings).findFirst(undefined, { useCache: true }));
   }
   setDefaultsForProblemStatuses() {
@@ -555,7 +549,7 @@ export class PhoneOption {
   static defaultVolunteer = new PhoneOption("defaultVolunteer", use ? use.language.defaultVolunteer : '', async args => {
     if (args.family.fixedCourier && args.d.courier != args.family.fixedCourier) {
       let h = await args.family.fixedCourier;
-      args.addPhone(getLang(args.remult).defaultVolunteer + ": " + h.name, h.phone.displayValue);
+      args.addPhone(getLang().defaultVolunteer + ": " + h.name, h.phone.displayValue);
     }
   });
 
@@ -689,15 +683,13 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     phoneInOrganizationListDisplay: phoneInOrganizationList?.displayValue
   });
 }
-export function getSettings(remult: Remult): SmallSettings {
-  let r = settingsForSite.get(Sites.getValidSchemaFromContext(remult));
+export function getSettings(): SmallSettings {
+  let r = settingsForSite.get(Sites.getValidSchemaFromContext());
   if (r)
     return r;
   //if (context.backend) {
   return new SmallSettings();
   throw "can't find application settings on server for this request";
-
-  return ApplicationSettings.get(remult);;
 }
 export class SmallSettings {
   defaultStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery;
@@ -740,7 +732,7 @@ interface customColumnInfo {
 
 }
 export function includePhoneInApi(remult: Remult) {
-  var s = getSettings(remult);
+  var s = getSettings();
   if (!s.hideFamilyPhoneFromVolunteer)
     return true;
   if (remult.isAllowed(Roles.distCenterAdmin))

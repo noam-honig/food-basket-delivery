@@ -33,9 +33,6 @@ export class EquipmentAge {
 
 @Controller('register-donor')
 export class donorForm {
-    constructor(private remult: Remult) {
-
-    }
     get $() { return getFields(this, remult) }
     @Field({
         caption: "שם מלא",
@@ -48,7 +45,7 @@ export class donorForm {
         validate: (self, col) => {
             if (!col.value || col.value.thePhone == '')
                 col.error = "אנא הזן ערך";
-            Phone.validatePhone(col, self.remult);
+            Phone.validatePhone(col, remult);
         }
     })
     phone: Phone;
@@ -94,7 +91,7 @@ export class donorForm {
 
     @BackendMethod({ allowed: true })
     async createDonor() {
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         if (!settings.isSytemForMlt)
             throw "Not Allowed";
         remult.setUser({
@@ -122,7 +119,7 @@ export class donorForm {
             if (q > 0) {
                 quantity += q;
 
-                await Families.addDelivery(f.id, await self.remult.repo(BasketType).findId(type), null, null, {
+                await Families.addDelivery(f.id, await remult.repo(BasketType).findId(type), null, null, {
                     comment: '',
                     quantity: q,
                     selfPickup: isSelfDeliver,
@@ -142,7 +139,7 @@ export class donorForm {
         await addDelivery('מסך', this.screen, this.selfDeliver);
 
         if (quantity == 0) {
-            await Families.addDelivery(f.id, await self.remult.repo(BasketType).findId('לא פורט'), null, null, {
+            await Families.addDelivery(f.id, await remult.repo(BasketType).findId('לא פורט'), null, null, {
                 comment: '',
                 quantity: 1,
                 selfPickup: false

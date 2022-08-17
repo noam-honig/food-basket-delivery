@@ -17,9 +17,7 @@ export class OptionalFieldsDefinition<dataArgs> {
     caption: string,
     build: (args: dataArgs) => string
   }[] = [];
-  constructor(public remult: Remult) {
-
-  }
+  remult = remult;
   addFields<entityType extends IdEntity>(entity: ClassType<entityType>, extractFromArgs: (x: dataArgs) => entityType, getFields: (entity: FieldsMetadata<entityType>) => FieldMetadata[]) {
     let repo = remult.repo(entity);
     let meta = repo.metadata;
@@ -46,8 +44,8 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   f: Families;
 }> {
 
-  constructor(remult: Remult, private ui: UITools) {
-    super(remult);
+  constructor( private ui: UITools) {
+    super();
     this.fields.push({
       key: 'name',
       caption: remult.context.lang.familyName,
@@ -85,12 +83,12 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     });
     this.fields.push({
       key: 'boxes1',
-      caption: getSettings(remult).boxes1Name,
+      caption: getSettings().boxes1Name,
       build: ({ fd }) => (fd.quantity * fd.basketType?.boxes)?.toString()
     })
     this.fields.push({
       key: 'boxes2',
-      caption: getSettings(remult).boxes2Name,
+      caption: getSettings().boxes2Name,
       build: ({ fd }) => (fd.quantity * fd.basketType?.boxes2)?.toString()
     })
 
@@ -140,7 +138,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   }
   @BackendMethod({ allowed: Roles.admin })
   static async getStickerData(filterVolunteer?: string) {
-    let d = new VolunteerReportDefs(remult, undefined);
+    let d = new VolunteerReportDefs( undefined);
     let lastCourier = null;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
       where: {

@@ -10,7 +10,7 @@ import { FieldType, translationConfig } from "../translate";
     fromJson: x => x ? new Phone(x) : null
   },
   inputType: "tel",
-  displayValue: (e, x) => x && getSettings(remult).forWho?.formatPhone(x.thePhone)
+  displayValue: (e, x) => x && getSettings().forWho?.formatPhone(x.thePhone)
 })
 @DataControl<any, Phone>({
   click: (e, x) => window.open('tel:' + x.displayValue),
@@ -49,7 +49,7 @@ export class Phone {
     s = s.replace(/\D/g, '');
     if (orig.startsWith('+'))
       return '+' + s;
-    let forWho = getSettings(remult).forWho;
+    let forWho = getSettings().forWho;
     if (forWho && forWho.args.suppressPhoneZeroAddition)
       return s;
     if (s.length == 9 && s[0] != '0' && s[0] != '3')
@@ -63,10 +63,10 @@ export class Phone {
   static sendWhatsappToPhone(phone: string, smsMessage: string, remult: Remult, test = false) {
     phone = Phone.fixPhoneInput(phone);
     if (phone.startsWith('0')) {
-      phone = getSettings(remult).getInternationalPhonePrefix + phone.substr(1);
+      phone = getSettings().getInternationalPhonePrefix + phone.substr(1);
     }
-    if (getSettings(remult).forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
-      phone = getSettings(remult).getInternationalPhonePrefix + phone;
+    if (getSettings().forWho.args.suppressPhoneZeroAddition && !phone.startsWith('+'))
+      phone = getSettings().getInternationalPhonePrefix + phone;
 
     if (phone.startsWith('+'))
       phone = phone.substr(1);
@@ -80,31 +80,31 @@ export class Phone {
   static validatePhone(col: FieldRef<any, Phone>, remult: Remult, required = false) {
     if (!col.value || col.value.thePhone == '') {
       if (required)
-        col.error = getLang(remult).invalidPhoneNumber;
+        col.error = getLang().invalidPhoneNumber;
       return;
     }
-    if (getLang(remult).languageCode != 'iw' || col.value?.thePhone.startsWith('+'))
+    if (getLang().languageCode != 'iw' || col.value?.thePhone.startsWith('+'))
       if (col.value.thePhone.length < 10)
-        col.error = getLang(remult).invalidPhoneNumber;
+        col.error = getLang().invalidPhoneNumber;
       else
         return;
 
     if (!isPhoneValidForIsrael(col.value.thePhone)) {
-      col.error = getLang(remult).invalidPhoneNumber;
+      col.error = getLang().invalidPhoneNumber;
     }
     /*
         if (col.displayValue.startsWith("05") || col.displayValue.startsWith("07")) {
           if (col.displayValue.length != 12) {
-            col.validationError = getLang(remult).invalidPhoneNumber;
+            col.validationError = getLang().invalidPhoneNumber;
           }
     
         } else if (col.displayValue.startsWith('0')) {
           if (col.displayValue.length != 11) {
-            col.validationError = getLang(remult).invalidPhoneNumber;
+            col.validationError = getLang().invalidPhoneNumber;
           }
         }
         else {
-          col.validationError = getLang(remult).invalidPhoneNumber;
+          col.validationError = getLang().invalidPhoneNumber;
         }
       */
   }

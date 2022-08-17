@@ -45,7 +45,7 @@ export class EventCardComponent implements OnInit {
     {
       name: 'Copy specific url',
       click: async e => {
-        copy(window.origin + '/' + Sites.getOrganizationFromContext(remult) + '/events/' + e.specificUrl);
+        copy(window.origin + '/' + Sites.getOrganizationFromContext() + '/events/' + e.specificUrl);
         this.dialog.Info(this.settings.lang.linkCopied);
       },
       visible: e => !!e.specificUrl

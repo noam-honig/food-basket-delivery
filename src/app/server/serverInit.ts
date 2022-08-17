@@ -112,7 +112,7 @@ export async function serverInit() {
         Sites.getDataProviderForOrg = org => new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
         return {
             dataSource: (y: Remult) => {
-                let org = Sites.getValidSchemaFromContext(y);
+                let org = Sites.getValidSchemaFromContext();
 
                 return new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, org)));
             },
@@ -144,7 +144,7 @@ export async function serverInit() {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
                     let remult = new Remult();
                     let h = await SqlFor(remult.repo(Helpers));
-                    var sql = new SqlBuilder(remult);
+                    var sql = new SqlBuilder();
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
                     let d = r.rows[0]['max'];
                     if (!d)

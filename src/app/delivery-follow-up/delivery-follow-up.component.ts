@@ -122,7 +122,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     }
     this.dialog.editCustomMessageDialog({
       helpText: 'פעולה זו תשלח הודעה למתנדבים אשר טרם נשלח להם SMS עם קישור - כדי להזכיר להם להגיע לארוע החלוקה - אך עדיין לשמור אותם מסומנים כטרם קיבלו SMS ',
-      title: getLang(remult).sendAttendanceReminder + ' - ' + h.length,
+      title: getLang().sendAttendanceReminder + ' - ' + h.length,
       message: DeliveryFollowUpController.createMessage(h[0], remult),
       templateText: message.template,
       buttons: [
@@ -217,11 +217,11 @@ export class DeliveryStats {
       }
     }
   }
-  notOutYet = new DeliveryStatistic(getLang(remult).smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
-  onTheWay = new DeliveryStatistic(getLang(remult).onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
-  smsNotOpenedYet = new DeliveryStatistic(getLang(remult).smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
-  delivered = new DeliveryStatistic(getLang(remult).doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
-  problem = new DeliveryStatistic(getLang(remult).problems, f => f.problem > 0, colors.red);
+  notOutYet = new DeliveryStatistic(getLang().smsNotSent, f => f.inProgress >= 1 && !f.smsWasSent, colors.blue);
+  onTheWay = new DeliveryStatistic(getLang().onTheWay, f => f.inProgress >= 1 && f.smsWasSent && f.viewedSms, colors.blue);
+  smsNotOpenedYet = new DeliveryStatistic(getLang().smsNotOpened, f => f.inProgress >= 1 && f.smsWasSent && !f.viewedSms, colors.yellow);
+  delivered = new DeliveryStatistic(getLang().doneVolunteers, f => f.inProgress == 0 && f.problem == 0, colors.green);
+  problem = new DeliveryStatistic(getLang().problems, f => f.problem > 0, colors.red);
 }
 export class DeliveryStatistic {
   constructor(public name: string, public rule: (f: helperFollowupInfo) => boolean, public color: string) {

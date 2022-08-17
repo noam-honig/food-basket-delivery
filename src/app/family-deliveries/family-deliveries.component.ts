@@ -90,7 +90,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   stats = new FamilyDeliveryStats();
   @ViewChild('myTab', { static: false }) myTab: MatTabGroup;
   basketStats: statsOnTabBasket = {
-    name: getLang(remult).remainingByBaskets,
+    name: getLang().remainingByBaskets,
     rule: FamilyDeliveries.readyAndSelfPickup(),
     stats: [
       this.stats.ready,
@@ -100,7 +100,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     fourthColumn: () => this.statusColumn
   };
   assignedButNotOutBaskets: statsOnTabBasket = {
-    name: getLang(remult).assignedButNotOutBaskets,
+    name: getLang().assignedButNotOutBaskets,
     rule: {
       messageStatus: MessageStatus.notSent,
       $and: [FamilyDeliveries.onTheWayFilter()]
@@ -113,7 +113,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     fourthColumn: () => this.statusColumn
   };
   selfPickupBaskets: statsOnTabBasket = {
-    name: getLang(remult).selfPickupByBaskets,
+    name: getLang().selfPickupByBaskets,
     rule: { deliverStatus: DeliveryStatus.SelfPickup },
     stats: [
       this.stats.ready,
@@ -124,7 +124,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
 
   basketsInEvent: statsOnTabBasket = {
-    name: getLang(remult).byBaskets,
+    name: getLang().byBaskets,
     rule: {},
     stats: [
       this.stats.ready,
@@ -134,7 +134,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     fourthColumn: () => this.statusColumn
   };
   basketsDelivered: statsOnTabBasket = {
-    name: getLang(remult).deliveredByBaskets,
+    name: getLang().deliveredByBaskets,
     rule: { deliverStatus: DeliveryStatus.isSuccess() },
     stats: [
       this.stats.ready,
@@ -145,7 +145,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   };
 
   cityStats: statsOnTab = {
-    name: getLang(remult).remainingByCities,
+    name: getLang().remainingByCities,
     showTotal: true,
     rule: FamilyDeliveries.readyFilter(),
     stats: [
@@ -158,7 +158,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
   statTabs: statsOnTab[] = [
     {
-      name: getLang(remult).deliveries,
+      name: getLang().deliveries,
       showTotal: true,
       rule: {},
       stats: [
@@ -183,7 +183,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     this.selfPickupBaskets,
     this.basketsDelivered,
     {
-      name: getLang(remult).remainingByGroups,
+      name: getLang().remainingByGroups,
       rule: FamilyDeliveries.readyFilter(),
       stats: [
         this.stats.ready,
@@ -200,7 +200,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
       }
     },
     {
-      name: getLang(remult).byGroups,
+      name: getLang().byGroups,
       rule: {},
       stats: [
         this.stats.ready,
@@ -218,7 +218,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     },
     this.cityStats,
     {
-      name: getLang(remult).requireFollowUp,
+      name: getLang().requireFollowUp,
       showTotal: true,
       rule: { needsWork: true },
       stats: [
@@ -308,7 +308,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     });
     if (this.pieChartData.length == 0) {
       this.pieChartData.push(0);
-      this.pieChartLabels.push(getLang(remult).empty);
+      this.pieChartLabels.push(getLang().empty);
     }
     if (this.colors[0].backgroundColor.length == 0) {
       this.colors[0].backgroundColor.push(colors.green, colors.blue, colors.yellow, colors.red, colors.orange, colors.gray);
@@ -434,7 +434,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             r.$and.push(differentFromFilter(firstCities[index]));
           }
 
-          lastFs = new FamilyDeliveresStatistics(getLang(remult).allOthers, r, undefined);
+          lastFs = new FamilyDeliveresStatistics(getLang().allOthers, r, undefined);
           stats.moreStats.push(x);
           lastFs.value = x.value;
           stats.stats.push(lastFs);
@@ -454,10 +454,10 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   showTotalBoxes() {
     let x: statsOnTabBasket = this.currentTabStats;
     if (x && (x.totalBoxes1 + x.totalBoxes2)) {
-      let r = getLang(remult).total + ' ' + BasketType.boxes1Name + ': ' + x.totalBoxes1;
+      let r = getLang().total + ' ' + BasketType.boxes1Name + ': ' + x.totalBoxes1;
 
       if (x.totalBoxes2)
-        r += ', ' + getLang(remult).total + ' ' + BasketType.boxes2Name + ': ' + x.totalBoxes2;
+        r += ', ' + getLang().total + ' ' + BasketType.boxes2Name + ': ' + x.totalBoxes2;
 
       return r;
     }
@@ -543,7 +543,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         },
 
         this.deliverySummary = {
-          caption: getLang(remult).deliverySummary,
+          caption: getLang().deliverySummary,
           field: deliveries.deliverStatus,
           readonly: true,
           valueList: async (c) => DeliveryStatus.getOptions(c)
@@ -679,28 +679,28 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         settings: this.settings
       })),
       {
-        name: getLang(remult).printVolunteers,
+        name: getLang().printVolunteers,
         visible: () => remult.isAllowed(Roles.admin),
         click: async () => {
           this.route.navigateToComponent(PrintVolunteersComponent)
         }
       },
       {
-        name: getLang(remult).printStickers,
+        name: getLang().printStickers,
         visible: () => remult.isAllowed(Roles.admin),
         click: async () => {
           this.route.navigateToComponent(PrintStickersComponent)
         }
       },
       {
-        name: getLang(remult).printVolunteerPage,
+        name: getLang().printVolunteerPage,
         visible: () => remult.isAllowed(Roles.admin),
         click: async () => {
           this.route.navigateToComponent(PrintVolunteerComponent)
         }
       },
       {
-        name: getLang(remult).whatToOrder,
+        name: getLang().whatToOrder,
         click: async () => {
           let items = new quantityHelper();
           let parcels = new quantityHelper();
@@ -726,11 +726,11 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
       },
       {
-        name: getLang(remult).exportToExcel,
+        name: getLang().exportToExcel,
         click: async () => {
 
           let includeFamilyInfo = await this.dialog.YesNoPromise(this.settings.lang.includeFamilyInfoInExcelFile);
-          await saveToExcel(this.settings, remult.repo(ActiveFamilyDeliveries), this.deliveries, getLang(remult).deliveries, this.dialog, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
+          await saveToExcel(this.settings, remult.repo(ActiveFamilyDeliveries), this.deliveries, getLang().deliveries, this.dialog, (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family, undefined,
             async (fd, addColumn) => {
               await fd.basketType?.addBasketTypes(fd.quantity, addColumn);
               fd.addStatusExcelColumn(addColumn);
@@ -760,7 +760,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
             ui: this.dialog
           });
         }
-        , textInMenu: () => getLang(remult).deliveryDetails
+        , textInMenu: () => getLang().deliveryDetails
       },
       {
         name: '',
@@ -769,7 +769,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: async fd => {
           openDialog(DeliveryImagesComponent, x => x.args = fd);
         }
-        , textInMenu: () => getLang(remult).photos_taken_by_volunteer,
+        , textInMenu: () => getLang().photos_taken_by_volunteer,
         visible: fd => fd.numOfPhotos > 0
       },
       {

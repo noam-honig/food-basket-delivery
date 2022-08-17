@@ -42,7 +42,7 @@ export class ImportFromExcelController {
                 if (createDelivery) {
                     fd._disableMessageToUsers = true;
                     f.updateDelivery(fd);
-                    if (getSettings(remult).isSytemForMlt) {
+                    if (getSettings().isSytemForMlt) {
                         fd.distributionCenter = await remult.context.findClosestDistCenter(f.addressHelper.location);
                     }
                     await fd.save();
@@ -123,7 +123,7 @@ export class ImportFromExcelController {
             updateRows: []
 
         } as serverCheckResults;
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         for (const info of excelRowInfo) {
             info.duplicateFamilyInfo = [];
             let findDuplicate = async (w: EntityFilter<Families>) => {
@@ -168,7 +168,7 @@ export class ImportFromExcelController {
             if (!info.duplicateFamilyInfo || info.duplicateFamilyInfo.length == 0) {
                 result.newRows.push(info);
             } else if (info.duplicateFamilyInfo.length > 1) {
-                info.error = getLang(remult).moreThanOneRowInDbMatchesExcel;
+                info.error = getLang().moreThanOneRowInDbMatchesExcel;
                 result.errorRows.push(info);
             } else {
                 let hasDifference = false;

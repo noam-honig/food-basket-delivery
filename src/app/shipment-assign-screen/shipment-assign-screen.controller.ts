@@ -1,5 +1,5 @@
 import { Roles } from '../auth/roles';
-import { BackendMethod, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, remult, Remult, SqlDatabase } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -11,7 +11,7 @@ import { BasketType } from '../families/BasketType';
 export class ShipmentAssignScreenController {
 
     @BackendMethod({ allowed: Roles.admin })
-    static async getShipmentAssignInfo(remult?: Remult) {
+    static async getShipmentAssignInfo() {
         let result: data = {
             helpers: {},
             unAssignedFamilies: {}
@@ -28,7 +28,7 @@ export class ShipmentAssignScreenController {
         {
             let settings = (await remult.context.getSettings());
             let fd = SqlFor(remult.repo(FamilyDeliveries));
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let busyLimitdate = new Date();
             busyLimitdate.setDate(busyLimitdate.getDate() - settings.BusyHelperAllowedFreq_denom);
 
@@ -45,7 +45,7 @@ export class ShipmentAssignScreenController {
         }
 
         {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
 
             let fd = SqlFor(remult.repo(FamilyDeliveries));
             for (let r of (await getDb().execute(await sql.query({
@@ -64,7 +64,7 @@ export class ShipmentAssignScreenController {
 
         //highlight new Helpers
         {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let h = SqlFor(remult.repo(Helpers));
             let fd = SqlFor(remult.repo(FamilyDeliveries));
             for (let helper of (await getDb().execute(await sql.query({
@@ -84,7 +84,7 @@ export class ShipmentAssignScreenController {
             }
         }
         {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let fd = await SqlFor(remult.repo(ActiveFamilyDeliveries));
 
             let sqlResult = await getDb().execute(

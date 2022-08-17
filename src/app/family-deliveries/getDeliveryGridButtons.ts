@@ -56,7 +56,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
   };
   return [
     {
-      name: getLang(args.remult).newDelivery,
+      name: getLang().newDelivery,
       icon: 'add_shopping_cart',
       click: async (d) => {
         newDelivery(d);
@@ -64,7 +64,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => args.remult.isAllowed(Roles.admin) && !d.deliverStatus.IsAResultStatus()
     },
     {
-      textInMenu: () => getLang(args.remult).newDelivery,
+      textInMenu: () => getLang().newDelivery,
       icon: 'add_shopping_cart',
       showInLine: true,
       click: async (d) => {
@@ -73,13 +73,13 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => args.remult.isAllowed(Roles.admin) && d.deliverStatus.IsAResultStatus()
     },
     {
-      name: getLang(args.remult).sendWhatsAppToFamily,
+      name: getLang().sendWhatsAppToFamily,
       click: f => sendWhatsappToFamily(f, args.remult),
       visible: f => canSendWhatsapp(f),
       icon: 'textsms'
     },
     {
-      textInMenu: () => getLang(args.remult).assignVolunteer,
+      textInMenu: () => getLang().assignVolunteer,
       icon: 'person_search',
       showInLine: true,
       click: async (d) => {
@@ -117,7 +117,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => !d.deliverStatus.IsAResultStatus() && args.remult.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu: () => getLang(args.remult).volunteerAssignments,
+      textInMenu: () => getLang().volunteerAssignments,
       icon: 'list_alt',
       showInLine: true,
       click: async (d) => {
@@ -131,7 +131,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => d.courier && args.remult.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu: () => getLang(args.remult).volunteerInfo,
+      textInMenu: () => getLang().volunteerInfo,
 
 
       click: async (d) => {
@@ -144,11 +144,11 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => d.courier && args.remult.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu: () => getLang(args.remult).cancelAsignment,
+      textInMenu: () => getLang().cancelAsignment,
       showInLine: true,
       icon: 'person_add_disabled',
       click: async (d) => {
-        if (await args.ui.YesNoPromise(getLang(args.remult).cancelAssignmentFor + d.name)) {
+        if (await args.ui.YesNoPromise(getLang().cancelAssignmentFor + d.name)) {
           {
             d.courier = null;
             await d.save();
@@ -158,7 +158,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier
     },
     {
-      name: getLang(args.remult).familyDeliveries,
+      name: getLang().familyDeliveries,
       click: async (fd) => {
         let f = await args.remult.repo(Families).findId(fd.family);
         f.showDeliveryHistoryDialog({
@@ -169,9 +169,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: f => !f.isNew()
     },
     {
-      name: getLang(args.remult).freezeDelivery,
+      name: getLang().freezeDelivery,
       click: async (d) => {
-        if (await args.ui.YesNoPromise(getLang(args.remult).freezeDeliveryHelp + d.name + "?")) {
+        if (await args.ui.YesNoPromise(getLang().freezeDeliveryHelp + d.name + "?")) {
           {
             d.deliverStatus = DeliveryStatus.Frozen;
             await d.save();
@@ -181,7 +181,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier
     },
     {
-      name: getLang(args.remult).unFreezeDelivery,
+      name: getLang().unFreezeDelivery,
       click: async (d) => {
         {
           d.deliverStatus = DeliveryStatus.ReadyForDelivery;
@@ -191,10 +191,10 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => d.deliverStatus == DeliveryStatus.Frozen
     },
     {
-      name: getLang(args.remult).deleteDelivery,
+      name: getLang().deleteDelivery,
       icon: 'delete',
       click: async (d) => {
-        if (await args.ui.YesNoPromise(getLang(args.remult).shouldDeleteDeliveryFor + d.name)) {
+        if (await args.ui.YesNoPromise(getLang().shouldDeleteDeliveryFor + d.name)) {
           {
             let fd = await args.remult.repo(FamilyDeliveries).findId(d.id);
             await fd.delete();
@@ -205,11 +205,11 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       visible: d => !(d.deliverStatus.IsAResultStatus()) && args.remult.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu: () => getLang(args.remult).archiveDelivery,
+      textInMenu: () => getLang().archiveDelivery,
       showInLine: true,
       icon: 'archive',
       click: async (d) => {
-        if (await args.ui.YesNoPromise(getLang(args.remult).shouldArchiveDelivery)) {
+        if (await args.ui.YesNoPromise(getLang().shouldArchiveDelivery)) {
           {
             let fd = await args.remult.repo(FamilyDeliveries).findId(d.id);
             fd.archive = true;
@@ -220,9 +220,9 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       }, visible: d => !d.archive && (d.deliverStatus.IsAResultStatus()) && args.remult.isAllowed(Roles.distCenterAdmin)
     },
     {
-      textInMenu: () => getLang(args.remult).sendWhatsAppToFamily,
+      textInMenu: () => getLang().sendWhatsAppToFamily,
       click: async (d) => {
-        d.phone1.sendWhatsapp(args.remult, getLang(args.remult).hello + ' ' + d.name + ',');
+        d.phone1.sendWhatsapp(args.remult, getLang().hello + ' ' + d.name + ',');
       },
       visible: d => d.phone1 && args.remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt
     }

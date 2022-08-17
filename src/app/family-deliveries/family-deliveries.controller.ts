@@ -45,7 +45,7 @@ export class FamilyDeliveriesController {
     @BackendMethod({ allowed: Roles.lab })
     static async getDeliveriesByPhone(phoneNumIn: string) {
         let phoneNum = new Phone(phoneNumIn);
-        let sql1 = new SqlBuilder(remult);
+        let sql1 = new SqlBuilder();
 
         let fd = SqlFor(remult.repo(FamilyDeliveries));
         let result: string[] = [];

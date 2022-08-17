@@ -15,7 +15,7 @@ export class DuplicateFamiliesController {
     static async familiesInSameAddress(compare: { address: boolean, name: boolean, phone: boolean, tz: boolean, onlyActive: boolean }) {
         if (!compare.address && !compare.name && !compare.phone && !compare.tz)
             throw "some column needs to be selected for compare";
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         let f = SqlFor(remult.repo(Families));
         let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let q = '';
@@ -82,7 +82,7 @@ export class DuplicateFamiliesController {
         return (await getDb().execute(q)).rows.map(x => ({
             address: x['address'],
             name: x['name'],
-            phone: getSettings(remult).forWho.formatPhone(x['phone']),
+            phone: getSettings().forWho.formatPhone(x['phone']),
             tz: x['tz'],
             count: +x['c'],
             ids: x['ids'].split(',').filter((val, index, self) => self.indexOf(val) == index).join(',')

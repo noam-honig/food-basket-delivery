@@ -29,10 +29,11 @@ export class SelectHelperComponent implements OnInit {
   lastFilter: string = undefined;
   public args: SelectHelperArgs;
   filteredHelpers: helperInList[] = [];
+  remult = remult;
   constructor(
     private dialogRef: MatDialogRef<any>,
     private dialog: DialogService,
-    public remult: Remult,
+
     private busy: BusyService,
     public settings: ApplicationSettings
 
@@ -54,7 +55,7 @@ export class SelectHelperComponent implements OnInit {
     this.select(null);
   }
   isMlt() {
-    return getSettings(remult).isSytemForMlt;
+    return getSettings().isSytemForMlt;
   }
 
   close() {

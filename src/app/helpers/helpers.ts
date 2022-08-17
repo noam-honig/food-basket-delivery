@@ -83,7 +83,7 @@ export class HelpersBase extends IdEntity {
         translation: l => l.volunteerName,
         validate: (h) => {
             if (!h.name)
-                h.$.name.error = getLang(h.remult).nameIsTooShort;
+                h.$.name.error = getLang().nameIsTooShort;
         }
     })
     name: string;
@@ -167,7 +167,7 @@ export class HelpersBase extends IdEntity {
     internalComment: string;
     @Field<Helpers>({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
         }
@@ -253,7 +253,7 @@ export class HelpersBase extends IdEntity {
             }
             if (self.$.leadHelper.valueChanged() && self.leadHelper) {
                 if (self.leadHelper.id == self.id || self.leadHelper.leadHelper?.id == self.id) {
-                    self.$.leadHelper.error = getLang(self.remult).invalidValue;
+                    self.$.leadHelper.error = getLang().invalidValue;
                     return;
                 }
             }
@@ -435,7 +435,7 @@ export class Helpers extends HelpersBase {
         });
     }
     static selectColumns(self: FieldsMetadata<Helpers>, remult: Remult) {
-        let settings = getSettings(remult);
+        let settings = getSettings();
         let r: DataControlSettings<Helpers>[] = [
             {
                 field: self.name,
@@ -544,7 +544,7 @@ export class Helpers extends HelpersBase {
     }
 
     userRequiresPassword(remult: Remult) {
-        return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller && getSettings(remult).usingCallModule;
+        return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller && getSettings().usingCallModule;
     }
     async showDeliveryHistory(ui: UITools) {
         let ctx = remult.repo((await import('../families/FamilyDeliveries')).FamilyDeliveries);
@@ -613,7 +613,7 @@ export class Helpers extends HelpersBase {
     @Field<Helpers>({
         sqlExpression: async (selfDefs) => {
             let self = SqlFor(selfDefs);
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             return sql.build(self.id, ' || ', self.escort, ' || ', self.theHelperIAmEscorting);
         }
     })
@@ -705,7 +705,7 @@ export class Helpers extends HelpersBase {
             this.$.phone.error = "טלפון לא תקין";
             throw this.$.phone.error;
         }
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         if (!settings.isSytemForMlt)
             throw "Not Allowed";
         remult.setUser({
@@ -840,7 +840,7 @@ export class Helpers extends HelpersBase {
             return SqlDatabase.customFilter(async c => {
                 let fd = SqlFor(remult.repo((await (import('../families/FamilyDeliveries'))).FamilyDeliveries));
                 let helpers = SqlFor(remult.repo(Helpers));
-                let sql = new SqlBuilder(remult);
+                let sql = new SqlBuilder();
                 c.sql = await sql.build(helpers.id, " in (", sql.query({
                     select: () => [sql.build('distinct ', fd.courier)],
                     from: fd,
@@ -949,8 +949,8 @@ export class Helpers extends HelpersBase {
 
 
 export function validatePasswordColumn(remult: Remult, password: FieldRef<any, string>) {
-    if (getSettings(remult).requireComplexPassword) {
-        var l = getLang(remult);
+    if (getSettings().requireComplexPassword) {
+        var l = getLang();
         if (password.value.length < 8)
             password.error = l.passwordTooShort;
         if (!password.value.match(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))

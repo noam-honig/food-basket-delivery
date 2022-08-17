@@ -157,7 +157,7 @@ export class DialogService implements UITools {
         if (!value) {
             value = 1;
         }
-        let cat = Sites.getOrganizationFromContext(remult);
+        let cat = Sites.getOrganizationFromContext();
         if (!cat)
             cat = '';
         gtag('event', action, {
@@ -171,7 +171,7 @@ export class DialogService implements UITools {
         if (!value) {
             value = 1;
         }
-        let cat = Sites.getOrganizationFromContext(remult);
+        let cat = Sites.getOrganizationFromContext();
         if (!cat)
             cat = '';
         gtag('event', action, {
@@ -318,7 +318,7 @@ export class DestroyHelper {
 let showing = false;
 @Injectable()
 export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
-    constructor(private dialog: DialogService, private zone: NgZone, private remult: Remult) {
+    constructor(private dialog: DialogService, private zone: NgZone) {
         super();
     }
     lastErrorString: '';

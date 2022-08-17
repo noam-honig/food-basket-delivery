@@ -37,9 +37,9 @@ export class EventInfoComponent implements OnInit {
     return this.e.eventDateJson.startsWith("999");
   }
   openGoogleMap() {
-    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang(remult).languageCode, '_blank');
+    window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang().languageCode, '_blank');
   }
-  reg = new RegisterToEvent(remult);
+  reg = new RegisterToEvent();
   isAdmin() {
     return remult.isAllowed(Roles.admin);
   }

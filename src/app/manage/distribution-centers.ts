@@ -101,13 +101,13 @@ export class DistributionCenters extends IdEntity {
 
     if (this.addressApiResult && this.address && this.addressHelper.ok)
       return this.addressHelper.getGeocodeInformation;
-    return (await ApplicationSettings.getAsync(remult)).addressHelper.getGeocodeInformation;
+    return (await ApplicationSettings.getAsync()).addressHelper.getGeocodeInformation;
   }
   async getRouteStartLocation() {
 
     if (this.addressApiResult && this.address && this.addressHelper.ok)
       return this.addressHelper.location;
-    return (await ApplicationSettings.getAsync(remult)).addressHelper.location;
+    return (await ApplicationSettings.getAsync()).addressHelper.location;
   }
   static async getValueList(remult: Remult, showAllOptions = false) {
     let r = await getEntityValueList<DistributionCenters>(remult.repo(DistributionCenters), {

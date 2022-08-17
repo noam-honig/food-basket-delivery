@@ -14,7 +14,7 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class DeliveryDetailsComponent implements OnInit {
 
-  constructor(private dialog: DialogService, public remult: Remult, public settings: ApplicationSettings, private zone: NgZone, public ref: MatDialogRef<any>) {
+  constructor(private dialog: DialogService,  public settings: ApplicationSettings, private zone: NgZone, public ref: MatDialogRef<any>) {
   }
   famInfo = new FamilyInfoComponent(this.dialog, this.settings, this.zone);
   buttons: RowButton<any>[] = [

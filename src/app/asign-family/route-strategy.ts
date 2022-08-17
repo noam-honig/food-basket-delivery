@@ -82,7 +82,7 @@ export async function getRouteInfo(families: familiesInRoute[], optimize: boolea
         origin: startLongLat,
         destination: destinationLongLat,
         waypoints: waypoints,
-        language: getLang(remult).languageCode,
+        language: getLang().languageCode,
         key: process.env.GOOGLE_GECODE_API_KEY
     };
     u.addObject(args);

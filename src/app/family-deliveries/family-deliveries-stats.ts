@@ -15,9 +15,9 @@ import { Field } from '../translate';
 
 
 export class FamilyDeliveryStats {
-    enquireDetails = new FamilyDeliveresStatistics(getLang(remult).enquireDetails, { deliverStatus: DeliveryStatus.enquireDetails }, colors.orange);
-    waitForAdmin = new FamilyDeliveresStatistics(getLang(remult).waitingForAdmin, { deliverStatus: DeliveryStatus.waitingForAdmin }, colors.orange);
-    ready = new FamilyDeliveresStatistics(getLang(remult).unAsigned,
+    enquireDetails = new FamilyDeliveresStatistics(getLang().enquireDetails, { deliverStatus: DeliveryStatus.enquireDetails }, colors.orange);
+    waitForAdmin = new FamilyDeliveresStatistics(getLang().waitingForAdmin, { deliverStatus: DeliveryStatus.waitingForAdmin }, colors.orange);
+    ready = new FamilyDeliveresStatistics(getLang().unAsigned,
         {
             special: { "!=": YesNo.Yes },
             $and: [
@@ -25,19 +25,19 @@ export class FamilyDeliveryStats {
             ]
         }
         , colors.yellow);
-    selfPickup = new FamilyDeliveresStatistics(getLang(remult).selfPickup, { deliverStatus: DeliveryStatus.SelfPickup }, colors.orange);
-    special = new FamilyDeliveresStatistics(getLang(remult).specialUnasigned,
+    selfPickup = new FamilyDeliveresStatistics(getLang().selfPickup, { deliverStatus: DeliveryStatus.SelfPickup }, colors.orange);
+    special = new FamilyDeliveresStatistics(getLang().specialUnasigned,
         {
             special: YesNo.Yes,
             $and: [FamilyDeliveries.readyFilter()]
         }
         , colors.orange);
 
-    onTheWay = new FamilyDeliveresStatistics(getLang(remult).onTheWay, FamilyDeliveries.onTheWayFilter(), colors.blue);
-    delivered = new FamilyDeliveresStatistics(getLang(remult).delveriesSuccesfull, { deliverStatus: DeliveryStatus.isSuccess() }, colors.green);
-    problem = new FamilyDeliveresStatistics(getLang(remult).problems, { deliverStatus: DeliveryStatus.isProblem() }, colors.red);
-    frozen = new FamilyDeliveresStatistics(getLang(remult).frozens, { deliverStatus: DeliveryStatus.Frozen }, colors.gray);
-    needWork = new FamilyDeliveresStatistics(getLang(remult).requireFollowUp, { needsWork: true }, colors.yellow);
+    onTheWay = new FamilyDeliveresStatistics(getLang().onTheWay, FamilyDeliveries.onTheWayFilter(), colors.blue);
+    delivered = new FamilyDeliveresStatistics(getLang().delveriesSuccesfull, { deliverStatus: DeliveryStatus.isSuccess() }, colors.green);
+    problem = new FamilyDeliveresStatistics(getLang().problems, { deliverStatus: DeliveryStatus.isProblem() }, colors.red);
+    frozen = new FamilyDeliveresStatistics(getLang().frozens, { deliverStatus: DeliveryStatus.Frozen }, colors.gray);
+    needWork = new FamilyDeliveresStatistics(getLang().requireFollowUp, { needsWork: true }, colors.yellow);
 
 
     async getData(distCenter: DistributionCenters) {
@@ -81,7 +81,7 @@ export class FamilyDeliveryStats {
 
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         sql.addEntity(f, "FamilyDeliveries")
         let baskets = await getDb().execute(await sql.build(sql.query({
             select: () => [f.basketType,
@@ -180,7 +180,7 @@ export interface groupStats {
 @Entity<CitiesStats>(undefined, {
     sqlExpression: async (self) => {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
 
         return sql.build('(', (await sql.query({
             select: () => [f.city, sql.columnWithAlias("count(*)", self.deliveries)],
@@ -204,7 +204,7 @@ export class CitiesStats {
     allowApiRead: false,
     sqlExpression: async (self) => {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
 
         return sql.build('(', (await sql.query({
             select: () => [f.city, f.distributionCenter, sql.columnWithAlias("count(*)", self.families)],

@@ -64,7 +64,7 @@ export class DateRangeComponent implements OnInit {
     }
     this.dateChanged.emit();
   }
-  constructor(public settings: ApplicationSettings, private remult: Remult) {
+  constructor(public settings: ApplicationSettings) {
   }
 
   ngOnInit() {

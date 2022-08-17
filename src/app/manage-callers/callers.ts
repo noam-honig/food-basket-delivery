@@ -61,7 +61,7 @@ export class Callers extends Helpers {
 function callerCallsQuery(selfDefs: EntityMetadata<Callers>, remult: Remult) {
     let self = SqlFor(selfDefs);
     let fd: SqlDefs<FamilyDeliveries> = SqlFor(remult.repo(FamilyDeliveries));
-    let sql = new SqlBuilder(remult);
+    let sql = new SqlBuilder();
     const innerSelectDefs = {
         from: fd,
         where: () => [sql.eq(fd.caller, self.id),

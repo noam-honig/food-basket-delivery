@@ -104,13 +104,13 @@ export class DeliveryStatus {
   }
   static getOptions(remult: Remult) {
     let op = getValueList(DeliveryStatus);
-    if (!getSettings(remult).usingSelfPickupModule) {
+    if (!getSettings().usingSelfPickupModule) {
       op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id &&
         x.id != DeliveryStatus.SuccessPickedUp.id);
     }
-    if (!getSettings(remult).usingCallModule)
+    if (!getSettings().usingCallModule)
       op = op.filter(x => x.id != DeliveryStatus.enquireDetails.id && x.id != DeliveryStatus.waitingForAdmin.id);
-    if (!getSettings(remult).isSytemForMlt) {
+    if (!getSettings().isSytemForMlt) {
       op = op.filter(x =>
         x.id != DeliveryStatus.FailedNotReady.id &&
         x.id != DeliveryStatus.FailedTooFar.id

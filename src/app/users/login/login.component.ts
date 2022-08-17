@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
 
   }
-  isguest = Sites.getOrganizationFromContext(remult) == Sites.guestSchema;
+  isguest = Sites.getOrganizationFromContext() == Sites.guestSchema;
   @ViewChild("stepper", { static: false }) stepper: MatStepper;
   @ViewChild("passwordForm", { static: false }) passwordForm: ElementRef;
   @ViewChild("phoneForm", { static: false }) phoneForm: ElementRef;

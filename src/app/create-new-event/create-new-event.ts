@@ -68,19 +68,13 @@ export class CreateNewEvent {
     @Field()
     basketType: BasketType;
 
-
-    constructor(private remult: Remult) {
-
-
-    }
-
     isAllowed() {
         return remult.isAllowed(Roles.admin);
     }
     get $() { return getFields(this, remult) };
     @BackendMethod({ queue: true, allowed: Roles.admin })
     async createNewEvent(progress?: ProgressListener) {
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         for (const x of [
             [this.$.createNewDelivery, settings.$.createBasketsForAllFamiliesInCreateEvent],
             [this.$.includeGroups, settings.$.includeGroupsInCreateEvent],
@@ -107,7 +101,7 @@ export class CreateNewEvent {
                 }
                 await fd.save();
             }, progress);
-            Families.SendMessageToBrowsers(r + " " + getLang(remult).deliveriesCreated, remult, '');
+            Families.SendMessageToBrowsers(r + " " + getLang().deliveriesCreated, remult, '');
         }
         return r;
 
@@ -170,7 +164,7 @@ export class CreateNewEvent {
 
         let notDoneDeliveries = await remult.repo(ActiveFamilyDeliveries).count({ ...FamilyDeliveries.readyFilter(), distributionCenter: remult.context.filterDistCenter(this.selectedDistributionList) });
         if (notDoneDeliveries > 0) {
-            await ui.messageDialog(getLang(remult).thereAre + " " + notDoneDeliveries + " " + getLang(remult).notDoneDeliveriesShouldArchiveThem);
+            await ui.messageDialog(getLang().thereAre + " " + notDoneDeliveries + " " + getLang().notDoneDeliveriesShouldArchiveThem);
             ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
             return;
         }
@@ -181,7 +175,7 @@ export class CreateNewEvent {
             courierAssingTime: { ">=": threeHoursAgo },
             distributionCenter: remult.context.filterDistCenter(this.selectedDistributionList)
         });
-        if (recentOnTheWay > 0 && !await ui.YesNoPromise(getLang(remult).thereAre + " " + recentOnTheWay + " " + getLang(remult).deliveresOnTheWayAssignedInTheLast3Hours)) {
+        if (recentOnTheWay > 0 && !await ui.YesNoPromise(getLang().thereAre + " " + recentOnTheWay + " " + getLang().deliveresOnTheWayAssignedInTheLast3Hours)) {
             ui.navigateToComponent((await import('../family-deliveries/family-deliveries.component')).FamilyDeliveriesComponent);
             return;
         }
@@ -210,11 +204,11 @@ export class CreateNewEvent {
 
                 let count = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.context.filterDistCenter(this.selectedDistributionList) });
                 if (count > 0) {
-                    if (!await ui.YesNoPromise(getLang(remult).confirmArchive + " " + count + " " + getLang(remult).deliveries))
-                        throw getLang(remult).actionCanceled;
+                    if (!await ui.YesNoPromise(getLang().confirmArchive + " " + count + " " + getLang().deliveries))
+                        throw getLang().actionCanceled;
                 }
-                if (this.createNewDelivery && !await ui.YesNoPromise(getLang(remult).create + " " + await this.countNewDeliveries() + " " + getLang(remult).newDeliveriesQM))
-                    throw getLang(remult).actionCanceled;
+                if (this.createNewDelivery && !await ui.YesNoPromise(getLang().create + " " + await this.countNewDeliveries() + " " + getLang().newDeliveriesQM))
+                    throw getLang().actionCanceled;
             }
 
 

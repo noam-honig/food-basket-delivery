@@ -30,8 +30,8 @@ export class MyFamiliesComponent implements OnInit {
   };
   familyLists = new UserFamiliesList( this.settings);
   user: UserInfo;
-
-  constructor(public remult: Remult, public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
+  remult = remult;
+  constructor( public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
     private busy: BusyService) {
     this.user = remult.user as UserInfo;
   }

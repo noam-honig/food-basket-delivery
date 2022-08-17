@@ -28,9 +28,9 @@ describe('AppComponent', () => {
   var f: SqlDefs<Families>;
   let afd: SqlDefs<ActiveFamilyDeliveries>;
   let fd: SqlDefs<FamilyDeliveries>;
-  var sql = new SqlBuilder(remult);
+  var sql = new SqlBuilder();
   beforeEach(async () => {
-    sql = new SqlBuilder(remult);
+    sql = new SqlBuilder();
     f = SqlFor(remult.repo(Families));
     afd = SqlFor(remult.repo(ActiveFamilyDeliveries));
     fd = SqlFor(remult.repo(FamilyDeliveries));
@@ -69,7 +69,7 @@ describe('AppComponent', () => {
   it("test bla bla", async () => {
     let h = SqlFor(remult.repo(Helpers));
     let u = SqlFor(remult.repo(RegisterURL));
-    let sql = new SqlBuilder(remult);
+    let sql = new SqlBuilder();
     let urls = [];
 
 
@@ -198,7 +198,7 @@ describe('AppComponent', () => {
     }, 'select p.id from BasketType p order by p.id, p.name desc');
   });
   it("column dbname can reference root entity", async () => {
-    let sql = new SqlBuilder(remult);
+    let sql = new SqlBuilder();
     expect(await sql.columnSumInnerSelect(bt, f.familyMembers, {
       from: f,
       where: () => [sql.eq(f.basketType, bt.id)]
@@ -231,7 +231,7 @@ describe('AppComponent', () => {
     })).toBe("update BasketType p set id = e2.basketType, name = 'noam' from Families e2 where p.boxes = 5 and p.boxes = e2.familyMembers");
   });
   it('insert ', async () => {
-    sql = new SqlBuilder(remult);
+    sql = new SqlBuilder();
 
     expect(await sql.insert({
       into: bt,

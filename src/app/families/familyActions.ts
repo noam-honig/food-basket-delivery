@@ -80,7 +80,7 @@ export class NewDelivery extends ActionOnRows<Families> {
             validate: async () => {
 
                 if (!this.useFamilyDistributionList && !this.distributionCenter) {
-                    this.$.distributionCenter.error = getLang(remult).mustSelectDistributionList;
+                    this.$.distributionCenter.error = getLang().mustSelectDistributionList;
                     throw this.$.distributionCenter.error;
                 }
             },
@@ -110,7 +110,7 @@ export class NewDelivery extends ActionOnRows<Families> {
             additionalWhere: { status: FamilyStatus.Active },
 
 
-            title: getLang(remult).newDelivery,
+            title: getLang().newDelivery,
             icon: 'add_shopping_cart',
             forEach: async f => {
 
@@ -182,7 +182,7 @@ export class updateGroup extends ActionOnRows<Families> {
     constructor(remult: Remult) {
         super(remult, Families, {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
-            title: getLang(remult).assignAFamilyGroup,
+            title: getLang().assignAFamilyGroup,
             forEach: async f => {
                 this.action.whatToDo(f.groups, this.group, x => f.groups = x);
             }
@@ -210,7 +210,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 
     constructor(remult: Remult) {
         super(remult, Families, {
-            help: () => getLang(remult).updateStatusHelp,
+            help: () => getLang().updateStatusHelp,
             dialogColumns: async () => {
                 if (!this.status)
                     this.status = FamilyStatus.Active;
@@ -224,7 +224,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 
                 ]
             },
-            title: getLang(remult).updateFamilyStatus,
+            title: getLang().updateFamilyStatus,
             forEach: async f => {
                 f.status = this.status;
                 if (this.deleteExistingComment) {
@@ -261,7 +261,7 @@ export class UpdateBasketType extends ActionOnRows<Families> {
 
     constructor(remult: Remult) {
         super(remult, Families, {
-            title: getLang(remult).updateDefaultBasket,
+            title: getLang().updateDefaultBasket,
             forEach: async f => { f.basketType = this.basket },
         });
     }
@@ -278,7 +278,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     constructor(remult: Remult) {
         super(remult, Families, {
             visible: c => c.settings.usingSelfPickupModule,
-            title: getLang(remult).updateDefaultSelfPickup,
+            title: getLang().updateDefaultSelfPickup,
             forEach: async f => {
                 {
                     f.defaultSelfPickup = this.selfPickup;
@@ -314,7 +314,7 @@ export class UpdateArea extends ActionOnRows<Families> {
 
     constructor(remult: Remult) {
         super(remult, Families, {
-            title: getLang(remult).updateArea,
+            title: getLang().updateArea,
             forEach: async f => { f.area = this.area.trim() },
         });
     }
@@ -326,7 +326,7 @@ export class UpdateQuantity extends ActionOnRows<Families> {
 
     constructor(remult: Remult) {
         super(remult, Families, {
-            title: getLang(remult).updateDefaultQuantity,
+            title: getLang().updateDefaultQuantity,
             forEach: async f => { f.quantity = this.quantity },
         });
     }
@@ -338,7 +338,7 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
 
     constructor(remult: Remult) {
         super(remult, Families, {
-            title: getLang(remult).updateFamilySource,
+            title: getLang().updateFamilySource,
             forEach: async f => { f.familySource = this.familySource }
         });
     }
@@ -356,7 +356,7 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
                 { field: this.$.courier, visible: () => !this.clearVoulenteer }
             ],
 
-            title: getLang(remult).updateDefaultVolunteer,
+            title: getLang().updateDefaultVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer) {
                     fd.fixedCourier = null;
@@ -384,7 +384,7 @@ export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
                 ]
             },
 
-            title: getLang(remult).updateDefaultDistributionCenter,
+            title: getLang().updateDefaultDistributionCenter,
             forEach: async fd => {
 
                 fd.defaultDistributionCenter = this.distributionCenter;

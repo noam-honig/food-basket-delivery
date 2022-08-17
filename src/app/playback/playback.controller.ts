@@ -14,7 +14,7 @@ export class PlaybackController {
 
         toDateDate = new Date(toDateDate.getFullYear(), toDateDate.getMonth(), toDateDate.getDate() + 1);
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         sql.addEntity(f, "Families");
         let r = (await getDb().execute(await sql.query({
             select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier, f.courierAssingTime, f.deliveryStatusDate],

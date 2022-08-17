@@ -37,26 +37,26 @@ export class HelpersController {
     static async sendInvite(helperId: string) {
         let h = await remult.repo(Helpers).findId(helperId);
         if (!h)
-            return getLang(remult).unfitForInvite;
+            return getLang().unfitForInvite;
         if (!(h.admin || h.distCenterAdmin))
-            return getLang(remult).unfitForInvite;
-        let url = remult.context.getSettings() + '/' + Sites.getOrganizationFromContext(remult);
-        let s = await ApplicationSettings.getAsync(remult);
+            return getLang().unfitForInvite;
+        let url = remult.context.getSettings() + '/' + Sites.getOrganizationFromContext();
+        let s = await ApplicationSettings.getAsync();
         let hasPassword = h.password && h.password.length > 0;
-        let message = getLang(remult).hello + ` ${h.name}
-  `+ getLang(remult).welcomeTo + ` ${s.organisationName}.
-  `+ getLang(remult).pleaseEnterUsing + `
+        let message = getLang().hello + ` ${h.name}
+  `+ getLang().welcomeTo + ` ${s.organisationName}.
+  `+ getLang().pleaseEnterUsing + `
   ${url}
   `;
         if (!hasPassword) {
-            message += getLang(remult).enterFirstTime
+            message += getLang().enterFirstTime
         }
         await new SendSmsUtils().sendSms(h.phone.thePhone, message, h);
-        return getLang(remult).inviteSentSuccesfully
+        return getLang().inviteSentSuccesfully
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async clearCommentsOnServer(remult?: Remult) {
+    static async clearCommentsOnServer() {
         for await (const h of remult.repo(Helpers).query({ where: { eventComment: { "!=": "" } } })) {
             h.eventComment = '';
             await h.save();
@@ -64,7 +64,7 @@ export class HelpersController {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async clearEscortsOnServer(remult?: Remult) {
+    static async clearEscortsOnServer() {
         for await (const h of remult.repo(Helpers).query()) {
             h.escort = null;
             h.needEscort = false;

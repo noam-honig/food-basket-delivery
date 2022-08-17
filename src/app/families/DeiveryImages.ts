@@ -33,7 +33,7 @@ export class DeliveryImage extends IdEntity {
             return SqlDatabase.customFilter(async b => {
                 var f = await SqlFor(remult.repo(Families));
                 var fi = await SqlFor(remult.repo(FamilyImage));
-                var sql = new SqlBuilder(remult);
+                var sql = new SqlBuilder();
                 b.sql = await sql.build(fi.familyId, sql.func(" in ", sql.build("select ", f.id, " from ", f, " where ", f.defaultDistributionCenter, "=", sql.str(remult.user.distributionCenter))));
             })
         }

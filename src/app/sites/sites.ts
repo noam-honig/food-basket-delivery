@@ -1,4 +1,4 @@
-import { Remult, DataProvider } from "remult";
+import {  DataProvider, Remult, remult } from "remult";
 
 
 import { Roles } from "../auth/roles";
@@ -12,8 +12,8 @@ export class Sites {
         this.schemas.push(id);
     }
 
-    static isOverviewSchema(remult: Remult) {
-        return Sites.getOrganizationFromContext(remult) == Sites.guestSchema;
+    static isOverviewSchema() {
+        return Sites.getOrganizationFromContext() == Sites.guestSchema;
     }
     static guestSchema = 'guest';
     static schemas = [];
@@ -55,11 +55,11 @@ export class Sites {
 
     }
 
-    static getValidSchemaFromContext(y: Remult) {
+    static getValidSchemaFromContext() {
         if (!Sites.multipleSites)
             return '';
         try {
-            let org = Sites.getOrganizationFromContext(y);
+            let org = Sites.getOrganizationFromContext();
             if (!Sites.isValidOrganization(org))
                 return Sites.guestSchema;
             return org;
@@ -68,17 +68,15 @@ export class Sites {
             return Sites.guestSchema;
         }
     }
-    static setSiteToContext(c: Remult, site: string) {
-        c.context.getSite = () => site;
+    static setSiteToContext( site: string) {
+        remult.context.getSite = () => site;
     }
 
-    static getOrganizationFromContext(y: Remult) {
-        if (!Sites.multipleSites)
-            return '';
-        return y.context.getSite();
+    static getOrganizationFromContext() {
+        return remult.context.getSite();
     }
-    static getOrgRole(y: Remult) {
-        return 'org:' + Sites.getOrganizationFromContext(y);
+    static getOrgRole() {
+        return 'org:' + Sites.getOrganizationFromContext();
     }
 
 }
@@ -110,8 +108,8 @@ const langForSite = new Map<string, Language>();
 export function setLangForSite(site: string, lang: TranslationOptions) {
     langForSite.set(site, langByCode(lang.args.languageFile));
 }
-export function getLang(remult: Remult) {
-    let r = langForSite.get(Sites.getValidSchemaFromContext(remult));
+export function getLang() {
+    let r = langForSite.get(Sites.getValidSchemaFromContext());
     if (r)
         return r;
     return use.language;

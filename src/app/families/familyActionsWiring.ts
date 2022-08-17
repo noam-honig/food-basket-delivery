@@ -147,7 +147,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
 
         });
-        let message = this.args.title + ": " + r + " " + remult.repo(this.entity).metadata.caption + " " + getLang(remult).updated;
+        let message = this.args.title + ": " + r + " " + remult.repo(this.entity).metadata.caption + " " + getLang().updated;
 
         await Families.SendMessageToBrowsers(message, remult, '');
         return r;

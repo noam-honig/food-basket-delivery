@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Remult, ValueConverters } from 'remult';
+import { remult,  ValueConverters } from 'remult';
 
 import { PreviousDeliveryController } from './previous-delivery-comments.controller';
 
@@ -11,7 +11,7 @@ import { PreviousDeliveryController } from './previous-delivery-comments.control
 export class PreviousDeliveryCommentsComponent implements OnInit {
   args: { family: string; };
 
-  constructor(public remult: Remult) { }
+  remult = remult;
   comments: {
     date,
     comment

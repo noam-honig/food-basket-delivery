@@ -50,7 +50,7 @@ export class CallModuleGuard extends AuthenticatedGuard {
 
     isAllowed() {
 
-        return remult.isAllowed(Roles.callPerson) && getSettings(remult).usingCallModule;
+        return remult.isAllowed(Roles.callPerson) && getSettings().usingCallModule;
     }
 }
 
@@ -95,7 +95,6 @@ export class distCenterOrLabGuard extends AuthenticatedGuard {
 
 @Injectable()
 export class EventListGuard implements CanActivate {
-    constructor(private remult: Remult) { }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
         return !remult.authenticated() || !remult.isAllowed(Roles.distCenterAdmin)
     }

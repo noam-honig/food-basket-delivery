@@ -15,9 +15,6 @@ export class RegisterURL extends IdEntity {
     @Field({ caption: "שם ייחודי לדוחות", allowApiUpdate: Roles.distCenterAdmin })
     prettyName: string
 
-    constructor(private remult: Remult) {
-        super();
-    }
 
     urlPrettyName(url: string) {
         let s = url.slice(7).split('/')[0].trim();
@@ -25,12 +22,12 @@ export class RegisterURL extends IdEntity {
     }
 
     @BackendMethod({ allowed: Roles.admin })
-    static async loadUrlsFromTables(remult?: Remult) {
+    static async loadUrlsFromTables() {
 
         let h = SqlFor(remult.repo(Helpers));
         let f = SqlFor(remult.repo(Families));
         let u = SqlFor(remult.repo(RegisterURL));
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         let urls = [];
 
         async function loadUrls(sql: SqlBuilder, table: SqlDefs, field: FieldMetadata) {

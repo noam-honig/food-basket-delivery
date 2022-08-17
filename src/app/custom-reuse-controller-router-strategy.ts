@@ -7,9 +7,6 @@ import { Injectable } from "@angular/core";
 export class CustomReuseStrategy implements RouteReuseStrategy {
 
     handlers: { [key: string]: DetachedRouteHandle } = {};
-    constructor(
-        private remult: Remult
-    ) { }
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         let x = (<any>route.component).prototype[reuseComponentOnNavigationAndCallMeWhenNavigatingToIt];
         //console.debug('CustomReuseStrategy:shouldDetach', this.getRouteInfo(route), this.handlers);

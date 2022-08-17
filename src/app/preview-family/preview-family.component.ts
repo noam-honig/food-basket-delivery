@@ -18,7 +18,7 @@ export class PreviewFamilyComponent implements OnInit {
 
   familyLists = new UserFamiliesList( this.settings);
   public argsFamily: ActiveFamilyDeliveries;
-  constructor(public remult: Remult, private dialogRef: MatDialogRef<any>
+  constructor( private dialogRef: MatDialogRef<any>
     , public settings: ApplicationSettings) { }
   async ngOnInit() {
 

@@ -283,7 +283,7 @@ export class SqlBuilder {
 
         return this.build(...result);
     }
-    constructor(private remult: Remult) {
+    constructor() {
         if (remult && !remult.context.getSite)
             InitContext(remult);
 
@@ -386,7 +386,7 @@ export class myDummySQLCommand implements SqlCommand {
         if (val instanceof Date)
             val = val.toISOString();
         if (typeof (val) == "string") {
-            return new SqlBuilder(undefined).str(val);
+            return new SqlBuilder().str(val);
         }
         return val.toString();
     }

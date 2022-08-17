@@ -49,7 +49,7 @@ export class AsignFamilyController {
         result.special = await countFamilies({ special: YesNo.Yes });
 
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let fd = SqlFor(remult.repo(FamilyDeliveries));
 
@@ -167,7 +167,7 @@ export class AsignFamilyController {
             },
         });
         if (!strategy)
-            strategy = (await ApplicationSettings.getAsync(remult)).routeStrategy;
+            strategy = (await ApplicationSettings.getAsync()).routeStrategy;
 
         if (!strategy)
             throw "Invalid Strategy";
@@ -263,7 +263,7 @@ export class AsignFamilyController {
                 info.preferRepeatFamilies = false;
             }
             let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             sql.addEntity(f, 'Families');
             let r = (await getDb().execute(await sql.query({
                 select: () => [sql.build('distinct ', [f.addressLatitude, f.addressLongitude])],
@@ -291,7 +291,7 @@ export class AsignFamilyController {
 
         let waitingFamilies = await getFamilies();
         let i = 0;
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         while (i < info.numOfBaskets) {
             if (progress)
                 progress.progress(i / info.numOfBaskets);
@@ -488,7 +488,7 @@ export class AsignFamilyController {
         filterArea: string
     }
     ) {
-        var sql = new SqlBuilder(remult);
+        var sql = new SqlBuilder();
         var fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
         let result = await getDb().execute(await sql.query({
@@ -542,7 +542,7 @@ export class AsignFamilyController {
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin, blockUser: false })
     static async getHelperStats(id: string) {
-        const sql = new SqlBuilder(remult);
+        const sql = new SqlBuilder();
         var fd = SqlFor(remult.repo(FamilyDeliveries));
         const result = await getDb().execute(await sql.query({
             select: () => [

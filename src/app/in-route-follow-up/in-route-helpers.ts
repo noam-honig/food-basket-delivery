@@ -18,7 +18,7 @@ import { UITools } from "../helpers/init-context";
     allowApiRead: Roles.admin,
     defaultOrderBy: { minAssignDate: "asc" },
     sqlExpression: async (self) => {
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
 
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let history = SqlFor(remult.repo(FamilyDeliveries));
@@ -85,7 +85,7 @@ export class InRouteHelpers extends IdEntity {
             knowTotalRows: true,
             rowButtons: [
                 {
-                    name: getLang(remult).editComment,
+                    name: getLang().editComment,
                     click: async (r) => {
                         ui.inputAreaDialog({
                             title: 'ערוך הערה',
@@ -182,9 +182,6 @@ export class InRouteHelpers extends IdEntity {
     })
     frozenTill: Date;
 
-    constructor(private remult: Remult) {
-        super();
-    }
 }
 
 
@@ -197,7 +194,7 @@ export class InRouteHelpers extends IdEntity {
     saving: async (self) => {
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = (await self.remult.context.getCurrentUser());
+            self.createUser = (await remult.context.getCurrentUser());
         }
     }
 })
@@ -236,10 +233,5 @@ export class HelperCommunicationHistory extends IdEntity {
 
     @Field({ translation: l => l.done })
     handled: boolean = false;
-
-
-    constructor(private remult: Remult) {
-        super()
-    }
 
 }

@@ -132,7 +132,7 @@ export class EventsComponent implements OnInit {
     new columnOrderAndWidthSaver(this.events).load('events-component');
   }
   copyLink() {
-    copy(window.origin + '/' + Sites.getOrganizationFromContext(remult) + '/events');
+    copy(window.origin + '/' + Sites.getOrganizationFromContext() + '/events');
     this.dialog.Info(this.settings.lang.linkCopied);
   }
   @ViewChild(EventCardComponent) card: EventCardComponent;

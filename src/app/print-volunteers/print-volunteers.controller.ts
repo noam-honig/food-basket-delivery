@@ -1,11 +1,11 @@
-import { Remult, BackendMethod } from 'remult';
+import { Remult, BackendMethod, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 
 
 export class PrintVolunteersController{
     @BackendMethod({ allowed: Roles.admin })
-    static async volunteersForPrint(remult?: Remult) {
+    static async volunteersForPrint() {
       let total = 0;
       let volunteers: volunteer[] = [];
       for await (const d of  remult.repo(ActiveFamilyDeliveries).query()) {

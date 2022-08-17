@@ -20,7 +20,7 @@ export class DistributionMapController {
     static async GetDeliveriesLocation(onlyPotentialAsignment?: boolean, city?: string, group?: string, distCenter?: DistributionCenters, area?: string, basket?: BasketType) {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let h = SqlFor(remult.repo(Helpers));
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         sql.addEntity(f, "FamilyDeliveries");
         let r = (await getDb().execute(await sql.query({
             select: () => [f.id, f.addressLatitude, f.addressLongitude, f.deliverStatus, f.courier,
@@ -35,7 +35,7 @@ export class DistributionMapController {
             where: () => {
 
                 let where: EntityFilter<ActiveFamilyDeliveries>[] = [{ distributionCenter: remult.context.filterDistCenter(distCenter) }];
-                if (area !== undefined && area !== null && area != getLang(remult).allRegions) {
+                if (area !== undefined && area !== null && area != getLang().allRegions) {
                     where.push({ area: area });
                 }
 
@@ -63,12 +63,12 @@ export class DistributionMapController {
         }) as deliveryOnMap[];
     }
     @BackendMethod({ allowed: Roles.overview })
-    static async GetLocationsForOverview(remult?: Remult) {
+    static async GetLocationsForOverview() {
 
         let result: deliveryOnMap[] = []
         let f = SqlFor(remult.repo(FamilyDeliveries));
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         sql.addEntity(f, "fd");
 
 

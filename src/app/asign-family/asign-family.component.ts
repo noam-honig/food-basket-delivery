@@ -279,7 +279,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             }
 
             this.areas = r.areas;
-            if (this.filterArea != getLang(remult).allRegions && !this.areas.find(x => x.name == this.filterArea)) {
+            if (this.filterArea != getLang().allRegions && !this.areas.find(x => x.name == this.filterArea)) {
 
                 this.areas.push({ name: this.filterArea, unassignedFamilies: 0 });
             }

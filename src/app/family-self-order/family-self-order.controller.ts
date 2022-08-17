@@ -57,14 +57,14 @@ export class FamilySelfOrderController {
         ]
     })
 
-    @BackendMethod({ allowed: (remult, self) => getSettings(remult).familySelfOrderEnabled })
+    @BackendMethod({ allowed: (remult, self) => getSettings().familySelfOrderEnabled })
     async load() {
         let f = await this.loadFamily();
         if (!f)
             return;
         this.familyName = f.name;
     }
-    @BackendMethod({ allowed: (remult, self) => getSettings(remult).familySelfOrderEnabled })
+    @BackendMethod({ allowed: (remult, self) => getSettings().familySelfOrderEnabled })
     async update() {
         let f = await this.loadFamily();
         if (!f)

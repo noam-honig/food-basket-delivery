@@ -36,14 +36,6 @@ export class RegisterToEvent {
         helperField?: FieldMetadata,
         getFieldToUpdate: (h: FieldsRef<Helpers>, e: FieldsRef<volunteersInEvent>) => FieldRef
     }[] = [];
-    constructor(private remult: Remult) {
-
-
-
-
-
-
-    }
     inited = false;
     async init() {
         if (this.inited)
@@ -79,9 +71,9 @@ export class RegisterToEvent {
         translation: l => l.phone,
         valueType: Phone,
         validate: (e, c) => {
-            if (!e.remult.authenticated()) {
+            if (!remult.authenticated()) {
                 c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone))
-                Phone.validatePhone(c, e.remult, true);
+                Phone.validatePhone(c, remult, true);
             }
 
         }
@@ -90,8 +82,8 @@ export class RegisterToEvent {
     @Field<RegisterToEvent>({
         caption: "שם",
         validate: (e, name) => {
-            if (!e.remult.authenticated()) {
-                Validators.required(e, name, e.remult.context.lang.nameIsTooShort)
+            if (!remult.authenticated()) {
+                Validators.required(e, name, remult.context.lang.nameIsTooShort)
             }
         }
     })
@@ -188,7 +180,7 @@ export class RegisterToEvent {
             let dp = Sites.getDataProviderForOrg(site);
 
             remult.setDataProvider(dp);
-            Sites.setSiteToContext(remult, site);
+            Sites.setSiteToContext(site);
             await InitContext(remult);
         }
         let helper: Helpers;
@@ -237,7 +229,7 @@ export class RegisterToEvent {
             const what = helper.name + " " + (register ? l.hasRegisteredTo : l.hasCanceledRegistration) + " " + event.name
             ManageController.sendEmailFromHagaiAdmin(what,
                 l.hello + " " + (await remult.context.getSettings()).organisationName + "\r\n\r\n" +
-                what + " " + l.thatWillTakePlaceAt + " " + event.$.eventDate.displayValue, remult);
+                what + " " + l.thatWillTakePlaceAt + " " + event.$.eventDate.displayValue);
 
         }
         catch { }
@@ -250,4 +242,3 @@ interface VolunteerInfo {
     name: string;
     lastName: string;
 }
-

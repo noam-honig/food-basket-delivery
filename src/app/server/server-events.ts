@@ -43,11 +43,11 @@ class userInSite {
 export class ServerEvents {
     sites = new Map<string, userInSite[]>();
 
-    constructor(private app: Express, getRemult: (req:any) => Promise<Remult>) {
+    constructor(private app: Express, getRemult: (req: any) => Promise<Remult>) {
         this.app.get('/*/api/stream', async (req, res) => {
 
             let remult = await getRemult(req);
-            let org = Sites.getOrganizationFromContext(remult);
+            let org = remult.context.getSite();
             res.writeHead(200, {
                 "Access-Control-Allow-Origin": req.header('origin') ? req.header('origin') : '',
                 "Access-Control-Allow-Credentials": "true",
@@ -87,7 +87,7 @@ export class ServerEvents {
     SendMessage(x: string, remult: Remult, distributionCenter: string) {
         let z = this;
         setTimeout(() => {
-            let org = Sites.getOrganizationFromContext(remult);
+            let org = Sites.getOrganizationFromContext();
             let y = z.sites.get(org);
             if (y)
                 y.forEach(y => y.write(distributionCenter, "data:" + x + "\n\n"));

@@ -62,7 +62,7 @@ export class eventStatus {
         if (isBackend()) {
             await self.addressHelper.updateApiResultIfChanged();
             if (self.distributionCenter == null)
-                self.distributionCenter = await self.remult.context.defaultDistributionCenter();
+                self.distributionCenter = await remult.context.defaultDistributionCenter();
         }
     },
     apiPrefilter: () => ({
@@ -125,7 +125,7 @@ export class Event extends IdEntity {
         }))
     }
     @Field<Event>({
-        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await self.remult.context.getCurrentUser()))
+        serverExpression: async self => self.volunteeredIsRegisteredToEvent((await remult.context.getCurrentUser()))
     })
     registeredToEvent: boolean;
 
@@ -137,7 +137,7 @@ export class Event extends IdEntity {
             { token: "תאריך", caption: "מועד הארוע", value: eventDisplayDate(this) },
             { token: "משעה", value: this.startTime },
             { token: "עד שעה", value: this.endTime },
-            { token: "ארגון", value: getSettings(remult).organisationName },
+            { token: "ארגון", value: getSettings().organisationName },
         ]);
     }
 
@@ -149,8 +149,8 @@ export class Event extends IdEntity {
     }
 
     @BackendMethod({ allowed: Roles.admin, queue: true })
-    async sendParticipationConfirmMessage(remult?: Remult, progress?: ProgressListener) {
-        let settings = await ApplicationSettings.getAsync(remult);
+    async sendParticipationConfirmMessage(progress?: ProgressListener) {
+        let settings = await ApplicationSettings.getAsync();
         if (!settings.bulkSmsEnabled)
             throw "אינך רשאי לשלוח הודעות לקבוצה";
         let i = 0;
@@ -177,8 +177,8 @@ export class Event extends IdEntity {
         return "נשלחו " + i + " הודעות";
     }
     @BackendMethod({ allowed: Roles.admin, queue: true })
-    async sendParticipationReminderMessageMessage(remult?: Remult, progress?: ProgressListener) {
-        let settings = await ApplicationSettings.getAsync(remult);
+    async sendParticipationReminderMessageMessage(progress?: ProgressListener) {
+        let settings = await ApplicationSettings.getAsync();
         if (!settings.bulkSmsEnabled)
             throw "אינך רשאי לשלוח הודעות לקבוצה";
         const message = await remult.repo(MessageTemplate).findId("attendanceReminder", { createIfNotFound: true });
@@ -209,7 +209,7 @@ export class Event extends IdEntity {
 
     @Field<Event>({
         translation: l => l.eventName,
-        validate: (s, c) => Validators.required(s, c, s.remult.context.lang.nameIsTooShort)
+        validate: (s, c) => Validators.required(s, c, remult.context.lang.nameIsTooShort)
     })
     name: string;
     @Field()
@@ -222,7 +222,7 @@ export class Event extends IdEntity {
         translation: l => l.eventDate,
         validate: (s, c) => {
             if (!c.value || c.value.getFullYear() < 2018)
-                c.error = s.remult.context.lang.invalidDate;
+                c.error = remult.context.lang.invalidDate;
         }
     })
     eventDate: Date = new Date();
@@ -253,7 +253,7 @@ export class Event extends IdEntity {
         sqlExpression: async (selfDefs) => {
             var vie = SqlFor(remult.repo(volunteersInEvent));
             let self = SqlFor(selfDefs);
-            var sql = new SqlBuilder(remult);
+            var sql = new SqlBuilder();
             return sql.columnCount(self, {
                 from: vie,
                 where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false })]
@@ -267,7 +267,7 @@ export class Event extends IdEntity {
         sqlExpression: async (selfDefs) => {
             var vie = SqlFor(remult.repo(volunteersInEvent));
             let self = SqlFor(selfDefs);
-            var sql = new SqlBuilder(remult);
+            var sql = new SqlBuilder();
             return sql.columnCountWithAs(self, {
                 from: vie,
                 where: () => [sql.eq(vie.eventId, self.id), vie.where({ canceled: false, confirmed: true })]
@@ -284,21 +284,18 @@ export class Event extends IdEntity {
     get eventLogo() {
         if (this.imageUrl)
             return this.imageUrl;
-        return getSettings(remult).logoUrl;
+        return getSettings().logoUrl;
     }
     get location() {
         return this.getAddress()?.location;
     }
     get orgName() {
-        return getSettings(remult).organisationName;
+        return getSettings().organisationName;
     }
     get eventDateJson() {
         return ValueConverters.DateOnly.toJson(this.eventDate);
     }
 
-    constructor(private remult: Remult) {
-        super();
-    }
     openEditDialog(ui: UITools, cancel: () => void = () => { }) {
         ui.inputAreaDialog({
             title: use.language.eventInfo,
@@ -415,14 +412,14 @@ export class Event extends IdEntity {
             return this.phone1Description;
         if (this.distributionCenter.phone1?.thePhone)
             return this.distributionCenter.phone1Description;
-        return getSettings(remult).helpText;
+        return getSettings().helpText;
     }
     getPhone(): Phone {
         if (this.phone1?.thePhone)
             return this.phone1;
         if (this.distributionCenter.phone1?.thePhone)
             return this.distributionCenter.phone1;
-        return getSettings(remult).helpPhone;
+        return getSettings().helpPhone;
     }
     get thePhone() {
         return this.getPhone()?.thePhone;
@@ -440,7 +437,7 @@ export class Event extends IdEntity {
             return this.addressHelper;
         if (this.distributionCenter?.addressHelper.ok)
             return this.distributionCenter.addressHelper;
-        return getSettings(remult).addressHelper;
+        return getSettings().addressHelper;
     }
     get city() {
         if (this.getAddress().ok)
@@ -491,7 +488,7 @@ export class volunteersInEvent extends IdEntity {
     @Field<volunteersInEvent>({
         translation: l => l.volunteerName,
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -506,7 +503,7 @@ export class volunteersInEvent extends IdEntity {
     @Field<volunteersInEvent>({
         translation: l => l.volunteerComment,
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -520,7 +517,7 @@ export class volunteersInEvent extends IdEntity {
     @Field({
         translation: l => l.volunteerPhoneNumber,
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -534,7 +531,7 @@ export class volunteersInEvent extends IdEntity {
     @Field({
         translation: l => l.deliveriesAssigned,
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let d = SqlFor(remult.repo(ActiveFamilyDeliveries));
             return sql.columnCount(self, { from: d, where: () => [sql.eq(self.helper, d.courier)] })
@@ -551,7 +548,7 @@ export class volunteersInEvent extends IdEntity {
     @Field({
         translation: l => l.delveriesSuccessfulEver,
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let d = SqlFor(remult.repo(FamilyDeliveries));
             return sql.columnCountWithAs(self, { from: d, where: () => [sql.eq(self.helper, d.courier), d.where({ deliverStatus: DeliveryStatus.isSuccess() })] }, 'succesfulDeliveries')
@@ -562,7 +559,7 @@ export class volunteersInEvent extends IdEntity {
     @Field<volunteersInEvent>({
         translation: l => l.email,
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -575,7 +572,7 @@ export class volunteersInEvent extends IdEntity {
     helperEmail: string;
     @Field<volunteersInEvent>({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -588,7 +585,7 @@ export class volunteersInEvent extends IdEntity {
     preferredDistributionAreaAddress: string;
     @Field<volunteersInEvent>({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -601,7 +598,7 @@ export class volunteersInEvent extends IdEntity {
     preferredFinishAddress: string;
     @Field<volunteersInEvent>({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -614,7 +611,7 @@ export class volunteersInEvent extends IdEntity {
     preferredDistributionAreaAddressCity: string;
     @Field<volunteersInEvent>({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -627,7 +624,7 @@ export class volunteersInEvent extends IdEntity {
     preferredFinishAddressCity: string;
     @Field({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let h = SqlFor(remult.repo(Helpers));
             return sql.columnInnerSelect(self, {
@@ -640,7 +637,7 @@ export class volunteersInEvent extends IdEntity {
     lastSmsTime: Date;
     @Field({
         sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             let d = SqlFor(remult.repo(FamilyDeliveries));
             return sql.columnMaxWithAs(self, d.courierAssingTime, { from: d, where: () => [sql.eq(self.helper, d.courier)] }, 'lastAssignTime')
@@ -692,7 +689,7 @@ export class volunteersInEvent extends IdEntity {
             columnSettings: (ev: FieldsMetadata<volunteersInEvent>) => [
                 { width: '100', field: ev.helperName, readonly: true },
                 {
-                    caption: getLang(remult).volunteerStatus,
+                    caption: getLang().volunteerStatus,
                     getValue: v => {
                         if (v.canceled)
                             return use.language.canceledParticipation;
@@ -701,12 +698,12 @@ export class volunteersInEvent extends IdEntity {
                             additionalText = ", " + v.$.confirmed.metadata.caption;
                         if (v.assignedDeliveries > 0)
                             if (v.lastAssignTime < v.lastSmsTime)
-                                return getLang(remult).smsSent + additionalText;
+                                return getLang().smsSent + additionalText;
                             else
-                                return getLang(remult).assigned + additionalText;
+                                return getLang().assigned + additionalText;
                         else if (v.succesfulDeliveries == 0)
-                            return getLang(remult).newVolunteer + additionalText
-                        else return getLang(remult).unAsigned + additionalText
+                            return getLang().newVolunteer + additionalText
+                        else return getLang().unAsigned + additionalText
 
                     },
                     width: '100'
@@ -744,12 +741,12 @@ export class volunteersInEvent extends IdEntity {
             },
             gridButtons: [
                 {
-                    name: getLang(remult).sendRequestConfirmSms,
-                    visible: () => getSettings(remult).bulkSmsEnabled && gridSettings.currentRow,
+                    name: getLang().sendRequestConfirmSms,
+                    visible: () => getSettings().bulkSmsEnabled && gridSettings.currentRow,
                     click: async () => {
                         ui.editCustomMessageDialog({
                             helpText: 'פעולה זו תשלח הודעה לכל מתנדבי הארוע ותבקש מהם לאשר הגעה.  אם המתנדב ישיב "כן", ירשם שהוא אישור הגעה, אם השיב "לא" ירשם שביטל השתתפות ואם השיב "הסר" יוסר מרשימות התפוצה',
-                            title: getLang(remult).sendRequestConfirmSms,
+                            title: getLang().sendRequestConfirmSms,
                             message: event.createMessage(gridSettings.currentRow),
                             templateText: settings.confirmEventParticipationMessage,
                             buttons: [
@@ -778,15 +775,15 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
-                    name: getLang(remult).sendAttendanceReminder,
-                    visible: () => getSettings(remult).bulkSmsEnabled && gridSettings.currentRow,
+                    name: getLang().sendAttendanceReminder,
+                    visible: () => getSettings().bulkSmsEnabled && gridSettings.currentRow,
                     click: async () => {
                         const message = await remult.repo(MessageTemplate).findId("attendanceReminder", { createIfNotFound: true });
 
 
                         ui.editCustomMessageDialog({
                             helpText: 'פעולה זו תשלח הודעה לכל מתנדבי הארוע',
-                            title: getLang(remult).sendAttendanceReminder,
+                            title: getLang().sendAttendanceReminder,
                             message: event.createMessage(gridSettings.currentRow),
                             templateText: message.template,
                             buttons: [
@@ -822,7 +819,7 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
-                    name: getLang(remult).exportToExcel,
+                    name: getLang().exportToExcel,
                     click: async () => {
                         saveToExcel((await remult.context.getSettings()), remult.repo(volunteersInEvent), gridSettings, use.language.volunteersRegisteredTo + " " + event.name, ui,
                             (e, c) => c == e.$.id || c == e.$.eventId || c == e.$.helperName || c == e.$.helperPhone)
@@ -831,7 +828,7 @@ export class volunteersInEvent extends IdEntity {
             ],
             rowButtons: [
                 {
-                    name: getLang(remult).assignDeliveryMenu,
+                    name: getLang().assignDeliveryMenu,
                     icon: 'list_alt',
                     click: async (ev) => {
                         let h = await ev.helper.getHelper();
@@ -840,7 +837,7 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
-                    name: getLang(remult).confirmed,
+                    name: getLang().confirmed,
                     icon: 'check',
                     click: async (ev) => {
                         ev.confirmed = !ev.confirmed;
@@ -848,7 +845,7 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
-                    name: getLang(remult).volunteerInfo,
+                    name: getLang().volunteerInfo,
                     icon: 'edit',
                     click: async (ev) => {
                         let h = await ev.helper.getHelper();
@@ -857,7 +854,7 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
-                    textInMenu: x => x.duplicateToNextEvent ? getLang(remult).unmarkAsFixed : getLang(remult).markAsFixed,
+                    textInMenu: x => x.duplicateToNextEvent ? getLang().unmarkAsFixed : getLang().markAsFixed,
                     icon: 'person',
                     click: async (ev) => {
                         ev.duplicateToNextEvent = !ev.duplicateToNextEvent;
@@ -865,12 +862,12 @@ export class volunteersInEvent extends IdEntity {
                     }
                 },
                 {
-                    name: getLang(remult).sendWhats,
+                    name: getLang().sendWhats,
                     click: h => h.helperPhone.sendWhatsapp(remult),
                     icon: 'textsms'
                 },
                 (() => {
-                    let b = new SendBulkSms(remult).sendSingleHelperButton(ui);
+                    let b = new SendBulkSms().sendSingleHelperButton(ui);
                     return {
                         ...b,
                         click: async v => {
@@ -882,7 +879,7 @@ export class volunteersInEvent extends IdEntity {
                 })()
                 ,
                 {
-                    name: getLang(remult).remove,
+                    name: getLang().remove,
                     click: async eh => {
                         eh.canceled = !eh.canceled;
                         await eh.save();
@@ -896,7 +893,7 @@ export class volunteersInEvent extends IdEntity {
             stateName: 'helpers-per-event',
 
             buttons: [{
-                text: getLang(remult).addVolunteer,
+                text: getLang().addVolunteer,
                 click: () => ui.selectHelper({
                     onSelect: async h => {
 

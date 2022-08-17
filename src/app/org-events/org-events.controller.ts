@@ -16,7 +16,7 @@ export class OrgEventsController {
     @BackendMethod({ allowed: true })
     static async getAllEvents(phone: string, sitesFilter: string): Promise<EventInList[]> {
         let r: EventInList[] = [];
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         let e = SqlFor(remult.repo(Event));
         let schemas = Sites.schemas;
         if (sitesFilter) {

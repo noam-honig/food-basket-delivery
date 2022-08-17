@@ -25,7 +25,6 @@ export class SendBulkSms {
         }
         return i;
     }
-    constructor(private remult: Remult) { }
     async sendBulkDialog(ui: UITools, currentHelper: Helpers) {
         let messageCount = await this.count();
         this.editInviteMethod(ui, currentHelper, {
@@ -59,7 +58,7 @@ export class SendBulkSms {
                     messageCount: 1
                 })
             },
-            visible: () => remult.isAllowed(Roles.admin) && getSettings(remult).bulkSmsEnabled
+            visible: () => remult.isAllowed(Roles.admin) && getSettings().bulkSmsEnabled
         }
     }
 
@@ -107,7 +106,7 @@ export class SendBulkSms {
     @BackendMethod({ allowed: Roles.admin })
     private async sendSingleMessage(helperId: string) {
         let helper = await remult.repo(Helpers).findId(helperId);
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         if (!settings.bulkSmsEnabled)
             throw ("Forbidden");
         let message = this.buildMessage(helper.name, settings).merge(settings.inviteVolunteersMessage);
@@ -121,7 +120,7 @@ export class SendBulkSms {
     get $() { return getFields(this) }
     async getVolunteers() {
         let db = remult._dataSource as SqlDatabase;
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         let helpers = SqlFor(remult.repo(Helpers));
         let fd = SqlFor(remult.repo(FamilyDeliveries));
         let f = SqlFor(remult.repo(Families));
@@ -189,7 +188,7 @@ export class SendBulkSms {
     buildMessage(name: string, settings: ApplicationSettings) {
         return new messageMerger([
             { token: 'מתנדב', caption: "שם המתנדב", value: name },
-            { token: 'קישור', caption: 'קישור לרישום', value: remult.context.getSettings() + '/' + Sites.getOrganizationFromContext(remult) + '/events' },
+            { token: 'קישור', caption: 'קישור לרישום', value: remult.context.getSettings() + '/' + Sites.getOrganizationFromContext() + '/events' },
             { token: 'ארגון', caption: "שם הארגון", value: settings.organisationName },
             { token: 'עיר', value: this.city },
 

@@ -15,8 +15,8 @@ export class SettingsService {
   instance: ApplicationSettings;
   async init() {
 
-    this.instance = await ApplicationSettings.getAsync(remult);
-    setSettingsForSite(Sites.getValidSchemaFromContext(remult), this.instance);
+    this.instance = await ApplicationSettings.getAsync();
+    setSettingsForSite(Sites.getValidSchemaFromContext(), this.instance);
 
     translationConfig.forWho = () => this.instance.forWho;
     DeliveryStatus.usingSelfPickupModule = this.instance.usingSelfPickupModule;

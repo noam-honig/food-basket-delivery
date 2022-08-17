@@ -35,7 +35,7 @@ export async function GetGeoInformation(address: string, remult: Remult) {
         return new GeocodeInformation(JSON.parse(cacheEntry.googleApiResult) as GeocodeResult);
     }
 
-    let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync(remult);
+    let settings = await (await import('../manage/ApplicationSettings')).ApplicationSettings.getAsync();
     let b = settings.forWho.args.bounds;
     let x = pendingRequests.get(address);
     if (!x) {
@@ -121,7 +121,7 @@ export class GeocodeInformation {
             this.info = { results: [], status: 'none' };
     }
     openGoogleMaps(remult: Remult) {
-        window.open('https://maps.google.com/maps?q=' + toLongLat(this.location()) + '&hl=' + getLang(remult).languageCode, '_blank');
+        window.open('https://maps.google.com/maps?q=' + toLongLat(this.location()) + '&hl=' + getLang().languageCode, '_blank');
     }
     getAddress() {
         if (!this.ok())

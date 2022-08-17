@@ -19,7 +19,6 @@ import { MergeFamiliesComponent } from '../merge-families/merge-families.compone
 
 export class TestMapComponent implements OnInit {
 
-  constructor(private remult: Remult) { }
   a:string='asdf';
    ngOnInit() {
      setTimeout(() => {

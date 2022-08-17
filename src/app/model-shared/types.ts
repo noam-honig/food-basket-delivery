@@ -112,7 +112,7 @@ export function relativeDateName(remult: Remult, args: { d?: Date, dontShowTimeF
   let d = args.d;
   if (!d)
     return '';
-  return moment(d).locale(getLang(remult).languageCodeHe).fromNow();
+  return moment(d).locale(getLang().languageCodeHe).fromNow();
 
 }
 
@@ -150,7 +150,7 @@ export function logChanges(e: EntityRef<any>, remult: Remult, args?: {
   if (cols) {
     var p = '';
     try {
-      p = Sites.getOrganizationFromContext(remult);
+      p = Sites.getOrganizationFromContext();
     }
     catch {
     }

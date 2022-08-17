@@ -137,7 +137,7 @@ export class AuthServiceController {
         return { authToken: await buildToken(result, settings) };
     }
     @BackendMethod({ allowed: Allow.authenticated, blockUser: false })
-    static async renewToken(remult?: Remult) {
+    static async renewToken() {
         if (!remult.authenticated())
             return undefined;
         let h = await remult.repo(Helpers).findId(remult.user.id);
@@ -162,14 +162,14 @@ export class AuthServiceController {
 async function buildHelperUserInfo(h: Helpers, remult: Remult) {
     let result: UserInfo = {
         id: h.id,
-        roles: [Sites.getOrgRole(remult)],
+        roles: [Sites.getOrgRole()],
         name: h.name,
         distributionCenter: h.distributionCenter?.id,
         theHelperIAmEscortingId: h.theHelperIAmEscorting?.id,
         escortedHelperName: h.theHelperIAmEscorting ? (h.theHelperIAmEscorting).name : ''
     };
     if (h.admin) {
-        if (Sites.isOverviewSchema(remult))
+        if (Sites.isOverviewSchema())
             result.roles.push(Roles.overview);
         else {
             result.roles.push(Roles.admin);
@@ -185,7 +185,7 @@ async function buildHelperUserInfo(h: Helpers, remult: Remult) {
         result.roles.push(Roles.familyAdmin);
         result.roles.push(Roles.distCenterAdmin);
     }
-    if (h.caller && getSettings(remult).usingCallModule)
+    if (h.caller && getSettings().usingCallModule)
         result.roles.push(Roles.callPerson);
     if ((await remult.context.getSettings()).isSytemForMlt) {
         if (h.labAdmin || h.admin)

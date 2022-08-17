@@ -95,7 +95,7 @@ export class MessageStatus {
 
             }
             if (self.isNew() && !self._disableMessageToUsers) {
-                self.distributionCenter.SendMessageToBrowser(getLang(self.remult).newDelivery, self.remult)
+                self.distributionCenter.SendMessageToBrowser(getLang().newDelivery, self.remult)
 
             }
         }
@@ -138,16 +138,16 @@ export class FamilyDeliveries extends IdEntity {
         } as ImageInfo));
     }
     addStatusExcelColumn(addColumn: (caption: string, v: string, t: import("xlsx/types").ExcelDataType) => void) {
-        addColumn(getLang(remult).statusSummary, this.statusSammary(), "s");
+        addColumn(getLang().statusSummary, this.statusSammary(), "s");
     }
     statusSammary() {
         var status = this.deliverStatus.caption;
         switch (this.deliverStatus) {
             case DeliveryStatus.ReadyForDelivery:
                 if (this.courier)
-                    status = getLang(remult).onTheWay;
+                    status = getLang().onTheWay;
                 else
-                    status = getLang(remult).unAsigned;
+                    status = getLang().unAsigned;
                 break;
             case DeliveryStatus.SelfPickup:
             case DeliveryStatus.Frozen:
@@ -155,7 +155,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.Success:
             case DeliveryStatus.SuccessPickedUp:
             case DeliveryStatus.SuccessLeftThere:
-                status = getLang(remult).delivered;
+                status = getLang().delivered;
                 break;
             case DeliveryStatus.FailedBadAddress:
             case DeliveryStatus.FailedNotHome:
@@ -165,7 +165,7 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedTooFar:
 
             case DeliveryStatus.FailedOther:
-                status = getLang(remult).problem;
+                status = getLang().problem;
                 break;
         }
         return status;
@@ -218,7 +218,7 @@ export class FamilyDeliveries extends IdEntity {
     @DataControl({ width: '100' })
     quantity: number;
     isLargeQuantity() {
-        return getSettings(remult).isSytemForMlt && (this.quantity > 10);
+        return getSettings().isSytemForMlt && (this.quantity > 10);
     }
 
     @Field({
@@ -405,7 +405,7 @@ export class FamilyDeliveries extends IdEntity {
 
     @Field({
         sqlExpression: async (self) => {
-            var sql = new SqlBuilder(remult);
+            var sql = new SqlBuilder();
 
             var fd = SqlFor(remult.repo(FamilyDeliveries));
             let f = SqlFor(self);
@@ -419,7 +419,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     })
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings(c).isSytemForMlt || c.isAllowed(Roles.familyAdmin)) })
+    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings().isSytemForMlt || c.isAllowed(Roles.familyAdmin)) })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
@@ -427,7 +427,7 @@ export class FamilyDeliveries extends IdEntity {
     archiveUser: HelpersBase;
     @Field({
         sqlExpression: async (selfDefs) => {
-            var sql = new SqlBuilder(remult);
+            var sql = new SqlBuilder();
             let self = SqlFor(selfDefs);
             return sql.case([{ when: [sql.or(sql.gtAny(self.deliveryStatusDate, 'current_date -1'), self.where({ deliverStatus: DeliveryStatus.ReadyForDelivery }))], then: true }], false);
 
@@ -436,7 +436,7 @@ export class FamilyDeliveries extends IdEntity {
     visibleToCourier: boolean;
     @Field({
         sqlExpression: async (self) => {
-            var sql = new SqlBuilder(remult);
+            var sql = new SqlBuilder();
 
             var helper = SqlFor(remult.repo(Helpers));
             let f = SqlFor(self);
@@ -472,7 +472,7 @@ export class FamilyDeliveries extends IdEntity {
         sqlExpression: async (selfDefs) => {
             let self = SqlFor(selfDefs);
             let images = SqlFor(remult.repo(DeliveryImage));
-            let sql = new SqlBuilder(remult);
+            let sql = new SqlBuilder();
             return sql.columnCount(self, {
                 from: images,
                 where: () => [sql.eq(images.deliveryId, self.id)]
@@ -572,7 +572,7 @@ export class FamilyDeliveries extends IdEntity {
     private familyForExcelExport: Families;
     async addFamilyInfoToExcelFile(addColumn) {
         var f = this.familyForExcelExport;
-        let settings = await ApplicationSettings.getAsync(remult);
+        let settings = await ApplicationSettings.getAsync();
         if (f) {
             let x = f.addressHelper.getGeocodeInformation;
             let street = f.address;
@@ -632,14 +632,14 @@ export class FamilyDeliveries extends IdEntity {
         let r = deliverStatus.caption + " ";
         if (deliverStatus.IsAResultStatus() && deliveryStatusDate) {
             if (deliveryStatusDate.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
-                r += getLang(remult).on + " " + deliveryStatusDate.toLocaleDateString("he-il");
+                r += getLang().on + " " + deliveryStatusDate.toLocaleDateString("he-il");
             else
                 r += relativeDateName(remult, { d: deliveryStatusDate });
             if (courierComments) {
                 r += ": " + courierComments;
             }
             if (courier && deliverStatus != DeliveryStatus.SelfPickup && deliverStatus != DeliveryStatus.SuccessPickedUp)
-                r += ' ' + getLang(remult).by + ' ' + courier.name;
+                r += ' ' + getLang().by + ' ' + courier.name;
         }
         return r;
     }
@@ -681,8 +681,8 @@ export class FamilyDeliveries extends IdEntity {
             case DeliveryStatus.FailedOther:
                 let duration = '';
                 if (this.courierAssingTime && this.deliveryStatusDate)
-                    duration = ' ' + getLang(remult).within + ' ' + Math.round((this.deliveryStatusDate.valueOf() - this.courierAssingTime.valueOf()) / 60000) + " " + getLang(remult).minutes;
-                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang(remult).by + ' ' + this.courier.name : '') + ' ' + relativeDateName(remult, { d: this.deliveryStatusDate }) + duration;
+                    duration = ' ' + getLang().within + ' ' + Math.round((this.deliveryStatusDate.valueOf() - this.courierAssingTime.valueOf()) / 60000) + " " + getLang().minutes;
+                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang().by + ' ' + this.courier.name : '') + ' ' + relativeDateName(remult, { d: this.deliveryStatusDate }) + duration;
 
         }
         return this.deliverStatus.caption;
@@ -714,10 +714,10 @@ export class FamilyDeliveries extends IdEntity {
         openWaze(toLocation, address);
     }
     openGoogleMaps() {
-        window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang(remult).languageCode + '&query=' + this.addressByGoogle, '_blank');
+        window.open('https://www.google.com/maps/search/?api=1&hl=' + getLang().languageCode + '&query=' + this.addressByGoogle, '_blank');
     }
     showOnGoogleMaps() {
-        window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=' + getLang(remult).languageCode, '_blank');
+        window.open('https://maps.google.com/maps?q=' + toLongLat(this.getDrivingLocation()) + '&hl=' + getLang().languageCode, '_blank');
     }
     showOnGovMap() {
         window.open('https://www.govmap.gov.il/?q=' + this.address + '&z=10', '_blank');
@@ -727,7 +727,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     getAddressDescription() {
         if (this.isGpsAddress()) {
-            return getLang(remult).gpsLocationNear + ' ' + this.addressByGoogle;
+            return getLang().gpsLocationNear + ' ' + this.addressByGoogle;
         }
         return this.address;
     }
@@ -783,7 +783,7 @@ export class FamilyDeliveries extends IdEntity {
                 });
             }
             else {
-                await callerHelper.ui.Error(getLang(remult).familyWasNotFound);
+                await callerHelper.ui.Error(getLang().familyWasNotFound);
                 showFamilyDetails = false;
             }
         }
@@ -796,7 +796,7 @@ export class FamilyDeliveries extends IdEntity {
     }
     async showDeliveryOnlyDetail(callerHelper: { refreshDeliveryStats?: () => void; onSave?: () => Promise<void>; focusOnDelivery?: boolean; ui: UITools; }) {
         callerHelper.ui.inputAreaDialog({
-            title: getLang(remult).deliveryDetailsFor + ' ' + this.name,
+            title: getLang().deliveryDetailsFor + ' ' + this.name,
             ok:
                 async () => {
 
@@ -829,11 +829,11 @@ export class FamilyDeliveries extends IdEntity {
             this.$.a1, this.$.a2, this.$.a3, this.$.a4,
             this.$.internalDeliveryComment,
             this.$.special,
-            [{ field: this.$.caller, visible: () => getSettings(remult).usingCallModule },
-            { field: this.$.callerAssignDate, visible: () => getSettings(remult).usingCallModule }],
-            [{ field: this.$.callCounter, visible: () => getSettings(remult).usingCallModule },
-            { field: this.$.lastCallDate, visible: () => getSettings(remult).usingCallModule }],
-            { field: this.$.callerComment, visible: () => getSettings(remult).usingCallModule },
+            [{ field: this.$.caller, visible: () => getSettings().usingCallModule },
+            { field: this.$.callerAssignDate, visible: () => getSettings().usingCallModule }],
+            [{ field: this.$.callCounter, visible: () => getSettings().usingCallModule },
+            { field: this.$.lastCallDate, visible: () => getSettings().usingCallModule }],
+            { field: this.$.callerComment, visible: () => getSettings().usingCallModule },
 
         ]
     };
@@ -855,7 +855,7 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
     static filterPhone = Filter.createCustom<ActiveFamilyDeliveries, string>((remult, phone) => {
         return SqlDatabase.customFilter(async (x) => {
             var phoneParam = x.addParameterAndReturnSqlToken(phone);
-            var sql = new SqlBuilder(remult);
+            var sql = new SqlBuilder();
             var fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
             let filter = [];
             for (const col of [fd.phone1, fd.phone2, fd.phone3, fd.phone4]) {

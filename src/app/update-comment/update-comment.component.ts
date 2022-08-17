@@ -30,7 +30,6 @@ export class GetVolunteerFeedback implements OnInit {
   };
   constructor(
     public dialogRef: MatDialogRef<any>,
-    private remult: Remult,
     private dialog: DialogService,
     public settings: ApplicationSettings
   ) {

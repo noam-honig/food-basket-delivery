@@ -22,7 +22,7 @@ import { getSettings } from '../manage/ApplicationSettings';
   width: '100'
 })
 @Entity<BasketType>("BasketType", {
-  allowApiRead: remult => Allow.authenticated(remult) || getSettings(remult).familySelfOrderEnabled,
+  allowApiRead: remult => Allow.authenticated(remult) || getSettings().familySelfOrderEnabled,
   allowApiCrud: Roles.admin,
   saving: async (self) => {
     if ((!self.boxes || self.boxes < 1) && (!self.boxes2 || self.boxes2 < 1))

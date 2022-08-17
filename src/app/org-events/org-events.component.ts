@@ -20,7 +20,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   constructor(public settings: ApplicationSettings, private dialog: DialogService, private route: ActivatedRoute) {
 
   }
-  isGuest = Sites.getOrganizationFromContext(remult) == Sites.guestSchema;
+  isGuest = Sites.getOrganizationFromContext() == Sites.guestSchema;
   getLogo() {
     return ApplicationSettings.get(remult).logoUrl;
 

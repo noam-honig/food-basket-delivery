@@ -45,7 +45,7 @@ export class SendSmsAction {
         if (!origin) {
             throw 'Couldnt determine origin for sms';
         }
-        let org = Sites.getOrganizationFromContext(remult);
+        let org = Sites.getOrganizationFromContext();
         if (org.length > 0) {
             origin = origin + '/' + org;
         }
@@ -55,7 +55,7 @@ export class SendSmsAction {
                 await helper.save();
             }
             let message = '';
-            let settings = await ApplicationSettings.getAsync(remult);
+            let settings = await ApplicationSettings.getAsync();
             if (reminder) {
                 message = settings.reminderSmsText;
 
@@ -64,7 +64,7 @@ export class SendSmsAction {
 
                 message = settings.smsText;
                 if (!message || message.trim().length == 0) {
-                    message = getLang(remult).defaultSmsText;
+                    message = getLang().defaultSmsText;
                 }
             }
             let url = origin + '/x/' + helper.shortUrlKey;
@@ -77,7 +77,7 @@ export class SendSmsAction {
         }
     }
     public static async getSenderPhone() {
-        let sender = (await ApplicationSettings.getAsync(remult)).helpPhone?.thePhone;
+        let sender = (await ApplicationSettings.getAsync()).helpPhone?.thePhone;
         if (!sender || sender.length < 3) {
             sender = (await remult.context.getCurrentUser()).phone.thePhone;
         }
@@ -114,8 +114,8 @@ export class SendSmsUtils {
         familyId?: string,
         eventId?: string
     }) {
-        var schema = Sites.getOrganizationFromContext(remult);
-        var settings = await ApplicationSettings.getAsync(remult)
+        var schema = Sites.getOrganizationFromContext();
+        var settings = await ApplicationSettings.getAsync()
         let un = process.env.SMS_UN;
         let pw = process.env.SMS_PW;
         let accid = process.env.SMS_ACCID;

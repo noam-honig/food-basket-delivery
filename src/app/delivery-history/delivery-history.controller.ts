@@ -17,7 +17,7 @@ export class DeliveryHistoryController {
 
 
         toDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() + 1);
-        var sql = new SqlBuilder(remult);
+        var sql = new SqlBuilder();
         var fd = await SqlFor(remult.repo(FamilyDeliveries));
 
         var h = await SqlFor(remult.repo(Helpers));

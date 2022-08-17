@@ -67,7 +67,7 @@ import { ManageCallersComponent } from './manage-callers/manage-callers.componen
 @Injectable()
 export class MltOnlyGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-    let site = Sites.getOrganizationFromContext(remult);
+    let site = Sites.getOrganizationFromContext();
 
     if (site == 'mlt')
       return true;
@@ -80,7 +80,7 @@ export class MltOnlyGuard implements CanActivate {
 @Injectable()
 export class MltAdminGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | import("@angular/router").UrlTree | import("rxjs").Observable<boolean | import("@angular/router").UrlTree> | Promise<boolean | import("@angular/router").UrlTree> {
-    let site = Sites.getOrganizationFromContext(remult);
+    let site = Sites.getOrganizationFromContext();
 
     if (site == 'mlt')
       return remult.isAllowed(Roles.admin);

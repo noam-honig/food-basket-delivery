@@ -15,7 +15,7 @@ import { GroupsStats } from './manage.component';
     let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
     let g = SqlFor(remult.repo(Groups));
     let d = SqlFor(remult.repo(DistributionCenters));
-    let sql = new SqlBuilder(remult);
+    let sql = new SqlBuilder();
     sql.addEntity(f, 'Families');
     sql.addEntity(g, 'groups');
     return sql.entityDbName(
@@ -41,9 +41,5 @@ export class GroupsStatsPerDistributionCenter extends EntityBase implements Grou
   distCenter: DistributionCenters;
   @Field()
   familiesCount: number;
-
-  constructor(private remult: Remult) {
-    super();
-  }
 
 }

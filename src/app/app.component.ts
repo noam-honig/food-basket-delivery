@@ -50,7 +50,7 @@ export class AppComponent {
 
   }
 
-  createNewEventAction = new CreateNewEvent(remult);
+  createNewEventAction = new CreateNewEvent();
 
 
 

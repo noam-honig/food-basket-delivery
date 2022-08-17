@@ -96,7 +96,7 @@ export class OverviewController {
 
         }
 
-        var builder = new SqlBuilder(remult);
+        var builder = new SqlBuilder();
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let fd = SqlFor(remult.repo(FamilyDeliveries));
 
@@ -180,13 +180,13 @@ export class OverviewController {
                 name = id;
             let oh = await remult.repo(Helpers).findId(remult.user.id);
             let db = await OverviewController.createDbSchema(id);
-            let otherContext = new Remult();
-            otherContext.setDataProvider(db);
-            otherContext.setUser(remult.user);
-            Sites.setSiteToContext(otherContext, id);
-            await InitContext(otherContext);
+            let s = remult.repo(SitesEntity).create();
+            remult.setDataProvider(db);
+            remult.setUser(remult.user);
+            Sites.setSiteToContext( id);
+            await InitContext(remult);
             {
-                let h = await otherContext.repo(Helpers).create();
+                let h = await remult.repo(Helpers).create();
                 h.name = oh.name;
                 h.realStoredPassword = oh.realStoredPassword;
                 h.phone = oh.phone;
@@ -194,19 +194,19 @@ export class OverviewController {
                 await h.save();
             }
             if (manager && phone) {
-                let h2 = await otherContext.repo(Helpers).create();
+                let h2 = await remult.repo(Helpers).create();
                 h2.name = manager;
                 h2.phone = new Phone(phone);
                 h2.admin = true;
                 await h2.save();
             }
-            let settings = await ApplicationSettings.getAsync(otherContext);
+            let settings = await ApplicationSettings.getAsync();
 
             settings.organisationName = name;
             settings.address = address;
             await settings.save();
 
-            let s = remult.repo(SitesEntity).create();
+            
             s.id = id;
             await s.save();
 

@@ -25,12 +25,10 @@ export function getToken() {
 }
 @Injectable()
 export class TokenService {
-    constructor(private remult: Remult) {
-
-    }
+    constructor(private remultForAuthGuard:Remult){}
     keyInStorage: string;
     async loadUserInfo() {
-        let org = Sites.getOrganizationFromContext(remult);
+        let org = Sites.getOrganizationFromContext();
         this.keyInStorage = "authorization/" + org;
         let token = sessionStorage.getItem(this.keyInStorage);
         if (!token)
@@ -44,7 +42,6 @@ export class TokenService {
             user = await AuthService.decodeJwt(token);
 
             await InitContext(remult, user);
-            await InitContext(this.remult, user);
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -57,7 +54,7 @@ export class TokenService {
 
         if (toCompare(user) != toCompare(remult.user)) {
             await remult.setUser(user);
-            await this.remult.setUser(user);
+            this.remultForAuthGuard.setUser(user);
         }
 
     }
@@ -103,8 +100,6 @@ export class AuthService {
     constructor(
         private dialog: DialogService,
         private tokenService: TokenService,
-
-        private remult: Remult,
         private routeHelper: RouteHelperService,
         public settings: ApplicationSettings,
         private zone: NgZone

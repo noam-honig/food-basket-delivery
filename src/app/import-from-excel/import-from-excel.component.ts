@@ -1123,7 +1123,7 @@ export class ImportFromExcelComponent implements OnInit {
 
 
         openDialog(GridDialogComponent, x => x.args = {
-            title: getLang(remult).familyHistory + ' ' + f.name,
+            title: getLang().familyHistory + ' ' + f.name,
             settings: result,
 
         });
@@ -1232,7 +1232,7 @@ export class ImportFromExcelComponent implements OnInit {
         addRows(this.identicalRows, use.language.existsIdenticat);
         addRows(this.errorRows, use.language.error);
         rows.sort((a, b) => a["excelLine"] - b["excelLine"]);
-        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext(remult) + ' import summary ' + new Date().toLocaleString('he').replace(/:/g, '-').replace(/\./g, '-').replace(/,/g, '') + this.filename);
+        await jsonToXlsx(this.busy, rows, Sites.getOrganizationFromContext() + ' import summary ' + new Date().toLocaleString('he').replace(/:/g, '-').replace(/\./g, '-').replace(/,/g, '') + this.filename);
     }
 
     async updateFamily(i: duplicateFamilyInfo) {

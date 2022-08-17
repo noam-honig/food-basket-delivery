@@ -22,7 +22,7 @@ export class WeeklyReportMltController {
         let fd = SqlFor(remult.repo(FamilyDeliveries));
         let u = SqlFor(remult.repo(RegisterURL));
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         sql.addEntity(fd, "fd")
 
         let q = await sql.build(sql.query({
@@ -57,7 +57,7 @@ export class WeeklyReportMltController {
 
         let u = SqlFor(remult.repo(RegisterURL));
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
 
         let q = await sql.build(sql.query({
             select: () => [
@@ -84,7 +84,7 @@ export class WeeklyReportMltController {
         let u = SqlFor(remult.repo(RegisterURL));
         let f = SqlFor(remult.repo(Families));
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
 
         let q = await sql.build(sql.query({
             select: () => [
@@ -111,7 +111,7 @@ export class WeeklyReportMltController {
 
         let f = await SqlFor(remult.repo(FamilyDeliveries));
 
-        let sql = new SqlBuilder(remult);
+        let sql = new SqlBuilder();
         sql.addEntity(f, "FamilyDeliveries")
         let deliveries = await getDb().execute(await sql.build(sql.query({
             select: () => [f.courier,

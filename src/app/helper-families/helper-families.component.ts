@@ -172,8 +172,9 @@ export class HelperFamiliesComponent implements OnInit {
       this.map.test(this.familyLists.toDeliver, this.familyLists.helper);
     });
   }
+  remult = remult;
 
-  constructor(public auth: AuthService, private dialog: DialogService, public remult: Remult, private busy: BusyService, public settings: ApplicationSettings,
+  constructor(public auth: AuthService, private dialog: DialogService,  private busy: BusyService, public settings: ApplicationSettings,
     public animDialog: NgDialogAnimationService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
@@ -595,7 +596,7 @@ export class HelperFamiliesComponent implements OnInit {
       }
       if (endOnDist)
         url += "/" + encodeURI((this.routeStart).getAddress());
-      window.open(url + "?hl=" + getLang(remult).languageCode, '_blank');
+      window.open(url + "?hl=" + getLang().languageCode, '_blank');
     }
     //window.open(url,'_blank');
   }

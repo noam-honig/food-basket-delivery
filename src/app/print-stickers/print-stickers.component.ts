@@ -21,7 +21,7 @@ export class PrintStickersComponent implements OnInit {
 
   constructor(private dialog: DialogService) { }
   remult = remult;
-  defs = new VolunteerReportDefs(remult, this.dialog);
+  defs = new VolunteerReportDefs( this.dialog);
   data: any[];
   report: ReportInfo;
   row: StickerInfo;

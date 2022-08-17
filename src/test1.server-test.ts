@@ -74,7 +74,7 @@ function init() {
             }
 
 
-            let as = await ApplicationSettings.getAsync(remult);
+            let as = await ApplicationSettings.getAsync();
             {
                 let g = new GeocodeInformation({
 

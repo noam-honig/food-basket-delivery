@@ -301,7 +301,7 @@ export class DeliveryHistoryComponent implements OnInit {
             ui: this.dialog
           });
         }
-        , textInMenu: () => getLang(remult).deliveryDetails
+        , textInMenu: () => getLang().deliveryDetails
       },
       {
         name: '',
@@ -313,7 +313,7 @@ export class DeliveryHistoryComponent implements OnInit {
           await fd.save();
           this.refresh();
         }
-        , textInMenu: () => getLang(remult).revertArchive
+        , textInMenu: () => getLang().revertArchive
       }
     ]
   });

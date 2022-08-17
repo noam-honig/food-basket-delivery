@@ -29,14 +29,14 @@ import { selectListItem } from '../helpers/init-context';
 export class HelperFamiliesController {
     @BackendMethod({ allowed: Roles.indie })
     static async getDeliveriesByLocation(pivotLocation: Location, selfAssign: boolean) {
-        if (!getSettings(remult).isSytemForMlt)
+        if (!getSettings().isSytemForMlt)
             throw "not allowed";
         let result: selectListItem<DeliveryInList>[] = [];
 
         let fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
 
-        let sql = new SqlBuilder(remult);
-        let settings = await ApplicationSettings.getAsync(remult);
+        let sql = new SqlBuilder();
+        let settings = await ApplicationSettings.getAsync();
         let privateDonation = selfAssign ? (await remult.repo(FamilySources).findFirst({ name: 'תרומה פרטית' })) : null;
 
         for (const r of (await getDb().execute(await sql.query({
@@ -129,7 +129,7 @@ export class HelperFamiliesController {
                 await fd.save();
             }
         });
-        await dist.SendMessageToBrowser(getLang(remult).cancelAssignmentForHelperFamilies, remult);
+        await dist.SendMessageToBrowser(getLang().cancelAssignmentForHelperFamilies, remult);
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async okAllForHelperOnServer(helper: HelpersBase) {

@@ -26,11 +26,11 @@ export const colors = {
     , gray: 'gray'
 };
 export class Stats {
-    outOfList = new FaimilyStatistics(getLang(remult).removedFromList, { status: FamilyStatus.RemovedFromList }, colors.gray);
-    frozen = new FaimilyStatistics(getLang(remult).frozen, { status: FamilyStatus.Frozen }, colors.orange);
-    toDelete = new FaimilyStatistics(getLang(remult).toDelete, { status: FamilyStatus.ToDelete }, colors.red);
-    active = new FaimilyStatistics(getLang(remult).active, { status: FamilyStatus.Active }, colors.green);
-    problem = new FaimilyStatistics(getLang(remult).adderssProblems, { status: FamilyStatus.Active, addressOk: false, defaultSelfPickup: false }, colors.orange);
+    outOfList = new FaimilyStatistics(getLang().removedFromList, { status: FamilyStatus.RemovedFromList }, colors.gray);
+    frozen = new FaimilyStatistics(getLang().frozen, { status: FamilyStatus.Frozen }, colors.orange);
+    toDelete = new FaimilyStatistics(getLang().toDelete, { status: FamilyStatus.ToDelete }, colors.red);
+    active = new FaimilyStatistics(getLang().active, { status: FamilyStatus.Active }, colors.green);
+    problem = new FaimilyStatistics(getLang().adderssProblems, { status: FamilyStatus.Active, addressOk: false, defaultSelfPickup: false }, colors.orange);
 
     async getData(distCenter: DistributionCenters) {
         let r = await Stats.getFamilyStats(distCenter?.id);

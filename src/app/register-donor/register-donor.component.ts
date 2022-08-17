@@ -33,7 +33,7 @@ export class RegisterDonorComponent implements OnInit {
 
   refer: string = null;
   isDone = false;
-  donor = new donorForm(remult);
+  donor = new donorForm();
   area = new DataAreaSettings({
     fields: () =>
       [

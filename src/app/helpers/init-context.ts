@@ -20,7 +20,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
     if (user === undefined)
         user = remult.user;
     let defaultBasketType: BasketType;
-    remult.context.getSettings = () => ApplicationSettings.getAsync(remult);
+    remult.context.getSettings = () => ApplicationSettings.getAsync();
     remult.context.getUserDistributionCenter = () => remult.repo(DistributionCenters).findId(remult.user.distributionCenter);
     remult.context.getCurrentUser = () => remult.repo(Helpers).findId(remult.user.id);
     remult.context.defaultBasketType = async () => {
@@ -68,7 +68,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         }
         return [];
     }
-    remult.context.lang = getLang(remult);
+    remult.context.lang = getLang();
 }
 export interface selectListItem<itemType = any> {
     name: string,
@@ -186,7 +186,7 @@ export async function createSiteContext(site: string) {
     let dp = Sites.getDataProviderForOrg(site);
     let c = new Remult();
     c.setDataProvider(dp);
-    Sites.setSiteToContext(c, site);
+    Sites.setSiteToContext( site);
     await InitContext(c, undefined);
     return c;
 }

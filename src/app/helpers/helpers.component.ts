@@ -129,7 +129,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
     {
       name: use.language.sendMessageToInviteVolunteers,
       click: async () => {
-        let c = new SendBulkSms(remult);
+        let c = new SendBulkSms();
         openDialog(InputAreaComponent, x => x.args = {
           title: use.language.sendMessageToInviteVolunteers,
           helpText: "ניתן לסנן לפי עיר בה המתנדב חילק בעבר, ולהגביל את מספר ההודעות שישלחו כאשר אם יש הגבלה - ההודעות תשלחנה למתנדבים להם שלחנו הודעה הכי מזמן. במסך הבא ניתן לנסח את ההודעה ולשלוח, בהצלחה",
@@ -224,7 +224,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
             await h.reactivate();
           else {
             if (await openDialog(YesNoQuestionComponent, q => q.args = {
-              question: getLang(remult).areYouSureYouWantToDelete + ' ' + h.name + '?'
+              question: getLang().areYouSureYouWantToDelete + ' ' + h.name + '?'
             }, q => q.yes)) {
               await h.deactivate();
               this.helpers.items.splice(this.helpers.items.indexOf(h), 1);
@@ -239,7 +239,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await h.showDeliveryHistory(this.dialog);
         }
       },
-      new SendBulkSms(remult).sendSingleHelperButton(this.dialog), {
+      new SendBulkSms().sendSingleHelperButton(this.dialog), {
         name: use.language.changeLog,
         visible: h => remult.isAllowed(Roles.admin),
         click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
@@ -287,7 +287,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
   private editFreezeDate(h: Helpers) {
     openDialog(InputAreaComponent, x => x.args = {
-      title: getLang(remult).freezeHelper,
+      title: getLang().freezeHelper,
       ok: () => {
         h.save();
       },
@@ -314,7 +314,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
 
   async ngOnInit() {
-    let s = await ApplicationSettings.getAsync(remult);
+    let s = await ApplicationSettings.getAsync();
     this.helpers.columns.numOfColumnsInGrid = this.numOfColsInGrid;
     new columnOrderAndWidthSaver(this.helpers).load('helpers');
 

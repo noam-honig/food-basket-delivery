@@ -104,7 +104,7 @@ CaptionTransformer.transformCaption = (remult, key, caption) => {
 
   if (caption)
     return caption;
-  let r = getLang(remult)[key];
+  let r = getLang()[key];
   if (!r) {
     if (!reported.has(key)) {
       reported.add(key);
@@ -117,7 +117,7 @@ function adjustSettings(settings: FieldOptions & TranslatedCaption, options: (Fi
   let opts: (FieldOptions | ((options: FieldOptions, remult: Remult) => void))[] = [settings];
   if (settings && settings.translation) {
     opts.push((o, remult) => {
-      o.caption = settings.translation(getLang(remult));
+      o.caption = settings.translation(getLang());
     });
   }
   opts.push(...options);
@@ -150,7 +150,7 @@ export function Entity<T>(key: string, settings: EntityOptions<T> & TranslatedCa
   let opts: (EntityOptions | ((options: EntityOptions, remult: Remult) => void))[] = [settings];
   if (settings.translation) {
     opts.push((o, remult) => {
-      o.caption = settings.translation(getLang(remult));
+      o.caption = settings.translation(getLang());
     });
   }
   opts.push(...options);

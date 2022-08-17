@@ -23,7 +23,7 @@ function log(s: string) {
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries).metadata);
 
         let h = SqlFor(remult.repo(Helpers).metadata);
-        var sql = new SqlBuilder(remult);
+        var sql = new SqlBuilder();
 
         let helperFamilies = (where: () => any[]) => {
             return {

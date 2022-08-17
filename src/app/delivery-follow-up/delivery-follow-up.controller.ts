@@ -19,7 +19,7 @@ export class DeliveryFollowUpController {
         let fd = SqlFor(remult.repo(FamilyDeliveries));
 
         let h = SqlFor(remult.repo(Helpers));
-        var sql = new SqlBuilder(remult);
+        var sql = new SqlBuilder();
         sql.addEntity(fd, 'fd');
         let r = await getDb().execute(log(await sql.build((await sql.query({
             from: fd,
@@ -79,7 +79,7 @@ export class DeliveryFollowUpController {
         return new messageMerger([
             { token: "מתנדב", caption: "שם המתנדב", value: volunteer.name },
 
-            { token: "ארגון", value: getSettings(remult).organisationName },
+            { token: "ארגון", value: getSettings().organisationName },
         ]);
     }
 }

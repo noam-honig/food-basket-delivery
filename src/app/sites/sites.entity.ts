@@ -1,4 +1,4 @@
-import { Entity, Remult, EntityBase } from "remult";
+import { Entity, Remult, EntityBase, remult } from "remult";
 import { Field } from '../translate';
 import { Roles } from "../auth/roles";
 import { Sites } from "./sites";
@@ -9,8 +9,8 @@ import { Sites } from "./sites";
         self.id = self.id.toLowerCase().trim();
         if (self.isNew()) {
             self.createDate = new Date();
-            if (self.remult.user)
-                self.createUser = self.remult.user.id;
+            if (remult.user)
+                self.createUser = remult.user.id;
         }
         else {
             if (self.$.id.valueChanged())
@@ -26,9 +26,6 @@ export class SitesEntity extends EntityBase {
     @Field()
     createUser: string;
 
-    constructor(private remult: Remult) {
-        super();
-    }
     static async completeInit(remult: Remult) {
         let sites = await remult.repo(SitesEntity).find();
         let missingInDb = Sites.schemas.filter(siteFromEnv => !sites.find(y => y.id == siteFromEnv));

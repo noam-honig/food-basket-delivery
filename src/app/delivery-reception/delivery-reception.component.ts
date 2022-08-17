@@ -84,7 +84,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
         icon: 'done_all',
         showInLine: true,
         click: async d => {
-          if (await this.dialog.YesNoPromise(getLang(remult).shouldArchiveDelivery)) {
+          if (await this.dialog.YesNoPromise(getLang().shouldArchiveDelivery)) {
             {
               d.archive = true;
 
@@ -95,7 +95,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
             }
           }
         }
-        , textInMenu: () => getLang(remult).receptionDone
+        , textInMenu: () => getLang().receptionDone
       },
       {
         name: '',
@@ -106,7 +106,7 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
           d.distributionCenter = await remult.context.getUserDistributionCenter();
           this.editComment(d);
         }
-        , textInMenu: () => getLang(remult).notDelivered
+        , textInMenu: () => getLang().notDelivered
       }
     ]
   });
@@ -130,10 +130,10 @@ export class DeliveryReceptionComponent implements OnInit, AfterViewInit {
 
   private editComment(d: FamilyDeliveries) {
     openDialog(InputAreaComponent, x => x.args = {
-      title: getLang(remult).commentForReception,
+      title: getLang().commentForReception,
       validate: async () => {
         if (d.receptionComments == '')
-          throw getLang(remult).updateComment;
+          throw getLang().updateComment;
       },
       ok: () => {
         d.save();

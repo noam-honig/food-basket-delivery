@@ -85,7 +85,12 @@ import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
 import { remultExpress } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
 
-
+process.on('unhandledRejection', (reason, p) => {
+    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+    console.trace();
+    // application specific logging, throwing an error, or other logic here
+    //1
+});
 const entities = [
     HelpersAndStats,
     Event,
@@ -163,7 +168,8 @@ const controllers = [
 let publicRoot = 'hagai';
 if (!fs.existsSync(publicRoot + '/index.html'))
     publicRoot = 'dist/' + publicRoot;
-serverInit().then(async ({dataSource,initDatabase}) => {
+serverInit().then(async ({ dataSource, initDatabase }) => {
+
 
     let app = express();
     app.use(jwt({ secret: process.env.TOKEN_SIGN_KEY, credentialsRequired: false, algorithms: ['HS256'] }));
@@ -192,7 +198,7 @@ serverInit().then(async ({dataSource,initDatabase}) => {
         try {
             let remult = await eb.getRemult(req);
 
-            let org = Sites.getOrganizationFromContext(remult);
+            let org = Sites.getOrganizationFromContext();
             if (redirect.includes(org)) {
                 const target = process.env.REDIRECT_TARGET + req.originalUrl;
                 console.log("Redirect ", target);
@@ -205,13 +211,12 @@ serverInit().then(async ({dataSource,initDatabase}) => {
             }
             const index = publicRoot + '/index.html';
 
-
             if (fs.existsSync(index)) {
                 let x = '';
 
-                let settings = (await ApplicationSettings.getAsync(remult));
-                setLangForSite(Sites.getValidSchemaFromContext(remult), settings.forWho);
-                setSettingsForSite(Sites.getValidSchemaFromContext(remult), settings);
+                let settings = (await ApplicationSettings.getAsync());
+                setLangForSite(Sites.getValidSchemaFromContext(), settings.forWho);
+                setSettingsForSite(Sites.getValidSchemaFromContext(), settings);
                 x = settings.organisationName;
                 let result = fs.readFileSync(index).toString().replace(/!TITLE!/g, x).replace("/*!SITE!*/", "multiSite=" + Sites.multipleSites);
                 let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY;
@@ -353,7 +358,7 @@ s.parentNode.insertBefore(b, s);})();
                 }
                 remult.context.getSite = () => getSiteFromUrl(url);
                 remult.context.requestUrlOnBackend = url;
-                if (!remult.isAllowed(Sites.getOrgRole(remult)))
+                if (!remult.isAllowed(Sites.getOrgRole()))
                     remult.setUser(undefined);
                 remult.setDataProvider(dataSource(remult));
                 remult.context.getOrigin = () => req.headers['origin'] as string;
@@ -423,7 +428,7 @@ s.parentNode.insertBefore(b, s);})();
 
             let remult = await eb.getRemult(req);
 
-            let org = Sites.getOrganizationFromContext(remult);
+            let org = Sites.getOrganizationFromContext();
             if (redirect.includes(org)) {
                 console.log("Incoming SMS Redirect", {
                     p: req.path,
@@ -639,3 +644,4 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
         }
     });
 }
+

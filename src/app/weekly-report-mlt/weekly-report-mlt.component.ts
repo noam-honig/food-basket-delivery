@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Remult } from 'remult';
+import { remult } from 'remult';
 import { DateRangeComponent } from '../date-range/date-range.component';
 import { RegisterURL } from '../resgister-url/regsiter-url';
 import { WeeklyReportMltController } from './weekly-report-mlt.controller';
@@ -12,7 +12,7 @@ import { WeeklyReportMltController } from './weekly-report-mlt.controller';
 export class WeeklyReportMltComponent implements OnInit {
   @ViewChild(DateRangeComponent, { static: true }) dateRange: DateRangeComponent;
 
-  constructor(public remult: Remult) { }
+  remult = remult;
 
   totalPerBasket = [];
   allBaskets = new Set<string>();

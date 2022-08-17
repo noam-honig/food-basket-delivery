@@ -60,9 +60,9 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
             //     this.$.updateFamilyStatus,
             //     { field: this.$.status, visible: () => this.updateFamilyStatus }
             // ],
-            title: getLang(remult).deleteDeliveries,
+            title: getLang().deleteDeliveries,
             icon: 'delete',
-            help: () => getLang(remult).deleteDeliveriesHelp,
+            help: () => getLang().deleteDeliveriesHelp,
             forEach: async fd => {
                 await fd.delete();
                 if (this.updateFamilyStatus) {
@@ -111,7 +111,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                 { field: this.$.defaultDistributionCenter, visible: () => c.ui.hasManyCenters }
             ],
 
-            title: getLang(remult).updateFamilyDefaults,
+            title: getLang().updateFamilyDefaults,
             forEach: async fd => {
 
 
@@ -156,7 +156,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     usedCouriers: string[] = [];
     constructor(remult: Remult) {
         super(remult, ActiveFamilyDeliveries, {
-            help: () => getLang(remult).updateVolunteerHelp,
+            help: () => getLang().updateVolunteerHelp,
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
                 { field: this.$.courier, visible: () => !this.clearVoulenteer },
@@ -164,7 +164,7 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
 
             ],
             additionalWhere: { deliverStatus: DeliveryStatus.isNotAResultStatus() },
-            title: getLang(remult).updateVolunteer,
+            title: getLang().updateVolunteer,
             forEach: async fd => {
                 if (this.clearVoulenteer) {
                     fd.courier = null;
@@ -201,11 +201,11 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
 
     constructor(remult: Remult) {
         super(remult, {
-            title: getLang(remult).updateDeliveriesStatus,
-            help: () => getSettings(remult).isSytemForMlt ? '' : getLang(remult).updateDeliveriesStatusHelp,
+            title: getLang().updateDeliveriesStatus,
+            help: () => getSettings().isSytemForMlt ? '' : getLang().updateDeliveriesStatusHelp,
             validate: async () => {
                 if (this.status == undefined)
-                    throw getLang(remult).statusNotSelected;
+                    throw getLang().statusNotSelected;
 
             },
             validateInComponent: async c => {
@@ -218,14 +218,14 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
                 })
                 if (deliveriesWithResultStatus > 0 && (this.status == DeliveryStatus.ReadyForDelivery || this.status == DeliveryStatus.SelfPickup)) {
                     if (await c.ui.YesNoPromise(
-                        getLang(remult).thereAre + " " + deliveriesWithResultStatus + " " + getLang(remult).deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
+                        getLang().thereAre + " " + deliveriesWithResultStatus + " " + getLang().deliveriesWithResultStatusSettingsTheirStatusWillOverrideThatStatusAndItWillNotBeSavedInHistory_toCreateANewDeliveryAbortThisActionAndChooseTheNewDeliveryOption_Abort)
 
                     )
-                        throw getLang(remult).updateCanceled;
+                        throw getLang().updateCanceled;
                 }
             },
             forEach: async f => {
-                if (getSettings(remult).isSytemForMlt || !(this.status == DeliveryStatus.Frozen && f.deliverStatus != DeliveryStatus.ReadyForDelivery && f.deliverStatus != DeliveryStatus.enquireDetails)) {
+                if (getSettings().isSytemForMlt || !(this.status == DeliveryStatus.Frozen && f.deliverStatus != DeliveryStatus.ReadyForDelivery && f.deliverStatus != DeliveryStatus.enquireDetails)) {
                     f.deliverStatus = this.status;
                     if (this.deleteExistingComment) {
                         f.internalDeliveryComment = '';
@@ -306,8 +306,8 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
                 return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, await this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
             },
             icon: 'archive',
-            title: getLang(remult).archiveDeliveries,
-            help: () => getLang(remult).archiveDeliveriesHelp,
+            title: getLang().archiveDeliveries,
+            help: () => getLang().archiveDeliveriesHelp,
             forEach: async f => {
                 await this.archiveHelper.forEach(f);
                 if (f.deliverStatus.IsAResultStatus())
@@ -326,7 +326,7 @@ export class UpdateBasketType extends ActionOnFamilyDeliveries {
     constructor(remult: Remult) {
         super(remult, {
             allowed: Roles.distCenterAdmin,
-            title: getLang(remult).updateBasketType,
+            title: getLang().updateBasketType,
             forEach: async f => { f.basketType = this.basketType },
 
         });
@@ -340,7 +340,7 @@ export class UpdateQuantity extends ActionOnFamilyDeliveries {
     constructor(remult: Remult) {
         super(remult, {
             allowed: Roles.distCenterAdmin,
-            title: getLang(remult).updateBasketQuantity,
+            title: getLang().updateBasketQuantity,
             forEach: async f => { f.quantity = this.quantity },
         });
     }
@@ -353,7 +353,7 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
 
     constructor(remult: Remult) {
         super(remult, {
-            title: getLang(remult).updateDistributionList,
+            title: getLang().updateDistributionList,
             forEach: async f => { f.distributionCenter = this.distributionCenter },
         });
     }
@@ -435,15 +435,15 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 if (!this.useCurrentDistributionCenter) {
 
                     if (!this.distributionCenter)
-                        throw getLang(remult).pleaseSelectDistributionList;
+                        throw getLang().pleaseSelectDistributionList;
                 }
             },
             additionalWhere: () => ({
                 deliverStatus: !this.newDeliveryForAll ? DeliveryStatus.isAResultStatus() : undefined
             }),
-            title: getLang(remult).newDelivery,
+            title: getLang().newDelivery,
             icon: 'add_shopping_cart',
-            help: () => getLang(remult).newDeliveryForDeliveriesHelp + ' ' + this.$.newDeliveryForAll.metadata.caption,
+            help: () => getLang().newDeliveryForDeliveriesHelp + ' ' + this.$.newDeliveryForAll.metadata.caption,
             forEach: async existingDelivery => {
                 this.archiveHelper.forEach(existingDelivery);
                 if (this.autoArchive) {

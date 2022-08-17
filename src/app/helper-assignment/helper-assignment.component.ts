@@ -4,7 +4,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 import { BusyService, DialogConfig } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 
@@ -22,10 +22,10 @@ import { DialogService } from '../select-popup/dialog';
 })
 export class HelperAssignmentComponent implements OnInit {
   public argsHelper: HelpersBase;
+  remult = remult;
   constructor(
     private dialogRef: MatDialogRef<any>,
     public settings: ApplicationSettings,
-    public remult: Remult,
     private dialog: DialogService,
     private busy: BusyService
   ) {
