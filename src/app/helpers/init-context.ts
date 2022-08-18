@@ -1,4 +1,4 @@
-import { EntityFilter, FieldRef, IdFilter, Remult, UserInfo, ValueFilter } from "remult";
+import { EntityFilter, FieldRef, IdFilter, remult, Remult, UserInfo, ValueFilter } from "remult";
 import { BasketType } from "../families/BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
 
@@ -184,11 +184,11 @@ export const evil: {
 
 export async function createSiteContext(site: string) {
     let dp = Sites.getDataProviderForOrg(site);
-    let c = new Remult();
-    c.setDataProvider(dp);
-    Sites.setSiteToContext( site);
-    await InitContext(c, undefined);
-    return c;
+
+    remult.setDataProvider(dp);
+    Sites.setSiteToContext(site);
+    await InitContext(remult, undefined);
+
 }
 declare module 'remult' {
     export interface RemultContext {

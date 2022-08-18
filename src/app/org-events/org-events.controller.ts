@@ -40,9 +40,9 @@ export class OrgEventsController {
 
         for (const org of sites) {
 
-            let c = await createSiteContext(org);
+            await createSiteContext(org);
 
-            let settings = await c.context.getSettings();
+            let settings = await remult.context.getSettings();
             setSettingsForSite(org, settings);
 
 
