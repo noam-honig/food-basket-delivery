@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 
 import { BusyService, DialogConfig } from '@remult/angular';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';

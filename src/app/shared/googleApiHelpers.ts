@@ -1,5 +1,5 @@
 import * as fetch from 'node-fetch';
-import { UrlBuilder, Entity, Remult, FieldRef, EntityBase, Controller, Fields, BackendMethod, ControllerBase, remult } from 'remult';
+import { UrlBuilder, Entity,  FieldRef, EntityBase, Controller, Fields, BackendMethod, ControllerBase, remult } from 'remult';
 import { Field } from '../translate';
 
 
@@ -21,7 +21,7 @@ export class GeoCodeOptions {
 }
 
 var pendingRequests = new Map<string, Promise<GeocodeInformation>>();
-export async function GetGeoInformation(address: string, remult: Remult) {
+export async function GetGeoInformation(address: string) {
 
     if (!address || address == '' || address.trim() == '')
         return new GeocodeInformation();
@@ -120,7 +120,7 @@ export class GeocodeInformation {
         if (!this.info)
             this.info = { results: [], status: 'none' };
     }
-    openGoogleMaps(remult: Remult) {
+    openGoogleMaps() {
         window.open('https://maps.google.com/maps?q=' + toLongLat(this.location()) + '&hl=' + getLang().languageCode, '_blank');
     }
     getAddress() {
@@ -396,7 +396,7 @@ export class AddressHelper {
     private _lastString: string;
     private _lastGeo: GeocodeInformation;
     async updateApiResult() {
-        let geo = await GetGeoInformation(this.addressColumn().value, remult);
+        let geo = await GetGeoInformation(this.addressColumn().value);
         this.apiResultColumn().value = geo.saveToString();
         this.updateCityColumn(geo);
     }
@@ -561,7 +561,7 @@ export class AdjustGeocode extends ControllerBase {
         this.location = toLongLat(geo.location());
 
         await ui.inputAreaDialog({
-            buttons: [{ text: 'מפה', click: () => geo.openGoogleMaps(remult) }],
+            buttons: [{ text: 'מפה', click: () => geo.openGoogleMaps() }],
             fields: [{ field: this.$.originalAddress, readonly: true }, this.$.location, this.$.city, this.$.address],
             ok: async () => {
                 ui.Info("עודכנו " + await this.updateGeocode() + " כתובות");

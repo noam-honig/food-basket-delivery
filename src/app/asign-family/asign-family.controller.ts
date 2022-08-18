@@ -477,8 +477,8 @@ export class AsignFamilyController {
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id == x) && result.familiesInSameAddress.indexOf(x) == i);
         if (distCenter)
-            distCenter.SendMessageToBrowser(settings.lang.deliveriesAssigned, remult);
-        Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned, remult, '');
+            distCenter.SendMessageToBrowser(settings.lang.deliveriesAssigned);
+        Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned,  '');
         return result;
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })

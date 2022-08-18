@@ -1,4 +1,4 @@
-import { Remult, ValueFilter, getValueList } from 'remult';
+import { ValueFilter, getValueList } from 'remult';
 
 import { use, ValueListFieldType } from '../translate';
 
@@ -9,7 +9,7 @@ import { DataControl } from '@remult/angular/interfaces';
 
 
 @DataControl({
-  valueList: async remult => DeliveryStatus.getOptions(remult)
+  valueList: async remult => DeliveryStatus.getOptions()
   , width: '150'
 
 })
@@ -102,7 +102,7 @@ export class DeliveryStatus {
   static isNotProblem() {
     return [...this.problemStatuses(), DeliveryStatus.Frozen];
   }
-  static getOptions(remult: Remult) {
+  static getOptions() {
     let op = getValueList(DeliveryStatus);
     if (!getSettings().usingSelfPickupModule) {
       op = op.filter(x => x.id != DeliveryStatus.SelfPickup.id &&

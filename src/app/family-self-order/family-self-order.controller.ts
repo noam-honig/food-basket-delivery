@@ -1,5 +1,5 @@
 import { DataAreaSettings, DataControl, getEntityValueList } from '@remult/angular/interfaces';
-import { BackendMethod, Controller, getFields, remult, Remult } from 'remult';
+import { BackendMethod, Controller, getFields, remult } from 'remult';
 import { BasketType } from '../families/BasketType';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -10,7 +10,7 @@ import { Field } from '../translate';
 @Controller('family-self-order')
 export class FamilySelfOrderController {
 
-    constructor(protected remult: Remult) { }
+    constructor() { }
     @Field()
     familyUrl: string = 'dcf37b47-603b-44a1-ae15-d021f3003537';
 
@@ -19,7 +19,7 @@ export class FamilySelfOrderController {
 
     @Field({ caption: 'סוג מזון' })
     @DataControl({
-        valueList: async (remult: Remult) => getEntityValueList(remult.repo(BasketType))
+        valueList: async () => getEntityValueList(remult.repo(BasketType))
     })
     basket: string;
 
@@ -86,7 +86,7 @@ export class FamilySelfOrderController {
     }
 
     async loadFamily() {
-        let f = await Families.getFamilyByShortUrl(this.familyUrl, remult);
+        let f = await Families.getFamilyByShortUrl(this.familyUrl);
         if (!f) {
             this.message = "לא נמצא";
             return;

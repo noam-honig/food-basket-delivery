@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { remult, Remult } from "remult";
+import { remult } from "remult";
 import { GridSettings } from "@remult/angular/interfaces";
 import { GeneralImportFromExcelComponent } from "../import-gifts/import-from-excel.component";
 import { HelperGifts } from "./HelperGifts";

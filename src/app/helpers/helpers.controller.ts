@@ -2,7 +2,6 @@
 import { Helpers } from './helpers';
 
 import { BackendMethod, remult } from 'remult';
-import { Remult } from 'remult';
 
 import { Roles } from '../auth/roles';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

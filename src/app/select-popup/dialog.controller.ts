@@ -1,4 +1,4 @@
-import { BackendMethod, remult, Remult } from "remult";
+import { BackendMethod, remult } from "remult";
 
 export class DialogController {
     @BackendMethod({ allowed: true })

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { EntityFilter, remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { GridSettings, RowButton } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { Event, eventStatus } from './events';
@@ -59,7 +59,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          await Event.duplicateEvent(remult, this.dialog, this.events.selectedRows, () => {
+          await Event.duplicateEvent( this.dialog, this.events.selectedRows, () => {
             this.events.reloadData();
             this.events.selectedRows.splice(0);
           });

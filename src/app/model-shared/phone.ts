@@ -1,5 +1,5 @@
 import { DataControl } from "@remult/angular/interfaces";
-import { Remult, FieldRef, remult } from "remult";
+import {  FieldRef } from "remult";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
 import { FieldType, translationConfig } from "../translate";
@@ -56,11 +56,11 @@ export class Phone {
       s = '0' + s;
     return s;
   }
-  sendWhatsapp(remult: Remult, message = "") {
-    Phone.sendWhatsappToPhone(this.thePhone, message, remult);
+  sendWhatsapp( message = "") {
+    Phone.sendWhatsappToPhone(this.thePhone, message);
   }
 
-  static sendWhatsappToPhone(phone: string, smsMessage: string, remult: Remult, test = false) {
+  static sendWhatsappToPhone(phone: string, smsMessage: string,  test = false) {
     phone = Phone.fixPhoneInput(phone);
     if (phone.startsWith('0')) {
       phone = getSettings().getInternationalPhonePrefix + phone.substr(1);
@@ -77,7 +77,7 @@ export class Phone {
   }
 
 
-  static validatePhone(col: FieldRef<any, Phone>, remult: Remult, required = false) {
+  static validatePhone(col: FieldRef<any, Phone>,  required = false) {
     if (!col.value || col.value.thePhone == '') {
       if (required)
         col.error = getLang().invalidPhoneNumber;

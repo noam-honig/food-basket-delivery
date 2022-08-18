@@ -13,7 +13,7 @@ export function CustomColumn(info: () => customColumnInfo, includeInApi?: Allowe
 }
 
 import { Location, AddressHelper } from "../shared/googleApiHelpers";
-import { Entity, Remult } from 'remult';
+import { Entity } from 'remult';
 import { logChanges } from "../model-shared/types";
 import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
@@ -78,7 +78,7 @@ export class RemovedFromListExcelImportStrategy {
         setLangForSite(Sites.getValidSchemaFromContext(), self.forWho);
       setSettingsForSite(Sites.getValidSchemaFromContext(), self);
       logChanges(self._, remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest, self.$.smsCredentials, self.$.smsPasswordInput] });
-      recordChanges(remult, self, {
+      recordChanges( self, {
         excludeColumns: s => [s.currentUserIsValidForAppLoadTest, s.smsPasswordInput],
         excludeValues: s => [s.smsCredentials]
       });
@@ -140,7 +140,7 @@ export class ApplicationSettings extends EntityBase {
     if (!d)
       return [];
     let Families = await (await import('../families/families')).Families;
-    let family = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family, remult);
+    let family = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family);
     let r: phoneOption[] = [];
     let settings = await ApplicationSettings.getAsync();
     for (const x of settings.getPhoneStrategy()) {
@@ -148,8 +148,6 @@ export class ApplicationSettings extends EntityBase {
         await x.option.build({
           family: family,
           d: d,
-          remult,
-
           phoneItem: x,
           settings,
           addPhone: (name, phone) => r.push({ name: name, phone: phone })
@@ -506,7 +504,7 @@ export class ApplicationSettings extends EntityBase {
   allowVolunteerToSeePreviousActivities: boolean;
 
 
-  static get(remult: Remult) {
+  static get() {
 
     return getSettings();
 
@@ -591,7 +589,6 @@ export interface qaItem {
 export interface phoneBuildArgs {
   family: import('../families/families').Families,
   d: import('../families/FamilyDeliveries').FamilyDeliveries,
-  remult: Remult,
   phoneItem: PhoneItem,
   settings: ApplicationSettings,
   addPhone: (name: string, value: string) => void
@@ -731,7 +728,7 @@ interface customColumnInfo {
   values?: string[]
 
 }
-export function includePhoneInApi(remult: Remult) {
+export function includePhoneInApi() {
   var s = getSettings();
   if (!s.hideFamilyPhoneFromVolunteer)
     return true;

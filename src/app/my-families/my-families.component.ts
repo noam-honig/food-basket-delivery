@@ -3,7 +3,7 @@ import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
 import { BusyService, RouteHelperService } from '@remult/angular';
-import { remult, Remult, UserInfo } from 'remult';
+import { remult,  UserInfo } from 'remult';
 
 import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

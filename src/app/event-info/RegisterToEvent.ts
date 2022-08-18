@@ -1,5 +1,5 @@
 import { DataControl } from '@remult/angular/interfaces';
-import { BackendMethod, Remult, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef, remult } from 'remult';
+import { BackendMethod,  Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef, remult } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers } from '../helpers/helpers';
@@ -73,7 +73,7 @@ export class RegisterToEvent {
         validate: (e, c) => {
             if (!remult.authenticated()) {
                 c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone))
-                Phone.validatePhone(c, remult, true);
+                Phone.validatePhone(c,  true);
             }
 
         }

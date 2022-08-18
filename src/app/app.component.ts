@@ -74,7 +74,7 @@ export class AppComponent {
   }
   prevLogoUrl = '';
   getLogo() {
-    let result = ApplicationSettings.get(remult).logoUrl;
+    let result = ApplicationSettings.get().logoUrl;
     if (result) {
       this.prevLogoUrl = result;
     }
@@ -91,7 +91,7 @@ export class AppComponent {
       if (this.activeRoute.firstChild.data && this.activeRoute.snapshot.firstChild.data.name)
         return this.activeRoute.snapshot.firstChild.data.name;
     }
-    return ApplicationSettings.get(remult).organisationName;
+    return ApplicationSettings.get().organisationName;
   }
   toolbarColor = 'primary';
   showConfidentialityApproveInPrint() {

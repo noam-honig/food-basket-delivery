@@ -1,6 +1,6 @@
 import { Express, Response } from 'express';
 import { ServerEventAuthorizeAction } from './server-event-authorize-action';
-import { Remult } from 'remult';
+import { remult, Remult } from 'remult';
 
 import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
@@ -9,7 +9,7 @@ import { Roles } from '../auth/roles';
 
 
 let tempConnections: any = {};
-ServerEventAuthorizeAction.authorize = (key, remult) => {
+ServerEventAuthorizeAction.authorize = (key) => {
     let x = tempConnections[key];
     if (x)
         x(remult);
@@ -84,7 +84,7 @@ export class ServerEvents {
         });
     }
 
-    SendMessage(x: string, remult: Remult, distributionCenter: string) {
+    SendMessage(x: string, distributionCenter: string) {
         let z = this;
         setTimeout(() => {
             let org = Sites.getOrganizationFromContext();

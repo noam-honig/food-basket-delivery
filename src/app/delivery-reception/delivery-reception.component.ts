@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { DataControlInfo, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';

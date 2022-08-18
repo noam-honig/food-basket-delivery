@@ -1,4 +1,4 @@
-import { Filter, Remult, getValueList as gvl } from "remult";
+import { Filter,  getValueList as gvl, remult } from "remult";
 import { Families } from "./families";
 
 import { BasketType } from "./BasketType";
@@ -75,8 +75,8 @@ export class NewDelivery extends ActionOnRows<Families> {
     })
 
     excludeGroups: GroupsValue;
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             validate: async () => {
 
                 if (!this.useFamilyDistributionList && !this.distributionCenter) {
@@ -179,8 +179,8 @@ export class updateGroup extends ActionOnRows<Families> {
     group: string;
     @Field()
     action: UpdateGroupStrategy = UpdateGroupStrategy.add;
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             confirmQuestion: () => this.action.caption + ' "' + this.group + '"',
             title: getLang().assignAFamilyGroup,
             forEach: async f => {
@@ -208,8 +208,8 @@ export class UpdateStatus extends ActionOnRows<Families> {
     @Field({ translation: l => l.deleteExistingComment })
     deleteExistingComment: boolean;
 
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             help: () => getLang().updateStatusHelp,
             dialogColumns: async () => {
                 if (!this.status)
@@ -259,8 +259,8 @@ export class UpdateBasketType extends ActionOnRows<Families> {
     @Field()
     basket: BasketType;
 
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             title: getLang().updateDefaultBasket,
             forEach: async f => { f.basketType = this.basket },
         });
@@ -275,8 +275,8 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
     updateExistingDeliveries: boolean;
 
 
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             visible: c => c.settings.usingSelfPickupModule,
             title: getLang().updateDefaultSelfPickup,
             forEach: async f => {
@@ -312,8 +312,8 @@ export class UpdateArea extends ActionOnRows<Families> {
     @Field({ translation: l => l.region })
     area: string;
 
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             title: getLang().updateArea,
             forEach: async f => { f.area = this.area.trim() },
         });
@@ -324,8 +324,8 @@ export class UpdateQuantity extends ActionOnRows<Families> {
     @Fields.quantity()
     quantity: number;
 
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             title: getLang().updateDefaultQuantity,
             forEach: async f => { f.quantity = this.quantity },
         });
@@ -336,8 +336,8 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
     @Field()
     familySource: FamilySources;
 
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             title: getLang().updateFamilySource,
             forEach: async f => { f.familySource = this.familySource }
         });
@@ -349,8 +349,8 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
     clearVoulenteer: boolean;
     @Field()
     courier: HelpersBase;
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
                 { field: this.$.courier, visible: () => !this.clearVoulenteer }
@@ -374,8 +374,8 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
 export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
     @Field({ translation: l => l.defaultDistributionCenter })
     distributionCenter: DistributionCenters;
-    constructor(remult: Remult) {
-        super(remult, Families, {
+    constructor() {
+        super(Families, {
             dialogColumns: async (x) => {
                 if (x.ui.distCenter)
                     this.distributionCenter = x.ui.distCenter;
@@ -404,8 +404,8 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
 
     @Field()
     familyActionInfo: any;
-    constructor(remult: Remult, public orig: ActionOnRows<Families>) {
-        super(remult, ActiveFamilyDeliveries, {
+    constructor(public orig: ActionOnRows<Families>) {
+        super(ActiveFamilyDeliveries, {
             forEach: async fd => {
                 if (this.processedFamilies.get(fd.family))
                     return;
@@ -443,20 +443,20 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
 }
 @Controller('updateGroupForDeliveries')
 export class updateGroupForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(remult: Remult) {
-        super(remult, new updateGroup(remult))
+    constructor() {
+        super(new updateGroup())
     }
 }
 @Controller('UpdateAreaForDeliveries')
 export class UpdateAreaForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(remult: Remult) {
-        super(remult, new UpdateArea(remult))
+    constructor() {
+        super(new UpdateArea())
     }
 }
 @Controller('UpdateStatusForDeliveries')
 export class UpdateStatusForDeliveries extends bridgeFamilyDeliveriesToFamilies {
-    constructor(remult: Remult) {
-        super(remult, new UpdateStatus(remult))
+    constructor() {
+        super(new UpdateStatus())
     }
 }
 

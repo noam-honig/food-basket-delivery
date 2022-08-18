@@ -1,4 +1,4 @@
-import { Remult, BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
+import {  BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

@@ -1,5 +1,5 @@
 
-import { Remult, BackendMethod, Allow, remult } from 'remult';
+import {  BackendMethod, Allow, remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';

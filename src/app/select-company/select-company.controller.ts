@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Remult, BackendMethod, SqlDatabase, remult } from 'remult';
+import {  BackendMethod, SqlDatabase, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from '../helpers/helpers';

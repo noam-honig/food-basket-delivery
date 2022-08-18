@@ -4,7 +4,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers';
 
 import { AsignFamilyComponent } from '../asign-family/asign-family.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { BusyService, DialogConfig } from '@remult/angular';
 import { DialogService } from '../select-popup/dialog';
 

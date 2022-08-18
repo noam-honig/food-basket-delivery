@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../print-stickers/VolunteerReportDefs';

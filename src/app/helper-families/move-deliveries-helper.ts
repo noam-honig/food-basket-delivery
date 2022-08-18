@@ -1,7 +1,7 @@
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { remult, Remult } from "remult";
+import { remult } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 

@@ -1,5 +1,5 @@
 
-import { Entity, Remult, EntityBase } from 'remult';
+import { Entity, Remult, EntityBase, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Field, Fields } from '../translate';
 @Entity('ApplicationImages', {
@@ -15,7 +15,7 @@ export class ApplicationImages extends EntityBase {
   base64PhoneHomeImage: string;
 
 
-  static async getAsync(remult: Remult): Promise<ApplicationImages> {
+  static async getAsync(): Promise<ApplicationImages> {
     return remult.repo(ApplicationImages).findFirst(undefined);
   }
 }

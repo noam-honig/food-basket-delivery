@@ -2,7 +2,7 @@ import { BackendMethod, remult, SqlDatabase } from 'remult';
 
 import { Helpers } from '../helpers/helpers';
 
-import { Remult } from 'remult';
+
 import { Roles } from '../auth/roles';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -57,7 +57,7 @@ export class DeliveryFollowUpController {
                 inProgress: +r['inprogress'],
                 problem: +r['problem'],
                 viewedSms: signindate && smsDate && signindate > smsDate,
-                smsDateName: smsDate ? relativeDateName(remult, { d: smsDate }) : '',
+                smsDateName: smsDate ? relativeDateName( { d: smsDate }) : '',
                 smsWasSent: smsDate && smsDate > maxAsign,
 
                 eventComment: r['comment1']
@@ -70,12 +70,11 @@ export class DeliveryFollowUpController {
         const message = await remult.repo(MessageTemplate).findId("simpleAttendanceReminder", { createIfNotFound: true });
         for (const h of await remult.repo(Helpers).find({ where: { id: ids } })) {
             await new SendSmsUtils().sendSms(h.phone.thePhone,
-                DeliveryFollowUpController.createMessage(h, remult).merge(message.template),  h, {});
+                DeliveryFollowUpController.createMessage(h).merge(message.template),  h, {});
         }
         return "נשלחו " + ids.length + " הודעות";
     }
-    static createMessage(volunteer: { name: string }, remult: Remult
-    ) {
+    static createMessage(volunteer: { name: string }) {
         return new messageMerger([
             { token: "מתנדב", caption: "שם המתנדב", value: volunteer.name },
 

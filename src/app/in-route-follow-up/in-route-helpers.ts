@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FieldMetadata, remult } from "remult";
+import { IdEntity,  Entity, FieldMetadata, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { DateTimeColumn, relativeDateName, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -134,7 +134,7 @@ export class InRouteHelpers extends IdEntity {
     @Field({ translation: l => l.volunteerName })
     name: string;
     relativeDate(val: Date) {
-        return relativeDateName(remult, { d: val });
+        return relativeDateName( { d: val });
     }
     @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),

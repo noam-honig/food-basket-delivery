@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Remult, IdEntity, remult } from 'remult';
+import {  remult } from 'remult';
 import { FamilyImage } from '../families/DeiveryImages';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { ImageInfo } from '../images/images.component';

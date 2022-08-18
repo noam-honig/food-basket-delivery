@@ -4,7 +4,6 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
-import { Remult } from 'remult';
 
 import { use } from '../translate';
 import { HelpersBase } from '../helpers/helpers';
@@ -129,7 +128,7 @@ export class HelperFamiliesController {
                 await fd.save();
             }
         });
-        await dist.SendMessageToBrowser(getLang().cancelAssignmentForHelperFamilies, remult);
+        await dist.SendMessageToBrowser(getLang().cancelAssignmentForHelperFamilies);
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async okAllForHelperOnServer(helper: HelpersBase) {
@@ -148,7 +147,7 @@ export class HelperFamiliesController {
             }
         });
         if (dist)
-            await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull, remult);
+            await dist.SendMessageToBrowser(use.language.markAllDeliveriesAsSuccesfull);
     }
     @BackendMethod({ allowed: Allow.authenticated })
     static async sendSuccessMessageToFamily(deliveryId: string) {

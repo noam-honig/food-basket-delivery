@@ -1,9 +1,8 @@
 //import('nodemailer');
 import { EmailSvc } from '../shared/utils';
-import { Remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 
-EmailSvc.sendMail = async (subject: string, message: string, email: string, remult: Remult) => {
+EmailSvc.sendMail = async (subject: string, message: string, email: string) => {
     let settings = await ApplicationSettings.getAsync();
     if (!settings.isSytemForMlt && !settings.familySelfOrderEnabled)
         return;

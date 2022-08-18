@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { BasketType } from '../families/BasketType';
-import { Remult } from 'remult';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { remult, Remult, Unobserve } from 'remult';
+import { remult,  Unobserve } from 'remult';
 import { EventInList } from '../events/events';
 import { RegisterToEvent } from '../event-info/RegisterToEvent';
 import { Sites } from '../sites/sites';
@@ -22,7 +22,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   }
   isGuest = Sites.getOrganizationFromContext() == Sites.guestSchema;
   getLogo() {
-    return ApplicationSettings.get(remult).logoUrl;
+    return ApplicationSettings.get().logoUrl;
 
   }
   ngOnDestroy(): void {

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Remult } from 'remult';
 import { validSchemaName } from '../sites/sites';
 
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';

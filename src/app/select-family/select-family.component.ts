@@ -3,8 +3,6 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { GridSettings } from '@remult/angular/interfaces';
 import { EntityFilter, EntityOrderBy, remult } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Filter } from 'remult';
-import { Remult } from 'remult';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

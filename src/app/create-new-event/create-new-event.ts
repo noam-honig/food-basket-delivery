@@ -1,4 +1,4 @@
-import { Remult, Controller, BackendMethod, getFields, ProgressListener, remult } from 'remult';
+import {  Controller, BackendMethod, getFields, ProgressListener, remult } from 'remult';
 
 
 import { Sites, getLang } from '../sites/sites';
@@ -101,7 +101,7 @@ export class CreateNewEvent {
                 }
                 await fd.save();
             }, progress);
-            Families.SendMessageToBrowsers(r + " " + getLang().deliveriesCreated, remult, '');
+            Families.SendMessageToBrowsers(r + " " + getLang().deliveriesCreated,  '');
         }
         return r;
 
@@ -181,7 +181,7 @@ export class CreateNewEvent {
         }
         this.useFamilyBasket = true;
 
-        let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, { distributionCenter: remult.context.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
+        let archiveHelperFields = await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo( { distributionCenter: remult.context.filterDistCenter(this.selectedDistributionList) }, settings.usingSelfPickupModule);
 
         await ui.inputAreaDialog({
             title: settings.lang.createNewEvent,

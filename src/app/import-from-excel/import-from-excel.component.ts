@@ -3,7 +3,6 @@ import { EntityFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, 
 import { DataAreaFieldsSetting, DataAreaSettings, DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 
-import { Remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { Phone } from "../model-shared/phone";
 
@@ -1004,7 +1003,7 @@ export class ImportFromExcelComponent implements OnInit {
         if (info.removedFromList) {
             r = use.language.removedFromList + '! ';
         }
-        return r + displayDupInfo(info, remult);
+        return r + displayDupInfo(info);
     }
 
 
@@ -1158,7 +1157,7 @@ export class ImportFromExcelComponent implements OnInit {
         return await this.dialog.YesNoPromise(what);
     }
     private async actualMoveFromErrorToUpdate(i: excelRowInfo, f: duplicateFamilyInfo) {
-        let r = await compareValuesWithRow(remult, i, f.id, this.compareBasketType, this.columnsInCompareMemberName);
+        let r = await compareValuesWithRow( i, f.id, this.compareBasketType, this.columnsInCompareMemberName);
         i.duplicateFamilyInfo = [f];
         if (r.hasDifference) {
             this.updateRows.push(i);

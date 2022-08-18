@@ -1,5 +1,5 @@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from "@angular/router";
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { Injectable } from "@angular/core";
 
 @Injectable()

@@ -11,7 +11,7 @@ import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 
 import { use } from '../translate';
 import { Helpers, HelpersBase } from '../helpers/helpers';
@@ -228,7 +228,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   reminderSmsRelativeDate() {
-    return relativeDateName(remult, { d: this.familyLists.helper.reminderSmsDate });
+    return relativeDateName( { d: this.familyLists.helper.reminderSmsDate });
   }
 
 
@@ -502,7 +502,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async sendWhatsapp() {
-    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage, remult);
+    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage);
     await this.updateMessageSent("Whatsapp");
   }
   print() {

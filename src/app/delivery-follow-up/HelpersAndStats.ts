@@ -2,7 +2,6 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Entity, remult } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
-import { Remult } from 'remult';
 import { Roles } from "../auth/roles";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { use, Field } from "../translate";
@@ -77,9 +76,4 @@ export class HelpersAndStats extends HelpersBase {
     })
     allDeliveires: number;
 
-
-
-    constructor(remult: Remult) {
-        super(remult);
-    }
 }

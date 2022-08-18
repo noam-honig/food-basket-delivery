@@ -1,5 +1,4 @@
 import { FieldRef, BackendMethod, remult } from 'remult';
-import { Remult } from 'remult';
 
 import { Roles } from '../auth/roles';
 
@@ -21,11 +20,11 @@ export class ImportHelpersFromExcelController {
     @BackendMethod({ allowed: Roles.admin })
     static async updateHelperColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string) {
         for (const r of rowsToUpdate) {
-            await ImportHelpersFromExcelController.actualUpdateCol(r, columnMemberName, remult);
+            await ImportHelpersFromExcelController.actualUpdateCol(r, columnMemberName);
         }
         return rowsToUpdate;
     }
-    static async actualUpdateCol(i: excelRowInfo, colMemberName: string, remult: Remult) {
+    static async actualUpdateCol(i: excelRowInfo, colMemberName: string) {
         let c = ImportHelpersFromExcelController.actualGetColInfo(i, colMemberName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;

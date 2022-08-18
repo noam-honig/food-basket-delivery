@@ -1,4 +1,4 @@
-import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, remult, Remult } from 'remult';
+import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, remult } from 'remult';
 import { ClassType } from 'remult/classType';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';

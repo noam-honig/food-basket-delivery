@@ -1,5 +1,5 @@
 import { Helpers, HelpersBase } from '../helpers/helpers';
-import { Remult, BackendMethod, SqlDatabase, remult } from 'remult';
+import {  BackendMethod, SqlDatabase, remult } from 'remult';
 
 import { getSettings } from '../manage/ApplicationSettings';
 import { Location, GetDistanceBetween, GeocodeInformation } from '../shared/googleApiHelpers';
@@ -104,7 +104,7 @@ export class SelectHelperController {
             }))).rows) {
                 let h = helpers.get(d.courier);
                 if (h) {
-                    h.lastCompletedDeliveryString = relativeDateName(remult, { d: d.delivery_date });
+                    h.lastCompletedDeliveryString = relativeDateName( { d: d.delivery_date });
                     h.totalRecentDeliveries = d.count;
                     h.isBusyVolunteer = (h.totalRecentDeliveries > (await remult.context.getSettings()).BusyHelperAllowedFreq_nom) ? "busyVolunteer" : "";
                 }

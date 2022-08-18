@@ -7,7 +7,7 @@ import { BusyService, openDialog } from '@remult/angular';
 import { Helpers } from '../helpers/helpers';
 
 
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { distCenterAdminGuard } from '../auth/guards';
 
 import { Route } from '@angular/router';
@@ -123,7 +123,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     this.dialog.editCustomMessageDialog({
       helpText: 'פעולה זו תשלח הודעה למתנדבים אשר טרם נשלח להם SMS עם קישור - כדי להזכיר להם להגיע לארוע החלוקה - אך עדיין לשמור אותם מסומנים כטרם קיבלו SMS ',
       title: getLang().sendAttendanceReminder + ' - ' + h.length,
-      message: DeliveryFollowUpController.createMessage(h[0], remult),
+      message: DeliveryFollowUpController.createMessage(h[0]),
       templateText: message.template,
       buttons: [
         {

@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import { Remult, IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase, remult } from 'remult';
+import {  IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase, remult } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -54,14 +54,14 @@ export class MessageStatus {
 
         if (self.isNew()) {
             self.createDate = new Date();
-            self.createUser = (await self.remult.context.getCurrentUser());
+            self.createUser = (await remult.context.getCurrentUser());
             self.deliveryStatusDate = new Date();
-            self.deliveryStatusUser = (await self.remult.context.getCurrentUser());
+            self.deliveryStatusUser = (await remult.context.getCurrentUser());
         }
         if (self.quantity < 1)
             self.quantity = 1;
         if (self.distributionCenter == null)
-            self.distributionCenter = await self.remult.repo(DistributionCenters).findFirst({ archive: false });
+            self.distributionCenter = await remult.repo(DistributionCenters).findFirst({ archive: false });
         if (self.$.courier.valueChanged() && !self.disableRouteReCalc && !self.isNew())
             self.routeOrder = 0;
 
@@ -69,33 +69,33 @@ export class MessageStatus {
             if (!self.disableChangeLogging) {
 
                 if (!self.isNew() || self.courier)
-                    logChanged(self.remult, self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
+                    logChanged( self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
                         if (!self._disableMessageToUsers) {
                             self.distributionCenter.SendMessageToBrowser(
-                                Families.GetUpdateMessage(self, 2, self.courier?.name, self.remult), self.remult);
+                                Families.GetUpdateMessage(self, 2, self.courier?.name));
                         }
                     }
                     );
                 if (!self.isNew() && self.$.courierComments.valueChanged() && self.courierComments.length > 0)
                     self.courierCommentsDate = new Date();
 
-                logChanged(self.remult, self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
+                logChanged( self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
                     if (!self._disableMessageToUsers) {
-                        self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.name : '', self.remult), self.remult);
+                        self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.name : ''));
                     }
                 });
-                logChanged(self.remult, self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
-                logChanged(self.remult, self.$.archive, self.$.archiveDate, self.$.archiveUser, async () => { });
+                logChanged( self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
+                logChanged( self.$.archive, self.$.archiveDate, self.$.archiveUser, async () => { });
             }
             if (!self.deliverStatus.IsAResultStatus()
                 && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
-                let f = await self.remult.repo(Families).findId(self.family);
+                let f = await remult.repo(Families).findId(self.family);
                 if (f)
                     f.updateDelivery(self);
 
             }
             if (self.isNew() && !self._disableMessageToUsers) {
-                self.distributionCenter.SendMessageToBrowser(getLang().newDelivery, self.remult)
+                self.distributionCenter.SendMessageToBrowser(getLang().newDelivery)
 
             }
         }
@@ -257,7 +257,7 @@ export class FamilyDeliveries extends IdEntity {
     @ChangeDateColumn()
     deliveryStatusDate: Date;
     relativeDeliveryStatusDate() {
-        return relativeDateName(remult, { d: this.deliveryStatusDate });
+        return relativeDateName( { d: this.deliveryStatusDate });
     }
     @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser, includeInApi: Roles.distCenterAdmin })
     courierAssignUser: HelpersBase;
@@ -363,42 +363,42 @@ export class FamilyDeliveries extends IdEntity {
     familyMembers: number;
     @Field({
         dbName: 'phone',
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone1: Phone;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone1Description: string;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone2: Phone;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone2Description: string;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone3: Phone;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone3Description: string;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone4: Phone;
     @Field({
-        includeInApi: remult => includePhoneInApi(remult),
+        includeInApi: () => includePhoneInApi(),
         allowApiUpdate: false
     })
     phone4Description: string;
@@ -560,10 +560,8 @@ export class FamilyDeliveries extends IdEntity {
 
     disableChangeLogging = false;
     _disableMessageToUsers = false;
-    constructor(protected remult: Remult) {
-        super();
-    }
-    static async loadFamilyInfoForExcepExport(remult: Remult, deliveries: ActiveFamilyDeliveries[]) {
+    
+    static async loadFamilyInfoForExcepExport( deliveries: ActiveFamilyDeliveries[]) {
         let families = await remult.repo(Families).find({ limit: deliveries.length, where: { id: deliveries.map(d => d.family) } });
         for (const d of deliveries) {
             d.familyForExcelExport = families.find(f => f.id == d.family);
@@ -634,7 +632,7 @@ export class FamilyDeliveries extends IdEntity {
             if (deliveryStatusDate.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
                 r += getLang().on + " " + deliveryStatusDate.toLocaleDateString("he-il");
             else
-                r += relativeDateName(remult, { d: deliveryStatusDate });
+                r += relativeDateName( { d: deliveryStatusDate });
             if (courierComments) {
                 r += ": " + courierComments;
             }
@@ -658,7 +656,7 @@ export class FamilyDeliveries extends IdEntity {
                 if (this.courier) {
                     let c = this.courier;
 
-                    let r = ((this.messageStatus == MessageStatus.opened ? use.language.onTheWay : use.language.assigned) + ': ' + c.name + (c.eventComment ? ' (' + c.eventComment + ')' : '') + ', ' + use.language.assigned + ' ' + relativeDateName(remult, { d: this.courierAssingTime })) + " ";
+                    let r = ((this.messageStatus == MessageStatus.opened ? use.language.onTheWay : use.language.assigned) + ': ' + c.name + (c.eventComment ? ' (' + c.eventComment + ')' : '') + ', ' + use.language.assigned + ' ' + relativeDateName( { d: this.courierAssingTime })) + " ";
                     switch (this.messageStatus) {
                         case MessageStatus.notSent:
                             r += use.language.smsNotSent;
@@ -682,13 +680,13 @@ export class FamilyDeliveries extends IdEntity {
                 let duration = '';
                 if (this.courierAssingTime && this.deliveryStatusDate)
                     duration = ' ' + getLang().within + ' ' + Math.round((this.deliveryStatusDate.valueOf() - this.courierAssingTime.valueOf()) / 60000) + " " + getLang().minutes;
-                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang().by + ' ' + this.courier.name : '') + ' ' + relativeDateName(remult, { d: this.deliveryStatusDate }) + duration;
+                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang().by + ' ' + this.courier.name : '') + ' ' + relativeDateName( { d: this.deliveryStatusDate }) + duration;
 
         }
         return this.deliverStatus.caption;
     }
     describe() {
-        return Families.GetUpdateMessage(this, 1, this.courier && this.courier.name, remult);
+        return Families.GetUpdateMessage(this, 1, this.courier && this.courier.name);
     }
 
 
@@ -840,7 +838,7 @@ export class FamilyDeliveries extends IdEntity {
 
 }
 SqlBuilder.filterTranslators.push({
-    translate: async (remult, f) => {
+    translate: async ( f) => {
         return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, remult);
     }
 });
@@ -871,7 +869,7 @@ iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
 
 
-function logChanged(remult: Remult, col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
+function logChanged( col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.setId(remult.user.id);

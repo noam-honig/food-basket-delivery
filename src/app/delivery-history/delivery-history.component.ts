@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Remult, EntityBase, getFields, remult } from 'remult';
+import { EntityBase, getFields, remult } from 'remult';
 import { Phone } from "../model-shared/phone";
 import { Helpers, CompanyColumn } from '../helpers/helpers';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -71,9 +71,8 @@ export class DeliveryHistoryComponent implements OnInit {
   constructor(private busy: BusyService, public settings: ApplicationSettings, public dialog: DialogService, private routeHelper: RouteHelperService) {
     this.helperStorage = new InMemoryDataProvider();
     this.dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
-    let stam = new Remult();
-    stam.setDataProvider(this.helperStorage);
-    this.helperInfo = new GridSettings(stam.repo(helperHistoryInfo), {
+
+    this.helperInfo = new GridSettings(remult.repo(helperHistoryInfo, this.helperStorage), {
       allowSelection: true,
       numOfColumnsInGrid: (this.settings.isSytemForMlt ? 12 : 9),
       gridButtons: [
@@ -81,7 +80,7 @@ export class DeliveryHistoryComponent implements OnInit {
           name: this.settings.lang.exportToExcel,
           visible: () => remult.isAllowed(Roles.admin),
           click: async () => {
-            await saveToExcel(this.settings, stam.repo(helperHistoryInfo), this.helperInfo, this.settings.lang.volunteers, this.dialog, (d: helperHistoryInfo, c) => c == d.$.courier);
+            await saveToExcel(this.settings, remult.repo(helperHistoryInfo, this.helperStorage), this.helperInfo, this.settings.lang.volunteers, this.dialog, (d: helperHistoryInfo, c) => c == d.$.courier);
           }
         },
         {
@@ -233,7 +232,7 @@ export class DeliveryHistoryComponent implements OnInit {
               await f.addFamilyInfoToExcelFile(addColumn);
           }, async deliveries => {
             if (includeFamilyInfo) {
-              await FamilyDeliveries.loadFamilyInfoForExcepExport(remult, deliveries);
+              await FamilyDeliveries.loadFamilyInfoForExcepExport( deliveries);
             }
           });
       }, visible: () => remult.isAllowed(Roles.admin)

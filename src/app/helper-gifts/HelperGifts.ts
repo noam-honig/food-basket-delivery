@@ -1,4 +1,4 @@
-import { Remult, Entity, IdEntity, BackendMethod, Allow, remult } from "remult";
+import {  Entity, IdEntity, BackendMethod, Allow, remult } from "remult";
 import { DataControl, GridSettings } from '@remult/angular/interfaces';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
@@ -126,7 +126,7 @@ export class HelperGifts extends IdEntity {
 
 
 
-export async function showHelperGifts(hid: Helpers, remult: Remult, ui: UITools): Promise<void> {
+export async function showHelperGifts(hid: Helpers,  ui: UITools): Promise<void> {
 
 
     let helperName = hid.name;

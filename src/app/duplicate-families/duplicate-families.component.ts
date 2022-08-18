@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Remult, FieldMetadata, getFields, remult } from 'remult';
+import {  FieldMetadata, getFields, remult } from 'remult';
 import { DataAreaSettings, DataControl, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
 import { Families } from '../families/families';
@@ -107,7 +107,7 @@ export class DuplicateFamiliesComponent implements OnInit {
         numOfColumnsInGrid: 6,
 
         gridButtons: [
-          ...[new UpdateStatus(remult), new updateGroup(remult)].map(a => a.gridButton(
+          ...[new UpdateStatus(), new updateGroup()].map(a => a.gridButton(
             {
               afterAction: async () => await x.args.settings.reloadData(),
               ui: this.dialog,
@@ -124,7 +124,7 @@ export class DuplicateFamiliesComponent implements OnInit {
           }, {
             name: this.settings.lang.exportToExcel,
             click: async () => {
-              await saveFamiliesToExcel(remult, x.args.settings, this.dialog, this.settings.lang.families)
+              await saveFamiliesToExcel( x.args.settings, this.dialog, this.settings.lang.families)
             }
           }],
         allowSelection: true,

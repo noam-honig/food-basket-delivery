@@ -1,7 +1,7 @@
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { DialogService } from "../select-popup/dialog";
-import { Remult, BackendMethod, remult } from "remult";
+import {  BackendMethod, remult } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
@@ -29,7 +29,7 @@ export class moveDeliveriesHelperController {
         await t.done();
         if (i) {
             let m = i + " " + settings.lang.deliveries + " " + settings.lang.to + " " + to.name
-            Families.SendMessageToBrowsers(m, remult, '');
+            Families.SendMessageToBrowsers(m,  '');
             return m;
         }
         return undefined;

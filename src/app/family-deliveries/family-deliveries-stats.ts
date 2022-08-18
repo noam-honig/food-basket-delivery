@@ -1,5 +1,5 @@
 
-import { Filter, Remult, BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter, remult } from "remult";
+import {  BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -75,7 +75,7 @@ export class FamilyDeliveryStats {
         for (let s in stats) {
             let x = stats[s];
             if (x instanceof FamilyDeliveresStatistics) {
-                pendingStats.push(x.saveTo(distCenter, result.data, remult));
+                pendingStats.push(x.saveTo(distCenter, result.data));
             }
         }
 
@@ -158,7 +158,7 @@ export class FamilyDeliveresStatistics {
     }
 
     value = 0;
-    async saveTo(distCenter: DistributionCenters, data: any, remult: Remult) {
+    async saveTo(distCenter: DistributionCenters, data: any) {
         try {
 
             data[this.name] = await remult.repo(ActiveFamilyDeliveries).count({ distributionCenter: remult.context.filterDistCenter(distCenter), $and: [this.rule] }).then(c => this.value = c);

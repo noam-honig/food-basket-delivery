@@ -1,6 +1,6 @@
 import { Event, EventType } from '../events/events';
 
-import { BackendMethod, remult, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, remult } from 'remult';
 import { EventInList, eventStatus } from '../events/events';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { Phone } from '../model-shared/phone';

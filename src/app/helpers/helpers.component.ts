@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Helpers } from './helpers';
 import { Route } from '@angular/router';
 import { getFields, remult } from 'remult';
-import { Remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
@@ -176,7 +175,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       },
       {
         name: this.settings.lang.sendWhats,
-        click: h => h.phone.sendWhatsapp(remult),
+        click: h => h.phone.sendWhatsapp(),
         icon: 'textsms'
       },
       {
@@ -262,7 +261,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       if (this.settings.isSytemForMlt)
         this.numOfColsInGrid += 6;
 
-      return [...Helpers.selectColumns(helpers, remult), helpers.preferredDistributionAreaAddressCity, helpers.preferredFinishAddressCity];
+      return [...Helpers.selectColumns(helpers), helpers.preferredDistributionAreaAddressCity, helpers.preferredFinishAddressCity];
     },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name),
 

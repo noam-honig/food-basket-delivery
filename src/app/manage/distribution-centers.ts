@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, Allow, isBackend, EntityFilter, remult } from "remult";
+import { IdEntity,  Entity, Allow, isBackend, EntityFilter, remult } from "remult";
 import { AddressHelper } from "../shared/googleApiHelpers";
 import { Phone } from "../model-shared/phone";
 
@@ -84,9 +84,9 @@ export class DistributionCenters extends IdEntity {
     return this.id == (remult.user).distributionCenter;
   }
 
-  async SendMessageToBrowser(message: string, remult: Remult) {
+  async SendMessageToBrowser(message: string) {
 
-    await (await import('../families/families')).Families.SendMessageToBrowsers(message, remult, this.id);
+    await (await import('../families/families')).Families.SendMessageToBrowsers(message,  this.id);
   }
 
 
@@ -109,7 +109,7 @@ export class DistributionCenters extends IdEntity {
       return this.addressHelper.location;
     return (await ApplicationSettings.getAsync()).addressHelper.location;
   }
-  static async getValueList(remult: Remult, showAllOptions = false) {
+  static async getValueList( showAllOptions = false) {
     let r = await getEntityValueList<DistributionCenters>(remult.repo(DistributionCenters), {
       where: { archive: false }
     })

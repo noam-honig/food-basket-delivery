@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FieldMetadata, FieldsMetadata, FieldRef, remult } from 'remult';
-import { Remult } from 'remult';
 
 import { DialogService } from '../select-popup/dialog';
 import { BusyService } from '@remult/angular';
@@ -127,7 +126,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
 
 
   async updateCol(i: excelRowInfo, col: FieldMetadata) {
-    await ImportHelpersFromExcelController.actualUpdateCol(i, col.key, remult);
+    await ImportHelpersFromExcelController.actualUpdateCol(i, col.key);
   }
 
   async clearColumnUpdate(i: excelRowInfo, col: FieldMetadata) {

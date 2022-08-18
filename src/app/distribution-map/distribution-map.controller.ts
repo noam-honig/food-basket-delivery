@@ -1,4 +1,4 @@
-import { EntityFilter, remult, Remult, SqlDatabase } from 'remult';
+import { EntityFilter, remult,  SqlDatabase } from 'remult';
 import { BackendMethod } from 'remult';
 import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { DeliveryStatus } from '../families/DeliveryStatus';

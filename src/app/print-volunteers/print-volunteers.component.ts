@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { BusyService } from '@remult/angular';
-import { Remult } from 'remult';
 import { PrintVolunteersController, volunteer } from './print-volunteers.controller';
 
 @Component({

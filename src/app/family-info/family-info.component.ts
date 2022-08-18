@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, NgZone, OnChanges, Simp
 import * as copy from 'copy-to-clipboard';
 import { DialogService } from '../select-popup/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 
 import { use } from '../translate';
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component';
@@ -90,7 +90,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     });
   }
   courierCommentsDateRelativeDate() {
-    return relativeDateName(remult, { d: this.f.courierCommentsDate })
+    return relativeDateName( { d: this.f.courierCommentsDate })
   }
 
 
@@ -153,7 +153,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     col?.call();
   }
   async sendWhatsapp(phone: Phone) {
-    phone.sendWhatsapp(remult, SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
+    phone.sendWhatsapp( SendSmsAction.getSuccessMessage(this.settings.successMessageText, this.settings.organisationName, this.f.name));
   }
 
 

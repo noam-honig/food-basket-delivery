@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { DeliveryStatus } from "../families/DeliveryStatus";
-import { Remult, EntityFilter, remult } from 'remult';
+import {  EntityFilter, remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
 
 import { Route, ActivatedRoute } from '@angular/router';

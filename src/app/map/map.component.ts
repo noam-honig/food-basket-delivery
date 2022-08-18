@@ -4,7 +4,6 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Remult } from 'remult';
 import { BusyService } from '@remult/angular';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers, HelpersBase } from '../helpers/helpers';

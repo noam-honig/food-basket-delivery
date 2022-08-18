@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
 import { DataAreaFieldsSetting, DataAreaSettings, GridSettings } from '@remult/angular/interfaces';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -212,7 +212,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     openDialog(UpdateFamilyDialogComponent, x => x.args = { family: f });
   }
   displayDupInfo(info: duplicateFamilyInfo) {
-    return displayDupInfo(info, remult);
+    return displayDupInfo(info);
   }
 
 
@@ -378,7 +378,7 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
   }
 
   sendWhatsApp() {
-    sendWhatsappToFamily(this.args.family, remult);
+    sendWhatsappToFamily(this.args.family);
   }
   canSendWhatsApp() {
     return canSendWhatsapp(this.args.family);

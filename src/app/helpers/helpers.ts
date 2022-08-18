@@ -1,4 +1,4 @@
-import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, remult } from 'remult';
+import { IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, remult } from 'remult';
 import { DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -75,10 +75,6 @@ export class HelpersBase extends IdEntity {
         return this.id == remult.user.id;
     }
 
-    constructor(protected remult: Remult) {
-
-        super();
-    }
     @Field<HelpersBase>({
         translation: l => l.volunteerName,
         validate: (h) => {
@@ -216,13 +212,13 @@ export class HelpersBase extends IdEntity {
             if (self.isNew())
                 canUpdate = true;
             else {
-                let updatingMyOwnHelperInfo = self.$.id.originalValue == self.remult.user.id;
+                let updatingMyOwnHelperInfo = self.$.id.originalValue == remult.user.id;
                 if (updatingMyOwnHelperInfo) {
                     if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue)
                         canUpdate = true;
-                    if (self.$.admin.originalValue && self.remult.isAllowed([Roles.admin, Roles.overview]))
+                    if (self.$.admin.originalValue && remult.isAllowed([Roles.admin, Roles.overview]))
                         canUpdate = true;
-                    if (self.$.distCenterAdmin.originalValue && self.remult.isAllowed(Roles.distCenterAdmin))
+                    if (self.$.distCenterAdmin.originalValue && remult.isAllowed(Roles.distCenterAdmin))
                         canUpdate = true;
                     if (!self.realStoredPassword && self.realStoredPassword.length == 0) //it's the first time I'm setting the password
                         canUpdate = true;
@@ -230,14 +226,14 @@ export class HelpersBase extends IdEntity {
                         canUpdate = true;
                 }
                 else {
-                    if (self.remult.isAllowed(Roles.admin))
+                    if (remult.isAllowed(Roles.admin))
                         canUpdate = true;
 
-                    if (self.remult.isAllowed(Roles.distCenterAdmin)) {
+                    if (remult.isAllowed(Roles.distCenterAdmin)) {
                         if (!self.$.admin.originalValue && !self.$.distCenterAdmin.originalValue) {
                             canUpdate = true;
                             if (self.distCenterAdmin) {
-                                self.distributionCenter = await self.remult.context.getUserDistributionCenter();
+                                self.distributionCenter = await remult.context.getUserDistributionCenter();
                             }
                         }
                         if (self.$.distCenterAdmin.originalValue && self.$.distributionCenter.originalValue && self.$.distributionCenter.originalValue.matchesCurrentUser())
@@ -261,22 +257,22 @@ export class HelpersBase extends IdEntity {
             if (!canUpdate)
                 throw "Not Allowed";
             if (self.password && self.$.password.valueChanged() && self.password != Helpers.emptyPassword) {
-                let remult = self.remult;
+
                 let password = self.$.password;
-                validatePasswordColumn(remult, password);
+                validatePasswordColumn(password);
                 if (self.$.password.error)
                     return;
                 //throw self.password.metadata.caption + " - " + self.password.validationError;
                 self.realStoredPassword = await Helpers.generateHash(self.password);
                 self.passwordChangeDate = new Date();
             }
-            if (self.isNew() && (await self.remult.repo(Helpers).count()) == 0) {
+            if (self.isNew() && (await remult.repo(Helpers).count()) == 0) {
 
                 self.admin = true;
             }
             self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone));
             if (!self._disableDuplicateCheck)
-                await Validators.unique(self, self.$.phone, self.remult.context.lang?.alreadyExist);
+                await Validators.unique(self, self.$.phone, remult.context.lang?.alreadyExist);
             if (self.isNew())
                 self.createDate = new Date();
             self.veryUrlKeyAndReturnTrueIfSaveRequired();
@@ -285,7 +281,7 @@ export class HelpersBase extends IdEntity {
             if (self.$.escort.valueChanged()) {
                 let h = self.escort;
                 if (self.$.escort.originalValue) {
-                    self.$.escort.originalValue.theHelperIAmEscorting = (await self.remult.context.getCurrentUser());
+                    self.$.escort.originalValue.theHelperIAmEscorting = (await remult.context.getCurrentUser());
                     await self.$.escort.originalValue.save();
                 }
                 if (self.escort) {
@@ -296,7 +292,7 @@ export class HelpersBase extends IdEntity {
             await self.preferredDistributionAreaAddressHelper.updateApiResultIfChanged();
             await self.preferredFinishAddressHelper.updateApiResultIfChanged();
 
-            logChanges(self._, self.remult, {
+            logChanges(self._, remult, {
                 excludeColumns: [
                     self.$.smsDate,
                     self.$.createDate,
@@ -315,7 +311,7 @@ export class HelpersBase extends IdEntity {
                 ],
                 excludeValues: [self.$.realStoredPassword]
             });
-            recordChanges(self.remult, self, {
+            recordChanges(self, {
                 excludeColumns: f => [
                     f.smsDate,
                     f.createDate,
@@ -370,14 +366,14 @@ export class Helpers extends HelpersBase {
                 }
                 this.$.phone.error = '';
                 this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone))
-                Phone.validatePhone(this.$.phone, remult, true);
+                Phone.validatePhone(this.$.phone,  true);
                 if (this.$.phone.error)
                     throw this.$.phone.error;
             },
             cancel: () => {
                 this._.undoChanges();
             },
-            fields: Helpers.selectColumns(this._.repository.metadata.fields, remult).map(map => ({
+            fields: Helpers.selectColumns(this._.repository.metadata.fields).map(map => ({
                 ...map,
                 field: this.$.find(map.field ? map.field as any : map)
             })),
@@ -434,7 +430,7 @@ export class Helpers extends HelpersBase {
             fields: [hist.$.message]
         });
     }
-    static selectColumns(self: FieldsMetadata<Helpers>, remult: Remult) {
+    static selectColumns(self: FieldsMetadata<Helpers>) {
         let settings = getSettings();
         let r: DataControlSettings<Helpers>[] = [
             {
@@ -543,7 +539,7 @@ export class Helpers extends HelpersBase {
         return r;
     }
 
-    userRequiresPassword(remult: Remult) {
+    userRequiresPassword() {
         return this.admin || this.distCenterAdmin || this.labAdmin || this.isIndependent || this.caller && getSettings().usingCallModule;
     }
     async showDeliveryHistory(ui: UITools) {
@@ -606,10 +602,7 @@ export class Helpers extends HelpersBase {
 
     static usingCompanyModule: boolean;
 
-    constructor(remult: Remult) {
 
-        super(remult);
-    }
     @Field<Helpers>({
         sqlExpression: async (selfDefs) => {
             let self = SqlFor(selfDefs);
@@ -724,7 +717,7 @@ export class Helpers extends HelpersBase {
                 settings.organisationName, '', this.name, remult.user.name, '');
 
             try {
-                await this.email.Send(settings.lang.thankYouForHelp, message, remult);
+                await this.email.Send(settings.lang.thankYouForHelp, message);
             } catch (err) {
                 console.error('send mail', err);
             }
@@ -737,7 +730,7 @@ export class Helpers extends HelpersBase {
         dbName: 'preferredDistributionAreaAddress2', customInput: i => i.addressInput()
     })
     preferredFinishAddress: string;
-    preferredFinishAddressHelper = new AddressHelper( () => this.$.preferredFinishAddress, () => this.$.addressApiResult2, () => this.$.preferredFinishAddressCity);
+    preferredFinishAddressHelper = new AddressHelper(() => this.$.preferredFinishAddress, () => this.$.addressApiResult2, () => this.$.preferredFinishAddressCity);
     @Field()
     preferredFinishAddressCity: string;
 
@@ -785,7 +778,7 @@ export class Helpers extends HelpersBase {
         includeInApi: Roles.distCenterAdmin,
 
         validate: (self) => {
-            if (self.remult.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
+            if (remult.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
                 return;
             }
             if (self.$.distCenterAdmin)
@@ -804,7 +797,7 @@ export class Helpers extends HelpersBase {
         includeInApi: Roles.familyAdmin,
 
         validate: (self) => {
-            if (self.remult.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
+            if (remult.isAllowed(Roles.admin) || !self._disableOnSavingRow) {
                 return;
             }
             if (self.$.distCenterAdmin || self.$.familyAdmin)
@@ -910,7 +903,7 @@ export class Helpers extends HelpersBase {
     }
     @BackendMethod({ allowed: Roles.admin })
     static async SendCustomMessageToCourier(h: HelpersBase, message: string) {
-        return await new (await (import('../asign-family/send-sms-action'))).SendSmsUtils().sendSms(h.phone.thePhone, message,  h);
+        return await new (await (import('../asign-family/send-sms-action'))).SendSmsUtils().sendSms(h.phone.thePhone, message, h);
 
     }
     async smsMessages(ui: UITools) {
@@ -948,7 +941,7 @@ export class Helpers extends HelpersBase {
 
 
 
-export function validatePasswordColumn(remult: Remult, password: FieldRef<any, string>) {
+export function validatePasswordColumn(password: FieldRef<any, string>) {
     if (getSettings().requireComplexPassword) {
         var l = getLang();
         if (password.value.length < 8)

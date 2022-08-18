@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { remult, Remult, SqlDatabase } from 'remult';
+import { remult } from 'remult';
 import { GridSettings } from '@remult/angular/interfaces';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';

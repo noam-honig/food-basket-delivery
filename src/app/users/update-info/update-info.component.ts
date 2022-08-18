@@ -6,7 +6,7 @@ import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
 import { InputField, GridSettings, DataAreaSettings } from '@remult/angular/interfaces';
 import { Route } from '@angular/router';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 import { AuthenticatedGuard, RouteHelperService } from '@remult/angular';
 

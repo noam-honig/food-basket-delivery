@@ -28,7 +28,7 @@ export class AdjustGeocodeComponent implements OnInit {
       name: 'מפה',
       showInLine: true,
       click: g => {
-        GeocodeInformation.fromString(g.googleApiResult).openGoogleMaps(remult);
+        GeocodeInformation.fromString(g.googleApiResult).openGoogleMaps();
       }
     }],
     columnSettings: g => [

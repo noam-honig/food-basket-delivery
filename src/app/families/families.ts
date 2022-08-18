@@ -6,7 +6,7 @@ import { BasketType } from "./BasketType";
 import { delayWhileTyping, Email, ChangeDateColumn } from "../model-shared/types";
 import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
-import { Remult, BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter, ValueConverters, remult } from 'remult';
+import { BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter, ValueConverters, remult } from 'remult';
 
 import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 
@@ -134,7 +134,7 @@ declare type factoryFor<T> = {
         }
       }
     }
-    recordChanges(remult, self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
+    recordChanges( self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
   },
   backendPrefilter: () => {
     if (remult.isAllowed(Roles.admin))
@@ -226,7 +226,6 @@ export class Families extends IdEntity {
           })
         },
         ...(await import("../family-deliveries/getDeliveryGridButtons")).getDeliveryGridButtons({
-          remult: remult,
           refresh: () => result.reloadData(),
           deliveries: () => result,
           ui: args.ui,
@@ -638,7 +637,7 @@ export class Families extends IdEntity {
         geo = new GeocodeInformation(result.result);
     }
     if (geo == undefined && !this.__disableGeocoding)
-      geo = await GetGeoInformation(this.address, remult);
+      geo = await GetGeoInformation(this.address);
     if (geo == undefined) {
       geo = new GeocodeInformation();
     }
@@ -698,22 +697,23 @@ export class Families extends IdEntity {
 
   @Field({
     includeInApi: Roles.familyAdmin,
+    translation:l=>l.previousDeliveryStatus,
     sqlExpression: (self) => {
-      return dbNameFromLastDelivery(self, remult, fde => fde.deliverStatus, "prevStatus");
+      return dbNameFromLastDelivery(self, fde => fde.deliverStatus, "prevStatus");
     }
   })
   previousDeliveryStatus: DeliveryStatus;
   @ChangeDateColumn({
     includeInApi: Roles.familyAdmin,
     sqlExpression: (self) => {
-      return dbNameFromLastDelivery(self, remult, fde => fde.deliveryStatusDate, "prevDate");
+      return dbNameFromLastDelivery(self, fde => fde.deliveryStatusDate, "prevDate");
     }
   })
   previousDeliveryDate: Date;
   @Field<Families>({
     translation: l => l.previousDeliveryNotes,
     sqlExpression: (self) => {
-      return dbNameFromLastDelivery(self, remult, fde => fde.courierComments, "prevComment");
+      return dbNameFromLastDelivery(self, fde => fde.courierComments, "prevComment");
     }
   })
   previousDeliveryComment: string;
@@ -757,7 +757,7 @@ export class Families extends IdEntity {
       translation: l => l.previousDeliverySummary,
       readonly: true,
       field: self.previousDeliveryStatus,
-      valueList: c => DeliveryStatus.getOptions(c),
+      valueList: c => DeliveryStatus.getOptions(),
       getValue: f => {
         if (!f.previousDeliveryStatus)
           return '';
@@ -808,8 +808,8 @@ export class Families extends IdEntity {
 
 
 
-  static SendMessageToBrowsers = (s: string, remult: Remult, distCenter: string) => { };
-  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string, remult: Remult) {
+  static SendMessageToBrowsers = (s: string,  distCenter: string) => { };
+  static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:
         switch (n.deliverStatus) {
@@ -904,10 +904,10 @@ export class Families extends IdEntity {
           foundExactName = true;
       }
     }
-    Phone.validatePhone(this.$.phone1, remult);
-    Phone.validatePhone(this.$.phone2, remult);
-    Phone.validatePhone(this.$.phone3, remult);
-    Phone.validatePhone(this.$.phone4, remult);
+    Phone.validatePhone(this.$.phone1);
+    Phone.validatePhone(this.$.phone2);
+    Phone.validatePhone(this.$.phone3);
+    Phone.validatePhone(this.$.phone4);
 
 
   }
@@ -1012,12 +1012,12 @@ export class Families extends IdEntity {
     }
     return { $or };
   });
-  static getSpecificFamilyWithoutUserRestrictionsBackendOnly(id: string, remult: Remult) {
+  static getSpecificFamilyWithoutUserRestrictionsBackendOnly(id: string) {
     if (!isBackend())
       throw "forbidden";
     return remult.repo(FamiliesWithoutUserRestrictions).findId(id);
   }
-  static async getFamilyByShortUrl(url: string, remult: Remult): Promise<Families> {
+  static async getFamilyByShortUrl(url: string): Promise<Families> {
     return await remult.repo(FamiliesWithoutUserRestrictions).findFirst({ shortUrlKey: url, status: FamilyStatus.Active })
   }
 }
@@ -1167,7 +1167,7 @@ export function parseUrlInAddress(address: string) {
 
 
 
-export function displayDupInfo(info: duplicateFamilyInfo, remult: Remult) {
+export function displayDupInfo(info: duplicateFamilyInfo) {
   let r = [];
 
 
@@ -1191,7 +1191,7 @@ export interface autocompleteResult {
   result: GeocodeResult
 }
 
-export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string, message?: string) {
+export function sendWhatsappToFamily(f: familyLikeEntity, phone?: string, message?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
@@ -1204,7 +1204,7 @@ export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?
     message = use.language.hello + ' ' + f.name + ',';
   }
   Phone.sendWhatsappToPhone(phone,
-    message, remult);
+    message);
 }
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
@@ -1222,7 +1222,7 @@ export interface familyLikeEntity {
   phone4: Phone;
 }
 
-async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, remult: Remult, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
+async function dbNameFromLastDelivery(selfDefs: EntityMetadata<Families>, col: (fd: FieldsMetadata<import("./FamilyDeliveries").FamilyDeliveries>) => FieldMetadata, alias: string) {
   let self = SqlFor(selfDefs);
   let fd = SqlFor(remult.repo(FamilyDeliveries));
   let sql = new SqlBuilder();

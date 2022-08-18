@@ -1,7 +1,7 @@
 import { day, Event, EventType, eventDisplayDate, EventInList, volunteersInEvent, eventStatus } from '../events/events';
 import { Component, Input, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { Remult, getFields, remult } from 'remult';
+import {  getFields, remult } from 'remult';
 import { EventInfoComponent } from '../event-info/event-info.component';
 import { DataAreaSettings, RowButton } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
@@ -24,7 +24,7 @@ export class EventCardComponent implements OnInit {
     {
       name: use.language.duplicateEvents,
       click: (e) => {
-        Event.duplicateEvent(remult, this.dialog, [e], (newEvents) => {
+        Event.duplicateEvent( this.dialog, [e], (newEvents) => {
           if (e.eventStatus == eventStatus.archive) {
             this.events = this.events.filter(x => x != e);
           }

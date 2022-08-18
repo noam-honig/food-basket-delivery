@@ -1,7 +1,7 @@
 
 import { extractError } from "../select-popup/extractError";
 import { Helpers } from "../helpers/helpers";
-import { Allow, BackendMethod, remult, Remult, UserInfo } from 'remult';
+import { Allow, BackendMethod, remult,  UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
@@ -17,11 +17,11 @@ export class AuthServiceController {
 
         if (h) {
             r.phone = h.phone.thePhone;
-            let info = await buildHelperUserInfo(h, remult);
+            let info = await buildHelperUserInfo(h);
             let userIsOk = false;
             if (remult.user && JSON.stringify(remult.user.roles) == JSON.stringify(info.roles) && remult.user.id == info.id)
                 userIsOk = true;
-            if (!h.realStoredPassword && !h.userRequiresPassword(remult))
+            if (!h.realStoredPassword && !h.userRequiresPassword())
                 userIsOk = true;
 
 
@@ -66,7 +66,7 @@ export class AuthServiceController {
 
         }
 
-        let result = await buildHelperUserInfo(h, remult);
+        let result = await buildHelperUserInfo(h);
 
 
         remult.setUser(result);
@@ -105,7 +105,7 @@ export class AuthServiceController {
 
 
 
-        if (h.userRequiresPassword(remult)) {
+        if (h.userRequiresPassword()) {
             let ok = true;
             if (!userHasPassword && !args.newPassword) {
                 r.requiredToSetPassword = true;
@@ -143,7 +143,7 @@ export class AuthServiceController {
         let h = await remult.repo(Helpers).findId(remult.user.id);
         if (!h)
             return undefined;
-        let newInfo = await buildHelperUserInfo(h, remult);
+        let newInfo = await buildHelperUserInfo(h);
 
 
         return buildToken(newInfo, (await remult.context.getSettings()));
@@ -159,7 +159,7 @@ export class AuthServiceController {
 
     }
 }
-async function buildHelperUserInfo(h: Helpers, remult: Remult) {
+async function buildHelperUserInfo(h: Helpers) {
     let result: UserInfo = {
         id: h.id,
         roles: [Sites.getOrgRole()],

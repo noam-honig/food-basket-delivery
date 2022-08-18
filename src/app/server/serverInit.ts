@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import { PostgresDataProvider, PostgresSchemaBuilder, PostgresPool, PostgresClient } from 'remult/postgres';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { Remult, Entity, SqlDatabase } from 'remult';
+import { Remult, Entity, SqlDatabase, remult } from 'remult';
 import '../create-new-event/create-new-event'
 
 import { Helpers } from '../helpers/helpers';
@@ -142,7 +142,6 @@ export async function serverInit() {
             for (const s of Sites.schemas) {
                 try {
                     let db = new SqlDatabase(new PostgresDataProvider(new PostgresSchemaWrapper(pool, s)));
-                    let remult = new Remult();
                     let h = await SqlFor(remult.repo(Helpers));
                     var sql = new SqlBuilder();
                     let r = (await db.execute(await sql.query({ from: h, select: () => [sql.max(h.lastSignInDate)] })));
@@ -191,11 +190,10 @@ async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<voi
         await verifySchemaExistance(pool, Sites.guestSchema);
     }
     let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
-    let remult = new Remult();
     let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
     remult.setDataProvider(dp);
     await InitRemult(remult);
-
+    
     let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
     if (!initSettings.disableSchemaInit) {
         for (const entity of <ClassType<any>[]>[
@@ -209,24 +207,25 @@ async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<voi
             await builder.createIfNotExist(remult.repo(entity).metadata);
             await builder.verifyAllColumns(remult.repo(entity).metadata);
         }
-
+        
     }
-    await SitesEntity.completeInit(remult);
+    await SitesEntity.completeInit();
     let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
     if (settings.isNew()) {
         settings.organisationName = "מערכת חלוקה";
         settings.id = 1;
         await settings.save();
     } else {
-
+        
         if (settings.organisationName == "מערכת חלוקה") {
             settings.organisationName = "חגי - אפליקציה לחלוקת מזון";
         }
         settings.logoUrl = '/assets/apple-touch-icon.png';
         if (settings._.wasChanged())
-            await settings.save();
+        await settings.save();
     }
-
+    
+    
     InitSchemas(pool);
 }
 
@@ -234,7 +233,6 @@ async function InitSpecificSchema(pool: Pool, s: any) {
     await verifySchemaExistance(pool, s);
     let schemaPool = new PostgresSchemaWrapper(pool, s);
     let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
-    let remult = new Remult();
     remult.setDataProvider(db);
     await InitRemult(remult);
     if (!initSettings.disableSchemaInit) {

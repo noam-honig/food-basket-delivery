@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EntityBase, EntityMetadata, IdEntity, remult, Remult } from 'remult';
+import { EntityBase, EntityMetadata, IdEntity, remult } from 'remult';
 import { ChangeLog } from './change-log';
 
 @Component({

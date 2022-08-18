@@ -193,7 +193,7 @@ export class DialogService implements UITools {
 
     @Field()
     @DataControl<DialogService>({
-        valueList: remult => DistributionCenters.getValueList(remult, true),
+        valueList: remult => DistributionCenters.getValueList( true),
         valueChange: async self => {
 
             if (remult.authenticated()) {

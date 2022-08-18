@@ -1,4 +1,4 @@
-import { Remult, EntityFilter, Filter } from "remult";
+import { EntityFilter, Filter, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { HelpersBase } from "../helpers/helpers";
@@ -19,12 +19,12 @@ import { getFields } from "remult";
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
 
-    constructor(remult: Remult, args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
-        super(remult, ActiveFamilyDeliveries, buildArgsForFamilyDeliveries(args, remult));
+    constructor(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
+        super(ActiveFamilyDeliveries, buildArgsForFamilyDeliveries(args));
     }
 
 }
-function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>, remult: Remult) {
+function buildArgsForFamilyDeliveries(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
     if (args.orderBy)
         throw "didn't expect order by";
     args.orderBy = {
@@ -54,8 +54,8 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
     @Field()
     status: FamilyStatus;
 
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             dialogColumns: async c => [],
             //     this.$.updateFamilyStatus,
             //     { field: this.$.status, visible: () => this.updateFamilyStatus }
@@ -103,8 +103,8 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
 
 
 
-    constructor(remult: Remult) {
-        super(remult, ActiveFamilyDeliveries, {
+    constructor() {
+        super(ActiveFamilyDeliveries, {
             help: () => use.language.updateFamilyDefaultsHelp,
             dialogColumns: async (c) => [
                 this.$.basketType, { field: this.$.selectBasket, visible: () => this.basketType }, this.$.quantity, this.$.byCurrentCourier, this.$.comment, { field: this.$.selfPickup, visible: () => c.settings.usingSelfPickupModule },
@@ -118,8 +118,8 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                 let f = await remult.repo(Families).findId(fd.family);
                 if (f) {
                     if (this.byCurrentCourier) {
-                //        if (fd.courier)
-                            f.fixedCourier = fd.courier;
+                        //        if (fd.courier)
+                        f.fixedCourier = fd.courier;
                     }
                     if (this.basketType) {
                         if (this.selectBasket == asCurrentBasket)
@@ -154,8 +154,8 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
     @Field({ translation: l => l.setAsDefaultVolunteer })
     updateAlsoAsFixed: boolean;
     usedCouriers: string[] = [];
-    constructor(remult: Remult) {
-        super(remult, ActiveFamilyDeliveries, {
+    constructor() {
+        super(ActiveFamilyDeliveries, {
             help: () => getLang().updateVolunteerHelp,
             dialogColumns: async () => [
                 this.$.clearVoulenteer,
@@ -199,8 +199,8 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
     deleteExistingComment: boolean;
 
 
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             title: getLang().updateDeliveriesStatus,
             help: () => getSettings().isSytemForMlt ? '' : getLang().updateDeliveriesStatusHelp,
             validate: async () => {
@@ -259,7 +259,7 @@ export class ArchiveHelper {
 
 
     get $() { return getFields(this) }
-    async initArchiveHelperBasedOnCurrentDeliveryInfo(remult: Remult, where: EntityFilter<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
+    async initArchiveHelperBasedOnCurrentDeliveryInfo(where: EntityFilter<ActiveFamilyDeliveries>, usingSelfPickupModule: boolean) {
         let result: DataAreaFieldsSetting<any>[] = [];
         let repo = remult.repo(ActiveFamilyDeliveries);
 
@@ -300,10 +300,10 @@ export class ArchiveHelper {
 export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
     @Field()
     archiveHelper: ArchiveHelper = new ArchiveHelper();
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             dialogColumns: async c => {
-                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, await this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
+                return await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo( await this.composeWhere(c.userWhere), c.settings.usingSelfPickupModule);
             },
             icon: 'archive',
             title: getLang().archiveDeliveries,
@@ -323,8 +323,8 @@ export class UpdateBasketType extends ActionOnFamilyDeliveries {
     @Field()
     basketType: BasketType;
 
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             allowed: Roles.distCenterAdmin,
             title: getLang().updateBasketType,
             forEach: async f => { f.basketType = this.basketType },
@@ -337,8 +337,8 @@ export class UpdateQuantity extends ActionOnFamilyDeliveries {
     @Fields.quantity()
     quantity: number;
 
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             allowed: Roles.distCenterAdmin,
             title: getLang().updateBasketQuantity,
             forEach: async f => { f.quantity = this.quantity },
@@ -351,8 +351,8 @@ export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
     @Field()
     distributionCenter: DistributionCenters;
 
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             title: getLang().updateDistributionList,
             forEach: async f => { f.distributionCenter = this.distributionCenter },
         });
@@ -375,7 +375,7 @@ class HelperStrategy {
     static selectHelper = new HelperStrategy(3, use.language.selectVolunteer, x => {
         x.newDelivery.courier = x.helper;
     });
-    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelpersBase, remult: Remult }) => void) {
+    constructor(public id: number, public caption: string, public applyTo: (args: { existingDelivery: ActiveFamilyDeliveries, newDelivery: ActiveFamilyDeliveries, helper: HelpersBase }) => void) {
 
     }
 }
@@ -408,8 +408,8 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
     useCurrentDistributionCenter: boolean;
 
 
-    constructor(remult: Remult) {
-        super(remult, {
+    constructor() {
+        super({
             dialogColumns: async (component) => {
                 this.basketType = await remult.context.defaultBasketType();
                 this.quantity = 1;
@@ -425,7 +425,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                     { field: this.$.distributionCenter, visible: () => component.ui.hasManyCenters && !this.useCurrentDistributionCenter },
                     this.$.helperStrategy,
                     { field: this.$.helper, visible: () => this.helperStrategy == HelperStrategy.selectHelper },
-                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo(remult, await this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
+                    ...await this.archiveHelper.initArchiveHelperBasedOnCurrentDeliveryInfo( await this.composeWhere(component.userWhere), component.settings.usingSelfPickupModule),
                     this.$.autoArchive,
                     this.$.newDeliveryForAll,
                     { field: this.$.selfPickup, visible: () => component.settings.usingSelfPickupModule }
@@ -466,7 +466,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
                 newDelivery.distributionCenter = this.distributionCenter;
                 if (this.useCurrentDistributionCenter)
                     newDelivery.distributionCenter = existingDelivery.distributionCenter;
-                this.helperStrategy.applyTo({ existingDelivery, newDelivery, helper: this.helper, remult });
+                this.helperStrategy.applyTo({ existingDelivery, newDelivery, helper: this.helper });
                 this.selfPickup.applyTo({ existingDelivery, newDelivery, family: f });
 
                 if ((await newDelivery.duplicateCount()) == 0)

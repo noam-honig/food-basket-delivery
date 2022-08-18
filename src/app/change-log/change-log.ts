@@ -1,5 +1,5 @@
 
-import { Entity, EntityBase, EntityMetadata, EntityRef, FieldRef, Fields, FieldsRef, FieldType, getEntityRef, IdEntity, isBackend, Remult } from "remult";
+import { Entity, EntityBase, EntityMetadata, EntityRef, FieldRef, Fields, FieldsRef, FieldType, getEntityRef, IdEntity, isBackend, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { Field } from "../translate";
 
@@ -47,10 +47,10 @@ export interface change {
 }
 
 
-export async function recordChanges<entityType extends EntityBase>(remult: Remult, self: entityType, options?: ColumnDeciderArgs<entityType>) {
+export async function recordChanges<entityType extends EntityBase>(self: entityType, options?: ColumnDeciderArgs<entityType>) {
     if (!self.isNew() && isBackend()) {
         let changes = [] as change[];
-        const decider = new FieldDecider(remult, self, options);
+        const decider = new FieldDecider( self, options);
 
         for (const c of decider.fields.filter(c => c.valueChanged())) {
             try {
@@ -103,7 +103,7 @@ export class FieldDecider<entityType>{
     fields: FieldRef<entityType>[];
     excludedFields: FieldRef<entityType>[];
     excludedValues: FieldRef<entityType>[];
-    constructor(remult: Remult, entity: entityType, options: ColumnDeciderArgs<entityType>) {
+    constructor( entity: entityType, options: ColumnDeciderArgs<entityType>) {
         const meta = getEntityRef(entity);
         if (!options?.excludeColumns)
             this.excludedFields = [];

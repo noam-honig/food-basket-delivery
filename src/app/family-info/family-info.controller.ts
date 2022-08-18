@@ -1,6 +1,6 @@
 
 import { extractError } from "../select-popup/extractError";
-import { Remult, BackendMethod, Allow, SqlDatabase, remult } from 'remult';
+import {  BackendMethod, Allow, SqlDatabase, remult } from 'remult';
 
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -66,7 +66,7 @@ export class FamilyInfoController {
         if (!d.courier.isCurrentUser() && !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]))
             return "";
         
-        var f = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family, remult);
+        var f = await Families.getSpecificFamilyWithoutUserRestrictionsBackendOnly(d.family);
         if (!f)
             return "";
         return f.name + ":" + f.tz;

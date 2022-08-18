@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';

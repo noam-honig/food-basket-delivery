@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, EntityFilter, Filter, remult } from 'remult';
+import {  EntityFilter, Filter, remult } from 'remult';
 import { InRouteHelpers } from './in-route-helpers';
 
 import { use } from '../translate';

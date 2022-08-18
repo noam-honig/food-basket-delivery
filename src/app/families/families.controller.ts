@@ -24,10 +24,6 @@ import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { Route } from '@angular/router';
 
-import { Remult } from 'remult';
-
-
-
 import { saveToExcel } from '../shared/saveToExcel';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';

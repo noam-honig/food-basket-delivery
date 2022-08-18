@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Families } from '../families/families';
 import { DataControlSettings, FieldCollection, getFieldDefinition } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, Fields, FieldRef, FieldMetadata, FieldsRef, remult } from 'remult';
+import {  FieldRef, FieldMetadata, FieldsRef, remult } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Roles } from '../auth/roles';
 import { DialogService } from '../select-popup/dialog';

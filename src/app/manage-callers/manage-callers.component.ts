@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridSettings } from '@remult/angular/interfaces';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Callers } from './callers';
 

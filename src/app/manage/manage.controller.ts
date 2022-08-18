@@ -1,7 +1,7 @@
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 
-import { Remult, BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase, remult } from 'remult';
+import {  BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase, remult } from 'remult';
 
 import { Roles } from '../auth/roles';
 
@@ -22,7 +22,7 @@ import { ChangeLog } from '../change-log/change-log';
 export class ManageController {
     @BackendMethod({ allowed: Roles.admin })
     static async TestSendEmail(to: string, text: string) {
-        return await EmailSvc.sendMail("test email", text, to, remult);
+        return await EmailSvc.sendMail("test email", text, to);
     }
     @BackendMethod({ allowed: Roles.admin })
     static async sendTestVolunteerRegistrationNotification() {
@@ -87,13 +87,13 @@ export class ManageController {
             progress
         })) {
 
-            await ManageController.clearDataFromFamilyDeliveries(f.id, remult);
+            await ManageController.clearDataFromFamilyDeliveries(f.id);
             await f.delete();
             i++;
         }
         return i;
     }
-    static async clearDataFromFamilyDeliveries(familyId: string, remult: Remult) {
+    static async clearDataFromFamilyDeliveries(familyId: string) {
         var db = remult._dataSource as SqlDatabase;
         const sql = new SqlBuilder();
         const fd = await SqlFor(remult.repo(FamilyDeliveries));

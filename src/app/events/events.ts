@@ -1,4 +1,4 @@
-import { IdEntity, Remult, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters, remult } from "remult";
+import { IdEntity,  Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters, remult } from "remult";
 import { DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, RowButton } from '@remult/angular/interfaces';
 import { use, ValueListFieldType, Field, Fields } from "../translate";
 import { getLang } from '../sites/sites';
@@ -144,7 +144,7 @@ export class Event extends IdEntity {
     async showVolunteers(ui: UITools) {
         if (remult.isAllowed(Roles.admin))
             await this.save();
-        await volunteersInEvent.displayVolunteer({ remult: remult, event: this, ui })
+        await volunteersInEvent.displayVolunteer({  event: this, ui })
         await this._.reload();
     }
 
@@ -330,7 +330,7 @@ export class Event extends IdEntity {
             }
         ];
     }
-    static async duplicateEvent(remult: Remult, ui: UITools, events: Event[], done: (createdEvents: Event[]) => void) {
+    static async duplicateEvent( ui: UITools, events: Event[], done: (createdEvents: Event[]) => void) {
         let settings = (await remult.context.getSettings());
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;
@@ -671,8 +671,7 @@ export class volunteersInEvent extends IdEntity {
     a4: string;
 
 
-    static async displayVolunteer({ remult, event, ui }: {
-        remult: Remult,
+    static async displayVolunteer({  event, ui }: {
         event: Event,
         ui: UITools
 
@@ -863,7 +862,7 @@ export class volunteersInEvent extends IdEntity {
                 },
                 {
                     name: getLang().sendWhats,
-                    click: h => h.helperPhone.sendWhatsapp(remult),
+                    click: h => h.helperPhone.sendWhatsapp(),
                     icon: 'textsms'
                 },
                 (() => {

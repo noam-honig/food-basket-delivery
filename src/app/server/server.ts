@@ -6,7 +6,7 @@ import * as fs from 'fs';//
 import { serverInit } from './serverInit';
 import { ServerEvents } from './server-events';
 import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
-import { Filter, OmitEB, Remult, SqlDatabase } from 'remult';
+import { Filter, OmitEB, remult, Remult, SqlDatabase } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
 import { GeocodeCache, GeoCodeOptions } from "../shared/googleApiHelpers";
@@ -84,6 +84,8 @@ import { CallerController } from "../caller/caller.controller";
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
 import { remultExpress } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
+import { RemultServer } from "remult/server/expressBridge";
+
 
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -196,9 +198,9 @@ serverInit().then(async ({ dataSource, initDatabase }) => {
         }
 
         try {
-            let remult = await eb.getRemult(req);
 
-            let org = Sites.getOrganizationFromContext();
+
+            let org = remult.context.getSite();
             if (redirect.includes(org)) {
                 const target = process.env.REDIRECT_TARGET + req.originalUrl;
                 console.log("Redirect ", target);
@@ -327,21 +329,21 @@ s.parentNode.insertBefore(b, s);})();
 
 
     if (!process.env.DISABLE_SERVER_EVENTS) {
-        let serverEvents = new ServerEvents(app, (req) => eb.getRemult(req));
+        let serverEvents = new ServerEvents(app, (req) => api.getRemult(req));
 
 
         let lastMessage = new Date();
-        Families.SendMessageToBrowsers = (x, c, distCenter) => {
+        Families.SendMessageToBrowsers = (x, distCenter) => {
             if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
                 lastMessage = new Date();
-                serverEvents.SendMessage(x, c, distCenter)
+                serverEvents.SendMessage(x, distCenter)
             }
         };
     }
     app.use(compression());
     //
 
-    let eb = remultExpress(
+    let api = remultExpress(
 
         {
             entities,
@@ -365,6 +367,7 @@ s.parentNode.insertBefore(b, s);})();
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {
+
                 await initDatabase();
                 if (!process.env.DEV_MODE)
                     return;
@@ -409,25 +412,21 @@ s.parentNode.insertBefore(b, s);})();
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
 
-    app.use(eb);
+    app.use(api);
 
     if (Sites.multipleSites) {
 
 
-        registerImageUrls(app, (req) => eb.getRemult(req), '/*');
+        registerImageUrls(app, api, '/*');
 
 
 
     }
     else {
-        registerImageUrls(app, eb.getRemult, '');
+        registerImageUrls(app, api, '');
     }
-    app.use('/*/api/incoming-sms', async (req, res) => {
+    app.use('/*/api/incoming-sms', api.withRemultMiddleware, async (req, res) => {
         try {
-
-
-            let remult = await eb.getRemult(req);
-
             let org = Sites.getOrganizationFromContext();
             if (redirect.includes(org)) {
                 console.log("Incoming SMS Redirect", {
@@ -525,18 +524,18 @@ s.parentNode.insertBefore(b, s);})();
     });
 
 
-    app.get('', (req, res) => {
+    app.get('', api.withRemultMiddleware, (req, res) => {
 
         sendIndex(res, req);
     });
 
-    app.get('/index.html', (req, res) => {
+    app.get('/index.html', api.withRemultMiddleware, (req, res) => {
 
         sendIndex(res, req);
     });
     app.use(express.static(publicRoot));
 
-    app.use('/*', async (req, res) => {
+    app.use('/*', api.withRemultMiddleware, async (req, res) => {
         await sendIndex(res, req);
     });
 
@@ -595,11 +594,10 @@ async function downloadPaperTrailLogs() {
     }
 }
 
-function registerImageUrls(app, getContext: (req: express.Request) => Promise<Remult>, sitePrefix: string) {
-    app.use(sitePrefix + '/assets/apple-touch-icon.png', async (req, res) => {
+function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
+    app.use(sitePrefix + '/assets/apple-touch-icon.png', api.withRemultMiddleware, async (req, res) => {
         try {
-            let remult = await getContext(req);
-            let imageBase = (await ApplicationImages.getAsync(remult)).base64PhoneHomeImage;
+            let imageBase = (await ApplicationImages.getAsync()).base64PhoneHomeImage;
             res.contentType('png');
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
@@ -624,11 +622,10 @@ function registerImageUrls(app, getContext: (req: express.Request) => Promise<Re
             res.send(fs.readFileSync(publicRoot + '/assets/favicon.ico'));
         }
     })
-    app.use(sitePrefix + '/favicon.ico', async (req, res) => {
+    app.use(sitePrefix + '/favicon.ico', api.withRemultMiddleware, async (req, res) => {
         try {
-            let remult = await getContext(req);
             res.contentType('ico');
-            let imageBase = (await ApplicationImages.getAsync(remult)).base64Icon;
+            let imageBase = (await ApplicationImages.getAsync()).base64Icon;
             if (imageBase) {
                 res.send(Buffer.from(imageBase, 'base64'));
                 return;

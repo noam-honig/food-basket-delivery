@@ -1,7 +1,8 @@
-import { Entity, Remult, EntityBase, remult } from "remult";
+import { Entity, EntityBase, remult } from "remult";
 import { Field } from '../translate';
 import { Roles } from "../auth/roles";
 import { Sites } from "./sites";
+import { getDb } from "../model-shared/SqlBuilder";
 
 @Entity<SitesEntity>('Sites', {
     allowApiRead: Roles.overview,
@@ -17,7 +18,7 @@ import { Sites } from "./sites";
                 self.$.id.error = 'not allowed to change';
         }
     }
-})
+}, (_, _1) => getDb().execute("SELECT setting FROM pg_settings WHERE name = 'search_path';").then(x => console.log(x.rows[0])))
 export class SitesEntity extends EntityBase {
     @Field()
     id: string;
@@ -26,7 +27,8 @@ export class SitesEntity extends EntityBase {
     @Field()
     createUser: string;
 
-    static async completeInit(remult: Remult) {
+    static async completeInit() {
+
         let sites = await remult.repo(SitesEntity).find();
         let missingInDb = Sites.schemas.filter(siteFromEnv => !sites.find(y => y.id == siteFromEnv));
         for (const s of missingInDb) {

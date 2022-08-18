@@ -1,4 +1,4 @@
-import { FieldMetadata, Remult } from "remult";
+import { FieldMetadata } from "remult";
 import { DataControlInfo, DataControlSettings, GridSettings } from "@remult/angular/interfaces";
 
 export async function foreachSync<T>(array: T[], action: (item: T) => Promise<void>) {
@@ -65,7 +65,7 @@ export class EmailSvc {
   constructor() {
 
   }
-  static sendMail: (subject: string, message: string, email: string, remult: Remult) => Promise<boolean>;
+  static sendMail: (subject: string, message: string, email: string) => Promise<boolean>;
 
 }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Email } from '../model-shared/types';
 import { Phone, isPhoneValidForIsrael } from "../model-shared/phone";
-import { Remult, Controller, getFields, Validators, remult } from 'remult';
+import {  Controller, getFields, Validators, remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { Sites } from '../sites/sites';
 import { Families } from '../families/families';
@@ -33,7 +33,7 @@ export class EquipmentAge {
 
 @Controller('register-donor')
 export class donorForm {
-    get $() { return getFields(this, remult) }
+    get $() { return getFields(this) }
     @Field({
         caption: "שם מלא",
         validate: Validators.required.withMessage("אנא הזן ערך")
@@ -45,7 +45,7 @@ export class donorForm {
         validate: (self, col) => {
             if (!col.value || col.value.thePhone == '')
                 col.error = "אנא הזן ערך";
-            Phone.validatePhone(col, remult);
+            Phone.validatePhone(col);
         }
     })
     phone: Phone;
@@ -152,7 +152,7 @@ export class donorForm {
             let message = SendSmsAction.getMessage(settings.registerFamilyReplyEmailText,
                 settings.organisationName, f.name, '', '', '');
             try {
-                await f.email.Send(settings.lang.thankYouForDonation, message, remult);
+                await f.email.Send(settings.lang.thankYouForDonation, message);
             } catch (err) {
                 console.error('send mail', err);
             }

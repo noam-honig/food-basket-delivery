@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output } from '@angular/core';
 import { BusyService } from '@remult/angular';
 import { EventEmitter } from 'events';
 
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import {  Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
@@ -53,6 +53,6 @@ export class EventInfoComponent implements OnInit {
 
 
   sendWhatsapp(phone: string) {
-    Phone.sendWhatsappToPhone(phone, '', remult);
+    Phone.sendWhatsappToPhone(phone, '');
   }
 }

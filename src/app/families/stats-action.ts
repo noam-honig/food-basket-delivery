@@ -1,7 +1,6 @@
 import { BackendMethod, EntityFilter, remult } from 'remult';
 import { Filter } from 'remult';
 import { Families } from "./families";
-import { Remult } from 'remult';
 import { BasketInfo } from "../asign-family/asign-family.controller";
 
 import { Roles } from "../auth/roles";
@@ -50,7 +49,7 @@ export class Stats {
         for (let s in stats) {
             let x = stats[s];
             if (x instanceof FaimilyStatistics) {
-                pendingStats.push(x.saveTo(distCenter, result.data, remult));
+                pendingStats.push(x.saveTo(distCenter, result.data));
             }
         }
 
@@ -86,7 +85,7 @@ export class FaimilyStatistics {
     }
 
     value = 0;
-    async saveTo(distCenter: string, data: any, remult: Remult) {
+    async saveTo(distCenter: string, data: any) {
 
         data[this.name] = await remult.repo(Families).count(this.rule).then(c => this.value = c);
     }

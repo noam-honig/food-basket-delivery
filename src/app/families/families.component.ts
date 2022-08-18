@@ -19,8 +19,6 @@ import { reuseComponentOnNavigationAndCallMeWhenNavigatingToIt, leaveComponent }
 import { Phone } from "../model-shared/phone";
 import { Route } from '@angular/router';
 
-import { Remult } from 'remult';
-
 import { saveToExcel } from '../shared/saveToExcel';
 import { AdminGuard, FamilyAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
@@ -53,7 +51,7 @@ import { ChangeLogComponent } from '../change-log/change-log.component';
 export class FamiliesComponent implements OnInit {
 
 
-    test = new NewDelivery(remult);
+    test = new NewDelivery();
     limit = 25;
 
 
@@ -172,7 +170,7 @@ export class FamiliesComponent implements OnInit {
     }
     stats = new Stats();
     async saveToExcel() {
-        await saveFamiliesToExcel(remult, this.families, this.dialog, this.settings.lang.families);
+        await saveFamiliesToExcel( this.families, this.dialog, this.settings.lang.families);
     }
 
 
@@ -360,16 +358,16 @@ export class FamiliesComponent implements OnInit {
                 click: () => this.showChart = !this.showChart
             },
             ...[
-                new NewDelivery(remult),
-                new updateGroup(remult),
-                new UpdateArea(remult),
-                new UpdateStatus(remult),
-                new UpdateSelfPickup(remult),
-                new UpdateDefaultVolunteer(remult),
-                new UpdateDefaultDistributionList(remult),
-                new UpdateBasketType(remult),
-                new UpdateQuantity(remult),
-                new UpdateFamilySource(remult)
+                new NewDelivery(),
+                new updateGroup(),
+                new UpdateArea(),
+                new UpdateStatus(),
+                new UpdateSelfPickup(),
+                new UpdateDefaultVolunteer(),
+                new UpdateDefaultDistributionList(),
+                new UpdateBasketType(),
+                new UpdateQuantity(),
+                new UpdateFamilySource()
             ].map(x => x.gridButton(
                 {
                     afterAction: async () => await this.refresh(),
@@ -417,7 +415,7 @@ export class FamiliesComponent implements OnInit {
             {
                 name: this.settings.lang.sendWhatsAppToFamily,
                 click: f =>
-                    sendWhatsappToFamily(f, remult)
+                    sendWhatsappToFamily(f)
                 ,
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
@@ -446,7 +444,7 @@ export class FamiliesComponent implements OnInit {
                             click: async () => {
                                 this.settings.familySelfOrderMessage = edit.args.templateText;
                                 await this.settings.save();
-                                sendWhatsappToFamily(f, remult, undefined, message.merge(edit.args.templateText))
+                                sendWhatsappToFamily(f,  undefined, message.merge(edit.args.templateText))
                             }
                         }]
 
@@ -748,7 +746,7 @@ interface statsOnTab {
     refreshStats?: (stats: statsOnTab) => Promise<void>
 
 }
-export async function saveFamiliesToExcel(remult: Remult, gs: GridSettings<Families>, ui: UITools, name) {
+export async function saveFamiliesToExcel( gs: GridSettings<Families>, ui: UITools, name) {
     await saveToExcel<Families, GridSettings<Families>>((await remult.context.getSettings()), remult.repo(Families), gs, name, ui, (f, c) => c == f.$.id || c == f.$.addressApiResult, (f, c) => false, async (f, addColumn) => {
         let x = f.addressHelper.getGeocodeInformation;
         let street = f.address;

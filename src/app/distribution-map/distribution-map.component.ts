@@ -7,7 +7,7 @@ import { polygonContains } from '../shared/googleApiHelpers';
 
 import { Route } from '@angular/router';
 
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 
 import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
 import { BusyService } from '@remult/angular';
@@ -67,13 +67,13 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   buttons: GridButton[] = [
     ...[
-      new UpdateAreaForDeliveries(remult),
-      new UpdateDistributionCenter(remult),
-      new UpdateCourier(remult),
-      new updateGroupForDeliveries(remult),
-      new NewDelivery(remult),
-      new UpdateDeliveriesStatus(remult),
-      new DeleteDeliveries(remult)
+      new UpdateAreaForDeliveries(),
+      new UpdateDistributionCenter(),
+      new UpdateCourier(),
+      new updateGroupForDeliveries(),
+      new NewDelivery(),
+      new UpdateDeliveriesStatus(),
+      new DeleteDeliveries()
     ].map(a => a.gridButton({
       afterAction: async () => await this.refreshDeliveries(),
       ui: this.dialog,

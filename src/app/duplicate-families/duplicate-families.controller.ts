@@ -1,5 +1,5 @@
 
-import { BackendMethod, remult, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, remult } from 'remult';
 
 import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BusyService, openDialog } from '@remult/angular';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { Roles } from '../auth/roles';
 
 import { DeliveryStatus } from '../families/DeliveryStatus';

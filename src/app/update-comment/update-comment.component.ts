@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 
 
 import { DialogService } from '../select-popup/dialog';

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';

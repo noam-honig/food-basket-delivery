@@ -3,7 +3,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { BasketType, quantityHelper } from "../families/BasketType";
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { MapComponent } from '../map/map.component';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";

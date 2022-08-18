@@ -1,4 +1,3 @@
-import { remult, Remult } from 'remult';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { translationConfig } from "../translate";
 import { Injectable } from '@angular/core';

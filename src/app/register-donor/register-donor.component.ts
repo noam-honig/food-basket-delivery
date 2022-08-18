@@ -1,6 +1,5 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { isPhoneValidForIsrael } from "../model-shared/phone";
-import { remult, Remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';

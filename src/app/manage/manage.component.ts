@@ -9,7 +9,7 @@ import { SettingsService } from "./SettingsService";
 
 import { DataAreaFieldsSetting, DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import { Remult, FieldRef, FieldsMetadata, getFields, remult } from 'remult';
+import {  FieldRef, FieldsMetadata, getFields, remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';

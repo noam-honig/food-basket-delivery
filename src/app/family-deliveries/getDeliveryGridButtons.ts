@@ -4,13 +4,12 @@ import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeli
 import { canSendWhatsapp, Families, sendWhatsappToFamily } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { getLang } from '../sites/sites';
-import { Remult } from 'remult';
 import { UITools } from '../helpers/init-context';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { remult } from 'remult';
 
 
 export interface deliveryButtonsHelper {
-  remult: Remult,
   ui: UITools,
   settings: ApplicationSettings,
   refresh: () => void,
@@ -19,7 +18,7 @@ export interface deliveryButtonsHelper {
 }
 export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<ActiveFamilyDeliveries>[] {
   let newDelivery: (d: FamilyDeliveries) => void = async (d) => {
-    let f = await args.remult.repo(Families).findId(d.family);
+    let f = await remult.repo(Families).findId(d.family);
 
     if (args.showAllBeforeNew) {
       f.showDeliveryHistoryDialog({
@@ -33,8 +32,8 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       copyFrom: d, aDeliveryWasAdded: async (newDeliveryId) => {
         if (args.settings.isSytemForMlt) {
           if (d.deliverStatus.isProblem) {
-            let newDelivery = await args.remult.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
-            for (const otherFailedDelivery of await args.remult.repo(ActiveFamilyDeliveries).find({
+            let newDelivery = await remult.repo(ActiveFamilyDeliveries).findId(newDeliveryId);
+            for (const otherFailedDelivery of await remult.repo(ActiveFamilyDeliveries).find({
               where: {
                 family: newDelivery.family,
                 deliverStatus: DeliveryStatus.isProblem()
@@ -61,7 +60,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async (d) => {
         newDelivery(d);
       },
-      visible: d => args.remult.isAllowed(Roles.admin) && !d.deliverStatus.IsAResultStatus()
+      visible: d => remult.isAllowed(Roles.admin) && !d.deliverStatus.IsAResultStatus()
     },
     {
       textInMenu: () => getLang().newDelivery,
@@ -70,11 +69,11 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async (d) => {
         newDelivery(d);
       },
-      visible: d => args.remult.isAllowed(Roles.admin) && d.deliverStatus.IsAResultStatus()
+      visible: d => remult.isAllowed(Roles.admin) && d.deliverStatus.IsAResultStatus()
     },
     {
       name: getLang().sendWhatsAppToFamily,
-      click: f => sendWhatsappToFamily(f, args.remult),
+      click: f => sendWhatsappToFamily(f),
       visible: f => canSendWhatsapp(f),
       icon: 'textsms'
     },
@@ -87,7 +86,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
           onSelect: async (selectedHelper) => {
             d.courier = selectedHelper;
             await d.save();
-            var fd = await args.remult.repo(ActiveFamilyDeliveries).find({
+            var fd = await remult.repo(ActiveFamilyDeliveries).find({
               where: {
                 id: { "!=": d.id },
                 distributionCenter: args.ui.filterDistCenter(),
@@ -114,7 +113,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
           }, location: d.getDrivingLocation()
         });
       },
-      visible: d => !d.deliverStatus.IsAResultStatus() && args.remult.isAllowed(Roles.distCenterAdmin)
+      visible: d => !d.deliverStatus.IsAResultStatus() && remult.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang().volunteerAssignments,
@@ -128,7 +127,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
 
       },
-      visible: d => d.courier && args.remult.isAllowed(Roles.distCenterAdmin)
+      visible: d => d.courier && remult.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang().volunteerInfo,
@@ -141,7 +140,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
 
 
       },
-      visible: d => d.courier && args.remult.isAllowed(Roles.distCenterAdmin)
+      visible: d => d.courier && remult.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang().cancelAsignment,
@@ -160,7 +159,7 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
     {
       name: getLang().familyDeliveries,
       click: async (fd) => {
-        let f = await args.remult.repo(Families).findId(fd.family);
+        let f = await remult.repo(Families).findId(fd.family);
         f.showDeliveryHistoryDialog({
           settings: args.settings,
           ui: args.ui
@@ -196,13 +195,13 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async (d) => {
         if (await args.ui.YesNoPromise(getLang().shouldDeleteDeliveryFor + d.name)) {
           {
-            let fd = await args.remult.repo(FamilyDeliveries).findId(d.id);
+            let fd = await remult.repo(FamilyDeliveries).findId(d.id);
             await fd.delete();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
         }
       },
-      visible: d => !(d.deliverStatus.IsAResultStatus()) && args.remult.isAllowed(Roles.distCenterAdmin)
+      visible: d => !(d.deliverStatus.IsAResultStatus()) && remult.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang().archiveDelivery,
@@ -211,20 +210,20 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
       click: async (d) => {
         if (await args.ui.YesNoPromise(getLang().shouldArchiveDelivery)) {
           {
-            let fd = await args.remult.repo(FamilyDeliveries).findId(d.id);
+            let fd = await remult.repo(FamilyDeliveries).findId(d.id);
             fd.archive = true;
             await fd.save();
             args.deliveries().items.splice(args.deliveries().items.indexOf(d), 1);
           }
         }
-      }, visible: d => !d.archive && (d.deliverStatus.IsAResultStatus()) && args.remult.isAllowed(Roles.distCenterAdmin)
+      }, visible: d => !d.archive && (d.deliverStatus.IsAResultStatus()) && remult.isAllowed(Roles.distCenterAdmin)
     },
     {
       textInMenu: () => getLang().sendWhatsAppToFamily,
       click: async (d) => {
-        d.phone1.sendWhatsapp(args.remult, getLang().hello + ' ' + d.name + ',');
+        d.phone1.sendWhatsapp( getLang().hello + ' ' + d.name + ',');
       },
-      visible: d => d.phone1 && args.remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt
+      visible: d => d.phone1 && remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt
     }
   ] as RowButton<FamilyDeliveries>[];
 }

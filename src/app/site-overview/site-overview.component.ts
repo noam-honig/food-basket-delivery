@@ -33,7 +33,7 @@ export class SiteOverviewComponent implements OnInit {
       message = "הי !שם!\n";
 
 
-    Phone.sendWhatsappToPhone(m.phone, this.createMessage(m).merge(message), remult, true);
+    Phone.sendWhatsappToPhone(m.phone, this.createMessage(m).merge(message),  true);
   }
   createMessage(m: Manager) {
     return new messageMerger([

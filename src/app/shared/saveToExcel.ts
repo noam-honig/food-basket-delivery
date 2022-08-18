@@ -1,4 +1,4 @@
-import { Entity, Remult, EntityBase, Repository, FieldRef, ValueConverters } from 'remult';
+import {  EntityBase, Repository, FieldRef, ValueConverters } from 'remult';
 import { BusyService } from '@remult/angular';
 
 import { use } from '../translate';

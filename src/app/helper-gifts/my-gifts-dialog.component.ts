@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { remult, Remult } from 'remult';
+import { remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -39,7 +39,7 @@ export class MyGiftsDialogComponent implements OnInit {
             return {
               giftID: x.id,
               giftUrl: x.giftURL,
-              dateGranted: relativeDateName(remult, { d: x.dateGranted }),
+              dateGranted: relativeDateName( { d: x.dateGranted }),
               wasConsumed: x.wasConsumed,
               wasClicked: x.wasClicked
             }

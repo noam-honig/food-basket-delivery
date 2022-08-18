@@ -5,7 +5,7 @@ import { AuthService } from '../../auth/auth-service';
 import { Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
-import { Remult, getFields, remult } from 'remult';
+import {  getFields, remult } from 'remult';
 import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
 
 import { Sites } from '../../sites/sites';
@@ -164,7 +164,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword);
         return;
       }
-      validatePasswordColumn(remult, this.$.newPassword);
+      validatePasswordColumn( this.$.newPassword);
       if (this.$.newPassword.error) {
         this.resetPasswords();
         this.dialog.Error(this.$.newPassword.error);
@@ -197,7 +197,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   }
   getLogo() {
-    return ApplicationSettings.get(remult).logoUrl;
+    return ApplicationSettings.get().logoUrl;
   }
   login() {
 
@@ -206,7 +206,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   orgName() {
-    return ApplicationSettings.get(remult).organisationName;
+    return ApplicationSettings.get().organisationName;
   }
 }
 

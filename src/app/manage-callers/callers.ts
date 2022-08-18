@@ -1,5 +1,5 @@
 import { DataControl } from "@remult/angular/interfaces";
-import { BackendMethod, Entity, EntityMetadata, EntityRef, Fields, remult, Remult } from "remult";
+import { BackendMethod, Entity, EntityMetadata, EntityRef, Fields, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { volunteersInEvent } from "../events/events";
 import { DeliveryStatus } from "../families/DeliveryStatus";
@@ -43,7 +43,7 @@ export class Callers extends Helpers {
     @Fields.integer<Callers>({
         caption: 'שיחות שהושלמו',
         sqlExpression: async (selfDefs) => {
-            var { sql, self, innerSelectDefs } = callerCallsQuery(selfDefs, remult);
+            var { sql, self, innerSelectDefs } = callerCallsQuery(selfDefs);
             return sql.columnCount(self, innerSelectDefs);
         }
     })
@@ -51,14 +51,14 @@ export class Callers extends Helpers {
     @Fields.date<Callers>({
         caption: 'שיחה אחרונה',
         sqlExpression: async (selfDefs) => {
-            var { sql, self, innerSelectDefs, fd } = callerCallsQuery(selfDefs, remult);
+            var { sql, self, innerSelectDefs, fd } = callerCallsQuery(selfDefs);
             return sql.columnMaxWithAs(self, fd.lastCallDate, innerSelectDefs, self.lastCallDate.key);
         }
     })
     lastCallDate: Date;
 }
 
-function callerCallsQuery(selfDefs: EntityMetadata<Callers>, remult: Remult) {
+function callerCallsQuery(selfDefs: EntityMetadata<Callers>) {
     let self = SqlFor(selfDefs);
     let fd: SqlDefs<FamilyDeliveries> = SqlFor(remult.repo(FamilyDeliveries));
     let sql = new SqlBuilder();

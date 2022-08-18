@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Remult, EntityFilter, remult } from 'remult';
+import {  EntityFilter, remult } from 'remult';
 import { DataControlInfo, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
@@ -546,7 +546,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
           caption: getLang().deliverySummary,
           field: deliveries.deliverStatus,
           readonly: true,
-          valueList: async (c) => DeliveryStatus.getOptions(c)
+          valueList: async (c) => DeliveryStatus.getOptions()
           ,
           getValue: f => f.getDeliveryDescription(),
           width: '300'
@@ -660,18 +660,18 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         click: () => this.showChart = !this.showChart
       },
       ...[
-        new NewDelivery(remult),
-        new ArchiveDeliveries(remult),
-        new DeleteDeliveries(remult),
-        new UpdateDeliveriesStatus(remult),
-        new UpdateBasketType(remult),
-        new UpdateQuantity(remult),
-        new UpdateDistributionCenter(remult),
-        new UpdateCourier(remult),
-        new UpdateFamilyDefaults(remult),
-        new updateGroupForDeliveries(remult),
-        new UpdateAreaForDeliveries(remult),
-        new UpdateStatusForDeliveries(remult)
+        new NewDelivery(),
+        new ArchiveDeliveries(),
+        new DeleteDeliveries(),
+        new UpdateDeliveriesStatus(),
+        new UpdateBasketType(),
+        new UpdateQuantity(),
+        new UpdateDistributionCenter(),
+        new UpdateCourier(),
+        new UpdateFamilyDefaults(),
+        new updateGroupForDeliveries(),
+        new UpdateAreaForDeliveries(),
+        new UpdateStatusForDeliveries()
       ].map(a => a.gridButton({
         afterAction: async () => await this.refresh(),
         ui: this.dialog,
@@ -739,7 +739,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
             }, async deliveries => {
               if (includeFamilyInfo) {
-                await FamilyDeliveries.loadFamilyInfoForExcepExport(remult, deliveries);
+                await FamilyDeliveries.loadFamilyInfoForExcepExport( deliveries);
               }
             });
         }
@@ -792,7 +792,6 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         }
       },
       ...getDeliveryGridButtons({
-        remult: remult,
         deliveries: () => this.deliveries,
         ui: this.dialog,
         refresh: () => this.refresh(),

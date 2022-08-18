@@ -1,5 +1,5 @@
 import { Roles } from '../auth/roles';
-import { BackendMethod, remult, Remult, SqlDatabase } from 'remult';
+import { BackendMethod, remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
@@ -113,7 +113,7 @@ export class ShipmentAssignScreenController {
                     id: await getValueFromResult(r, fd.family),
                     name: await getValueFromResult(r, fd.name),
                     address: await getValueFromResult(r, fd.address),
-                    createDateString: relativeDateName(remult, { d: await getValueFromResult(r, fd.createDate) }),
+                    createDateString: relativeDateName( { d: await getValueFromResult(r, fd.createDate) }),
                     location: {
                         lat: +await getValueFromResult(r, fd.addressLatitude),
                         lng: +await getValueFromResult(r, fd.addressLongitude)

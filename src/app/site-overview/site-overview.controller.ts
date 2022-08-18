@@ -1,12 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { siteItem, dateRange } from '../overview/overview.controller';
-import { MatDialogRef } from '@angular/material/dialog';
-import { BackendMethod, Remult } from 'remult';
+import { BackendMethod } from 'remult';
 import { Roles } from '../auth/roles';
 import { createSiteContext } from '../helpers/init-context';
 import { Helpers } from '../helpers/helpers';
-import { Phone } from '../model-shared/phone';
-
 
 export class SiteOverviewController {
     @BackendMethod({ allowed: Roles.overview })

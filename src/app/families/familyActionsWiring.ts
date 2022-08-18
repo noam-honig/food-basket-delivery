@@ -1,4 +1,4 @@
-import { Remult, Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions, remult } from "remult";
+import {  Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions, remult } from "remult";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
@@ -22,7 +22,7 @@ export interface DoWorkOnServerHelper<T extends IdEntity> {
 
 
 export abstract class ActionOnRows<T extends IdEntity>  {
-    constructor(protected remult: Remult,
+    constructor(
         private entity: {
             new(...args: any[]): T;
         },
@@ -149,7 +149,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         });
         let message = this.args.title + ": " + r + " " + remult.repo(this.entity).metadata.caption + " " + getLang().updated;
 
-        await Families.SendMessageToBrowsers(message, remult, '');
+        await Families.SendMessageToBrowsers(message,  '');
         return r;
     }
 

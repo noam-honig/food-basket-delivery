@@ -32,21 +32,21 @@ import { SqlBuilder } from './SqlBuilder';
   width: '250',
 })
 export class Email {
-  async Send(subject: string, message: string, remult: Remult) {
-    await EmailSvc.sendMail(subject, message, this.address, remult);
+  async Send(subject: string, message: string) {
+    await EmailSvc.sendMail(subject, message, this.address);
   }
   constructor(public readonly address: string) {
 
   }
 }
 
-export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
+export function DateTimeColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>) => void))[]) {
   return Field<entityType, Date>({
     ...{ displayValue: (e, x) => x ? x.toLocaleString("he-il") : '' },
     ...settings
   }, ...options)
 }
-export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>, remult: Remult) => void))[]) {
+export function ChangeDateColumn<entityType = any>(settings?: FieldOptions<entityType, Date> & TranslatedCaption, ...options: (FieldOptions<entityType, Date> | ((options: FieldOptions<entityType, Date>) => void))[]) {
   return (a, b) => {
     DataControl({ readonly: true })(a, b)
     return DateTimeColumn<entityType>({
@@ -108,7 +108,7 @@ class a {
 }
 
 
-export function relativeDateName(remult: Remult, args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
+export function relativeDateName( args: { d?: Date, dontShowTimeForOlderDates?: boolean }) {
   let d = args.d;
   if (!d)
     return '';

@@ -1,6 +1,5 @@
 import { BackendMethod, SqlDatabase, EntityFilter, FieldRef, remult } from 'remult';
 
-import { Remult } from 'remult';
 
 import { Families, duplicateFamilyInfo } from '../families/families';
 
@@ -57,11 +56,11 @@ export class ImportFromExcelController {
     @BackendMethod({ allowed: Roles.familyAdmin })
     static async updateColsOnServer(rowsToUpdate: excelRowInfo[], columnMemberName: string, addDelivery: boolean, compareBasketType: boolean) {
         for (const r of rowsToUpdate) {
-            await ImportFromExcelController.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType, remult, (await remult.context.getSettings()));
+            await ImportFromExcelController.actualUpdateCol(r, columnMemberName, addDelivery, compareBasketType,  (await remult.context.getSettings()));
         }
         return rowsToUpdate;
     }
-    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean, remult: Remult, settings: ApplicationSettings) {
+    static async actualUpdateCol(i: excelRowInfo, entityAndColumnName: string, addDelivery: boolean, compareBasketType: boolean,  settings: ApplicationSettings) {
         let c = ImportFromExcelController.actualGetColInfo(i, entityAndColumnName);
         if (c.existingDisplayValue == c.newDisplayValue)
             return;
@@ -173,7 +172,7 @@ export class ImportFromExcelController {
             } else {
                 let hasDifference = false;
                 let existingFamily;
-                ({ ef: existingFamily, hasDifference } = await compareValuesWithRow(remult, info, info.duplicateFamilyInfo[0].id, compareBasketType, columnsInCompareMemeberName));
+                ({ ef: existingFamily, hasDifference } = await compareValuesWithRow( info, info.duplicateFamilyInfo[0].id, compareBasketType, columnsInCompareMemeberName));
                 if (existingFamily.status == FamilyStatus.RemovedFromList) {
                     switch (settings.removedFromListStrategy) {
                         case RemovedFromListExcelImportStrategy.displayAsError:
@@ -198,7 +197,7 @@ export class ImportFromExcelController {
         return result;
     }
 }
-export async function compareValuesWithRow(remult: Remult, info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
+export async function compareValuesWithRow( info: excelRowInfo, withFamily: string, compareBasketType: boolean, columnsInCompareMemeberName: string[]) {
     let hasDifference = false;
     let basketType = await remult.repo(BasketType).findId(info.basketType);
     let distCenter = await remult.repo(DistributionCenters).findId(info.distCenter);

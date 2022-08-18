@@ -1,5 +1,5 @@
 import { Families } from '../families/families';
-import { Remult, BackendMethod, remult } from 'remult';
+import {  BackendMethod, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DeliveryStatus } from '../families/DeliveryStatus';
