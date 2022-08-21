@@ -196,7 +196,7 @@ export class AsignFamilyController {
             },
             orderBy: { routeOrder: "desc" }
         });
-
+        let moreHelperInfo = await helper.getHelper();
 
         let locationReferenceFamilies: Location[] = [];
         let bounds: { lng1?: number, lng2?: number, lat1?: number, lat2?: number };
@@ -274,6 +274,9 @@ export class AsignFamilyController {
                     let where = f.where(buildWhere);
                     let res = [];
                     res.push(where);
+                    res.push(f.where({
+                        family: { "!=": moreHelperInfo.blockedFamilies }
+                    }))
                     if (info.preferRepeatFamilies)
                         res.push(filterRepeatFamilies(sql, f, SqlFor(remult.repo(FamilyDeliveries)), helper));
                     return res;
@@ -344,7 +347,7 @@ export class AsignFamilyController {
             }
 
             if (waitingFamilies.length > 0) {
-                let moreHelperInfo = await helper.getHelper();
+
                 let preferArea = moreHelperInfo.preferredDistributionAreaAddressHelper.ok;
                 let preferEnd = moreHelperInfo.preferredFinishAddressHelper.ok;
 
@@ -561,7 +564,7 @@ export class AsignFamilyController {
             })]
         }));
         const r = result.rows[0];
-        
+
         if (r.deliveries > 0) {
             const d = new Date(r.startdate);
             return "השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3".replace("$1", r.deliveries).replace("$2", r.dates)

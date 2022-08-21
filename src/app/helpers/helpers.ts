@@ -1,4 +1,4 @@
-import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase } from 'remult';
+import { Remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, Fields as remultFields, ValueConverters } from 'remult';
 import { DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -21,6 +21,7 @@ import { EntityFilter } from 'remult';
 import { UITools } from './init-context';
 import { recordChanges } from '../change-log/change-log';
 import { GroupsValue } from '../manage/groups';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 
 
 
@@ -166,6 +167,14 @@ export class HelpersBase extends IdEntity {
         translation: l => l.helperInternalComment
     })
     internalComment: string;
+    @remultFields.object<Helpers, string[]>({
+        valueConverter: {
+            fieldTypeInDb: 'json',
+            toDb: ValueConverters.JsonString.toDb,
+            fromDb: x => !x ? [] : x
+        }
+    })
+    blockedFamilies: string[];
     @Field<Helpers>({}, (options, remult) => options.
         sqlExpression = async (selfDefs) => {
             let sql = new SqlBuilder(remult);
@@ -418,6 +427,11 @@ export class Helpers extends HelpersBase {
                     name: this.remult.lang.smsMessages,
                     click: async () => {
                         this.smsMessages(ui);
+                    }
+                }, {
+                    name: 'משפחות חסומות',
+                    click: () => {
+                        ui.editBlockedFamilies(this);
                     }
                 }]
 
@@ -833,7 +847,7 @@ export class Helpers extends HelpersBase {
     @DataControl<Helpers>({ visible: self => self.caller })
     excludeGroups: GroupsValue;
     @Fields.integer({ translation: l => l.callQuota })
-    @DataControl<Helpers>({ visible: self => self.caller,width:'70' })
+    @DataControl<Helpers>({ visible: self => self.caller, width: '70' })
     callQuota: number;
 
     static deliveredPreviously = Filter.createCustom<Helpers,

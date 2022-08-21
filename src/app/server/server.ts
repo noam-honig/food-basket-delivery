@@ -381,7 +381,7 @@ s.parentNode.insertBefore(b, s);})();
                     }
                 }
                 //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
-                if (false) {
+                if (true) {
 
                     console.log("---------------------------------------------------------------------------");
                     var h = await remult.repo(Helpers).findFirst();
@@ -394,6 +394,10 @@ s.parentNode.insertBefore(b, s);})();
                         roles: [Roles.admin],
                         theHelperIAmEscortingId: ""
                     });
+                    h.blockedFamilies = ["1","2"];
+                    h.blockedFamilies = null;
+                    await h.save();
+                    console.log(h.blockedFamilies);
                 }
                 // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
 

@@ -119,6 +119,7 @@ import { CallerComponent } from './caller/caller.component';
 import { SelectFamilyForCallerComponent } from './select-family-for-caller/select-family-for-caller.component';
 import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component';
 import { ManageCallersComponent } from './manage-callers/manage-callers.component';
+import { BlockedFamiliesComponent } from './blocked-families/blocked-families.component';
 
 
 
@@ -229,7 +230,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     CallerComponent,
     SelectFamilyForCallerComponent,
     AdjustGeocodeComponent,
-    ManageCallersComponent
+    ManageCallersComponent,
+    BlockedFamiliesComponent
 
 
   ],

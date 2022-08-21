@@ -140,6 +140,7 @@ export interface EditCustomMessageArgs {
 }
 
 export interface UITools {
+    editBlockedFamilies(helper: Helpers);
     YesNoPromise(question: string): Promise<Boolean>;
     messageDialog(question: string): Promise<Boolean>;
     Error(err: string): Promise<void>;

@@ -3,7 +3,7 @@
 
 
     <mat-form-field class="full-width">
-      <input matInput [(ngModel)]="searchString" (input)="doFilter()"
+      <input matInput [(ngModel)]="searchString" (input)="doFilter()" autocomplete="off"
         placeholder="{{settings.lang.search}} {{args.selectStreet?settings.lang.address:settings.lang.familyName}}"
         #search [ngModelOptions]="{standalone: true}">
       <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
@@ -18,7 +18,7 @@
 
 
 
-    
+
     <button mat-raised-button color="accent"
       *ngIf="args.selectStreet&&families.totalRows>1&&searchString&&countSelected()==0"
       (click)="doSelection()">{{settings.lang.assign}} {{families.totalRows}}
@@ -54,8 +54,10 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  
+
   <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
-  <button mat-raised-button (click)="doSelection()" color="accent" *ngIf="args.allowSelectAll">{{settings.lang.selectAll}}</button>
-  <mat-checkbox [(ngModel)]="showAll" *ngIf="args.allowShowAll" (change)="doFilter()" style="margin-right:10px" >{{settings.lang.showAll}}</mat-checkbox>
+  <button mat-raised-button (click)="doSelection()" color="accent"
+    *ngIf="args.allowSelectAll">{{settings.lang.selectAll}}</button>
+  <mat-checkbox [(ngModel)]="showAll" *ngIf="args.allowShowAll" (change)="doFilter()" style="margin-right:10px">
+    {{settings.lang.showAll}}</mat-checkbox>
 </mat-dialog-actions>

@@ -17,11 +17,12 @@ import { Location } from "../shared/googleApiHelpers";
 import { Sites } from "../sites/sites";
 import "../helpers/init-context";
 import { EditCustomMessageArgs, evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs, UpdateGroupArgs } from "../helpers/init-context";
-import { HelpersBase } from "../helpers/helpers";
+import { Helpers, HelpersBase } from "../helpers/helpers";
 import { extractError } from "./extractError";
 import { DialogController } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
+import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
 
 
 
@@ -106,6 +107,9 @@ export class DialogService implements UITools {
         }
 
 
+    }
+    editBlockedFamilies(helper: Helpers) {
+        openDialog(BlockedFamiliesComponent, x => x.helper = helper);
     }
     donotWait<T>(what: () => Promise<T>): Promise<T> {
         return this.busy.donotWait(what);
