@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { EntityFilter } from 'remult';
 
-import { Families, sendWhatsappToFamily, canSendWhatsapp } from './families';
+import { Families, sendWhatsappToFamily, canSendWhatsapp, buildFamilyMessage } from './families';
 
 import { YesNo } from "./YesNo";
 
@@ -39,11 +39,12 @@ import { use } from '../translate';
 import { ChartType } from 'chart.js';
 import { GroupsValue } from '../manage/groups';
 import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
-import { messageMerger } from "../edit-custom-message/messageMerger";
+import { messageMerger, MessageTemplate } from "../edit-custom-message/messageMerger";
 import { makeId } from '../helpers/helpers';
 import { UITools } from '../helpers/init-context';
 import { FamiliesController } from './families.controller';
 import { ChangeLogComponent } from '../change-log/change-log.component';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
     selector: 'app-families',
@@ -421,6 +422,40 @@ export class FamiliesComponent implements OnInit {
                 ,
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
+            }, {
+                name: 'ערוך מבנה הודעת וטסאפ למשפחה',
+                visible: () => this.remult.isAllowed(Roles.admin),
+                click: async (f) => {
+
+                    let messageMerge = buildFamilyMessage(f,this.remult);
+                    const message = await messageMerge.fetchTemplateRow(this.remult);
+                    openDialog(EditCustomMessageComponent, edit => edit.args = {
+                        message: messageMerge,
+                        templateText: message.template ,
+                        helpText: '',
+                        title: 'ערוך מבנה הודעת וטסאפ למשפחה',
+                        buttons: [{
+                            name: 'שלח הודעה',
+                            click: async () => {
+                                message.template = edit.args.templateText;
+                                await message.save();
+                                sendWhatsappToFamily(f, this.remult, undefined, messageMerge.merge(edit.args.templateText))
+                                edit.ref.close();
+                            }
+                        }, {
+                            name: 'שמור',
+                            click: async () => {
+                                message.template = edit.args.templateText;
+                                await message.save();
+                                edit.ref.close();
+                            }
+
+                        }]
+
+
+                    })
+                }
+
             }
             ,
             {
@@ -447,6 +482,7 @@ export class FamiliesComponent implements OnInit {
                                 this.settings.familySelfOrderMessage = edit.args.templateText;
                                 await this.settings.save();
                                 sendWhatsappToFamily(f, this.remult, undefined, message.merge(edit.args.templateText))
+                                edit.ref.close();
                             }
                         }]
 

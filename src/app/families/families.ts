@@ -28,6 +28,7 @@ import { GroupsValue } from "../manage/groups";
 
 import { evil, UITools } from "../helpers/init-context";
 import { recordChanges } from "../change-log/change-log";
+import { messageMerger } from "../edit-custom-message/messageMerger";
 
 
 
@@ -1199,7 +1200,14 @@ export interface autocompleteResult {
   result: GeocodeResult
 }
 
-export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string, message?: string) {
+export function buildFamilyMessage(f: familyLikeEntity, remult: Remult) {
+  return new messageMerger([
+    { token: 'משפחה', value: f.name },
+    { token: 'ארגון', value: getSettings(remult).organisationName }
+  ], "whatsappToFamily", use.language.hello + ' !משפחה!, ');
+}
+
+export async function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string, message?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
@@ -1209,7 +1217,7 @@ export function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?
     }
   }
   if (!message) {
-    message = use.language.hello + ' ' + f.name + ',';
+    message = await buildFamilyMessage(f, remult).mergeFromTemplate(remult);
   }
   Phone.sendWhatsappToPhone(phone,
     message, remult);

@@ -55,6 +55,7 @@ function log(s: string) {
                     h.leadHelper,
                     h.myGiftsURL,
                     h.doNotSendSms,
+                    h.blockedFamilies,
 
                     sql.countDistinctInnerSelect(f.family, helperFamilies(() => [f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })]), self.deliveriesInProgress),
                     sql.countInnerSelect(helperFamilies(() => []), self.allDeliveires),

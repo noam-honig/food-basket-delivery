@@ -84,6 +84,7 @@ import { CallerController } from "../caller/caller.controller";
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
 import { remultExpress } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
+import { MessageTemplate } from "../edit-custom-message/messageMerger";
 
 
 const entities = [
@@ -113,7 +114,8 @@ const entities = [
     Families,
     FamilyDeliveries,
     ActiveFamilyDeliveries,
-    Callers
+    Callers,
+    MessageTemplate
 ];
 const controllers = [
     CallerController,
@@ -394,7 +396,7 @@ s.parentNode.insertBefore(b, s);})();
                         roles: [Roles.admin],
                         theHelperIAmEscortingId: ""
                     });
-                    h.blockedFamilies = ["1","2"];
+                    h.blockedFamilies = ["1", "2"];
                     h.blockedFamilies = null;
                     await h.save();
                     console.log(h.blockedFamilies);
