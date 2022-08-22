@@ -29,7 +29,7 @@ import { DeliveryImage, FamilyImage } from "../families/DeiveryImages";
 import { FamilySources } from "../families/FamilySources";
 import { CitiesStats, CitiesStatsPerDistCenter, FamilyDeliveryStats } from "../family-deliveries/family-deliveries-stats";
 import { HelperGifts } from "../helper-gifts/HelperGifts";
-import { InRouteHelpers } from "../in-route-follow-up/in-route-helpers";
+import { HelperCommunicationHistory, InRouteHelpers } from "../in-route-follow-up/in-route-helpers";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { Groups } from "../manage/groups";
 import { GroupsStatsPerDistributionCenter } from "../manage/GroupsStatsPerDistributionCenter";
@@ -115,7 +115,8 @@ const entities = [
     FamilyDeliveries,
     ActiveFamilyDeliveries,
     Callers,
-    MessageTemplate
+    MessageTemplate,
+    HelperCommunicationHistory
 ];
 const controllers = [
     CallerController,
