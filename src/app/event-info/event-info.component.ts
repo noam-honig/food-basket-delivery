@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import { Remult } from 'remult';
 import { Roles } from '../auth/roles';
 
-import {  Event, eventDisplayDate, EventInList, volunteersInEvent } from '../events/events';
+import {  Event, eventDisplayDate, EventInList, EventType, volunteersInEvent } from '../events/events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerNeedType } from '../manage/VolunteerNeedType';
 import { Phone } from '../model-shared/phone';
@@ -32,6 +32,9 @@ export class EventInfoComponent implements OnInit {
   }
   openWaze() {
     openWaze(this.e.longLat, this.e.theAddress);
+  }
+  showEventType() {
+    return !this.isGeneralEvent() && this.e.type != EventType.other;
   }
   isGeneralEvent(){
     return this.e.eventDateJson.startsWith("999");
