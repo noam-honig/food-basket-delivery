@@ -2,7 +2,7 @@ import { ChangeDateColumn, relativeDateName } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 
-import {  IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase, remult } from 'remult';
+import { IdEntity, Filter, FieldRef, Allow, BackendMethod, isBackend, EntityFilter, SqlDatabase, remult } from 'remult';
 import { BasketType } from "./BasketType";
 import { Families, iniFamilyDeliveriesInFamiliesCode } from "./families";
 import { DeliveryStatus } from "./DeliveryStatus";
@@ -69,7 +69,7 @@ export class MessageStatus {
             if (!self.disableChangeLogging) {
 
                 if (!self.isNew() || self.courier)
-                    logChanged( self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
+                    logChanged(self.$.courier, self.$.courierAssingTime, self.$.courierAssignUser, async () => {
                         if (!self._disableMessageToUsers) {
                             self.distributionCenter.SendMessageToBrowser(
                                 Families.GetUpdateMessage(self, 2, self.courier?.name));
@@ -79,13 +79,13 @@ export class MessageStatus {
                 if (!self.isNew() && self.$.courierComments.valueChanged() && self.courierComments.length > 0)
                     self.courierCommentsDate = new Date();
 
-                logChanged( self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
+                logChanged(self.$.deliverStatus, self.$.deliveryStatusDate, self.$.deliveryStatusUser, async () => {
                     if (!self._disableMessageToUsers) {
                         self.distributionCenter.SendMessageToBrowser(Families.GetUpdateMessage(self, 1, self.courier ? await self.courier.name : ''));
                     }
                 });
-                logChanged( self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
-                logChanged( self.$.archive, self.$.archiveDate, self.$.archiveUser, async () => { });
+                logChanged(self.$.needsWork, self.$.needsWorkDate, self.$.needsWorkUser, async () => { });
+                logChanged(self.$.archive, self.$.archiveDate, self.$.archiveUser, async () => { });
             }
             if (!self.deliverStatus.IsAResultStatus()
                 && self.$.deliverStatus.originalValue && self.$.deliverStatus.originalValue.IsAResultStatus()) {
@@ -99,8 +99,8 @@ export class MessageStatus {
 
             }
         }
-    }
-}, o => o.apiPrefilter = FamilyDeliveries.isAllowedForUser())
+    }, apiPrefilter: () => FamilyDeliveries.isAllowedForUser()
+})
 export class FamilyDeliveries extends IdEntity {
     getCss(): string {
         return this.deliverStatus.getCss(this.courier);
@@ -257,7 +257,7 @@ export class FamilyDeliveries extends IdEntity {
     @ChangeDateColumn()
     deliveryStatusDate: Date;
     relativeDeliveryStatusDate() {
-        return relativeDateName( { d: this.deliveryStatusDate });
+        return relativeDateName({ d: this.deliveryStatusDate });
     }
     @Field({ allowApiUpdate: false, translation: l => l.courierAsignUser, includeInApi: Roles.distCenterAdmin })
     courierAssignUser: HelpersBase;
@@ -560,8 +560,8 @@ export class FamilyDeliveries extends IdEntity {
 
     disableChangeLogging = false;
     _disableMessageToUsers = false;
-    
-    static async loadFamilyInfoForExcepExport( deliveries: ActiveFamilyDeliveries[]) {
+
+    static async loadFamilyInfoForExcepExport(deliveries: ActiveFamilyDeliveries[]) {
         let families = await remult.repo(Families).find({ limit: deliveries.length, where: { id: deliveries.map(d => d.family) } });
         for (const d of deliveries) {
             d.familyForExcelExport = families.find(f => f.id == d.family);
@@ -632,7 +632,7 @@ export class FamilyDeliveries extends IdEntity {
             if (deliveryStatusDate.valueOf() < new Date().valueOf() - 7 * 86400 * 1000)
                 r += getLang().on + " " + deliveryStatusDate.toLocaleDateString("he-il");
             else
-                r += relativeDateName( { d: deliveryStatusDate });
+                r += relativeDateName({ d: deliveryStatusDate });
             if (courierComments) {
                 r += ": " + courierComments;
             }
@@ -656,7 +656,7 @@ export class FamilyDeliveries extends IdEntity {
                 if (this.courier) {
                     let c = this.courier;
 
-                    let r = ((this.messageStatus == MessageStatus.opened ? use.language.onTheWay : use.language.assigned) + ': ' + c.name + (c.eventComment ? ' (' + c.eventComment + ')' : '') + ', ' + use.language.assigned + ' ' + relativeDateName( { d: this.courierAssingTime })) + " ";
+                    let r = ((this.messageStatus == MessageStatus.opened ? use.language.onTheWay : use.language.assigned) + ': ' + c.name + (c.eventComment ? ' (' + c.eventComment + ')' : '') + ', ' + use.language.assigned + ' ' + relativeDateName({ d: this.courierAssingTime })) + " ";
                     switch (this.messageStatus) {
                         case MessageStatus.notSent:
                             r += use.language.smsNotSent;
@@ -680,7 +680,7 @@ export class FamilyDeliveries extends IdEntity {
                 let duration = '';
                 if (this.courierAssingTime && this.deliveryStatusDate)
                     duration = ' ' + getLang().within + ' ' + Math.round((this.deliveryStatusDate.valueOf() - this.courierAssingTime.valueOf()) / 60000) + " " + getLang().minutes;
-                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang().by + ' ' + this.courier.name : '') + ' ' + relativeDateName( { d: this.deliveryStatusDate }) + duration;
+                return this.deliverStatus.caption + (this.courierComments ? ", " + this.courierComments + " - " : '') + (this.courier ? ' ' + getLang().by + ' ' + this.courier.name : '') + ' ' + relativeDateName({ d: this.deliveryStatusDate }) + duration;
 
         }
         return this.deliverStatus.caption;
@@ -838,7 +838,7 @@ export class FamilyDeliveries extends IdEntity {
 
 }
 SqlBuilder.filterTranslators.push({
-    translate: async ( f) => {
+    translate: async (f) => {
         return Filter.translateCustomWhere<FamilyDeliveries>(f, remult.repo(FamilyDeliveries).metadata, remult);
     }
 });
@@ -869,7 +869,7 @@ iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
 
 
-function logChanged( col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
+function logChanged(col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
         user.setId(remult.user.id);
