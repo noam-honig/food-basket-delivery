@@ -148,6 +148,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         else {
             Helpers.addToRecent(helper);
             await this.refreshList();
+            await helper.$.leadHelper.load();
             if (helper.leadHelper && this.familyLists.toDeliver.length == 0) {
                 new moveDeliveriesHelper(this.settings, this.dialog, () => this.familyLists.reload()).move(helper.leadHelper, this.familyLists.helper, false
                     , this.settings.lang.for + " \"" + this.familyLists.helper.name + "\" " + this.settings.lang.isDefinedAsLeadVolunteerOf + " \"" + helper.leadHelper.name + "\".")

@@ -379,6 +379,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.otherDependentVolunteers = [];
 
     this.busy.donotWaitNonAsync(async () => {
+      await this.familyLists.helper.$.leadHelper.load();
       if (this.familyLists.helper.leadHelper) {
         this.otherDependentVolunteers.push(this.familyLists.helper.leadHelper);
       }

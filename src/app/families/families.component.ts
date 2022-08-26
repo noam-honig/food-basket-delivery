@@ -466,7 +466,7 @@ export class FamiliesComponent implements OnInit {
                     }
                     let message = new messageMerger([
                         { token: 'משפחה', value: f.name },
-                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: remult.context.getSettings() + '/' + remult.context.getSite() + '/fso/' + f.shortUrlKey },
+                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: remult.context.getOrigin() + '/' + remult.context.getSite() + '/fso/' + f.shortUrlKey },
                         { token: 'ארגון', value: this.settings.organisationName }
                     ]);
                     openDialog(EditCustomMessageComponent, edit => edit.args = {

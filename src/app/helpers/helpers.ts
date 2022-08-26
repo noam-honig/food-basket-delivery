@@ -136,6 +136,7 @@ export class HelpersBase extends IdEntity {
     @Field({
         translation: l => l.leadHelper
         , allowApiUpdate: Roles.admin
+        , lazy: true
     })
     leadHelper: HelpersBase;
     @Field({
@@ -171,11 +172,12 @@ export class HelpersBase extends IdEntity {
     })
     blockedFamilies: string[];
     @Field<Helpers>({
-    sqlExpression: async (selfDefs) => {
-        let sql = new SqlBuilder();
-        let self = SqlFor(selfDefs);
-        return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
-    }})
+        sqlExpression: async (selfDefs) => {
+            let sql = new SqlBuilder();
+            let self = SqlFor(selfDefs);
+            return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
+        }
+    })
     isFrozen: boolean;
 
 
@@ -255,7 +257,7 @@ export class HelpersBase extends IdEntity {
 
                 }
             }
-            if (self.$.leadHelper.valueChanged() && self.leadHelper) {
+            if (self.$.leadHelper.valueChanged() && !self.$.leadHelper.valueIsNull()) {
                 if (self.leadHelper.id == self.id || self.leadHelper.leadHelper?.id == self.id) {
                     self.$.leadHelper.error = getLang().invalidValue;
                     return;
@@ -374,7 +376,7 @@ export class Helpers extends HelpersBase {
                 }
                 this.$.phone.error = '';
                 this.phone = new Phone(Phone.fixPhoneInput(this.phone.thePhone))
-                Phone.validatePhone(this.$.phone,  true);
+                Phone.validatePhone(this.$.phone, true);
                 if (this.$.phone.error)
                     throw this.$.phone.error;
             },
