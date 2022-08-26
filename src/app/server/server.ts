@@ -648,4 +648,3 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
         }
     });
 }
-

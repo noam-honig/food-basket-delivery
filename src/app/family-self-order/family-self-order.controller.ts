@@ -32,6 +32,16 @@ export class FamilySelfOrderController {
     @Field({ caption: 'מידת טיטולים' })
     titulim: string = '';
 
+    @DataControl({
+        valueList: [{ id: '', caption: 'ללא' }, ...['0-3', '3-6', '6-9', '9-12', '12-18', '18-24'].map(item => ({
+            id: 'בגד ' + item,
+            caption: item
+        }))]
+    })
+    @Field({ caption: 'מידת בגד' })
+    size: string = '';
+
+
     @Field({ caption: 'גרבר' })
     gerber: boolean;
 
@@ -51,6 +61,7 @@ export class FamilySelfOrderController {
         fields: () => [
             this.$.basket,
             this.$.titulim,
+            this.$.size,
             this.$.gerber,
             this.$.daisa,
             this.$.comment
@@ -73,7 +84,7 @@ export class FamilySelfOrderController {
         fd.basketType = await remult.repo(BasketType).findId(this.basket);
         fd.deliveryComments = '';
 
-        for (const what of [this.titulim, this.gerber ? "גרבר" : "", this.daisa ? "דיסה" : "", this.comment]) {
+        for (const what of [this.titulim, this.size, this.gerber ? "גרבר" : "", this.daisa ? "דיסה" : "", this.comment]) {
             if (what) {
                 if (fd.deliveryComments.length > 0)
                     fd.deliveryComments += ", ";

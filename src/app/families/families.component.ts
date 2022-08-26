@@ -465,6 +465,14 @@ export class FamiliesComponent implements OnInit {
 
                 }
             },
+           
+            {
+                name: this.settings.lang.familyDeliveries,
+                click: async f => {
+                    f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog });
+                }
+                , visible: f => !f.isNew()
+            },
             {
                 name: "עריכת קישור להזמנה עצמית",
                 visible: () => this.settings.familySelfOrderEnabled,
@@ -488,13 +496,6 @@ export class FamiliesComponent implements OnInit {
 
                     })
                 }
-            },
-            {
-                name: this.settings.lang.familyDeliveries,
-                click: async f => {
-                    f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog });
-                }
-                , visible: f => !f.isNew()
             },
             {
                 name: use.language.changeLog,
