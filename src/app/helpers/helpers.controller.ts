@@ -39,7 +39,7 @@ export class HelpersController {
             return getLang().unfitForInvite;
         if (!(h.admin || h.distCenterAdmin))
             return getLang().unfitForInvite;
-        let url = remult.context.getSettings() + '/' + Sites.getOrganizationFromContext();
+        let url = remult.context.getOrigin() + '/' + Sites.getOrganizationFromContext();
         let s = await ApplicationSettings.getAsync();
         let hasPassword = h.password && h.password.length > 0;
         let message = getLang().hello + ` ${h.name}

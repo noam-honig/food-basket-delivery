@@ -188,7 +188,7 @@ export class SendBulkSms {
     buildMessage(name: string, settings: ApplicationSettings) {
         return new messageMerger([
             { token: 'מתנדב', caption: "שם המתנדב", value: name },
-            { token: 'קישור', caption: 'קישור לרישום', value: remult.context.getSettings() + '/' + Sites.getOrganizationFromContext() + '/events' },
+            { token: 'קישור', caption: 'קישור לרישום', value: remult.context.getOrigin() + '/' + Sites.getOrganizationFromContext() + '/events' },
             { token: 'ארגון', caption: "שם הארגון", value: settings.organisationName },
             { token: 'עיר', value: this.city },
 
