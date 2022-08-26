@@ -29,7 +29,7 @@ import { DeliveryImage, FamilyImage } from "../families/DeiveryImages";
 import { FamilySources } from "../families/FamilySources";
 import { CitiesStats, CitiesStatsPerDistCenter, FamilyDeliveryStats } from "../family-deliveries/family-deliveries-stats";
 import { HelperGifts } from "../helper-gifts/HelperGifts";
-import { InRouteHelpers } from "../in-route-follow-up/in-route-helpers";
+import { HelperCommunicationHistory, InRouteHelpers } from "../in-route-follow-up/in-route-helpers";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { Groups } from "../manage/groups";
 import { GroupsStatsPerDistributionCenter } from "../manage/GroupsStatsPerDistributionCenter";
@@ -84,6 +84,7 @@ import { CallerController } from "../caller/caller.controller";
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
 import { remultExpress } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
+import { MessageTemplate } from "../edit-custom-message/messageMerger";
 import { RemultServer } from "remult/server/expressBridge";
 
 
@@ -120,7 +121,9 @@ const entities = [
     Families,
     FamilyDeliveries,
     ActiveFamilyDeliveries,
-    Callers
+    Callers,
+    MessageTemplate,
+    HelperCommunicationHistory
 ];
 const controllers = [
     CallerController,
@@ -390,7 +393,7 @@ s.parentNode.insertBefore(b, s);})();
                     }
                 }
                 //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
-                if (false) {
+                if (true) {
 
                     console.log("---------------------------------------------------------------------------");
                     var h = await remult.repo(Helpers).findFirst();
@@ -403,6 +406,10 @@ s.parentNode.insertBefore(b, s);})();
                         roles: [Roles.admin],
                         theHelperIAmEscortingId: ""
                     });
+                    h.blockedFamilies = ["1", "2"];
+                    h.blockedFamilies = null;
+                    await h.save();
+                    console.log(h.blockedFamilies);
                 }
                 // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
 

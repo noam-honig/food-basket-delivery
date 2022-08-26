@@ -589,6 +589,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
     private async performSpecificFamilyAssignment(f: ActiveFamilyDeliveries, analyticsName: string) {
         await this.verifyHelperExistance();
+        if (this.helper.blockedFamilies?.includes(f.family)) {
+            if (!await this.dialog.YesNoPromise(`משפחת ${f.name} חסומה עבור המתנדב ${this.helper.name} האם לשייך בכל זאת?`)) {
+                return;
+            }
+        }
         f.courier = this.helper;
         f.deliverStatus = DeliveryStatus.ReadyForDelivery;
         this.dialog.analytics(analyticsName);

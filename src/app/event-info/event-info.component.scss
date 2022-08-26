@@ -19,3 +19,11 @@
   .space-above{
     margin-top:5px;
   }
+  .event-image {
+    width: 120px;
+    height: 120px;
+    @media (max-width: 720px) {
+        width: 150px;
+        height: 150px;
+    }
+}

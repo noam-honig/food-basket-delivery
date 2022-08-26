@@ -51,6 +51,9 @@ export class EventCardComponent implements OnInit {
       visible: e => !!e.specificUrl
     }
   ];
+  showEventType(e: EventInList) {
+    return !this.isGeneralEvent(e) && e.type != EventType.other;
+  }
   isGeneralEvent(e: EventInList) {
     return e.eventDateJson.startsWith("999");
   }

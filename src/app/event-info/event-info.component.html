@@ -11,7 +11,7 @@
         <img class="event-image" [src]="e.eventLogo">
     </div>
     <strong>{{e.orgName}}</strong>
-    <span>{{e.city}}<span *ngIf="!isGeneralEvent()">, {{e.type.caption}}</span></span>
+    <span>{{e.city}}<span *ngIf="showEventType()">, {{e.type.caption}}</span></span>
     <span *ngIf="!isGeneralEvent()">{{displayDate()}}<span *ngIf="e.startTime">,
             {{e.startTime}}</span><span *ngIf="e.endTime"> -
             {{e.endTime}}</span>

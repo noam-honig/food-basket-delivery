@@ -17,6 +17,7 @@ myGiftsURL varchar default '' not null
 archive boolean default false not null
 frozenTill date
 internalComment varchar default '' not null
+blockedFamilies json
 phone varchar default '' not null
 lastSignInDate timestamp
 password varchar default '' not null

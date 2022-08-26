@@ -1,4 +1,4 @@
-import { IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, remult } from 'remult';
+import { remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, Fields as remultFields, ValueConverters } from 'remult';
 import { DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -21,6 +21,7 @@ import { EntityFilter } from 'remult';
 import { UITools } from './init-context';
 import { recordChanges } from '../change-log/change-log';
 import { GroupsValue } from '../manage/groups';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 
 
 
@@ -161,13 +162,20 @@ export class HelpersBase extends IdEntity {
         translation: l => l.helperInternalComment
     })
     internalComment: string;
-    @Field<Helpers>({
-        sqlExpression: async (selfDefs) => {
-            let sql = new SqlBuilder();
-            let self = SqlFor(selfDefs);
-            return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
+    @remultFields.object<Helpers, string[]>({
+        valueConverter: {
+            fieldTypeInDb: 'json',
+            toDb: ValueConverters.JsonString.toDb,
+            fromDb: x => !x ? [] : x
         }
     })
+    blockedFamilies: string[];
+    @Field<Helpers>({
+    sqlExpression: async (selfDefs) => {
+        let sql = new SqlBuilder();
+        let self = SqlFor(selfDefs);
+        return sql.case([{ when: [sql.or(sql.build(self.frozenTill, ' is null'), self.where({ frozenTill: { "<=": new Date() } }))], then: false }], true);
+    }})
     isFrozen: boolean;
 
 
@@ -412,6 +420,11 @@ export class Helpers extends HelpersBase {
                     name: remult.context.lang.smsMessages,
                     click: async () => {
                         this.smsMessages(ui);
+                    }
+                }, {
+                    name: 'משפחות חסומות',
+                    click: () => {
+                        ui.editBlockedFamilies(this);
                     }
                 }]
 
