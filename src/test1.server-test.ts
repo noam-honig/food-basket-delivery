@@ -1,6 +1,6 @@
 //import { CustomModuleLoader } from '../../radweb/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/out-tsc/server-test/radweb/projects');
-import { Remult, SqlDatabase } from "remult";
+import { remult, Remult, SqlDatabase } from "remult";
 import './app/manage/ApplicationSettings';
 import "jasmine";
 import { AsignFamilyComponent } from "./app/asign-family/asign-family.component";
@@ -24,12 +24,12 @@ import { AuthService } from './app/auth/auth-service';
 import { actionInfo } from 'remult/src/server-action';
 import { InitContext } from "./app/helpers/init-context";
 import { AsignFamilyController } from "./app/asign-family/asign-family.controller";
+import { getDb } from "./app/model-shared/SqlBuilder";
 initSettings.disableSchemaInit = true;
 
 
 function init() {
 
-    let remult = new Remult();
 
     let helperWhoIsAdmin: Helpers;
 
@@ -60,17 +60,14 @@ function init() {
         itAsync('helpers and stats work', async () => {
 
             let h = await remult.repo(HelpersAndStats).find();
-        })
-            ;
+
+        });
     });
     describe("the test", () => {
 
         beforeEach(async done => {
-            for (const d of await remult.repo(FamilyDeliveries).find()) {
-                await d.delete();
-            }
-            for (const d of await remult.repo(Helpers).find()) {
-                await d.delete();
+            for (const r of [Families, FamilyDeliveries, Helpers].map((x: any) => remult.repo(x).metadata.key)) {
+                await getDb().execute('delete from ' + r);
             }
 
 
@@ -108,12 +105,15 @@ function init() {
             remult.user = ({
                 id: helperWhoIsAdmin.id,
                 name: 'admin',
-                roles: [Roles.admin, Roles.distCenterAdmin]
+                roles: [Roles.admin, Roles.distCenterAdmin],
+                distributionCenter: undefined,
+                escortedHelperName: undefined,
+                theHelperIAmEscortingId: undefined
             });
             await InitContext(remult);
             done();
         });
-        async function callAddBox(num=1) {
+        async function callAddBox(num = 1) {
             return await AsignFamilyController.AddBox(helperWhoIsAdmin, null, null, {
                 allRepeat: false,
                 area: '',
@@ -121,7 +121,7 @@ function init() {
                 group: '',
                 numOfBaskets: num,
                 preferRepeatFamilies: false
-            }, remult, sql);
+            });
         }
         async function createDelivery(distanceFromRoot: number) {
             let d = remult.repo(ActiveFamilyDeliveries).create();
@@ -290,7 +290,7 @@ function init() {
 
             expect(+await remult.repo(ActiveFamilyDeliveries).count({ family: f.id })).toBe(2);
 
-            let b = new UpdateStatusForDeliveries(remult);
+            let b = new UpdateStatusForDeliveries();
             let u = b.orig as UpdateStatus;
             u.status = FamilyStatus.Frozen;
             u.archiveFinshedDeliveries = true;
@@ -299,6 +299,7 @@ function init() {
                 count: 1,
                 where: { id: fd.id }
             });
+            await f._.reload();
 
             let fd_after = await remult.repo(FamilyDeliveries).findId(fd.id);
             expect(fd_after.archive).toBe(true, "fd");
@@ -313,7 +314,7 @@ function init() {
             await fd.save();
 
             expect(+await remult.repo(ActiveFamilyDeliveries).count({ id: fd.id })).toBe(1);
-            let u = new UpdateDeliveriesStatus(remult);
+            let u = new UpdateDeliveriesStatus();
 
             u.status = DeliveryStatus.Frozen;
 
@@ -330,7 +331,7 @@ function init() {
             f.name = "test";
             await f.save();
 
-            let u = new UpdateArea(remult);
+            let u = new UpdateArea();
 
             u.area = "north";
 
@@ -349,7 +350,7 @@ function init() {
             let fd = f.createDelivery(null);
             await fd.save();
 
-            let b = new UpdateAreaForDeliveries(remult);
+            let b = new UpdateAreaForDeliveries();
             let u = b.orig as UpdateArea;
             u.area = 'north';
 
@@ -371,7 +372,7 @@ function init() {
             let fd = f.createDelivery(null);
             fd.deliverStatus = DeliveryStatus.Success;
             await fd.save();
-            var u = new DeleteDeliveries(remult);
+            var u = new DeleteDeliveries();
             await u.internalForTestingCallTheServer({
                 count: 0,
                 where: undefined
@@ -398,7 +399,8 @@ function init() {
             let d = await f.createDelivery(a).save();
             expect(d.distributionCenter.name).toBe('a');
         });
-        itAsync("test delete only works for user dist center", async () => {
+        it("test delete only works for user dist center", async () => {
+
             let f = await remult.repo(Families).create();
             f.name = "test";
             await f.save();
@@ -413,9 +415,7 @@ function init() {
             await f.createDelivery(a).save();
             await f.createDelivery(a).save();
             await f.createDelivery(b).save();
-            let c2 = new Remult();
-            c2.dataProvider = (sql);
-            let distAdmin = await c2.repo(Helpers).create({
+            let distAdmin = await remult.repo(Helpers).create({
                 id: 'distCenterAdmin',
                 name: 'distCenterAdmin',
                 distributionCenter: b,
@@ -423,7 +423,7 @@ function init() {
             }).save();
 
 
-            c2.user = ({
+            remult.user = ({
                 id: distAdmin.id,
                 name: 'distCenterAdmin',
                 distributionCenter: 'b',
@@ -431,10 +431,12 @@ function init() {
                 theHelperIAmEscortingId: undefined,
                 roles: [Roles.distCenterAdmin]
             });
-            await InitContext(c2);
+            remult.clearAllCache();
+            await InitContext(remult);
+
 
             expect(+(await remult.repo(ActiveFamilyDeliveries).count())).toBe(3);
-            var u = new DeleteDeliveries(c2);
+            var u = new DeleteDeliveries();
             await u.internalForTestingCallTheServer({
                 count: 1,
                 where: {}

@@ -132,7 +132,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         let count = await remult.repo(this.entity).count(where);
         if (count != info.count) {
             console.log({ count, packCount: info.count, name: remult.repo(this.entity).metadata.caption });
-            throw "ארעה שגיאה אנא נסה שוב";
+            throw Error( "ארעה שגיאה אנא נסה שוב");
         }
         let i = 0;
         let r = await pagedRowsIterator<T>(remult.repo(this.entity), {
