@@ -425,7 +425,7 @@ export class FamiliesComponent implements OnInit {
                 visible: () => this.remult.isAllowed(Roles.admin),
                 click: async (f) => {
 
-                    let messageMerge = buildFamilyMessage(f, this.remult);
+                    let messageMerge = buildFamilyMessage(f);
                     const message = await messageMerge.fetchTemplateRow(this.remult);
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
                         message: messageMerge,
@@ -437,7 +437,7 @@ export class FamiliesComponent implements OnInit {
                             click: async () => {
                                 message.template = edit.args.templateText;
                                 await message.save();
-                                sendWhatsappToFamily(f, this.remult, undefined, messageMerge.merge(edit.args.templateText))
+                                sendWhatsappToFamily(f, undefined, messageMerge.merge(edit.args.templateText))
                                 edit.ref.close();
                             }
                         }, {

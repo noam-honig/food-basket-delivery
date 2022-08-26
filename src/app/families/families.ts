@@ -1199,7 +1199,7 @@ export function buildFamilyMessage(f: familyLikeEntity) {
   ], "whatsappToFamily", use.language.hello + ' !משפחה!, ');
 }
 
-export async function sendWhatsappToFamily(f: familyLikeEntity, remult: Remult, phone?: string, message?: string) {
+export async function sendWhatsappToFamily(f: familyLikeEntity, phone?: string, message?: string) {
   if (!phone) {
     for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
       if (p && p.canSendWhatsapp()) {
