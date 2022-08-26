@@ -1,4 +1,4 @@
-import {  DataProvider, Remult, remult } from "remult";
+import { DataProvider, Remult, remult } from "remult";
 
 
 import { Roles } from "../auth/roles";
@@ -37,7 +37,7 @@ export class Sites {
                 if (!site) {
                     site = Sites.guestSchema;
                 }
-                Remult.apiBaseUrl = '/' + site + '/api';
+                remult.apiClient.url = '/' + site + '/api';
             }
 
 
@@ -68,7 +68,7 @@ export class Sites {
             return Sites.guestSchema;
         }
     }
-    static setSiteToContext( site: string) {
+    static setSiteToContext(site: string) {
         remult.context.getSite = () => site;
     }
 

@@ -62,7 +62,7 @@ export function CompanyColumn<entityType = any>(settings?: FieldOptions<entityTy
     apiPrefilter: () => ({
         id: !remult.authenticated() ? [] :
             remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? undefined :
-                [remult.user.id, remult.user.theHelperIAmEscortingId]
+                [remult.user?.id, remult.user?.theHelperIAmEscortingId]
 
     })
 })
@@ -336,7 +336,7 @@ export class HelpersBase extends IdEntity {
     },
     apiPrefilter: () => ({
         id: !remult.authenticated() ? [] : undefined,
-        allowedIds: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? { $contains: remult.user.id } : undefined
+        allowedIds: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin, Roles.lab]) ? { $contains: remult.user?.id } : undefined
     })
 })
 
@@ -701,7 +701,7 @@ export class Helpers extends HelpersBase {
         let settings = await ApplicationSettings.getAsync();
         if (!settings.isSytemForMlt)
             throw "Not Allowed";
-        remult.setUser({
+        remult.user = ({
             id: 'WIX',
             name: 'WIX',
             roles: [],

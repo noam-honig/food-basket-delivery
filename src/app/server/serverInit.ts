@@ -191,7 +191,7 @@ async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<voi
     }
     let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema);
     let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
-    remult.setDataProvider(dp);
+    remult.dataProvider = (dp);
     await InitRemult(remult);
     
     let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
@@ -233,7 +233,7 @@ async function InitSpecificSchema(pool: Pool, s: any) {
     await verifySchemaExistance(pool, s);
     let schemaPool = new PostgresSchemaWrapper(pool, s);
     let db = new SqlDatabase(new PostgresDataProvider(schemaPool));
-    remult.setDataProvider(db);
+    remult.dataProvider = (db);
     await InitRemult(remult);
     if (!initSettings.disableSchemaInit) {
         const b = new PostgresSchemaBuilder(db, s);

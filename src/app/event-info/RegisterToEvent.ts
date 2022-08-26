@@ -179,7 +179,7 @@ export class RegisterToEvent {
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);
 
-            remult.setDataProvider(dp);
+            remult.dataProvider = (dp);
             Sites.setSiteToContext(site);
             await InitContext(remult);
         }
@@ -195,7 +195,7 @@ export class RegisterToEvent {
                 helper.name = (this.name + ' ' + this.lastName).trim();
                 await helper.save();
             }
-            remult.setUser({
+            remult.user = ({
                 id: helper.id,
                 name: helper.name,
                 roles: [],

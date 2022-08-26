@@ -21,8 +21,8 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         user = remult.user;
     let defaultBasketType: BasketType;
     remult.context.getSettings = () => ApplicationSettings.getAsync();
-    remult.context.getUserDistributionCenter = () => remult.repo(DistributionCenters).findId(remult.user.distributionCenter);
-    remult.context.getCurrentUser = () => remult.repo(Helpers).findId(remult.user.id);
+    remult.context.getUserDistributionCenter = () => remult.repo(DistributionCenters).findId(remult.user?.distributionCenter);
+    remult.context.getCurrentUser = () => remult.repo(Helpers).findId(remult.user?.id);
     remult.context.defaultBasketType = async () => {
         if (defaultBasketType)
             return defaultBasketType;
@@ -55,7 +55,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         else if (remult.isAllowed(Roles.admin)) {
             return undefined;
         } else
-            return { $id: [remult.user.distributionCenter] };
+            return { $id: [remult.user?.distributionCenter] };
 
     }
     remult.context.filterDistCenter = (distCenter): IdFilter<DistributionCenters> => {
@@ -63,7 +63,7 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
         if (distCenter == null) {
             return remult.context.filterCenterAllowedForUser();
         } else {
-            if (remult.isAllowed(Roles.admin) || distCenter.id == remult.user.distributionCenter)
+            if (remult.isAllowed(Roles.admin) || distCenter.id == remult.user?.distributionCenter)
                 return distCenter;
         }
         return [];
@@ -185,7 +185,7 @@ export const evil: {
 export async function createSiteContext(site: string) {
     let dp = Sites.getDataProviderForOrg(site);
 
-    remult.setDataProvider(dp);
+    remult.dataProvider = (dp);
     Sites.setSiteToContext(site);
     await InitContext(remult, undefined);
 

@@ -18,7 +18,9 @@ import { getDb } from "../model-shared/SqlBuilder";
                 self.$.id.error = 'not allowed to change';
         }
     }
-}, (_, _1) => getDb().execute("SELECT setting FROM pg_settings WHERE name = 'search_path';").then(x => console.log(x.rows[0])))
+}
+//, (_, _1) => getDb().execute("SELECT setting FROM pg_settings WHERE name = 'search_path';").then(x => console.log(x.rows[0]))
+)
 export class SitesEntity extends EntityBase {
     @Field()
     id: string;

@@ -49,7 +49,7 @@ function init() {
                     }
                     let dp = Sites.getDataProviderForOrg("test");
                     sql = <any>dp;
-                    remult.setDataProvider(dp);
+                    remult.dataProvider = (dp);
 
                     done();
                 });
@@ -105,7 +105,7 @@ function init() {
             h.admin = true;
             await h.save();
             helperWhoIsAdmin = h;
-            remult.setUser({
+            remult.user = ({
                 id: helperWhoIsAdmin.id,
                 name: 'admin',
                 roles: [Roles.admin, Roles.distCenterAdmin]
@@ -414,7 +414,7 @@ function init() {
             await f.createDelivery(a).save();
             await f.createDelivery(b).save();
             let c2 = new Remult();
-            c2.setDataProvider(sql);
+            c2.dataProvider = (sql);
             let distAdmin = await c2.repo(Helpers).create({
                 id: 'distCenterAdmin',
                 name: 'distCenterAdmin',
@@ -423,7 +423,7 @@ function init() {
             }).save();
 
 
-            c2.setUser({
+            c2.user = ({
                 id: distAdmin.id,
                 name: 'distCenterAdmin',
                 distributionCenter: 'b',

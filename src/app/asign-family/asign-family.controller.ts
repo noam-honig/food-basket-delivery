@@ -26,7 +26,7 @@ import { optimizeRoute, routeStats, routeStrategy } from './route-strategy';
 export class AsignFamilyController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getBasketStatus(helper: HelpersBase, basket: BasketType, distCenter: DistributionCenters, info: GetBasketStatusActionInfo): Promise<GetBasketStatusActionResponse> {
-        const db = remult._dataSource as SqlDatabase;
+        const db = getDb();
         let result: GetBasketStatusActionResponse = {
             baskets: [],
             cities: [],

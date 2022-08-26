@@ -81,7 +81,7 @@ export class DistributionCenters extends IdEntity {
 
 
   matchesCurrentUser() {
-    return this.id == (remult.user).distributionCenter;
+    return this.id == (remult.user)?.distributionCenter;
   }
 
   async SendMessageToBrowser(message: string) {
@@ -94,7 +94,7 @@ export class DistributionCenters extends IdEntity {
     if (remult.isAllowed(Roles.admin)) {
       return true;
     } else if (remult.isAllowed(Roles.distCenterAdmin))
-      return (remult.user).distributionCenter == this.id;
+      return (remult.user)?.distributionCenter == this.id;
     return false;
   }
   async getRouteStartGeo() {

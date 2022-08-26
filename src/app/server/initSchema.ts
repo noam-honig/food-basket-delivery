@@ -25,7 +25,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
     let remult = new Remult();
     await InitContext(remult);
-    remult.setDataProvider(dataSource);
+    remult.dataProvider = (dataSource);
     let sql = new SqlBuilder();
     let createFamilyIndex = async (name: string, ...columns: FieldMetadata[]) => {
         await dataSource.execute(await sql.build("create index if not exists ", name, " on ", f, "  (", columns, ")"));
@@ -63,7 +63,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
     let l = getLang();
-    remult.setUser({
+    remult.user = ({
         id: "version_update",
         name: "version_update",
         roles: [Roles.admin],

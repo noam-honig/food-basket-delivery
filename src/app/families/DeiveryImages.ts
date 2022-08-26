@@ -10,7 +10,7 @@ import { Families } from "./families";
     allowApiCrud: Allow.authenticated,
     allowApiUpdate: false.valueOf,
     apiPrefilter: () => ({
-        uploadingVolunteer: !remult.isAllowed([Roles.admin]) ? { $id: [remult.user.id] } : undefined
+        uploadingVolunteer: !remult.isAllowed([Roles.admin]) ? { $id: [remult.user?.id] } : undefined
     }),
     saving: async self => {
         if (self.isNew())

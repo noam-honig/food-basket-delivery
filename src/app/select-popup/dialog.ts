@@ -193,7 +193,7 @@ export class DialogService implements UITools {
 
     @Field()
     @DataControl<DialogService>({
-        valueList: remult => DistributionCenters.getValueList( true),
+        valueList: remult => DistributionCenters.getValueList(true),
         valueChange: async self => {
 
             if (remult.authenticated()) {
@@ -208,7 +208,7 @@ export class DialogService implements UITools {
     canSeeCenter() {
         var dist = '';
         if (remult.user)
-            dist = (remult.user).distributionCenter;
+            dist = (remult.user)?.distributionCenter;
         return remult.isAllowed(Roles.admin) && this.hasManyCenters;
     }
     dc: DistributionCenters;
@@ -219,7 +219,7 @@ export class DialogService implements UITools {
         this.dc = undefined;
 
         if (remult.isAllowed(Roles.distCenterAdmin) && !remult.isAllowed(Roles.admin))
-            remult.repo(DistributionCenters).findId((remult.user).distributionCenter).then(x => this.dc = x);
+            remult.repo(DistributionCenters).findId((remult.user)?.distributionCenter).then(x => this.dc = x);
         if (remult.isAllowed(Roles.admin)) {
             this.hasManyCenters = await remult.repo(DistributionCenters).count({ archive: false }) > 1;
             this.distCenterArea = new DataAreaSettings({ fields: () => [this.$.distCenter] });
@@ -235,7 +235,7 @@ export class DialogService implements UITools {
             let EventSource: any = window['EventSource'];
             if (enable && typeof (EventSource) !== "undefined") {
                 this.zone.run(() => {
-                    var source = new EventSource(Remult.apiBaseUrl + '/' + 'stream', { withCredentials: true });
+                    var source = new EventSource(remult.apiClient.url + '/' + 'stream', { withCredentials: true });
                     if (this.eventSource) {
                         this.eventSource.close();
                         this.eventSource = undefined;

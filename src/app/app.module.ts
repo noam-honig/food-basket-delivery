@@ -312,27 +312,23 @@ export class AppModule { }
 
 
 export function initApp(session: TokenService, settings: SettingsService, injectedRemult: Remult, http: HttpClient) {
-  Remult.setDefaultHttpProvider(http);
+  remult.apiClient.httpClient = http;
+  injectedRemult.apiClient.url = remult.apiClient.url;
   return async () => {
     try {
       try {
         injectedRemult.context.getSite = () => getSiteFromUrl(window.location.pathname)
         remult.context.getSite = () => getSiteFromUrl(window.location.pathname)
-        await session.loadUserInfo();
-        await injectedRemult.userChange.observe(async () => {
+        session.initContext = async () => {
           await InitContext(injectedRemult);
-          if (settings.instance)
-            await settings.instance._.reload();
+          if (settings.instance) {
+            settings.instance._.reload();
+          }
+        }
+        await session.loadUserInfo();
 
-        });
       } catch {
         session.setToken(undefined, true);
-        await injectedRemult.userChange.observe(async () => {
-          await InitContext(injectedRemult);
-          if (settings.instance)
-            await settings.instance._.reload();
-
-        });
         console.error("Failed to init existing user");
       }
       injectedRemult.context.getOrigin = () => window.location.origin;
@@ -391,4 +387,9 @@ export function initApp(session: TokenService, settings: SettingsService, inject
     return '';
 
   };
+}
+
+
+Remult.onFind = (e) => {
+  console.trace(e.key);
 }

@@ -63,7 +63,7 @@ export class ServerEvents {
                     x = [];
                     this.sites.set(org, x);
                 }
-                x.push(new userInSite((remult.user).distributionCenter, res, remult.isAllowed(Roles.admin)));
+                x.push(new userInSite((remult.user)?.distributionCenter, res, remult.isAllowed(Roles.admin)));
                 tempConnections[key] = undefined;
 
             };

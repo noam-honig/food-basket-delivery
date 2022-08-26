@@ -872,7 +872,7 @@ iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 function logChanged(col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {
         dateCol.value = new Date();
-        user.setId(remult.user.id);
+        user.setId(remult.user?.id);
         wasChanged();
     }
 }

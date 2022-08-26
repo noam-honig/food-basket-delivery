@@ -6,7 +6,7 @@ import {  BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, Fiel
 import { Roles } from '../auth/roles';
 
 import { Families } from '../families/families';
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { FamilyStatus } from '../families/FamilyStatus';
@@ -94,7 +94,7 @@ export class ManageController {
         return i;
     }
     static async clearDataFromFamilyDeliveries(familyId: string) {
-        var db = remult._dataSource as SqlDatabase;
+        var db = getDb();
         const sql = new SqlBuilder();
         const fd = await SqlFor(remult.repo(FamilyDeliveries));
         const fdi = await SqlFor(remult.repo(DeliveryImage));

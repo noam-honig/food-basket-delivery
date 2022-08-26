@@ -1,6 +1,6 @@
 import { BackendMethod, Controller, Filter, getFields, remult,  SqlDatabase } from "remult";
 import { FamilyDeliveries } from "../families/FamilyDeliveries";
-import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
+import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Helpers } from "./helpers";
 import { Event, volunteersInEvent, eventStatus } from '../events/events';
 import { HelperCommunicationHistory } from "../in-route-follow-up/in-route-helpers";
@@ -119,7 +119,7 @@ export class SendBulkSms {
 
     get $() { return getFields(this) }
     async getVolunteers() {
-        let db = remult._dataSource as SqlDatabase;
+        let db = getDb();
         let sql = new SqlBuilder();
         let helpers = SqlFor(remult.repo(Helpers));
         let fd = SqlFor(remult.repo(FamilyDeliveries));

@@ -14,7 +14,7 @@ import { UITools } from "../helpers/init-context";
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: Roles.admin,
     apiPrefilter: () => ({
-        assignedToHelper: !remult.isAllowed(Roles.admin) ? { $id: [remult.user.id] } : undefined
+        assignedToHelper: !remult.isAllowed(Roles.admin) ? { $id: [remult.user?.id] } : undefined
     }),
     saving: async (self) => {
         if (self.isNew()) {

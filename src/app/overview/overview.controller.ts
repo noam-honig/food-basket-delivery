@@ -181,8 +181,8 @@ export class OverviewController {
             let oh = await remult.repo(Helpers).findId(remult.user.id);
             let db = await OverviewController.createDbSchema(id);
             let s = remult.repo(SitesEntity).create();
-            remult.setDataProvider(db);
-            remult.setUser(remult.user);
+            remult.dataProvider = (db);
+            remult.user = (remult.user);
             Sites.setSiteToContext( id);
             await InitContext(remult);
             {

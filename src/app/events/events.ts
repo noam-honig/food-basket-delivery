@@ -464,7 +464,7 @@ export function mapFieldMetadataToFieldRef(e: EntityRef<any>, x: DataControlInfo
     allowApiCrud: Allow.authenticated,
     allowApiDelete: false,
     apiPrefilter: () => ({
-        helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? { $id: [remult.user.id] } : undefined
+        helper: !remult.isAllowed([Roles.admin, Roles.distCenterAdmin]) ? { $id: [remult.user?.id] } : undefined
     }),
     saving: async (self) => {
         if (self.isNew() && isBackend()) {

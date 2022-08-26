@@ -1,4 +1,4 @@
-import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult,  EntityFilter, CustomSqlFilterObject, CustomSqlFilterBuilder, remult, SqlDatabase } from 'remult';
+import { Filter, SortSegment, FieldMetadata, SqlCommand, FieldsMetadata, Repository, EntityMetadata, SqlResult, EntityFilter, CustomSqlFilterObject, CustomSqlFilterBuilder, remult, SqlDatabase } from 'remult';
 
 import { FilterConsumer } from 'remult/src/filter/filter-interfaces';
 
@@ -12,7 +12,7 @@ import { InitContext } from '../helpers/init-context';
 
 
 export class SqlBuilder {
-    static filterTranslators: { translate: ( f: Filter) => Promise<Filter> }[] = [];
+    static filterTranslators: { translate: (f: Filter) => Promise<Filter> }[] = [];
     max(val: any): any {
         return this.func('max', val);
     }
@@ -83,7 +83,7 @@ export class SqlBuilder {
         let f = e as Filter;
         if (f && f.__applyToConsumer) {
             for (const t of SqlBuilder.filterTranslators) {
-                f = await t.translate( f);
+                f = await t.translate(f);
             }
             let bridge = new FilterConsumerBridgeToSqlRequest(new myDummySQLCommand());
             bridge._addWhere = false;
@@ -601,5 +601,5 @@ export class FilterConsumerBridgeToSqlRequest implements FilterConsumer {
     }
 }
 export function getDb() {
-    return remult._dataSource as SqlDatabase;
+    return remult.dataProvider as SqlDatabase;
 }

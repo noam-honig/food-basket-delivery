@@ -32,14 +32,14 @@ describe('users and security', () => {
         let h = await c.findFirst();
         h.name = '123';
         await expectFail(() => h.save());
-        remult.setUser({
+        remult.user = ({
             id: h2.id,
             name: 'stam',
             roles: []
         });
 
         await expectFail(() => h.save());
-        remult.setUser({
+        remult.user = ({
             id: h.id,
             name: 'stam',
             roles: []
@@ -53,7 +53,7 @@ describe('users and security', () => {
         let h2 = await c.create({ id: 'stam', name: 'stam', admin: true, phone: new Phone("123") }).save();
         let h = await c.findFirst();
         h.name = '123';
-        remult.setUser({
+        remult.user = ({
             id: h2.id,
             name: 'stam',
             roles: [Roles.admin]
@@ -67,13 +67,13 @@ describe('users and security', () => {
         });
         let h = await c.findFirst();
         h.password = '456';
-        remult.setUser({
+        remult.user = ({
             id: h.id,
             name: 'stam',
             roles: []
         });
         await expectFail(() => h.save());
-        remult.setUser({
+        remult.user = ({
             id: h.id,
             name: 'stam',
             roles: [Roles.admin]
@@ -231,7 +231,7 @@ async function getHelperContext(args?: { setValues?: (h: Helpers) => void }) {
     }
     let mem = new InMemoryDataProvider();
     var remult = new Remult();
-    remult.setDataProvider(mem);
+    remult.dataProvider = (mem);
     await remult.userChange.observe(async () => InitContext(remult));
     let c =  remult.repo(Helpers);
     let h = c.create();

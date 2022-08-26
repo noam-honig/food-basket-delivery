@@ -94,7 +94,7 @@ export class donorForm {
         let settings = await ApplicationSettings.getAsync();
         if (!settings.isSytemForMlt)
             throw "Not Allowed";
-        remult.setUser({
+        remult.user = ({
             id: 'WIX',
             name: 'WIX',
             roles: [],

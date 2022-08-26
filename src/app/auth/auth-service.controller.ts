@@ -28,7 +28,7 @@ export class AuthServiceController {
 
             if (userIsOk) {
                 h.lastSignInDate = new Date();
-                remult.setUser(info);
+                remult.user = (info);
 
                 await h.save();
                 return {
@@ -69,7 +69,7 @@ export class AuthServiceController {
         let result = await buildHelperUserInfo(h);
 
 
-        remult.setUser(result);
+        remult.user = (result);
 
 
 

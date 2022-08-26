@@ -25,7 +25,7 @@ export function getToken() {
 }
 @Injectable()
 export class TokenService {
-    constructor(private remultForAuthGuard:Remult){}
+    constructor(private remultForAuthGuard: Remult) { }
     keyInStorage: string;
     async loadUserInfo() {
         let org = Sites.getOrganizationFromContext();
@@ -35,6 +35,8 @@ export class TokenService {
             token = localStorage.getItem(this.keyInStorage);
         await this.setToken(token, false);
     }
+    initContext: () => Promise<void> = async () => { };
+    userChanged = () => { };
     async setToken(token: string, remember: boolean) {
         staticToken = token;
         let user: UserInfo = undefined;
@@ -42,6 +44,7 @@ export class TokenService {
             user = await AuthService.decodeJwt(token);
 
             await InitContext(remult, user);
+
             sessionStorage.setItem(this.keyInStorage, token);
             if (remember)
                 localStorage.setItem(this.keyInStorage, token);
@@ -53,8 +56,10 @@ export class TokenService {
         }
 
         if (toCompare(user) != toCompare(remult.user)) {
-            await remult.setUser(user);
-            this.remultForAuthGuard.setUser(user);
+            remult.user = (user);
+            this.remultForAuthGuard.user = (user);
+            await this.initContext();
+            this.userChanged();
         }
 
     }
@@ -116,10 +121,10 @@ export class AuthService {
 
         }
         if (dialog)
-            remult.userChange.observe(() => {
+            tokenService.userChanged = () => {
                 dialog.refreshEventListener(remult.isAllowed(Roles.distCenterAdmin));
                 dialog.refreshFamiliesAndDistributionCenters();
-            });
+            };
 
         window.onmousemove = () => this.refreshUserState();
         window.onkeydown = () => this.refreshUserState();

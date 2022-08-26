@@ -361,8 +361,8 @@ s.parentNode.insertBefore(b, s);})();
                 remult.context.getSite = () => getSiteFromUrl(url);
                 remult.context.requestUrlOnBackend = url;
                 if (!remult.isAllowed(Sites.getOrgRole()))
-                    remult.setUser(undefined);
-                remult.setDataProvider(dataSource(remult));
+                    remult.user = (undefined);
+                remult.dataProvider = (dataSource(remult));
                 remult.context.getOrigin = () => req.headers['origin'] as string;
                 await InitContext(remult, undefined)
             },
@@ -372,7 +372,7 @@ s.parentNode.insertBefore(b, s);})();
                 if (!process.env.DEV_MODE)
                     return;
                 remult.context.getSite = () => "test1";
-                remult.setDataProvider(dataSource(remult));
+                remult.dataProvider = (dataSource(remult));
                 await InitContext(remult, undefined);
                 const path = './db-structure/';
                 for (const entity of entities) {
@@ -395,7 +395,7 @@ s.parentNode.insertBefore(b, s);})();
                     console.log("---------------------------------------------------------------------------");
                     var h = await remult.repo(Helpers).findFirst();
                     console.log("---------------------------------------------------------------------------1");
-                    remult.setUser({
+                    remult.user = ({
                         distributionCenter: "dist",
                         escortedHelperName: "",
                         id: h.id,
@@ -460,7 +460,7 @@ s.parentNode.insertBefore(b, s);})();
                     }
 
                     if (com.volunteer) {
-                        remult.setUser({
+                        remult.user = ({
                             id: com.volunteer.id,
                             name: com.volunteer.name,
                             roles: [],

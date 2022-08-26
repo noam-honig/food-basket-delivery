@@ -17,7 +17,7 @@ import { SqlFor, SqlBuilder, SqlDefs } from "../model-shared/SqlBuilder";
     apiPrefilter: () => {
         if (!remult.isAllowed(Roles.admin))
             return {
-                id: remult.user.id
+                id: remult.user?.id
             }
     }
 }
