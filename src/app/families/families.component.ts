@@ -460,15 +460,16 @@ export class FamiliesComponent implements OnInit {
                 name: this.settings.lang.sendSelfOrderLink,
                 visible: () => this.settings.familySelfOrderEnabled,
                 click: async (f) => {
-                    if (!f.shortUrlKey) {
-                        f.shortUrlKey = makeId();
-                        await f.save();
-                    }
-                    let message = new messageMerger([
-                        { token: 'משפחה', value: f.name },
-                        { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: remult.context.getOrigin() + '/' + remult.context.getSite() + '/fso/' + f.shortUrlKey },
-                        { token: 'ארגון', value: this.settings.organisationName }
-                    ]);
+                    let message = await this.createSelfOrderMessage(f);
+                    sendWhatsappToFamily(f, undefined, message.merge(this.settings.familySelfOrderMessage))
+
+                }
+            },
+            {
+                name: "עריכת קישור להזמנה עצמית",
+                visible: () => this.settings.familySelfOrderEnabled,
+                click: async (f) => {
+                    let message = await this.createSelfOrderMessage(f);
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
                         message,
                         templateText: this.settings.familySelfOrderMessage || defaultSelfOrderMessage,
@@ -506,6 +507,19 @@ export class FamiliesComponent implements OnInit {
 
 
     destroyHelper = new DestroyHelper();
+    private async createSelfOrderMessage(f: Families) {
+        if (!f.shortUrlKey) {
+            f.shortUrlKey = makeId();
+            await f.save();
+        }
+        let message = new messageMerger([
+            { token: 'משפחה', value: f.name },
+            { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: remult.context.getOrigin() + '/' + remult.context.getSite() + '/fso/' + f.shortUrlKey },
+            { token: 'ארגון', value: this.settings.organisationName }
+        ]);
+        return message;
+    }
+
     ngOnDestroy(): void {
         this.destroyHelper.destroy();
     }
