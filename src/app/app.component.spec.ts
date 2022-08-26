@@ -20,6 +20,7 @@ import { Helpers } from './helpers/helpers';
 import { RegisterURL, urlDbOperator } from './resgister-url/regsiter-url';
 import { initConfig } from './helpers/init-context';
 import { eventDisplayDate, EventInList } from './events/events';
+import { TranslationOptions } from './translate';
 
 describe('AppComponent', () => {
   initConfig.disableForTesting = true;
@@ -292,11 +293,11 @@ describe('AppComponent', () => {
   });
   it("format phone", () => {
 
-    expect(Phone.formatPhone("214,391,757")).toBe("021-439-1757");
+    expect(TranslationOptions.Families.formatPhone("214,391,757")).toBe("021-439-1757");
   });
   it("fix phone input", () => {
 
-    expect(Phone.fixPhoneInput("+972507330590", remult)).toBe("+972507330590");
+    expect(Phone.fixPhoneInput("+972507330590")).toBe("+972507330590");
   });
   it("test schema name", () => {
     expect(validSchemaName("abc")).toBe("abc");
@@ -385,7 +386,7 @@ describe('AppComponent', () => {
   it("properMerge4", () => {
     let f = remult.repo(Families).create();
     let f2 = remult.repo(Families).create();
-    let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
+    let c = new MergeFamiliesComponent(undefined, undefined, undefined, undefined);
     c.family = remult.repo(Families).create();
     c.family.phone1 = new Phone('0507330590');
     c.families = [f, f2];
@@ -404,7 +405,7 @@ describe('AppComponent', () => {
   it("properMerge", () => {
     let f = remult.repo(Families).create();
     let f2 = remult.repo(Families).create();
-    let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
+    let c = new MergeFamiliesComponent(undefined, undefined, undefined, undefined);
     c.family = remult.repo(Families).create();
     c.families = [f, f2];
     f.tz = '1';
@@ -416,7 +417,7 @@ describe('AppComponent', () => {
   it("properMerge1", () => {
     let f = remult.repo(Families).create();
     let f2 = remult.repo(Families).create();
-    let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
+    let c = new MergeFamiliesComponent(undefined, undefined, undefined, undefined);
     c.family = remult.repo(Families).create();
     c.families = [f, f2];
 
@@ -427,7 +428,7 @@ describe('AppComponent', () => {
   it("properMerge2", () => {
     let f = remult.repo(Families).create();
     let f2 = remult.repo(Families).create();
-    let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
+    let c = new MergeFamiliesComponent(undefined, undefined, undefined, undefined);
     c.family = remult.repo(Families).create();
     c.families = [f, f2];
     f.tz = '1';
@@ -439,7 +440,7 @@ describe('AppComponent', () => {
   it("properMerge3", () => {
     let f = remult.repo(Families).create();
     let f2 = remult.repo(Families).create();
-    let c = new MergeFamiliesComponent(remult, undefined, undefined, undefined, undefined);
+    let c = new MergeFamiliesComponent(undefined, undefined, undefined, undefined);
     c.family = remult.repo(Families).create();
     c.families = [f, f2];
     f.phone1 = new Phone('1');
@@ -471,5 +472,6 @@ describe('AppComponent', () => {
 
 
 });
+
 
 

@@ -11,6 +11,7 @@ import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { DataAreaFieldsSetting, GridSettings, RowButton } from "@remult/angular/interfaces";
 import { messageMerger } from "../edit-custom-message/messageMerger";
 
+let i = 0;
 
 export const initConfig = {
     disableForTesting: false
@@ -207,9 +208,9 @@ declare module 'remult' {
         getOrigin(): string;
     }
     export interface UserInfo {
-        theHelperIAmEscortingId: string;
-        escortedHelperName: string;
-        distributionCenter: string;
+        theHelperIAmEscortingId?: string;
+        escortedHelperName?: string;
+        distributionCenter?: string;
     }
     export interface FieldOptions<entityType, valueType> {
         clickWithTools?: (e: entityType, c: FieldRef<entityType, valueType>, ui: UITools) => void;
