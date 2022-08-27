@@ -18,14 +18,14 @@
 </div>
 
 <app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps">
-    <button (click)=" addControl()">{{remult.lang.addField}}</button>
+    <button (click)=" addControl()">{{remult.context.lang.addField}}</button>
     <ng-container *ngIf="currentProps.control">
-        <button (click)="moveControl(-1)">{{remult.lang.moveUp}}</button>
-        <button (click)="moveControl(1)">{{remult.lang.moveDown}}</button>
-        <button (click)="removeControl(currentProps.control)">{{remult.lang.removeField}}</button>
+        <button (click)="moveControl(-1)">{{remult.context.lang.moveUp}}</button>
+        <button (click)="moveControl(1)">{{remult.context.lang.moveDown}}</button>
+        <button (click)="removeControl(currentProps.control)">{{remult.context.lang.removeField}}</button>
     </ng-container>
     <br>
-    <button (click)="selectControl()">{{remult.lang.fieldProperties}}</button>
-    <button (click)="currentProps = stickerProps">{{remult.lang.stickerProperties}}</button>
-    <button (click)="currentProps = pageProps">{{remult.lang.pageProperties}}</button>
+    <button (click)="selectControl()">{{remult.context.lang.fieldProperties}}</button>
+    <button (click)="currentProps = stickerProps">{{remult.context.lang.stickerProperties}}</button>
+    <button (click)="currentProps = pageProps">{{remult.context.lang.pageProperties}}</button>
 </app-properties-editor>

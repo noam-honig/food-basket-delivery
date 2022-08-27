@@ -47,17 +47,17 @@
 
 <app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps" [(editing)]="editing">
 
-    <button (click)="addControl()">{{remult.lang.addField}}</button>
-    <button (click)="addColumn()">{{remult.lang.addColumn}}</button>
+    <button (click)="addControl()">{{remult.context.lang.addField}}</button>
+    <button (click)="addColumn()">{{remult.context.lang.addColumn}}</button>
     <ng-container *ngIf="currentProps.control">
-        <button (click)="removeControl(currentProps.control)">{{remult.lang.removeField}}</button>
+        <button (click)="removeControl(currentProps.control)">{{remult.context.lang.removeField}}</button>
     </ng-container>
     <ng-container *ngIf="currentColumn&&currentProps == columnProps">
-        <button (click)="removeColumn()">{{remult.lang.removeColumn}}</button>
+        <button (click)="removeColumn()">{{remult.context.lang.removeColumn}}</button>
     </ng-container>
     <br>
     <!-- <button (click)="selectControl()">תכונות שדה</button> -->
 
     <button
-        (click)="currentProps = pageProps;currentControlList = report.controls">{{remult.lang.pageProperties}}</button>
+        (click)="currentProps = pageProps;currentControlList = report.controls">{{remult.context.lang.pageProperties}}</button>
 </app-properties-editor>
