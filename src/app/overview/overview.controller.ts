@@ -21,42 +21,7 @@ export class OverviewController {
         let inEvent = "באירוע";
 
 
-        const remultHagaiSites = (async () => {
-            return;
-            const info = process.env.REMOTE_HAGAI;
-            if (info) {
-                const url = info.split('|')[0];
-                const token = info.split('|')[1];
-                const remoteRemult = new Remult({
-                    url: url + '/guest/api',
-                    // httpClient: async (url: any, info: any) => {
-                    //     console.log({ headers: info.headers });
-                    //     return await fetch(url, info) as any
-                    // }
-                    httpClient: {
-                        get: () => undefined,
-                        put: () => undefined,
-                        delete: () => undefined,
-                        post: async (url, data) => {
-                            const fetchResult =await  fetch(url, {
-                                method: "POST",
-                                headers: {
-                                    "accept": "application/json, text/plain, */*",
-                                    "authorization": "Bearer " + token,
-                                    "cache-control": "no-cache",
-                                    "content-type": "application/json"
-                                },
-                                body: JSON.stringify(data)
-                            }).then(x=>x.text());
-                            console.log({ fetchResult })
-                            return fetchResult;
-                        }
-                    }
-                })
-                const r = await remoteRemult.call(OverviewController.getOverview)(full);
-                console.log({ r });
-            }
-        })();
+
 
         let result: overviewResult = {
             statistics: [
@@ -130,6 +95,45 @@ export class OverviewController {
             ],
             sites: []
         };
+
+
+        const remultHagaiSites = (async () => {
+
+            const info = process.env.REMOTE_HAGAI;
+            if (info) {
+                const url = info.split('|')[0];
+                const token = info.split('|')[1];
+                const remoteRemult = new Remult({
+                    url: url + '/guest/api',
+                    // httpClient: async (url: any, info: any) => {
+                    //     console.log({ headers: info.headers });
+                    //     return await fetch(url, info) as any
+                    // }
+                    httpClient: {
+                        get: () => undefined,
+                        put: () => undefined,
+                        delete: () => undefined,
+                        post: async (url, data) => {
+                            const fetchResult = await fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "accept": "application/json, text/plain, */*",
+                                    "authorization": "Bearer " + token,
+                                    "cache-control": "no-cache",
+                                    "content-type": "application/json"
+                                },
+                                body: JSON.stringify(data)
+                            }).then(x => x.json());
+                            return fetchResult;
+                        }
+                    }
+                })
+                const r = await remoteRemult.call(OverviewController.getOverview)(full);
+                return r;
+            }
+            return undefined;
+        })();
+
         if (!full)
             result.statistics = [];
         else {
@@ -220,6 +224,22 @@ export class OverviewController {
             }
 
 
+        }
+        try {
+            const remote = await remultHagaiSites;
+            if (remote) {
+                result.sites.push(...remote.sites);
+                for (const z of remote.statistics) {
+                    const my = result.statistics.find(y => y.caption == z.caption);
+                    if (my) {
+                        my.value += z.value;
+                    }
+                    else
+                        result.statistics.push(z);
+                }
+            }
+        } catch (err) {
+            console.error("get from remote hagai", err);
         }
         return result;
 
