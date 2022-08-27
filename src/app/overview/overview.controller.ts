@@ -1,4 +1,4 @@
-import { BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
+import { BackendMethod, Entity, SqlDatabase, ProgressListener, remult, Remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings, getSettings, settingsForSite } from '../manage/ApplicationSettings';
@@ -12,12 +12,52 @@ import { SitesEntity } from '../sites/sites.entity';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InitContext } from '../helpers/init-context';
 import { Phone } from '../model-shared/phone';
+import fetch from 'node-fetch';
 export class OverviewController {
     @BackendMethod({ allowed: Roles.overview, queue: true })
     static async getOverview(full: boolean, progress?: ProgressListener) {
         let today = new Date();
         let onTheWay = "בדרך";
         let inEvent = "באירוע";
+
+
+        const remultHagaiSites = (async () => {
+            return;
+            const info = process.env.REMOTE_HAGAI;
+            if (info) {
+                const url = info.split('|')[0];
+                const token = info.split('|')[1];
+                const remoteRemult = new Remult({
+                    url: url + '/guest/api',
+                    // httpClient: async (url: any, info: any) => {
+                    //     console.log({ headers: info.headers });
+                    //     return await fetch(url, info) as any
+                    // }
+                    httpClient: {
+                        get: () => undefined,
+                        put: () => undefined,
+                        delete: () => undefined,
+                        post: async (url, data) => {
+                            const fetchResult =await  fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "accept": "application/json, text/plain, */*",
+                                    "authorization": "Bearer " + token,
+                                    "cache-control": "no-cache",
+                                    "content-type": "application/json"
+                                },
+                                body: JSON.stringify(data)
+                            }).then(x=>x.text());
+                            console.log({ fetchResult })
+                            return fetchResult;
+                        }
+                    }
+                })
+                const r = await remoteRemult.call(OverviewController.getOverview)(full);
+                console.log({ r });
+            }
+        })();
+
         let result: overviewResult = {
             statistics: [
                 {
@@ -201,8 +241,8 @@ export class OverviewController {
             if (!name || name.length == 0)
                 name = id;
             let oh = await remult.repo(Helpers).findId(remult.user.id);
-            let db = await OverviewController.createDbSchema(id);
             let s = remult.repo(SitesEntity).create();
+            let db = await OverviewController.createDbSchema(id);
             remult.dataProvider = (db);
             remult.user = (remult.user);
             Sites.setSiteToContext(id);
