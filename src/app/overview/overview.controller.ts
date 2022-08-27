@@ -1,4 +1,4 @@
-import {  BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
+import { BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
@@ -183,7 +183,7 @@ export class OverviewController {
             let s = remult.repo(SitesEntity).create();
             remult.dataProvider = (db);
             remult.user = (remult.user);
-            Sites.setSiteToContext( id);
+            Sites.setSiteToContext(id);
             await InitContext(remult);
             {
                 let h = await remult.repo(Helpers).create();
@@ -200,13 +200,13 @@ export class OverviewController {
                 h2.admin = true;
                 await h2.save();
             }
-            let settings = await ApplicationSettings.getAsync();
+            let settings = await remult.repo(ApplicationSettings).findFirst();
 
             settings.organisationName = name;
             settings.address = address;
             await settings.save();
 
-            
+
             s.id = id;
             await s.save();
 
@@ -217,6 +217,7 @@ export class OverviewController {
             return { ok: true, errorText: '' }
         }
         catch (err) {
+            console.error(err);
             return { ok: false, errorText: extractError(err) }
         }
     }
