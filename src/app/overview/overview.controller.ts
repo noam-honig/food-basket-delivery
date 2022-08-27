@@ -1,7 +1,7 @@
 import { BackendMethod, Entity, SqlDatabase, ProgressListener, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Sites, validSchemaName } from '../sites/sites';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings, settingsForSite } from '../manage/ApplicationSettings';
 
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -106,55 +106,77 @@ export class OverviewController {
         for (const org of Sites.schemas) {
             progress.progress(++soFar / Sites.schemas.length);
             let dp = Sites.getDataProviderForOrg(org);
+            if (!full) {
+                const s = settingsForSite.get(org);
+                if (s)
+                    result.sites.push({
+                        name: s.organisationName,
+                        site: org,
+                        logo: s.logoUrl,
+                        stats: {},
+                        lastSignIn: null
+                    })
+                else {
+                    result.sites.push({
+                        name: org,
+                        site: org,
+                        logo: '',
+                        stats: {},
+                        lastSignIn: null
+                    })
 
-            var as = await SqlFor(remult.repo(ApplicationSettings));
-            var h = await SqlFor(remult.repo(Helpers));
-
-            let cols: any[] = [as.organisationName, as.logoUrl, builder.build("(", builder.query({
-                from: h,
-                select: () => [builder.max(h.lastSignInDate)],
-                where: () => [h.where({ admin: true })]
-            }), ")")];
-
-            for (const dateRange of result.statistics) {
-                let key = 'a' + cols.length;
-                if (dateRange.caption == inEvent) {
-                    cols.push(builder.countInnerSelect({ from: f }, key));
-
-
-                } else if (dateRange.caption == onTheWay) {
-                    cols.push(builder.countInnerSelect({ from: f, where: () => [f.where(FamilyDeliveries.onTheWayFilter())] }, key));
                 }
-                else
-                    cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.where({ deliveryStatusDate: { ">=": dateRange.from, "<": dateRange.to }, deliverStatus: DeliveryStatus.isAResultStatus() })), ') ', key));
-
             }
+            else {
+                var as = await SqlFor(remult.repo(ApplicationSettings));
+                var h = await SqlFor(remult.repo(Helpers));
 
-            let z = await builder.query({
-                select: () => cols,
-                from: as,
-            });
-            let sql = dp as SqlDatabase;
-            let zz = await sql.execute(z);
-            let row = zz.rows[0];
+                let cols: any[] = [as.organisationName, as.logoUrl, builder.build("(", builder.query({
+                    from: h,
+                    select: () => [builder.max(h.lastSignInDate)],
+                    where: () => [h.where({ admin: true })]
+                }), ")")];
 
-            let site: siteItem = {
-                name: row[zz.getColumnKeyInResultForIndexInSelect(0)],
-                site: org,
-                logo: row[zz.getColumnKeyInResultForIndexInSelect(1)],
-                stats: {},
-                lastSignIn: row[zz.getColumnKeyInResultForIndexInSelect(2)]
-
-            };
+                for (const dateRange of result.statistics) {
+                    let key = 'a' + cols.length;
+                    if (dateRange.caption == inEvent) {
+                        cols.push(builder.countInnerSelect({ from: f }, key));
 
 
-            result.sites.push(site);
-            let i = 3;
-            for (const dateRange of result.statistics) {
-                let r = row[zz.getColumnKeyInResultForIndexInSelect(i++)];
+                    } else if (dateRange.caption == onTheWay) {
+                        cols.push(builder.countInnerSelect({ from: f, where: () => [f.where(FamilyDeliveries.onTheWayFilter())] }, key));
+                    }
+                    else
+                        cols.push(builder.build('(select count(*) from ', fd, ' where ', builder.and(fd.where({ deliveryStatusDate: { ">=": dateRange.from, "<": dateRange.to }, deliverStatus: DeliveryStatus.isAResultStatus() })), ') ', key));
 
-                dateRange.value += +r;
-                site.stats[dateRange.caption] = r;
+                }
+
+                let z = await builder.query({
+                    select: () => cols,
+                    from: as,
+                });
+                let sql = dp as SqlDatabase;
+                let zz = await sql.execute(z);
+                let row = zz.rows[0];
+
+                let site: siteItem = {
+                    name: row[zz.getColumnKeyInResultForIndexInSelect(0)],
+                    site: org,
+                    logo: row[zz.getColumnKeyInResultForIndexInSelect(1)],
+                    stats: {},
+                    lastSignIn: row[zz.getColumnKeyInResultForIndexInSelect(2)]
+
+                };
+
+
+                result.sites.push(site);
+                let i = 3;
+                for (const dateRange of result.statistics) {
+                    let r = row[zz.getColumnKeyInResultForIndexInSelect(i++)];
+
+                    dateRange.value += +r;
+                    site.stats[dateRange.caption] = r;
+                }
             }
 
 
