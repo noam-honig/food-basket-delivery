@@ -321,18 +321,20 @@ export function initApp(session: TokenService, settings: SettingsService, inject
       try {
         injectedRemult.context.getSite = () => getSiteFromUrl(window.location.pathname)
         remult.context.getSite = () => getSiteFromUrl(window.location.pathname)
-        session.initContext = async () => {
-          await InitContext(injectedRemult);
-          if (settings.instance) {
-            settings.instance._.reload();
-          }
-        }
+        
         await session.loadUserInfo();
 
       } catch {
         session.setToken(undefined, true);
         console.error("Failed to init existing user");
       }
+      session.initContext = async () => {
+        await InitContext(injectedRemult);
+        if (settings.instance) {
+          settings.instance._.reload();
+        }
+      }
+      await session.initContext();
       injectedRemult.context.getOrigin = () => window.location.origin;
       for (const key in injectedRemult.context) {
         if (Object.prototype.hasOwnProperty.call(injectedRemult.context, key)) {
