@@ -4,7 +4,7 @@ import { Families } from '../families/families';
 import { BasketType } from "../families/BasketType";
 import { ApplicationSettings, RemovedFromListExcelImportStrategy, setSettingsForSite } from '../manage/ApplicationSettings';
 import { ApplicationImages } from '../manage/ApplicationImages';
-import { SqlDatabase, FieldMetadata, Remult, ControllerBase } from 'remult';
+import { SqlDatabase, FieldMetadata, Remult, ControllerBase, remult } from 'remult';
 
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -21,9 +21,8 @@ import { MessageTemplate } from '../edit-custom-message/messageMerger';
 
 export async function initSchema(pool1: PostgresPool, org: string) {
 
-
     var dataSource = new SqlDatabase(new PostgresDataProvider(pool1));
-    let remult = new Remult();
+    remult.context.getSite = () => org;
     await InitContext(remult);
     remult.dataProvider = (dataSource);
     let sql = new SqlBuilder();
@@ -202,7 +201,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         await createDeliveryIndex("for_basket1", fd.basketType, fd.deliverStatus, fd.courier);
         await createDeliveryIndex("for_basket_dist1", fd.distributionCenter, fd.basketType, fd.deliverStatus, fd.courier);
 
-       // await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
+        // await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
         await dataSource.execute(await sql.build('create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'));
         settings.dataStructureVersion = 12;
         await settings.save();

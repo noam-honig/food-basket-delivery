@@ -78,7 +78,7 @@ export class RemovedFromListExcelImportStrategy {
         setLangForSite(Sites.getValidSchemaFromContext(), self.forWho);
       setSettingsForSite(Sites.getValidSchemaFromContext(), self);
       logChanges(self._, remult, { excludeColumns: [self.$.currentUserIsValidForAppLoadTest, self.$.smsCredentials, self.$.smsPasswordInput] });
-      recordChanges( self, {
+      recordChanges(self, {
         excludeColumns: s => [s.currentUserIsValidForAppLoadTest, s.smsPasswordInput],
         excludeValues: s => [s.smsCredentials]
       });
