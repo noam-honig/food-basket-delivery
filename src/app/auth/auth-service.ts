@@ -120,11 +120,13 @@ export class AuthService {
             this.signout();
 
         }
-        if (dialog)
+        if (dialog){
             tokenService.userChanged = () => {
                 dialog.refreshEventListener(remult.isAllowed(Roles.distCenterAdmin));
                 dialog.refreshFamiliesAndDistributionCenters();
             };
+            tokenService.userChanged();
+        }
 
         window.onmousemove = () => this.refreshUserState();
         window.onkeydown = () => this.refreshUserState();
