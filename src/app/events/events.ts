@@ -934,7 +934,8 @@ export interface EventInList {
     site?: string,
     eventLogo: string,
     location: Location,
-    orgName: string
+    orgName: string,
+    remoteUrl?:string
 
 
 }

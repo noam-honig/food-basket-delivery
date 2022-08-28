@@ -1,5 +1,5 @@
 import { DataControl } from '@remult/angular/interfaces';
-import { BackendMethod,  Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef, remult } from 'remult';
+import { BackendMethod, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef, remult } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers } from '../helpers/helpers';
@@ -8,6 +8,7 @@ import { CustomColumn, registerQuestionForVolunteers } from '../manage/Applicati
 import { ManageController } from '../manage/manage.controller';
 import { Phone } from '../model-shared/phone';
 import { Email } from '../model-shared/types';
+import { doOnRemoteHagai } from '../overview/remoteHagai';
 import { Sites } from '../sites/sites';
 import { Field, use } from '../translate';
 
@@ -73,7 +74,7 @@ export class RegisterToEvent {
         validate: (e, c) => {
             if (!remult.authenticated()) {
                 c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone))
-                Phone.validatePhone(c,  true);
+                Phone.validatePhone(c, true);
             }
 
         }
@@ -131,7 +132,7 @@ export class RegisterToEvent {
             this.phone = currentHelper.phone;
             this.name = currentHelper.name;
         }
-        if (!remult.authenticated() || this.questions.filter(x => x.show()).length > 0)
+        if (!remult.authenticated() || this.questions.filter(x => x.show()).length > 0 || e.remoteUrl)
             await ui.inputAreaDialog({
                 title: lang.register,
                 helpText: lang.registerHelpText,
@@ -140,7 +141,7 @@ export class RegisterToEvent {
                 cancel: () => { },
                 ok: async () => {
 
-                    this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
+                    this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true, e.remoteUrl));
 
                     if (currentHelper)
                         await currentHelper._.reload();
@@ -161,7 +162,7 @@ export class RegisterToEvent {
             });
         else {
 
-            this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true));
+            this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, true, e.remoteUrl));
         }
     }
     async updateEvent(e: EventInList, update: EventInList) {
@@ -171,10 +172,14 @@ export class RegisterToEvent {
     }
     async removeFromEvent(e: EventInList, ui: UITools) {
         ui.trackVolunteer("un-register-event:" + e.site);
-        this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false));
+        this.updateEvent(e, await this.registerVolunteerToEvent(e.id, e.site, false, e.remoteUrl));
     }
     @BackendMethod({ allowed: true })
-    async registerVolunteerToEvent(id: string, site: string, register: boolean) {
+    async registerVolunteerToEvent(id: string, site: string, register: boolean, remoteUrl?: string) {
+        if (remoteUrl)
+            return await doOnRemoteHagai(async (remote, url) => {
+                return await remote.call(this.registerVolunteerToEvent, this)(id, site, register, remoteUrl).then((x: EventInList) => ({ ...x, remoteUrl: url, eventLogo: remoteUrl + x.eventLogo }));
+            });
         await this.init();
         if (site) {
             let dp = Sites.getDataProviderForOrg(site);

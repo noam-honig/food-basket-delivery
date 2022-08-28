@@ -9,6 +9,7 @@ import { createSiteContext } from '../helpers/init-context';
 import { setSettingsForSite, settingsForSite, SmallAdressHelper, SmallSettings } from '../manage/ApplicationSettings';
 import { getDb, SqlBuilder, SqlFor } from '../model-shared/SqlBuilder';
 import { VolunteerNeedType } from '../manage/VolunteerNeedType';
+import { doOnRemoteHagai } from '../overview/remoteHagai';
 
 
 
@@ -24,6 +25,10 @@ export class OrgEventsController {
             if (x.length > 0)
                 schemas = x;
         }
+        const otherSite = doOnRemoteHagai(async (remoteRemult, url) => {
+            const remote = await remoteRemult.call(OrgEventsController.getAllEvents)(phone, sitesFilter);
+            r.push(...remote.map(s => ({ ...s, eventLogo: url + s.eventLogo, remoteUrl: url })));
+        });
         let query = '';
         for (const org of schemas) {
             const s = settingsForSite.get(org);
@@ -52,6 +57,10 @@ export class OrgEventsController {
             }
 
         }
+        try {
+            await otherSite;
+        }
+        catch { }
         return r;
     }
 
