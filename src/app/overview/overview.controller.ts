@@ -13,15 +13,15 @@ import { DeliveryStatus } from '../families/DeliveryStatus';
 import { InitContext } from '../helpers/init-context';
 import { Phone } from '../model-shared/phone';
 import fetch from 'node-fetch';
+import { doOnRemoteHagai } from './remoteHagai';
 export class OverviewController {
+
+    static mySiteInfo = new Map<string, siteItem>();
     @BackendMethod({ allowed: Roles.overview, queue: true })
     static async getOverview(full: boolean, progress?: ProgressListener) {
         let today = new Date();
         let onTheWay = "בדרך";
         let inEvent = "באירוע";
-
-
-
 
         let result: overviewResult = {
             statistics: [
@@ -97,48 +97,24 @@ export class OverviewController {
         };
 
 
-        const remultHagaiSites = (async () => {
-
-            const info = process.env.REMOTE_HAGAI;
-            if (info) {
-                const url = info.split('|')[0];
-                const token = info.split('|')[1];
-                const remoteRemult = new Remult({
-                    url: url + '/guest/api',
-                    // httpClient: async (url: any, info: any) => {
-                    //     console.log({ headers: info.headers });
-                    //     return await fetch(url, info) as any
-                    // }
-                    httpClient: {
-                        get: () => undefined,
-                        put: () => undefined,
-                        delete: () => undefined,
-                        post: async (url, data) => {
-                            const fetchResult = await fetch(url, {
-                                method: "POST",
-                                headers: {
-                                    "accept": "application/json, text/plain, */*",
-                                    "authorization": "Bearer " + token,
-                                    "cache-control": "no-cache",
-                                    "content-type": "application/json"
-                                },
-                                body: JSON.stringify(data)
-                            }).then(x => x.json());
-                            return fetchResult;
-                        }
+        const remultHagaiSites = doOnRemoteHagai(async (remoteRemult, url) => {
+            const remote = await remoteRemult.call(OverviewController.getOverview)(full);
+            if (remote) {
+                result.sites.push(...remote.sites.map(s => ({ ...s, isRemote: true, logo: url + s.logo })));
+                for (const z of remote.statistics) {
+                    const my = result.statistics.find(y => y.caption == z.caption);
+                    if (my) {
+                        my.value += z.value;
                     }
-                })
-                const r = await remoteRemult.call(OverviewController.getOverview)(full);
-                return r;
+                    else
+                        result.statistics.push(z);
+                }
             }
-            return undefined;
-        })();
+        }, true);
 
-        if (!full)
-            result.statistics = [];
-        else {
 
-        }
+
+
 
         var builder = new SqlBuilder();
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
@@ -151,25 +127,40 @@ export class OverviewController {
             progress.progress(++soFar / Sites.schemas.length);
             let dp = Sites.getDataProviderForOrg(org);
             if (!full) {
-                const s = settingsForSite.get(org);
-                if (s)
-                    result.sites.push({
-                        name: s.organisationName,
-                        site: org,
-                        logo: s.logoUrl,
-                        stats: {},
-                        lastSignIn: null
-                    })
-                else {
-                    result.sites.push({
-                        name: org,
-                        site: org,
-                        logo: '',
-                        stats: {},
-                        lastSignIn: null
-                    })
+                const have = OverviewController.mySiteInfo.get(org);
+                if (have) {
+                    {
+                        result.sites.push(have);
+                        for (const stat of result.statistics) {
+                            const val = have.stats[stat.caption];
+                            if (val)
+                                stat.value += +val;
+                        }
+                    }
+                } else {
+                    const s = settingsForSite.get(org);
+                    if (s)
+                        result.sites.push({
+                            name: s.organisationName,
+                            site: org,
+                            logo: s.logoUrl,
+                            stats: {},
+                            lastSignIn: null,
+                            isRemote: false
+                        })
+                    else {
+                        result.sites.push({
+                            name: org,
+                            site: org,
+                            logo: '/assets/apple-touch-icon.png',
+                            stats: {},
+                            lastSignIn: null,
+                            isRemote: false
+                        })
 
+                    }
                 }
+
             }
             else {
                 var as = await SqlFor(remult.repo(ApplicationSettings));
@@ -204,6 +195,7 @@ export class OverviewController {
                 let row = zz.rows[0];
 
                 let site: siteItem = {
+                    isRemote: false,
                     name: row[zz.getColumnKeyInResultForIndexInSelect(0)],
                     site: org,
                     logo: row[zz.getColumnKeyInResultForIndexInSelect(1)],
@@ -212,7 +204,7 @@ export class OverviewController {
 
                 };
 
-
+                OverviewController.mySiteInfo.set(org, site);
                 result.sites.push(site);
                 let i = 3;
                 for (const dateRange of result.statistics) {
@@ -226,18 +218,8 @@ export class OverviewController {
 
         }
         try {
-            const remote = await remultHagaiSites;
-            if (remote) {
-                result.sites.push(...remote.sites);
-                for (const z of remote.statistics) {
-                    const my = result.statistics.find(y => y.caption == z.caption);
-                    if (my) {
-                        my.value += z.value;
-                    }
-                    else
-                        result.statistics.push(z);
-                }
-            }
+            await remultHagaiSites;
+
         } catch (err) {
             console.error("get from remote hagai", err);
         }
@@ -328,6 +310,7 @@ export interface siteItem {
     name: string;
     logo: string;
     lastSignIn: Date;
+    isRemote: boolean;
     stats: {
         [index: string]: number;
     }

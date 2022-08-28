@@ -2,11 +2,16 @@ import { BackendMethod, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { createSiteContext } from '../helpers/init-context';
 import { Helpers } from '../helpers/helpers';
+import { doOnRemoteHagai } from '../overview/remoteHagai';
 
 export class SiteOverviewController {
     @BackendMethod({ allowed: Roles.overview })
-    static async siteInfo(site: string): Promise<Manager[]> {
-        await createSiteContext(site);
+    static async siteInfo(site: string, isRemote?: boolean): Promise<Manager[]> {
+        if (isRemote) {
+            return doOnRemoteHagai(async (remoteRemult) => remoteRemult.call(SiteOverviewController.siteInfo)(site), true);
+        }
+        else
+            await createSiteContext(site);
         return (await remult.repo(Helpers).find({ where: { admin: true }, orderBy: { lastSignInDate: "desc" } })).map(
             ({ name, phone, lastSignInDate }) => ({
                 name, phone: phone?.thePhone, lastSignInDate

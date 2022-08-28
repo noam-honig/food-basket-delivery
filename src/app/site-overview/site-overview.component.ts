@@ -21,7 +21,7 @@ export class SiteOverviewComponent implements OnInit {
   }
   managers: Manager[] = [];
   ngOnInit() {
-    SiteOverviewController.siteInfo(this.args.site.site).then(x => this.managers = x);
+    SiteOverviewController.siteInfo(this.args.site.site,this.args.site.isRemote).then(x => this.managers = x);
   }
   openSite() {
     window.open(location.origin + '/' + this.args.site.site, '_blank');
