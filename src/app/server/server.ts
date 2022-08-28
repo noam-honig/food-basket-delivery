@@ -374,6 +374,7 @@ s.parentNode.insertBefore(b, s);})();
                 await initDatabase();
                 if (!process.env.DEV_MODE)
                     return;
+                return;
                 remult.context.getSite = () => "test1";
                 remult.dataProvider = (dataSource(remult));
                 await InitContext(remult, undefined);

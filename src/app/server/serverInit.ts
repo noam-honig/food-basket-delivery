@@ -164,7 +164,6 @@ export async function serverInit() {
             sortedSchemas.sort((a, b) => b.lastSignIn.valueOf() - a.lastSignIn.valueOf());
 
 
-
             let i = 0;
             for (const s of sortedSchemas) {
                 if (s.name.toLowerCase() == Sites.guestSchema)
