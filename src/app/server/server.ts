@@ -95,6 +95,7 @@ process.on('unhandledRejection', (reason, p) => {
     //1
 });
 const entities = [
+    ChangeLog,
     HelpersAndStats,
     Event,
     volunteersInEvent,
