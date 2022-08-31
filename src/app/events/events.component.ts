@@ -119,7 +119,8 @@ export class EventsComponent implements OnInit {
             s.$.registerAskEmail,
             s.$.registerAskPreferredDistributionAreaAddress,
             s.$.registerAskPreferredFinishAddress,
-            s.$.emailForVolunteerRegistrationNotification
+            s.$.emailForVolunteerRegistrationNotification,
+            s.$.donotShowEventsInGeneralList
           ]
         });
       }
