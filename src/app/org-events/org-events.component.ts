@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { remult,  Unobserve } from 'remult';
-import { EventInList } from '../events/events';
+import { remult, Unobserve } from 'remult';
+import { EventInList, isGeneralEvent } from '../events/events';
 import { RegisterToEvent } from '../event-info/RegisterToEvent';
 import { Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
@@ -37,7 +37,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     if (this.isAdmin())
       return
-      
+
 
     let sites = (new URL(document.location.href)).searchParams.get("sites");
     this.unObserve = await RegisterToEvent.volunteerInfoChanged.dispatcher.observe(async () => {
@@ -46,8 +46,31 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
         this.events = await OrgEventsController.getAllEvents(RegisterToEvent.volunteerInfo.phone, sites);
       }
       else
-        this.events = await OrgEventsController.getEvents(RegisterToEvent.volunteerInfo.phone,this.route.snapshot.params['id']);
+        this.events = await OrgEventsController.getEvents(RegisterToEvent.volunteerInfo.phone, this.route.snapshot.params['id']);
     })
+  }
+  async saveToExcel() {
+    const xlsx = await import('xlsx');
+    let wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, xlsx.utils.json_to_sheet(this.events.map(e => {
+      const url = remult.context.getOrigin() + `/guest/event/${e.site}/${e.id}/${e.remoteUrl ? "remote" : ""}`
+      return ({
+        "שם התנדבות": e.name,
+        "סוג התנדבות": "פומבי",
+        "קטגוריה": "עזרה ומזון לנזקקים",
+        "תאור": e.description,
+        "תאור עם קישור": "לפרטים והרשמה לחצו " + url + "\n\n" + e.description,
+        "שם פרטי איש קשר": e.thePhoneDescription,
+        "טלפון איש קשר": e.thePhoneDisplay,
+        "חד פעמי/חוזרת": isGeneralEvent(e) ? "חוזרת" : "חד פעמית",
+        "תאריך": isGeneralEvent(e) ? "" : e.eventDateJson,
+        "משעה": e.startTime,
+        "עד שעה": e.endTime,
+        "קישור": url
+      })
+    })));
+    xlsx.writeFile(wb, "hagai-events.xlsx");
+
   }
 
 

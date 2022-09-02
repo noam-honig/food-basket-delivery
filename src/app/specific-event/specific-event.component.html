@@ -1,0 +1,6 @@
+<div style="display: flex;
+        justify-content: center;">
+    <mat-card *ngIf="events" style="max-width: 300px;">
+        <app-event-info [e]="events" [noClose]="true"></app-event-info>
+    </mat-card>
+</div>

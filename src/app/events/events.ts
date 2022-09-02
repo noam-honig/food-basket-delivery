@@ -1,4 +1,4 @@
-import { IdEntity,  Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters, remult } from "remult";
+import { IdEntity, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters, remult } from "remult";
 import { DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, RowButton } from '@remult/angular/interfaces';
 import { use, ValueListFieldType, Field, Fields } from "../translate";
 import { getLang } from '../sites/sites';
@@ -144,7 +144,7 @@ export class Event extends IdEntity {
     async showVolunteers(ui: UITools) {
         if (remult.isAllowed(Roles.admin))
             await this.save();
-        await volunteersInEvent.displayVolunteer({  event: this, ui })
+        await volunteersInEvent.displayVolunteer({ event: this, ui })
         await this._.reload();
     }
 
@@ -167,7 +167,7 @@ export class Event extends IdEntity {
                 if (!v.helper.doNotSendSms) {
                     await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
                         this.createMessage(v).merge(settings.confirmEventParticipationMessage),
-                         v.helper, {
+                        v.helper, {
                         eventId: this.id
                     });
                     i++;
@@ -197,7 +197,7 @@ export class Event extends IdEntity {
                         continue;
                     await new SendSmsUtils().sendSms(v.helper.phone.thePhone,
                         this.createMessage(v).merge(message.template),
-                         v.helper, {
+                        v.helper, {
                         eventId: this.id
                     });
                     i++;
@@ -330,7 +330,7 @@ export class Event extends IdEntity {
             }
         ];
     }
-    static async duplicateEvent( ui: UITools, events: Event[], done: (createdEvents: Event[]) => void) {
+    static async duplicateEvent(ui: UITools, events: Event[], done: (createdEvents: Event[]) => void) {
         let settings = (await remult.context.getSettings());
         let archiveCurrentEvent = new InputField<boolean>({ valueType: Boolean, caption: settings.lang.archiveCurrentEvent });
         archiveCurrentEvent.value = true;
@@ -671,7 +671,7 @@ export class volunteersInEvent extends IdEntity {
     a4: string;
 
 
-    static async displayVolunteer({  event, ui }: {
+    static async displayVolunteer({ event, ui }: {
         event: Event,
         ui: UITools
 
@@ -935,7 +935,7 @@ export interface EventInList {
     eventLogo: string,
     location: Location,
     orgName: string,
-    remoteUrl?:string
+    remoteUrl?: string
 
 
 }
@@ -985,7 +985,9 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
         return use.language.past;
 }
 
-
+export function isGeneralEvent(e: EventInList) {
+    return e.eventDateJson.startsWith("999")
+}
 /*
 
 select  (select name from helpers where id=helper) helperName,

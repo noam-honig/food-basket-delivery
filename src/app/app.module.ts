@@ -121,6 +121,7 @@ import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.componen
 import { ManageCallersComponent } from './manage-callers/manage-callers.component';
 import { HttpClient } from '@angular/common/http';
 import { BlockedFamiliesComponent } from './blocked-families/blocked-families.component';
+import { SpecificEventComponent } from './specific-event/specific-event.component';
 
 
 
@@ -232,7 +233,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     SelectFamilyForCallerComponent,
     AdjustGeocodeComponent,
     ManageCallersComponent,
-    BlockedFamiliesComponent
+    BlockedFamiliesComponent,
+    SpecificEventComponent
 
 
   ],

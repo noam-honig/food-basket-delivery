@@ -62,6 +62,7 @@ import { getSettings } from '../app/manage/ApplicationSettings';
 import { CallerComponent } from './caller/caller.component';
 import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component';
 import { ManageCallersComponent } from './manage-callers/manage-callers.component';
+import { SpecificEventComponent } from './specific-event/specific-event.component';
 
 
 @Injectable()
@@ -147,6 +148,8 @@ export const routes: Routes = [
   { path: 'manage-callers', component: ManageCallersComponent, canActivate: [CallModuleGuard, AdminGuard], data: { name: "ניהול טלפנים", hide: true } },
   { path: 'events', component: OrgEventsComponent },
   { path: 'events/:id', component: OrgEventsComponent },
+  { path: 'event/:site/:id/:remote', component: SpecificEventComponent },
+  { path: 'event/:site/:id', component: SpecificEventComponent },
   UpdateInfoComponent.route,
   LoginComponent.route,
   { path: 'weekly-report-mlt', component: WeeklyReportMltComponent, canActivate: [MltOnlyGuard] },

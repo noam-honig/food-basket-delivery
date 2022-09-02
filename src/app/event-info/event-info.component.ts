@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import { remult } from 'remult';
 import { Roles } from '../auth/roles';
 
-import {  Event, eventDisplayDate, EventInList, EventType, volunteersInEvent } from '../events/events';
+import { Event, eventDisplayDate, EventInList, EventType, isGeneralEvent, volunteersInEvent } from '../events/events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerNeedType } from '../manage/VolunteerNeedType';
 import { Phone } from '../model-shared/phone';
@@ -36,8 +36,8 @@ export class EventInfoComponent implements OnInit {
   showEventType() {
     return !this.isGeneralEvent() && this.e.type != EventType.other;
   }
-  isGeneralEvent(){
-    return this.e.eventDateJson.startsWith("999");
+  isGeneralEvent() {
+    return isGeneralEvent(this.e);
   }
   openGoogleMap() {
     window.open('https://maps.google.com/maps?q=' + this.e.longLat + '&hl=' + getLang().languageCode, '_blank');

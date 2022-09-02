@@ -41,21 +41,23 @@ export class OrgEventsController {
                     " where ", [e.where({ eventStatus: eventStatus.active, eventDate: { ">=": new Date() } })]);
             }
         }
-        let sites = (await getDb().execute(' select distinct site from (' + query + ') x')).rows.map(x => x.site);
+        if (query) {
+            let sites = (await getDb().execute(' select distinct site from (' + query + ') x')).rows.map(x => x.site);
 
-        for (const org of sites) {
+            for (const org of sites) {
 
-            await createSiteContext(org);
+                await createSiteContext(org);
 
-            let settings = await remult.context.getSettings();
-            setSettingsForSite(org, settings);
+                let settings = await remult.context.getSettings();
+                setSettingsForSite(org, settings);
 
 
-            if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
-                let items = await OrgEventsController.getEvents(phone, '');
-                r.push(...items.map(i => ({ ...i, site: org })));
+                if (!settings.donotShowEventsInGeneralList && !settings.forWho.args.leftToRight) {
+                    let items = await OrgEventsController.getEvents(phone, '');
+                    r.push(...items.map(i => ({ ...i, site: org })));
+                }
+
             }
-
         }
         try {
             await otherSite;
