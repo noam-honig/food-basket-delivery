@@ -9,7 +9,7 @@ import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/
 import { Filter, OmitEB, remult, Remult, SqlDatabase } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
 
-import { GeocodeCache, GeoCodeOptions } from "../shared/googleApiHelpers";
+import { AdjustGeocode, GeocodeCache, GeoCodeOptions } from "../shared/googleApiHelpers";
 import { Families } from "../families/families";
 import { PostgresSchemaBuilder, preparePostgresQueueStorage } from "remult/postgres";
 import * as forceHttps from 'express-force-https';
@@ -127,6 +127,7 @@ const entities = [
     HelperCommunicationHistory
 ];
 const controllers = [
+    AdjustGeocode,
     CallerController,
     SendSmsAction,
     AsignFamilyController,
