@@ -986,7 +986,7 @@ export function eventDisplayDate(e: EventInList, group = false, today: Date = un
 }
 
 export function isGeneralEvent(e: EventInList) {
-    return e.eventDateJson.startsWith("999")
+    return e.eventDateJson?.startsWith("999")
 }
 /*
 
