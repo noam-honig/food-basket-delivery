@@ -258,7 +258,7 @@ export class HelpersBase extends IdEntity {
                 }
             }
             if (self.$.leadHelper.valueChanged() && !self.$.leadHelper.valueIsNull()) {
-                if (self.leadHelper.id == self.id || self.leadHelper.leadHelper?.id == self.id) {
+                if (self.leadHelper?.id == self.id || self.leadHelper?.leadHelper?.id == self.id) {
                     self.$.leadHelper.error = getLang().invalidValue;
                     return;
                 }
