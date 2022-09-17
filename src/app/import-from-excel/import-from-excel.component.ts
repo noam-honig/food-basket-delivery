@@ -895,7 +895,7 @@ export class ImportFromExcelComponent implements OnInit {
                                 }))
                                 if (Object.prototype.hasOwnProperty.call(f.values, key)) {
                                     const element = f.values[key];
-                                    if (element.newValue !== previousRow.values[key].newValue) {
+                                    if (element?.newValue !== previousRow.values[key]?.newValue) {
                                         identical = false;
                                         break
                                     }
