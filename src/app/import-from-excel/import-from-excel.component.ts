@@ -31,6 +31,7 @@ import { selectListItem } from '../helpers/init-context';
 import { compareValuesWithRow, excelRowInfo, getColumnDisplayValue, ImportFromExcelController } from './import-from-excel.controller';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
     selector: 'app-excel-import',
@@ -608,6 +609,27 @@ export class ImportFromExcelComponent implements OnInit {
             updateFamily: async (v, f, h) => updateCol(h.fd.$.items, v, ", "),
             columns: [this.fd.items]
         });
+        this.columns.push({
+            key: 'itemKey',
+            name: this.settings.lang.item,
+            updateFamily: async (v, f, h) => {
+                h.laterSteps.push({
+                    step: 2,
+                    what: async () => { h.fd.items += v }
+                })
+
+            },
+            columns: [this.fd.items]
+        });
+        this.columns.push({
+            key: 'itemQuantityKey',
+            name: this.settings.lang.itemQuantity,
+            updateFamily: async (v, f, h) => {
+                h.fd.items += v + " "
+            },
+            columns: [this.fd.items],
+
+        });
 
 
         this.columns.push({
@@ -792,6 +814,7 @@ export class ImportFromExcelComponent implements OnInit {
         this.updateRows = [];
         this.identicalRows = [];
         let rows: excelRowInfo[] = [];
+        let previousRow: excelRowInfo;
         let usedTz = new Map<number, excelRowInfo>();
         let usedPhone = new Map<number, excelRowInfo>();
         this.stepper.next();
@@ -852,10 +875,48 @@ export class ImportFromExcelComponent implements OnInit {
                         });
                     }
                     let f = await this.readLine(index, originalUpdateFields);
-                    if (f.error) {
+
+                    let identical = true;
+                    if (!previousRow)
+                        identical = false;
+                    else
+                        for (const key in f.values) {
+                            if (key != keyFromColumnInCompare({
+                                e: this.fdDefs,
+                                c: this.fd.items
+                            }) &&
+                                key != keyFromColumnInCompare({
+                                    e: this.fDefs,
+                                    c: this.f.id
+                                }) &&
+                                key != keyFromColumnInCompare({
+                                    e: this.fdDefs,
+                                    c: this.fd.id
+                                }))
+                                if (Object.prototype.hasOwnProperty.call(f.values, key)) {
+                                    const element = f.values[key];
+                                    if (element.newValue !== previousRow.values[key].newValue) {
+                                        identical = false;
+                                        break
+                                    }
+                                }
+                        }
+                    if (identical) {
+                        const key = keyFromColumnInCompare({
+                            e: this.fdDefs,
+                            c: this.fd.items
+                        });
+                        previousRow.values[key].newValue += ", " + f.values[key].newValue;
+                        previousRow.values[key].newDisplayValue += ", " + f.values[key].newDisplayValue;
+                        if (rows.length == 0) {
+                            rows.push(previousRow);
+                        }
+                    }
+                    else if (f.error) {
                         this.errorRows.push(f);
                     }
                     else {
+                        previousRow = f;
 
                         let exists = (val: string, map: Map<number, excelRowInfo>, caption: string) => {
                             let origVal = val;

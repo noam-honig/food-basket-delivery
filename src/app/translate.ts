@@ -1329,6 +1329,8 @@ export class Language {
   items = "פריטים";
   calcTotalItems = 'חשב סה"כ פריטים';
   totalItems = 'סה"כ פריטים';
+  item = 'פריט';
+  itemQuantity = 'כמות פריט';
 }
 
 
