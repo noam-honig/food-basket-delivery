@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import {  EntityFilter, remult } from 'remult';
+import { EntityFilter, Filter, remult } from 'remult';
 import { DataControlInfo, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
 import { FamilyDeliveresStatistics, FamilyDeliveryStats, groupStats } from './family-deliveries-stats';
@@ -447,9 +447,19 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     });
     stats.moreStats.sort((a, b) => a.name.localeCompare(b.name));
   }
-  getToTake() {
+  async calcTotalItems() {
     let x: statsOnTabBasket = this.currentTabStats;
-    return x.toBrind;
+    const items = await FamilyDeliveriesController.getTotalItems(
+      Filter.entityFilterToJson(remult.repo(FamilyDeliveries).metadata, x.rule)
+    )
+    const field = new InputField<string>({
+      customInput: c => c.textArea(), caption: remult.context.lang.totalItems,
+      defaultValue: () => items.toString()
+    });
+    this.dialog.inputAreaDialog({
+      fields: [field],
+      ok: () => { },
+    });
   }
   showTotalBoxes() {
     let x: statsOnTabBasket = this.currentTabStats;
@@ -611,7 +621,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         deliveries.caller,
         deliveries.callerComment,
         deliveries.callerAssignDate,
-        deliveries.lastCallDate
+        deliveries.lastCallDate,
+        deliveries.items
       ];
       for (const c of [deliveries.a1, deliveries.a2, deliveries.a3, deliveries.a4]) {
         if (getCustomColumnVisible(c)) {
@@ -739,7 +750,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
             }, async deliveries => {
               if (includeFamilyInfo) {
-                await FamilyDeliveries.loadFamilyInfoForExcepExport( deliveries);
+                await FamilyDeliveries.loadFamilyInfoForExcepExport(deliveries);
               }
             });
         }

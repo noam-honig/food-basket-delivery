@@ -9,7 +9,7 @@ import { SettingsService } from "./SettingsService";
 
 import { DataAreaFieldsSetting, DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
 import { BusyService, openDialog } from '@remult/angular';
-import {  FieldRef, FieldsMetadata, getFields, remult } from 'remult';
+import { FieldRef, FieldsMetadata, getFields, remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
@@ -94,17 +94,7 @@ export class ManageComponent implements OnInit {
         field: x.boxes2,
         width: '100px'
       }, {
-        field: x.whatToTake,
-        click: b => {
-          const field = new InputField<string>({ customInput: c => c.textArea(), caption: b.$.whatToTake.metadata.caption });
-          field.value = b.whatToTake.split(',').map(x => x.trim()).join("\n");
-          this.dialog.inputAreaDialog({
-            fields: [field],
-            ok: () => {
-              b.whatToTake = field.value.split("\n").map(x => x.trim()).join(", ")
-            }
-          });
-        }
+        field: x.whatToTake
       }
     ],
     saving: () => this.refreshEnvironmentAfterSave(),
@@ -681,7 +671,7 @@ export class ManageComponent implements OnInit {
 
   showGeneralListing() {
     openDialog(EventInfoComponent, x => x.e = OrgEventsController.createOrgEvent({
-      volunteerNeedStatus:this.settings.volunteerNeedStatus,
+      volunteerNeedStatus: this.settings.volunteerNeedStatus,
       addressHelper: this.settings.addressHelper,
       descriptionInOrganizationList: this.settings.descriptionInOrganizationList,
       logoUrl: this.settings.logoUrl,

@@ -17,7 +17,7 @@ import { Location, toLongLat, isGpsAddress, openWaze } from '../shared/googleApi
 import { use, FieldType, Field, ValueListFieldType, Entity, Fields } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
-import { DataAreaFieldsSetting, DataControl, IDataAreaSettings } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, DataControl, IDataAreaSettings, InputField } from "@remult/angular/interfaces";
 
 
 import { Groups, GroupsValue } from "../manage/groups";
@@ -172,7 +172,7 @@ export class FamilyDeliveries extends IdEntity {
     }
 
     changeRequireStatsRefresh() {
-        return [this.$.deliverStatus, this.$.courier, this.$.basketType, this.$.quantity].filter(x => x.valueChanged()).length > 0;
+        return [this.$.deliverStatus, this.$.courier, this.$.basketType, this.$.quantity,this.$.items].filter(x => x.valueChanged()).length > 0;
     }
     copyFrom(originalDelivery: FamilyDeliveries) {
         this.distributionCenter = originalDelivery.distributionCenter;
@@ -217,6 +217,14 @@ export class FamilyDeliveries extends IdEntity {
     })
     @DataControl({ width: '100' })
     quantity: number;
+
+    @Field<FamilyDeliveries, string>({
+        translation: l => l.items,
+        clickWithTools: (_, fr, ui) => {
+            editItems(fr, ui);
+        },
+    })
+    items: string = '';
     isLargeQuantity() {
         return getSettings().isSytemForMlt && (this.quantity > 10);
     }
@@ -820,6 +828,7 @@ export class FamilyDeliveries extends IdEntity {
             [{ width: '', field: this.$.basketType }, { width: '', field: this.$.quantity }],
             [{ width: '', field: this.$.deliverStatus }, this.$.deliveryStatusDate],
             this.$.deliveryComments,
+            this.$.items,
             this.$.courier,
             { field: this.$.distributionCenter, visible: () => ui.hasManyCenters },
             this.$.needsWork,
@@ -868,6 +877,20 @@ export class ActiveFamilyDeliveries extends FamilyDeliveries {
 iniFamilyDeliveriesInFamiliesCode(FamilyDeliveries, ActiveFamilyDeliveries);
 
 
+
+function editItems(fr: FieldRef<FamilyDeliveries, string>, ui: UITools) {
+    const field = new InputField<string>({
+        customInput: c => c.textArea(),
+        caption: fr.metadata.caption
+    });
+    field.value = fr.value.split(',').map(x => x.trim()).join("\n");
+    ui.inputAreaDialog({
+        fields: [field],
+        ok: () => {
+            fr.value = field.value.split("\n").map(x => x.trim()).join(", ");
+        }
+    });
+}
 
 function logChanged(col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFieldRef<any, HelpersBase>, wasChanged: (() => void)) {
     if (col.value != col.originalValue) {

@@ -69,10 +69,11 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   private refreshWhatToTake() {
     let toTake = new quantityHelper();
     this.whatToTake = '';
+    toTake.parseComment(this.f.items);
     if (this.f.basketType) {
       toTake.parseComment(this.f.basketType.whatToTake, this.f.quantity);
-      this.whatToTake = toTake.toString(this.userFamilies?.labs || true ? undefined : ', ');
     }
+    this.whatToTake = toTake.toString(this.userFamilies?.labs || true ? undefined : ', ');
   }
 
   async loadImages() {

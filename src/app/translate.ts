@@ -1326,6 +1326,9 @@ export class Language {
   descriptionInOrganizationList = "תאור ברשימת הארגונים הכללית";
   phoneInOrganizationList = "טלפון ברשימת הארגונים הכללית";
   hideVolunteerVideo = "הסר סרטון הדרכה למתנדב";
+  items = "פריטים";
+  calcTotalItems = 'חשב סה"כ פריטים';
+  totalItems = 'סה"כ פריטים';
 }
 
 

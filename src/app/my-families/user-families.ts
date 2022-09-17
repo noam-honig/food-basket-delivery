@@ -72,7 +72,7 @@ export class UserFamiliesList {
         return " (" + -r + "-) ";
     }
     userClickedOnFamilyOnMap: (familyId: string[]) => void = x => { };
-        async initForHelper(helper: HelpersBase) {
+    async initForHelper(helper: HelpersBase) {
         if (helper != this.helper) {
             await this.initHelper(helper);
             if (helper) {
@@ -216,7 +216,10 @@ export class UserFamiliesList {
             this.refreshRoute({});
         }
         const q = new quantityHelper();
-        this.toDeliver.forEach(d => q.parseComment(d?.basketType?.whatToTake, d.quantity));
+        this.toDeliver.forEach(d => {
+            q.parseComment(d?.basketType?.whatToTake, d.quantity);
+            q.parseComment(d?.items);
+        });
         this.whatToTake = q.toString();
         if (this.toDeliver.length == 0)
             this.prevRouteStats = undefined;

@@ -602,6 +602,13 @@ export class ImportFromExcelComponent implements OnInit {
             }, columns: [this.fd.basketType]
         });
 
+        this.columns.push({
+            key: 'items',
+            name: this.fd.items.caption,
+            updateFamily: async (v, f, h) => updateCol(h.fd.$.items, v, ", "),
+            columns: [this.fd.items]
+        });
+
 
         this.columns.push({
             key: 'distCenterName',
@@ -1157,7 +1164,7 @@ export class ImportFromExcelComponent implements OnInit {
         return await this.dialog.YesNoPromise(what);
     }
     private async actualMoveFromErrorToUpdate(i: excelRowInfo, f: duplicateFamilyInfo) {
-        let r = await compareValuesWithRow( i, f.id, this.compareBasketType, this.columnsInCompareMemberName);
+        let r = await compareValuesWithRow(i, f.id, this.compareBasketType, this.columnsInCompareMemberName);
         i.duplicateFamilyInfo = [f];
         if (r.hasDifference) {
             this.updateRows.push(i);

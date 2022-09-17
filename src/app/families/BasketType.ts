@@ -1,12 +1,14 @@
 
 
-import { Entity, IdEntity, Allow, Fields } from 'remult';
+import { Entity, IdEntity, Allow, Fields, FieldRef } from 'remult';
 
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
 import { getLang } from '../sites/sites';
-import { DataControl, getEntityValueList } from '@remult/angular/interfaces';
+import { DataControl, getEntityValueList, InputField } from '@remult/angular/interfaces';
 import { getSettings } from '../manage/ApplicationSettings';
+import { FamilyDeliveries } from './FamilyDeliveries';
+import { UITools } from '../helpers/init-context';
 
 
 @FieldType<BasketType>({
@@ -37,7 +39,10 @@ export class BasketType extends IdEntity {
   boxes: number = 1;
   @Fields.integer({}, (options) => options.caption = BasketType.boxes2Name)
   boxes2: number = 0;
-  @Field({ translation: l => l.whatToTake })
+  @Field<any, string>({
+    translation: l => l.whatToTake,
+    clickWithTools: (u, fr, ui) => editItems(fr, ui)
+  })
   whatToTake: string = '';
 
   static boxes1Name = !use ? '' : use.language.boxes1Name;
@@ -82,4 +87,17 @@ export class quantityHelper {
 interface totalItem {
   name: string,
   quantity: number
+}
+export function editItems(fr: FieldRef<FamilyDeliveries, string>, ui: UITools) {
+  const field = new InputField<string>({
+    customInput: c => c.textArea(),
+    caption: fr.metadata.caption
+  });
+  field.value = fr.value.split(',').map(x => x.trim()).join("\n");
+  ui.inputAreaDialog({
+    fields: [field],
+    ok: () => {
+      fr.value = field.value.split("\n").map(x => x.trim()).join(", ");
+    }
+  });
 }

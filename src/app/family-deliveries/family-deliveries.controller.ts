@@ -14,6 +14,7 @@ import { Phone } from "../model-shared/phone";
 import { Groups } from '../manage/groups';
 
 import { DistributionCenters } from '../manage/distribution-centers';
+import { quantityHelper } from '../families/BasketType';
 
 
 export class FamilyDeliveriesController {
@@ -70,6 +71,15 @@ export class FamilyDeliveriesController {
         }
 
         return await (await remult.repo(FamilyDeliveries).find({ where: { id: result } })).map(x => x._.toApiJson());
+    }
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
+    static async getTotalItems(filter: any) {
+        const q = new quantityHelper();
+        for await (const fd of remult.repo(FamilyDeliveries).query()) {
+            q.parseComment(fd.basketType?.whatToTake, fd.quantity);
+            q.parseComment(fd.items);
+        }
+        return q.toString();
     }
 
 }
