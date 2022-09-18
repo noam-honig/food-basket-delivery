@@ -2,7 +2,7 @@
   {{s}}
 </div>
 
-<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap">
+<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap" >
   <mat-card-title *ngIf="familyLists.getLeftFamiliesDescription()">
     {{familyLists.getLeftFamiliesDescription()}}
     <div>
@@ -67,7 +67,7 @@
         style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
 
   </div>
-  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab style="margin:0 -16px"
+  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab style="margin:0"
     [style.marginInlineStart]="disableDrag?'':'16px'">
     <mat-tab>
       <ng-template mat-tab-label>

@@ -27,6 +27,9 @@
   height:10px;
   flex-grow:1;
   overflow-x: auto;
+  @media (max-width: 720px) {
+    margin:5px 2px 0px
+  }
 }}
 
 $iconWidth: 56px;

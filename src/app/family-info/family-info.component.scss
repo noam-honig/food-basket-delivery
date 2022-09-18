@@ -45,3 +45,8 @@ h3 {
     flex-grow: 1;
   }
 }
+@media (max-width: 720px) {
+  .mat-card{
+  padding: 16px 4px !important;
+  }
+  }

@@ -75,9 +75,9 @@ align-items: center;" class="{{f.deliverStatus.getCss(f.courier)}}">
 
 
   <h4>{{settings.lang.address}}</h4>
-  <mat-card>
+  <mat-card style="font-size:20px;line-height:28px">
 
-    <div style="display:flex;gap:4px;">
+    <div style="display:flex;gap:4px;align-items: center;">
       <div style="flex-grow:1;">
         <a (click)="navigate(f)">
           <span style="display:block"> {{f.getAddressDescription()}} </span>
