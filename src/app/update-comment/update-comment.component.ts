@@ -10,7 +10,11 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { DataAreaSettings } from '@remult/angular/interfaces';
 import { ImageInfo } from '../images/images.component';
 import { DeliveryImage } from '../families/DeiveryImages';
+import { DialogConfig } from '@remult/angular';
 
+@DialogConfig({
+  minWidth:'98%'
+})
 @Component({
   selector: 'app-update-comment',
   templateUrl: './update-comment.component.html',
