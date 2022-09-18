@@ -19,16 +19,16 @@
             *ngIf="settings.showVideo()">{{settings.lang.clickForTutorialVideo}}</a>
         <ng-container
             *ngIf="settings.message1Text&&( !settings.message1OnlyWhenDone || familyLists.toDeliver.length==0)">
-            <a style="white-space: pre-line;" href="{{settings.message1Link}}" target="_blank" class="no-print"
-                *ngIf="settings.message1Link" style="display: block">{{settings.message1Text}}</a>
+            <a  href="{{settings.message1Link}}" target="_blank" class="no-print"
+                *ngIf="settings.message1Link" style="display: block;white-space: pre-line;">{{settings.message1Text}}</a>
             <div style="white-space: pre-line;" *ngIf="!settings.message1Link">
                 {{settings.message1Text}}
             </div>
         </ng-container>
         <ng-container
             *ngIf="settings.message2Text&&(!settings.message2OnlyWhenDone || familyLists.toDeliver.length==0)">
-            <a style="white-space: pre-line;" href="{{settings.message2Link}}" target="_blank" class="no-print"
-                *ngIf="settings.message2Link" style="display: block">{{settings.message2Text}}</a>
+            <a  href="{{settings.message2Link}}" target="_blank" class="no-print"
+                *ngIf="settings.message2Link" style="display: block;white-space: pre-line;">{{settings.message2Text}}</a>
             <div style="white-space: pre-line;" *ngIf="!settings.message2Link">
                 {{settings.message2Text}}
             </div>
