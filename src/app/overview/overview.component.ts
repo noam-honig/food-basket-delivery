@@ -46,7 +46,9 @@ export class OverviewComponent implements OnInit {
   }
 
   showSite(s: siteItem) {
-    return !this.searchString || s.name.includes(this.searchString);
+    return !this.searchString ||
+      s.name.toLowerCase().includes(this.searchString.toLocaleLowerCase())
+      || s.city?.toLowerCase().includes(this.searchString.toLocaleLowerCase());
   }
   showSiteInfo(s: siteItem) {
     openDialog(SiteOverviewComponent, x => x.args = { site: s, statistics: this.overview.statistics });

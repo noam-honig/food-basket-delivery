@@ -14,6 +14,7 @@ import { InitContext } from '../helpers/init-context';
 import { Phone } from '../model-shared/phone';
 import fetch from 'node-fetch';
 import { doOnRemoteHagai } from './remoteHagai';
+import { Location } from "../shared/googleApiHelpers";
 export class OverviewController {
 
     static mySiteInfo = new Map<string, siteItem>();
@@ -142,6 +143,8 @@ export class OverviewController {
                     if (s)
                         result.sites.push({
                             name: s.organisationName,
+                            city: s.addressHelper.getCity,
+                            location: s.addressHelper.location,
                             site: org,
                             logo: s.logoUrl,
                             stats: {},
@@ -152,6 +155,11 @@ export class OverviewController {
                         result.sites.push({
                             name: org,
                             site: org,
+                            city: '',
+                            location: {
+                                lat: 0,
+                                lng: 0
+                            },
                             logo: '/assets/apple-touch-icon.png',
                             stats: {},
                             lastSignIn: null,
@@ -193,11 +201,13 @@ export class OverviewController {
                 let sql = dp as SqlDatabase;
                 let zz = await sql.execute(z);
                 let row = zz.rows[0];
-
+                const s = settingsForSite.get(org);
                 let site: siteItem = {
                     isRemote: false,
                     name: row[zz.getColumnKeyInResultForIndexInSelect(0)],
                     site: org,
+                    city: s?.addressHelper.getCity,
+                    location: s?.addressHelper.location,
                     logo: row[zz.getColumnKeyInResultForIndexInSelect(1)],
                     stats: {},
                     lastSignIn: row[zz.getColumnKeyInResultForIndexInSelect(2)]
@@ -311,6 +321,8 @@ export interface siteItem {
     logo: string;
     lastSignIn: Date;
     isRemote: boolean;
+    city: string;
+    location: Location,
     stats: {
         [index: string]: number;
     }
