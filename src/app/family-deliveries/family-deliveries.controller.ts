@@ -1,7 +1,7 @@
 
 import { Roles } from '../auth/roles';
 
-import { BackendMethod, remult } from 'remult';
+import { BackendMethod, Filter, remult } from 'remult';
 
 import { groupStats } from './family-deliveries-stats';
 
@@ -75,7 +75,9 @@ export class FamilyDeliveriesController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getTotalItems(filter: any) {
         const q = new quantityHelper();
-        for await (const fd of remult.repo(FamilyDeliveries).query()) {
+        for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
+            where: await Filter.entityFilterFromJson<ActiveFamilyDeliveries>(remult.repo(ActiveFamilyDeliveries).metadata, filter)
+        })) {
             q.parseComment(fd.basketType?.whatToTake, fd.quantity);
             q.parseComment(fd.items);
         }
