@@ -393,7 +393,7 @@
   },
   "assignHelpText": {
     "google": "Please enter the volunteer's phone and name, and then you can choose a group, city and baskets to associate",
-    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך",
+    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך. לחיפוש לפי שם לחצי על - ",
     "custom": "Please type volunteer's phone and name to start delivery assignment, you can also search volunteer by name, by clicking on "
   },
   "assignmentCanceledFor": {
@@ -543,6 +543,10 @@
     "google": "By distance",
     "valueInCode": "לפי מרחק"
   },
+  "calcTotalItems": {
+    "google": "Calculate total items",
+    "valueInCode": "חשב סה\"כ פריטים"
+  },
   "callCounter": {
     "google": "Attempts to call",
     "valueInCode": "נסיונות התקשרות"
@@ -567,6 +571,10 @@
   "callPerson": {
     "google": "Call",
     "valueInCode": "התקשר ל"
+  },
+  "callQuota": {
+    "google": "call quota",
+    "valueInCode": "מכסת שיחות"
   },
   "cancel": {
     "google": "void",
@@ -1201,6 +1209,10 @@
     "google": "Ever delivered",
     "valueInCode": "נמסרו אי פעם"
   },
+  "descriptionInOrganizationList": {
+    "google": "Description in the general list of organizations",
+    "valueInCode": "תאור ברשימת הארגונים הכללית"
+  },
   "dial": {
     "google": "dialing",
     "valueInCode": "חיוג",
@@ -1299,7 +1311,7 @@
   },
   "donotShowEventsInGeneralList": {
     "google": "Do not present volunteering opportunities in the list of all organizations",
-    "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים"
+    "valueInCode": "הסר מרשימת הארגונים הכללית"
   },
   "DoNotWantProblemStatusText": {
     "google": "Status text not interested",
@@ -1745,6 +1757,10 @@
     "valueInCode": "חפש מתנדב לפי שם",
     "custom": "Search by Name"
   },
+  "firstDelivery": {
+    "google": "first delivery",
+    "valueInCode": "משלוח ראשון"
+  },
   "firstName": {
     "google": "First name",
     "valueInCode": "שם פרטי"
@@ -1947,6 +1963,10 @@
     "google": "Hide pie",
     "valueInCode": "הסתר פאי"
   },
+  "hideVolunteerVideo": {
+    "google": "Remove a volunteer training video",
+    "valueInCode": "הסר סרטון הדרכה למתנדב"
+  },
   "hours": {
     "google": "Hours",
     "valueInCode": "שעות"
@@ -2081,6 +2101,18 @@
     "google": "Defined as the Leading Volunteer of",
     "valueInCode": "מוגדר המתנדב מוביל"
   },
+  "item": {
+    "google": "item",
+    "valueInCode": "פריט"
+  },
+  "itemQuantity": {
+    "google": "Item quantity",
+    "valueInCode": "כמות פריט"
+  },
+  "items": {
+    "google": "items",
+    "valueInCode": "פריטים"
+  },
   "km": {
     "google": "km",
     "valueInCode": "ק\"מ"
@@ -2101,6 +2133,10 @@
     "google": "hey",
     "valueInCode": "he"
   },
+  "lastDelivery": {
+    "google": "Last shipment",
+    "valueInCode": "משלוח אחרון"
+  },
   "lastName": {
     "google": "Last Name",
     "valueInCode": "שם משפחה"
@@ -2111,6 +2147,7 @@
   },
   "lastUpdateDate": {
     "google": "Deadline",
+    "custom": "Last Update date",
     "valueInCode": "מועד עדכון אחרון"
   },
   "lastUpdateUser": {
@@ -2728,6 +2765,10 @@
     "google": "Phone Notes 4",
     "valueInCode": "הערות לטלפון 4"
   },
+  "phoneInOrganizationList": {
+    "google": "Phone in the general list of organizations",
+    "valueInCode": "טלפון ברשימת הארגונים הכללית"
+  },
   "phones": {
     "google": "phones",
     "valueInCode": "טלפונים",
@@ -3335,6 +3376,10 @@
     "google": "Collect the package",
     "valueInCode": "אספו את החבילה"
   },
+  "sendAttendanceReminder": {
+    "google": "Sending a reminder SMS before distribution",
+    "valueInCode": "שליחת הודעת SMS תזכורת לקראת חלוקה"
+  },
   "sendInviteBySms": {
     "google": "Send invitation by SMS to manager",
     "valueInCode": "שלח הזמנה בSMS למנהל"
@@ -3370,7 +3415,7 @@
   },
   "sendSmsToAllVolunteersThatDidntGetOne": {
     "google": "Send an SMS to volunteers who have not yet received",
-    "valueInCode": "שלח הודעת SMS למתנדבים שטרם קיבלו"
+    "valueInCode": "שלח הודעת SMS עם קישור למתנדבים שטרם קיבלו"
   },
   "sendSmsWithLink": {
     "google": "Send an SMS with a link",
@@ -3441,6 +3486,10 @@
   "shouldUpdateColumn": {
     "google": "Do update the field",
     "valueInCode": "האם לעדכן את השדה"
+  },
+  "show": {
+    "google": "Show",
+    "valueInCode": "הצג"
   },
   "showAll": {
     "google": "Show all",
@@ -3830,6 +3879,10 @@
   "total": {
     "google": "Total",
     "valueInCode": "סה\"כ"
+  },
+  "totalItems": {
+    "google": "Total items",
+    "valueInCode": "סה\"כ פריטים"
   },
   "toVolunteer": {
     "google": "To the volunteer",

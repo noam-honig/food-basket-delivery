@@ -353,7 +353,7 @@
   },
   "assignHelpText": {
     "google": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך",
-    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך"
+    "valueInCode": "אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך. לחיפוש לפי שם לחצי על - "
   },
   "assignmentCanceledFor": {
     "google": "בוטל השיוך למשפחת",
@@ -484,6 +484,10 @@
     "google": "לפי מרחק",
     "valueInCode": "לפי מרחק"
   },
+  "calcTotalItems": {
+    "google": "חשב סה\"כ פריטים",
+    "valueInCode": "חשב סה\"כ פריטים"
+  },
   "callCounter": {
     "google": "נסיונות התקשרות",
     "valueInCode": "נסיונות התקשרות"
@@ -507,6 +511,10 @@
   "callPerson": {
     "google": "התקשר ל",
     "valueInCode": "התקשר ל"
+  },
+  "callQuota": {
+    "google": "מכסת שיחות",
+    "valueInCode": "מכסת שיחות"
   },
   "cancel": {
     "google": "בטל",
@@ -1065,6 +1073,10 @@
     "google": "נמסרו אי פעם",
     "valueInCode": "נמסרו אי פעם"
   },
+  "descriptionInOrganizationList": {
+    "google": "תאור ברשימת הארגונים הכללית",
+    "valueInCode": "תאור ברשימת הארגונים הכללית"
+  },
   "dial": {
     "google": "חיוג",
     "valueInCode": "חיוג"
@@ -1159,7 +1171,7 @@
   },
   "donotShowEventsInGeneralList": {
     "google": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים",
-    "valueInCode": "אל תציג הזדמנויות התנדבות ברשימת כלל הארגונים"
+    "valueInCode": "הסר מרשימת הארגונים הכללית"
   },
   "DoNotWantProblemStatusText": {
     "google": "מלל סטטוס לא מעוניינים",
@@ -1578,6 +1590,10 @@
     "google": "חפש מתנדב לפי שם",
     "valueInCode": "חפש מתנדב לפי שם"
   },
+  "firstDelivery": {
+    "google": "משלוח ראשון",
+    "valueInCode": "משלוח ראשון"
+  },
   "firstName": {
     "google": "שם פרטי",
     "valueInCode": "שם פרטי"
@@ -1770,6 +1786,10 @@
     "google": "הסתר פאי",
     "valueInCode": "הסתר פאי"
   },
+  "hideVolunteerVideo": {
+    "google": "הסר סרטון הדרכה למתנדב",
+    "valueInCode": "הסר סרטון הדרכה למתנדב"
+  },
   "hours": {
     "google": "שעות",
     "valueInCode": "שעות"
@@ -1898,6 +1918,18 @@
     "google": "מוגדר המתנדב מוביל של",
     "valueInCode": "מוגדר המתנדב מוביל"
   },
+  "item": {
+    "google": "פריט",
+    "valueInCode": "פריט"
+  },
+  "itemQuantity": {
+    "google": "כמות פריט",
+    "valueInCode": "כמות פריט"
+  },
+  "items": {
+    "google": "פריטים",
+    "valueInCode": "פריטים"
+  },
   "km": {
     "google": "ק\"מ",
     "valueInCode": "ק\"מ"
@@ -1917,6 +1949,10 @@
   "languageCodeHe": {
     "google": "he",
     "valueInCode": "he"
+  },
+  "lastDelivery": {
+    "google": "משלוח אחרון",
+    "valueInCode": "משלוח אחרון"
   },
   "lastName": {
     "google": "שם תורם",
@@ -2522,6 +2558,10 @@
     "google": "הערות לטלפון 4",
     "valueInCode": "הערות לטלפון 4"
   },
+  "phoneInOrganizationList": {
+    "google": "טלפון ברשימת הארגונים הכללית",
+    "valueInCode": "טלפון ברשימת הארגונים הכללית"
+  },
   "phones": {
     "google": "טלפונים",
     "valueInCode": "טלפונים"
@@ -3088,6 +3128,10 @@
     "google": "הפריטים נקלטו",
     "valueInCode": "אספו את החבילה"
   },
+  "sendAttendanceReminder": {
+    "google": "שליחת הודעת SMS תזכורת לקראת חלוקה",
+    "valueInCode": "שליחת הודעת SMS תזכורת לקראת חלוקה"
+  },
   "sendInviteBySms": {
     "google": "שלח הזמנה בSMS למנהל",
     "valueInCode": "שלח הזמנה בSMS למנהל"
@@ -3122,7 +3166,7 @@
   },
   "sendSmsToAllVolunteersThatDidntGetOne": {
     "google": "שלח הודעת SMS למתנדבים שטרם קיבלו",
-    "valueInCode": "שלח הודעת SMS למתנדבים שטרם קיבלו"
+    "valueInCode": "שלח הודעת SMS עם קישור למתנדבים שטרם קיבלו"
   },
   "sendSmsWithLink": {
     "google": "שלח הודעת SMS עם קישור",
@@ -3187,6 +3231,10 @@
   "shouldUpdateColumn": {
     "google": "האם לעדכן את השדה",
     "valueInCode": "האם לעדכן את השדה"
+  },
+  "show": {
+    "google": "הצג",
+    "valueInCode": "הצג"
   },
   "showAll": {
     "google": "הצג הכל",
@@ -3559,6 +3607,10 @@
   "total": {
     "google": "סה\"כ",
     "valueInCode": "סה\"כ"
+  },
+  "totalItems": {
+    "google": "סה\"כ פריטים",
+    "valueInCode": "סה\"כ פריטים"
   },
   "toVolunteer": {
     "google": "למתנדב",

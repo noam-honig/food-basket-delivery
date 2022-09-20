@@ -836,6 +836,7 @@ export class donor {
   wrongCodeWordProcessAborted = 'מילת קוד שגויה - התהליך מופסק';
   configuration = 'המערכת היא עבור';
   foodParcel = 'סל מזון';
+  show = 'הצג';
   updated = 'עודכנו';
   showFreezed = 'הצג מוקפאים';
   pickupLocation = 'נקודת איסוף';
@@ -925,6 +926,7 @@ export class donor {
   smsMessages = 'הודעות SMS';
   when = 'מתי';
   sendRequestConfirmSms = 'שליחת הודעת SMS לאישור הגעה';
+  sendAttendanceReminder = 'שליחת הודעת SMS תזכורת לקראת חלוקה';
   sendSelfOrderLink = 'שליחת קישור להזמנה עצמית';
   whatToOrder = 'מה להזמין?';
   smsProviderConfiguration = 'הגדרות ספק SMS';
@@ -989,4 +991,15 @@ export class donor {
   defaultDeliveryStatusIsEnquireDetails = 'בירור פרטים כסטטוס ברירת מחדל למשלוחים';
   previousValue = 'הערך הקודם';
   helperStatsText = 'השלימ/ה $1 משלוחים ב-$2 תאריכים מ-$3';
+  firstDelivery = 'משלוח ראשון';
+  lastDelivery = 'משלוח אחרון';
+  callQuota = 'מכסת שיחות';
+  descriptionInOrganizationList = 'תאור ברשימת הארגונים הכללית';
+  phoneInOrganizationList = 'טלפון ברשימת הארגונים הכללית';
+  hideVolunteerVideo = 'הסר סרטון הדרכה למתנדב';
+  items = 'פריטים';
+  calcTotalItems = 'חשב סה"כ פריטים';
+  totalItems = 'סה"כ פריטים';
+  item = 'פריט';
+  itemQuantity = 'כמות פריט';
 }

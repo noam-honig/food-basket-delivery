@@ -268,7 +268,7 @@ export class en {
   previousDeliverySummary = 'Previous delivery summary';
   createUser = 'Creating user';
   assignUser = 'User associates';
-  lastUpdateDate = 'Deadline';
+  lastUpdateDate = 'Last Update date';
   lastUpdateUser = 'Updating user';
   within = 'within';
   forFamily = 'For the family';
@@ -836,6 +836,7 @@ export class en {
   wrongCodeWordProcessAborted = 'Wrong code word - process stopped';
   configuration = 'The system is for';
   foodParcel = 'Food Parcel';
+  show = 'Show';
   updated = 'Updated';
   showFreezed = 'Show frozen';
   pickupLocation = 'Pickup location';
@@ -925,6 +926,7 @@ export class en {
   smsMessages = 'SMS messages';
   when = 'When';
   sendRequestConfirmSms = 'Sending an SMS to confirm arrival';
+  sendAttendanceReminder = 'Sending a reminder SMS before distribution';
   sendSelfOrderLink = 'Submit a link for a self-order';
   whatToOrder = 'What to order?';
   smsProviderConfiguration = 'SMS provider settings';
@@ -989,4 +991,15 @@ export class en {
   defaultDeliveryStatusIsEnquireDetails = 'Clarify details as default status for shipments';
   previousValue = 'Previous value';
   helperStatsText = 'Completed $1 deliveries on $2 dates since $3';
+  firstDelivery = 'first delivery';
+  lastDelivery = 'Last shipment';
+  callQuota = 'call quota';
+  descriptionInOrganizationList = 'Description in the general list of organizations';
+  phoneInOrganizationList = 'Phone in the general list of organizations';
+  hideVolunteerVideo = 'Remove a volunteer training video';
+  items = 'items';
+  calcTotalItems = 'Calculate total items';
+  totalItems = 'Total items';
+  item = 'item';
+  itemQuantity = 'Item quantity';
 }
