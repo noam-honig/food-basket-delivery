@@ -76,7 +76,7 @@ export class MessageStatus {
                         }
                     }
                     );
-                if (self.$.courier.valueChanged() && !self.$.courier.originalValueIsNull()) {
+                if (!self.isNew()&&self.$.courier.valueChanged() && !self.$.courier.originalValueIsNull()) {
                     await self.$.courier.load();
 
                     console.log(`courier change:${remult.context.requestUrlOnBackend} - delivery:${self.name} change courier from: ${self.$.courier.originalValue?.name} to:${self.courier?.name} by:${remult.user?.name}`);
