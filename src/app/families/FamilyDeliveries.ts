@@ -76,6 +76,11 @@ export class MessageStatus {
                         }
                     }
                     );
+                if (self.$.courier.valueChanged() && !self.$.courier.originalValueIsNull()) {
+                    await self.$.courier.load();
+
+                    console.log(`courier change:${remult.context.requestUrlOnBackend} - delivery:${self.name} change courier from: ${self.$.courier.originalValue.name} to:${self.courier?.name} by:${remult.user?.name}`);
+                }
                 if (!self.isNew() && self.$.courierComments.valueChanged() && self.courierComments.length > 0)
                     self.courierCommentsDate = new Date();
 
@@ -172,7 +177,7 @@ export class FamilyDeliveries extends IdEntity {
     }
 
     changeRequireStatsRefresh() {
-        return [this.$.deliverStatus, this.$.courier, this.$.basketType, this.$.quantity,this.$.items].filter(x => x.valueChanged()).length > 0;
+        return [this.$.deliverStatus, this.$.courier, this.$.basketType, this.$.quantity, this.$.items].filter(x => x.valueChanged()).length > 0;
     }
     copyFrom(originalDelivery: FamilyDeliveries) {
         this.distributionCenter = originalDelivery.distributionCenter;
