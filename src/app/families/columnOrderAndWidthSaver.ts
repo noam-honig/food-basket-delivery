@@ -38,7 +38,7 @@ export class columnOrderAndWidthSaver {
             for (let index = 0; index <= this.grid.columns.numOfColumnsInGrid; index++) {
                 const element = this.grid.columns.items[index];
                 if (element)
-                    x.push({ caption: element.caption, width: element.width });
+                    x.push({ caption: element.caption, key: getFieldDefinition(element.field).key, width: element.width });
             }
             let s = this.getStorage();
             s[key] = x;
