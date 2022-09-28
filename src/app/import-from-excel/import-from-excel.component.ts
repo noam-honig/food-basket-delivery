@@ -369,6 +369,9 @@ export class ImportFromExcelComponent implements OnInit {
             if (fd.$.basketType.valueChanged()) {
                 f.basketType = fd.basketType;
             }
+            if (fd.$.distributionCenter.valueChanged()) {
+                f.defaultDistributionCenter = fd.distributionCenter;
+            }
             if (fd.$.quantity.valueChanged()) {
                 f.quantity = fd.quantity;
             }
@@ -841,7 +844,7 @@ export class ImportFromExcelComponent implements OnInit {
                     if (updatedColumns.get(c)) {
                         if (c == this.fd.distributionCenter && !this.dialog.hasManyCenters)
                             continue;
-                        if (c == this.f.basketType || c == this.f.quantity || c == this.f.deliveryComments || c == this.f.fixedCourier) {
+                        if (c == this.f.basketType || c == this.f.quantity || c == this.f.deliveryComments || c == this.f.fixedCourier || c == this.f.defaultDistributionCenter) {
                             laterColumnsInCompare.push(c);
                         }
                         else {
@@ -1053,6 +1056,8 @@ export class ImportFromExcelComponent implements OnInit {
             if (updatedColumns.get(this.fd.basketType)) {
                 updatedColumns.set(this.f.basketType, true);
             }
+            if (updatedColumns.get(this.fd.distributionCenter))
+                updatedColumns.set(this.f.defaultDistributionCenter, true);
             if (updatedColumns.get(this.fd.courier)) {
                 updatedColumns.set(this.f.fixedCourier, true);
             }
