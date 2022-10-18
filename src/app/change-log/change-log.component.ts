@@ -19,7 +19,7 @@ export class ChangeLogComponent implements OnInit {
   meta!: EntityMetadata;
   async ngOnInit() {
     this.meta = this.args.for._.metadata;
-    this.changes = await remult.repo(ChangeLog).find({ where: { relatedId: this.args.for._.getId() } });
+    this.changes = await remult.repo(ChangeLog).find({ where: { relatedId: this.args.for._.getId().toString() } });
     console.log(this.changes);
   }
 

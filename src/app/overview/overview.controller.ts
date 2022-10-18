@@ -99,7 +99,7 @@ export class OverviewController {
 
 
         const remultHagaiSites = doOnRemoteHagai(async (remoteRemult, url) => {
-            const remote = await remoteRemult.call(OverviewController.getOverview)(full);
+            const remote = await remoteRemult.call(OverviewController.getOverview,undefined,full);
             if (remote) {
                 result.sites.push(...remote.sites.map(s => ({ ...s, isRemote: true, logo: url + s.logo })));
                 for (const z of remote.statistics) {

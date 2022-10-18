@@ -129,7 +129,7 @@ export class AppComponent {
       return false;
     if (route.component == AssignEscortComponent && !this.settings.manageEscorts)
       return false;
-    return this.helper.canNavigateToRoute(route);
+    return this.helper.canNavigateToRoute(route as any);
   }
   @ViewChild('sidenav', { static: false }) sidenav: MatSidenav;
   routeClicked() {

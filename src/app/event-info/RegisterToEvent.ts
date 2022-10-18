@@ -178,7 +178,7 @@ export class RegisterToEvent {
     async registerVolunteerToEvent(id: string, site: string, register: boolean, remoteUrl?: string) {
         if (remoteUrl)
             return await doOnRemoteHagai(async (remote, url) => {
-                return await remote.call(this.registerVolunteerToEvent, this)(id, site, register, remoteUrl).then((x: EventInList) => ({ ...x, remoteUrl: url, eventLogo: remoteUrl + x.eventLogo }));
+                return await remote.call(this.registerVolunteerToEvent, this,id, site, register, remoteUrl).then((x: EventInList) => ({ ...x, remoteUrl: url, eventLogo: remoteUrl + x.eventLogo }));
             });
         await this.init();
         if (site) {

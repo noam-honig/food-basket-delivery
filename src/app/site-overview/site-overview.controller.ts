@@ -8,7 +8,7 @@ export class SiteOverviewController {
     @BackendMethod({ allowed: Roles.overview })
     static async siteInfo(site: string, isRemote?: boolean): Promise<Manager[]> {
         if (isRemote) {
-            return doOnRemoteHagai(async (remoteRemult) => remoteRemult.call(SiteOverviewController.siteInfo)(site), true);
+            return doOnRemoteHagai(async (remoteRemult) => remoteRemult.call(SiteOverviewController.siteInfo, undefined, site), true);
         }
         else
             await createSiteContext(site);

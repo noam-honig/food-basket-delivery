@@ -1,5 +1,5 @@
-//import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
+import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
+let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
 import { ApplicationImages } from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as fs from 'fs';//
@@ -435,7 +435,7 @@ s.parentNode.insertBefore(b, s);})();
     else {
         registerImageUrls(app, api, '');
     }
-    app.use('/*/api/incoming-sms', api.withRemultMiddleware, async (req, res) => {
+    app.use('/*/api/incoming-sms', api.withRemult, async (req, res) => {
         try {
             let org = Sites.getOrganizationFromContext();
             if (redirect.includes(org)) {
@@ -534,18 +534,18 @@ s.parentNode.insertBefore(b, s);})();
     });
 
 
-    app.get('', api.withRemultMiddleware, (req, res) => {
+    app.get('', api.withRemult, (req, res) => {
 
         sendIndex(res, req);
     });
 
-    app.get('/index.html', api.withRemultMiddleware, (req, res) => {
+    app.get('/index.html', api.withRemult, (req, res) => {
 
         sendIndex(res, req);
     });
     app.use(express.static(publicRoot));
 
-    app.use('/*', api.withRemultMiddleware, async (req, res) => {
+    app.use('/*', api.withRemult, async (req, res) => {
         await sendIndex(res, req);
     });
 
@@ -605,7 +605,7 @@ async function downloadPaperTrailLogs() {
 }
 
 function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
-    app.use(sitePrefix + '/assets/apple-touch-icon.png', api.withRemultMiddleware, async (req, res) => {
+    app.use(sitePrefix + '/assets/apple-touch-icon.png', api.withRemult, async (req, res) => {
         try {
             let imageBase = (await ApplicationImages.getAsync()).base64PhoneHomeImage;
             res.contentType('png');
@@ -632,7 +632,7 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
             res.send(fs.readFileSync(publicRoot + '/assets/favicon.ico'));
         }
     })
-    app.use(sitePrefix + '/favicon.ico', api.withRemultMiddleware, async (req, res) => {
+    app.use(sitePrefix + '/favicon.ico', api.withRemult, async (req, res) => {
         try {
             res.contentType('ico');
             let imageBase = (await ApplicationImages.getAsync()).base64Icon;

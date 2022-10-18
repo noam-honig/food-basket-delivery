@@ -151,7 +151,7 @@ export class AuthServiceController {
     }
 
     static async signJwt(result: any, timeToDisconnect: number) {
-        let jwt = (await import('jsonwebtoken'));
+        let jwt = (await import('jsonwebtoken'.toString()));
         if (timeToDisconnect)
             return jwt.sign(result, process.env.TOKEN_SIGN_KEY, { expiresIn: timeToDisconnect * TIMEOUT_MULTIPLIER_IN_SECONDS + 60/*to have one more minute on top of the user disconnect time */ });
         else

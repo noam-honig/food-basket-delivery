@@ -26,7 +26,7 @@ export class OrgEventsController {
                 schemas = x;
         }
         const otherSite = doOnRemoteHagai(async (remoteRemult, url) => {
-            const remote = await remoteRemult.call(OrgEventsController.getAllEvents)(phone, sitesFilter);
+            const remote = await remoteRemult.call(OrgEventsController.getAllEvents,undefined, phone, sitesFilter);
             r.push(...remote.map(s => ({ ...s, eventLogo: url + s.eventLogo, remoteUrl: url })));
         });
         let query = '';
