@@ -5,7 +5,6 @@ import { Remult, getFields, IdFilter, Repository, FieldRef, FieldMetadata, remul
 
 import { DataAreaSettings, DataControl, DataControlInfo, DataControlSettings, GridSettings, IDataSettings } from '@remult/angular/interfaces';
 import { BusyService, openDialog, RemultAngularPluginsService, RouteHelperService, SelectValueDialogComponent } from '@remult/angular';
-import { ServerEventAuthorizeAction } from "../server/server-event-authorize-action";
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { DistributionCenters } from "../manage/distribution-centers";
@@ -19,7 +18,7 @@ import "../helpers/init-context";
 import { EditCustomMessageArgs, evil, GridDialogArgs, InputAreaArgs, SelectHelperArgs, UITools, UpdateFamilyDialogArgs, UpdateGroupArgs } from "../helpers/init-context";
 import { Helpers, HelpersBase } from "../helpers/helpers";
 import { extractError } from "./extractError";
-import { DialogController } from "./dialog.controller";
+import { DialogController, StatusChangeChannel } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
@@ -232,58 +231,25 @@ export class DialogService implements UITools {
                 this.distCenter = null;
         }
     }
-    liveQuery :EventSourceLiveQuery;
-    eventSource: any;/*EventSource*/
+    liveQuery: EventSourceLiveQuery;
     refreshEventListener(enable: boolean) {
         const self = this;
-        if (typeof (window) !== 'undefined') {
-            let EventSource: any = window['EventSource'];
-            if (enable && typeof (EventSource) !== "undefined") {
-                this.liveQuery = new EventSourceLiveQuery();
+
+        if (enable) {
+            this.liveQuery = new EventSourceLiveQuery();
+            StatusChangeChannel.subscribe(this.liveQuery, data => {
                 this.zone.run(() => {
-                    var source = new EventSource(remult.apiClient.url + '/' + 'stream', { withCredentials: true });
-                    if (this.eventSource) {
-                        this.eventSource.close();
-                        this.eventSource = undefined;
-                    }
-                    this.eventSource = source;
-                    source.onmessage = e => {
-
-                        this.zone.run(() => {
-                            this.statusRefreshThrottle.do(() => this.refreshStatusStats.next());
-                            this.Info(e.data.toString() + ' ');
-                        });
-                    };
-                    let x = this;
-                    source.addEventListener("authenticate", async function (e) {
-                        try {
-                            await x.busy.donotWait(async () => await ServerEventAuthorizeAction.DoAthorize((<any>e).data.toString()));
-                        } catch (err) {
-                            var m = err.message;
-                            if (!m) {
-                                m = err;
-                            }
-                            try {
-                                if (remult.user)
-                                    m += " user:" + JSON.stringify(remult.user);
-                            } catch { }
-                            await DialogController.LogWithUser(m)
-                        }
-
-                    });
+                    this.statusRefreshThrottle.do(() => this.refreshStatusStats.next());
+                    this.Info(data + ' ');
                 });
-            }
-            else 
-            {
-                if (this.liveQuery){
-                    this.liveQuery.close();
-                    this.liveQuery = undefined;
-                }
-                if (this.eventSource) {
-                this.eventSource.close();
-                this.eventSource = undefined;
-            }
+            })
+
         }
+        else {
+            if (this.liveQuery) {
+                this.liveQuery.close();
+                this.liveQuery = undefined;
+            }
         }
     }
     async messageDialog(what: string) {

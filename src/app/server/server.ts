@@ -4,7 +4,6 @@ import { ApplicationImages } from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as fs from 'fs';//
 import { serverInit } from './serverInit';
-import { ServerEvents } from './server-events';
 import { ApplicationSettings, getSettings, setSettingsForSite } from '../manage/ApplicationSettings';
 import { Filter, OmitEB, remult, Remult, SqlDatabase } from 'remult';
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites';
@@ -71,8 +70,7 @@ import { DeliveryHistoryController } from "../delivery-history/delivery-history.
 import { NewDelivery } from "../families/familyActions";
 import { DeleteDeliveries } from "../family-deliveries/family-deliveries-actions";
 import { PlaybackController } from "../playback/playback.controller";
-import { DialogController } from "../select-popup/dialog.controller";
-import { ServerEventAuthorizeAction } from "./server-event-authorize-action";
+import { DialogController, StatusChangeChannel } from "../select-popup/dialog.controller";
 import { ShipmentAssignScreenController } from "../shipment-assign-screen/shipment-assign-screen.controller";
 import { PrintVolunteersController } from "../print-volunteers/print-volunteers.controller";
 import { PromiseThrottle } from "../shared/utils";
@@ -165,7 +163,6 @@ const controllers = [
     DeleteDeliveries,
     PlaybackController,
     DialogController,
-    ServerEventAuthorizeAction,
     ShipmentAssignScreenController,
     PrintVolunteersController,
     OverviewController
@@ -334,14 +331,12 @@ s.parentNode.insertBefore(b, s);})();
 
 
     if (!process.env.DISABLE_SERVER_EVENTS) {
-        let serverEvents = new ServerEvents(app, (req) => api.getRemult(req));
-
-
         let lastMessage = new Date();
         Families.SendMessageToBrowsers = (x, distCenter) => {
             if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
                 lastMessage = new Date();
-                serverEvents.SendMessage(x, distCenter)
+                StatusChangeChannel.send(x)
+
             }
         };
     }
@@ -353,6 +348,7 @@ s.parentNode.insertBefore(b, s);})();
         {
             entities,
             controllers,
+            messageChannels: [StatusChangeChannel],
             logApiEndPoints: process.env.logUrls == "true",
             initRequest: async (remult, req) => {
                 let url = '';
