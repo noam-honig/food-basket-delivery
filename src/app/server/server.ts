@@ -1,5 +1,5 @@
 import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
-let moduleLoader = new CustomModuleLoader('/dist-server/radweb/projects');
+let moduleLoader = new CustomModuleLoader('/dist/server/radweb/projects');
 import { ApplicationImages } from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as fs from 'fs';//

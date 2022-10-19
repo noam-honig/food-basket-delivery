@@ -23,6 +23,7 @@ import { DialogController } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
+import { EventSourceLiveQuery } from "../../../../radweb/projects/core/src/live-query/EventSourceLiveQuery";
 
 
 
@@ -231,13 +232,14 @@ export class DialogService implements UITools {
                 this.distCenter = null;
         }
     }
-
+    liveQuery :EventSourceLiveQuery;
     eventSource: any;/*EventSource*/
     refreshEventListener(enable: boolean) {
         const self = this;
         if (typeof (window) !== 'undefined') {
             let EventSource: any = window['EventSource'];
             if (enable && typeof (EventSource) !== "undefined") {
+                this.liveQuery = new EventSourceLiveQuery();
                 this.zone.run(() => {
                     var source = new EventSource(remult.apiClient.url + '/' + 'stream', { withCredentials: true });
                     if (this.eventSource) {
@@ -271,10 +273,17 @@ export class DialogService implements UITools {
                     });
                 });
             }
-            else if (this.eventSource) {
+            else 
+            {
+                if (this.liveQuery){
+                    this.liveQuery.close();
+                    this.liveQuery = undefined;
+                }
+                if (this.eventSource) {
                 this.eventSource.close();
                 this.eventSource = undefined;
             }
+        }
         }
     }
     async messageDialog(what: string) {
