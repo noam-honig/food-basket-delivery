@@ -22,7 +22,8 @@ import { DialogController, StatusChangeChannel } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
-import { EventSourceLiveQuery } from "../../../../radweb/projects/core/src/live-query/EventSourceLiveQuery";
+import { LiveQueryClient } from "../../../../radweb/projects/core/src/live-query/LiveQuery";
+import { EventSourceLiveQueryProvider } from "../../../../radweb/projects/core/src/live-query/EventSourceLiveQueryProvider";
 
 
 
@@ -83,6 +84,7 @@ export class DialogService implements UITools {
 
 
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
+        remult.liveQueryProvider = new LiveQueryClient(new EventSourceLiveQueryProvider(x => zone.run(() => x())));
         evil.YesNoPromise = (message) => this.YesNoPromise(message);
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)
@@ -231,16 +233,9 @@ export class DialogService implements UITools {
                 this.distCenter = null;
         }
     }
-    liveQuery: EventSourceLiveQuery;
     refreshEventListener() {
-        const self = this;
-        if (this.liveQuery) {
-            this.liveQuery.close();
-            this.liveQuery = undefined;
-        }
-        this.liveQuery = new EventSourceLiveQuery();
         if (remult.isAllowed(Roles.distCenterAdmin))
-            StatusChangeChannel.subscribe(this.liveQuery, data => {
+            StatusChangeChannel.subscribe(remult.liveQueryProvider, data => {
                 this.zone.run(() => {
                     this.statusRefreshThrottle.do(() => this.refreshStatusStats.next());
                     this.Info(data + ' ');
