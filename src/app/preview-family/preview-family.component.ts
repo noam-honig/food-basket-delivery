@@ -6,6 +6,7 @@ import { DialogConfig } from '@remult/angular';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { DialogService } from '../select-popup/dialog';
 
 
 @Component({
@@ -16,10 +17,10 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 @DialogConfig({ minWidth: 350 })
 export class PreviewFamilyComponent implements OnInit {
 
-  familyLists = new UserFamiliesList( this.settings);
+  familyLists = new UserFamiliesList(this.settings, this.dialog);
   public argsFamily: ActiveFamilyDeliveries;
-  constructor( private dialogRef: MatDialogRef<any>
-    , public settings: ApplicationSettings) { }
+  constructor(private dialogRef: MatDialogRef<any>
+    , public settings: ApplicationSettings, private dialog: DialogService) { }
   async ngOnInit() {
 
     this.familyLists.toDeliver = [this.argsFamily];

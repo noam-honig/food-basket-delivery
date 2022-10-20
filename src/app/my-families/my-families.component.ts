@@ -28,7 +28,7 @@ export class MyFamiliesComponent implements OnInit {
   static route: Route = {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
-  familyLists = new UserFamiliesList( this.settings);
+  familyLists = new UserFamiliesList( this.settings,this.dialog);
   user: UserInfo;
   remult = remult;
   constructor( public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
@@ -153,4 +153,7 @@ function checkCookie() {
   if (cookieEnabled)
     return "cookies are ok"
   else return "cookies don't work";
-}
+} 
+
+//TODO - check why cancel assignment doesn't appear for some reason
+// TODO - why when loading even though it shows a row - we see 0 manot

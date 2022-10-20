@@ -12,6 +12,7 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats, routeStrategy } from "../asign-family/route-strategy";
 import { openDialog } from "@remult/angular";
 import { Roles } from "../auth/roles";
+import { DialogService } from "../select-popup/dialog";
 
 const useWazeKey = "useWaze";
 export class UserFamiliesList {
@@ -38,7 +39,7 @@ export class UserFamiliesList {
     }
     forceShowMap = false;
 
-    constructor(private settings: ApplicationSettings) {
+    constructor(private settings: ApplicationSettings, private ui: DialogService) {
         this.useWaze = this.settings.lang.languageCode == 'iw';
         let x = localStorage.getItem(useWazeKey);
         if (x != undefined) {
@@ -151,7 +152,7 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
-            this.allFamilies = await remult.repo(ActiveFamilyDeliveries).find({
+            this.ui.liveQuery.subscribe(remult.repo(ActiveFamilyDeliveries), {
                 where: {
                     courier: this.helper,
                     visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
@@ -162,16 +163,20 @@ export class UserFamiliesList {
                     address: "asc"
                 },
                 limit: 1000
-            });
-            if (this.lastHelperId != this.helper.id) {
-                this.lastHelperId = this.helper.id;
+            }, families => {
+                
+                console.log("families subscription ",families.length);
+                this.allFamilies = families;
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
                     this.highlightNewFamilies = true;
                     this.familiesAlreadyAssigned.set(f.id, true);
                 }
-
+                this.initFamilies();
+            });
+            if (this.lastHelperId != this.helper.id) {
+                this.lastHelperId = this.helper.id;
             }
         }
         else {
@@ -213,7 +218,8 @@ export class UserFamiliesList {
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus == DeliveryStatus.ReadyForDelivery);
         if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {
-            this.refreshRoute({});
+            // TODO - return refresh routes
+            //this.refreshRoute({});
         }
         const q = new quantityHelper();
         this.toDeliver.forEach(d => {
@@ -268,3 +274,4 @@ export class UserFamiliesList {
 
     }
 }
+//FIXME -  handle the last added indication

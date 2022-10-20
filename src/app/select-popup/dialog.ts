@@ -232,11 +232,14 @@ export class DialogService implements UITools {
         }
     }
     liveQuery: EventSourceLiveQuery;
-    refreshEventListener(enable: boolean) {
+    refreshEventListener() {
         const self = this;
-
-        if (enable) {
-            this.liveQuery = new EventSourceLiveQuery();
+        if (this.liveQuery) {
+            this.liveQuery.close();
+            this.liveQuery = undefined;
+        }
+        this.liveQuery = new EventSourceLiveQuery();
+        if (remult.isAllowed(Roles.distCenterAdmin))
             StatusChangeChannel.subscribe(this.liveQuery, data => {
                 this.zone.run(() => {
                     this.statusRefreshThrottle.do(() => this.refreshStatusStats.next());
@@ -244,13 +247,6 @@ export class DialogService implements UITools {
                 });
             })
 
-        }
-        else {
-            if (this.liveQuery) {
-                this.liveQuery.close();
-                this.liveQuery = undefined;
-            }
-        }
     }
     async messageDialog(what: string) {
         return await openDialog(await (await import("./yes-no-question/yes-no-question.component")).YesNoQuestionComponent, y => {

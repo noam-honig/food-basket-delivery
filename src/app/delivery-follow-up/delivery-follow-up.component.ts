@@ -39,7 +39,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     this.refresh();
   }
 
-  familyLists = new UserFamiliesList(this.settings);
+  familyLists = new UserFamiliesList(this.settings,this.dialog);
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;

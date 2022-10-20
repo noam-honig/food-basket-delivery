@@ -14,4 +14,4 @@ export class DialogController {
 }
 
 
-export const StatusChangeChannel = new AMessageChannel<string>(() => remult.context.getSite() + ":statusChange", () => remult.isAllowed(Roles.admin));
+export const StatusChangeChannel = new AMessageChannel<string>(() => remult.context.getSite() + ":statusChange", () => remult.isAllowed(Roles.distCenterAdmin));

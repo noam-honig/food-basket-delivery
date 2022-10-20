@@ -312,7 +312,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.familyLists.initForHelper(this.helper), this.refreshBaskets()]);
 
     }
-    familyLists = new UserFamiliesList(this.settings);
+    familyLists = new UserFamiliesList(this.settings,this.dialog);
     filterGroup = '';
     groups: GroupsStats[] = [];
     trackGroup(a, g: GroupsStats) {
