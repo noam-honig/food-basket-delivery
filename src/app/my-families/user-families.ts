@@ -152,7 +152,7 @@ export class UserFamiliesList {
     lastHelperId = undefined;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
-            remult.liveQueryProvider.subscribe(remult.repo(ActiveFamilyDeliveries), {
+            remult.repo(ActiveFamilyDeliveries).query({
                 where: {
                     courier: this.helper,
                     visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
@@ -162,11 +162,9 @@ export class UserFamiliesList {
                     routeOrder: "asc",
                     address: "asc"
                 },
-                limit: 1000
-            }, families => {
-
-                console.log("families subscription ", families.length);
-                this.allFamilies = families;
+                pageSize: 1000
+            }).subscribe(reducer => {
+                this.allFamilies = reducer(this.allFamilies);
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
