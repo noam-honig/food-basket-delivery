@@ -9,7 +9,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 
 import { DestroyHelper, DialogService } from '../select-popup/dialog';
 import * as copy from 'copy-to-clipboard';
-import { Sites } from '../sites/sites';
+import { getLang, Sites } from '../sites/sites';
 import { Roles } from '../auth/roles';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { EventCardComponent } from '../event-card/event-card.component';
@@ -59,7 +59,7 @@ export class EventsComponent implements OnInit {
       {
         name: this.settings.lang.duplicateEvents,
         click: async () => {
-          await Event.duplicateEvent( this.dialog, this.events.selectedRows, () => {
+          await Event.duplicateEvent(this.dialog, this.events.selectedRows, () => {
             this.events.reloadData();
             this.events.selectedRows.splice(0);
           });
@@ -80,7 +80,15 @@ export class EventsComponent implements OnInit {
           this.showArchive = !this.showArchive;
           this.events.reloadData();
         }
+      },
+      {
+        name: getLang().exportToExcel,
+        click: async () => {
+          (await import('../shared/saveToExcel')).saveToExcel((await remult.context.getSettings()), remult.repo(Event), this.events, "events", this.dialog,
+            (e, c) => c == e.$.id )
+        }
       }
+
     ],
     numOfColumnsInGrid: 100,
     columnSettings: e => Event.displayColumns(e, this.dialog),
