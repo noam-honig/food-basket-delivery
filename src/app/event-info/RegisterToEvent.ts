@@ -125,6 +125,12 @@ export class RegisterToEvent {
         this.a2 = '';
         this.a3 = '';
         this.a4 = '';
+        const sp = new URLSearchParams(window.location.search);
+        for (const f of [this.$.a1, this.$.a2, this.$.a3, this.$.a4]) {
+            let val = sp.get(f.metadata.key);
+            if (val)
+                f.value = val;
+        }
         let lang = remult.context.lang;
         this.rememberMeOnThisDevice = storedInfo().name != '';
         let currentHelper = (await remult.context.getCurrentUser());
