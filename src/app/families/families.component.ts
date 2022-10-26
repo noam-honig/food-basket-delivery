@@ -375,8 +375,23 @@ export class FamiliesComponent implements OnInit {
                     ui: this.dialog,
                     userWhere: async () => (await this.families.getFilterWithSelectedRows()).where,
                     settings: this.settings
-                }))
-            , {
+                })),
+            {
+                name: this.settings.lang.exportToExcelBasic,
+                click: async () =>
+
+                    await saveToExcel<Families, GridSettings<Families>>((await remult.context.getSettings()), remult.repo(Families), this.families, "families-short", this.dialog,
+                        (f, c) => c == f.$.id || c == f.$.addressApiResult,
+                        (f, c) => ![f.$.id, f.$.name, f.$.phone1, f.$.address, f.$.floor, f.$.appartment, f.$.entrance, f.$.addressComment].includes(c),
+                        async (f, addColumn) => {
+                            for (const c of [f.$.area, f.$.custom2, f.$.familySource]) {
+                                addColumn(c.metadata.caption, c.displayValue,'s');
+                            }
+
+                        }),
+                visible: () => this.isAdmin
+            },
+            {
                 name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
@@ -465,7 +480,7 @@ export class FamiliesComponent implements OnInit {
 
                 }
             },
-           
+
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {

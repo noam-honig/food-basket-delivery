@@ -1331,6 +1331,7 @@ export class Language {
   totalItems = 'סה"כ פריטים';
   item = 'פריט';
   itemQuantity = 'כמות פריט';
+  exportToExcelBasic = 'יצוא מצומצם לאקסל'
 }
 
 
