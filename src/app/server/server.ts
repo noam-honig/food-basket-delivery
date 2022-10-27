@@ -80,10 +80,13 @@ import { ChangeLog, FieldDecider } from "../change-log/change-log";
 import { CallerController } from "../caller/caller.controller";
 
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
-import { remultExpress } from "remult/remult-express";
+import { remultExpress, ServerEventsController } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
 import { MessageTemplate } from "../edit-custom-message/messageMerger";
 import { RemultServer } from "remult/server/expressBridge";
+import { LiveQueryPublisher } from '../../../../radweb/projects/core/live-query';
+import { EventSourceLiveQueryProvider } from '../../../../radweb/projects/core/src/live-query/EventSourceLiveQueryProvider';
+import { LiveQueryPublisherInterface } from '../../../../radweb/projects/core/src/context';
 
 
 process.on('unhandledRejection', (reason, p) => {
@@ -343,12 +346,13 @@ s.parentNode.insertBefore(b, s);})();
     app.use(compression());
     //
 
+    const siteEventPublishers = new Map<string, LiveQueryPublisherInterface>();
+
     let api = remultExpress(
 
         {
             entities,
             controllers,
-            messageChannels: [StatusChangeChannel],
             logApiEndPoints: process.env.logUrls == "true",
             initRequest: async (remult, req) => {
                 let url = '';
@@ -359,12 +363,28 @@ s.parentNode.insertBefore(b, s);})();
                     else
                         url = req.path;
                 }
-                remult.context.getSite = () => getSiteFromUrl(url);
+                const site = getSiteFromUrl(url);
+                remult.context.getSite = () => site;
                 remult.context.requestUrlOnBackend = url;
                 if (!remult.isAllowed(Sites.getOrgRole()))
                     remult.user = (undefined);
                 remult.dataProvider = (dataSource(remult));
                 remult.context.getOrigin = () => req.headers['origin'] as string;
+
+                remult.liveQueryPublisher = siteEventPublishers.get(site);
+                if (!remult.liveQueryPublisher) {
+                   
+                    remult.liveQueryPublisher = new LiveQueryPublisher(new ServerEventsController(
+                        (channel, remult) => {
+                            if (channel === StatusChangeChannel.channelKey)
+                                return remult.isAllowed(Roles.distCenterAdmin)
+                            return channel.startsWith(`users.${remult.user.id}`);
+                        }
+                    ));
+                    siteEventPublishers.set(site, remult.liveQueryPublisher);
+                }
+
+
                 await InitContext(remult, undefined)
             },
             initApi: async (remult) => {

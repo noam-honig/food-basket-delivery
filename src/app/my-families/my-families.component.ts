@@ -156,4 +156,5 @@ function checkCookie() {
 } 
 
 //TODO - check why cancel assignment doesn't appear for some reason
+//TODO - check why when assigning two families in same address, it only shows the second one.
 // TODO - why when loading even though it shows a row - we see 0 manot
