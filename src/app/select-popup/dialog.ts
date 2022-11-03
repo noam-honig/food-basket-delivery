@@ -25,6 +25,8 @@ import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.c
 
 import { EventSourceLiveQueryProvider } from "../../../../radweb/projects/core/src/live-query/EventSourceLiveQueryProvider";
 import { LiveQueryClient } from "../../../../radweb/projects/core/src/live-query/LiveQuerySubscriber";
+import { AblyLiveQueryProvider } from "../../../../radweb/projects/core/live-query/ably";
+import * as ably from 'ably';
 
 
 
@@ -85,6 +87,35 @@ export class DialogService implements UITools {
 
     //TODO figure out why normal message doesn't rise
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
+        if (false) { }
+        else {
+            const p = new AblyLiveQueryProvider(new ably.Realtime.Promise(
+                {
+                    async authCallback(data, callback) {
+                        try {
+                            callback(null, await DialogController.getAblyToken())
+                        }
+                        catch (error: any) {
+                            callback(error, null);
+                        }
+                    },
+                }
+
+            ))
+            remult.liveQuerySubscriber = new LiveQueryClient({
+                async openStreamAndReturnCloseFunction(onReconnect) {
+                    const result = await p.openStreamAndReturnCloseFunction(onReconnect);
+                    return {
+                        disconnect() {
+                            result.disconnect();
+                        },
+                        subscribe(channel, handler) {
+                            return result.subscribe(remult.context.getSite() + ":" + channel, handler);
+                        },
+                    }
+                },
+            });
+        }
         remult.liveQuerySubscriber.wrapMessageHandling = x => zone.run(() => x());
         evil.YesNoPromise = (message) => this.YesNoPromise(message);
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));

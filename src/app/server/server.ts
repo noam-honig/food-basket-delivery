@@ -87,6 +87,8 @@ import { RemultServer } from "remult/server/expressBridge";
 import { LiveQueryPublisher } from '../../../../radweb/projects/core/live-query';
 import { EventSourceLiveQueryProvider } from '../../../../radweb/projects/core/src/live-query/EventSourceLiveQueryProvider';
 import { LiveQueryPublisherInterface } from '../../../../radweb/projects/core/src/context';
+import * as ably from 'ably';
+import { AblyServerEventDispatcher } from '../../../../radweb/projects/core/live-query/ably'
 
 
 process.on('unhandledRejection', (reason, p) => {
@@ -373,14 +375,22 @@ s.parentNode.insertBefore(b, s);})();
 
                 remult.liveQueryPublisher = siteEventPublishers.get(site);
                 if (!remult.liveQueryPublisher) {
-                   
-                    remult.liveQueryPublisher = new LiveQueryPublisher(new ServerEventsController(
-                        (channel, remult) => {
-                            if (channel === StatusChangeChannel.channelKey)
-                                return remult.isAllowed(Roles.distCenterAdmin)
-                            return channel.startsWith(`users.${remult.user.id}`);
-                        }
-                    ));
+                    if (false)
+                        remult.liveQueryPublisher = new LiveQueryPublisher(new ServerEventsController(
+                            (channel, remult) => {
+                                if (channel === StatusChangeChannel.channelKey)
+                                    return remult.isAllowed(Roles.distCenterAdmin)
+                                return channel.startsWith(`users:${remult.user.id}`);
+                            }
+                        ));
+                    else {
+                        const d = new AblyServerEventDispatcher(new ably.Realtime.Promise(process.env.ABLY_KEY));
+                        remult.liveQueryPublisher = new LiveQueryPublisher({
+                            sendChannelMessage(channel, message) {
+                                d.sendChannelMessage(site + ":" + channel, message);
+                            },
+                        });
+                    }
                     siteEventPublishers.set(site, remult.liveQueryPublisher);
                 }
 
