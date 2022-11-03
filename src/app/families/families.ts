@@ -480,7 +480,7 @@ export class Families extends IdEntity {
   tz2: string;
   @Fields.integer()
   familyMembers: number;
-  @Fields.dateOnly()
+  @Fields.dateOnly({displayValue:(_,d)=>d.toLocaleDateString('he-il')})
   birthDate: Date;
   @Fields.dateOnly<Families>({
 
