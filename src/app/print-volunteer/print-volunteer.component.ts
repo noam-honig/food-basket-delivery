@@ -65,7 +65,8 @@ export class PrintVolunteerComponent implements OnInit {
 
   columnProps: ElementProps = {
     caption: remult.context.lang.columnProperties, props: [
-      ...this.defs.fieldProps.props
+      ...this.defs.fieldProps.props,
+      new SizeProperty('width', remult.context.lang.width)
     ]
 
   };
@@ -126,9 +127,27 @@ export class PrintVolunteerComponent implements OnInit {
 
     this.save();
   }
+  moveControl(pos = 1) {
+    let from = this.currentControlList.indexOf(this.currentProps.control);
+    let to = from + pos;
+    if (to >= this.currentControlList.length || to < 0)
+      return;
+    this.currentControlList.splice(to, 0, ...this.currentControlList.splice(from, 1));
+    this.save();
+
+  }
   removeColumn() {
     this.report.columns.splice(this.report.columns.indexOf(this.currentColumn), 1);
     this.save();
+  }
+  moveColumn(pos = 1) {
+    let from = this.report.columns.indexOf(this.currentColumn);
+    let to = from + pos;
+    if (to >= this.report.columns.length || to < 0)
+      return;
+    this.report.columns.splice(to, 0, ...this.report.columns.splice(from, 1));
+    this.save();
+
   }
   async ngOnInit() {
     let filterVolunteer = this.route.snapshot.queryParams['volunteer'];

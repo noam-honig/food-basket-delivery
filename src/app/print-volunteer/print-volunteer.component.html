@@ -65,14 +65,12 @@
           </ng-container>
         </td>
       </tr>
-    </tbody>
-    <tfoot
-      *ngIf="
-        this.report.page[this.showItemsTotalsKey] ||
-        this.report.page[this.showBasketTotalsKey]
-      "
-    >
-      <tr>
+      <tr
+        *ngIf="
+          this.report.page[this.showItemsTotalsKey] ||
+          this.report.page[this.showBasketTotalsKey]
+        "
+      >
         <td [colSpan]="report.columns.length">
           <div style="display: flex">
             <div
@@ -90,7 +88,7 @@
           </div>
         </td>
       </tr>
-    </tfoot>
+    </tbody>
   </table>
 </ng-container>
 
@@ -103,11 +101,16 @@
   <button (click)="addControl()">{{ remult.context.lang.addField }}</button>
   <button (click)="addColumn()">{{ remult.context.lang.addColumn }}</button>
   <ng-container *ngIf="currentProps.control">
+    <button (click)="moveControl(-1)">{{remult.context.lang.moveUp}}</button>
+    <button (click)="moveControl(1)">{{remult.context.lang.moveDown}}</button>
     <button (click)="removeControl(currentProps.control)">
       {{ remult.context.lang.removeField }}
     </button>
   </ng-container>
   <ng-container *ngIf="currentColumn && currentProps == columnProps">
+    <button (click)="moveColumn(-1)">{{remult.context.lang.moveBefore}}</button>
+    <button (click)="moveColumn(1)">{{remult.context.lang.moveAfter}}</button>
+
     <button (click)="removeColumn()">
       {{ remult.context.lang.removeColumn }}
     </button>

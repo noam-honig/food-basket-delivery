@@ -1335,6 +1335,8 @@ export class Language {
   multipleLines = 'מספר שורות';
   showBasketTotals = "הצג סיכום סלים";
   showItemsTotals = "הצג סיכום פריטים";
+  moveBefore="הזז לפני";
+  moveAfter = "הזז אחרי";
 }
 
 
