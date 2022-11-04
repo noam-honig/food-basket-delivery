@@ -37,7 +37,8 @@ export class PrintVolunteerComponent implements OnInit {
   report: ReportInfo;
   row: VolunteerReportInfo;
   readonly newPageKey = '@newPageKey';
-  readonly showTotalsKey = '@showTotalsKey';
+  readonly showItemsTotalsKey = '@showTotalsKey';
+  readonly showBasketTotalsKey = '@showTotalBasketsKey';
   pageBreakBefore() {
     if (this.report.page[this.newPageKey])
       return 'always';
@@ -51,9 +52,13 @@ export class PrintVolunteerComponent implements OnInit {
         key: this.newPageKey
       },
       {
-        caption: remult.context.lang.showVolunteerTotals,
+        caption: remult.context.lang.showBasketTotals,
         inputType: "checkbox",
-        key: this.showTotalsKey
+        key: this.showBasketTotalsKey
+      }, {
+        caption: remult.context.lang.showItemsTotals,
+        inputType: "checkbox",
+        key: this.showItemsTotalsKey
       }]
 
   };

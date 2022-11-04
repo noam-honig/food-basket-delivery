@@ -66,14 +66,25 @@
         </td>
       </tr>
     </tbody>
-    <tfoot *ngIf="this.report.page[this.showTotalsKey]">
+    <tfoot
+      *ngIf="
+        this.report.page[this.showItemsTotalsKey] ||
+        this.report.page[this.showBasketTotalsKey]
+      "
+    >
       <tr>
         <td [colSpan]="report.columns.length">
-          <div style="display:flex">
-            <div style="white-space: pre-line">
+          <div style="display: flex">
+            <div
+              style="white-space: pre-line"
+              *ngIf="this.report.page[this.showBasketTotalsKey]"
+            >
               {{ v.baskets }}
             </div>
-            <div style="white-space: pre-line;padding:0 32px">
+            <div
+              style="white-space: pre-line; padding: 0 32px"
+              *ngIf="this.report.page[this.showItemsTotalsKey]"
+            >
               {{ v.items }}
             </div>
           </div>

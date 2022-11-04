@@ -1333,7 +1333,8 @@ export class Language {
   itemQuantity = 'כמות פריט';
   exportToExcelBasic = 'יצוא מצומצם לאקסל'
   multipleLines = 'מספר שורות';
-  showVolunteerTotals="הצג סה\"כ למתנדב";
+  showBasketTotals = "הצג סיכום סלים";
+  showItemsTotals = "הצג סיכום פריטים";
 }
 
 
