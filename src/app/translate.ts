@@ -1332,6 +1332,8 @@ export class Language {
   item = 'פריט';
   itemQuantity = 'כמות פריט';
   exportToExcelBasic = 'יצוא מצומצם לאקסל'
+  multipleLines = 'מספר שורות';
+  showVolunteerTotals="הצג סה\"כ למתנדב";
 }
 
 

@@ -1,63 +1,112 @@
 <ng-container *ngIf="report">
-    <table class="table-bordered" *ngFor="let v of data" style="width:100%;"
-        [style.pageBreakBefore]="pageBreakBefore()">
-        <thead>
-            <tr>
-                <td [colSpan]="report.columns.length" cdkDropList
-                    (cdkDropListDropped)="dropControl($event,report.controls)">
-                    <ng-container *ngFor="let f of report.controls">
-
-                        <div *ngIf="v.firstRow[f.fieldKey]" cdkDrag
-                            [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
-                            (click)="editControl(f,report.controls)">
-                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{v.firstRow[f.fieldKey]}}
-                            {{f.propertyValues&& f.propertyValues[defs.textAfterKey]}}
-                        </div>
-                    </ng-container>
-                </td>
-            </tr>
-            <tr>
-                <td [colSpan]="report.columns.length" *ngIf="settings.requireConfidentialityApprove">
-                    {{settings.lang.infoIsConfidential}}
-                </td>
-            </tr>
-            <tr>
-                <td *ngFor="let c of report.columns" (click)="editColumn(c)"
-                    [ngStyle]="defs.getStyle(columnProps.props,c.propertyValues)">
-                    {{c.propertyValues[defs.textBeforeKey]}}
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let r of v.deliveries">
-                <td *ngFor="let c of report.columns" cdkDropList (cdkDropListDropped)="dropControl($event,c.controls)">
-                    <ng-container *ngFor="let f of c.controls">
-
-                        <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
-                            cdkDrag (click)="editControl(f,c.controls)">
-                            {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}}
-                            {{f.propertyValues&& f.propertyValues[defs.textAfterKey ]}}
-                        </div>
-                    </ng-container>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <table
+    class="table-bordered"
+    *ngFor="let v of data"
+    style="width: 100%"
+    [style.pageBreakBefore]="pageBreakBefore()"
+  >
+    <thead>
+      <tr>
+        <td
+          [colSpan]="report.columns.length"
+          cdkDropList
+          (cdkDropListDropped)="dropControl($event, report.controls)"
+        >
+          <ng-container *ngFor="let f of report.controls">
+            <div
+              *ngIf="v.firstRow[f.fieldKey]"
+              cdkDrag
+              [ngStyle]="defs.getStyle(defs.fieldProps.props, f.propertyValues)"
+              (click)="editControl(f, report.controls)"
+            >
+              {{ f.propertyValues && f.propertyValues[defs.textBeforeKey] }}
+              {{ v.firstRow[f.fieldKey] }}
+              {{ f.propertyValues && f.propertyValues[defs.textAfterKey] }}
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td
+          [colSpan]="report.columns.length"
+          *ngIf="settings.requireConfidentialityApprove"
+        >
+          {{ settings.lang.infoIsConfidential }}
+        </td>
+      </tr>
+      <tr>
+        <td
+          *ngFor="let c of report.columns"
+          (click)="editColumn(c)"
+          [ngStyle]="defs.getStyle(columnProps.props, c.propertyValues)"
+        >
+          {{ c.propertyValues[defs.textBeforeKey] }}
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of v.deliveries">
+        <td
+          *ngFor="let c of report.columns"
+          cdkDropList
+          (cdkDropListDropped)="dropControl($event, c.controls)"
+        >
+          <ng-container *ngFor="let f of c.controls">
+            <div
+              *ngIf="r[f.fieldKey]"
+              [ngStyle]="defs.getStyle(defs.fieldProps.props, f.propertyValues)"
+              cdkDrag
+              (click)="editControl(f, c.controls)"
+            >
+              {{ f.propertyValues && f.propertyValues[defs.textBeforeKey] }}
+              {{ r[f.fieldKey] }}
+              {{ f.propertyValues && f.propertyValues[defs.textAfterKey] }}
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot *ngIf="this.report.page[this.showTotalsKey]">
+      <tr>
+        <td [colSpan]="report.columns.length">
+          <div style="display:flex">
+            <div style="white-space: pre-line">
+              {{ v.baskets }}
+            </div>
+            <div style="white-space: pre-line;padding:0 32px">
+              {{ v.items }}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
 </ng-container>
 
-<app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps" [(editing)]="editing">
+<app-properties-editor
+  *ngIf="report"
+  (change)="save()"
+  [props]="currentProps"
+  [(editing)]="editing"
+>
+  <button (click)="addControl()">{{ remult.context.lang.addField }}</button>
+  <button (click)="addColumn()">{{ remult.context.lang.addColumn }}</button>
+  <ng-container *ngIf="currentProps.control">
+    <button (click)="removeControl(currentProps.control)">
+      {{ remult.context.lang.removeField }}
+    </button>
+  </ng-container>
+  <ng-container *ngIf="currentColumn && currentProps == columnProps">
+    <button (click)="removeColumn()">
+      {{ remult.context.lang.removeColumn }}
+    </button>
+  </ng-container>
+  <br />
+  <!-- <button (click)="selectControl()">תכונות שדה</button> -->
 
-    <button (click)="addControl()">{{remult.context.lang.addField}}</button>
-    <button (click)="addColumn()">{{remult.context.lang.addColumn}}</button>
-    <ng-container *ngIf="currentProps.control">
-        <button (click)="removeControl(currentProps.control)">{{remult.context.lang.removeField}}</button>
-    </ng-container>
-    <ng-container *ngIf="currentColumn&&currentProps == columnProps">
-        <button (click)="removeColumn()">{{remult.context.lang.removeColumn}}</button>
-    </ng-container>
-    <br>
-    <!-- <button (click)="selectControl()">תכונות שדה</button> -->
-
-    <button
-        (click)="currentProps = pageProps;currentControlList = report.controls">{{remult.context.lang.pageProperties}}</button>
+  <button
+    (click)="currentProps = pageProps; currentControlList = report.controls"
+  >
+    {{ remult.context.lang.pageProperties }}
+  </button>
 </app-properties-editor>
