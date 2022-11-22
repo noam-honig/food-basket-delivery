@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { EntityFilter, remult } from 'remult';
+import { EntityFilter, Fields, getFields, remult } from 'remult';
 
 import { Families, sendWhatsappToFamily, canSendWhatsapp, buildFamilyMessage } from './families';
 
@@ -153,6 +153,8 @@ export class FamiliesComponent implements OnInit {
         this.searchString = '';
         this.refreshFamilyGrid();
     }
+    @Fields.string()
+    filterPhone = '';
     searchString = '';
     async doSearch() {
         if (this.families.currentRow && this.families.currentRow._.wasChanged())
@@ -205,6 +207,8 @@ export class FamiliesComponent implements OnInit {
         where: () => {
             let index = 0;
             let result: EntityFilter<Families>[] = [];
+            if (this.filterPhone)
+                result.push(Families.filterPhone(this.filterPhone))
 
             if (this.currentStatFilter) {
                 result.push(this.currentStatFilter.rule);
@@ -349,6 +353,22 @@ export class FamiliesComponent implements OnInit {
         },
         gridButtons: ([
             {
+                textInMenu: () => use.language.filterPhone,
+                icon: 'phone',
+                click: async () => {
+                    await this.dialog.inputAreaDialog({
+                        fields: [getFields(this).filterPhone],
+                        ok: () => {
+                            this.refreshFamilyGrid()
+                        },
+                        cancel: () => {
+                            this.filterPhone = ''
+                            this.refreshFamilyGrid()
+                        }
+                    })
+                }
+            },
+            {
                 textInMenu: () => use.language.refresh,
                 icon: 'refresh',
                 click: () => this.refresh()
@@ -385,7 +405,7 @@ export class FamiliesComponent implements OnInit {
                         (f, c) => ![f.$.id, f.$.name, f.$.phone1, f.$.address, f.$.floor, f.$.appartment, f.$.entrance, f.$.addressComment].includes(c),
                         async (f, addColumn) => {
                             for (const c of [f.$.area, f.$.custom2, f.$.familySource]) {
-                                addColumn(c.metadata.caption, c.displayValue,'s');
+                                addColumn(c.metadata.caption, c.displayValue, 's');
                             }
 
                         }),

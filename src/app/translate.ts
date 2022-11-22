@@ -1337,6 +1337,7 @@ export class Language {
   showItemsTotals = "הצג סיכום פריטים";
   moveBefore="הזז לפני";
   moveAfter = "הזז אחרי";
+  filterPhone = 'סינון לפי טלפון';
 }
 
 

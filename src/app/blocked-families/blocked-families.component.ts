@@ -13,7 +13,7 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./blocked-families.component.scss']
 })
 export class BlockedFamiliesComponent implements OnInit {
-  helper: import("c:/repos/hug-moms/src/app/helpers/helpers").Helpers;
+  helper: import("../helpers/helpers").Helpers;
 
   constructor(public settings: ApplicationSettings,
     public dialogRef: MatDialogRef<any>,
