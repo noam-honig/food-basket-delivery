@@ -352,7 +352,7 @@ export class Families extends IdEntity {
 
     });
   }
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.familyAdmin })
   static async addDelivery(familyId: string, basketType: BasketType, distCenter: DistributionCenters, courier: HelpersBase, settings: {
     quantity: number,
     comment: string,
