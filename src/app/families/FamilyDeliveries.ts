@@ -60,7 +60,7 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
     allowApiRead: Allow.authenticated,
     allowApiInsert: false,
     allowApiUpdate: Allow.authenticated,
-    allowApiDelete: Roles.admin,
+    allowApiDelete: Roles.familyAdmin,
     deleted: async self => {
         if (isBackend()) {
             await documentChange(self, true);
