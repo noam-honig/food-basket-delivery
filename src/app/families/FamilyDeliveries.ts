@@ -931,7 +931,9 @@ function logChanged(col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFi
 export class DeliveryChanges extends IdEntity {
     @Field()
     deliveryId: string = '';
-    @Field()
+    @Field({
+        translation: l => l.family,
+    })
     deliveryName: string = '';
     @Field()
     familyId: string = '';
@@ -939,20 +941,29 @@ export class DeliveryChanges extends IdEntity {
     appUrl: string = remult.context.requestRefererOnBackend;
     @Field()
     apiUrl: string = remult.context.requestUrlOnBackend;
-    @Field()
+    @Field({ translation: l => l.lastUpdateDate })
     changeDate: Date = new Date();
     @Field()
     userId: string = remult.user?.id;
-    @Field()
+    @Field({
+        translation: l => l.lastUpdateUser
+    })
     userName: string = remult.user?.name;
-    @Field()
+    @DataControl({ width: '100' })
+    @Field({
+        translation: l => l.volunteer
+    })
     courier: HelpersBase;
-    @Field()
+    @DataControl({ width: '100' })
+    @Field({
+        translation: l => l.volunteer + " " + l.previous
+    })
     previousCourier: HelpersBase;
-    @Field()
+    @Field({ translation: l => l.deliveryStatus })
     status: DeliveryStatus;
-    @Field()
+    @Field({ translation: l => l.deliveryStatus + " " + l.previous })
     previousDeliveryStatus: DeliveryStatus;
+    @DataControl({ width: '100' })
     @Field()
     deleted: boolean;
 }
