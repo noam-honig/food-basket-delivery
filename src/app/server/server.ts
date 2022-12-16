@@ -89,6 +89,7 @@ import { EventSourceLiveQueryProvider } from '../../../../radweb/projects/core/s
 import { LiveQueryPublisherInterface } from '../../../../radweb/projects/core/src/context';
 import * as ably from 'ably';
 import { AblyServerEventDispatcher } from '../../../../radweb/projects/core/live-query/ably'
+import { LiveQueryStorage, LiveQueryStorageInMemoryImplementation, ServerEventDispatcher } from '../../../../radweb/projects/core/src/live-query/LiveQueryPublisher';
 
 
 process.on('unhandledRejection', (reason, p) => {
@@ -348,7 +349,10 @@ s.parentNode.insertBefore(b, s);})();
     app.use(compression());
     //
 
-    const siteEventPublishers = new Map<string, LiveQueryPublisherInterface>();
+    const siteEventPublishers = new Map<string, {
+        dispatcher: ServerEventDispatcher;
+        storage: LiveQueryStorage;
+    }>();
 
     let api = remultExpress(
 
@@ -359,9 +363,12 @@ s.parentNode.insertBefore(b, s);})();
             initRequest: async (remult, req) => {
                 let url = '';
                 if (req) {
-                    remult.context.requestRefererOnBackend = req.headers['referer']?.toString();
+                    if (req.headers)
+                        remult.context.requestRefererOnBackend = req.headers['referer']?.toString();
                     if (req.originalUrl)
                         url = req.originalUrl;
+                    else if (req.url)
+                        url = req.url;
                     else
                         url = req.path;
                 }
@@ -373,26 +380,34 @@ s.parentNode.insertBefore(b, s);})();
                 remult.dataProvider = (dataSource(remult));
                 remult.context.getOrigin = () => req.headers['origin'] as string;
 
-                remult.liveQueryPublisher = siteEventPublishers.get(site);
-                if (!remult.liveQueryPublisher) {
+                let found = siteEventPublishers.get(site);
+                if (!found) {
+                    let dispatcher: ServerEventDispatcher;
                     if (false)
-                        remult.liveQueryPublisher = new LiveQueryPublisher(new ServerEventsController(
+
+                        dispatcher = new ServerEventsController(
                             (channel, remult) => {
                                 if (channel === StatusChangeChannel.channelKey)
                                     return remult.isAllowed(Roles.distCenterAdmin)
                                 return channel.startsWith(`users:${remult.user.id}`);
                             }
-                        ));
+                        )
+
                     else {
                         const d = new AblyServerEventDispatcher(new ably.Realtime.Promise(process.env.ABLY_KEY));
-                        remult.liveQueryPublisher = new LiveQueryPublisher({
+                        dispatcher = {
                             sendChannelMessage(channel, message) {
                                 d.sendChannelMessage(site + ":" + channel, message);
-                            },
+                            }
+                        }
+                        siteEventPublishers.set(site, found = {
+                            dispatcher,
+                            storage: new LiveQueryStorageInMemoryImplementation()
                         });
                     }
-                    siteEventPublishers.set(site, remult.liveQueryPublisher);
                 }
+                remult.liveQueryPublisher.dispatcher = found.dispatcher;
+                remult.liveQueryPublisher.storage = found.storage;
 
 
                 await InitContext(remult, undefined)
