@@ -521,7 +521,7 @@ export class FamiliesComponent implements OnInit {
             },
             {
                 name: use.language.assignHistory,
-                visible: h => remult.isAllowed(Roles.admin),
+                visible: h => remult.repo(DeliveryChanges).metadata.apiReadAllowed,
                 click: h => openDialog(GridDialogComponent, x => x.args = {
                     title: use.language.assignHistory + " - " + h.name,
                     settings: new GridSettings(remult.repo(DeliveryChanges), {

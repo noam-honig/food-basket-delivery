@@ -923,7 +923,7 @@ function logChanged(col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFi
 }
 
 @Entity<DeliveryChanges>("deliveryChanges", {
-    allowApiRead: Roles.admin,
+    allowApiRead: Roles.distCenterAdmin,
     defaultOrderBy: {
         changeDate: "desc"
     }

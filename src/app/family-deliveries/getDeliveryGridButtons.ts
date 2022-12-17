@@ -1,6 +1,6 @@
 import { Roles } from '../auth/roles';
 import { GridSettings, RowButton } from '@remult/angular/interfaces';
-import { FamilyDeliveries, ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { FamilyDeliveries, ActiveFamilyDeliveries, DeliveryChanges } from '../families/FamilyDeliveries';
 import { canSendWhatsapp, Families, sendWhatsappToFamily } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { getLang } from '../sites/sites';
@@ -221,9 +221,33 @@ export function getDeliveryGridButtons(args: deliveryButtonsHelper): RowButton<A
     {
       textInMenu: () => getLang().sendWhatsAppToFamily,
       click: async (d) => {
-        d.phone1.sendWhatsapp( getLang().hello + ' ' + d.name + ',');
+        d.phone1.sendWhatsapp(getLang().hello + ' ' + d.name + ',');
       },
       visible: d => d.phone1 && remult.isAllowed(Roles.distCenterAdmin) && args.settings.isSytemForMlt
+    },
+    {
+      name: getLang().assignHistory,
+      visible: h => remult.repo(DeliveryChanges).metadata.apiReadAllowed,
+      click: h => args.ui.gridDialog({
+        title: getLang().assignHistory + " - " + h.name,
+        settings: new GridSettings(remult.repo(DeliveryChanges), {
+          numOfColumnsInGrid: 8,
+          columnSettings: x => [
+            x.courier,
+            x.previousCourier,
+            x.status,
+            x.previousDeliveryStatus,
+            x.deleted,
+            x.userName,
+            x.changeDate,
+            x.appUrl,
+            x.apiUrl
+          ],
+          where: {
+            deliveryId: h.id
+          }
+        })
+      })
     }
   ] as RowButton<FamilyDeliveries>[];
 }
