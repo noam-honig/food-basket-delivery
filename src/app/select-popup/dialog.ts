@@ -22,9 +22,7 @@ import { DialogController, StatusChangeChannel } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
-
-import { EventSourceLiveQueryProvider } from "../../../../radweb/projects/core/src/live-query/EventSourceLiveQueryProvider";
-import { LiveQueryClient } from "../../../../radweb/projects/core/src/live-query/LiveQuerySubscriber";
+import { LiveQueryClient } from "remult/live-query";
 import { AblyLiveQueryProvider } from "../../../../radweb/projects/core/live-query/ably";
 import * as ably from 'ably';
 

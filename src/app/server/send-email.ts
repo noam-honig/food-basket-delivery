@@ -8,7 +8,7 @@ EmailSvc.sendMail = async (subject: string, message: string, email: string) => {
         return;
     if (!email || !email.includes('@'))
         return;
-    var nodemailer = await import('nodemailer'.toString());
+    var nodemailer = await import('nodemailer');
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         port: 587,

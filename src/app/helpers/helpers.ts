@@ -353,10 +353,10 @@ export class HelpersBase extends IdEntity {
 export class Helpers extends HelpersBase {
 
     static async generateHash(password: string) {
-        return await (await import('password-hash'.toString())).generate(password)
+        return await (await import('password-hash')).generate(password)
     }
     static async verifyHash(password: string, hash: string) {
-        return (await import('password-hash'.toString())).verify(password, hash);
+        return (await import('password-hash')).verify(password, hash);
     }
 
 

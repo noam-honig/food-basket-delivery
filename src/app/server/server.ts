@@ -1,5 +1,5 @@
-import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
-let moduleLoader = new CustomModuleLoader('/dist/server/radweb/projects');
+//import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
+//let moduleLoader = new CustomModuleLoader('/dist/server/radweb/projects');
 import { ApplicationImages } from "../manage/ApplicationImages";
 import * as express from 'express';
 import * as fs from 'fs';//
@@ -84,12 +84,10 @@ import { remultExpress, ServerEventsController } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
 import { MessageTemplate } from "../edit-custom-message/messageMerger";
 import { RemultServer } from "remult/server/expressBridge";
-import { LiveQueryPublisher } from '../../../../radweb/projects/core/live-query';
-import { EventSourceLiveQueryProvider } from '../../../../radweb/projects/core/src/live-query/EventSourceLiveQueryProvider';
-import { LiveQueryPublisherInterface } from '../../../../radweb/projects/core/src/context';
+
 import * as ably from 'ably';
-import { AblyServerEventDispatcher } from '../../../../radweb/projects/core/live-query/ably'
-import { LiveQueryStorage, LiveQueryStorageInMemoryImplementation, ServerEventDispatcher } from '../../../../radweb/projects/core/src/live-query/LiveQueryPublisher';
+import { AblyServerEventDispatcher } from 'remult/live-query/ably'
+import { LiveQueryStorage, LiveQueryStorageInMemoryImplementation, ServerEventDispatcher } from 'remult/live-query';
 
 
 process.on('unhandledRejection', (reason, p) => {

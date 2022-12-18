@@ -1,5 +1,5 @@
 import { Allow, BackendMethod, remult } from "remult";
-import { AMessageChannel } from "../../../../radweb/projects/core/src/live-query/LiveQuerySubscriber";
+import { AMessageChannel } from "remult/live-query";
 import * as ably from 'ably';
 export class DialogController {
 

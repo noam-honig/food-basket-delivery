@@ -120,7 +120,7 @@ export class AuthService {
             this.signout();
 
         }
-        if (dialog) {
+        if (dialog){
             tokenService.userChanged = () => {
                 dialog.refreshEventListener();
                 dialog.refreshFamiliesAndDistributionCenters();
