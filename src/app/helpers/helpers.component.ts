@@ -20,6 +20,8 @@ import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
 import { SendBulkSms } from './send-bulk-sms';
 import { HelpersController } from './helpers.controller';
 import { ChangeLogComponent } from '../change-log/change-log.component';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { DeliveryChanges } from '../families/FamilyDeliveries';
 
 @Component({
   selector: 'app-helpers',
@@ -238,11 +240,41 @@ export class HelpersComponent implements OnInit, OnDestroy {
           await h.showDeliveryHistory(this.dialog);
         }
       },
-      new SendBulkSms().sendSingleHelperButton(this.dialog), {
+      new SendBulkSms().sendSingleHelperButton(this.dialog),
+      {
         name: use.language.changeLog,
         visible: h => remult.isAllowed(Roles.admin),
         click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
+      },
+      {
+        name: use.language.assignHistory,
+        visible: h => remult.repo(DeliveryChanges).metadata.apiReadAllowed,
+        click: h => openDialog(GridDialogComponent, x => x.args = {
+          title: use.language.assignHistory + " - " + h.name,
+          settings: new GridSettings(remult.repo(DeliveryChanges), {
+            numOfColumnsInGrid: 8,
+            columnSettings: x => [
+              x.deliveryName,
+              x.courier,
+              x.previousCourier,
+              x.status,
+              x.previousDeliveryStatus,
+              x.deleted,
+              x.userName,
+              x.changeDate,
+              x.appUrl,
+              x.apiUrl
+            ],
+            where: {
+              $or: [
+                { courier: h },
+                { previousCourier: h }
+              ]
+            }
+          })
+        })
       }
+
     ],
 
 

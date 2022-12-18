@@ -2,7 +2,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { totalmem } from 'os';
 import { remult } from 'remult';
+import { quantityHelper } from '../families/BasketType';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from '../print-stickers/VolunteerReportDefs';
@@ -30,11 +32,13 @@ import { VolunteerReportInfo } from './VolunteerReportInfo';
 export class PrintVolunteerComponent implements OnInit {
 
   remult = remult;
-  constructor( private dialog: DialogService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
-  defs = new VolunteerReportDefs( this.dialog);
+  constructor(private dialog: DialogService, public settings: ApplicationSettings, private route: ActivatedRoute) { }
+  defs = new VolunteerReportDefs(this.dialog);
   report: ReportInfo;
   row: VolunteerReportInfo;
   readonly newPageKey = '@newPageKey';
+  readonly showItemsTotalsKey = '@showTotalsKey';
+  readonly showBasketTotalsKey = '@showTotalBasketsKey';
   pageBreakBefore() {
     if (this.report.page[this.newPageKey])
       return 'always';
@@ -46,13 +50,23 @@ export class PrintVolunteerComponent implements OnInit {
         caption: remult.context.lang.newPageForEachVolunteer,
         inputType: "checkbox",
         key: this.newPageKey
+      },
+      {
+        caption: remult.context.lang.showBasketTotals,
+        inputType: "checkbox",
+        key: this.showBasketTotalsKey
+      }, {
+        caption: remult.context.lang.showItemsTotals,
+        inputType: "checkbox",
+        key: this.showItemsTotalsKey
       }]
 
   };
 
   columnProps: ElementProps = {
     caption: remult.context.lang.columnProperties, props: [
-      ...this.defs.fieldProps.props
+      ...this.defs.fieldProps.props,
+      new SizeProperty('width', remult.context.lang.width)
     ]
 
   };
@@ -83,7 +97,9 @@ export class PrintVolunteerComponent implements OnInit {
   }
   data: {
     firstRow: {},
-    deliveries: any[]
+    deliveries: any[],
+    items: string,
+    baskets: string
   }[] = [];
   currentProps = this.pageProps;
   currentControlList: Control[];
@@ -111,9 +127,27 @@ export class PrintVolunteerComponent implements OnInit {
 
     this.save();
   }
+  moveControl(pos = 1) {
+    let from = this.currentControlList.indexOf(this.currentProps.control);
+    let to = from + pos;
+    if (to >= this.currentControlList.length || to < 0)
+      return;
+    this.currentControlList.splice(to, 0, ...this.currentControlList.splice(from, 1));
+    this.save();
+
+  }
   removeColumn() {
     this.report.columns.splice(this.report.columns.indexOf(this.currentColumn), 1);
     this.save();
+  }
+  moveColumn(pos = 1) {
+    let from = this.report.columns.indexOf(this.currentColumn);
+    let to = from + pos;
+    if (to >= this.report.columns.length || to < 0)
+      return;
+    this.report.columns.splice(to, 0, ...this.report.columns.splice(from, 1));
+    this.save();
+
   }
   async ngOnInit() {
     let filterVolunteer = this.route.snapshot.queryParams['volunteer'];
@@ -126,10 +160,28 @@ export class PrintVolunteerComponent implements OnInit {
         deliveries = [];
         this.data.push({
           firstRow: d,
-          deliveries
+          deliveries,
+          items: '',
+          baskets: ''
         })
       }
       deliveries.push(d);
+    }
+    this.data = [...this.data.filter(x => x.firstRow[this.defs.helperPhoneKey]), ...this.data.filter(x => !x.firstRow[this.defs.helperPhoneKey])];
+    for (const item of this.data) {
+      if (!item.firstRow[this.defs.helperPhoneKey])
+        item.deliveries.sort((a, b) => a[this.defs.nameKey].toString().localeCompare(b[this.defs.nameKey]))
+      let totalItems = new quantityHelper();
+      let totalBaskets = new quantityHelper();
+      item.deliveries.forEach(d => {
+        totalBaskets.parseComment(d[this.defs.basketTypeKey], +d[this.defs.quantityKey]);
+        let items: string = d[this.defs.itemsKey].toString();
+        items.split('\n').forEach(y => totalItems.parseComment(y.replace('X', ' ')))
+      });
+      item.items = totalItems.toString();
+      item.baskets = totalBaskets.toString();
+
+
     }
     this.row = await remult.repo(VolunteerReportInfo).findFirst({ key: "volunteerReport" }, { useCache: false, createIfNotFound: true });
     this.report = this.row.info;

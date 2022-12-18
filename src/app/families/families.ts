@@ -70,7 +70,7 @@ declare type factoryFor<T> = {
       }
       if (!self.defaultDistributionCenter)
         self.defaultDistributionCenter = await remult.context.findClosestDistCenter(self.addressHelper.location);
-      if (!remult.isAllowed(Roles.admin)) {
+      if (!remult.isAllowed(Roles.admin) && self.isNew()) {
         self.defaultDistributionCenter = await remult.context.getUserDistributionCenter()
       }
       let currentUser = (await remult.context.getCurrentUser());
@@ -135,7 +135,7 @@ declare type factoryFor<T> = {
         }
       }
     }
-    recordChanges( self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
+    recordChanges(self, { excludeColumns: f => [f.addressApiResult, f.addressLongitude, f.addressLatitude, f.drivingLongitude, f.drivingLatitude, f.statusDate, f.statusUser, f.createDate, f.createUser, f.lastUpdateDate, f.lastUpdateUser, f.shortUrlKey] })
   },
   backendPrefilter: () => {
     if (remult.isAllowed(Roles.admin))
@@ -352,7 +352,7 @@ export class Families extends IdEntity {
 
     });
   }
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.familyAdmin })
   static async addDelivery(familyId: string, basketType: BasketType, distCenter: DistributionCenters, courier: HelpersBase, settings: {
     quantity: number,
     comment: string,
@@ -480,7 +480,7 @@ export class Families extends IdEntity {
   tz2: string;
   @Fields.integer()
   familyMembers: number;
-  @Fields.dateOnly()
+  @Fields.dateOnly({ displayValue: (_, d) => d.toLocaleDateString('he-il') })
   birthDate: Date;
   @Fields.dateOnly<Families>({
 
@@ -698,7 +698,7 @@ export class Families extends IdEntity {
 
   @Field({
     includeInApi: Roles.familyAdmin,
-    translation:l=>l.previousDeliveryStatus,
+    translation: l => l.previousDeliveryStatus,
     sqlExpression: (self) => {
       return dbNameFromLastDelivery(self, fde => fde.deliverStatus, "prevStatus");
     }
@@ -809,7 +809,7 @@ export class Families extends IdEntity {
 
 
 
-  static SendMessageToBrowsers = (s: string,  distCenter: string) => { };
+  static SendMessageToBrowsers = (s: string, distCenter: string) => { };
   static GetUpdateMessage(n: FamilyUpdateInfo, updateType: number, courierName: string) {
     switch (updateType) {
       case 1:

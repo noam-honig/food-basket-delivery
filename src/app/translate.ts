@@ -1331,6 +1331,13 @@ export class Language {
   totalItems = 'סה"כ פריטים';
   item = 'פריט';
   itemQuantity = 'כמות פריט';
+  exportToExcelBasic = 'יצוא מצומצם לאקסל'
+  multipleLines = 'מספר שורות';
+  showBasketTotals = "הצג סיכום סלים";
+  showItemsTotals = "הצג סיכום פריטים";
+  moveBefore = "הזז לפני";
+  moveAfter = "הזז אחרי";
+  assignHistory = 'היסטורית שיוכים';
 }
 
 

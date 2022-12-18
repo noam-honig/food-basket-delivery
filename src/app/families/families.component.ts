@@ -43,6 +43,8 @@ import { UITools } from '../helpers/init-context';
 import { FamiliesController } from './families.controller';
 import { ChangeLogComponent } from '../change-log/change-log.component';
 import { async } from 'rxjs/internal/scheduler/async';
+import { GridDialogComponent } from '../grid-dialog/grid-dialog.component';
+import { DeliveryChanges } from './FamilyDeliveries';
 
 @Component({
     selector: 'app-families',
@@ -375,8 +377,23 @@ export class FamiliesComponent implements OnInit {
                     ui: this.dialog,
                     userWhere: async () => (await this.families.getFilterWithSelectedRows()).where,
                     settings: this.settings
-                }))
-            , {
+                })),
+            {
+                name: this.settings.lang.exportToExcelBasic,
+                click: async () =>
+
+                    await saveToExcel<Families, GridSettings<Families>>((await remult.context.getSettings()), remult.repo(Families), this.families, "families-short", this.dialog,
+                        (f, c) => c == f.$.id || c == f.$.addressApiResult,
+                        (f, c) => ![f.$.id, f.$.name, f.$.phone1, f.$.address, f.$.floor, f.$.appartment, f.$.entrance, f.$.addressComment].includes(c),
+                        async (f, addColumn) => {
+                            for (const c of [f.$.area, f.$.custom2, f.$.familySource]) {
+                                addColumn(c.metadata.caption, c.displayValue, 's');
+                            }
+
+                        }),
+                visible: () => this.isAdmin
+            },
+            {
                 name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
                 visible: () => this.isAdmin
@@ -465,7 +482,7 @@ export class FamiliesComponent implements OnInit {
 
                 }
             },
-           
+
             {
                 name: this.settings.lang.familyDeliveries,
                 click: async f => {
@@ -501,6 +518,30 @@ export class FamiliesComponent implements OnInit {
                 name: use.language.changeLog,
                 visible: h => remult.isAllowed(Roles.admin),
                 click: h => openDialog(ChangeLogComponent, x => x.args = { for: h })
+            },
+            {
+                name: use.language.assignHistory,
+                visible: h => remult.repo(DeliveryChanges).metadata.apiReadAllowed,
+                click: h => openDialog(GridDialogComponent, x => x.args = {
+                    title: use.language.assignHistory + " - " + h.name,
+                    settings: new GridSettings(remult.repo(DeliveryChanges), {
+                        numOfColumnsInGrid: 8,
+                        columnSettings: x => [
+                            x.courier,
+                            x.previousCourier,
+                            x.status,
+                            x.previousDeliveryStatus,
+                            x.deleted,
+                            x.userName,
+                            x.changeDate,
+                            x.appUrl,
+                            x.apiUrl
+                        ],
+                        where: {
+                            familyId: h.id
+                        }
+                    })
+                })
             }
         ]
     });

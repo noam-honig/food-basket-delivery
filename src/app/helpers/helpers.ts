@@ -206,7 +206,7 @@ export class HelpersBase extends IdEntity {
 
 @Entity<Helpers>("Helpers", {
     allowApiRead: Allow.authenticated,
-    allowApiDelete: Allow.authenticated,
+    allowApiDelete: false,
     allowApiUpdate: Allow.authenticated,
     allowApiInsert: true,
     saving: async (self) => {
@@ -632,7 +632,7 @@ export class Helpers extends HelpersBase {
     _disableDuplicateCheck = false;
     public static emptyPassword = 'password';
 
-    @Field({ translation: l => l.phone })
+    @Field({ translation: l => l.phone, allowApiUpdate: isNotSmsSignIn })
     phone: Phone;
     @ChangeDateColumn()
     lastSignInDate: Date;
@@ -751,6 +751,7 @@ export class Helpers extends HelpersBase {
 
     @Field<Helpers>({
         inputType: "password",
+        allowApiUpdate: isNotSmsSignIn,
         serverExpression: (self) => self.realStoredPassword ? Helpers.emptyPassword : ''
     })
     password: string;
@@ -978,3 +979,6 @@ export function makeId() {
     return text;
 }
 
+function isNotSmsSignIn() {
+    return remult.authenticated && !remult.isAllowed(Roles.smsSignIn);
+}

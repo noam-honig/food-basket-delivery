@@ -1,6 +1,7 @@
 import { BackendMethod, FieldMetadata, FieldsMetadata, IdEntity, remult } from 'remult';
 import { ClassType } from 'remult/classType';
 import { Roles } from '../auth/roles';
+import { quantityHelper } from '../families/BasketType';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { Families } from '../families/families';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
@@ -44,10 +45,10 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   f: Families;
 }> {
 
-  constructor( private ui: UITools) {
+  constructor(private ui: UITools) {
     super();
     this.fields.push({
-      key: 'name',
+      key: this.nameKey,
       caption: remult.context.lang.familyName,
       build: ({ fd }) => (fd.courier ? fd.routeOrder + ". " : "") + fd.name
     });
@@ -65,16 +66,21 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       key: 'address',
       caption: remult.context.lang.fullAddress,
       build: ({ fd }) => fd.getAddressDescription() +
-        (fd.entrance ? ", " + fd.$.entrance.metadata.caption + ": " + fd.entrance : '') +
-        (fd.floor ? ", " + fd.$.floor.metadata.caption + ": " + fd.floor : '') +
-        (fd.appartment ? ", " + fd.$.appartment.metadata.caption + ": " + fd.appartment : '') +
-        (fd.buildingCode ? ", " + fd.$.buildingCode.metadata.caption + ": " + fd.buildingCode : '') +
-        (fd.addressComment ? ", " + remult.context.lang.notice + ": " + fd.addressComment : '')
+        (fd.entrance ? ", \n" + fd.$.entrance.metadata.caption + ": " + fd.entrance : '') +
+        (fd.floor ? ", \n" + fd.$.floor.metadata.caption + ": " + fd.floor : '') +
+        (fd.appartment ? ", \n" + fd.$.appartment.metadata.caption + ": " + fd.appartment : '') +
+        (fd.buildingCode ? ", \n" + fd.$.buildingCode.metadata.caption + ": " + fd.buildingCode : '') +
+        (fd.addressComment ? ", \n" + remult.context.lang.notice + ": " + fd.addressComment : '')
     });
     this.fields.push({
-      key: 'basketType',
+      key: this.basketTypeKey,
       caption: remult.context.lang.basketType,
       build: ({ fd }) => (fd.quantity > 1 ? fd.quantity + " X " : "") + fd.$.basketType.displayValue
+    });
+    this.fields.push({
+      key: this.quantityKey,
+      caption: remult.context.lang.quantity,
+      build: ({ fd }) => fd.quantity.toString(),
     });
     this.fields.push({
       key: 'deliveryComments',
@@ -91,9 +97,20 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       caption: getSettings().boxes2Name,
       build: ({ fd }) => (fd.quantity * fd.basketType?.boxes2)?.toString()
     })
+    this.fields.push({
+      key: this.itemsKey,
+      caption: remult.context.lang.items,
+      build: ({ fd }) => {
+        let toTake = new quantityHelper();
+        toTake.parseComment(fd.items);
+        if (fd.basketType) {
+          toTake.parseComment(fd.basketType.whatToTake, fd.quantity);
+        }
+        return toTake.toString();
+      }
+    })
 
     this.addFields(ActiveFamilyDeliveries, a => a.fd, f => [
-      f.items,
       f.area,
       f.addressComment,
       f.phone1,
@@ -139,7 +156,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   }
   @BackendMethod({ allowed: Roles.admin })
   static async getStickerData(filterVolunteer?: string) {
-    let d = new VolunteerReportDefs( undefined);
+    let d = new VolunteerReportDefs(undefined);
     let lastCourier = null;
     for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
       where: {
@@ -198,7 +215,11 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
   textBeforeKey = "@textBefore";
   textAfterKey = "@textAfter";
   helperPhoneKey = "helperPhone";
+  nameKey = 'name';
+  itemsKey = 'items';
   helperCommentKey = "helperComment";
+  basketTypeKey = 'basketType';
+  quantityKey = 'quantity';
   fieldProps: ElementProps = {
     caption: this.remult.context.lang.fieldProperties,
     props: [
@@ -217,6 +238,10 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       new Property("inline", this.remult.context.lang.sameLine, "checkbox", (v, s) => {
         if (v)
           s["display"] = "inline";
+      }),
+      new Property("multipleLines", this.remult.context.lang.multipleLines, "checkbox", (v, s) => {
+        if (v)
+          s["white-space"] = "pre-line";
       })
     ],
     values: {}

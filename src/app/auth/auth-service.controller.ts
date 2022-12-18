@@ -1,7 +1,7 @@
 
 import { extractError } from "../select-popup/extractError";
 import { Helpers } from "../helpers/helpers";
-import { Allow, BackendMethod, remult,  UserInfo } from 'remult';
+import { Allow, BackendMethod, remult, UserInfo } from 'remult';
 import { LoginResponse } from "./login-response";
 import { Roles } from "./roles";
 import { Sites } from "../sites/sites";
@@ -18,25 +18,17 @@ export class AuthServiceController {
         if (h) {
             r.phone = h.phone.thePhone;
             let info = await buildHelperUserInfo(h);
-            let userIsOk = false;
-            if (remult.user && JSON.stringify(remult.user.roles) == JSON.stringify(info.roles) && remult.user.id == info.id)
-                userIsOk = true;
-            if (!h.realStoredPassword && !h.userRequiresPassword())
-                userIsOk = true;
+            info.roles = [Sites.getOrgRole(),Roles.smsSignIn];
 
+            h.lastSignInDate = new Date();
+            remult.user = (info);
 
-
-            if (userIsOk) {
-                h.lastSignInDate = new Date();
-                remult.user = (info);
-
-                await h.save();
-                return {
-                    valid: true,
-                    authToken: await buildToken(info, (await remult.context.getSettings())),
-                    requirePassword: false
-                } as LoginResponse
-            }
+            await h.save();
+            return {
+                valid: true,
+                authToken: await buildToken(info, (await remult.context.getSettings())),
+                requirePassword: false
+            } as LoginResponse
 
         }
         return r;

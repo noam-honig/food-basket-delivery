@@ -42,14 +42,30 @@ export class MessageStatus {
 
     }
 }
+async function documentChange(fd: FamilyDeliveries, deleted = false) {
+    await remult.repo(DeliveryChanges).insert({
+        deliveryId: fd.id,
+        deliveryName: fd.name,
+        familyId: fd.family,
+        courier: fd.courier,
+        previousCourier: fd.$.courier.originalValue,
+        deleted,
+        status: fd.deliverStatus,
+        previousDeliveryStatus: fd.$.deliverStatus.originalValue
+    })
+}
 @Entity<FamilyDeliveries>('FamilyDeliveries', {
     dbName: 'FamilyDeliveries',
     translation: l => l.deliveries,
     allowApiRead: Allow.authenticated,
     allowApiInsert: false,
     allowApiUpdate: Allow.authenticated,
-    allowApiDelete: Roles.admin,
-
+    allowApiDelete: Roles.familyAdmin,
+    deleted: async self => {
+        if (isBackend()) {
+            await documentChange(self, true);
+        }
+    },
     saving: async (self) => {
 
         if (self.isNew()) {
@@ -76,10 +92,11 @@ export class MessageStatus {
                         }
                     }
                     );
-                if (!self.isNew()&&self.$.courier.valueChanged() && !self.$.courier.originalValueIsNull()) {
+                if (!self.isNew() &&
+                    (self.$.courier.valueChanged()) ||
+                    self.$.deliverStatus.valueChanged()) {
                     await self.$.courier.load();
-
-                    console.log(`courier change:${remult.context.requestUrlOnBackend} - delivery:${self.name} change courier from: ${self.$.courier.originalValue?.name} to:${self.courier?.name} by:${remult.user?.name}`);
+                    await documentChange(self, false);
                 }
                 if (!self.isNew() && self.$.courierComments.valueChanged() && self.courierComments.length > 0)
                     self.courierCommentsDate = new Date();
@@ -903,4 +920,50 @@ function logChanged(col: FieldRef<any>, dateCol: FieldRef<any, Date>, user: IdFi
         user.setId(remult.user?.id);
         wasChanged();
     }
+}
+
+@Entity<DeliveryChanges>("deliveryChanges", {
+    allowApiRead: Roles.distCenterAdmin,
+    defaultOrderBy: {
+        changeDate: "desc"
+    }
+})
+export class DeliveryChanges extends IdEntity {
+    @Field()
+    deliveryId: string = '';
+    @Field({
+        translation: l => l.family,
+    })
+    deliveryName: string = '';
+    @Field()
+    familyId: string = '';
+    @Field()
+    appUrl: string = remult.context.requestRefererOnBackend;
+    @Field()
+    apiUrl: string = remult.context.requestUrlOnBackend;
+    @Field({ translation: l => l.lastUpdateDate })
+    changeDate: Date = new Date();
+    @Field()
+    userId: string = remult.user?.id;
+    @Field({
+        translation: l => l.lastUpdateUser
+    })
+    userName: string = remult.user?.name;
+    @DataControl({ width: '100' })
+    @Field({
+        translation: l => l.volunteer
+    })
+    courier: HelpersBase;
+    @DataControl({ width: '100' })
+    @Field({
+        translation: l => l.volunteer + " " + l.previous
+    })
+    previousCourier: HelpersBase;
+    @Field({ translation: l => l.deliveryStatus })
+    status: DeliveryStatus;
+    @Field({ translation: l => l.deliveryStatus + " " + l.previous })
+    previousDeliveryStatus: DeliveryStatus;
+    @DataControl({ width: '100' })
+    @Field()
+    deleted: boolean;
 }

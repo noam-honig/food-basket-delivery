@@ -21,7 +21,7 @@ import * as fetch from 'node-fetch';
 import { volunteersInEvent, Event, eventStatus } from "../events/events";
 
 import { OverviewController } from "../overview/overview.controller";
-import { ActiveFamilyDeliveries, FamilyDeliveries } from "../families/FamilyDeliveries";
+import { ActiveFamilyDeliveries, DeliveryChanges, FamilyDeliveries } from "../families/FamilyDeliveries";
 import { HelpersAndStats } from "../delivery-follow-up/HelpersAndStats";
 import { BasketType } from "../families/BasketType";
 import { DeliveryImage, FamilyImage } from "../families/DeiveryImages";
@@ -99,6 +99,7 @@ process.on('unhandledRejection', (reason, p) => {
     //1
 });
 const entities = [
+    DeliveryChanges,
     ChangeLog,
     HelpersAndStats,
     Event,

@@ -1,7 +1,8 @@
 <div *ngIf="showConfidentialityApproveInPrint()" class="print-only">
   {{settings.lang.infoIsConfidential}}
 </div>
-<mat-sidenav-container class="app-sidenav-container">
+  <router-outlet *ngIf="noConfHeaderAndBorders()"></router-outlet>
+<mat-sidenav-container class="app-sidenav-container" *ngIf="!noConfHeaderAndBorders()">
 
   <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
     *ngIf="showSideBar()" [mode]="dialog.isScreenSmall()?'over':'side'">
