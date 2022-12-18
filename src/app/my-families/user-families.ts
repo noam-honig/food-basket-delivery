@@ -12,7 +12,6 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats, routeStrategy } from "../asign-family/route-strategy";
 import { openDialog } from "@remult/angular";
 import { Roles } from "../auth/roles";
-import { DialogService } from "../select-popup/dialog";
 
 const useWazeKey = "useWaze";
 export class UserFamiliesList {
