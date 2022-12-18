@@ -37,7 +37,7 @@ export class ManageController {
         if (!email || !email.includes("@"))
             return "Invalid email";
 
-        var nodemailer = await import('nodemailer'.toString());
+        var nodemailer = await import('nodemailer');
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             port: 587,
