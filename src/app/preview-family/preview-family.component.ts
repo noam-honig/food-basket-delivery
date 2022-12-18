@@ -17,7 +17,7 @@ import { DialogService } from '../select-popup/dialog';
 @DialogConfig({ minWidth: 350 })
 export class PreviewFamilyComponent implements OnInit {
 
-  familyLists = new UserFamiliesList(this.settings, this.dialog);
+  familyLists = new UserFamiliesList(this.settings);
   public argsFamily: ActiveFamilyDeliveries;
   constructor(private dialogRef: MatDialogRef<any>
     , public settings: ApplicationSettings, private dialog: DialogService) { }

@@ -112,7 +112,6 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "keyv": "^4.5.0",
     "npm": "^6.14.7",
     "protractor": "~7.0.0",
     "source-map-explorer": "^2.5.2",

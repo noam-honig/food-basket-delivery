@@ -39,7 +39,7 @@ export class UserFamiliesList {
     }
     forceShowMap = false;
 
-    constructor(private settings: ApplicationSettings, private ui: DialogService) {
+    constructor(private settings: ApplicationSettings) {
         this.useWaze = this.settings.lang.languageCode == 'iw';
         let x = localStorage.getItem(useWazeKey);
         if (x != undefined) {
