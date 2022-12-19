@@ -83,9 +83,8 @@ export class DialogService implements UITools {
 
     statusRefreshThrottle = new myThrottle(1000);
 
-    //TODO figure out why normal message doesn't rise
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
-        if (false) { }
+        if (true) { }
         else {
             const p = new AblyLiveQueryProvider(new ably.Realtime.Promise(
                 {

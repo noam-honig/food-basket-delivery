@@ -312,7 +312,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.familyLists.initForHelper(this.helper), this.refreshBaskets()]);
 
     }
-    familyLists = new UserFamiliesList(this.settings);
+    destroyHelper = new DestroyHelper();
+    ngOnDestroy(): void {
+        this.destroyHelper.destroy();
+    }
+    familyLists = new UserFamiliesList(this.settings,this.destroyHelper);
     filterGroup = '';
     groups: GroupsStats[] = [];
     trackGroup(a, g: GroupsStats) {
@@ -378,10 +382,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
 
 
-    destroyHelper = new DestroyHelper();
-    ngOnDestroy(): void {
-        this.destroyHelper.destroy();
-    }
+
 
     constructor(public dialog: DialogService, public busy: BusyService, public settings: ApplicationSettings) {
         this.dialog.onDistCenterChange(() => this.refreshBaskets(), this.destroyHelper);
@@ -470,7 +471,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                                 f.courier = this.helper;
                                 await f.save();
                             }
-                            await this.familyLists.initForHelper(this.helper)
                         });
                     }
                 }

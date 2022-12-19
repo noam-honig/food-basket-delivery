@@ -38,8 +38,11 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     await openDialog(HelperAssignmentComponent, x => x.argsHelper = h);
     this.refresh();
   }
-
-  familyLists = new UserFamiliesList(this.settings);
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
+  }
+  familyLists = new UserFamiliesList(this.settings,this.destroyHelper);
   currentlHelper: helperFollowupInfo;
   async selectCourier(c: helperFollowupInfo) {
     this.currentlHelper = c;
@@ -191,10 +194,7 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper);
   }
-  destroyHelper = new DestroyHelper();
-  ngOnDestroy(): void {
-    this.destroyHelper.destroy();
-  }
+
 
 
   ngOnInit() {

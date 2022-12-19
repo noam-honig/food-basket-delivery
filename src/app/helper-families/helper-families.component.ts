@@ -312,7 +312,6 @@ export class HelperFamiliesComponent implements OnInit {
     this.dialog.analytics('Cancel Assign');
     f.courier = null;
     await f.save();
-    this.familyLists.reload();
     this.assignmentCanceled.emit();
   }
   cancelAll() {
@@ -321,7 +320,6 @@ export class HelperFamiliesComponent implements OnInit {
 
         this.dialog.analytics('cancel all');
         await HelperFamiliesController.cancelAssignAllForHelperOnServer(this.familyLists.helper);
-        this.familyLists.reload();
         this.assignmentCanceled.emit();
       });
     });
@@ -353,12 +351,11 @@ export class HelperFamiliesComponent implements OnInit {
 
         this.dialog.analytics('ok all');
         await HelperFamiliesController.okAllForHelperOnServer(this.familyLists.helper);
-        this.familyLists.reload();
       });
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    await new moveDeliveriesHelper(this.settings, this.dialog, () => this.familyLists.reload()).move(this.familyLists.helper, to, true, '', true);
+    await new moveDeliveriesHelper(this.settings, this.dialog,async () => {}).move(this.familyLists.helper, to, true, '', true);
 
   }
 

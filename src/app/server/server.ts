@@ -382,28 +382,32 @@ s.parentNode.insertBefore(b, s);})();
                 let found = siteEventPublishers.get(site);
                 if (!found) {
                     let dispatcher: ServerEventDispatcher;
-                    if (false)
-
-                        dispatcher = new ServerEventsController(
+                    if (true) {
+                        let x = new ServerEventsController(
                             (channel, remult) => {
                                 if (channel === StatusChangeChannel.channelKey)
                                     return remult.isAllowed(Roles.distCenterAdmin)
                                 return channel.startsWith(`users:${remult.user.id}`);
                             }
                         )
+                        x.debugFileSaver = x => fs.writeFileSync('./tmp/dispatcher.json', JSON.stringify(x, undefined, 2))
+                        dispatcher = x;
+                    }
 
                     else {
                         const d = new AblyServerEventDispatcher(new ably.Realtime.Promise(process.env.ABLY_KEY));
                         dispatcher = {
                             sendChannelMessage(channel, message) {
+                                fs.writeFileSync('./tmp/messages/' + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(message));
                                 d.sendChannelMessage(site + ":" + channel, message);
                             }
                         }
-                        siteEventPublishers.set(site, found = {
-                            dispatcher,
-                            storage: new LiveQueryStorageInMemoryImplementation()
-                        });
                     }
+                    siteEventPublishers.set(site, found = {
+                        dispatcher,
+                        //TODO - replace with storage that is stored in the db
+                        storage: new LiveQueryStorageInMemoryImplementation()
+                    });
                 }
                 remult.liveQueryPublisher.dispatcher = found.dispatcher;
                 remult.liveQueryPublisher.storage = found.storage;
@@ -643,7 +647,6 @@ async function downloadPaperTrailLogs() {
         console.error(err);
     }
 }
-
 function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
     app.use(sitePrefix + '/assets/apple-touch-icon.png', api.withRemult, async (req, res) => {
         try {
@@ -691,3 +694,5 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
         }
     });
 }
+LiveQueryStorageInMemoryImplementation.debugFileSaver = x => fs.writeFileSync('./tmp/liveQueryStorage.json', JSON.stringify(x, undefined, 2));
+         

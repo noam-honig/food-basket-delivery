@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
 import { BusyService, RouteHelperService } from '@remult/angular';
-import { remult,  UserInfo } from 'remult';
+import { remult, UserInfo } from 'remult';
 
 import { Helpers } from '../helpers/helpers';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DialogService } from '../select-popup/dialog';
+import { DestroyHelper, DialogService } from '../select-popup/dialog';
 
 import { LoginComponent } from '../users/login/login.component';
 import { AuthService } from '../auth/auth-service';
@@ -23,15 +23,19 @@ import { Roles } from '../auth/roles';
   templateUrl: './my-families.component.html',
   styleUrls: ['./my-families.component.scss']
 })
-export class MyFamiliesComponent implements OnInit {
+export class MyFamiliesComponent implements OnInit, OnDestroy {
 
   static route: Route = {
     path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
   };
-  familyLists = new UserFamiliesList( this.settings);
+  destroyHelper = new DestroyHelper();
+  ngOnDestroy(): void {
+    this.destroyHelper.destroy();
+  }
+  familyLists = new UserFamiliesList(this.settings, this.destroyHelper);
   user: UserInfo;
   remult = remult;
-  constructor( public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
+  constructor(public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
     private busy: BusyService) {
     this.user = remult.user as UserInfo;
   }
@@ -153,8 +157,5 @@ function checkCookie() {
   if (cookieEnabled)
     return "cookies are ok"
   else return "cookies don't work";
-} 
+}
 
-//TODO - check why cancel assignment doesn't appear for some reason
-//TODO - check why when assigning two families in same address, it only shows the second one.
-// TODO - why when loading even though it shows a row - we see 0 manot

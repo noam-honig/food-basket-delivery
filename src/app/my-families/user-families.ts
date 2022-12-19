@@ -12,6 +12,7 @@ import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats, routeStrategy } from "../asign-family/route-strategy";
 import { openDialog } from "@remult/angular";
 import { Roles } from "../auth/roles";
+import { DestroyHelper } from "../select-popup/dialog";
 
 const useWazeKey = "useWaze";
 export class UserFamiliesList {
@@ -38,7 +39,13 @@ export class UserFamiliesList {
     }
     forceShowMap = false;
 
-    constructor(private settings: ApplicationSettings) {
+    constructor(private settings: ApplicationSettings, destroyHelper: DestroyHelper) {
+        destroyHelper.add(() => {
+            if (this.unsubscribe) {
+                this.unsubscribe();
+                this.unsubscribe = undefined;
+            }
+        });
         this.useWaze = this.settings.lang.languageCode == 'iw';
         let x = localStorage.getItem(useWazeKey);
         if (x != undefined) {
@@ -149,9 +156,13 @@ export class UserFamiliesList {
     familiesAlreadyAssigned = new Map<string, boolean>();
     highlightNewFamilies = false;
     lastHelperId = undefined;
+    unsubscribe: VoidFunction;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
-            remult.repo(ActiveFamilyDeliveries).query({
+            if (this.unsubscribe)
+                this.unsubscribe();
+            this.checkRoutes = true;
+            this.unsubscribe = remult.repo(ActiveFamilyDeliveries).query({
                 where: {
                     courier: this.helper,
                     visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
@@ -163,7 +174,9 @@ export class UserFamiliesList {
                 },
                 pageSize: 1000
             }).subscribe(reducer => {
+                const prev = this.allFamilies.length;
                 this.allFamilies = reducer(this.allFamilies);
+                console.log("reducer", { prev, now: this.allFamilies.length })
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
@@ -180,7 +193,6 @@ export class UserFamiliesList {
             this.allFamilies = [];
             this.highlightNewFamilies = false;
         }
-        this.initFamilies();
     }
 
     distCenter: DistributionCenters;
@@ -201,6 +213,7 @@ export class UserFamiliesList {
         localStorage.setItem("labs", this.labs ? "true" : "");
     }
     whatToTake: string = '';
+    checkRoutes = false;
 
     initFamilies() {
 
@@ -214,9 +227,11 @@ export class UserFamiliesList {
             this.distCenter = undefined;
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus == DeliveryStatus.ReadyForDelivery);
-        if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {
-            // TODO - return refresh routes
-            //this.refreshRoute({});
+        if (this.checkRoutes) {
+            this.checkRoutes = false;
+            if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {
+                this.refreshRoute({});
+            }
         }
         const q = new quantityHelper();
         this.toDeliver.forEach(d => {
@@ -271,4 +286,3 @@ export class UserFamiliesList {
 
     }
 }
-//FIXME -  handle the last added indication
