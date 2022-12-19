@@ -23,6 +23,7 @@ import { InitContext as InitRemult } from '../helpers/init-context';
 import { actionInfo } from 'remult/src/server-action';
 import { OverviewController } from '../overview/overview.controller';
 import { FamilyInfoController } from '../family-info/family-info.controller';
+import { MemoryStats } from './stats';
 
 declare const lang = '';
 export const initSettings = {
@@ -193,7 +194,7 @@ async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<voi
     let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool));
     remult.dataProvider = (dp);
     await InitRemult(remult);
-    
+
     let builder = new PostgresSchemaBuilder(dp, Sites.guestSchema);
     if (!initSettings.disableSchemaInit) {
         for (const entity of <ClassType<any>[]>[
@@ -201,13 +202,14 @@ async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<voi
             ApplicationImages,
             Helpers,
             SitesEntity,
-            DistributionCenters
+            DistributionCenters,
+            MemoryStats
         ]) {
 
             await builder.createIfNotExist(remult.repo(entity).metadata);
             await builder.verifyAllColumns(remult.repo(entity).metadata);
         }
-        
+
     }
     await SitesEntity.completeInit();
     let settings = await remult.repo(ApplicationSettings).findId(1, { createIfNotFound: true });
@@ -216,16 +218,16 @@ async function initDatabase(pool: Pool, InitSchemas: (pool: Pool) => Promise<voi
         settings.id = 1;
         await settings.save();
     } else {
-        
+
         if (settings.organisationName == "מערכת חלוקה") {
             settings.organisationName = "חגי - אפליקציה לחלוקת מזון";
         }
         settings.logoUrl = '/assets/apple-touch-icon.png';
         if (settings._.wasChanged())
-        await settings.save();
+            await settings.save();
     }
-    
-    
+
+
     InitSchemas(pool);
 }
 
