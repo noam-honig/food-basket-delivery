@@ -23,7 +23,7 @@ import { AddressInputComponent } from "../address-input/address-input.component"
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
 import { LiveQueryClient } from "remult/live-query";
-import { AblyLiveQueryProvider } from "../../../../radweb/projects/core/live-query/ably";
+import { AblyLiveQueryProvider } from "remult/live-query/ably";
 import * as ably from 'ably';
 
 
