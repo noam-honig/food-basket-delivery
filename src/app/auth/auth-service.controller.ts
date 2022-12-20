@@ -18,7 +18,7 @@ export class AuthServiceController {
         if (h) {
             r.phone = h.phone.thePhone;
             let info = await buildHelperUserInfo(h);
-            info.roles = [Sites.getOrgRole(),Roles.smsSignIn];
+            info.roles = [Sites.getOrgRole(), Roles.smsSignIn];
 
             h.lastSignInDate = new Date();
             remult.user = (info);
@@ -136,8 +136,8 @@ export class AuthServiceController {
         if (!h)
             return undefined;
         let newInfo = await buildHelperUserInfo(h);
-
-
+        if (remult.isAllowed(Roles.smsSignIn))
+            newInfo.roles = [Sites.getOrgRole(), Roles.smsSignIn];
         return buildToken(newInfo, (await remult.context.getSettings()));
 
     }
