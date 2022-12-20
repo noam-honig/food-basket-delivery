@@ -392,8 +392,8 @@ s.parentNode.insertBefore(b, s);})();
                                 return channel.startsWith(`users:${remult.user.id}`);
                             }
                         )
-                        x.debugFileSaver = x => fs.writeFileSync('./tmp/dispatcher.json', JSON.stringify(x, undefined, 2))
-                        x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + id + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
+                        //x.debugFileSaver = x => fs.writeFileSync('./tmp/dispatcher.json', JSON.stringify(x, undefined, 2))
+                        //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + id + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
                         dispatcher = x;
                     }
 
