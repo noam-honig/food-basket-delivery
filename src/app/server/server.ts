@@ -481,7 +481,8 @@ s.parentNode.insertBefore(b, s);})();
                 //@ts-ignore
                 let val = siteEventPublishers.get(key).storage.queries.length;
                 vals.total += val;
-                vals[key] = val;
+                if (val > 0)
+                    vals[key] = val;
             }
             await remult.repo(MemoryStats).insert({
                 mem: process.memoryUsage(),
