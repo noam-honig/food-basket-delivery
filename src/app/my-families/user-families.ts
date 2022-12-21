@@ -174,9 +174,7 @@ export class UserFamiliesList {
                 },
                 pageSize: 1000
             }).subscribe(reducer => {
-                const prev = this.allFamilies.length;
                 this.allFamilies = reducer(this.allFamilies);
-                console.log("reducer", { prev, now: this.allFamilies.length })
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {

@@ -87,7 +87,7 @@ import { RemultServer } from "remult/server/expressBridge";
 
 import * as ably from 'ably';
 import { AblyServerEventDispatcher } from 'remult/live-query/ably'
-import { LiveQueryStorage, LiveQueryStorageInMemoryImplementation, ServerEventDispatcher } from 'remult/live-query';
+import { LiveQueryPublisher, LiveQueryStorage, LiveQueryStorageInMemoryImplementation, ServerEventDispatcher } from 'remult/live-query';
 import { MemoryStats } from "./stats";
 
 
@@ -385,6 +385,7 @@ s.parentNode.insertBefore(b, s);})();
                 if (!found) {
                     let dispatcher: ServerEventDispatcher;
                     if (true) {
+                        //TODO YONI - review channel name
                         let x = new ServerEventsController(
                             (channel, remult) => {
                                 if (channel === StatusChangeChannel.channelKey)
@@ -392,8 +393,8 @@ s.parentNode.insertBefore(b, s);})();
                                 return channel.startsWith(`users:${remult.user.id}`);
                             }
                         )
-                        //x.debugFileSaver = x => fs.writeFileSync('./tmp/dispatcher.json', JSON.stringify(x, undefined, 2))
-                        //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + id + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
+                        //x.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'dispatcher.json', JSON.stringify(x, undefined, 2))
+                        //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
                         dispatcher = x;
                     }
 
@@ -412,10 +413,13 @@ s.parentNode.insertBefore(b, s);})();
                         //TODO - replace with storage that is stored in the db
                         storage
                     });
-                    //storage.debugFileSaver = x => fs.writeFileSync('./tmp/liveQueryStorage.json', JSON.stringify(x, undefined, 2));
+                    //storage.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'liveQueryStorage.json', JSON.stringify(x, undefined, 2));
                 }
-                remult.liveQueryPublisher.dispatcher = found.dispatcher;
-                remult.liveQueryPublisher.storage = found.storage;
+                let z = new LiveQueryPublisher(found.dispatcher, found.storage, (remult.liveQueryPublisher as LiveQueryPublisher).performWithRequest);
+                //z.debugFileSaver = x => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(x, undefined, 2));
+                remult.liveQueryPublisher = z;
+
+
 
 
                 await InitContext(remult, undefined)
@@ -470,26 +474,27 @@ s.parentNode.insertBefore(b, s);})();
             rootPath: '/*/api',
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
-    setInterval(() => {
-        api.withRemult({
-            url: '/' + Sites.guestSchema + '/xx'
-        }, undefined, async () => {
-            let vals = {
-                total: 0
-            }
-            for (const key of siteEventPublishers.keys()) {
-                //@ts-ignore
-                let val = siteEventPublishers.get(key).storage.queries.length;
-                vals.total += val;
-                if (val > 0)
-                    vals[key] = val;
-            }
-            await remult.repo(MemoryStats).insert({
-                mem: process.memoryUsage(),
-                stats: vals
-            });
-        })
-    }, 60000);
+    if (true) //TODO - return this
+        setInterval(() => {
+            api.withRemult({
+                url: '/' + Sites.guestSchema + '/xx'
+            }, undefined, async () => {
+                let vals = {
+                    total: 0
+                }
+                for (const key of siteEventPublishers.keys()) {
+                    //@ts-ignore
+                    let val = siteEventPublishers.get(key).storage.queries.length;
+                    vals.total += val;
+                    if (val > 0)
+                        vals[key] = val;
+                }
+                await remult.repo(MemoryStats).insert({
+                    mem: process.memoryUsage(),
+                    stats: vals
+                });
+            })
+        }, 60000);
     app.use(api);
 
     if (Sites.multipleSites) {
@@ -718,4 +723,3 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
         }
     });
 }
-
