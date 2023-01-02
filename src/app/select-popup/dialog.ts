@@ -22,7 +22,6 @@ import { DialogController, StatusChangeChannel } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
-import { LiveQueryClient } from "remult/live-query";
 import { AblyLiveQueryProvider } from "remult/live-query/ably";
 import * as ably from 'ably';
 
@@ -99,21 +98,21 @@ export class DialogService implements UITools {
                 }
 
             ))
-            remult.liveQuerySubscriber = new LiveQueryClient({
-                async openStreamAndReturnCloseFunction(onReconnect) {
-                    const result = await p.openStreamAndReturnCloseFunction(onReconnect);
+            remult.apiClient.subscriptionClient = {
+                async openConnection(onReconnect) {
+                    const result = await p.openConnection(onReconnect);
                     return {
-                        disconnect() {
-                            result.disconnect();
+                        close() {
+                            result.close();
                         },
                         subscribe(channel, handler) {
                             return result.subscribe(remult.context.getSite() + ":" + channel, handler);
                         },
                     }
                 },
-            });
+            };
         }
-        remult.liveQuerySubscriber.wrapMessageHandling = x => zone.run(() => x());
+        remult.apiClient.wrapMessageHandling = x => zone.run(() => x());
         evil.YesNoPromise = (message) => this.YesNoPromise(message);
         this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
         if (this.distCenter === undefined)

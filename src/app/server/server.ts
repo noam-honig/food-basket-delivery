@@ -87,7 +87,7 @@ import { RemultServer } from "remult/server/expressBridge";
 
 import * as ably from 'ably';
 import { AblyServerEventDispatcher } from 'remult/live-query/ably'
-import { LiveQueryPublisher, LiveQueryStorage, LiveQueryStorageInMemoryImplementation, ServerEventDispatcher } from 'remult/live-query';
+import { LiveQueryStorage, LiveQueryStorageInMemoryImplementation, MessagePublisher } from 'remult/live-query';
 import { MemoryStats } from "./stats";
 
 
@@ -351,8 +351,8 @@ s.parentNode.insertBefore(b, s);})();
     //
 
     const siteEventPublishers = new Map<string, {
-        dispatcher: ServerEventDispatcher;
-        storage: LiveQueryStorage;
+        subscriptionServer: MessagePublisher,
+        liveQueryStorage: LiveQueryStorage
     }>();
 
     let api = remultExpress(
@@ -383,7 +383,7 @@ s.parentNode.insertBefore(b, s);})();
 
                 let found = siteEventPublishers.get(site);
                 if (!found) {
-                    let dispatcher: ServerEventDispatcher;
+                    let subscriptionServer: MessagePublisher;
                     if (true) {
                         //TODO YONI - review channel name
                         let x = new ServerEventsController(
@@ -395,35 +395,31 @@ s.parentNode.insertBefore(b, s);})();
                         )
                         //x.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'dispatcher.json', JSON.stringify(x, undefined, 2))
                         //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
-                        dispatcher = x;
+                        subscriptionServer = x;
                     }
 
                     else {
                         const d = new AblyServerEventDispatcher(new ably.Realtime.Promise(process.env.ABLY_KEY));
-                        dispatcher = {
-                            sendChannelMessage(channel, message) {
+                        subscriptionServer = {
+                            publishMessage(channel, message) {
                                 fs.writeFileSync('./tmp/messages/' + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(message));
-                                d.sendChannelMessage(site + ":" + channel, message);
+                                d.publishMessage(site + ":" + channel, message);
                             }
                         }
                     }
-                    var storage = new LiveQueryStorageInMemoryImplementation();
+                    var liveQueryStorage = new LiveQueryStorageInMemoryImplementation();
                     siteEventPublishers.set(site, found = {
-                        dispatcher,
+                        subscriptionServer,
                         //TODO - replace with storage that is stored in the db
-                        storage
+                        liveQueryStorage
                     });
                     //storage.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'liveQueryStorage.json', JSON.stringify(x, undefined, 2));
                 }
-                let z = new LiveQueryPublisher(found.dispatcher, found.storage, (remult.liveQueryPublisher as LiveQueryPublisher).performWithRequest);
                 //z.debugFileSaver = x => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(x, undefined, 2));
-                remult.liveQueryPublisher = z;
-
-
-
-
+                remult.subscriptionServer = found.subscriptionServer;
                 await InitContext(remult, undefined)
             },
+            liveQueryStorageForRequest: remult => siteEventPublishers.get(remult.context.getSite()).liveQueryStorage,
             initApi: async (remult) => {
 
                 await initDatabase();
@@ -474,7 +470,7 @@ s.parentNode.insertBefore(b, s);})();
             rootPath: '/*/api',
             queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
         });
-    if (true) //TODO - return this
+    if (true)
         setInterval(() => {
             api.withRemult({
                 url: '/' + Sites.guestSchema + '/xx'
@@ -484,7 +480,7 @@ s.parentNode.insertBefore(b, s);})();
                 }
                 for (const key of siteEventPublishers.keys()) {
                     //@ts-ignore
-                    let val = siteEventPublishers.get(key).storage.queries.length;
+                    let val = siteEventPublishers.get(key).liveQueryStorage.queries.length;
                     vals.total += val;
                     if (val > 0)
                         vals[key] = val;

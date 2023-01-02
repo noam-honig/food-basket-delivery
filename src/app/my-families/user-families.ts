@@ -162,7 +162,7 @@ export class UserFamiliesList {
             if (this.unsubscribe)
                 this.unsubscribe();
             this.checkRoutes = true;
-            this.unsubscribe = remult.repo(ActiveFamilyDeliveries).query({
+            this.unsubscribe = remult.repo(ActiveFamilyDeliveries).liveQuery({
                 where: {
                     courier: this.helper,
                     visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
@@ -172,9 +172,9 @@ export class UserFamiliesList {
                     routeOrder: "asc",
                     address: "asc"
                 },
-                pageSize: 1000
+                limit: 1000
             }).subscribe(reducer => {
-                this.allFamilies = reducer(this.allFamilies);
+                this.allFamilies = reducer.items;
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
