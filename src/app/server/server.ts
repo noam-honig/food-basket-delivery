@@ -80,14 +80,14 @@ import { ChangeLog, FieldDecider } from "../change-log/change-log";
 import { CallerController } from "../caller/caller.controller";
 
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
-import { remultExpress, ServerEventsController } from "remult/remult-express";
+import { remultExpress, SseSubscriptionServer } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
 import { MessageTemplate } from "../edit-custom-message/messageMerger";
 import { RemultServer } from "remult/server/expressBridge";
 
 import * as ably from 'ably';
 import { AblyServerEventDispatcher } from 'remult/live-query/ably'
-import { LiveQueryStorage, LiveQueryStorageInMemoryImplementation, MessagePublisher } from 'remult/live-query';
+import { LiveQueryStorage, InMemoryLiveQueryStorage, SubscriptionServer } from 'remult';
 import { MemoryStats } from "./stats";
 
 
@@ -342,7 +342,7 @@ s.parentNode.insertBefore(b, s);})();
         Families.SendMessageToBrowsers = (x, distCenter) => {
             if (new Date().valueOf() - lastMessage.valueOf() > 1000) {
                 lastMessage = new Date();
-                StatusChangeChannel.send(x)
+                StatusChangeChannel.publish(x)
 
             }
         };
@@ -351,7 +351,7 @@ s.parentNode.insertBefore(b, s);})();
     //
 
     const siteEventPublishers = new Map<string, {
-        subscriptionServer: MessagePublisher,
+        subscriptionServer: SubscriptionServer,
         liveQueryStorage: LiveQueryStorage
     }>();
 
@@ -361,7 +361,7 @@ s.parentNode.insertBefore(b, s);})();
             entities,
             controllers,
             logApiEndPoints: process.env.logUrls == "true",
-            initRequest: async (remult, req) => {
+            initRequest: async (remult, req, options) => {
                 let url = '';
                 if (req) {
                     if (req.headers)
@@ -383,10 +383,10 @@ s.parentNode.insertBefore(b, s);})();
 
                 let found = siteEventPublishers.get(site);
                 if (!found) {
-                    let subscriptionServer: MessagePublisher;
+                    let subscriptionServer: SubscriptionServer;
                     if (true) {
                         //TODO YONI - review channel name
-                        let x = new ServerEventsController(
+                        let x = new SseSubscriptionServer(
                             (channel, remult) => {
                                 if (channel === StatusChangeChannel.channelKey)
                                     return remult.isAllowed(Roles.distCenterAdmin)
@@ -407,7 +407,7 @@ s.parentNode.insertBefore(b, s);})();
                             }
                         }
                     }
-                    var liveQueryStorage = new LiveQueryStorageInMemoryImplementation();
+                    var liveQueryStorage = new InMemoryLiveQueryStorage();
                     siteEventPublishers.set(site, found = {
                         subscriptionServer,
                         //TODO - replace with storage that is stored in the db
@@ -417,9 +417,9 @@ s.parentNode.insertBefore(b, s);})();
                 }
                 //z.debugFileSaver = x => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(x, undefined, 2));
                 remult.subscriptionServer = found.subscriptionServer;
+                options.liveQueryStorage = found.liveQueryStorage;
                 await InitContext(remult, undefined)
             },
-            liveQueryStorageForRequest: remult => siteEventPublishers.get(remult.context.getSite()).liveQueryStorage,
             initApi: async (remult) => {
 
                 await initDatabase();
