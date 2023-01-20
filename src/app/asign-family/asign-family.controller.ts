@@ -172,15 +172,12 @@ export class AsignFamilyController {
         if (!strategy)
             throw "Invalid Strategy";
         let r = await optimizeRoute(await helper.getHelper(), existingFamilies, !args.doNotUseGoogle, strategy, args.volunteerLocation);
-        r.families = r.families.filter(f => f.checkAllowedForUser());
-        r.families = await Promise.all(r.families.map(x => x._.toApiJson()));
         return r;
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin, queue: false })
     static async AddBox(helper: HelpersBase, basketType: BasketType, distCenter: DistributionCenters, info: AddBoxInfo, progress?: ProgressListener) {
         let result: AddBoxResponse = {
             addedBoxes: 0,
-            families: [],
             basketInfo: undefined,
             routeStats: undefined,
             familiesInSameAddress: []
@@ -463,25 +460,15 @@ export class AsignFamilyController {
                             await addFamilyToResult(f);
                         }
                     }
-
-
-
-
                 }
-
             }
-
         }
-
-        existingFamilies = existingFamilies.filter(f => f.checkAllowedForUser());
-        existingFamilies.sort((a, b) => a.routeOrder - b.routeOrder);
-        result.families = existingFamilies.map(f => f._.toApiJson());
 
 
         result.familiesInSameAddress = result.familiesInSameAddress.filter((x, i) => !existingFamilies.find(f => f.id == x) && result.familiesInSameAddress.indexOf(x) == i);
         if (distCenter)
             distCenter.SendMessageToBrowser(settings.lang.deliveriesAssigned);
-        Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned,  '');
+        Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned, '');
         return result;
     }
     @BackendMethod({ allowed: Roles.distCenterAdmin })
@@ -590,13 +577,10 @@ export interface CityInfo {
     unassignedFamilies: number;
 }
 export interface AddBoxResponse {
-    families: any[];
     basketInfo: GetBasketStatusActionResponse
     addedBoxes: number;
     routeStats: routeStats;
     familiesInSameAddress: string[];
-
-
 }
 
 export interface FamilyDistance {

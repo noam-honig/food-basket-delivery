@@ -141,18 +141,7 @@ export class UserFamiliesList {
         return boxesText;
 
     }
-    async initForFamilies(helper: HelpersBase, familiesPocoArray: any[]) {
-        this.initHelper(helper);
-        let newFamilies = await Promise.all(familiesPocoArray.map(x => remult.repo(ActiveFamilyDeliveries).fromJson(x)));
-        newFamilies.push(...this.delivered);
-        newFamilies.push(...this.problem);
-        this.allFamilies = newFamilies;
-        this.initFamilies();
-    }
-    addFamily(d: FamilyDeliveries) {
-        this.allFamilies.push(d);
-        this.initFamilies();
-    }
+    
     familiesAlreadyAssigned = new Map<string, boolean>();
     highlightNewFamilies = false;
     lastHelperId = undefined;
@@ -194,16 +183,20 @@ export class UserFamiliesList {
     }
 
     distCenter: DistributionCenters;
-
+    lastTimeout: any;
     async refreshRoute(args: import("../asign-family/asign-family.controller").refreshRouteArgs, strategy?: routeStrategy) {
 
-        await (await import("../asign-family/asign-family.controller")).AsignFamilyController.RefreshRoute(this.helper, args, strategy).then(r => {
+        if (this.lastTimeout)
+            clearTimeout(this.lastTimeout)
+        this.lastTimeout = setTimeout(async () => {
+            await (await import("../asign-family/asign-family.controller")).AsignFamilyController.RefreshRoute(this.helper, args, strategy).then(r => {
 
-            if (r && r.ok && r.families.length == this.toDeliver.length) {
-                this.setRouteStats(r.stats);
-                this.initForFamilies(this.helper, r.families);
-            }
-        });
+                if (r && r.ok) {
+                    this.setRouteStats(r.stats);
+                }
+            });
+        }, 1000);
+
     }
     labs = Boolean(localStorage.getItem("labs"));
     toggleLabs() {
@@ -226,7 +219,7 @@ export class UserFamiliesList {
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus == DeliveryStatus.ReadyForDelivery);
         if (this.checkRoutes) {
-            this.checkRoutes = false;
+            // this.checkRoutes = false;
             if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {
                 this.refreshRoute({});
             }

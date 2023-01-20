@@ -316,7 +316,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroyHelper.destroy();
     }
-    familyLists = new UserFamiliesList(this.settings,this.destroyHelper);
+    familyLists = new UserFamiliesList(this.settings, this.destroyHelper);
     filterGroup = '';
     groups: GroupsStats[] = [];
     trackGroup(a, g: GroupsStats) {
@@ -459,7 +459,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
                 allRepeat: allRepeat
             });
             if (x.addedBoxes) {
-                this.familyLists.initForFamilies(this.helper, x.families);
+
 
                 let refreshBaskets = this.basketType.basket == undefined;
                 if (x.familiesInSameAddress.length > 0) {
@@ -599,7 +599,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         f.deliverStatus = DeliveryStatus.ReadyForDelivery;
         this.dialog.analytics(analyticsName);
         await f.save();
-        this.familyLists.addFamily(f);
         setTimeout(() => {
             this.refreshBaskets();
         }, 300);

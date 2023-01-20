@@ -101,8 +101,8 @@ export async function getRouteInfo(families: familiesInRoute[], optimize: boolea
 export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliveries[], useGoogle: boolean, strategy: routeStrategy, volunteerLocation: Location) {
 
 
+
     let result: {
-        families: ActiveFamilyDeliveries[],
         stats: {
             totalKm: number,
             totalTime: number
@@ -119,10 +119,10 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
     if (families.length < 1)
         return result;
     if (strategy == routeStrategy.basedOnAssignOrder) {
-        result.families = families;
-        result.families.sort((a, b) => a.courierAssingTime.valueOf() - b.courierAssingTime.valueOf());
+
+        families.sort((a, b) => a.courierAssingTime.valueOf() - b.courierAssingTime.valueOf());
         let i = 0;
-        for (const f of result.families) {
+        for (const f of families) {
             i++;
             f.routeOrder = i;
             await f.save();
@@ -246,12 +246,7 @@ export async function optimizeRoute(helper: Helpers, families: ActiveFamilyDeliv
         }
 
     }
-    families.sort((a, b) => a.routeOrder - b.routeOrder);
-    result.families = families;
-
     await helper.save();
-
-
     return result;
 
 }
