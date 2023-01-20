@@ -844,9 +844,9 @@ export class Helpers extends HelpersBase {
     callQuota: number;
 
     static deliveredPreviously = Filter.createCustom<Helpers,
-        { city: string }>(((remult, { city }) => {
+        { city: string }>((( { city }) => {
 
-            return SqlDatabase.customFilter(async c => {
+            return SqlDatabase.rawFilter(async c => {
                 let fd = SqlFor(remult.repo((await (import('../families/FamilyDeliveries'))).FamilyDeliveries));
                 let helpers = SqlFor(remult.repo(Helpers));
                 let sql = new SqlBuilder();

@@ -86,7 +86,7 @@ import { MessageTemplate } from "../edit-custom-message/messageMerger";
 import { RemultServer } from "remult/server/expressBridge";
 
 import * as ably from 'ably';
-import { AblyServerEventDispatcher } from 'remult/live-query/ably'
+import { AblySubscriptionServer } from 'remult/live-query/ably'
 import { LiveQueryStorage, InMemoryLiveQueryStorage, SubscriptionServer } from 'remult';
 import { MemoryStats } from "./stats";
 
@@ -361,7 +361,7 @@ s.parentNode.insertBefore(b, s);})();
             entities,
             controllers,
             logApiEndPoints: process.env.logUrls == "true",
-            initRequest: async (remult, req, options) => {
+            initRequest: async (req, options) => {
                 let url = '';
                 if (req) {
                     if (req.headers)
@@ -399,7 +399,7 @@ s.parentNode.insertBefore(b, s);})();
                     }
 
                     else {
-                        const d = new AblyServerEventDispatcher(new ably.Realtime.Promise(process.env.ABLY_KEY));
+                        const d = new AblySubscriptionServer(new ably.Realtime.Promise(process.env.ABLY_KEY));
                         subscriptionServer = {
                             publishMessage(channel, message) {
                                 fs.writeFileSync('./tmp/messages/' + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(message));
@@ -719,3 +719,12 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
         }
     });
 }
+
+
+function test<t = never>(what: (a: t, b: number) => void) {
+
+}
+
+test<any>((a, b) => {
+a.toString()
+});

@@ -1,5 +1,5 @@
 
-import {  BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter, remult } from "remult";
+import { BackendMethod, Entity, SqlDatabase, EntityBase, EntityFilter, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { YesNo } from "../families/YesNo";
 import { BasketType } from "../families/BasketType";
@@ -178,7 +178,8 @@ export interface groupStats {
 }
 
 @Entity<CitiesStats>(undefined, {
-    sqlExpression: async (self) => {
+    sqlExpression: async (meta) => {
+        const self = SqlFor(meta);
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder();
 
@@ -202,7 +203,8 @@ export class CitiesStats {
 }
 @Entity<CitiesStatsPerDistCenter>('citiesStatsPerDistCenter', {
     allowApiRead: false,
-    sqlExpression: async (self) => {
+    sqlExpression: async (meta) => {
+        const self = SqlFor(meta);
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let sql = new SqlBuilder();
 

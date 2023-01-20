@@ -1,4 +1,4 @@
-import {  Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions, remult } from "remult";
+import { Allowed, IdEntity, Filter, EntityFilter, EntityOrderBy, BackendMethod, ProgressListener, EntityBase, getFields, Repository, QueryOptions, remult } from "remult";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
 import { use } from "../translate";
 import { getLang } from '../sites/sites';
@@ -124,7 +124,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         return { $and: [await Filter.resolve(this.args.additionalWhere), await Filter.resolve(where)] } as EntityFilter<T>
     }
 
-    @BackendMethod<ActionOnRows<any>>({ allowed: (remult, self) => remult.isAllowed(self.args.allowed), queue: true })
+    @BackendMethod<ActionOnRows<any>>({ allowed: (self) => remult.isAllowed(self.args.allowed), queue: true })
     async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
         await this.serialHelper?.deserializeOnServer();
         let where: EntityFilter<T> = await this.composeWhere(Filter.entityFilterFromJson(remult.repo(this.entity).metadata, info.packedWhere));
@@ -132,7 +132,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         let count = await remult.repo(this.entity).count(where);
         if (count != info.count) {
             console.log({ count, packCount: info.count, name: remult.repo(this.entity).metadata.caption });
-            throw Error( "ארעה שגיאה אנא נסה שוב");
+            throw Error("ארעה שגיאה אנא נסה שוב");
         }
         let i = 0;
         let r = await pagedRowsIterator<T>(remult.repo(this.entity), {
@@ -149,7 +149,7 @@ export abstract class ActionOnRows<T extends IdEntity>  {
         });
         let message = this.args.title + ": " + r + " " + remult.repo(this.entity).metadata.caption + " " + getLang().updated;
 
-        await Families.SendMessageToBrowsers(message,  '');
+        await Families.SendMessageToBrowsers(message, '');
         return r;
     }
 

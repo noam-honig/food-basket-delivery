@@ -22,7 +22,7 @@ import { DialogController, StatusChangeChannel } from "./dialog.controller";
 import { AddressInputComponent } from "../address-input/address-input.component";
 import { AreaDataComponent } from "../area-data/area-data.component";
 import { BlockedFamiliesComponent } from "../blocked-families/blocked-families.component";
-import { AblyLiveQueryProvider } from "remult/live-query/ably";
+import { AblySubscriptionClient } from "remult/live-query/ably";
 import * as ably from 'ably';
 
 
@@ -85,7 +85,7 @@ export class DialogService implements UITools {
     constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
         if (true) { }
         else {
-            const p = new AblyLiveQueryProvider(new ably.Realtime.Promise(
+            const p = new AblySubscriptionClient(new ably.Realtime.Promise(
                 {
                     async authCallback(data, callback) {
                         try {
@@ -105,8 +105,8 @@ export class DialogService implements UITools {
                         close() {
                             result.close();
                         },
-                        subscribe(channel, handler) {
-                            return result.subscribe(remult.context.getSite() + ":" + channel, handler);
+                        subscribe(channel, handler, err) {
+                            return result.subscribe(remult.context.getSite() + ":" + channel, handler, err);
                         },
                     }
                 },

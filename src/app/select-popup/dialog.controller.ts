@@ -1,5 +1,5 @@
 import { Allow, BackendMethod, remult } from "remult";
-import { PubSubChannel } from "remult";
+import { SubscriptionChannel } from "remult";
 import * as ably from 'ably';
 export class DialogController {
 
@@ -23,4 +23,4 @@ export class DialogController {
         });
     }
 }
-export const StatusChangeChannel = new PubSubChannel<string>("statusChange");
+export const StatusChangeChannel = new SubscriptionChannel<string>("statusChange");

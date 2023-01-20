@@ -1,4 +1,4 @@
-import { IdEntity,  Entity, FieldMetadata, remult } from "remult";
+import { IdEntity, Entity, FieldMetadata, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { DateTimeColumn, relativeDateName, ChangeDateColumn } from "../model-shared/types";
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
@@ -17,9 +17,9 @@ import { UITools } from "../helpers/init-context";
 @Entity<InRouteHelpers>('in-route-helpers', {
     allowApiRead: Roles.admin,
     defaultOrderBy: { minAssignDate: "asc" },
-    sqlExpression: async (self) => {
+    sqlExpression: async (meta) => {
         let sql = new SqlBuilder();
-
+        const self = SqlFor(meta)
         let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
         let history = SqlFor(remult.repo(FamilyDeliveries));
         let com = SqlFor(remult.repo(HelperCommunicationHistory));
@@ -134,7 +134,7 @@ export class InRouteHelpers extends IdEntity {
     @Field({ translation: l => l.volunteerName })
     name: string;
     relativeDate(val: Date) {
-        return relativeDateName( { d: val });
+        return relativeDateName({ d: val });
     }
     @Field<InRouteHelpers, Date>({
         displayValue: (e, val) => e.relativeDate(val),

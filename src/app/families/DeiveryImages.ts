@@ -30,7 +30,7 @@ export class DeliveryImage extends IdEntity {
     allowApiCrud: Roles.familyAdmin,
     apiPrefilter: () => {
         if (!remult.isAllowed(Roles.admin)) {
-            return SqlDatabase.customFilter(async b => {
+            return SqlDatabase.rawFilter(async b => {
                 var f = await SqlFor(remult.repo(Families));
                 var fi = await SqlFor(remult.repo(FamilyImage));
                 var sql = new SqlBuilder();

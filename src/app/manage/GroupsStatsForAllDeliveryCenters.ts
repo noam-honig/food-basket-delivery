@@ -1,4 +1,4 @@
-import {  Entity, EntityBase, remult } from 'remult';
+import { Entity, EntityBase, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -9,7 +9,8 @@ import { GroupsStats } from './manage.component';
 @Entity<GroupsStatsForAllDeliveryCenters>('GroupsStatsForAllDeliveryCenters', {
   allowApiRead: Roles.distCenterAdmin,
   defaultOrderBy: { name: "asc" },
-  sqlExpression: async (self) => {
+  sqlExpression: async (meta) => {
+    const self = SqlFor(meta)
     let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
     let g = SqlFor(remult.repo(Groups));
 

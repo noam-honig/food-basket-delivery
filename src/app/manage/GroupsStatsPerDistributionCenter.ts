@@ -11,7 +11,8 @@ import { GroupsStats } from './manage.component';
 @Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
   allowApiRead: Roles.distCenterAdmin,
   defaultOrderBy: { name: "asc" },
-  sqlExpression: async (self) => {
+  sqlExpression: async (meta) => {
+    let self = SqlFor(meta);
     let f = SqlFor(remult.repo(ActiveFamilyDeliveries));
     let g = SqlFor(remult.repo(Groups));
     let d = SqlFor(remult.repo(DistributionCenters));

@@ -989,7 +989,7 @@ export class Families extends IdEntity {
     return result;
 
   }
-  static isAllowedForUser = Filter.createCustom<Families>(async (remult) => {
+  static isAllowedForUser = Filter.createCustom<Families>(async () => {
 
     if (!remult.authenticated())
       return { id: [] };

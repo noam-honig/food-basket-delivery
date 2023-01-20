@@ -531,7 +531,7 @@ export class FamilyDeliveries extends IdEntity {
         group: string,
         area: string,
         basketId: string
-    }>(async (remult, { city, group, area, basketId }) => {
+    }>(async ( { city, group, area, basketId }) => {
         let basket = await remult.repo(BasketType).findId(basketId);
         return {
             deliverStatus: DeliveryStatus.ReadyForDelivery,
@@ -543,7 +543,7 @@ export class FamilyDeliveries extends IdEntity {
             basketType: basket != null ? basket : undefined
         }
     });
-    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>(async (remult) => {
+    static isAllowedForUser = Filter.createCustom<FamilyDeliveries>(async () => {
 
         if (!remult.authenticated())
             return { id: [] };
@@ -567,7 +567,7 @@ export class FamilyDeliveries extends IdEntity {
         }
         return { $and: result };
     });
-    static inProgressCallerDeliveries = Filter.createCustom<FamilyDeliveries>(async remult => {
+    static inProgressCallerDeliveries = Filter.createCustom<FamilyDeliveries>(async () => {
         return { caller: await remult.context.getCurrentUser(), deliverStatus: DeliveryStatus.enquireDetails, archive: false }
 
     });
@@ -881,8 +881,8 @@ SqlBuilder.filterTranslators.push({
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 
-    static filterPhone = Filter.createCustom<ActiveFamilyDeliveries, string>((remult, phone) => {
-        return SqlDatabase.customFilter(async (x) => {
+    static filterPhone = Filter.createCustom<ActiveFamilyDeliveries, string>(( phone) => {
+        return SqlDatabase.rawFilter(async (x) => {
             var phoneParam = x.addParameterAndReturnSqlToken(phone);
             var sql = new SqlBuilder();
             var fd = SqlFor(remult.repo(ActiveFamilyDeliveries));
