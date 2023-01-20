@@ -44,6 +44,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
 
     if ((await remult.repo(BasketType).count() == 0)) {
         let h = remult.repo(BasketType).create();
+        //TODO - fix basket type to inherit from different id entity
         h.id = '';
         h.name = 'רגיל';
         h.boxes = 1;
@@ -107,6 +108,7 @@ export async function initSchema(pool1: PostgresPool, org: string) {
     }
     if ((await remult.repo(DistributionCenters).count() == 0)) {
         let h = remult.repo(DistributionCenters).create();
+        //TODO - fix basket type to inherit from different id entity
         h.id = '';
         h.name = l.defaultDistributionListName;
         h.address = settings.address;
