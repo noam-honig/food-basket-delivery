@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { DataAreaSettings, DataControl, InputField } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControl, InputField } from '../common-ui-elements/interfaces';
 import {  getFields } from 'remult';
 
 

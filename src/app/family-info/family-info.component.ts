@@ -15,7 +15,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { getLang, Sites } from '../sites/sites';
 import { Phone } from "../model-shared/phone";
 import { UserFamiliesList } from '../my-families/user-families';
-import { openDialog } from '@remult/angular';
+import { openDialog } from '../common-ui-elements';
 import { relativeDateName } from '../model-shared/types';
 import { ImageInfo } from '../images/images.component';
 import { SendSmsAction } from '../asign-family/send-sms-action';

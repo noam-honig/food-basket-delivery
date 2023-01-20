@@ -1,5 +1,5 @@
 import {  Entity, IdEntity, BackendMethod, Allow, remult } from "remult";
-import { DataControl, GridSettings } from '@remult/angular/interfaces';
+import { DataControl, GridSettings } from '../common-ui-elements/interfaces';
 import { Roles } from "../auth/roles";
 import { ChangeDateColumn } from "../model-shared/types";
 import { Helpers, HelpersBase } from "../helpers/helpers";

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import { remult } from 'remult';
-import { DialogConfig } from '@remult/angular';
+import { DialogConfig } from '../common-ui-elements';
 
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';

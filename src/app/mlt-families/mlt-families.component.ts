@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { remult } from 'remult';
 import { Roles } from '../auth/roles';
 

@@ -5,9 +5,9 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 import { DialogService } from '../select-popup/dialog';
 import { extractError } from "../select-popup/extractError";
 import { SiteOverviewComponent } from '../site-overview/site-overview.component';
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { actionInfo } from 'remult/src/server-action';
-import { InputField } from '@remult/angular/interfaces';
+import { InputField } from '../common-ui-elements/interfaces';
 import { dateRange, OverviewController, overviewResult, siteItem } from './overview.controller';
 
 @Component({

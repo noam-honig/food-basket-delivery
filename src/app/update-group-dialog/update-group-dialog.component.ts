@@ -5,7 +5,7 @@ import { DialogService } from '../select-popup/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { InputField } from '@remult/angular/interfaces';
+import { InputField } from '../common-ui-elements/interfaces';
 import { UpdateGroupArgs } from '../helpers/init-context';
 
 

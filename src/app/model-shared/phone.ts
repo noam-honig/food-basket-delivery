@@ -1,4 +1,4 @@
-import { DataControl } from "@remult/angular/interfaces";
+import { DataControl } from "../common-ui-elements/interfaces";
 import {  FieldRef } from "remult";
 import { getSettings } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";

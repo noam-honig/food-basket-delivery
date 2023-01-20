@@ -15,7 +15,7 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { use, Field } from '../translate';
 import { GroupsValue } from '../manage/groups';
-import { DataControl } from '@remult/angular/interfaces';
+import { DataControl } from '../common-ui-elements/interfaces';
 import { UITools } from '../helpers/init-context';
 
 

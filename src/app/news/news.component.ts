@@ -8,7 +8,7 @@ import { Route, ActivatedRoute } from '@angular/router';
 
 
 import { Filter } from 'remult';
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';

@@ -1,6 +1,6 @@
 import { Component, Input, ElementRef, ViewChild, NgZone, AfterViewInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { CustomComponentArgs, CustomDataComponent } from '@remult/angular/interfaces';
+import { CustomComponentArgs, CustomDataComponent } from '../common-ui-elements/interfaces';
 
 import { FieldRef } from 'remult';
 import { parseAddress, parseUrlInAddress } from '../families/families';

@@ -1,5 +1,5 @@
 
-import { DataControl } from "@remult/angular/interfaces";
+import { DataControl } from "../common-ui-elements/interfaces";
 import { IdEntity,  Entity } from "remult";
 import { Roles } from "../auth/roles";
 import { Field, FieldType, use } from "../translate";

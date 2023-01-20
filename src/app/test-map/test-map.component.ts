@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { openDialog } from '@remult/angular';
+import { openDialog } from '../common-ui-elements';
 import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
 
 

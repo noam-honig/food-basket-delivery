@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserFamiliesList } from './user-families';
 import { Route } from '@angular/router';
 
-import { BusyService, RouteHelperService } from '@remult/angular';
+import { BusyService, RouteHelperService } from '../common-ui-elements';
 import { remult, UserInfo } from 'remult';
 
 import { Helpers } from '../helpers/helpers';

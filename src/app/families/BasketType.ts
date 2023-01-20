@@ -5,7 +5,7 @@ import { Entity, IdEntity, Allow, Fields, FieldRef } from 'remult';
 import { Roles } from "../auth/roles";
 import { use, Field, FieldType } from '../translate';
 import { getLang } from '../sites/sites';
-import { DataControl, getEntityValueList, InputField } from '@remult/angular/interfaces';
+import { DataControl, getEntityValueList, InputField } from '../common-ui-elements/interfaces';
 import { getSettings } from '../manage/ApplicationSettings';
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UITools } from '../helpers/init-context';

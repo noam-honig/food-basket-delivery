@@ -5,7 +5,7 @@ import { remult } from "remult";
 import { ActiveFamilyDeliveries } from "../families/FamilyDeliveries";
 import { DeliveryStatus } from "../families/DeliveryStatus";
 
-import { openDialog } from "@remult/angular";
+import { openDialog } from "../common-ui-elements";
 import { SelectFamilyComponent } from "../select-family/select-family.component";
 import { moveDeliveriesHelperController } from "./move-deliveries-helper.controller";
 

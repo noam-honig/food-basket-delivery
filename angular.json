@@ -31,7 +31,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@remult/angular/input-styles.scss",
+              "src/app/common-ui-elements/input-styles.scss",
               "src/styles.scss"
             ],
             "scripts": [],

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { remult } from 'remult';
-import { GridSettings, RowButton } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
+import { GridSettings, RowButton } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { Event, eventStatus } from './events';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';

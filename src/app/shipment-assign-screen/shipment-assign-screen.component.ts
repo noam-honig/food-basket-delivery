@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { remult } from 'remult';
 import { Helpers } from '../helpers/helpers';
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
@@ -7,7 +7,7 @@ import { Location, GetDistanceBetween } from '../shared/googleApiHelpers';
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component';
 import { SelectHelperComponent } from '../select-helper/select-helper.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { InputField } from '@remult/angular/interfaces';
+import { InputField } from '../common-ui-elements/interfaces';
 import { data, familyInfo, helperInfo, relevantHelper, ShipmentAssignScreenController } from './shipment-assign-screen.controller';
 
 @Component({

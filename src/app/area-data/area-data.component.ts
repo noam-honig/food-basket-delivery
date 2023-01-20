@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { CustomComponentArgs, CustomDataComponent } from '@remult/angular/interfaces';
+import { CustomComponentArgs, CustomDataComponent } from '../common-ui-elements/interfaces';
 
 @Component({
   selector: 'app-area-data',

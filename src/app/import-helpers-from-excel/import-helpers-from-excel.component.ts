@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FieldMetadata, FieldsMetadata, FieldRef, remult } from 'remult';
 
 import { DialogService } from '../select-popup/dialog';
-import { BusyService } from '@remult/angular';
+import { BusyService } from '../common-ui-elements';
 import { MatStepper } from '@angular/material/stepper';
 
 import { ApplicationSettings } from '../manage/ApplicationSettings';

@@ -5,7 +5,7 @@ import { Phone } from "../model-shared/phone";
 import { Roles } from "../auth/roles";
 import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
-import { DataControl, getEntityValueList } from "@remult/angular/interfaces";
+import { DataControl, getEntityValueList } from "../common-ui-elements/interfaces";
 import { use, FieldType, Field } from "../translate";
 
 
@@ -21,7 +21,7 @@ import { use, FieldType, Field } from "../translate";
 @DataControl<any, DistributionCenters>({
   hideDataOnInput: true,
   valueList: remult => {
-    return DistributionCenters.getValueList(remult)
+    return DistributionCenters.getValueList()
   },
   width: '150',
 })

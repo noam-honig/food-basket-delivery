@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GridSettings } from '@remult/angular/interfaces';
+import { GridSettings } from '../common-ui-elements/interfaces';
 import { Button } from 'protractor';
 import { remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';

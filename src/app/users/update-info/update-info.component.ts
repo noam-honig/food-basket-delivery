@@ -4,11 +4,11 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Helpers } from '../../helpers/helpers';
 import { DialogService } from '../../select-popup/dialog';
 import { AuthService } from '../../auth/auth-service';
-import { InputField, GridSettings, DataAreaSettings } from '@remult/angular/interfaces';
+import { InputField, GridSettings, DataAreaSettings } from '../../common-ui-elements/interfaces';
 import { Route } from '@angular/router';
 import { remult } from 'remult';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
-import { AuthenticatedGuard, RouteHelperService } from '@remult/angular';
+import { AuthenticatedGuard, RouteHelperService } from '../../common-ui-elements';
 
 
 

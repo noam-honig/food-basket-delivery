@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {  FieldMetadata, getFields, remult } from 'remult';
-import { DataAreaSettings, DataControl, GridSettings } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
+import { DataAreaSettings, DataControl, GridSettings } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { Families } from '../families/families';
 import { FamilyStatus } from '../families/FamilyStatus';
 import { DialogService } from '../select-popup/dialog';

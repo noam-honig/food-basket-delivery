@@ -1,5 +1,5 @@
 
-import { DataControl } from '@remult/angular/interfaces';
+import { DataControl } from '../common-ui-elements/interfaces';
 import { ValueListFieldType } from 'remult/src/remult3';
 
 @DataControl({ width: '100' })

@@ -42,7 +42,6 @@
     "@angular/router": "~13.3.0",
     "@auth0/angular-jwt": "^5.0.2",
     "@google/markerclustererplus": "^5.0.3",
-    "@remult/angular": "^0.15.4",
     "@types/form-data": "^2.5.0",
     "ably": "^1.2.30",
     "angular2-qrcode": "^2.0.3",

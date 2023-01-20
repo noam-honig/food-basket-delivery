@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewChecked, AfterViewInit, NgZone, 
 import { MatDialogRef } from '@angular/material/dialog';
 import { Families, duplicateFamilyInfo, displayDupInfo, autocompleteResult as autoCompleteResult, sendWhatsappToFamily, canSendWhatsapp } from '../families/families';
 
-import { DataAreaFieldsSetting, DataAreaSettings, GridSettings } from '@remult/angular/interfaces';
+import { DataAreaFieldsSetting, DataAreaSettings, GridSettings } from '../common-ui-elements/interfaces';
 import { remult } from 'remult';
 import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component';
@@ -18,7 +18,7 @@ import { AddressInputComponent } from '../address-input/address-input.component'
 import { ImageInfo } from '../images/images.component';
 import { FamilyImage } from '../families/DeiveryImages';
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver';
-import { BusyService, DialogConfig, openDialog } from '@remult/angular';
+import { BusyService, DialogConfig, openDialog } from '../common-ui-elements';
 import { UpdateFamilyDialogArgs } from '../helpers/init-context';
 import { ChangeLogComponent } from '../change-log/change-log.component';
 

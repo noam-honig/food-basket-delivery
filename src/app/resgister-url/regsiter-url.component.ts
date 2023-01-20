@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { remult } from 'remult';
-import { GridSettings } from '@remult/angular/interfaces';
+import { GridSettings } from '../common-ui-elements/interfaces';
 import { Helpers } from '../helpers/helpers';
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component';
 import { RegisterURL } from './regsiter-url';
-import { openDialog } from '@remult/angular';
+import { openDialog } from '../common-ui-elements';
 
 @Component({
   selector: 'app-register-url',

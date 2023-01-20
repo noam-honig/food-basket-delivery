@@ -8,7 +8,7 @@ import { Roles } from "../auth/roles";
 import { getLang, Sites } from "../sites/sites";
 import { Language } from "../translate";
 import { ApplicationSettings } from "../manage/ApplicationSettings";
-import { DataAreaFieldsSetting, GridSettings, RowButton } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, GridSettings, RowButton } from "../common-ui-elements/interfaces";
 import { messageMerger } from "../edit-custom-message/messageMerger";
 
 let i = 0;

@@ -5,7 +5,7 @@ import { getLang } from '../sites/sites';
 import { PromiseThrottle } from "../shared/utils";
 
 import { Families } from "./families";
-import { DataAreaFieldsSetting, GridButton } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, GridButton } from "../common-ui-elements/interfaces";
 
 import { Roles } from "../auth/roles";
 import { UITools } from "../helpers/init-context";

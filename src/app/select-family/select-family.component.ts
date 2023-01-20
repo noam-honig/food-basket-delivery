@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
-import { GridSettings } from '@remult/angular/interfaces';
+import { GridSettings } from '../common-ui-elements/interfaces';
 import { EntityFilter, EntityOrderBy, remult } from 'remult';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { BusyService } from '@remult/angular';
+import { BusyService } from '../common-ui-elements';
 
 
 @Component({

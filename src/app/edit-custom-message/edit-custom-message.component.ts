@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { GridButton } from '@remult/angular/interfaces';
+import { GridButton } from '../common-ui-elements/interfaces';
 import { MatDialogRef } from '@angular/material/dialog';
 import { messageMerger } from './messageMerger';
 import { EditCustomMessageArgs } from '../helpers/init-context';

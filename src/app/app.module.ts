@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule, routes } from './app-routing.module';
 import { AppComponent, routeMap } from './app.component';
-import { RemultModule } from '@remult/angular';
+import { CommonUIElementsModule } from './common-ui-elements';
 import { MaterialModule } from './shared/material.module';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
@@ -245,7 +245,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     NgxPaginationModule,
     MaterialModule,
     BrowserAnimationsModule,
-    RemultModule,
+    CommonUIElementsModule,
     AppRoutingModule,
     ChartsModule,
     PlatformModule,
@@ -323,7 +323,7 @@ export function initApp(session: TokenService, settings: SettingsService, inject
       try {
         injectedRemult.context.getSite = () => getSiteFromUrl(window.location.pathname)
         remult.context.getSite = () => getSiteFromUrl(window.location.pathname)
-        
+
         await session.loadUserInfo();
 
       } catch {
@@ -397,5 +397,5 @@ export function initApp(session: TokenService, settings: SettingsService, inject
 
 
 Remult.onFind = (e) => {
- // console.trace(e.key);
+  // console.trace(e.key);
 }

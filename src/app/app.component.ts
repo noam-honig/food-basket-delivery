@@ -8,7 +8,7 @@ import { ApplicationSettings } from './manage/ApplicationSettings';
 import { SettingsService } from "./manage/SettingsService";
 import { FamiliesComponent } from './families/families.component';
 import { remult } from 'remult';
-import { RouteHelperService, BusyService } from '@remult/angular';
+import { RouteHelperService, BusyService } from './common-ui-elements';
 import { Roles } from './auth/roles';
 import { translationConfig, Language } from './translate';
 

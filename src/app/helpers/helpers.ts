@@ -1,5 +1,5 @@
 import { remult, IdEntity, UserInfo, Filter, Entity, BackendMethod, FieldOptions, Validators, FieldRef, FieldMetadata, FieldsMetadata, Allow, isBackend, SqlDatabase, Fields as remultFields, ValueConverters } from 'remult';
-import { DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
+import { DataControl, DataControlSettings, GridSettings, InputField } from '../common-ui-elements/interfaces';
 import { DateTimeColumn, logChanges, ChangeDateColumn, Email } from '../model-shared/types';
 import { SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { isPhoneValidForIsrael, Phone } from "../model-shared/phone";

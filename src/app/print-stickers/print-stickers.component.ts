@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '../common-ui-elements';
 import { IdEntity, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { Control, ElementProps, getMarginsH, getMarginsV, Property, SizeProperty } from './VolunteerReportDefs';

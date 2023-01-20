@@ -4,7 +4,7 @@ import { Phone } from "../model-shared/phone";
 import {  IdEntity, Entity, Allow } from 'remult';
 import { Roles } from "../auth/roles";
 
-import { DataControl, getEntityValueList } from "@remult/angular/interfaces";
+import { DataControl, getEntityValueList } from "../common-ui-elements/interfaces";
 import { use, Field, FieldType } from "../translate";
 
 @DataControl({

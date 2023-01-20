@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { openDialog } from '@remult/angular';
+import { openDialog } from '../common-ui-elements';
 import { Remult } from 'remult';
 import { Families } from '../families/families';
 import { ApplicationSettings } from '../manage/ApplicationSettings';

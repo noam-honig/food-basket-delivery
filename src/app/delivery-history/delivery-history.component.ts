@@ -10,7 +10,7 @@ import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-q
 import { Route } from '@angular/router';
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { DataAreaSettings, DataControlInfo, GridSettings } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControlInfo, GridSettings } from '../common-ui-elements/interfaces';
 
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
@@ -23,7 +23,7 @@ import { HelperGifts } from '../helper-gifts/HelperGifts';
 import { use, Field, Fields } from '../translate';
 import { DeliveryStatus } from '../families/DeliveryStatus';
 import { DistributionCenters } from '../manage/distribution-centers';
-import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
+import { BusyService, openDialog, RouteHelperService } from '../common-ui-elements';
 import { DeliveryHistoryController } from './delivery-history.controller';
 import { PlaybackComponent } from '../playback/playback.component';
 

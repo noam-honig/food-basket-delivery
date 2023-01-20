@@ -1,5 +1,5 @@
 import { Roles } from '../auth/roles';
-import { GridSettings, RowButton } from '@remult/angular/interfaces';
+import { GridSettings, RowButton } from '../common-ui-elements/interfaces';
 import { FamilyDeliveries, ActiveFamilyDeliveries, DeliveryChanges } from '../families/FamilyDeliveries';
 import { canSendWhatsapp, Families, sendWhatsappToFamily } from '../families/families';
 import { DeliveryStatus } from '../families/DeliveryStatus';

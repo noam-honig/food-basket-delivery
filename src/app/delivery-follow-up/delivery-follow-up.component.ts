@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserFamiliesList } from '../my-families/user-families';
 import * as chart from 'chart.js';
 
-import { BusyService, openDialog } from '@remult/angular';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { Helpers } from '../helpers/helpers';
 
 

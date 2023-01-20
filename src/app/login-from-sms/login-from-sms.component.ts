@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, Route } from '@angular/router';
 
 import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
-import { RouteHelperService } from '@remult/angular';
+import { RouteHelperService } from '../common-ui-elements';
 import { LoginComponent } from '../users/login/login.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 

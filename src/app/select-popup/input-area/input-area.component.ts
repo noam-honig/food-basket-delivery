@@ -3,9 +3,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 import { DialogService } from '../dialog';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
-import { DataAreaSettings, IDataAreaSettings } from '@remult/angular/interfaces';
+import { DataAreaSettings, IDataAreaSettings } from '../../common-ui-elements/interfaces';
 import { button, InputAreaArgs } from '../../helpers/init-context';
-import { DialogConfig } from '@remult/angular';
+import { DialogConfig } from '../../common-ui-elements';
 
 @DialogConfig({
   maxWidth:''

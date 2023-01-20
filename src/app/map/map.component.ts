@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { DeliveryStatus } from "../families/DeliveryStatus";
 import { DistributionMap } from '../distribution-map/distribution-map.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { BusyService } from '@remult/angular';
+import { BusyService } from '../common-ui-elements';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { DialogService } from '../select-popup/dialog';

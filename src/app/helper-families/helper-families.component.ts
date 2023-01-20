@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef, TrackByFunction } from '@angular/core';
-import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
+import { DataAreaSettings, GridButton, InputField } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog } from '../common-ui-elements';
 import * as copy from 'copy-to-clipboard';
 import { UserFamiliesList } from '../my-families/user-families';
 import { MapComponent } from '../map/map.component';

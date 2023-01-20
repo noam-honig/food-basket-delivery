@@ -1,4 +1,4 @@
-import { DataControl } from '@remult/angular/interfaces';
+import { DataControl } from '../common-ui-elements/interfaces';
 import { BackendMethod, Controller, getFields, Validators, EventSource, FieldMetadata, FieldRef, Fields, FieldsRef, remult } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';

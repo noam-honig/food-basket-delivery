@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { openDialog, RouteHelperService } from '@remult/angular';
-import { DataAreaSettings, RowButton } from '@remult/angular/interfaces';
+import { openDialog, RouteHelperService } from '../common-ui-elements';
+import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces';
 import { FieldRef, remult } from 'remult';
 import { Roles } from '../auth/roles';
 import { DeliveryStatus } from '../families/DeliveryStatus';

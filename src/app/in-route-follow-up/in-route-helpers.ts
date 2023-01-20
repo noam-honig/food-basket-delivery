@@ -9,7 +9,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 
 import { Field, Fields } from "../translate";
 
-import { DataControl, GridSettings } from "@remult/angular/interfaces";
+import { DataControl, GridSettings } from "../common-ui-elements/interfaces";
 
 
 import { UITools } from "../helpers/init-context";

@@ -7,8 +7,8 @@ import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings, PhoneItem, PhoneOption, qaItem } from './ApplicationSettings';
 import { SettingsService } from "./SettingsService";
 
-import { DataAreaFieldsSetting, DataAreaSettings, GridSettings, InputField } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
+import { DataAreaFieldsSetting, DataAreaSettings, GridSettings, InputField } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog } from '../common-ui-elements';
 import { FieldRef, FieldsMetadata, getFields, remult } from 'remult';
 import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/guards';

@@ -16,8 +16,8 @@ import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { BasketType } from '../families/BasketType';
 
 import { Phone } from "../model-shared/phone";
-import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
-import { DataAreaSettings, InputField } from '@remult/angular/interfaces';
+import { BusyService, openDialog, SelectValueDialogComponent } from '../common-ui-elements';
+import { DataAreaSettings, InputField } from '../common-ui-elements/interfaces';
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { GroupsStats } from '../manage/manage.component';

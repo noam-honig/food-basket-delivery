@@ -1,4 +1,4 @@
-import { DataControl } from "@remult/angular/interfaces";
+import { DataControl } from "../common-ui-elements/interfaces";
 import { BackendMethod, Entity, EntityMetadata, EntityRef, Fields, remult } from "remult";
 import { Roles } from "../auth/roles";
 import { volunteersInEvent } from "../events/events";

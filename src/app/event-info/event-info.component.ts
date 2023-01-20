@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { BusyService } from '@remult/angular';
+import { BusyService } from '../common-ui-elements';
 import { EventEmitter } from 'events';
 
 import { remult } from 'remult';

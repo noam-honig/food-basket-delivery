@@ -9,8 +9,8 @@ import { Route } from '@angular/router';
 
 import { remult } from 'remult';
 
-import { DataAreaSettings, GridButton, InputField } from '@remult/angular/interfaces';
-import { BusyService } from '@remult/angular';
+import { DataAreaSettings, GridButton, InputField } from '../common-ui-elements/interfaces';
+import { BusyService } from '../common-ui-elements';
 
 import { distCenterAdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';

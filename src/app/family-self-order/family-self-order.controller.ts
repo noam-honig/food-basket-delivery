@@ -1,4 +1,4 @@
-import { DataAreaSettings, DataControl, getEntityValueList } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControl, getEntityValueList } from '../common-ui-elements/interfaces';
 import { BackendMethod, Controller, getFields, remult } from 'remult';
 import { BasketType } from '../families/BasketType';
 import { Families } from '../families/families';

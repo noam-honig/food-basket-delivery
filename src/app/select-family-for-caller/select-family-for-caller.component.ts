@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BusyService } from '@remult/angular';
+import { BusyService } from '../common-ui-elements';
 import { CallerController, CallerFamilyInfo } from '../caller/caller.controller';
 
 @Component({

@@ -27,7 +27,7 @@ import { DeliveryHistoryComponent } from './delivery-history/delivery-history.co
 
 import { AdminGuard, OverviewGuard, distCenterAdminGuard, distCenterOrOverviewOrAdmin, OverviewOrAdminGuard, LabGuard, distCenterOrLabGuard, SignedInAndNotOverviewGuard, EventListGuard, FamilyAdminGuard, CallModuleGuard } from './auth/guards';
 import { Roles } from './auth/roles';
-import { AuthenticatedGuard } from '@remult/angular';
+import { AuthenticatedGuard } from '../app/common-ui-elements';
 import { remult } from 'remult';
 
 import { ImportHelpersFromExcelComponent } from './import-helpers-from-excel/import-helpers-from-excel.component';

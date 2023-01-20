@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Helpers, HelpersBase } from '../helpers/helpers';
 import { remult } from 'remult';
 
-import { BusyService, DialogConfig } from '@remult/angular';
+import { BusyService, DialogConfig } from '../common-ui-elements';
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats';
 

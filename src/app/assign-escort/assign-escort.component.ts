@@ -9,8 +9,8 @@ import { environment } from '../../environments/environment';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from "../model-shared/phone";
-import { openDialog } from '@remult/angular';
-import { DataAreaSettings } from '@remult/angular/interfaces';
+import { openDialog } from '../common-ui-elements';
+import { DataAreaSettings } from '../common-ui-elements/interfaces';
 
 @Component({
   selector: 'app-assign-escort',

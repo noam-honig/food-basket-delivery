@@ -1,5 +1,5 @@
 import { IdEntity, Entity, FieldsMetadata, Allow, EntityRef, FieldMetadata, Validators, isBackend, BackendMethod, ProgressListener, ValueConverters, remult } from "remult";
-import { DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, RowButton } from '@remult/angular/interfaces';
+import { DataControl, DataControlInfo, DataControlSettings, GridSettings, InputField, RowButton } from '../common-ui-elements/interfaces';
 import { use, ValueListFieldType, Field, Fields } from "../translate";
 import { getLang } from '../sites/sites';
 import { Roles } from "../auth/roles";

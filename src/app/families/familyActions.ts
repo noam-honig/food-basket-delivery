@@ -14,7 +14,7 @@ import { use, Field, ValueListFieldType, Fields } from "../translate";
 import { getLang } from '../sites/sites';
 import { Controller } from "remult";
 
-import { DataControl, getEntityValueList } from "@remult/angular/interfaces";
+import { DataControl, getEntityValueList } from "../common-ui-elements/interfaces";
 import { Groups, GroupsValue } from "../manage/groups";
 import { FamilySources } from "./FamilySources";
 

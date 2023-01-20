@@ -3,8 +3,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Remult, getFields, IdFilter, Repository, FieldRef, FieldMetadata, remult } from 'remult';
 
 
-import { DataAreaSettings, DataControl, DataControlInfo, DataControlSettings, GridSettings, IDataSettings } from '@remult/angular/interfaces';
-import { BusyService, openDialog, RemultAngularPluginsService, RouteHelperService, SelectValueDialogComponent } from '@remult/angular';
+import { DataAreaSettings, DataControl, DataControlInfo, DataControlSettings, GridSettings, IDataSettings } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog, CommonUIElementsPluginsService, RouteHelperService, SelectValueDialogComponent } from '../common-ui-elements';
 import { Subject } from "rxjs";
 import { myThrottle } from "../model-shared/types";
 import { DistributionCenters } from "../manage/distribution-centers";
@@ -82,7 +82,7 @@ export class DialogService implements UITools {
 
     statusRefreshThrottle = new myThrottle(1000);
 
-    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: RemultAngularPluginsService) {
+    constructor(public zone: NgZone, private busy: BusyService, private snackBar: MatSnackBar, private routeReuseStrategy: RouteReuseStrategy, private routeHelper: RouteHelperService, plugInService: CommonUIElementsPluginsService) {
         if (true) { }
         else {
             const p = new AblySubscriptionClient(new ably.Realtime.Promise(

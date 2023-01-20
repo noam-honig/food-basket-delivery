@@ -8,7 +8,7 @@ import { getDb, SqlBuilder, SqlFor } from "../model-shared/SqlBuilder";
 import { Phone } from "../model-shared/phone";
 import { BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, FieldsMetadata, EntityMetadata, isBackend, getFields, Filter, EntityFilter, ValueConverters, remult } from 'remult';
 
-import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '@remult/angular/interfaces';
+import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '../common-ui-elements/interfaces';
 
 import { Helpers, HelpersBase } from "../helpers/helpers";
 

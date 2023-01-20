@@ -8,7 +8,7 @@ import { DeliveryStatus } from "../families/DeliveryStatus";
 import { Roles } from "../auth/roles";
 import { PromiseThrottle } from "../shared/utils";
 import { Families } from "../families/families";
-import { openDialog } from "@remult/angular";
+import { openDialog } from "../common-ui-elements";
 import { SelectFamilyComponent } from "../select-family/select-family.component";
 
 export class moveDeliveriesHelperController {

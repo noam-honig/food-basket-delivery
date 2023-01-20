@@ -3,8 +3,8 @@ import { Helpers } from './helpers';
 import { Route } from '@angular/router';
 import { getFields, remult } from 'remult';
 import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { DataControlInfo, GridSettings } from '@remult/angular/interfaces';
-import { BusyService, openDialog } from '@remult/angular';
+import { DataControlInfo, GridSettings } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog } from '../common-ui-elements';
 
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';

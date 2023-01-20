@@ -7,10 +7,10 @@ import { remult } from 'remult';
 
 import { DialogService } from '../select-popup/dialog';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { DataAreaSettings } from '@remult/angular/interfaces';
+import { DataAreaSettings } from '../common-ui-elements/interfaces';
 import { ImageInfo } from '../images/images.component';
 import { DeliveryImage } from '../families/DeiveryImages';
-import { DialogConfig } from '@remult/angular';
+import { DialogConfig } from '../common-ui-elements';
 
 @DialogConfig({
   minWidth:'98%'

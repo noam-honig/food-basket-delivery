@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { EntityFilter, FieldsMetadata, EntityMetadata, FieldMetadata, FieldRef, EntityBase, getFields, remult } from 'remult';
-import { DataAreaFieldsSetting, DataAreaSettings, DataControlInfo, GridSettings } from '@remult/angular/interfaces';
-import { BusyService, openDialog, RouteHelperService } from '@remult/angular';
+import { DataAreaFieldsSetting, DataAreaSettings, DataControlInfo, GridSettings } from '../common-ui-elements/interfaces';
+import { BusyService, openDialog, RouteHelperService } from '../common-ui-elements';
 
 import { Helpers } from '../helpers/helpers';
 import { Phone } from "../model-shared/phone";

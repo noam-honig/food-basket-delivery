@@ -6,7 +6,7 @@ import { Route } from '@angular/router';
 import { ApplicationSettings } from '../../manage/ApplicationSettings';
 
 import {  getFields, remult } from 'remult';
-import { DataAreaSettings, DataControl } from '@remult/angular/interfaces';
+import { DataAreaSettings, DataControl } from '../../common-ui-elements/interfaces';
 
 import { Sites } from '../../sites/sites';
 
@@ -14,7 +14,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers';
 import { Phone } from "../../model-shared/phone";
 import { use, Field } from '../../translate';
-import { NotAuthenticatedGuard } from '@remult/angular';
+import { NotAuthenticatedGuard } from '../../common-ui-elements';
 import { loginResult } from '../../auth/auth-service.controller';
 
 @Component({

@@ -17,7 +17,7 @@ import { Location, toLongLat, isGpsAddress, openWaze } from '../shared/googleApi
 import { use, FieldType, Field, ValueListFieldType, Entity, Fields } from "../translate";
 import { includePhoneInApi, getSettings, ApplicationSettings, CustomColumn, questionForVolunteers } from "../manage/ApplicationSettings";
 import { getLang } from "../sites/sites";
-import { DataAreaFieldsSetting, DataControl, IDataAreaSettings, InputField } from "@remult/angular/interfaces";
+import { DataAreaFieldsSetting, DataControl, IDataAreaSettings, InputField } from "../common-ui-elements/interfaces";
 
 
 import { Groups, GroupsValue } from "../manage/groups";

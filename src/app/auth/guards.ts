@@ -1,4 +1,4 @@
-import { AuthenticatedGuard } from '@remult/angular';
+import { AuthenticatedGuard } from '../common-ui-elements';
 import { remult } from 'remult';
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';

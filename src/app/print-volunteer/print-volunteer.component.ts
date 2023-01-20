@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BusyService, openDialog, SelectValueDialogComponent } from '@remult/angular';
+import { BusyService, openDialog, SelectValueDialogComponent } from '../common-ui-elements';
 import { totalmem } from 'os';
 import { remult } from 'remult';
 import { quantityHelper } from '../families/BasketType';

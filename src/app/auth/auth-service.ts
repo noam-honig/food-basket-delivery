@@ -2,7 +2,7 @@ import { Injectable, NgZone } from "@angular/core";
 
 import { DialogService } from "../select-popup/dialog";
 
-import { openDialog, RouteHelperService } from '@remult/angular';
+import { openDialog, RouteHelperService } from '../common-ui-elements';
 import { remult, Remult, UserInfo } from 'remult';
 
 import { Roles } from "./roles";

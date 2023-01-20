@@ -1,6 +1,6 @@
 import { Component, EventEmitter, NgZone, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { RowButton } from '@remult/angular/interfaces';
+import { RowButton } from '../common-ui-elements/interfaces';
 import { FamilyInfoComponent } from '../family-info/family-info.component';
 import { ApplicationSettings } from '../manage/ApplicationSettings';
 import { Phone } from '../model-shared/phone';
