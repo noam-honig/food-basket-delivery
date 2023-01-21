@@ -338,6 +338,7 @@ export class Families extends IdEntity {
         let newId = await Families.addDelivery(newDelivery.family, newDelivery.basketType, newDelivery.distributionCenter, newDelivery.courier, {
           quantity: newDelivery.quantity,
           comment: newDelivery.deliveryComments,
+          items:newDelivery.items,
           selfPickup: selfPickup.value
         });
         if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus() && arciveCurrentDelivery.value) {
