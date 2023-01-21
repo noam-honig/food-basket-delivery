@@ -22,7 +22,7 @@ import { ArchiveDeliveries, DeleteDeliveries, NewDelivery, UpdateBasketType, Upd
 
 
 import { saveToExcel } from '../shared/saveToExcel';
-import { ApplicationSettings, getCustomColumnVisible } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getCustomColumnVisible, getSettings } from '../manage/ApplicationSettings';
 import { use } from '../translate'
 
 
@@ -449,17 +449,75 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   }
   async calcTotalItems() {
     let x: statsOnTabBasket = this.currentTabStats;
+    const child = window.open("", "_blank")
     const items = await FamilyDeliveriesController.getTotalItems(
       Filter.entityFilterToJson(remult.repo(FamilyDeliveries).metadata, x.rule)
-    )
-    const field = new InputField<string>({
-      customInput: c => c.textArea(), caption: remult.context.lang.totalItems,
-      defaultValue: () => items.toString()
-    });
-    this.dialog.inputAreaDialog({
-      fields: [field],
-      ok: () => { },
-    });
+    );
+    items.items.sort((a, b) => (a.name || '').localeCompare(b.name))
+    items.baskets.sort((a, b) => (a.name || '').localeCompare(b.name))
+    
+    child.document.write(
+      `<html><head>
+<style>
+    table{
+        border-collapse:collapse
+    }
+    th, td{
+       padding:4px 
+
+    }
+</style>
+</head>
+<body dir="${getSettings().forWho.args.leftToRight ? "ltr" : "rtl"}" style="
+font-family: &quot;arial&quot;;
+">
+<h3>${use.language.basketTypes}</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>
+                ${use.language.basketType}
+            </th>
+            <th>
+                ${use.language.quantity}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        ${items.baskets.map(b => (`
+        <tr>
+            <td>${b.name}</td>
+            <td>${b.quantity}</td>
+        </tr>
+        `))}
+    </tbody>
+</table>
+<h3>${use.language.items}</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>
+                ${use.language.item}
+            </th>
+            <th>
+                ${use.language.quantity}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        ${items.items.map(b => (`
+        <tr>
+            <td>${b.name}</td>
+            <td>${b.quantity}</td>
+        </tr>
+        `))}
+    </tbody>
+</table>
+</body></html>`)
+
+
+
+
   }
   showTotalBoxes() {
     let x: statsOnTabBasket = this.currentTabStats;

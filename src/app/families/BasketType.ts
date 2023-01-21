@@ -84,7 +84,7 @@ export class quantityHelper {
   }
 }
 
-interface totalItem {
+export interface totalItem {
   name: string,
   quantity: number
 }

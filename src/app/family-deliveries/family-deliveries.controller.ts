@@ -14,7 +14,7 @@ import { Phone } from "../model-shared/phone";
 import { Groups } from '../manage/groups';
 
 import { DistributionCenters } from '../manage/distribution-centers';
-import { quantityHelper } from '../families/BasketType';
+import { quantityHelper, totalItem } from '../families/BasketType';
 
 
 export class FamilyDeliveriesController {
@@ -75,13 +75,21 @@ export class FamilyDeliveriesController {
     @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async getTotalItems(filter: any) {
         const q = new quantityHelper();
+        const baskets: totalItem[] = [];
         for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
             where: await Filter.entityFilterFromJson<ActiveFamilyDeliveries>(remult.repo(ActiveFamilyDeliveries).metadata, filter)
         })) {
             q.parseComment(fd.basketType?.whatToTake, fd.quantity);
             q.parseComment(fd.items);
+            let b = baskets.find(b => b.name === fd.basketType?.name);
+            if (!b)
+                baskets.push(b = { name: fd.basketType?.name, quantity: 0 })
+            b.quantity += fd.quantity;
         }
-        return q.toString();
+        return {
+            items: q.items,
+            baskets
+        };
     }
 
 }
