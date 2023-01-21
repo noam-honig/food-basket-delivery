@@ -455,8 +455,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
     );
     items.items.sort((a, b) => (a.name || '').localeCompare(b.name))
     items.baskets.sort((a, b) => (a.name || '').localeCompare(b.name))
-    
-    child.document.write(
+
+    const html =
       `<html><head>
 <style>
     table{
@@ -489,7 +489,7 @@ font-family: &quot;arial&quot;;
             <td>${b.name}</td>
             <td>${b.quantity}</td>
         </tr>
-        `))}
+        `)).join('')}
     </tbody>
 </table>
 <h3>${use.language.items}</h3>
@@ -510,10 +510,12 @@ font-family: &quot;arial&quot;;
             <td>${b.name}</td>
             <td>${b.quantity}</td>
         </tr>
-        `))}
+        `)).join('')}
     </tbody>
 </table>
-</body></html>`)
+</body></html>`;
+    console.log(html);
+    child.document.write(html);
 
 
 
