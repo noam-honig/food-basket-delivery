@@ -1338,6 +1338,7 @@ export class Language {
   moveBefore = "הזז לפני";
   moveAfter = "הזז אחרי";
   assignHistory = 'היסטורית שיוכים';
+  editFamilyWhatsappMessage = "'ערוך מבנה הודעת וטסאפ למשפחה'";
 }
 
 

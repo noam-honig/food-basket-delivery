@@ -54,7 +54,6 @@ import { DeliveryChanges } from './FamilyDeliveries';
 export class FamiliesComponent implements OnInit {
 
 
-    test = new NewDelivery();
     limit = 25;
 
 
@@ -438,7 +437,7 @@ export class FamiliesComponent implements OnInit {
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
             }, {
-                name: 'ערוך מבנה הודעת וטסאפ למשפחה',
+                name: use.language.editFamilyWhatsappMessage ,
                 visible: () => this.remult.isAllowed(Roles.admin),
                 click: async (f) => {
 

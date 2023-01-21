@@ -310,6 +310,7 @@ export class Families extends IdEntity {
     const fields: DataAreaFieldsSetting<any>[] = [
       [newDelivery.$.basketType,
       newDelivery.$.quantity],
+      newDelivery.$.items,
       newDelivery.$.deliveryComments];
     if (ui.hasManyCenters)
       fields.push(newDelivery.$.distributionCenter);
