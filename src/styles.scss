@@ -495,3 +495,7 @@ body[dir="rtl"] {
 }
 .mat-expansion-panel-header
 {height:72px}
+
+* { //disables double click to zoom
+  touch-action: manipulation;
+}
