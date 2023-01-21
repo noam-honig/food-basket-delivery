@@ -769,32 +769,6 @@ font-family: &quot;arial&quot;;
         }
       },
       {
-        name: getLang().whatToOrder,
-        click: async () => {
-          let items = new quantityHelper();
-          let parcels = new quantityHelper();
-
-          for await (const fd of remult.repo(ActiveFamilyDeliveries).query()) {
-            parcels.add(fd.basketType?.name || '', fd.quantity);
-            for (let item of fd.deliveryComments.split(',')) {
-              item = item.trim();
-              let reg = /(^\d*)(.*)/.exec(item);
-              if (reg[1])
-                items.add(reg[2], +reg[1])
-              else items.add(reg[2], 1);
-            }
-          }
-          const field = new InputField<string>({
-            customInput: c => c.textArea(), caption: remult.context.lang.whatToOrder,
-            defaultValue: () => items.toString() + "\n---------------\n" + parcels.toString()
-          });
-          this.dialog.inputAreaDialog({
-            fields: [field],
-            ok: () => { },
-          });
-        }
-      },
-      {
         name: getLang().exportToExcel,
         click: async () => {
 
