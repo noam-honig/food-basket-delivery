@@ -82,13 +82,13 @@ export class FamilySelfOrderController {
             return;
         let fd = f.createDelivery(undefined);
         fd.basketType = await remult.repo(BasketType).findId(this.basket);
-        fd.deliveryComments = '';
-
-        for (const what of [this.titulim, this.size, this.gerber ? "גרבר" : "", this.daisa ? "דיסה" : "", this.comment]) {
+        fd.items = '';
+        fd.deliveryComments = this.comment;
+        for (const what of [this.titulim, this.size, this.gerber ? "גרבר" : "", this.daisa ? "דיסה" : ""]) {
             if (what) {
-                if (fd.deliveryComments.length > 0)
-                    fd.deliveryComments += ", ";
-                fd.deliveryComments += what;
+                if (fd.items.length > 0)
+                    fd.items += ", ";
+                fd.items += what;
             }
         }
         await fd.save();

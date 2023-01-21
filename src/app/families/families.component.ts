@@ -473,6 +473,14 @@ export class FamiliesComponent implements OnInit {
 
             }
             ,
+
+            {
+                name: this.settings.lang.familyDeliveries,
+                click: async f => {
+                    f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog });
+                }
+                , visible: f => !f.isNew()
+            },
             {
                 name: this.settings.lang.sendSelfOrderLink,
                 visible: () => this.settings.familySelfOrderEnabled,
@@ -481,14 +489,6 @@ export class FamiliesComponent implements OnInit {
                     sendWhatsappToFamily(f, undefined, message.merge(this.settings.familySelfOrderMessage))
 
                 }
-            },
-
-            {
-                name: this.settings.lang.familyDeliveries,
-                click: async f => {
-                    f.showDeliveryHistoryDialog({ settings: this.settings, ui: this.dialog });
-                }
-                , visible: f => !f.isNew()
             },
             {
                 name: "עריכת קישור להזמנה עצמית",
