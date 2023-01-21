@@ -338,7 +338,7 @@ export class Families extends IdEntity {
         let newId = await Families.addDelivery(newDelivery.family, newDelivery.basketType, newDelivery.distributionCenter, newDelivery.courier, {
           quantity: newDelivery.quantity,
           comment: newDelivery.deliveryComments,
-          items:newDelivery.items,
+          items: newDelivery.items,
           selfPickup: selfPickup.value
         });
         if (args.copyFrom != null && args.copyFrom.deliverStatus.IsAResultStatus() && arciveCurrentDelivery.value) {
@@ -360,7 +360,8 @@ export class Families extends IdEntity {
     comment: string,
     selfPickup: boolean,
     deliverStatus?: DeliveryStatus,
-    archive?: boolean
+    archive?: boolean,
+    items?: string
   }) {
     let f = await remult.repo(Families).findId(familyId);
     if (f) {
@@ -377,6 +378,8 @@ export class Families extends IdEntity {
       if (settings.archive) fd.archive = settings.archive;
       if (settings.selfPickup)
         fd.deliverStatus = DeliveryStatus.SelfPickup;
+      if (settings.items)
+        fd.items = settings.items;
 
       await fd.save();
       return fd.id;
