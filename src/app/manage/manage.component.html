@@ -304,7 +304,7 @@
             <button mat-raised-button (click)="deleteFamilies()"
                 color="accent">{{settings.lang.deleteFamiliesButton}}</button>
         </mat-expansion-panel>
-        <mat-expansion-panel>
+        <mat-expansion-panel *ngIf="isSuperAdmin()">
             <mat-expansion-panel-header>
                 superadmin
             </mat-expansion-panel-header>

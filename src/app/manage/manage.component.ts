@@ -264,6 +264,9 @@ export class ManageComponent implements OnInit {
   settingsLogo = new DataAreaSettings({
     fields: s => [this.settings.$.logoUrl]
   });
+  isSuperAdmin() {
+    return remult.isAllowed(Roles.superAdmin);
+  }
   superAdmin = new DataAreaSettings({
     fields: s => [
       this.settings.$.customSmsOriginForSmsToVolunteer,
