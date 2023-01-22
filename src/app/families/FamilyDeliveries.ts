@@ -449,7 +449,7 @@ export class FamilyDeliveries extends IdEntity {
         }
     })
     courierBeenHereBefore: boolean;
-    @Field({ allowApiUpdate: c => c.authenticated() && (getSettings().isSytemForMlt || c.isAllowed(Roles.familyAdmin)) })
+    @Field({ allowApiUpdate: c => remult.authenticated() && (getSettings().isSytemForMlt || remult.isAllowed(Roles.familyAdmin)) })
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
