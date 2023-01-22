@@ -114,13 +114,7 @@ export class SendSmsUtils {
         familyId?: string,
         eventId?: string
     }) {
-        if (true) {
-            console.log({
-                phone, message
-            })
-            return "ok";
-        }
-
+  
         var schema = Sites.getOrganizationFromContext();
         var settings = await ApplicationSettings.getAsync()
         let un = process.env.SMS_UN;
