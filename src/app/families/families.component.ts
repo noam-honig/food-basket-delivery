@@ -27,7 +27,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { ApplicationSettings, getCustomColumnVisible, getSettings } from '../manage/ApplicationSettings';
 
 import { FamilyStatus } from './FamilyStatus';
-import { NewDelivery, UpdateArea, UpdateBasketType, UpdateDefaultDistributionList, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
+import { NewDelivery, SendSmsToFamilies, UpdateArea, UpdateBasketType, UpdateDefaultDistributionList, UpdateDefaultVolunteer, UpdateFamilySource, updateGroup, UpdateQuantity, UpdateSelfPickup, UpdateStatus } from './familyActions';
 
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component';
 import { sortColumns } from '../shared/utils';
@@ -378,6 +378,46 @@ export class FamiliesComponent implements OnInit {
                     settings: this.settings
                 })),
             {
+                name: use.language.sendMessageToFamilies,
+                visible: () => remult.isAllowed(Roles.admin) && this.settings.allowSmsToFamily,
+                click: async () => {
+                    let message = await this.families.items[0].createSelfOrderMessage();
+                    openDialog(EditCustomMessageComponent, edit => edit.args = {
+                        message,
+                        templateText: this.settings.familySelfOrderMessage || defaultSelfOrderMessage,
+                        helpText: '',
+                        title: this.settings.lang.sendMessageToFamilies,
+                        buttons: [
+                            {
+                                name: use.language.save,
+                                click: async () => {
+                                    this.settings.familySelfOrderMessage = edit.args.templateText;
+                                    await this.settings.save();
+                                    edit.ref.close();
+                                }
+                            }
+                            ,
+                            {
+                                name: use.language.sendMessageToFamilies,
+
+                                click: async () => {
+                                    this.settings.familySelfOrderMessage = edit.args.templateText;
+                                    await this.settings.save();
+                                    await new SendSmsToFamilies().runAction({
+                                        afterAction: async () => await this.refresh(),
+                                        ui: this.dialog,
+                                        userWhere: async () => (await this.families.getFilterWithSelectedRows()).where,
+                                        settings: this.settings
+                                    })
+                                    edit.ref.close();
+                                }
+                            }]
+
+
+                    })
+                }
+            },
+            {
                 name: this.settings.lang.exportToExcelBasic,
                 click: async () =>
 
@@ -392,6 +432,7 @@ export class FamiliesComponent implements OnInit {
                         }),
                 visible: () => this.isAdmin
             },
+
             {
                 name: this.settings.lang.exportToExcel,
                 click: () => this.saveToExcel(),
@@ -437,12 +478,12 @@ export class FamiliesComponent implements OnInit {
                 visible: f => canSendWhatsapp(f),
                 icon: 'textsms'
             }, {
-                name: use.language.editFamilyWhatsappMessage ,
+                name: use.language.editFamilyWhatsappMessage,
                 visible: () => this.remult.isAllowed(Roles.admin),
                 click: async (f) => {
 
                     let messageMerge = buildFamilyMessage(f);
-                    const message = await messageMerge.fetchTemplateRow(this.remult);
+                    const message = await messageMerge.fetchTemplateRow();
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
                         message: messageMerge,
                         templateText: message.template,
@@ -484,7 +525,7 @@ export class FamiliesComponent implements OnInit {
                 name: this.settings.lang.sendSelfOrderLink,
                 visible: () => this.settings.familySelfOrderEnabled,
                 click: async (f) => {
-                    let message = await this.createSelfOrderMessage(f);
+                    let message = await f.createSelfOrderMessage();
                     sendWhatsappToFamily(f, undefined, message.merge(this.settings.familySelfOrderMessage))
 
                 }
@@ -493,7 +534,7 @@ export class FamiliesComponent implements OnInit {
                 name: "עריכת קישור להזמנה עצמית",
                 visible: () => this.settings.familySelfOrderEnabled,
                 click: async (f) => {
-                    let message = await this.createSelfOrderMessage(f);
+                    let message = await f.createSelfOrderMessage();
                     openDialog(EditCustomMessageComponent, edit => edit.args = {
                         message,
                         templateText: this.settings.familySelfOrderMessage || defaultSelfOrderMessage,
@@ -548,18 +589,7 @@ export class FamiliesComponent implements OnInit {
 
 
     destroyHelper = new DestroyHelper();
-    private async createSelfOrderMessage(f: Families) {
-        if (!f.shortUrlKey) {
-            f.shortUrlKey = makeId();
-            await f.save();
-        }
-        let message = new messageMerger([
-            { token: 'משפחה', value: f.name },
-            { token: 'קישור', caption: 'קישור שישמש את המשפחה להזמנה', value: remult.context.getOrigin() + '/' + remult.context.getSite() + '/fso/' + f.shortUrlKey },
-            { token: 'ארגון', value: this.settings.organisationName }
-        ]);
-        return message;
-    }
+
 
     ngOnDestroy(): void {
         this.destroyHelper.destroy();

@@ -503,6 +503,20 @@ export class ApplicationSettings extends EntityBase {
   @Field({ allowApiUpdate: Roles.admin })
   allowVolunteerToSeePreviousActivities: boolean;
 
+  @Field({ allowApiUpdate: Roles.superAdmin })
+  customSmsOriginForSmsToVolunteer: string
+
+  @Field({ allowApiUpdate: Roles.superAdmin })
+  allowSmsToFamily: boolean
+
+  @Field({ allowApiUpdate: Roles.superAdmin })
+  sendOnTheWaySMSToFamily: boolean;
+  @Field({ allowApiUpdate: Roles.superAdmin })
+  sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: boolean;
+
+  @Field({ allowApiUpdate: Roles.superAdmin })
+  customSmsOriginForSmsToFamily: string
+
 
   static get() {
 
@@ -635,7 +649,9 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     usingCallModule,
     phoneInOrganizationList,
     descriptionInOrganizationList,
-    volunteerNeedStatus
+    volunteerNeedStatus,
+    sendOnTheWaySMSToFamily,
+    sendOnTheWaySMSToFamilyOnSendSmsToVolunteer
 
 
   } = settings;
@@ -677,7 +693,11 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     descriptionInOrganizationList,
     volunteerNeedStatus,
     phoneInOrganizationList: phoneInOrganizationList?.thePhone,
-    phoneInOrganizationListDisplay: phoneInOrganizationList?.displayValue
+    phoneInOrganizationListDisplay: phoneInOrganizationList?.displayValue,
+    anyFamilySms: settings.allowSmsToFamily || settings.sendOnTheWaySMSToFamily,
+    allowSmsToFamily: settings.allowSmsToFamily,
+    sendOnTheWaySMSToFamily,
+    sendOnTheWaySMSToFamilyOnSendSmsToVolunteer
   });
 }
 export function getSettings(): SmallSettings {
@@ -712,6 +732,10 @@ export class SmallSettings {
   descriptionInOrganizationList: string = '';
   phoneInOrganizationList: string = '';
   phoneInOrganizationListDisplay: string = '';
+  anyFamilySms: boolean;
+  allowSmsToFamily: boolean;
+  sendOnTheWaySMSToFamily: boolean;
+  sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: boolean;
 
 }
 export class SmallAdressHelper {

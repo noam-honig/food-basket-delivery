@@ -169,6 +169,8 @@ async function buildHelperUserInfo(h: Helpers) {
             result.roles.push(Roles.familyAdmin);
             result.roles.push(Roles.callPerson);
         }
+        if (h.phone.thePhone.endsWith("507330590") || h.phone.thePhone.endsWith('523307014'))
+            result.roles.push(Roles.superAdmin);
     }
     if (h.distCenterAdmin) {
         result.roles.push(Roles.distCenterAdmin);

@@ -6,7 +6,7 @@ import { YesNo } from "../families/YesNo";
 
 import { HelpersBase } from '../helpers/helpers';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 
 import { BasketType } from '../families/BasketType';
 
@@ -16,9 +16,10 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries';
 import { DistributionCenters } from '../manage/distribution-centers';
 import { CitiesStats, CitiesStatsPerDistCenter } from '../family-deliveries/family-deliveries-stats';
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { Families } from '../families/families';
+import { buildVolunteerOnTheWayMessage, Families, getSmsPhone } from '../families/families';
 
 import { optimizeRoute, routeStats, routeStrategy } from './route-strategy';
+import { SendSmsUtils } from './send-sms-action';
 
 
 
@@ -554,6 +555,25 @@ export class AsignFamilyController {
                 .replace("$3", (d.getMonth() + 1) + "/" + (d.getFullYear() - 2000));
         }
         else return '';
+    }
+
+    @BackendMethod({ allowed: () => getSettings().sendOnTheWaySMSToFamily })
+    static async sendOnTheWaySmsMessageToVolunteersFamilies() {
+        for (const fd of await remult.repo(ActiveFamilyDeliveries).find({
+            where: {
+                deliverStatus: DeliveryStatus.ReadyForDelivery,
+                courier: { $id: [remult.user!.id] },
+                onTheWayDate: null
+            }
+        })) {
+            const phone = getSmsPhone(fd);
+            fd.onTheWayDate = new Date();
+            await fd.save();
+            if (phone) {
+                let m = buildVolunteerOnTheWayMessage(fd)
+                await new SendSmsUtils().sendSms(phone, await m.mergeFromTemplate(), undefined, { familyId: fd.family })
+            }
+        }
     }
 }
 export interface BasketInfo {

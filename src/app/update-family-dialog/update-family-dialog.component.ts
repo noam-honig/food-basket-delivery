@@ -348,7 +348,8 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
         [families.phone3,
         families.phone3Description],
         [families.phone4,
-        families.phone4Description]
+        families.phone4Description],
+        families.doNotSendSms
       ]
     });
     this.deliveryDefaults = this.families.addArea({

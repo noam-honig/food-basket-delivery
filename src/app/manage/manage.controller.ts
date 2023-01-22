@@ -1,7 +1,7 @@
 import { SendSmsUtils } from '../asign-family/send-sms-action';
 import { ApplicationSettings } from './ApplicationSettings';
 
-import {  BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase, remult } from 'remult';
+import { BackendMethod, ProgressListener, Controller, SqlDatabase, OmitEB, FieldMetadata, ControllerBase, remult } from 'remult';
 
 import { Roles } from '../auth/roles';
 
@@ -93,6 +93,8 @@ export class ManageController {
         }
         return i;
     }
+
+
     static async clearDataFromFamilyDeliveries(familyId: string) {
         var db = getDb();
         const sql = new SqlBuilder();
@@ -131,11 +133,13 @@ export class SendTestSms extends ControllerBase {
     @Field({ translation: l => l.customSmsMessage })
     message: string;
     @BackendMethod({ allowed: Roles.admin })
-    async sendTestMessage() {
+    async sendTestMessage(forFamily?: boolean) {
         let settings = await ApplicationSettings.getAsync();
-        if (!settings.bulkSmsEnabled)
+        if (!settings.bulkSmsEnabled && !remult.isAllowed(Roles.superAdmin))
             throw "can only use this with bulk sms enabled";
-        return await new SendSmsUtils().sendSms(this.phone, this.message, undefined);
+        return await new SendSmsUtils().sendSms(this.phone, this.message, undefined, {
+            familyId: forFamily ? "testFamily" : undefined
+        });
     }
 
 }

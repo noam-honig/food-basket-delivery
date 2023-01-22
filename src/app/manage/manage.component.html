@@ -304,6 +304,12 @@
             <button mat-raised-button (click)="deleteFamilies()"
                 color="accent">{{settings.lang.deleteFamiliesButton}}</button>
         </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                superadmin
+            </mat-expansion-panel-header>
+            <data-area [settings]="superAdmin"></data-area>
+        </mat-expansion-panel>
     </mat-accordion>
     <button mat-button (click)="changeLog()">{{settings.lang.changeLog}} </button>
 </div>

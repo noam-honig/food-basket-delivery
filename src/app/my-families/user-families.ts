@@ -7,7 +7,7 @@ import { remult } from 'remult';
 
 import { ActiveFamilyDeliveries, FamilyDeliveries } from '../families/FamilyDeliveries';
 import { BasketSummaryComponent } from "../basket-summary/basket-summary.component";
-import { ApplicationSettings } from "../manage/ApplicationSettings";
+import { ApplicationSettings, getSettings } from "../manage/ApplicationSettings";
 import { DistributionCenters } from "../manage/distribution-centers";
 import { routeStats, routeStrategy } from "../asign-family/route-strategy";
 import { openDialog } from "../common-ui-elements";
@@ -141,11 +141,12 @@ export class UserFamiliesList {
         return boxesText;
 
     }
-    
+
     familiesAlreadyAssigned = new Map<string, boolean>();
     highlightNewFamilies = false;
     lastHelperId = undefined;
     unsubscribe: VoidFunction;
+    hasDeliveriesNotOnTheWay = false;
     async reload() {
         if (this.helper && !this.helper.isNew()) {
             if (this.unsubscribe)
@@ -164,6 +165,7 @@ export class UserFamiliesList {
                 limit: 1000
             }).subscribe(reducer => {
                 this.allFamilies = reducer.items;
+
                 this.familiesAlreadyAssigned = new Map<string, boolean>();
                 this.highlightNewFamilies = false;
                 for (const f of this.allFamilies) {
@@ -218,6 +220,8 @@ export class UserFamiliesList {
             this.distCenter = undefined;
         }
         this.toDeliver = this.allFamilies.filter(f => f.deliverStatus == DeliveryStatus.ReadyForDelivery);
+        let notOnTheWay = this.toDeliver.filter(x => x.onTheWayDate == null)
+        this.hasDeliveriesNotOnTheWay = getSettings().sendOnTheWaySMSToFamily && !getSettings().sendOnTheWaySMSToFamilyOnSendSmsToVolunteer && notOnTheWay.length > 0;
         if (this.checkRoutes) {
             // this.checkRoutes = false;
             if (this.toDeliver.find(f => f.routeOrder == 0) && this.toDeliver.length > 0) {

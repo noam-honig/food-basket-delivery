@@ -4,6 +4,7 @@ createDate timestamp
 createUser varchar default '' not null
 volunteer varchar default '' not null
 family varchar default '' not null
+origin varchar default '' not null
 eventId varchar default '' not null
 message varchar default '' not null
 apiResponse varchar default '' not null

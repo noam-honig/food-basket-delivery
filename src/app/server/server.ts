@@ -55,7 +55,7 @@ import { HelpersController } from "../helpers/helpers.controller";
 import { SendBulkSms } from "../helpers/send-bulk-sms";
 import { ImportFromExcelController } from "../import-from-excel/import-from-excel.controller";
 import { ImportHelpersFromExcelController } from "../import-helpers-from-excel/import-helpers-from-excel.controller";
-import { ManageController } from "../manage/manage.controller";
+import { ManageController, SendTestSms } from "../manage/manage.controller";
 import { MergeFamiliesController } from "../merge-families/merge-families.controller";
 import { MltFamiliesController } from "../mlt-families/mlt-families.controller";
 import { OrgEventsController } from "../org-events/org-events.controller";
@@ -67,7 +67,7 @@ import { SelectHelperController } from "../select-helper/select-helper.controlle
 import { SiteOverviewController } from "../site-overview/site-overview.controller";
 import { WeeklyReportMltController } from "../weekly-report-mlt/weekly-report-mlt.controller";
 import { DeliveryHistoryController } from "../delivery-history/delivery-history.controller";
-import { NewDelivery } from "../families/familyActions";
+import { NewDelivery, SendSmsToFamilies } from "../families/familyActions";
 import { DeleteDeliveries } from "../family-deliveries/family-deliveries-actions";
 import { PlaybackController } from "../playback/playback.controller";
 import { DialogController, StatusChangeChannel } from "../select-popup/dialog.controller";
@@ -132,6 +132,7 @@ const entities = [
     HelperCommunicationHistory
 ];
 const controllers = [
+    SendTestSms,
     AdjustGeocode,
     CallerController,
     SendSmsAction,
@@ -143,6 +144,7 @@ const controllers = [
     DuplicateFamiliesController,
     RegisterToEvent,
     FamiliesController,
+    SendSmsToFamilies,
     Stats,
     FamilyDeliveryStats,
     FamilyDeliveriesController,
@@ -425,7 +427,6 @@ s.parentNode.insertBefore(b, s);})();
                 await initDatabase();
                 if (!process.env.DEV_MODE)
                     return;
-                return;
                 remult.context.getSite = () => "test1";
                 remult.dataProvider = (dataSource(remult));
                 await InitContext(remult, undefined);
@@ -445,7 +446,7 @@ s.parentNode.insertBefore(b, s);})();
                     }
                 }
                 //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
-                if (true) {
+                if (false) {
 
                     console.log("---------------------------------------------------------------------------");
                     var h = await remult.repo(Helpers).findFirst();

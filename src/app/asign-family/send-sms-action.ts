@@ -114,6 +114,13 @@ export class SendSmsUtils {
         familyId?: string,
         eventId?: string
     }) {
+        if (true) {
+            console.log({
+                phone, message
+            })
+            return "ok";
+        }
+
         var schema = Sites.getOrganizationFromContext();
         var settings = await ApplicationSettings.getAsync()
         let un = process.env.SMS_UN;
@@ -122,6 +129,14 @@ export class SendSmsUtils {
         const inforuToken = process.env.INFORU_SMS_TOKEN;
         let useGlobalSms = !inforuToken;
         var from = settings.isSytemForMlt ? 'Mitchashvim' : 'Hagai';
+        if (!info?.familyId) {
+            if (settings.customSmsOriginForSmsToVolunteer)
+                from = settings.customSmsOriginForSmsToVolunteer;
+        }
+        else {
+            if (settings.customSmsOriginForSmsToFamily)
+                from = settings.customSmsOriginForSmsToFamily;
+        }
         if (settings.bulkSmsEnabled) {
             if (settings.smsVirtualPhoneNumber)
                 from = settings.smsVirtualPhoneNumber;
@@ -275,7 +290,8 @@ export class SendSmsUtils {
             message,
             phone,
             family: info?.familyId,
-            eventId: info?.eventId
+            eventId: info?.eventId,
+            origin: from
 
 
         }).save();

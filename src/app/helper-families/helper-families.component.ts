@@ -10,7 +10,7 @@ import { AuthService } from '../auth/auth-service';
 import { DialogService } from '../select-popup/dialog';
 import { SendSmsAction } from '../asign-family/send-sms-action';
 
-import { ApplicationSettings } from '../manage/ApplicationSettings';
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings';
 import { remult } from 'remult';
 
 import { use } from '../translate';
@@ -43,6 +43,7 @@ import { NgDialogAnimationService } from 'ng-dialog-animation';
 import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component';
 import { environment } from '../../environments/environment';
 import { Roles } from '../auth/roles';
+import { AsignFamilyController } from '../asign-family/asign-family.controller';
 
 
 @Component({
@@ -174,7 +175,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   remult = remult;
 
-  constructor(public auth: AuthService, private dialog: DialogService,  private busy: BusyService, public settings: ApplicationSettings,
+  constructor(public auth: AuthService, private dialog: DialogService, private busy: BusyService, public settings: ApplicationSettings,
     public animDialog: NgDialogAnimationService) { }
   @Input() familyLists: UserFamiliesList;
   @Input() partOfAssign = false;
@@ -228,7 +229,7 @@ export class HelperFamiliesComponent implements OnInit {
 
   }
   reminderSmsRelativeDate() {
-    return relativeDateName( { d: this.familyLists.helper.reminderSmsDate });
+    return relativeDateName({ d: this.familyLists.helper.reminderSmsDate });
   }
 
 
@@ -355,7 +356,7 @@ export class HelperFamiliesComponent implements OnInit {
     });
   }
   async moveBasketsTo(to: HelpersBase) {
-    await new moveDeliveriesHelper(this.settings, this.dialog,async () => {}).move(this.familyLists.helper, to, true, '', true);
+    await new moveDeliveriesHelper(this.settings, this.dialog, async () => { }).move(this.familyLists.helper, to, true, '', true);
 
   }
 
@@ -488,6 +489,9 @@ export class HelperFamiliesComponent implements OnInit {
     this.dialog.analytics('Send SMS ' + (reminder ? 'reminder' : ''));
     let to = this.familyLists.helper.name;
     await SendSmsAction.SendSms(this.familyLists.helper, reminder);
+    if (getSettings().sendOnTheWaySMSToFamilyOnSendSmsToVolunteer) {
+      await AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies();
+    }
     if (this.familyLists.helper.escort) {
       to += ' ול' + this.familyLists.escort.name;
       await SendSmsAction.SendSms(this.familyLists.helper.escort, reminder);
@@ -518,7 +522,7 @@ export class HelperFamiliesComponent implements OnInit {
   prepareMessage(reminder: boolean) {
     this.isReminderMessage = reminder;
     this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage( this.familyLists.helper, window.origin, reminder, remult.user.name, async (phone, message, sender, link) => {
+      await SendSmsAction.generateMessage(this.familyLists.helper, window.origin, reminder, remult.user.name, async (phone, message, sender, link) => {
         this.smsMessage = message;
         this.smsPhone = phone;
         this.smsLink = link;
@@ -544,7 +548,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async updateMessageSent(type: string) {
 
-    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper,  type);
+    await SendSmsAction.documentHelperMessage(this.isReminderMessage, this.familyLists.helper, type);
   }
   async copyMessage() {
     copy(this.smsMessage);

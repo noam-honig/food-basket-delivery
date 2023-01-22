@@ -28,15 +28,14 @@ export class DataControl2Component {
   @ViewChild('theId', { read: ViewContainerRef, static: true })
   theId!: ViewContainerRef;
   done = false;
+  customFieldRef: FieldRef;
   initCustomComponent() {
     if (this.map?.customComponent?.component) {
+      if (this.customFieldRef = this.map?.field as FieldRef)
+        this.done = false;
       if (this.done)
         return;
-      const fieldRef = this.map.field as FieldRef;
-      if (!fieldRef.metadata) {
-        this.map.customComponent = undefined;
-        return;
-      }
+      this.customFieldRef = this.map.field as FieldRef;
       this.done = true;
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory<CustomDataComponent>(this.map.customComponent.component);
 
@@ -46,7 +45,7 @@ export class DataControl2Component {
       const componentRef = viewContainerRef.createComponent<CustomDataComponent>(componentFactory);
 
       componentRef.instance.args = {
-        fieldRef,
+        fieldRef: this.customFieldRef,
         settings: this.map
       }
     }

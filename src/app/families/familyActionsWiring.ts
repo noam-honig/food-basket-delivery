@@ -82,25 +82,28 @@ export abstract class ActionOnRows<T extends IdEntity>  {
 
                     },
                     ok: async () => {
-                        let groupName = remult.repo(this.entity).metadata.caption;
-                        let where = await this.composeWhere(component.userWhere);
-                        let count = await remult.repo(this.entity).count(where)
-                        if (await component.ui.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
-                            let r = await this.internalForTestingCallTheServer({
-                                count,
-                                where
-                            });
-
-
-
-                            component.afterAction();
-                        }
+                        await this.runAction(component)
                     }
                     , cancel: () => { }
                 });
 
             }
         } as GridButton;
+    }
+    async runAction(component: actionDialogNeeds<T>) {
+        let groupName = remult.repo(this.entity).metadata.caption;
+        let where = await this.composeWhere(component.userWhere);
+        let count = await remult.repo(this.entity).count(where)
+        if (await component.ui.YesNoPromise(this.args.confirmQuestion() + " " + use.language.for + " " + count + ' ' + groupName + '?')) {
+            let r = await this.internalForTestingCallTheServer({
+                count,
+                where
+            });
+
+
+
+            component.afterAction();
+        }
     }
 
     async internalForTestingCallTheServer(info: {

@@ -209,6 +209,8 @@ export class HelperCommunicationHistory extends IdEntity {
     volunteer: HelpersBase;
     @Field()
     family: string;
+    @Field()
+    origin: string;
     @Field({ allowApiUpdate: false })
     eventId: string;
     @Field({

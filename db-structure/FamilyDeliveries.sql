@@ -3,6 +3,7 @@ id varchar default '' not null
 family varchar default '' not null
 basketType varchar default '' not null
 quantity integer default 0 not null
+items varchar default '' not null
 distributionCenter varchar default '' not null
 deliverStatus integer default 0 not null
 courier varchar default '' not null
@@ -50,6 +51,7 @@ phone4 varchar default '' not null
 phone4Description varchar default '' not null
 archive boolean default false not null
 archiveDate timestamp
+onTheWayDate timestamp
 archiveUser varchar default '' not null
 a1 varchar default '' not null
 a2 varchar default '' not null

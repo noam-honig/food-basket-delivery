@@ -15,6 +15,7 @@ import { Event } from '../events/events';
 import { SignedInAndNotOverviewGuard } from '../auth/guards';
 import { OrgEventsComponent } from '../org-events/org-events.component';
 import { Roles } from '../auth/roles';
+import { AsignFamilyController } from '../asign-family/asign-family.controller';
 
 
 
@@ -139,7 +140,9 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  sendMessageToFamilies() {
+    AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies()
+  }
 
 
 

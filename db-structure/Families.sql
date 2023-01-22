@@ -27,6 +27,7 @@ area varchar default '' not null
 addressComment varchar default '' not null
 postalCode integer default 0 not null
 deliveryComments varchar default '' not null
+doNotSendSms boolean default false not null
 phone varchar default '' not null
 phone1Description varchar default '' not null
 phone2 varchar default '' not null

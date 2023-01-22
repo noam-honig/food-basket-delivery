@@ -10,7 +10,7 @@ import { BackendMethod, IdEntity, SqlDatabase, Validators, FieldMetadata, Fields
 
 import { DataAreaFieldsSetting, DataControl, DataControlSettings, GridSettings, InputField } from '../common-ui-elements/interfaces';
 
-import { Helpers, HelpersBase } from "../helpers/helpers";
+import { Helpers, HelpersBase, makeId } from "../helpers/helpers";
 
 import { GeocodeInformation, GetGeoInformation, leaveOnlyNumericChars, isGpsAddress, GeocodeResult, AddressHelper, openWaze } from "../shared/googleApiHelpers";
 import { ApplicationSettings, CustomColumn, customColumnInfo, getSettings } from "../manage/ApplicationSettings";
@@ -563,13 +563,18 @@ export class Families extends IdEntity {
   postalCode: number;
   @Field({ translation: l => l.defaultDeliveryComment })
   deliveryComments: string;
+
+  @DataControl({
+    visible: () => getSettings().anyFamilySms
+  })
+  @Field()
+  doNotSendSms: boolean
   @Field({
     dbName: 'phone',
   })
   @DataControl<Families>({
     valueChange: self => self.delayCheckDuplicateFamilies(),
   })
-
   phone1: Phone;
   @Field()
   phone1Description: string;
@@ -1026,6 +1031,23 @@ export class Families extends IdEntity {
   static async getFamilyByShortUrl(url: string): Promise<Families> {
     return await remult.repo(FamiliesWithoutUserRestrictions).findFirst({ shortUrlKey: url, status: FamilyStatus.Active })
   }
+  async createSelfOrderMessage() {
+    if (!this.shortUrlKey) {
+      this.shortUrlKey = makeId();
+      await this.save();
+    }
+    let message = new messageMerger([
+      { token: 'משפחה', value: this.name },
+      {
+        token: 'קישור',
+        caption: 'קישור שישמש את המשפחה להזמנה',
+        value: remult.context.getOrigin() + '/' + remult.context.getSite() + '/fso/' + this.shortUrlKey,
+        enabled: getSettings().familySelfOrderEnabled
+      },
+      { token: 'ארגון', value: getSettings().organisationName }
+    ]);
+    return message;
+  }
 }
 
 
@@ -1203,22 +1225,34 @@ export function buildFamilyMessage(f: familyLikeEntity) {
     { token: 'ארגון', value: getSettings().organisationName }
   ], "whatsappToFamily", use.language.hello + ' !משפחה!, ');
 }
+export function buildVolunteerOnTheWayMessage(f: familyLikeEntity) {
+  return new messageMerger([
+    { token: 'משפחה', value: f.name },
+    { token: 'ארגון', value: getSettings().organisationName }
+  ], "buildVolunteerOnTheWayMessage", use.language.hello + ' !משפחה!, המתנדב/ת מ!ארגון! בדרך אליכם');
+}
 
 export async function sendWhatsappToFamily(f: familyLikeEntity, phone?: string, message?: string) {
   if (!phone) {
-    for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
-      if (p && p.canSendWhatsapp()) {
-        phone = p.thePhone;
-        break;
-      }
-    }
+    phone = getSmsPhone(f);
   }
   if (!message) {
-    message = await buildFamilyMessage(f).mergeFromTemplate(remult);
+    message = await buildFamilyMessage(f).mergeFromTemplate();
   }
   Phone.sendWhatsappToPhone(phone,
     message);
 }
+export function getSmsPhone(f: familyLikeEntity) {
+  let phone: string = undefined;
+  for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
+    if (p && p.canSendWhatsapp()) {
+      phone = p.thePhone;
+      break;
+    }
+  }
+  return phone;
+}
+
 export function canSendWhatsapp(f: familyLikeEntity) {
   for (const p of [f.phone1, f.phone2, f.phone3, f.phone4]) {
     if (p && p.canSendWhatsapp()) {

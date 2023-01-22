@@ -131,3 +131,8 @@ familySelfOrderEnabled boolean default false not null
 familySelfOrderMessage varchar default '' not null
 inviteVolunteersMessage varchar default '' not null
 allowVolunteerToSeePreviousActivities boolean default false not null
+customSmsOriginForSmsToVolunteer varchar default '' not null
+allowSmsToFamily boolean default false not null
+sendOnTheWaySMSToFamily boolean default false not null
+sendOnTheWaySMSToFamilyOnSendSmsToVolunteer boolean default false not null
+customSmsOriginForSmsToFamily varchar default '' not null

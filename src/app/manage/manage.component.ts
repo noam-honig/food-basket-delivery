@@ -14,7 +14,7 @@ import { DialogService } from '../select-popup/dialog';
 import { AdminGuard } from '../auth/guards';
 import { Roles } from '../auth/roles';
 import { Route } from '@angular/router';
-import { Families } from '../families/families';
+import { buildVolunteerOnTheWayMessage, Families } from '../families/families';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DistributionCenters } from './distribution-centers';
 
@@ -31,6 +31,8 @@ import { ManageController, SendTestSms } from './manage.controller';
 import { ChangeLogComponent } from '../change-log/change-log.component';
 import { EventInfoComponent } from '../event-info/event-info.component';
 import { OrgEventsController } from '../org-events/org-events.controller';
+import { ButtonDataComponent } from '../button-data/button-data.component';
+import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component';
 
 @Component({
   selector: 'app-manage',
@@ -262,6 +264,42 @@ export class ManageComponent implements OnInit {
   settingsLogo = new DataAreaSettings({
     fields: s => [this.settings.$.logoUrl]
   });
+  superAdmin = new DataAreaSettings({
+    fields: s => [
+      this.settings.$.customSmsOriginForSmsToVolunteer,
+      {
+        caption: 'test sms to volunteer',
+        click: () => {
+          this.testSmsMessage()
+        },
+        customComponent: {
+          component: ButtonDataComponent
+        }
+      },
+      this.settings.$.allowSmsToFamily,
+      this.settings.$.sendOnTheWaySMSToFamily,
+      {
+        field:
+          this.settings.$.sendOnTheWaySMSToFamilyOnSendSmsToVolunteer,
+        visible: () => this.settings.sendOnTheWaySMSToFamily
+      },
+      {
+        field:
+          this.settings.$.customSmsOriginForSmsToFamily,
+        visible: () => this.settings.sendOnTheWaySMSToFamily || this.settings.allowSmsToFamily
+      },
+      {
+        caption: 'test sms to family',
+        click: () => {
+          this.testSmsMessage(true)
+        },
+        customComponent: {
+          component: ButtonDataComponent
+        }
+      },
+
+    ]
+  });
   async previewVolunteer() {
     openDialog(MyFamiliesComponent);
   }
@@ -309,7 +347,8 @@ export class ManageComponent implements OnInit {
       [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values],
       this.settings.$.askVolunteerForLocationOnDelivery,
       this.settings.$.askVolunteerForAPhotoToHelp,
-      this.settings.$.questionForVolunteerWhenUploadingPhoto
+      this.settings.$.questionForVolunteerWhenUploadingPhoto,
+
     ]
   });
   settings2Messages = new DataAreaSettings({
@@ -320,8 +359,33 @@ export class ManageComponent implements OnInit {
       this.settings.$.AddressProblemStatusText,
       this.settings.$.NotHomeProblemStatusText,
       this.settings.$.DoNotWantProblemStatusText,
-      this.settings.$.OtherProblemStatusText
+      this.settings.$.OtherProblemStatusText,
+      {
+        caption: use.language.smsMessageToFamilyWhenVolunteerOnTheWay,
+        visible: () => this.settings.sendOnTheWaySMSToFamily,
+        click: async () => {
 
+          let messageMerge = buildVolunteerOnTheWayMessage(await remult.repo(Families).findFirst());
+          const message = await messageMerge.fetchTemplateRow();
+          openDialog(EditCustomMessageComponent, edit => edit.args = {
+            message: messageMerge,
+            templateText: message.template,
+            helpText: '',
+            title: use.language.smsMessageToFamilyWhenVolunteerOnTheWay,
+            buttons: [{
+              name: use.language.save,
+              click: async () => {
+                message.template = edit.args.templateText;
+                await message.save();
+                edit.ref.close();
+              }
+            }]
+          })
+        },
+        customComponent: {
+          component: ButtonDataComponent
+        }
+      },
 
 
 
@@ -401,22 +465,26 @@ export class ManageComponent implements OnInit {
       , buttons: [{
         text: use.language.testSmsMessage,
         click: async () => {
-          await this.settings.save()
-          var message = new SendTestSms(remult);
-          message.phone = (await remult.context.getCurrentUser()).phone.thePhone;
-          message.message = this.testSms();
-          openDialog(InputAreaComponent, x => x.args = {
-            fields: message.$.toArray(),
-            title: use.language.testSmsMessage,
-            ok: async () => {
-              let result = await message.sendTestMessage();
-              this.dialog.Error(result);
-            }
 
-          })
+          await this.testSmsMessage();
         }
       }]
     }); ""
+  }
+
+  private async testSmsMessage(toFamily = false) {
+    await this.settings.save()
+    var message = new SendTestSms(remult);
+    message.phone = (await remult.context.getCurrentUser()).phone.thePhone;
+    message.message = this.testSms();
+    openDialog(InputAreaComponent, x => x.args = {
+      fields: message.$.toArray(),
+      title: use.language.testSmsMessage,
+      ok: async () => {
+        let result = await message.sendTestMessage(toFamily);
+        this.dialog.Error(result);
+      }
+    });
   }
 
   testSms() {

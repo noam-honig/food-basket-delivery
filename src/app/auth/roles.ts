@@ -10,5 +10,6 @@ export class Roles {
     static indie = 'indie';
     static callPerson = 'caller';
     static smsSignIn = 'smsSignIn';
+    static superAdmin = 'superAdmin'
 }
 

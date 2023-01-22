@@ -67,7 +67,7 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
         }
     },
     saving: async (self) => {
-
+        //SqlDatabase.LogToConsole = true
         if (self.isNew()) {
             self.createDate = new Date();
             self.createUser = (await remult.context.getCurrentUser());
@@ -78,8 +78,11 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
             self.quantity = 1;
         if (self.distributionCenter == null)
             self.distributionCenter = await remult.repo(DistributionCenters).findFirst({ archive: false });
-        if (self.$.courier.valueChanged() && !self.disableRouteReCalc && !self.isNew())
-            self.routeOrder = 0;
+        if (self.$.courier.valueChanged() && !self.isNew()) {
+            if (!self.disableRouteReCalc)
+                self.routeOrder = 0;
+            self.onTheWayDate = null;
+        }
 
         if (isBackend()) {
             if (!self.disableChangeLogging) {
@@ -453,6 +456,9 @@ export class FamilyDeliveries extends IdEntity {
     archive: boolean;
     @ChangeDateColumn({ includeInApi: Roles.admin, translation: l => l.archiveDate })
     archiveDate: Date;
+
+    @Field({ allowApiUpdate: false, allowNull: true })
+    onTheWayDate: Date;
     @Field({ includeInApi: Roles.admin, translation: l => l.archiveUser })
     archiveUser: HelpersBase;
     @Field({
@@ -531,7 +537,7 @@ export class FamilyDeliveries extends IdEntity {
         group: string,
         area: string,
         basketId: string
-    }>(async ( { city, group, area, basketId }) => {
+    }>(async ({ city, group, area, basketId }) => {
         let basket = await remult.repo(BasketType).findId(basketId);
         return {
             deliverStatus: DeliveryStatus.ReadyForDelivery,
@@ -881,7 +887,7 @@ SqlBuilder.filterTranslators.push({
 export class ActiveFamilyDeliveries extends FamilyDeliveries {
 
 
-    static filterPhone = Filter.createCustom<ActiveFamilyDeliveries, string>(( phone) => {
+    static filterPhone = Filter.createCustom<ActiveFamilyDeliveries, string>((phone) => {
         return SqlDatabase.rawFilter(async (x) => {
             var phoneParam = x.addParameterAndReturnSqlToken(phone);
             var sql = new SqlBuilder();

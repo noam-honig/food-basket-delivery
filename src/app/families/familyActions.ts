@@ -1,5 +1,5 @@
-import { Filter,  getValueList as gvl, remult } from "remult";
-import { Families } from "./families";
+import { Filter, getValueList as gvl, remult } from "remult";
+import { Families, getSmsPhone } from "./families";
 
 import { BasketType } from "./BasketType";
 import { DistributionCenters } from "../manage/distribution-centers";
@@ -20,6 +20,9 @@ import { FamilySources } from "./FamilySources";
 
 
 import { controllerRefImpl, getControllerRef } from "remult/src/remult3";
+import { getSettings } from "../manage/ApplicationSettings";
+import { Roles } from "../auth/roles";
+import { SendSmsAction, SendSmsUtils } from "../asign-family/send-sms-action";
 
 @ValueListFieldType({
     translation: l => l.selfPickupStrategy
@@ -340,6 +343,29 @@ export class UpdateFamilySource extends ActionOnRows<Families> {
         super(Families, {
             title: getLang().updateFamilySource,
             forEach: async f => { f.familySource = this.familySource }
+        });
+    }
+}
+@Controller('SendSmsToFamilies')
+export class SendSmsToFamilies extends ActionOnRows<Families> {
+
+
+    constructor() {
+        super(Families, {
+            title: getLang().sendMessageToFamilies,
+            additionalWhere: () => ({
+                doNotSendSms: false
+            }),
+            allowed: () => remult.isAllowed(Roles.admin) && getSettings().allowSmsToFamily,
+            forEach: async f => {
+                let setting = await remult.context.getSettings();
+                let message = await f.createSelfOrderMessage();
+                let phone = getSmsPhone(f);
+                if (phone)
+                    new SendSmsUtils().sendSms(phone, message.merge(setting.familySelfOrderMessage), undefined, {
+                        familyId: f.id
+                    })
+            }
         });
     }
 }
