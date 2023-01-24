@@ -148,32 +148,48 @@ export class UserFamiliesList {
     unsubscribe: VoidFunction;
     hasDeliveriesNotOnTheWay = false;
     async reload() {
+
+
         if (this.helper && !this.helper.isNew()) {
             if (this.unsubscribe)
                 this.unsubscribe();
             this.checkRoutes = true;
-            this.unsubscribe = remult.repo(ActiveFamilyDeliveries).liveQuery({
-                where: {
-                    courier: this.helper,
-                    visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
-
-                }, orderBy: {
-                    deliverStatus: "asc",
-                    routeOrder: "asc",
-                    address: "asc"
-                },
-                limit: 1000
-            }).subscribe(reducer => {
-                this.allFamilies = reducer.items;
-
-                this.familiesAlreadyAssigned = new Map<string, boolean>();
-                this.highlightNewFamilies = false;
-                for (const f of this.allFamilies) {
-                    this.highlightNewFamilies = true;
-                    this.familiesAlreadyAssigned.set(f.id, true);
+            let done = false;
+            await new Promise((res) => {
+                const complete = () => {
+                    if (!done) {
+                        done = true;
+                        res({})
+                    }
                 }
-                this.initFamilies();
-            });
+                this.unsubscribe = remult.repo(ActiveFamilyDeliveries).liveQuery({
+                    where: {
+                        courier: this.helper,
+                        visibleToCourier: !this.settings.isSytemForMlt && !remult.isAllowed(Roles.distCenterAdmin) ? true : undefined
+
+                    }, orderBy: {
+                        deliverStatus: "asc",
+                        routeOrder: "asc",
+                        address: "asc"
+                    },
+                    limit: 1000
+                }).subscribe({
+                    next: reducer => {
+                        complete()
+                        this.allFamilies = reducer.items;
+
+                        this.familiesAlreadyAssigned = new Map<string, boolean>();
+                        this.highlightNewFamilies = false;
+                        for (const f of this.allFamilies) {
+                            this.highlightNewFamilies = true;
+                            this.familiesAlreadyAssigned.set(f.id, true);
+                        }
+                        this.initFamilies();
+                    },
+                    error: () => complete(),
+                    complete: () => complete()
+                });
+            })
             if (this.lastHelperId != this.helper.id) {
                 this.lastHelperId = this.helper.id;
             }
@@ -276,6 +292,8 @@ export class UserFamiliesList {
         if (this.map)
             this.map.clear();
         this.forceShowMap = false;
+        if (this.unsubscribe)
+            this.unsubscribe();
 
 
 

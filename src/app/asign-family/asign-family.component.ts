@@ -623,7 +623,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
         if (this.showSave()) {
             try {
+                let isNew = this.helper.isNew()
                 await this.helper.save();
+                if (isNew)
+                    await this.familyLists.initForHelper(this.helper)
             } catch (err) {
                 await this.dialog.exception(this.settings.lang.saveVolunteerInfo, err);
                 throw err;
