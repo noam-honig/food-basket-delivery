@@ -388,7 +388,7 @@ export class Families extends IdEntity {
 
   }
   createDelivery(distCenter: DistributionCenters) {
-    let fd = remult.repo(FamilyDeliveries).create();
+    let fd = remult.repo(ActiveFamilyDeliveries).create();
     fd.family = this.id;
     fd.distributionCenter = distCenter ? distCenter : this.defaultDistributionCenter;
     fd.special = this.special;
