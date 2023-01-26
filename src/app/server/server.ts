@@ -445,6 +445,11 @@ s.parentNode.insertBefore(b, s);})();
                         fs.writeFileSync(path + meta.key + '.sql', s);
                     }
                 }
+
+
+                
+
+
                 //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
                 if (false) {
 
@@ -727,5 +732,5 @@ function test<t = never>(what: (a: t, b: number) => void) {
 }
 
 test<any>((a, b) => {
-a.toString()
+    a.toString()
 });

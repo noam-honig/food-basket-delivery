@@ -9,6 +9,8 @@ import { DataControl, getEntityValueList, InputField } from '../common-ui-elemen
 import { getSettings } from '../manage/ApplicationSettings';
 import { FamilyDeliveries } from './FamilyDeliveries';
 import { UITools } from '../helpers/init-context';
+import { MyIdEntity } from './MyIdEntity';
+
 
 
 @FieldType<BasketType>({
@@ -26,13 +28,14 @@ import { UITools } from '../helpers/init-context';
 @Entity<BasketType>("BasketType", {
   allowApiRead: remult => Allow.authenticated(remult) || getSettings().familySelfOrderEnabled,
   allowApiCrud: Roles.admin,
+  allowApiDelete: false,
   saving: async (self) => {
     if ((!self.boxes || self.boxes < 1) && (!self.boxes2 || self.boxes2 < 1))
       self.boxes = 1;
   },
   defaultOrderBy: { name: "asc" }
 })
-export class BasketType extends IdEntity {
+export class BasketType extends MyIdEntity {
   @Field({ translation: l => l.basketTypeName })
   name: string;
   @Fields.integer({}, (options) => options.caption = BasketType.boxes1Name)

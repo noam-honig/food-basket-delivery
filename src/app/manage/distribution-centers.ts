@@ -7,6 +7,7 @@ import { HelpersBase } from "../helpers/helpers";
 import { ApplicationSettings } from "./ApplicationSettings";
 import { DataControl, getEntityValueList } from "../common-ui-elements/interfaces";
 import { use, FieldType, Field } from "../translate";
+import { MyIdEntity } from "../families/MyIdEntity";
 
 
 
@@ -39,7 +40,7 @@ import { use, FieldType, Field } from "../translate";
     }
   }
 })
-export class DistributionCenters extends IdEntity {
+export class DistributionCenters extends MyIdEntity {
   @Field({ translation: l => l.distributionCenterName })
   name: string;
   @Field({ translation: l => l.distributionCenterUniqueId })
