@@ -1,5 +1,5 @@
 <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-    <mat-label>{{caption?caption:field.metadata.caption}}</mat-label>
+    <mat-label>{{caption?caption:field.metadata?.caption}}</mat-label>
     <input #theId matInput [(ngModel)]="field.value" #addressInput [errorStateMatcher]="ngErrorStateMatches"
         autocomplete="false" (input)="checkInput()">
     <mat-error *ngIf="getError()" id="theId">{{getError()}}</mat-error>

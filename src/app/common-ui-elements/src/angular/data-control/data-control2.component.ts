@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, Input, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, Input, ViewChild, ViewContainerRef, OnChanges, ComponentRef } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { FloatLabelType } from '@angular/material/form-field';
 import { Entity, ValueListItem, FieldMetadata, FieldRef } from 'remult';
@@ -12,7 +12,7 @@ import { CommonUIElementsPluginsService } from '../CommonUIElementsPluginsServic
   templateUrl: './data-control2.component.html',
   styleUrls: ['./data-control2.component.scss']
 })
-export class DataControl2Component {
+export class DataControl2Component implements OnChanges {
   @Input() map!: DataControlSettings;
   @Input() set field(value: FieldMetadata | FieldRef<any, any>) {
     this.map = {
@@ -28,25 +28,23 @@ export class DataControl2Component {
   @ViewChild('theId', { read: ViewContainerRef, static: true })
   theId!: ViewContainerRef;
   done = false;
-  customFieldRef: FieldRef;
+  componentRef: ComponentRef<CustomDataComponent<any>>;
   initCustomComponent() {
     if (this.map?.customComponent?.component) {
-      if (this.customFieldRef = this.map?.field as FieldRef)
-        this.done = false;
-      if (this.done)
-        return;
-      this.customFieldRef = this.map.field as FieldRef;
-      this.done = true;
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory<CustomDataComponent>(this.map.customComponent.component);
+      if (!this.done) {
+        this.done = true;
+        const componentFactory = this.componentFactoryResolver.resolveComponentFactory<CustomDataComponent>(this.map.customComponent.component);
 
-      const viewContainerRef = this.theId;
-      viewContainerRef.clear();
+        const viewContainerRef = this.theId;
+        viewContainerRef.clear();
 
-      const componentRef = viewContainerRef.createComponent<CustomDataComponent>(componentFactory);
-
-      componentRef.instance.args = {
-        fieldRef: this.customFieldRef,
-        settings: this.map
+        this.componentRef = viewContainerRef.createComponent<CustomDataComponent>(componentFactory);
+      }
+      if (this.componentRef) {
+        this.componentRef.instance.args = {
+          fieldRef: this._getColumn() as FieldRef,
+          settings: this.map
+        }
       }
     }
   }
