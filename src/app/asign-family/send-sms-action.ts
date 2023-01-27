@@ -115,6 +115,10 @@ export class SendSmsUtils {
         eventId?: string
     }) {
 
+        if (process.env.TEST_SMS_PHONE) {
+            phone = process.env.TEST_SMS_PHONE;
+        }
+
         var schema = Sites.getOrganizationFromContext();
         var settings = await ApplicationSettings.getAsync()
         let un = process.env.SMS_UN;

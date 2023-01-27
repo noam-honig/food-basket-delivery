@@ -141,7 +141,7 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
   }
 
   sendMessageToFamilies() {
-    AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies()
+    AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies(this.familyLists.helper)
   }
 
 

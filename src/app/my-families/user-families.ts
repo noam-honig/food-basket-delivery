@@ -292,8 +292,10 @@ export class UserFamiliesList {
         if (this.map)
             this.map.clear();
         this.forceShowMap = false;
-        if (this.unsubscribe)
+        if (this.unsubscribe) {
             this.unsubscribe();
+            this.unsubscribe = undefined;
+        }
 
 
 

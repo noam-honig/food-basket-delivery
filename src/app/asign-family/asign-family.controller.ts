@@ -558,22 +558,29 @@ export class AsignFamilyController {
     }
 
     @BackendMethod({ allowed: () => getSettings().sendOnTheWaySMSToFamily })
-    static async sendOnTheWaySmsMessageToVolunteersFamilies() {
+    static async sendOnTheWaySmsMessageToVolunteersFamilies(courier: HelpersBase) {
+
+        let promises = [];
         for (const fd of await remult.repo(ActiveFamilyDeliveries).find({
             where: {
                 deliverStatus: DeliveryStatus.ReadyForDelivery,
-                courier: { $id: [remult.user!.id] },
-                onTheWayDate: null
+                courier,
+                onTheWayDate: null,
+                $and: [
+                    ActiveFamilyDeliveries.isAllowedForUser()
+                ]
             }
         })) {
             const phone = getSmsPhone(fd);
             fd.onTheWayDate = new Date();
-            await fd.save();
-            if (phone) {
-                let m = buildVolunteerOnTheWayMessage(fd)
-                await new SendSmsUtils().sendSms(phone, await m.mergeFromTemplate(), undefined, { familyId: fd.family })
-            }
+            promises.push(fd.save().then(async () => {
+                if (phone) {
+                    let m = buildVolunteerOnTheWayMessage(fd)
+                    await new SendSmsUtils().sendSms(phone, await m.mergeFromTemplate(), undefined, { familyId: fd.family })
+                }
+            }));
         }
+        await Promise.all(promises);
     }
 }
 export interface BasketInfo {

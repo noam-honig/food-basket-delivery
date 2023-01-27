@@ -697,7 +697,7 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     anyFamilySms: settings.allowSmsToFamily || settings.sendOnTheWaySMSToFamily,
     allowSmsToFamily: settings.allowSmsToFamily,
     sendOnTheWaySMSToFamily,
-    sendOnTheWaySMSToFamilyOnSendSmsToVolunteer
+    sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: sendOnTheWaySMSToFamilyOnSendSmsToVolunteer && sendOnTheWaySMSToFamily
   });
 }
 export function getSettings(): SmallSettings {

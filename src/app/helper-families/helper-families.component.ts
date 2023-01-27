@@ -490,7 +490,7 @@ export class HelperFamiliesComponent implements OnInit {
     let to = this.familyLists.helper.name;
     await SendSmsAction.SendSms(this.familyLists.helper, reminder);
     if (getSettings().sendOnTheWaySMSToFamilyOnSendSmsToVolunteer) {
-      await AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies();
+      await AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies(this.familyLists.helper);
     }
     if (this.familyLists.helper.escort) {
       to += ' ול' + this.familyLists.escort.name;

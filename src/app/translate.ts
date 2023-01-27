@@ -1338,7 +1338,7 @@ export class Language {
   moveBefore = "הזז לפני";
   moveAfter = "הזז אחרי";
   assignHistory = 'היסטורית שיוכים';
-  editFamilyWhatsappMessage = "'ערוך מבנה הודעת וטסאפ למשפחה'";
+  editFamilyWhatsappMessage = "ערוך מבנה הודעת וטסאפ למשפחה";
   allowSmsToFamily = "הרשה הודעות SMS למשפחות";
   sendOnTheWaySMSToFamily = "שלח SMS למשפחה כשהמתנדב בדרך";
   sendOnTheWaySMSToFamilyOnSendSmsToVolunteer = "שלח SMS למשפחה שהמתנדב בדרך אוטומטית כאשר שולחים הודעה למתנדב"
