@@ -447,7 +447,7 @@ s.parentNode.insertBefore(b, s);})();
                 }
 
 
-                
+
 
 
                 //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
@@ -482,14 +482,23 @@ s.parentNode.insertBefore(b, s);})();
                 url: '/' + Sites.guestSchema + '/xx'
             }, undefined, async () => {
                 let vals = {
-                    total: 0
+                    total: 0,
+                    total$sse: 0
+
                 }
                 for (const key of siteEventPublishers.keys()) {
+                    await siteEventPublishers.get(key).liveQueryStorage.forEach("", async () => { })
                     //@ts-ignore
                     let val = siteEventPublishers.get(key).liveQueryStorage.queries.length;
                     vals.total += val;
                     if (val > 0)
                         vals[key] = val;
+                    //@ts-ignore
+                    let v2 = siteEventPublishers.get(key).subscriptionServer.connections.length
+                    if (v2) {
+                        vals.total$sse += v2;
+                        vals[key + '$sse'] = v2;
+                    }
                 }
                 await remult.repo(MemoryStats).insert({
                     mem: process.memoryUsage(),
