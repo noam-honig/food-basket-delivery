@@ -12,7 +12,7 @@ import { openDialog } from "../common-ui-elements";
 import { SelectFamilyComponent } from "../select-family/select-family.component";
 
 export class moveDeliveriesHelperController {
-    @BackendMethod({ allowed: Roles.admin })
+    @BackendMethod({ allowed: Roles.distCenterAdmin })
     static async moveDeliveriesBetweenVolunteers(deliveries: string[], to: HelpersBase) {
         let t = new PromiseThrottle(10);
         let settings = (await remult.context.getSettings());

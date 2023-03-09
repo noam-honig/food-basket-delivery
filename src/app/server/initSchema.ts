@@ -531,6 +531,10 @@ export async function initSchema(pool1: PostgresPool, org: string) {
             await message.save();
         }
     });
+    await version(48, async () => {
+        var h = SqlFor(remult.repo(HelperCommunicationHistory));
+        await dataSource.execute(await sql.build("create index if not exists ComHistory_by_volunteer on ", h, "  (", [h.volunteer, h.createDate], ")"));
+    })
 
 
 
