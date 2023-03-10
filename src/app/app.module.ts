@@ -399,5 +399,5 @@ export function initApp(session: TokenService, settings: SettingsService, inject
 
 
 Remult.onFind = (e) => {
-  // console.trace(e.key);
+   console.trace(e.key);
 }

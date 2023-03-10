@@ -99,7 +99,7 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
       if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
         id = this.user.theHelperIAmEscortingId;
       done += '2';
-      let helper = await remult.repo(Helpers).findId(id, { useCache: false });
+      let helper = await remult.repo(Helpers).findId(id);
       if (helper)
         done += 'helper id:' + helper.id;
       else done += "3";
