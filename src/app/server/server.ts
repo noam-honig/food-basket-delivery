@@ -80,13 +80,13 @@ import { ChangeLog, FieldDecider } from "../change-log/change-log";
 import { CallerController } from "../caller/caller.controller";
 
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder';
-import { remultExpress, SseSubscriptionServer } from "remult/remult-express";
+import { remultExpress } from "remult/remult-express";
 import { Callers } from "../manage-callers/callers";
 import { MessageTemplate } from "../edit-custom-message/messageMerger";
-import { RemultServer } from "remult/server/expressBridge";
+import { RemultServer,SseSubscriptionServer } from "remult/server";
 
 import * as ably from 'ably';
-import { AblySubscriptionServer } from 'remult/live-query/ably'
+
 import { LiveQueryStorage, InMemoryLiveQueryStorage, SubscriptionServer } from 'remult';
 import { MemoryStats } from "./stats";
 
@@ -386,7 +386,6 @@ s.parentNode.insertBefore(b, s);})();
                 let found = siteEventPublishers.get(site);
                 if (!found) {
                     let subscriptionServer: SubscriptionServer;
-                    if (true) {
                         //TODO YONI - review channel name
                         let x = new SseSubscriptionServer(
                             (channel, remult) => {
@@ -398,17 +397,8 @@ s.parentNode.insertBefore(b, s);})();
                         //x.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'dispatcher.json', JSON.stringify(x, undefined, 2))
                         //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
                         subscriptionServer = x;
-                    }
 
-                    else {
-                        const d = new AblySubscriptionServer(new ably.Realtime.Promise(process.env.ABLY_KEY));
-                        subscriptionServer = {
-                            publishMessage(channel, message) {
-                                fs.writeFileSync('./tmp/messages/' + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(message));
-                                d.publishMessage(site + ":" + channel, message);
-                            }
-                        }
-                    }
+                   
                     var liveQueryStorage = new InMemoryLiveQueryStorage();
                     siteEventPublishers.set(site, found = {
                         subscriptionServer,
