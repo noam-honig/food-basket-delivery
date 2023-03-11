@@ -463,6 +463,9 @@ export class ApplicationSettings extends EntityBase {
   @Field()
   registerAskTz: boolean;
   @Field()
+  registerRequireTz: boolean;
+
+  @Field()
   registerAskEmail: boolean;
   @Field()
   registerAskPreferredDistributionAreaAddress: boolean;
@@ -697,7 +700,8 @@ export function setSettingsForSite(site: string, settings: ApplicationSettings) 
     anyFamilySms: settings.allowSmsToFamily || settings.sendOnTheWaySMSToFamily,
     allowSmsToFamily: settings.allowSmsToFamily,
     sendOnTheWaySMSToFamily,
-    sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: sendOnTheWaySMSToFamilyOnSendSmsToVolunteer && sendOnTheWaySMSToFamily
+    sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: sendOnTheWaySMSToFamilyOnSendSmsToVolunteer && sendOnTheWaySMSToFamily,
+    registerRequireTz: settings.registerAskTz && settings.registerRequireTz
   });
 }
 export function getSettings(): SmallSettings {
@@ -736,6 +740,7 @@ export class SmallSettings {
   allowSmsToFamily: boolean;
   sendOnTheWaySMSToFamily: boolean;
   sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: boolean;
+  registerRequireTz: boolean;
 
 }
 export class SmallAdressHelper {

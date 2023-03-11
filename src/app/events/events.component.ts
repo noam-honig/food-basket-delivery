@@ -85,7 +85,7 @@ export class EventsComponent implements OnInit {
         name: getLang().exportToExcel,
         click: async () => {
           (await import('../shared/saveToExcel')).saveToExcel((await remult.context.getSettings()), remult.repo(Event), this.events, "events", this.dialog,
-            (e, c) => c == e.$.id )
+            (e, c) => c == e.$.id)
         }
       }
 
@@ -124,6 +124,7 @@ export class EventsComponent implements OnInit {
             [this.settings.$.questionForRegistration3Caption, this.settings.$.questionForRegistration3Values],
             [this.settings.$.questionForRegistration4Caption, this.settings.$.questionForRegistration4Values],
             s.$.registerAskTz,
+            { field: s.$.registerRequireTz, visible: () => s.registerAskTz },
             s.$.registerAskEmail,
             s.$.registerAskPreferredDistributionAreaAddress,
             s.$.registerAskPreferredFinishAddress,

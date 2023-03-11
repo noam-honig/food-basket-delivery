@@ -1345,6 +1345,8 @@ export class Language {
   sendMessageToFamilies = "שלח הודעת SMS למשפחות"
   sendSmsToFamiliesToLetThemKnowImOnTheWay = "שלח הודעה למשפחות שאני בדרך"
   smsMessageToFamilyWhenVolunteerOnTheWay = 'הודעה שתצא למשפחה כאשר המתנדב יוצא לדרך';
+  registerRequireTz = 'חובה על המתנדב להזין תז';
+  requiredField = "שדה חובה" 
 }
 
 

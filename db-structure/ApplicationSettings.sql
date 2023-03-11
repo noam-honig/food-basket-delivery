@@ -113,6 +113,7 @@ questionForRegistration3Values varchar default '' not null
 questionForRegistration4Caption varchar default '' not null
 questionForRegistration4Values varchar default '' not null
 registerAskTz boolean default false not null
+registerRequireTz boolean default false not null
 registerAskEmail boolean default false not null
 registerAskPreferredDistributionAreaAddress boolean default false not null
 registerAskPreferredFinishAddress boolean default false not null

@@ -4,7 +4,7 @@ import { actionInfo } from 'remult/src/server-action';
 import { EventInList, volunteersInEvent, Event, eventDisplayDate } from '../events/events';
 import { Helpers } from '../helpers/helpers';
 import { InitContext, UITools } from '../helpers/init-context';
-import { CustomColumn, registerQuestionForVolunteers } from '../manage/ApplicationSettings';
+import { CustomColumn, getSettings, registerQuestionForVolunteers } from '../manage/ApplicationSettings';
 import { ManageController } from '../manage/manage.controller';
 import { Phone } from '../model-shared/phone';
 import { Email } from '../model-shared/types';
@@ -104,7 +104,14 @@ export class RegisterToEvent {
     a3: string = '';
     @CustomColumn(() => registerQuestionForVolunteers[4])
     a4: string = '';
-    @Field({ translation: l => l.socialSecurityNumber })
+    @Field<RegisterToEvent>({
+        translation: l => l.socialSecurityNumber,
+        validate: (e, tz) => {
+            if (getSettings().registerRequireTz) {
+                Validators.required(e, tz, remult.context.lang.requiredField)
+            }
+        }
+    })
     socialSecurityNumber: string = '';
     @Field()
     email: Email = new Email('');
@@ -184,7 +191,7 @@ export class RegisterToEvent {
     async registerVolunteerToEvent(id: string, site: string, register: boolean, remoteUrl?: string) {
         if (remoteUrl)
             return await doOnRemoteHagai(async (remote, url) => {
-                return await remote.call(this.registerVolunteerToEvent, this,id, site, register, remoteUrl).then((x: EventInList) => ({ ...x, remoteUrl: url, eventLogo: remoteUrl + x.eventLogo }));
+                return await remote.call(this.registerVolunteerToEvent, this, id, site, register, remoteUrl).then((x: EventInList) => ({ ...x, remoteUrl: url, eventLogo: remoteUrl + x.eventLogo }));
             });
         await this.init();
         if (site) {
