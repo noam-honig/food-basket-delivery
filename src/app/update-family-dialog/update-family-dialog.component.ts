@@ -341,13 +341,13 @@ export class UpdateFamilyDialogComponent implements OnInit, AfterViewChecked, Af
     this.phones = this.families.addArea({
       fields: families => [
         [
-          families.phone1,
+          { cssClass: 'phone-field', field: families.phone1 },
           families.phone1Description],
-        [families.phone2,
+        [{ cssClass: 'phone-field', field: families.phone2 },
         families.phone2Description],
-        [families.phone3,
+        [{ cssClass: 'phone-field', field: families.phone3 },
         families.phone3Description],
-        [families.phone4,
+        [{ cssClass: 'phone-field', field: families.phone4 },
         families.phone4Description],
         families.doNotSendSms
       ]

@@ -499,3 +499,12 @@ body[dir="rtl"] {
 * { //disables double click to zoom
   touch-action: manipulation;
 }
+@media (max-width:400px) {
+  .one-line:has(.phone-field){
+    flex-direction: column;
+    border-bottom: solid 2px rgba(0,0,0,0.12);
+    padding-bottom: 2px;
+    margin-bottom: 6px;
+  }
+}
+
