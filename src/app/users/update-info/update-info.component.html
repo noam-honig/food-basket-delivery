@@ -1,17 +1,20 @@
 <mat-card>
   <data-area *ngIf="area" [settings]="area"></data-area>
 
-  <div style="display:flex; justify-content: space-between;">
-
+  <div style="display: flex; justify-content: space-between">
     <button mat-raised-button color="accent" (click)="register()">
-      {{settings.lang.updateInfo}}
+      {{ settings.lang.updateInfo }}
     </button>
 
-    <button *ngIf="settings.isSytemForMlt" mat-raised-button color="accent" (click)="signout()">
-      {{settings.lang.exit}}
+    <button
+      *ngIf="settings.isSytemForMlt"
+      mat-raised-button
+      color="accent"
+      (click)="signout()"
+    >
+      {{ settings.lang.exit }}
     </button>
-    </div>
-
+  </div>
 </mat-card>
 
 <!-- <input #address>  -->

@@ -1,13 +1,20 @@
-<div  class="myDiv" style="text-align: -webkit-center;">
+<div class="myDiv" style="text-align: -webkit-center">
   <mat-card style="max-width: 300px; align-self: center">
-      <form (ngSubmit)="f.valid && search()" style="margin-top: 24px; text-align: start;" #f="ngForm">
-        <div style="width:100%;text-align: center;margin-top:10px">
-          <data-control [field]="phone"></data-control>
-          <button mat-raised-button color="accent" type="submit">הצג משלוחים</button>
-        </div>
-      </form>
-    </mat-card>
+    <form
+      (ngSubmit)="f.valid && search()"
+      style="margin-top: 24px; text-align: start"
+      #f="ngForm"
+    >
+      <div style="width: 100%; text-align: center; margin-top: 10px">
+        <data-control [field]="phone"></data-control>
+        <button mat-raised-button color="accent" type="submit">
+          הצג משלוחים
+        </button>
+      </div>
+    </form>
+  </mat-card>
 
   <div *ngIf="showData">
-      <data-grid [settings]="deliveries" class="grow-item"></data-grid>
+    <data-grid [settings]="deliveries" class="grow-item"></data-grid>
   </div>
+</div>

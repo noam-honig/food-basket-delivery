@@ -1,65 +1,64 @@
-
 h3 {
-    background-color: #fafafa;
-    position: sticky;
-    top: 0px;
-    z-index: 1;
-    @media (max-width: 720px) {
-        margin-block-start: 0em;
-        margin-block-end: 0;
-    }
+  background-color: #fafafa;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  @media (max-width: 720px) {
+    margin-block-start: 0em;
+    margin-block-end: 0;
+  }
 }
 .event-card {
-    width: 195px;
-    display: flex;
-    flex-direction: column;
-    margin: 5px;
-    @media (max-width: 720px) {
-        width: 100%;
-        margin-left: 0px;
-        margin-right: 0px;
-    }
+  width: 195px;
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  @media (max-width: 720px) {
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
 
-    strong {
-        @media (max-width: 720px) {
-            font-weight: 600;
-        }
+  strong {
+    @media (max-width: 720px) {
+      font-weight: 600;
     }
+  }
 }
 .event-info {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+  @media (max-width: 720px) {
+    flex-direction: row;
     img {
-        max-width: 120px;
-        max-height: 120px;
+      max-width: 80px;
+      max-height: 80px;
+      margin-left: 15px;
     }
-    @media (max-width: 720px) {
-        flex-direction: row;
-        img {
-            max-width: 80px;
-            max-height: 80px;
-            margin-left: 15px;
-        }
-    }
+  }
 }
 .event-detail {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 .event-image {
-    width: 120px;
-    height: 120px;
-    @media (max-width: 720px) {
-        width: 150px;
-        height: 150px;
-    }
+  width: 120px;
+  height: 120px;
+  @media (max-width: 720px) {
+    width: 150px;
+    height: 150px;
+  }
 }
 
 .events-container {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .registered {
-    background-color: lightgreen !important;
+  background-color: lightgreen !important;
 }

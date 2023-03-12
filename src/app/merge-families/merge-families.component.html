@@ -1,44 +1,59 @@
-<h1 mat-dialog-title *ngIf="family">{{settings.lang.mergeForFamily}} {{family.name}}</h1>
+<h1 mat-dialog-title *ngIf="family">
+  {{ settings.lang.mergeForFamily }} {{ family.name }}
+</h1>
 <div mat-dialog-content>
-    <table class="table table-bordered my-table" *ngIf="cc">
-        <tr *ngFor="let c of cc.items">
-            <td>
-                <div style="min-width:250px">
-                    <data-control [map]="c" [settings]="cc">
-
-                    </data-control>
-                </div>
-            </td>
-            <td *ngFor="let f of families">
-                <div *ngIf="f.$.find(getField(c)).displayValue==family.$.find( getField(c)).displayValue; else elseBlock"
-                    class="green">
-                    {{f.$.find(getField(c)).displayValue}}</div>
-                <ng-template #elseBlock><span class="red"> {{f.$.find(getField(c)).displayValue}}</span>
-                    <mat-icon style="color:green"
-                        (click)="family.$.find(getField(c)).value = f.$.find(getField(c)).value">done
-                    </mat-icon>
-                </ng-template>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <a (click)="updateCurrentFamily()">{{settings.lang.familyDetails}}</a>
-            </td>
-            <td *ngFor="let f of families">
-                <a (click)="updateFamily(f)">{{settings.lang.familyDetails}}</a><br>
-                <a
-                    (click)="f.showDeliveryHistoryDialog({ui:dialog,settings:settings})">{{settings.lang.deliveries}}</a>
-            </td>
-        </tr>
-    </table>
+  <table class="table table-bordered my-table" *ngIf="cc">
+    <tr *ngFor="let c of cc.items">
+      <td>
+        <div style="min-width: 250px">
+          <data-control [map]="c" [settings]="cc"> </data-control>
+        </div>
+      </td>
+      <td *ngFor="let f of families">
+        <div
+          *ngIf="
+            f.$.find(getField(c)).displayValue ==
+              family.$.find(getField(c)).displayValue;
+            else elseBlock
+          "
+          class="green"
+        >
+          {{ f.$.find(getField(c)).displayValue }}
+        </div>
+        <ng-template #elseBlock
+          ><span class="red"> {{ f.$.find(getField(c)).displayValue }}</span>
+          <mat-icon
+            style="color: green"
+            (click)="
+              family.$.find(getField(c)).value = f.$.find(getField(c)).value
+            "
+            >done
+          </mat-icon>
+        </ng-template>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a (click)="updateCurrentFamily()">{{ settings.lang.familyDetails }}</a>
+      </td>
+      <td *ngFor="let f of families">
+        <a (click)="updateFamily(f)">{{ settings.lang.familyDetails }}</a
+        ><br />
+        <a
+          (click)="
+            f.showDeliveryHistoryDialog({ ui: dialog, settings: settings })
+          "
+          >{{ settings.lang.deliveries }}</a
+        >
+      </td>
+    </tr>
+  </table>
 </div>
 <mat-dialog-actions>
-    <button mat-raised-button color="warning" (click)="cancel()">
-        {{settings.lang.cancel}}
-    </button>
-    <button mat-raised-button color="accent" (click)="confirm()">
-        {{settings.lang.merge}}
-    </button>
-
-
+  <button mat-raised-button color="warning" (click)="cancel()">
+    {{ settings.lang.cancel }}
+  </button>
+  <button mat-raised-button color="accent" (click)="confirm()">
+    {{ settings.lang.merge }}
+  </button>
 </mat-dialog-actions>

@@ -1,10 +1,10 @@
-import { Fields, EntityBase } from 'remult';
-import * as uuid from 'uuid';
+import { Fields, EntityBase } from 'remult'
+import * as uuid from 'uuid'
 
 export class MyIdEntity extends EntityBase {
   @Fields.string({
-    defaultValue: ()=>uuid(),
+    defaultValue: () => uuid(),
     allowApiUpdate: false
   })
-  id!: string;
+  id!: string
 }

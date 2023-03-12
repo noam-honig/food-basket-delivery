@@ -1,23 +1,41 @@
 <div class="myDiv">
   <div class="no-print" *ngIf="showHelperInput">
-
     <mat-card>
       <mat-card-title>
-        {{settings.lang.volunteerInfo}}
+        {{ settings.lang.volunteerInfo }}
         <div>
-
           <mat-menu #appMenu77>
-            <button mat-menu-item *ngIf="familyLists.helper"
-              (click)="editHelper()"><mat-icon>edit</mat-icon> {{settings.lang.volunteerInfo}}</button>
-            <button mat-menu-item (click)="findHelper()"><mat-icon>person_search</mat-icon> {{settings.lang.findHelperByName}}</button>
-            <button mat-menu-item (click)="clearHelperInfo()"><mat-icon>clear</mat-icon>{{settings.lang.clearHelperInfo}}</button>
-            <button mat-menu-item (click)="saveHelper()"
-              *ngIf="showSave()">{{settings.lang.saveHelperInfoAndMoveToNextHelper}}</button>
-            <button *ngIf="!settings.showCompanies" mat-menu-item
-              (click)="settings.showCompanies= true; changeShowCompany()">{{settings.lang.showHelperCompany}}</button>
-            <button *ngIf="settings.showCompanies" mat-menu-item
-              (click)="settings.showCompanies= false; changeShowCompany()">{{settings.lang.hideHelperCompany}}</button>
-
+            <button
+              mat-menu-item
+              *ngIf="familyLists.helper"
+              (click)="editHelper()"
+            >
+              <mat-icon>edit</mat-icon> {{ settings.lang.volunteerInfo }}
+            </button>
+            <button mat-menu-item (click)="findHelper()">
+              <mat-icon>person_search</mat-icon>
+              {{ settings.lang.findHelperByName }}
+            </button>
+            <button mat-menu-item (click)="clearHelperInfo()">
+              <mat-icon>clear</mat-icon>{{ settings.lang.clearHelperInfo }}
+            </button>
+            <button mat-menu-item (click)="saveHelper()" *ngIf="showSave()">
+              {{ settings.lang.saveHelperInfoAndMoveToNextHelper }}
+            </button>
+            <button
+              *ngIf="!settings.showCompanies"
+              mat-menu-item
+              (click)="settings.showCompanies = true; changeShowCompany()"
+            >
+              {{ settings.lang.showHelperCompany }}
+            </button>
+            <button
+              *ngIf="settings.showCompanies"
+              mat-menu-item
+              (click)="settings.showCompanies = false; changeShowCompany()"
+            >
+              {{ settings.lang.hideHelperCompany }}
+            </button>
           </mat-menu>
 
           <button mat-icon-button [matMenuTriggerFor]="appMenu77">
@@ -26,35 +44,64 @@
         </div>
       </mat-card-title>
 
-      <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-        <mat-label>{{settings.lang.volunteerPhoneNumber}}</mat-label>
-        <input matInput [(ngModel)]="phone" (input)="searchPhone()" type="tel" #phoneInput>
-        <div matSuffix style="display:flex">
-          <mat-icon (click)="clearHelperInfo()" class="clickable-icon">clear</mat-icon>
-          <mat-icon (click)="findHelper()" class="clickable-icon">person_search</mat-icon>
+      <mat-form-field
+        appearance="outline"
+        class="full-width-form-field dense-form-field"
+      >
+        <mat-label>{{ settings.lang.volunteerPhoneNumber }}</mat-label>
+        <input
+          matInput
+          [(ngModel)]="phone"
+          (input)="searchPhone()"
+          type="tel"
+          #phoneInput
+        />
+        <div matSuffix style="display: flex">
+          <mat-icon (click)="clearHelperInfo()" class="clickable-icon"
+            >clear</mat-icon
+          >
+          <mat-icon (click)="findHelper()" class="clickable-icon"
+            >person_search</mat-icon
+          >
         </div>
       </mat-form-field>
-      <data-area [settings]="area" *ngIf="phone&& isValidPhone()&&showHelperInput&&helper"></data-area>
+      <data-area
+        [settings]="area"
+        *ngIf="phone && isValidPhone() && showHelperInput && helper"
+      ></data-area>
     </mat-card>
   </div>
 
-
-  <span *ngIf="showHelperInput&&(!helper||!helper.name)" class="help no-print">{{settings.lang.assignHelpText}}
-    <mat-icon (click)="findHelper()" class="clickable-icon">person_search</mat-icon></span>
-  <br *ngIf="showHelperInput&&(!helper||!helper.name)">
-  <a href="https://youtu.be/8LCeQRQPL1U" *ngIf="showHelperInput&&(!helper||!helper.name)&&settings.showVideo()" target="_blank"
-    class="help no-print">{{settings.lang.asignVideoHelp}}</a>
-  <div *ngIf="helper&&helper. name&&helper.name.length>=2">
+  <span
+    *ngIf="showHelperInput && (!helper || !helper.name)"
+    class="help no-print"
+    >{{ settings.lang.assignHelpText }}
+    <mat-icon (click)="findHelper()" class="clickable-icon"
+      >person_search</mat-icon
+    ></span
+  >
+  <br *ngIf="showHelperInput && (!helper || !helper.name)" />
+  <a
+    href="https://youtu.be/8LCeQRQPL1U"
+    *ngIf="showHelperInput && (!helper || !helper.name) && settings.showVideo()"
+    target="_blank"
+    class="help no-print"
+    >{{ settings.lang.asignVideoHelp }}</a
+  >
+  <div *ngIf="helper && helper.name && helper.name.length >= 2">
     <mat-card class="no-print">
-      
       <mat-card-title>
-        {{settings.lang.asignDeliveriesTo}} {{helper.name}}
+        {{ settings.lang.asignDeliveriesTo }} {{ helper.name }}
         <div>
-
-          <mat-menu #filterOptionsMenu="matMenu" >
-            <div style="display:flex;flex-direction: column;">
-            <mat-checkbox class="mat-menu-item" [(ngModel)]="o.inputValue" (change)="changeShowCompany()"
-              *ngFor="let o of filterOptions">{{o.metadata.caption}}</mat-checkbox>
+          <mat-menu #filterOptionsMenu="matMenu">
+            <div style="display: flex; flex-direction: column">
+              <mat-checkbox
+                class="mat-menu-item"
+                [(ngModel)]="o.inputValue"
+                (change)="changeShowCompany()"
+                *ngFor="let o of filterOptions"
+                >{{ o.metadata.caption }}</mat-checkbox
+              >
             </div>
           </mat-menu>
           <button mat-icon-button [matMenuTriggerFor]="filterOptionsMenu">
@@ -62,50 +109,118 @@
           </button>
         </div>
       </mat-card-title>
-      <mat-card-subtitle *ngIf="helperStats"> 👍 {{helperStats}} </mat-card-subtitle>
+      <mat-card-subtitle *ngIf="helperStats">
+        👍 {{ helperStats }}
+      </mat-card-subtitle>
       <mat-card-content>
-
         <div class="filter-div">
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
-            *ngIf="settings.showGroupsOnAssing">
-            <mat-label>{{settings.lang.familyGroups}}</mat-label>
-            <select matNativeControl class="form-control" #lang (change)="refreshBaskets()" [(ngModel)]="filterGroup">
-              <option value="">{{settings.lang.allGroups}}</option>
-              <option *ngFor="let g of groups;trackBy:trackGroup" value="{{g.name}}">{{g.name}} - {{g.familiesCount}}
+          <mat-form-field
+            appearance="outline"
+            class="full-width-form-field dense-form-field"
+            *ngIf="settings.showGroupsOnAssing"
+          >
+            <mat-label>{{ settings.lang.familyGroups }}</mat-label>
+            <select
+              matNativeControl
+              class="form-control"
+              #lang
+              (change)="refreshBaskets()"
+              [(ngModel)]="filterGroup"
+            >
+              <option value="">{{ settings.lang.allGroups }}</option>
+              <option
+                *ngFor="let g of groups; trackBy: trackGroup"
+                value="{{ g.name }}"
+              >
+                {{ g.name }} - {{ g.familiesCount }}
               </option>
             </select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
-            *ngIf="settings.showCityOnAssing">
-            <mat-label>{{settings.lang.distributionCity}}</mat-label>
-            <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterCity">
-              <option value="">{{settings.lang.allCities}}</option>
-              <option *ngFor="let c of cities;trackBy:trackCity" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+          <mat-form-field
+            appearance="outline"
+            class="full-width-form-field dense-form-field"
+            *ngIf="settings.showCityOnAssing"
+          >
+            <mat-label>{{ settings.lang.distributionCity }}</mat-label>
+            <select
+              matNativeControl
+              class="form-control"
+              #city
+              (change)="selectCity()"
+              [(ngModel)]="filterCity"
+            >
+              <option value="">{{ settings.lang.allCities }}</option>
+              <option
+                *ngFor="let c of cities; trackBy: trackCity"
+                value="{{ c.name }}"
+              >
+                {{ c.name }} - {{ c.unassignedFamilies }}
+              </option>
             </select>
           </mat-form-field>
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
-            *ngIf="settings.showAreaOnAssing">
-            <mat-label>{{settings.lang.region}}</mat-label>
-            <select matNativeControl class="form-control" #city (change)="selectCity()" [(ngModel)]="filterArea">
-              <option [value]="settings.lang.allRegions">{{settings.lang.allRegions}}</option>
-              <option *ngFor="let c of areas;trackBy:trackCity" value="{{c.name}}">{{c.name}} - {{c.unassignedFamilies}}</option>
+          <mat-form-field
+            appearance="outline"
+            class="full-width-form-field dense-form-field"
+            *ngIf="settings.showAreaOnAssing"
+          >
+            <mat-label>{{ settings.lang.region }}</mat-label>
+            <select
+              matNativeControl
+              class="form-control"
+              #city
+              (change)="selectCity()"
+              [(ngModel)]="filterArea"
+            >
+              <option [value]="settings.lang.allRegions">
+                {{ settings.lang.allRegions }}
+              </option>
+              <option
+                *ngFor="let c of areas; trackBy: trackCity"
+                value="{{ c.name }}"
+              >
+                {{ c.name }} - {{ c.unassignedFamilies }}
+              </option>
             </select>
           </mat-form-field>
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
-            *ngIf="settings.showBasketOnAssing">
-            <mat-label>{{settings.lang.basketType}}</mat-label>
-            <select matNativeControl class="form-control" #lang   (change)="refreshBaskets()"[(ngModel)]="basketType">
-              <option *ngFor="let b of baskets;trackBy:trackBasket" [ngValue]="b">{{b.name}} <span *ngIf="b!=allBaskets">-
-                  {{b.unassignedFamilies}}</span></option>
+          <mat-form-field
+            appearance="outline"
+            class="full-width-form-field dense-form-field"
+            *ngIf="settings.showBasketOnAssing"
+          >
+            <mat-label>{{ settings.lang.basketType }}</mat-label>
+            <select
+              matNativeControl
+              class="form-control"
+              #lang
+              (change)="refreshBaskets()"
+              [(ngModel)]="basketType"
+            >
+              <option
+                *ngFor="let b of baskets; trackBy: trackBasket"
+                [ngValue]="b"
+              >
+                {{ b.name }}
+                <span *ngIf="b != allBaskets"
+                  >- {{ b.unassignedFamilies }}</span
+                >
+              </option>
             </select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width-form-field dense-form-field"
-            *ngIf="settings.showNumOfBoxesOnAssing">
-            <mat-label>{{settings.lang.numOfFamilies}}</mat-label>
-            <input matInput type="number" id="numOfBaskets" [(ngModel)]="numOfBaskets">
-            <div matSuffix style="display:flex">
+          <mat-form-field
+            appearance="outline"
+            class="full-width-form-field dense-form-field"
+            *ngIf="settings.showNumOfBoxesOnAssing"
+          >
+            <mat-label>{{ settings.lang.numOfFamilies }}</mat-label>
+            <input
+              matInput
+              type="number"
+              id="numOfBaskets"
+              [(ngModel)]="numOfBaskets"
+            />
+            <div matSuffix style="display: flex">
               <button mat-icon-button (click)="add(1)">
                 <mat-icon>add</mat-icon>
               </button>
@@ -115,63 +230,124 @@
             </div>
           </mat-form-field>
 
-          <mat-checkbox [(ngModel)]="preferRepeatFamilies" style="width:auto" *ngIf="showRepeatFamilies">
-            {{settings.lang.prioritizeRepeatFamilies}} ({{repeatFamilies.length}})
+          <mat-checkbox
+            [(ngModel)]="preferRepeatFamilies"
+            style="width: auto"
+            *ngIf="showRepeatFamilies"
+          >
+            {{ settings.lang.prioritizeRepeatFamilies }} ({{
+              repeatFamilies.length
+            }})
           </mat-checkbox>
-          <div *ngIf="hasPreferred()" style="margin-bottom: 4px;">{{preferredText()}}</div>
+          <div *ngIf="hasPreferred()" style="margin-bottom: 4px">
+            {{ preferredText() }}
+          </div>
         </div>
 
-
-
-
-        <div class="no-print" style="display:flex;justify-content: center;" #assignButton>
-          <button mat-raised-button color="primary" (click)="assignItem()" 
-            [disabled]="basketType.unassignedFamilies==0 || assigning"
-            style="border-top-left-radius: 0px;border-bottom-left-radius:0px;">
-            {{assigning?settings.lang.inProgress: basketType.unassignedFamilies==0?settings.lang.noDeliveriesLeft:  familyLists.allFamilies.length>0? settings.lang.asignClosestDelivery:repeatFamilies.length>0&&preferRepeatFamilies&&repeatFamilies.length>0?settings.lang.assignRepeatFamily:helper.preferredDistributionAreaAddress||helper.preferredFinishAddress?settings.lang.asignClosestDelivery:settings.lang.asignAnyDelivery}}
+        <div
+          class="no-print"
+          style="display: flex; justify-content: center"
+          #assignButton
+        >
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="assignItem()"
+            [disabled]="basketType.unassignedFamilies == 0 || assigning"
+            style="border-top-left-radius: 0px; border-bottom-left-radius: 0px"
+          >
+            {{
+              assigning
+                ? settings.lang.inProgress
+                : basketType.unassignedFamilies == 0
+                ? settings.lang.noDeliveriesLeft
+                : familyLists.allFamilies.length > 0
+                ? settings.lang.asignClosestDelivery
+                : repeatFamilies.length > 0 &&
+                  preferRepeatFamilies &&
+                  repeatFamilies.length > 0
+                ? settings.lang.assignRepeatFamily
+                : helper.preferredDistributionAreaAddress ||
+                  helper.preferredFinishAddress
+                ? settings.lang.asignClosestDelivery
+                : settings.lang.asignAnyDelivery
+            }}
             -
-            {{getBasketsToClick()}}</button>
-          <button mat-button [matMenuTriggerFor]="basketMenu" mat-raised-button color="primary" style="border-top-right-radius: 0;
-          border-bottom-right-radius: 0;
-          padding-left: 0;
-          padding-right: 0;
-          min-width: 38px;" *ngIf="baskets.length">
+            {{ getBasketsToClick() }}
+          </button>
+          <button
+            mat-button
+            [matMenuTriggerFor]="basketMenu"
+            mat-raised-button
+            color="primary"
+            style="
+              border-top-right-radius: 0;
+              border-bottom-right-radius: 0;
+              padding-left: 0;
+              padding-right: 0;
+              min-width: 38px;
+            "
+            *ngIf="baskets.length"
+          >
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #basketMenu="matMenu">
-            <button mat-menu-item (click)="addRepeat()"
-              *ngIf="preferRepeatFamilies&&repeatFamilies.length>0">{{settings.lang.addRepeatFamilies}}</button>
-            <button mat-menu-item (click)="addSpecial()" *ngIf="specialFamilies">{{settings.lang.specialFamilies}} -
-              {{specialFamilies}}</button>
-            <button mat-menu-item (click)="addSpecific()">{{settings.lang.selectDeliveryByName}}</button>
-            <button mat-menu-item (click)="assignOnMap()">{{settings.lang.selectDeliveryOnMap}}</button>
-            <button mat-menu-item (click)="addStreet()">{{settings.lang.selectDeliveryByStreet}}</button>
-            <button mat-menu-item (click)="addBuilding()">{{settings.lang.assignBuildings}}</button>
-            <button mat-menu-item (click)="assignClosestDeliveries()" *ngIf="settings.isSytemForMlt&&familyLists.helper.preferredDistributionAreaAddressHelper.ok">{{settings.lang.closestDeliveries}}</button>
-            
-            
+            <button
+              mat-menu-item
+              (click)="addRepeat()"
+              *ngIf="preferRepeatFamilies && repeatFamilies.length > 0"
+            >
+              {{ settings.lang.addRepeatFamilies }}
+            </button>
+            <button
+              mat-menu-item
+              (click)="addSpecial()"
+              *ngIf="specialFamilies"
+            >
+              {{ settings.lang.specialFamilies }} - {{ specialFamilies }}
+            </button>
+            <button mat-menu-item (click)="addSpecific()">
+              {{ settings.lang.selectDeliveryByName }}
+            </button>
+            <button mat-menu-item (click)="assignOnMap()">
+              {{ settings.lang.selectDeliveryOnMap }}
+            </button>
+            <button mat-menu-item (click)="addStreet()">
+              {{ settings.lang.selectDeliveryByStreet }}
+            </button>
+            <button mat-menu-item (click)="addBuilding()">
+              {{ settings.lang.assignBuildings }}
+            </button>
+            <button
+              mat-menu-item
+              (click)="assignClosestDeliveries()"
+              *ngIf="
+                settings.isSytemForMlt &&
+                familyLists.helper.preferredDistributionAreaAddressHelper.ok
+              "
+            >
+              {{ settings.lang.closestDeliveries }}
+            </button>
 
-
-            <button mat-menu-item
-              (click)="moveBasktesFromOtherHelper()">{{settings.lang.transferDeliveriesFromOtherVolunteer}}</button>
-
-
+            <button mat-menu-item (click)="moveBasktesFromOtherHelper()">
+              {{ settings.lang.transferDeliveriesFromOtherVolunteer }}
+            </button>
           </mat-menu>
-
-
-
         </div>
-
       </mat-card-content>
     </mat-card>
-
 
     <!--
     <input type="checkbox" [(ngModel)]="this.useGoogleOptimization">
     <button (click)="doRefreshRoute()">Run Refresh Route</button>-->
-    <app-helper-families #helperFamilies [familyLists]="familyLists" [partOfAssign]="true"
-      [partOfReview]="!showHelperInput" (assignmentCanceled)="assignmentCanceled()" (assignSmsSent)="smsSent()">
+    <app-helper-families
+      #helperFamilies
+      [familyLists]="familyLists"
+      [partOfAssign]="true"
+      [partOfReview]="!showHelperInput"
+      (assignmentCanceled)="assignmentCanceled()"
+      (assignSmsSent)="smsSent()"
+    >
     </app-helper-families>
-
   </div>
 </div>

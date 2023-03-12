@@ -1,18 +1,17 @@
-
-.myDiv{
-    display:flex;
-    flex-direction: column;
-    height:100%;
-    justify-content: center; /*centers items on the line (the x-axis by default)*/
-    align-items: center; /*centers items on the cross-axis (y by default)*/
-   h1{
-       text-align: center;
-   }
+.myDiv {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center; /*centers items on the line (the x-axis by default)*/
+  align-items: center; /*centers items on the cross-axis (y by default)*/
+  h1 {
+    text-align: center;
+  }
 }
-button{
-    color:white;
-    background-color: #3753F6;
-    [disabled]{
-        background-color: light-gray;
-    }
+button {
+  color: white;
+  background-color: #3753f6;
+  [disabled] {
+    background-color: light-gray;
+  }
 }

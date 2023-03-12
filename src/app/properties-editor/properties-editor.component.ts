@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ElementProps } from '../print-stickers/VolunteerReportDefs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { ElementProps } from '../print-stickers/VolunteerReportDefs'
 
 @Component({
   selector: 'app-properties-editor',
@@ -7,35 +7,28 @@ import { ElementProps } from '../print-stickers/VolunteerReportDefs';
   styleUrls: ['./properties-editor.component.scss']
 })
 export class PropertiesEditorComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
   toggleEditing() {
-    this.editing = !this.editing;
-    this.editingChange.emit(this.editing);
+    this.editing = !this.editing
+    this.editingChange.emit(this.editing)
   }
   print() {
-    window.print();
+    window.print()
   }
 
   @Input()
-  editing: boolean;
+  editing: boolean
   @Output()
-  editingChange = new EventEmitter<boolean>();
+  editingChange = new EventEmitter<boolean>()
 
   @Input()
-  props: ElementProps;
+  props: ElementProps
 
   @Output()
-  change = new EventEmitter();
+  change = new EventEmitter()
   save() {
-    this.change.emit();
+    this.change.emit()
   }
-
-
-
 }
-

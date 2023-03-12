@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { GridButton } from '../common-ui-elements/interfaces';
-import { MatDialogRef } from '@angular/material/dialog';
-import { messageMerger } from './messageMerger';
-import { EditCustomMessageArgs } from '../helpers/init-context';
+import { Component, OnInit } from '@angular/core'
+import { ApplicationSettings } from '../manage/ApplicationSettings'
+import { GridButton } from '../common-ui-elements/interfaces'
+import { MatDialogRef } from '@angular/material/dialog'
+import { messageMerger } from './messageMerger'
+import { EditCustomMessageArgs } from '../helpers/init-context'
 
 @Component({
   selector: 'app-edit-custom-message',
@@ -11,22 +11,22 @@ import { EditCustomMessageArgs } from '../helpers/init-context';
   styleUrls: ['./edit-custom-message.component.scss']
 })
 export class EditCustomMessageComponent implements OnInit {
-
-  constructor(public settings: ApplicationSettings, public ref: MatDialogRef<any>) { }
+  constructor(
+    public settings: ApplicationSettings,
+    public ref: MatDialogRef<any>
+  ) {}
 
   args: EditCustomMessageArgs = {
-    message: specificMessage("noam"),
-    templateText: "test",
-    title: "שליחת SMS",
-    helpText: "עזרה",
+    message: specificMessage('noam'),
+    templateText: 'test',
+    title: 'שליחת SMS',
+    helpText: 'עזרה',
     buttons: [] as GridButton[]
   }
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 
   testSms() {
-    return this.args.message.merge(this.args.templateText);
+    return this.args.message.merge(this.args.templateText)
   }
   getButtonArgs() {
     return {
@@ -34,17 +34,14 @@ export class EditCustomMessageComponent implements OnInit {
       close: () => this.ref.close()
     }
   }
-
 }
-
-
-
 
 export function specificMessage(volunteer: string) {
-  return new messageMerger([{
-    token: '!מתנדב!',
-    caption: "שם מתנדב",
-    value: volunteer
-  }])
+  return new messageMerger([
+    {
+      token: '!מתנדב!',
+      caption: 'שם מתנדב',
+      value: volunteer
+    }
+  ])
 }
-

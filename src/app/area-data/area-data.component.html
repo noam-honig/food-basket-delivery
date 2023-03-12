@@ -1,6 +1,18 @@
-<mat-form-field appearance="outline" class="full-width-form-field dense-form-field" *ngIf="args">
-    <mat-label>{{args.settings.caption}}</mat-label>
-    <textarea #theId matInput [(ngModel)]="args.fieldRef.value" #addressInput [errorStateMatcher]="ngErrorStateMatches">
-        </textarea>
-    <mat-error *ngIf="args.fieldRef.error" id="theId">{{args.fieldRef.error}}</mat-error>
+<mat-form-field
+  appearance="outline"
+  class="full-width-form-field dense-form-field"
+  *ngIf="args"
+>
+  <mat-label>{{ args.settings.caption }}</mat-label>
+  <textarea
+    #theId
+    matInput
+    [(ngModel)]="args.fieldRef.value"
+    #addressInput
+    [errorStateMatcher]="ngErrorStateMatches"
+  >
+  </textarea>
+  <mat-error *ngIf="args.fieldRef.error" id="theId">{{
+    args.fieldRef.error
+  }}</mat-error>
 </mat-form-field>

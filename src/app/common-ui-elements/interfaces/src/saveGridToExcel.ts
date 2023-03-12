@@ -3,14 +3,14 @@ import {
   Repository,
   FieldRef,
   ValueConverters,
-  getEntityRef,
+  getEntityRef
 } from 'remult'
 import { terms } from '../../../terms'
 import type { BusyService } from '../../src/angular/wait/busy-service'
 import { GridSettings } from './grid-settings'
 export async function saveToExcel<
   E = any,
-  T extends GridSettings<E> = GridSettings<any>,
+  T extends GridSettings<E> = GridSettings<any>
 >(
   grid: T,
   fileName: string,
@@ -22,10 +22,10 @@ export async function saveToExcel<
     addfield: (
       caption: string,
       v: string,
-      t: import('xlsx').ExcelDataType,
-    ) => void,
+      t: import('xlsx').ExcelDataType
+    ) => void
   ) => void,
-  loadPage?: (items: E[]) => Promise<void>,
+  loadPage?: (items: E[]) => Promise<void>
 ) {
   await busyService.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx')
@@ -55,19 +55,19 @@ export async function saveToExcel<
           caption: string,
           v: string,
           t: import('xlsx').ExcelDataType,
-          hidden?: boolean,
+          hidden?: boolean
         ) => {
           if (rowNum == titleRow + 1) {
             ws[colPrefix + colName + titleRow] = { v: caption }
             ws['!cols']!.push({
               wch: caption.length,
-              hidden: hidden,
+              hidden: hidden
             })
           }
 
           ws[colPrefix + colName + rowNum.toString()] = {
             v: v,
-            t: t,
+            t: t
           }
           maxChar = colPrefix + colName
           {
@@ -102,14 +102,14 @@ export async function saveToExcel<
                     ? ValueConverters.DateOnly.toJson!(c.value)
                     : undefined,
                   'd',
-                  false,
+                  false
                 )
               } else
                 addColumn(
                   c.metadata.caption,
                   v.toString(),
                   's',
-                  hideColumn(<E>f, c),
+                  hideColumn(<E>f, c)
                 )
             }
           } catch (err) {
@@ -135,7 +135,7 @@ export async function saveToExcel<
 export async function jsonToXlsx(
   busy: BusyService,
   rows: any[],
-  fileName: string,
+  fileName: string
 ) {
   await busy.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx')

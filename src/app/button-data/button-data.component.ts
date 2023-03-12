@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { CustomComponentArgs, CustomDataComponent } from '../common-ui-elements/interfaces';
+import { Component, OnInit } from '@angular/core'
+import {
+  CustomComponentArgs,
+  CustomDataComponent
+} from '../common-ui-elements/interfaces'
 
 @Component({
   selector: 'app-button-data',
@@ -7,12 +10,8 @@ import { CustomComponentArgs, CustomDataComponent } from '../common-ui-elements/
   styleUrls: ['./button-data.component.scss']
 })
 export class ButtonDataComponent implements OnInit, CustomDataComponent {
+  args: CustomComponentArgs
+  constructor() {}
 
-  args: CustomComponentArgs;
-  constructor() { }
-
-  ngOnInit(): void {
-    
-  }
-
+  ngOnInit(): void {}
 }

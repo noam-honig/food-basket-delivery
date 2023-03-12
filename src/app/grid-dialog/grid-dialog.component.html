@@ -1,21 +1,31 @@
 <form *ngIf="args">
-  <h3 matDialogHeader>{{args.title}}</h3>
+  <h3 matDialogHeader>{{ args.title }}</h3>
   <div mat-dialog-content>
     <data-grid [settings]="args.settings" height="300"> </data-grid>
   </div>
 
   <mat-dialog-actions>
     <ng-container *ngFor="let b of args.buttons">
-      <button mat-raised-button *ngIf="isVisible(b)" (click)="buttonClick(b,$event)">
-        {{b.text}}
-      </button></ng-container>
-    <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.args.cancel">
-      {{settings.lang.cancel}}
+      <button
+        mat-raised-button
+        *ngIf="isVisible(b)"
+        (click)="buttonClick(b, $event)"
+      >
+        {{ b.text }}
+      </button></ng-container
+    >
+    <button
+      type="button"
+      mat-raised-button
+      color="warning"
+      (click)="this.dialogRef.close()"
+      *ngIf="this.args.cancel"
+    >
+      {{ settings.lang.cancel }}
     </button>
 
     <button type="submit" mat-raised-button color="accent" (click)="confirm()">
-      {{settings.lang.confirm}}
+      {{ settings.lang.confirm }}
     </button>
-
   </mat-dialog-actions>
 </form>

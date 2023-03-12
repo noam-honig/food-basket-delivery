@@ -1,52 +1,65 @@
 <div *ngIf="isguest" class="full-page">
-
   <app-org-events class="grow-item"></app-org-events>
 
-
-
-  <button mat-button style="position:absolute;bottom:0px;left:0;" (click)="isguest = false">o</button>
+  <button
+    mat-button
+    style="position: absolute; bottom: 0px; left: 0"
+    (click)="isguest = false"
+  >
+    o
+  </button>
 </div>
 <div class="myDiv" *ngIf="!isguest">
-  <mat-card style="max-width: 300px;
-  align-self: center;margin-top:70px">
-    <div style="width:100%;text-align: center">
-      <img src="{{getLogo()}}" />
+  <mat-card style="max-width: 300px; align-self: center; margin-top: 70px">
+    <div style="width: 100%; text-align: center">
+      <img src="{{ getLogo() }}" />
     </div>
-    <div style="width:100%;text-align: center">
-      {{orgName()}}
-
+    <div style="width: 100%; text-align: center">
+      {{ orgName() }}
     </div>
     <mat-horizontal-stepper #stepper [tabIndex]="999">
       <mat-step>
         <form #phoneForm>
-          <ng-template matStepLabel>{{settings.lang.signIn}}</ng-template>
+          <ng-template matStepLabel>{{ settings.lang.signIn }}</ng-template>
           <data-area [settings]="phoneArea"></data-area>
-          <div style="width:100%;text-align: end;margin-top:10px">
-            <button mat-raised-button color="accent" (click)="phoneState.nextStep()">{{settings.lang.signIn}}</button>
+          <div style="width: 100%; text-align: end; margin-top: 10px">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="phoneState.nextStep()"
+            >
+              {{ settings.lang.signIn }}
+            </button>
           </div>
         </form>
       </mat-step>
       <mat-step>
         <form #passwordForm>
-          <div *ngIf="loginState==passwordState">
+          <div *ngIf="loginState == passwordState">
             <data-area [settings]="passwordArea"></data-area>
           </div>
 
-          <div *ngIf="loginState==updatePasswordAndEulaState">
-            {{this.loginResult.requiredToSetPasswordReason}}
+          <div *ngIf="loginState == updatePasswordAndEulaState">
+            {{ this.loginResult.requiredToSetPasswordReason }}
             <data-area [settings]="setPasswordArea"></data-area>
-            <a href="https://admin.we-tribu.com/Hagai/terms-of-use" *ngIf="this.loginResult.requiredToSignEULA"
-              target="_blank">{{settings.lang.readEula}} </a>
+            <a
+              href="https://admin.we-tribu.com/Hagai/terms-of-use"
+              *ngIf="this.loginResult.requiredToSignEULA"
+              target="_blank"
+              >{{ settings.lang.readEula }}
+            </a>
           </div>
-          <div style="width:100%;text-align: end;margin-top:10px">
-            <button mat-raised-button color="accent" (click)="loginState.nextStep()">{{settings.lang.signIn}}</button>
+          <div style="width: 100%; text-align: end; margin-top: 10px">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="loginState.nextStep()"
+            >
+              {{ settings.lang.signIn }}
+            </button>
           </div>
-
         </form>
       </mat-step>
-
     </mat-horizontal-stepper>
-
   </mat-card>
-
 </div>

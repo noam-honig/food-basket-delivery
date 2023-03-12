@@ -1,24 +1,33 @@
-<div *ngIf="images!=undefined">
+<div *ngIf="images != undefined">
+  <button mat-button *ngIf="!readonly">
+    <label for="uploadImage" style="display: flex; align-items: center">
+      <mat-icon>photo_camera</mat-icon>&nbsp;
+      {{ settings.questionForVolunteerWhenUploadingPhoto }}
+    </label>
+  </button>
 
-    <button mat-button *ngIf="!readonly">
-        <label for="uploadImage" style="display: flex;
-      align-items: center;">
-            <mat-icon>photo_camera</mat-icon>&nbsp;
-            {{settings.questionForVolunteerWhenUploadingPhoto}}
-        </label>
-    </button>
-
-
-    <input *ngIf="!readonly" #fileInput type="file" (input)="onFileInput($event)" accept="image/*" id="uploadImage"
-        style="display:none" />
+  <input
+    *ngIf="!readonly"
+    #fileInput
+    type="file"
+    (input)="onFileInput($event)"
+    accept="image/*"
+    id="uploadImage"
+    style="display: none"
+  />
 </div>
 <div class="image-container">
-    <ng-container *ngFor="let i of images">
-        <div *ngIf="!i.deleted" class="image">
-            <img [src]="i.image" style="max-width: 100%;">
-            <button mat-button (click)="i.deleted = true" *ngIf="!readonly" style="display:block">
-                <mat-icon>delete</mat-icon> {{settings.lang.deletePhoto}}
-            </button>
-        </div>
-    </ng-container>
+  <ng-container *ngFor="let i of images">
+    <div *ngIf="!i.deleted" class="image">
+      <img [src]="i.image" style="max-width: 100%" />
+      <button
+        mat-button
+        (click)="i.deleted = true"
+        *ngIf="!readonly"
+        style="display: block"
+      >
+        <mat-icon>delete</mat-icon> {{ settings.lang.deletePhoto }}
+      </button>
+    </div>
+  </ng-container>
 </div>

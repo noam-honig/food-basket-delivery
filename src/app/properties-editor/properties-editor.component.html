@@ -1,40 +1,50 @@
-<div class="no-print" style="border: solid;
+<div
+  class="no-print"
+  style="
+    border: solid;
     border-width: 1px;
     border-radius: 4px;
-    left:0;
-    top:0;
+    left: 0;
+    top: 0;
     background-color: white;
     position: absolute;
     padding: 10px;
-    ">
-    <div style="display: flex;
-    justify-content: space-between;
-    align-items: center;">
-        <strong *ngIf="editing">{{props.caption}}</strong>
-        <div>
-            <button mat-icon-button (click)="print()">
-                <mat-icon>print</mat-icon>
-            </button>
-            <button mat-icon-button (click)="toggleEditing()">
-                <mat-icon *ngIf="editing"> close</mat-icon>
-                <mat-icon *ngIf="!editing"> settings</mat-icon>
-            </button>
-        </div>
+  "
+>
+  <div
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
+    <strong *ngIf="editing">{{ props.caption }}</strong>
+    <div>
+      <button mat-icon-button (click)="print()">
+        <mat-icon>print</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleEditing()">
+        <mat-icon *ngIf="editing"> close</mat-icon>
+        <mat-icon *ngIf="!editing"> settings</mat-icon>
+      </button>
     </div>
-    <table *ngIf="editing">
-        <tr *ngFor="let p of props.props">
-            <td>
-                <input *ngIf="p.inputType!='checkbox'" [(ngModel)]="props.values[p.key]" [type]="p.inputType"
-                    (change)="save()">
-                <input *ngIf="p.inputType=='checkbox'" [(ngModel)]="props.values[p.key]" type="checkbox"
-                    (change)="save()">
-
-            </td>
-            <td>
-                {{p.caption}}
-            </td>
-        </tr>
-    </table>
-    <ng-content *ngIf="editing"></ng-content>
-
+  </div>
+  <table *ngIf="editing">
+    <tr *ngFor="let p of props.props">
+      <td>
+        <input
+          *ngIf="p.inputType != 'checkbox'"
+          [(ngModel)]="props.values[p.key]"
+          [type]="p.inputType"
+          (change)="save()"
+        />
+        <input
+          *ngIf="p.inputType == 'checkbox'"
+          [(ngModel)]="props.values[p.key]"
+          type="checkbox"
+          (change)="save()"
+        />
+      </td>
+      <td>
+        {{ p.caption }}
+      </td>
+    </tr>
+  </table>
+  <ng-content *ngIf="editing"></ng-content>
 </div>

@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { BusyService } from '../common-ui-elements';
-import { PrintVolunteersController, volunteer } from './print-volunteers.controller';
+import { Component, OnInit } from '@angular/core'
+import { BusyService } from '../common-ui-elements'
+import {
+  PrintVolunteersController,
+  volunteer
+} from './print-volunteers.controller'
 
 @Component({
   selector: 'app-print-volunteers',
@@ -8,14 +11,13 @@ import { PrintVolunteersController, volunteer } from './print-volunteers.control
   styleUrls: ['./print-volunteers.component.scss']
 })
 export class PrintVolunteersComponent implements OnInit {
-
-  constructor(private busy: BusyService) { }
-  volunteers: volunteer[] = [];
-  total: number = 0;
+  constructor(private busy: BusyService) {}
+  volunteers: volunteer[] = []
+  total: number = 0
   ngOnInit() {
-    PrintVolunteersController.volunteersForPrint().then(x => {
-      this.volunteers = x.volunteers;
-      this.total = x.total;
-    });
+    PrintVolunteersController.volunteersForPrint().then((x) => {
+      this.volunteers = x.volunteers
+      this.total = x.total
+    })
   }
 }

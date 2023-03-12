@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { CustomComponentArgs, CustomDataComponent } from '../common-ui-elements/interfaces';
+import { Component, OnInit } from '@angular/core'
+import { ErrorStateMatcher } from '@angular/material/core'
+import {
+  CustomComponentArgs,
+  CustomDataComponent
+} from '../common-ui-elements/interfaces'
 
 @Component({
   selector: 'app-area-data',
@@ -8,19 +11,16 @@ import { CustomComponentArgs, CustomDataComponent } from '../common-ui-elements/
   styleUrls: ['./area-data.component.scss']
 })
 export class AreaDataComponent implements OnInit, CustomDataComponent {
+  constructor() {}
+  args: CustomComponentArgs
 
-  constructor() { }
-  args: CustomComponentArgs;
-
-  ngOnInit(): void {
-  }
-  ngErrorStateMatches = new class extends ErrorStateMatcher {
+  ngOnInit(): void {}
+  ngErrorStateMatches = new (class extends ErrorStateMatcher {
     constructor(public parent: AreaDataComponent) {
-      super();
+      super()
     }
     isErrorState() {
-      return !!this.parent.args.fieldRef.error;
+      return !!this.parent.args.fieldRef.error
     }
-  }(this);
-
+  })(this)
 }

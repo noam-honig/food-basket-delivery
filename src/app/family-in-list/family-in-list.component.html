@@ -1,27 +1,43 @@
-<button style="position: absolute;;" mat-raised-button color="accent" *ngIf="swipe&&delivered.observers.length"
-  (click)="doDelivered($event)">{{settings.lang.delivered}}</button>
-<div class="swipingItem"  [style.transform]="offsetX()"
-  [class.swipeleft]="swipe&&delivered.observers.length" (panleft)="horizontalPan($event)" (panright)="horizontalPan($event)" (panend)="panend($event)" >
+<button
+  style="position: absolute ;"
+  mat-raised-button
+  color="accent"
+  *ngIf="swipe && delivered.observers.length"
+  (click)="doDelivered($event)"
+>
+  {{ settings.lang.delivered }}
+</button>
+<div
+  class="swipingItem"
+  [style.transform]="offsetX()"
+  [class.swipeleft]="swipe && delivered.observers.length"
+  (panleft)="horizontalPan($event)"
+  (panright)="horizontalPan($event)"
+  (panend)="panend($event)"
+>
   <mat-panel-title style="justify-content: space-between">
     <div class="familyLine">
-      <span *ngIf="i">{{i}}.&nbsp;</span>{{getName()}}
+      <span *ngIf="i">{{ i }}.&nbsp;</span>{{ getName() }}
       <mat-icon color="accent" *ngIf="f.deliveryComments"> comment</mat-icon>
       <mat-icon color="accent" *ngIf="!f.addressOk">warning</mat-icon>
       <mat-icon color="green" *ngIf="f.courierBeenHereBefore">repeat</mat-icon>
-      <mat-icon  *ngIf="f.courierComments"> comment</mat-icon>
+      <mat-icon *ngIf="f.courierComments"> comment</mat-icon>
     </div>
     <div>
-      <span *ngIf="f.quantity>1">{{f.quantity}} x </span> {{f.$.basketType.displayValue}}
+      <span *ngIf="f.quantity > 1">{{ f.quantity }} x </span>
+      {{ f.$.basketType.displayValue }}
     </div>
   </mat-panel-title>
 
   <mat-panel-description style="justify-content: space-between">
-
-    <div style="white-space: nowrap;">
-      {{getAddressDescription() }}
+    <div style="white-space: nowrap">
+      {{ getAddressDescription() }}
     </div>
-    <div *ngIf="latestAssign" style="font-size: 11px;">({{settings.lang.latestAssigned}})</div>
-    <div *ngIf="newAssign&&!latestAssign" style="font-size: 11px;">({{settings.lang.recentlyAssigned}})</div>
-
+    <div *ngIf="latestAssign" style="font-size: 11px">
+      ({{ settings.lang.latestAssigned }})
+    </div>
+    <div *ngIf="newAssign && !latestAssign" style="font-size: 11px">
+      ({{ settings.lang.recentlyAssigned }})
+    </div>
   </mat-panel-description>
 </div>

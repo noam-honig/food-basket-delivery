@@ -1,59 +1,87 @@
-<mat-card-title>{{this.args.title}}</mat-card-title>
-
+<mat-card-title>{{ this.args.title }}</mat-card-title>
 
 <div [class.hide]="!args.showFailStatus">
-  {{settings.lang.whatWentWrong}}
+  {{ settings.lang.whatWentWrong }}
 </div>
 <div [class.hide]="!args.showFailStatus">
-  <mat-radio-group class="example-radio-group" [(ngModel)]="defaultFailStatus" class="radio-button">
-
-    <mat-radio-button class="example-radio-button" *ngFor="let f of failOptions" [value]="f">
-      {{getStatusName(f)}}
+  <mat-radio-group
+    class="example-radio-group"
+    [(ngModel)]="defaultFailStatus"
+    class="radio-button"
+  >
+    <mat-radio-button
+      class="example-radio-button"
+      *ngFor="let f of failOptions"
+      [value]="f"
+    >
+      {{ getStatusName(f) }}
     </mat-radio-button>
   </mat-radio-group>
 </div>
 
 <mat-dialog-content>
-  <data-area [settings]="args.questionsArea" *ngIf="args.questionsArea"></data-area>
-  {{helpText()}}
-  <textarea class="form-control" rows="3" [(ngModel)]="args.comment" class="comment-text-area"></textarea>
-  <a (click)="addLocationToComment()" style="display:block"
-    *ngIf="!args.hideLocation&&settings.askVolunteerForLocationOnDelivery">{{settings.lang.addCurrentLocationToNote}}</a>
-  <app-images [images]="images" *ngIf="settings.askVolunteerForAPhotoToHelp"></app-images>
+  <data-area
+    [settings]="args.questionsArea"
+    *ngIf="args.questionsArea"
+  ></data-area>
+  {{ helpText() }}
+  <textarea
+    class="form-control"
+    rows="3"
+    [(ngModel)]="args.comment"
+    class="comment-text-area"
+  ></textarea>
+  <a
+    (click)="addLocationToComment()"
+    style="display: block"
+    *ngIf="!args.hideLocation && settings.askVolunteerForLocationOnDelivery"
+    >{{ settings.lang.addCurrentLocationToNote }}</a
+  >
+  <app-images
+    [images]="images"
+    *ngIf="settings.askVolunteerForAPhotoToHelp"
+  ></app-images>
 </mat-dialog-content>
 
 <mat-dialog-actions>
   <div class="button-container">
     <div class="button-line">
       <button mat-raised-button color="warning" (click)="cancel()">
-        {{settings.lang.cancel}}
+        {{ settings.lang.cancel }}
       </button>
       <button mat-raised-button color="accent" (click)="confirm()">
-        {{args.showFailStatus?settings.lang.basketNotDelivered:settings.lang.confirm}}
+        {{
+          args.showFailStatus
+            ? settings.lang.basketNotDelivered
+            : settings.lang.confirm
+        }}
       </button>
-
     </div>
     <div class="button-line" [class.hide]="!args.showFailStatus">
-      <a href="tel:{{phoneOptions[0].phone}}" *ngIf="phoneOptions.length==1">
+      <a
+        href="tel:{{ phoneOptions[0].phone }}"
+        *ngIf="phoneOptions.length == 1"
+      >
         <button mat-raised-button color="accent" class="dial-for-help">
-          <mat-icon>phone</mat-icon> {{settings.lang.dialTo}} {{phoneOptions[0].name}} {{settings.lang.forHelp}}
+          <mat-icon>phone</mat-icon> {{ settings.lang.dialTo }}
+          {{ phoneOptions[0].name }} {{ settings.lang.forHelp }}
         </button>
       </a>
-      <button mat-raised-button color="accent" class="dial-for-help" [matMenuTriggerFor]="menu"
-        *ngIf="phoneOptions.length>1">
-        <mat-icon>phone</mat-icon> {{settings.lang.dialForHelp}}
+      <button
+        mat-raised-button
+        color="accent"
+        class="dial-for-help"
+        [matMenuTriggerFor]="menu"
+        *ngIf="phoneOptions.length > 1"
+      >
+        <mat-icon>phone</mat-icon> {{ settings.lang.dialForHelp }}
       </button>
 
       <mat-menu #menu="matMenu">
-        <a href="tel:{{p.phone}}" *ngFor="let p of phoneOptions">
-          <button mat-menu-item>{{p.name}} - {{p.phone}}</button>
+        <a href="tel:{{ p.phone }}" *ngFor="let p of phoneOptions">
+          <button mat-menu-item>{{ p.name }} - {{ p.phone }}</button>
         </a>
       </mat-menu>
     </div>
   </div>
-
-
-
-
-
 </mat-dialog-actions>

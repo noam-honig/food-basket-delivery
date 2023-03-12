@@ -1,17 +1,22 @@
 <div class="full-page">
-    <div style="    display: flex;
-    justify-content: space-between;">
-        <button mat-raised-button color="primary" (click)="add()">{{settings.lang.add}}</button>
-        <button mat-raised-button (click)="copyLink()">{{settings.lang.copyLinkForVolunteer}}</button>
-
-    </div>
-    <mat-tab-group class="grow-item">
-        <mat-tab [label]="settings.lang.eventsComponent">
-            <app-event-card #card [events]="events.items" [listOptions]="listOptions"></app-event-card>
-        </mat-tab>
-        <mat-tab [label]="settings.lang.list">
-            <data-grid [settings]="events" class="grow-item"></data-grid>
-        </mat-tab>
-
-    </mat-tab-group>
+  <div style="display: flex; justify-content: space-between">
+    <button mat-raised-button color="primary" (click)="add()">
+      {{ settings.lang.add }}
+    </button>
+    <button mat-raised-button (click)="copyLink()">
+      {{ settings.lang.copyLinkForVolunteer }}
+    </button>
+  </div>
+  <mat-tab-group class="grow-item">
+    <mat-tab [label]="settings.lang.eventsComponent">
+      <app-event-card
+        #card
+        [events]="events.items"
+        [listOptions]="listOptions"
+      ></app-event-card>
+    </mat-tab>
+    <mat-tab [label]="settings.lang.list">
+      <data-grid [settings]="events" class="grow-item"></data-grid>
+    </mat-tab>
+  </mat-tab-group>
 </div>

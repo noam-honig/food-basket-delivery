@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { OverviewController } from '../overview/overview.controller';
+import { Component, OnInit } from '@angular/core'
+import { OverviewController } from '../overview/overview.controller'
 
 @Component({
   selector: 'app-token-replacer',
@@ -7,32 +7,33 @@ import { OverviewController } from '../overview/overview.controller';
   styleUrls: ['./token-replacer.component.scss']
 })
 export class TokenReplacerComponent implements OnInit {
-  listOfSchemas: string = 'test,test1,test2,test3';
+  listOfSchemas: string = 'test,test1,test2,test3'
 
-  token: string = 'test1';
-  sql: string = 'select city from test1.families';
-  seperator: string = ' union all ';
-  constructor() { }
+  token: string = 'test1'
+  sql: string = 'select city from test1.families'
+  seperator: string = ' union all '
+  constructor() {}
 
-  result: string;
+  result: string
   build() {
-    this.result = '';
+    this.result = ''
 
     for (let s of this.listOfSchemas.split(',')) {
       if (s) {
-        s = s.trim();
+        s = s.trim()
         if (s.length > 0) {
-          if (this.result != '')
-            this.result += this.seperator + '\r\n';
-          this.result += this.sql.split(this.token).join(s);
+          if (this.result != '') this.result += this.seperator + '\r\n'
+          this.result += this.sql.split(this.token).join(s)
         }
       }
     }
   }
 
   ngOnInit() {
-    this.build();
-    OverviewController.getSites().then(x => { this.listOfSchemas = x; this.build() });
+    this.build()
+    OverviewController.getSites().then((x) => {
+      this.listOfSchemas = x
+      this.build()
+    })
   }
-
 }

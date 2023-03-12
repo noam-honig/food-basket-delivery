@@ -1,315 +1,390 @@
 <div class="full-page">
-    <div>
-        <button mat-icon-button (click)="save()" [disabled]="!wasChange()">
-            <mat-icon>check</mat-icon>
+  <div>
+    <button mat-icon-button (click)="save()" [disabled]="!wasChange()">
+      <mat-icon>check</mat-icon>
+    </button>
+    <button mat-icon-button (click)="reset()" [disabled]="!wasChange()">
+      <mat-icon color="warning">clear</mat-icon>
+    </button>
+    <button mat-button (click)="previewVolunteer()">
+      {{ settings.lang.previewVolunteerScreen }}
+    </button>
+  </div>
+
+  <mat-accordion *ngIf="settings" style="margin-top: 10px" class="grow-item">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.organizationInfo }} - {{ settings.organisationName }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <data-area [settings]="settingsArea"></data-area>
+      <button
+        mat-raised-button
+        *ngIf="hasGeneralListing()"
+        (click)="showGeneralListing()"
+      >
+        {{ settings.lang.show }}
+      </button>
+      <mat-card>
+        <mat-card-title>
+          {{ settings.lang.defaultHelpPhone }}
+        </mat-card-title>
+        {{ settings.lang.defaulyHelpPhoneExplanation }} <br />
+        <data-area [settings]="settingsMore"></data-area>
+      </mat-card>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.basketTypes }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-grid [settings]="basketType" height="300"></data-grid>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.distributionLists }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-grid [settings]="distributionCenters" height="300"></data-grid>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.familySources }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-grid [settings]="sources" height="300"></data-grid>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.familyGroups }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      {{ settings.lang.distributionListsHelp }}
+      <data-grid [settings]="groups" height="300"></data-grid>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.volunteerTexts }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card>
+        <mat-card-title>
+          {{ settings.$.smsText.metadata.caption }}
+        </mat-card-title>
+        {{ settings.lang.smsTextHelpTitle }}
+        <ul>
+          <li>!מתנדב! - {{ settings.lang.replacedByVolunteerName }}</li>
+          <li *ngIf="settings.isSytemForMlt">
+            !משפחה! - {{ settings.lang.replacedByFamilyName }}
+          </li>
+          <li *ngIf="settings.isSytemForMlt">
+            !תורם! - {{ settings.lang.replacedByFamilyName }}
+          </li>
+          <li>!שולח! - {{ settings.lang.replcaedBySenderName }}</li>
+          <li>!ארגון! - {{ settings.lang.replacedByOrgName }}</li>
+          <li>!אתר! - {{ settings.lang.replaceBySiteUrl }}</li>
+        </ul>
+        <textarea
+          [(ngModel)]="settings.smsText"
+          class="form-control"
+        ></textarea>
+        <H4>{{ settings.lang.sampleMessage }}</H4>
+        <pre>{{ testSms() }}</pre>
+      </mat-card>
+
+      <data-area [settings]="settingsMessages"></data-area>
+      <button
+        mat-raised-button
+        (click)="saveAndPreview()"
+        color="primary"
+        style="left: 0px; margin-bottom: 5px"
+      >
+        {{ settings.lang.saveAndPreview }}
+      </button>
+      <data-area [settings]="settings2Messages"></data-area>
+
+      <mat-card>
+        <mat-card-title>
+          {{ settings.$.reminderSmsText.metadata.caption }}
+        </mat-card-title>
+        {{ settings.lang.reminderSmsTextHelp }}
+        <textarea
+          [(ngModel)]="settings.reminderSmsText"
+          class="form-control"
+          lines="3"
+        ></textarea>
+
+        <h4>{{ settings.lang.sampleReminderSms }}</h4>
+        <pre>{{ testSmsReminder() }}</pre>
+      </mat-card>
+      <mat-card *ngIf="settings.isSytemForMlt">
+        <mat-card-title>
+          {{ settings.$.registerFamilyReplyEmailText.metadata.caption }}
+        </mat-card-title>
+        {{ settings.lang.registerFamilyReplyEmailText }}
+        <textarea
+          [(ngModel)]="settings.registerFamilyReplyEmailText"
+          class="form-control"
+          lines="3"
+        ></textarea>
+
+        <h4>{{ settings.lang.sampleMessage }}</h4>
+        <pre [innerHTML]="testEmailDonor()"></pre>
+      </mat-card>
+      <mat-card *ngIf="settings.isSytemForMlt">
+        <mat-card-title>
+          {{ settings.$.registerHelperReplyEmailText.metadata.caption }}
+        </mat-card-title>
+        {{ settings.lang.registerHelperReplyEmailText }}
+        <textarea
+          [(ngModel)]="settings.registerHelperReplyEmailText"
+          class="form-control"
+          lines="3"
+        ></textarea>
+
+        <h4>{{ settings.lang.sampleMessage }}</h4>
+        <pre [innerHTML]="testEmailHelper()"></pre>
+      </mat-card>
+      <mat-card
+        *ngIf="settings.isSytemForMlt || settings.familySelfOrderEnabled"
+      >
+        <mat-card-title> הגדרות מייל </mat-card-title>
+        <data-area [settings]="emailConfiguration"></data-area>
+        <button mat-raised-button (click)="sendTestEmail()">
+          שלח מייל נסיון
         </button>
-        <button mat-icon-button (click)="reset()" [disabled]="!wasChange()">
-            <mat-icon color="warning">clear</mat-icon>
-        </button>
-        <button mat-button (click)="previewVolunteer()">{{settings.lang.previewVolunteerScreen}}</button>
-    </div>
+      </mat-card>
+      <mat-card>
+        <mat-card-title> תבנית הודעת ווטסאפ ממתנדב למשפחה </mat-card-title>
+        <data-control
+          [field]="settings.$.sendSuccessMessageToFamily"
+          *ngIf="settings.allowSendSuccessMessageOption && settings.helpPhone"
+        ></data-control>
+        <ng-container>
+          הודעה זו תופיע כאשר המתנדב לוחץ על צלמית הווטסאפ לצד הטלפון של המשפחה
+          <ul>
+            <li>!משפחה! יוחלף בשם המשפחה</li>
+          </ul>
+          <textarea
+            [(ngModel)]="settings.successMessageText"
+            class="form-control"
+            lines="3"
+          ></textarea>
 
+          <h4>הודעה לדוגמא</h4>
+          <pre>{{ testSuccessSms() }}</pre>
+        </ng-container>
+      </mat-card>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.volunteerQAndA }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      {{ settings.lang.volunteerQAndAHelp }}
 
-
-    <mat-accordion *ngIf="settings" style="margin-top:10px" class="grow-item">
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.organizationInfo}} - {{settings.organisationName}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-
-
-
-            <data-area [settings]="settingsArea"></data-area>
-            <button mat-raised-button *ngIf="hasGeneralListing()" (click)="showGeneralListing()">
-                {{settings.lang.show}}
-            </button>
-            <mat-card>
-                <mat-card-title>
-                    {{settings.lang.defaultHelpPhone}}
-                </mat-card-title>
-                {{settings.lang.defaulyHelpPhoneExplanation}} <br />
-                <data-area [settings]="settingsMore"></data-area>
-            </mat-card>
-
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.basketTypes}}
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <data-grid [settings]="basketType" height="300"></data-grid>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.distributionLists}}
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <data-grid [settings]="distributionCenters" height="300"></data-grid>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.familySources}}
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <data-grid [settings]="sources" height="300"></data-grid>
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.familyGroups}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-
-            {{settings.lang.distributionListsHelp}}
-            <data-grid [settings]="groups" height="300"></data-grid>
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.volunteerTexts}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-            <mat-card>
-                <mat-card-title>
-                    {{settings.$.smsText.metadata.caption}}
-                </mat-card-title>
-                {{settings.lang.smsTextHelpTitle}}
-                <ul>
-                    <li>!מתנדב! - {{settings.lang.replacedByVolunteerName}}</li>
-                    <li *ngIf="settings.isSytemForMlt">!משפחה! - {{settings.lang.replacedByFamilyName}}</li>
-                    <li *ngIf="settings.isSytemForMlt">!תורם! - {{settings.lang.replacedByFamilyName}}</li>
-                    <li>!שולח! - {{settings.lang.replcaedBySenderName}}</li>
-                    <li>!ארגון! - {{settings.lang.replacedByOrgName}}</li>
-                    <li>!אתר! - {{settings.lang.replaceBySiteUrl}}</li>
-                </ul>
-                <textarea [(ngModel)]="settings.smsText" class="form-control"></textarea>
-                <H4>{{settings.lang.sampleMessage}}</H4>
-                <pre>{{testSms()}}</pre>
-            </mat-card>
-
-            <data-area [settings]="settingsMessages"></data-area>
-            <button mat-raised-button (click)="saveAndPreview()" color="primary"
-                style="left:0px;margin-bottom:5px">{{settings.lang.saveAndPreview}}</button>
-            <data-area [settings]="settings2Messages"></data-area>
-
-            <mat-card>
-                <mat-card-title>
-                    {{settings.$.reminderSmsText.metadata.caption}}
-                </mat-card-title>
-                {{settings.lang.reminderSmsTextHelp}}
-                <textarea [(ngModel)]="settings.reminderSmsText" class="form-control" lines=3></textarea>
-
-                <h4>{{settings.lang.sampleReminderSms}}</h4>
-                <pre>{{testSmsReminder()}}</pre>
-            </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt">
-                <mat-card-title>
-                    {{settings.$.registerFamilyReplyEmailText.metadata.caption}}
-                </mat-card-title>
-                {{settings.lang.registerFamilyReplyEmailText}}
-                <textarea [(ngModel)]="settings.registerFamilyReplyEmailText" class="form-control" lines=3></textarea>
-
-                <h4>{{settings.lang.sampleMessage}}</h4>
-                <pre [innerHTML]="testEmailDonor()"></pre>
-            </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt">
-                <mat-card-title>
-                    {{settings.$.registerHelperReplyEmailText.metadata.caption}}
-                </mat-card-title>
-                {{settings.lang.registerHelperReplyEmailText}}
-                <textarea [(ngModel)]="settings.registerHelperReplyEmailText" class="form-control" lines=3></textarea>
-
-                <h4>{{settings.lang.sampleMessage}}</h4>
-                <pre [innerHTML]="testEmailHelper()"></pre>
-            </mat-card>
-            <mat-card *ngIf="settings.isSytemForMlt||settings.familySelfOrderEnabled">
-                <mat-card-title>
-                    הגדרות מייל
-                </mat-card-title>
-                <data-area [settings]="emailConfiguration"></data-area>
-                <button mat-raised-button (click)="sendTestEmail()">שלח מייל נסיון</button>
-            </mat-card>
-            <mat-card>
-                <mat-card-title>
-                    תבנית הודעת ווטסאפ ממתנדב למשפחה
-                </mat-card-title>
-                <data-control [field]="settings.$.sendSuccessMessageToFamily"
-                    *ngIf="settings.allowSendSuccessMessageOption&&settings.helpPhone"></data-control>
-                <ng-container>
-                    הודעה זו תופיע כאשר המתנדב לוחץ על צלמית הווטסאפ לצד הטלפון של המשפחה
-                    <ul>
-                        <li>!משפחה! יוחלף בשם המשפחה</li>
-                    </ul>
-                    <textarea [(ngModel)]="settings.successMessageText" class="form-control" lines=3></textarea>
-
-                    <h4>הודעה לדוגמא</h4>
-                    <pre>{{testSuccessSms()}}</pre>
-                </ng-container>
-            </mat-card>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.volunteerQAndA}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-            {{settings.lang.volunteerQAndAHelp}}
-
-            <table>
-                <tr *ngFor="let p of qaItems; let i = index" style="border-bottom: solid;
+      <table>
+        <tr
+          *ngFor="let p of qaItems; let i = index"
+          style="
+            border-bottom: solid;
             border-bottom-width: thin;
-            border-bottom-color: lightgray;">
-                    <td style=" vertical-align: top;
-                padding: 9px;">{{i+1}}.</td>
-                    <td style="    padding-bottom: 9px;padding-top:9px;">
-                        <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-                            <mat-label>{{settings.lang.question}}</mat-label>
-                            <input matInput [(ngModel)]="p.question">
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-                            <mat-label>{{settings.lang.answer}}</mat-label>
-                            <textarea matInput [(ngModel)]="p.answer" style="height:50px;"></textarea>
-                        </mat-form-field>
-                    </td>
-                    <td><button mat-icon-button (click)="deleteQuestion(p)">
-                            <mat-icon>delete</mat-icon>
-                        </button></td>
-                    <td><button mat-icon-button (click)="moveQuestion(p,-1)" *ngIf="i>0">
-                            <mat-icon>arrow_drop_up</mat-icon>
-                        </button></td>
-                    <td><button mat-icon-button (click)="moveQuestion(p,1)" *ngIf="i<qaItems.length-1">
-                            <mat-icon>arrow_drop_down</mat-icon>
-                        </button></td>
-
-                </tr>
-            </table>
-            <button (click)="addQuestion()" mat-icon-button>
-                <mat-icon>add</mat-icon>
+            border-bottom-color: lightgray;
+          "
+        >
+          <td style="vertical-align: top; padding: 9px">{{ i + 1 }}.</td>
+          <td style="padding-bottom: 9px; padding-top: 9px">
+            <mat-form-field
+              appearance="outline"
+              class="full-width-form-field dense-form-field"
+            >
+              <mat-label>{{ settings.lang.question }}</mat-label>
+              <input matInput [(ngModel)]="p.question" />
+            </mat-form-field>
+            <mat-form-field
+              appearance="outline"
+              class="full-width-form-field dense-form-field"
+            >
+              <mat-label>{{ settings.lang.answer }}</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="p.answer"
+                style="height: 50px"
+              ></textarea>
+            </mat-form-field>
+          </td>
+          <td>
+            <button mat-icon-button (click)="deleteQuestion(p)">
+              <mat-icon>delete</mat-icon>
             </button>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.voluntreeHelpPhones}}
-                </mat-panel-title>
+          </td>
+          <td>
+            <button mat-icon-button (click)="moveQuestion(p, -1)" *ngIf="i > 0">
+              <mat-icon>arrow_drop_up</mat-icon>
+            </button>
+          </td>
+          <td>
+            <button
+              mat-icon-button
+              (click)="moveQuestion(p, 1)"
+              *ngIf="i < qaItems.length - 1"
+            >
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      <button (click)="addQuestion()" mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.voluntreeHelpPhones }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      {{ settings.lang.volunteerHelpPhonesHelpLine1 }}
+      <br />
+      {{ settings.lang.volunteerHelpPhonesHelpLine2 }}
 
-            </mat-expansion-panel-header>
-            {{settings.lang.volunteerHelpPhonesHelpLine1}}
-            <br>
-            {{settings.lang.volunteerHelpPhonesHelpLine2}}
-
-            <table>
-                <tr *ngFor="let p of helpPhones; let i = index" style="border-bottom: solid;
+      <table>
+        <tr
+          *ngFor="let p of helpPhones; let i = index"
+          style="
+            border-bottom: solid;
             border-bottom-width: thin;
-            border-bottom-color: lightgray;">
-                    <td style=" vertical-align: top;
-                padding: 9px;padding-top:18px;">{{i+1}}.</td>
-                    <td style="    padding-bottom: 9px;padding-top:9px;">
-                        <select [(ngModel)]="p.option" class="form-control">
-                            <option *ngFor="let c of phoneOptions" [ngValue]="c">{{c.name}}</option>
-                        </select>
-                        <input [(ngModel)]="p.name" placeholder="{{settings.lang.volunteerName}}"
-                            *ngIf="showNameAndPhone(p)" class="form-control">
-                        <input [(ngModel)]="p.phone" input="tel" placeholder="{{settings.lang.phone}}"
-                            *ngIf="showNameAndPhone(p)" class="form-control">
-                    </td>
-                    <td><button mat-icon-button (click)="delete(p)">
-                            <mat-icon>delete</mat-icon>
-                        </button></td>
-                    <td><button mat-icon-button (click)="move(p,-1)" *ngIf="i>0">
-                            <mat-icon>arrow_drop_up</mat-icon>
-                        </button></td>
-                    <td><button mat-icon-button (click)="move(p,1)" *ngIf="i<helpPhones.length-1">
-                            <mat-icon>arrow_drop_down</mat-icon>
-                        </button></td>
-
-                </tr>
-            </table>
-            <button (click)="addPhoneOption()" mat-icon-button>
-                <mat-icon>add</mat-icon>
+            border-bottom-color: lightgray;
+          "
+        >
+          <td style="vertical-align: top; padding: 9px; padding-top: 18px">
+            {{ i + 1 }}.
+          </td>
+          <td style="padding-bottom: 9px; padding-top: 9px">
+            <select [(ngModel)]="p.option" class="form-control">
+              <option *ngFor="let c of phoneOptions" [ngValue]="c">
+                {{ c.name }}
+              </option>
+            </select>
+            <input
+              [(ngModel)]="p.name"
+              placeholder="{{ settings.lang.volunteerName }}"
+              *ngIf="showNameAndPhone(p)"
+              class="form-control"
+            />
+            <input
+              [(ngModel)]="p.phone"
+              input="tel"
+              placeholder="{{ settings.lang.phone }}"
+              *ngIf="showNameAndPhone(p)"
+              class="form-control"
+            />
+          </td>
+          <td>
+            <button mat-icon-button (click)="delete(p)">
+              <mat-icon>delete</mat-icon>
             </button>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.preferences}}
-                </mat-panel-title>
+          </td>
+          <td>
+            <button mat-icon-button (click)="move(p, -1)" *ngIf="i > 0">
+              <mat-icon>arrow_drop_up</mat-icon>
+            </button>
+          </td>
+          <td>
+            <button
+              mat-icon-button
+              (click)="move(p, 1)"
+              *ngIf="i < helpPhones.length - 1"
+            >
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      <button (click)="addPhoneOption()" mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.preferences }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-area [settings]="prefereces"></data-area>
+      <button mat-raised-button (click)="resetToDefault()">
+        {{ settings.lang.resetTextsToLanguageDefaults }}
+      </button>
+      <button mat-raised-button (click)="configureSmsGlobal()">
+        {{ settings.lang.smsProviderConfiguration }}
+      </button>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.logoAndIcons }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-area [settings]="settingsLogo"></data-area>
 
-            </mat-expansion-panel-header>
-            <data-area [settings]="prefereces"></data-area>
-            <button mat-raised-button (click)="resetToDefault()">{{settings.lang.resetTextsToLanguageDefaults}}</button>
-            <button mat-raised-button (click)="configureSmsGlobal()">{{settings.lang.smsProviderConfiguration}}</button>
+      {{ settings.lang.logoRecommendTool }}
+      <a href="https://www.favicon-generator.org/" target="_blank"
+        >Favicon generator</a
+      >
+      {{ settings.lang.logoRecommendAfter }}
 
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{settings.lang.logoAndIcons}}
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-            <data-area [settings]="settingsLogo"></data-area>
-
-            {{settings.lang.logoRecommendTool}}
-            <a href="https://www.favicon-generator.org/" target="_blank">Favicon generator</a>
-            {{settings.lang.logoRecommendAfter}}
-
-            <mat-card>
-                <mat-card-title>{{settings.lang.iconForWebSite}} (favicon.ico)</mat-card-title>
-                <br>
-                <input type="file" id="icon" (change)="onFileChange('icon',images.currentRow.$.base64Icon)">
-                <br>
-                <img [src]="getIcon()" *ngIf="this.images.currentRow">
-            </mat-card>
-            <br>
-            <br>
-            <mat-card>
-                <mat-card-title>
-                    {{settings.lang.logoForWebsiteAndPhone}} - (apple-icon-120x120.png)</mat-card-title>
-                <br>
-                <input type="file" id="logo" (change)="onFileInput($event)">
-                <br>
-                <img [src]="getLogo()" *ngIf="this.images.currentRow">
-                <br>
-            </mat-card>
-
-
-
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                {{settings.lang.deleteFamilies}}
-            </mat-expansion-panel-header>
-            {{settings.lang.deleteFamiliesHelp}}
-            <br><br>
-            <button mat-raised-button (click)="deleteFamilies()"
-                color="accent">{{settings.lang.deleteFamiliesButton}}</button>
-        </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="isSuperAdmin()">
-            <mat-expansion-panel-header>
-                superadmin
-            </mat-expansion-panel-header>
-            <data-area [settings]="superAdmin"></data-area>
-        </mat-expansion-panel>
-    </mat-accordion>
-    <button mat-button (click)="changeLog()">{{settings.lang.changeLog}} </button>
+      <mat-card>
+        <mat-card-title
+          >{{ settings.lang.iconForWebSite }} (favicon.ico)</mat-card-title
+        >
+        <br />
+        <input
+          type="file"
+          id="icon"
+          (change)="onFileChange('icon', images.currentRow.$.base64Icon)"
+        />
+        <br />
+        <img [src]="getIcon()" *ngIf="this.images.currentRow" />
+      </mat-card>
+      <br />
+      <br />
+      <mat-card>
+        <mat-card-title>
+          {{ settings.lang.logoForWebsiteAndPhone }} -
+          (apple-icon-120x120.png)</mat-card-title
+        >
+        <br />
+        <input type="file" id="logo" (change)="onFileInput($event)" />
+        <br />
+        <img [src]="getLogo()" *ngIf="this.images.currentRow" />
+        <br />
+      </mat-card>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        {{ settings.lang.deleteFamilies }}
+      </mat-expansion-panel-header>
+      {{ settings.lang.deleteFamiliesHelp }}
+      <br /><br />
+      <button mat-raised-button (click)="deleteFamilies()" color="accent">
+        {{ settings.lang.deleteFamiliesButton }}
+      </button>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="isSuperAdmin()">
+      <mat-expansion-panel-header> superadmin </mat-expansion-panel-header>
+      <data-area [settings]="superAdmin"></data-area>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <button mat-button (click)="changeLog()">
+    {{ settings.lang.changeLog }}
+  </button>
 </div>

@@ -1,62 +1,97 @@
 <div>
-    <data-area [settings]="area"></data-area>
-    <div style="display:flex;    justify-content: space-between;
-    flex-direction: row-reverse;">
-        <app-dots-menu [buttons]="listOptions" *ngIf="isAdmin()"></app-dots-menu>
-        <div>
-            <button mat-raised-button color="primary" (click)="sortByDistance()" *ngIf="showLocation">
-                {{!volunteerLocation?settings.lang.showByDistanceFromMe:settings.lang.showByDate}}
-            </button>
-        </div>
+  <data-area [settings]="area"></data-area>
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+    "
+  >
+    <app-dots-menu [buttons]="listOptions" *ngIf="isAdmin()"></app-dots-menu>
+    <div>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="sortByDistance()"
+        *ngIf="showLocation"
+      >
+        {{
+          !volunteerLocation
+            ? settings.lang.showByDistanceFromMe
+            : settings.lang.showByDate
+        }}
+      </button>
     </div>
-    <mat-divider></mat-divider>
+  </div>
+  <mat-divider></mat-divider>
 </div>
 <div>
-    <div *ngFor="let d of dates">
-        <ng-container *ngIf="hasEvents(d)">
-            <h3>{{d.date}}</h3>
-            <div class="events-container" [transition-group]="'flip-list'">
-                <ng-container *ngFor="let e of d.events ; trackBy: trackBy">
-                    <mat-card transition-group-item class="event-card" [class.registered]="e.registeredToEvent"
-                        *ngIf="filter(e)">
-                        <div *ngIf="isAdmin()" style="display: flex;
+  <div *ngFor="let d of dates">
+    <ng-container *ngIf="hasEvents(d)">
+      <h3>{{ d.date }}</h3>
+      <div class="events-container" [transition-group]="'flip-list'">
+        <ng-container *ngFor="let e of d.events; trackBy: trackBy">
+          <mat-card
+            transition-group-item
+            class="event-card"
+            [class.registered]="e.registeredToEvent"
+            *ngIf="filter(e)"
+          >
+            <div
+              *ngIf="isAdmin()"
+              style="
+                display: flex;
                 justify-content: space-between;
-                margin-bottom: 10px;">
-
-                            <button mat-icon-button (click)="edit(e)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <strong *ngIf="isAdmin()">{{getStatus(e)}}</strong>
-                            <app-dots-menu [item]="e" [buttons]="menuOptions" *ngIf="isAdmin()"></app-dots-menu>
-
-                        </div>
-                        <div class="event-info">
-                            <div style="text-align: center;" (click)="eventDetails(e)">
-                                <img class="event-image" [src]="e.eventLogo">
-                            </div>
-                            <div class="event-detail">
-                                <strong (click)="eventDetails(e)">
-                                    <mat-icon *ngIf="e.registeredToEvent" style="color:green">done</mat-icon> {{e.name}}
-                                </strong>
-                                <strong style="font-size: small;">
-                                    {{e.orgName}}
-                                </strong>
-                                <span (click)="eventDetails(e)"> {{distance(e)}} {{e.city}}<span *ngIf="showEventType(e)">, {{e.type.caption}} </span></span>
-                                <div (click)="eventDetails(e)" *ngIf="!isGeneralEvent(e)">
-                                    <strong>{{displayDate(e)}}</strong><span *ngIf="e.startTime">,
-                                        {{e.startTime}}</span><span *ngIf="e.endTime"> -
-                                        {{e.endTime}}</span>
-
-                                </div>
-                                <span *ngIf="isFull(e)">{{settings.lang.eventIsFullShort}}</span>
-                                <a (click)="eventDetails(e)"
-                                    *ngIf="!isFull(e)">{{settings.lang.forDetailsAndRegistration}}</a>
-                                <a (click)="showVolunteers(e)">{{adminVolunteers(e)}}</a>
-                            </div>
-                        </div>
-                    </mat-card>
-                </ng-container>
+                margin-bottom: 10px;
+              "
+            >
+              <button mat-icon-button (click)="edit(e)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <strong *ngIf="isAdmin()">{{ getStatus(e) }}</strong>
+              <app-dots-menu
+                [item]="e"
+                [buttons]="menuOptions"
+                *ngIf="isAdmin()"
+              ></app-dots-menu>
             </div>
+            <div class="event-info">
+              <div style="text-align: center" (click)="eventDetails(e)">
+                <img class="event-image" [src]="e.eventLogo" />
+              </div>
+              <div class="event-detail">
+                <strong (click)="eventDetails(e)">
+                  <mat-icon *ngIf="e.registeredToEvent" style="color: green"
+                    >done</mat-icon
+                  >
+                  {{ e.name }}
+                </strong>
+                <strong style="font-size: small">
+                  {{ e.orgName }}
+                </strong>
+                <span (click)="eventDetails(e)">
+                  {{ distance(e) }} {{ e.city
+                  }}<span *ngIf="showEventType(e)"
+                    >, {{ e.type.caption }}
+                  </span></span
+                >
+                <div (click)="eventDetails(e)" *ngIf="!isGeneralEvent(e)">
+                  <strong>{{ displayDate(e) }}</strong
+                  ><span *ngIf="e.startTime">, {{ e.startTime }}</span
+                  ><span *ngIf="e.endTime"> - {{ e.endTime }}</span>
+                </div>
+                <span *ngIf="isFull(e)">{{
+                  settings.lang.eventIsFullShort
+                }}</span>
+                <a (click)="eventDetails(e)" *ngIf="!isFull(e)">{{
+                  settings.lang.forDetailsAndRegistration
+                }}</a>
+                <a (click)="showVolunteers(e)">{{ adminVolunteers(e) }}</a>
+              </div>
+            </div>
+          </mat-card>
         </ng-container>
-    </div>
+      </div>
+    </ng-container>
+  </div>
 </div>

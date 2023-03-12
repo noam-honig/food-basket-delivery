@@ -1,7 +1,2 @@
-
-
-console.log('test');
-export class myClass
-{
-
-}
+console.log('test')
+export class myClass {}

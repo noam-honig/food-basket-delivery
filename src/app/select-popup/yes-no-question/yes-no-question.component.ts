@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { ApplicationSettings } from '../../manage/ApplicationSettings';
+import { Component, OnInit } from '@angular/core'
+import { MatDialogRef } from '@angular/material/dialog'
+import { ApplicationSettings } from '../../manage/ApplicationSettings'
 
 @Component({
   selector: 'app-yes-no-question',
@@ -9,51 +9,47 @@ import { ApplicationSettings } from '../../manage/ApplicationSettings';
 })
 export class YesNoQuestionComponent implements OnInit {
   public args: {
-    onYes?: () => void;
-    onNo?: () => void;
-    yesButtonText?: string,
-    noButtonText?: string,
-    showOnlyConfirm?: boolean;
-    question: string;
-  };
-  confirmOnly = false;
-  question: string;
+    onYes?: () => void
+    onNo?: () => void
+    yesButtonText?: string
+    noButtonText?: string
+    showOnlyConfirm?: boolean
+    question: string
+  }
+  confirmOnly = false
+  question: string
   constructor(
     private dialogRef: MatDialogRef<any>,
     public settings: ApplicationSettings
-
   ) {
-    dialogRef.afterClosed().subscribe(s => {
-      if (!this.yes && this.args && this.args.onNo)
-        this.args.onNo();
-    });
+    dialogRef.afterClosed().subscribe((s) => {
+      if (!this.yes && this.args && this.args.onNo) this.args.onNo()
+    })
   }
 
   ngOnInit() {
     if (!this.args) {
       this.args = {
         question: 'q'
-      };
+      }
     }
     if (this.args && this.args.showOnlyConfirm)
-      this.confirmOnly = this.args.showOnlyConfirm;
-    if (!this.question)
-      this.question = this.args.question;
+      this.confirmOnly = this.args.showOnlyConfirm
+    if (!this.question) this.question = this.args.question
     if (this.args) {
       if (!this.args.yesButtonText)
-        this.args.yesButtonText = this.settings.lang.yes;
+        this.args.yesButtonText = this.settings.lang.yes
       if (!this.args.noButtonText)
-        this.args.noButtonText = this.settings.lang.no;
+        this.args.noButtonText = this.settings.lang.no
     }
   }
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close()
   }
-  yes = false;
+  yes = false
   select() {
-    this.yes = true;
-    this.dialogRef.close();
-    if (this.args.onYes)
-      this.args.onYes();
+    this.yes = true
+    this.dialogRef.close()
+    if (this.args.onYes) this.args.onYes()
   }
 }

@@ -1,9 +1,9 @@
 .container {
-    @media screen and (min-width: 600px) {
-        display: flex;
-        flex-direction: row;
-        > div:nth-child(1) > div{
-            flex-direction: column ;
-        }
+  @media screen and (min-width: 600px) {
+    display: flex;
+    flex-direction: row;
+    > div:nth-child(1) > div {
+      flex-direction: column;
     }
+  }
 }

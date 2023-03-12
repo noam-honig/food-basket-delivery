@@ -1,23 +1,21 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UserFamiliesList } from './user-families';
-import { Route } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { UserFamiliesList } from './user-families'
+import { Route } from '@angular/router'
 
-import { BusyService, RouteHelperService } from '../common-ui-elements';
-import { remult, UserInfo } from 'remult';
+import { BusyService, RouteHelperService } from '../common-ui-elements'
+import { remult, UserInfo } from 'remult'
 
-import { Helpers } from '../helpers/helpers';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { DestroyHelper, DialogService } from '../select-popup/dialog';
+import { Helpers } from '../helpers/helpers'
+import { ApplicationSettings } from '../manage/ApplicationSettings'
+import { DestroyHelper, DialogService } from '../select-popup/dialog'
 
-import { LoginComponent } from '../users/login/login.component';
-import { AuthService } from '../auth/auth-service';
-import { Event } from '../events/events';
-import { SignedInAndNotOverviewGuard } from '../auth/guards';
-import { OrgEventsComponent } from '../org-events/org-events.component';
-import { Roles } from '../auth/roles';
-import { AsignFamilyController } from '../asign-family/asign-family.controller';
-
-
+import { LoginComponent } from '../users/login/login.component'
+import { AuthService } from '../auth/auth-service'
+import { Event } from '../events/events'
+import { SignedInAndNotOverviewGuard } from '../auth/guards'
+import { OrgEventsComponent } from '../org-events/org-events.component'
+import { Roles } from '../auth/roles'
+import { AsignFamilyController } from '../asign-family/asign-family.controller'
 
 @Component({
   selector: 'app-my-families',
@@ -25,32 +23,39 @@ import { AsignFamilyController } from '../asign-family/asign-family.controller';
   styleUrls: ['./my-families.component.scss']
 })
 export class MyFamiliesComponent implements OnInit, OnDestroy {
-
   static route: Route = {
-    path: 'my-families', component: MyFamiliesComponent, canActivate: [SignedInAndNotOverviewGuard], data: { name: 'משפחות שלי' }
-  };
-  destroyHelper = new DestroyHelper();
+    path: 'my-families',
+    component: MyFamiliesComponent,
+    canActivate: [SignedInAndNotOverviewGuard],
+    data: { name: 'משפחות שלי' }
+  }
+  destroyHelper = new DestroyHelper()
   ngOnDestroy(): void {
-    this.destroyHelper.destroy();
+    this.destroyHelper.destroy()
   }
-  familyLists = new UserFamiliesList(this.settings, this.destroyHelper);
-  user: UserInfo;
-  remult = remult;
-  constructor(public settings: ApplicationSettings, private dialog: DialogService, private helper: RouteHelperService, public sessionManager: AuthService,
-    private busy: BusyService) {
-    this.user = remult.user as UserInfo;
+  familyLists = new UserFamiliesList(this.settings, this.destroyHelper)
+  user: UserInfo
+  remult = remult
+  constructor(
+    public settings: ApplicationSettings,
+    private dialog: DialogService,
+    private helper: RouteHelperService,
+    public sessionManager: AuthService,
+    private busy: BusyService
+  ) {
+    this.user = remult.user as UserInfo
   }
-  hasEvents = false;
+  hasEvents = false
   moveToOpertunities() {
-    this.helper.navigateToComponent(OrgEventsComponent);
+    this.helper.navigateToComponent(OrgEventsComponent)
   }
   addressHelper() {
     if (this.familyLists.distCenter.address)
-      return this.familyLists.distCenter.addressHelper;
+      return this.familyLists.distCenter.addressHelper
     return this.settings.addressHelper
   }
   editSettings() {
-    const s = this.settings.$;
+    const s = this.settings.$
     this.dialog.inputAreaDialog({
       title: this.settings.lang.preferences,
       fields: [
@@ -71,10 +76,22 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
         this.settings.$.problemButtonText,
         this.settings.$.commentForProblem,
 
-        [this.settings.$.questionForVolunteer1Caption, this.settings.$.questionForVolunteer1Values],
-        [this.settings.$.questionForVolunteer2Caption, this.settings.$.questionForVolunteer2Values],
-        [this.settings.$.questionForVolunteer3Caption, this.settings.$.questionForVolunteer3Values],
-        [this.settings.$.questionForVolunteer4Caption, this.settings.$.questionForVolunteer4Values],
+        [
+          this.settings.$.questionForVolunteer1Caption,
+          this.settings.$.questionForVolunteer1Values
+        ],
+        [
+          this.settings.$.questionForVolunteer2Caption,
+          this.settings.$.questionForVolunteer2Values
+        ],
+        [
+          this.settings.$.questionForVolunteer3Caption,
+          this.settings.$.questionForVolunteer3Values
+        ],
+        [
+          this.settings.$.questionForVolunteer4Caption,
+          this.settings.$.questionForVolunteer4Values
+        ],
         this.settings.$.askVolunteerForLocationOnDelivery,
         this.settings.$.askVolunteerForAPhotoToHelp,
         this.settings.$.questionForVolunteerWhenUploadingPhoto,
@@ -85,80 +102,94 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
       ],
       ok: () => this.settings.save(),
       cancel: () => this.settings._.undoChanges()
-    });
+    })
   }
   isAdmin() {
-    return remult.isAllowed(Roles.admin);
+    return remult.isAllowed(Roles.admin)
   }
   async ngOnInit() {
-
     let done = ''
     try {
-      done += '1';
-      let id = remult.user.id;
-      if (this.user.theHelperIAmEscortingId && this.user.theHelperIAmEscortingId.trim().length > 0)
-        id = this.user.theHelperIAmEscortingId;
-      done += '2';
-      let helper = await remult.repo(Helpers).findId(id);
-      if (helper)
-        done += 'helper id:' + helper.id;
-      else done += "3";
+      done += '1'
+      let id = remult.user.id
+      if (
+        this.user.theHelperIAmEscortingId &&
+        this.user.theHelperIAmEscortingId.trim().length > 0
+      )
+        id = this.user.theHelperIAmEscortingId
+      done += '2'
+      let helper = await remult.repo(Helpers).findId(id)
+      if (helper) done += 'helper id:' + helper.id
+      else done += '3'
 
-      await this.familyLists.initForHelper(helper);
+      await this.familyLists.initForHelper(helper)
       if (this.settings.showDeliverySummaryToVolunteerOnFirstSignIn) {
-        let comments = this.familyLists.toDeliver.filter(d => d.deliveryComments);
+        let comments = this.familyLists.toDeliver.filter(
+          (d) => d.deliveryComments
+        )
         if (comments) {
-          let date = new Date().toDateString();
-          let displayed: { id: string, comment: string, displayedOn: string }[] = [];
-          let storageValue = localStorage.getItem("last-summary-display");
-          if (storageValue)
-            displayed = JSON.parse(storageValue);
-          if (comments.filter(x => !displayed.find(d => d.id == x.id && d.comment == x.deliveryComments && d.displayedOn == date)).length > 0) {
-            await this.familyLists.showBasketSummary();
-            displayed = comments.map(x => ({ id: x.id, comment: x.deliveryComments, displayedOn: date }));
-            localStorage.setItem("last-summary-display", JSON.stringify(displayed));
-
+          let date = new Date().toDateString()
+          let displayed: {
+            id: string
+            comment: string
+            displayedOn: string
+          }[] = []
+          let storageValue = localStorage.getItem('last-summary-display')
+          if (storageValue) displayed = JSON.parse(storageValue)
+          if (
+            comments.filter(
+              (x) =>
+                !displayed.find(
+                  (d) =>
+                    d.id == x.id &&
+                    d.comment == x.deliveryComments &&
+                    d.displayedOn == date
+                )
+            ).length > 0
+          ) {
+            await this.familyLists.showBasketSummary()
+            displayed = comments.map((x) => ({
+              id: x.id,
+              comment: x.deliveryComments,
+              displayedOn: date
+            }))
+            localStorage.setItem(
+              'last-summary-display',
+              JSON.stringify(displayed)
+            )
           }
-
         }
       }
-      done += '4';
-    }
-    catch (err) {
-      let info = done += " - " + checkCookie();
-      if (remult.user)
-        info += " user: " + remult.user.name;
-      else
-        info += " NO USER ";
-      this.dialog.exception("My Families: " + this.settings.lang.smsLoginFailed + info, err);
-      this.sessionManager.signout();
-      this.helper.navigateToComponent(LoginComponent);
-
+      done += '4'
+    } catch (err) {
+      let info = (done += ' - ' + checkCookie())
+      if (remult.user) info += ' user: ' + remult.user.name
+      else info += ' NO USER '
+      this.dialog.exception(
+        'My Families: ' + this.settings.lang.smsLoginFailed + info,
+        err
+      )
+      this.sessionManager.signout()
+      this.helper.navigateToComponent(LoginComponent)
     }
     this.busy.donotWait(async () => {
-      this.hasEvents = (await remult.repo(Event).count()) > 0;
-    });
+      this.hasEvents = (await remult.repo(Event).count()) > 0
+    })
   }
 
   sendMessageToFamilies() {
-    AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies(this.familyLists.helper)
+    AsignFamilyController.sendOnTheWaySmsMessageToVolunteersFamilies(
+      this.familyLists.helper
+    )
   }
-
-
-
-
-
 }
-
 
 function checkCookie() {
-  var cookieEnabled = navigator.cookieEnabled;
+  var cookieEnabled = navigator.cookieEnabled
   if (!cookieEnabled) {
-    document.cookie = "testcookie=1234";
-    cookieEnabled = document.cookie.indexOf("testcookie=1234") != -1;
+    document.cookie = 'testcookie=1234'
+    cookieEnabled = document.cookie.indexOf('testcookie=1234') != -1
   }
-  if (cookieEnabled)
-    return "cookies are ok"
-  else return "cookies don't work";
+  if (cookieEnabled) return 'cookies are ok'
+  else return "cookies don't work"
 }
-

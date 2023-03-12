@@ -1,7 +1,5 @@
-
-
 .my-select::after {
-  content: "";
+  content: '';
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
@@ -22,17 +20,17 @@
 
 .my-select {
   position: relative;
-  width:100%;
+  width: 100%;
 }
 .data-control3 {
   display: flex;
-  width:100%;
+  width: 100%;
 }
-.row-button{
-  height:auto;
+.row-button {
+  height: auto;
   line-height: normal;
 }
-input{
+input {
   border: none;
   outline: 0;
   padding: 0;

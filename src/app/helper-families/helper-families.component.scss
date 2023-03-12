@@ -27,7 +27,7 @@
 h3 {
   margin-top: 5px;
 }
-[dir="rtl"] .printTable {
+[dir='rtl'] .printTable {
   th,
   td {
     text-align: right;
@@ -70,13 +70,13 @@ h3 {
   margin-left: -50px; /* Negative half of width. */
   //transform: translate(-100%, -100%);
   transition: all 300ms ease;
-  
+
   z-index: 100;
 }
 .cool {
   transform: translate(0, 0);
 }
-.mat-card{
+.mat-card {
   padding-left: 8px;
   padding-right: 8px;
 }

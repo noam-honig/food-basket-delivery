@@ -1,24 +1,38 @@
 <mat-form-field class="full-width">
-  <input matInput [(ngModel)]="searchString" (input)="doFilter()" placeholder="{{settings.lang.searchFamily}}" #search
-    [ngModelOptions]="{standalone: true}">
+  <input
+    matInput
+    [(ngModel)]="searchString"
+    (input)="doFilter()"
+    placeholder="{{ settings.lang.searchFamily }}"
+    #search
+    [ngModelOptions]="{ standalone: true }"
+  />
   <mat-icon matSuffix (click)="clearHelper()">clear</mat-icon>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()">{{settings.lang.showAllFamilies}}
+<mat-checkbox [(ngModel)]="showAllFamilies" (change)="doFilter()"
+  >{{ settings.lang.showAllFamilies }}
 </mat-checkbox>
 <mat-accordion class="no-print">
-  <mat-expansion-panel #myPanel *ngFor="let f of families.items;let i=index">
-    <mat-expansion-panel-header class="mat-expansion-panel-header {{f.getCss()}}">
-      <app-family-in-list [f]="f" [i]="i+1" style="width:100%"></app-family-in-list>
-
+  <mat-expansion-panel #myPanel *ngFor="let f of families.items; let i = index">
+    <mat-expansion-panel-header
+      class="mat-expansion-panel-header {{ f.getCss() }}"
+    >
+      <app-family-in-list
+        [f]="f"
+        [i]="i + 1"
+        style="width: 100%"
+      ></app-family-in-list>
     </mat-expansion-panel-header>
     <app-family-info [partOfAssign]="true" [f]="f" [selfPickupScreen]="true">
-
-
     </app-family-info>
   </mat-expansion-panel>
 </mat-accordion>
-<br>
-<button mat-raised-button color="accent" (click)="moreFamilies()"
-  *ngIf=" families.items.length!=families.totalRows">
-  {{settings.lang.moreFamilies}}
+<br />
+<button
+  mat-raised-button
+  color="accent"
+  (click)="moreFamilies()"
+  *ngIf="families.items.length != families.totalRows"
+>
+  {{ settings.lang.moreFamilies }}
 </button>

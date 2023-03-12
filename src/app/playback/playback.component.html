@@ -4,43 +4,65 @@
       <app-date-range></app-date-range>
       <button (click)="select()" mat-raised-button color="primary">בחר</button>
     </ng-container>
-    <h3 *ngIf="showOrgTitle">{{settings.organisationName}}</h3>
-    <div style="display:flex;justify-content: space-between;align-items: center;">
+    <h3 *ngIf="showOrgTitle">{{ settings.organisationName }}</h3>
+    <div
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
       <div *ngIf="showOrgLogo">
-        <div><img src="{{settings.logoUrl}}">
-        </div>
+        <div><img src="{{ settings.logoUrl }}" /></div>
       </div>
 
       <div>
-        <h4 [hidden]="!ready" *ngIf="timeline.length>0" (click)="animate()" style="display:inline;margin-left:15px">
-          {{currentTime()}}</h4>
-        <button [hidden]="!ready" mat-raised-button (click)="animate()" *ngIf="!playing&&ready" color="primary">לחצו עלי
-          ותהנו</button>
-        <div [hidden]="!ready" style="display: block;width:350px;">
-          <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
-            [options]="options" [colors]="colors"></canvas>
+        <h4
+          [hidden]="!ready"
+          *ngIf="timeline.length > 0"
+          (click)="animate()"
+          style="display: inline; margin-left: 15px"
+        >
+          {{ currentTime() }}
+        </h4>
+        <button
+          [hidden]="!ready"
+          mat-raised-button
+          (click)="animate()"
+          *ngIf="!playing && ready"
+          color="primary"
+        >
+          לחצו עלי ותהנו
+        </button>
+        <div [hidden]="!ready" style="display: block; width: 350px">
+          <canvas
+            baseChart
+            [data]="pieChartData"
+            [labels]="pieChartLabels"
+            [chartType]="pieChartType"
+            [options]="options"
+            [colors]="colors"
+          ></canvas>
         </div>
       </div>
       <div *ngIf="showHagaiLogo">
-        <img src="/assets/hagai-full.png">
+        <img src="/assets/hagai-full.png" />
       </div>
     </div>
   </div>
   <div class="full-page">
-
     <div [hidden]="!ready" #gmap class="grow-item"></div>
     <div *ngIf="ready">
       <ng-container *ngIf="!dialog.isScreenSmall()">
-        <input [(ngModel)]="height" *ngIf="ready">
-        {{map.getZoom()}} <input [(ngModel)]="zoom" *ngIf="ready"><button (click)="map.setZoom(+this.zoom)">set</button>
-        <input [(ngModel)]="speed" *ngIf="ready">
+        <input [(ngModel)]="height" *ngIf="ready" />
+        {{ map.getZoom() }} <input [(ngModel)]="zoom" *ngIf="ready" /><button
+          (click)="map.setZoom(+this.zoom)"
+        >
+          set
+        </button>
+        <input [(ngModel)]="speed" *ngIf="ready" />
         <mat-checkbox [(ngModel)]="showOnLeft">הצג משמאל</mat-checkbox>
         <mat-checkbox [(ngModel)]="showOrgLogo">הצג לוגו ארגון</mat-checkbox>
         <mat-checkbox [(ngModel)]="showOrgTitle">הצג כותרת ארגון</mat-checkbox>
         <mat-checkbox [(ngModel)]="showHagaiLogo">הצג לוגו חגי</mat-checkbox>
       </ng-container>
-      <a (click)="reset()" style="position: fixed;bottom: 0;">reset</a>
+      <a (click)="reset()" style="position: fixed; bottom: 0">reset</a>
     </div>
-
   </div>
 </div>

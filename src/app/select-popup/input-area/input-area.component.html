@@ -1,24 +1,32 @@
-<div  matDialogHeader style="display:flex;justify-content: space-between;">
-  <div class="mat-title">{{args.title}}</div>
+<div matDialogHeader style="display: flex; justify-content: space-between">
+  <div class="mat-title">{{ args.title }}</div>
   <app-dots-menu *ngIf="args.menu" [buttons]="args.menu"></app-dots-menu>
 </div>
 <mat-dialog-content>
   <div class="help-text" *ngIf="args.helpText">
-    {{args.helpText}}
+    {{ args.helpText }}
   </div>
   <data-area [settings]="area"> </data-area>
 </mat-dialog-content>
 <mat-dialog-actions>
-
-  <button mat-raised-button *ngFor="let b of args.buttons" (click)="buttonClick(b,$event)">
-    {{b.text}}
+  <button
+    mat-raised-button
+    *ngFor="let b of args.buttons"
+    (click)="buttonClick(b, $event)"
+  >
+    {{ b.text }}
   </button>
-  <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" *ngIf="this.args.cancel">
-    {{settings.lang.cancel}}
+  <button
+    type="button"
+    mat-raised-button
+    color="warning"
+    (click)="this.dialogRef.close()"
+    *ngIf="this.args.cancel"
+  >
+    {{ settings.lang.cancel }}
   </button>
 
   <button mat-raised-button color="accent" (click)="confirm()">
-    {{settings.lang.confirm}}
+    {{ settings.lang.confirm }}
   </button>
-
 </mat-dialog-actions>

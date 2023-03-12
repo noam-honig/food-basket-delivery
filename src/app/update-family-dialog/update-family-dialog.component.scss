@@ -1,28 +1,29 @@
-.myDiv{
-    direction:rtl;
+.myDiv {
+  direction: rtl;
 }
 
-.mat-dialog-container{
-    margin:3px;
+.mat-dialog-container {
+  margin: 3px;
 }
-.dialog-content-fixer{
-    min-height: 500px;
+.dialog-content-fixer {
+  min-height: 500px;
 }
-.top{
-    margin:0;
+.top {
+  margin: 0;
 }
-.content{
-    height: calc(70vh - 96px);max-height: unset;overflow-y: scroll;//because of iphone scroll in dialog
+.content {
+  height: calc(70vh - 96px);
+  max-height: unset;
+  overflow-y: scroll; //because of iphone scroll in dialog
 }
-.badAddressTitle{
-    color:red;
-    margin: 5px;
-    font-weight: 700;
+.badAddressTitle {
+  color: red;
+  margin: 5px;
+  font-weight: 700;
 }
-.badAddressIcon{
-    color:#FAC090;
+.badAddressIcon {
+  color: #fac090;
 }
-.fix-input{
-    background-color: yellow;
-    
+.fix-input {
+  background-color: yellow;
 }

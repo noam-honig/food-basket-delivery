@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ApplicationSettings, qaItem, phoneOption } from '../manage/ApplicationSettings';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core'
+import {
+  ApplicationSettings,
+  qaItem,
+  phoneOption
+} from '../manage/ApplicationSettings'
+import { MatDialogRef } from '@angular/material/dialog'
 
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 
 @Component({
   selector: 'app-common-questions',
@@ -10,31 +14,29 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
   styleUrls: ['./common-questions.component.scss']
 })
 export class CommonQuestionsComponent implements OnInit {
-
-  questions: qaItem[];
+  questions: qaItem[]
   args: {
     family: ActiveFamilyDeliveries
-  };
-  phoneOptions: phoneOption[] = [];
-  constructor(public settings: ApplicationSettings, private dialog: MatDialogRef<any>) {
-    this.questions = settings.getQuestions();
-
+  }
+  phoneOptions: phoneOption[] = []
+  constructor(
+    public settings: ApplicationSettings,
+    private dialog: MatDialogRef<any>
+  ) {
+    this.questions = settings.getQuestions()
   }
   async init(family: ActiveFamilyDeliveries) {
-    this.args = { family: family };
-    this.phoneOptions = await ApplicationSettings.getPhoneOptions(family.id);
+    this.args = { family: family }
+    this.phoneOptions = await ApplicationSettings.getPhoneOptions(family.id)
   }
 
-  async ngOnInit() {
-
-  }
+  async ngOnInit() {}
   cancel() {
-    this.dialog.close();
+    this.dialog.close()
   }
-  updateFailedDelivery = false;
+  updateFailedDelivery = false
   confirm() {
-    this.updateFailedDelivery = true;
-    this.dialog.close();
+    this.updateFailedDelivery = true
+    this.dialog.close()
   }
-
 }

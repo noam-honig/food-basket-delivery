@@ -101,15 +101,17 @@
   <button (click)="addControl()">{{ remult.context.lang.addField }}</button>
   <button (click)="addColumn()">{{ remult.context.lang.addColumn }}</button>
   <ng-container *ngIf="currentProps.control">
-    <button (click)="moveControl(-1)">{{remult.context.lang.moveUp}}</button>
-    <button (click)="moveControl(1)">{{remult.context.lang.moveDown}}</button>
+    <button (click)="moveControl(-1)">{{ remult.context.lang.moveUp }}</button>
+    <button (click)="moveControl(1)">{{ remult.context.lang.moveDown }}</button>
     <button (click)="removeControl(currentProps.control)">
       {{ remult.context.lang.removeField }}
     </button>
   </ng-container>
   <ng-container *ngIf="currentColumn && currentProps == columnProps">
-    <button (click)="moveColumn(-1)">{{remult.context.lang.moveBefore}}</button>
-    <button (click)="moveColumn(1)">{{remult.context.lang.moveAfter}}</button>
+    <button (click)="moveColumn(-1)">
+      {{ remult.context.lang.moveBefore }}
+    </button>
+    <button (click)="moveColumn(1)">{{ remult.context.lang.moveAfter }}</button>
 
     <button (click)="removeColumn()">
       {{ remult.context.lang.removeColumn }}

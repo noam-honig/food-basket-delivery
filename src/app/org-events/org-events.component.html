@@ -1,110 +1,111 @@
 <div class="full-page" *ngIf="!isAdmin()">
-    <div class="grow-item">
-        <ng-container *ngIf="events.length!=1">
-            <div style="text-align:center;">
-                <a href="https://noam-honig.github.io/salmaz/"><img src="{{getLogo()}}" style="max-width:120px" /></a>
-                <div class="mat-headline" style="align-self: center;"> {{settings.organisationName}}
-                </div>
-                <div class="sub-header" style="align-self: center;" *ngIf="isGuest">
-                    <p>בואו להתנדב ולסייע למשפחות נזקקות וניצולי שואה.</p>
-                    <p>
-                        כאן תוכלו למצוא איך לעשות מעשה גדול במאמץ קטן במיקום הקרוב אליכם ובזמן שנוח לכם!</p>
-                    <p>
-                        תודה מראש לכל המלאכים המתנדבים 😊
-                    </p>
-                </div>
-            </div>
-
-            <app-event-card [events]="events"></app-event-card>
-        </ng-container>
-        <div style="display: flex;
-        justify-content: center;">
-            <mat-card *ngIf="events.length==1" style="max-width: 300px;">
-                <app-event-info [e]="events[0]" [noClose]="true"></app-event-info>
-            </mat-card>
+  <div class="grow-item">
+    <ng-container *ngIf="events.length != 1">
+      <div style="text-align: center">
+        <a href="https://noam-honig.github.io/salmaz/"
+          ><img src="{{ getLogo() }}" style="max-width: 120px"
+        /></a>
+        <div class="mat-headline" style="align-self: center">
+          {{ settings.organisationName }}
         </div>
+        <div class="sub-header" style="align-self: center" *ngIf="isGuest">
+          <p>בואו להתנדב ולסייע למשפחות נזקקות וניצולי שואה.</p>
+          <p>
+            כאן תוכלו למצוא איך לעשות מעשה גדול במאמץ קטן במיקום הקרוב אליכם
+            ובזמן שנוח לכם!
+          </p>
+          <p>תודה מראש לכל המלאכים המתנדבים 😊</p>
+        </div>
+      </div>
 
-        <mat-card class="headline-card" *ngIf="isGuest">
-            <div class="headline">
-                <div class="hagai-container">
-                    <img src="/assets/facebook-img.png">
-                    <div>
-                        <div class="head-line-text-1 mat-headline ">חגי - אפליקציה לחלוקת סלי
-                            מזון
-                        </div>
-                        <div class="mat-headline head-line-text-2">לארגונים המחלקים סלי מזון למשפחות על ידי מתנדבים
-                        </div>
-                        <div class="description-text">
-                            <p>
-                                אפליקציית חגי, זוכת פרס הנשיא
-                                להתנדבות, היא אפליקציה ללא מטרות רווח לזכרו של חגי איינמר ז״ל המסייעת למאות עמותות
-                                לחלק ביעילות מירבית סלי מזון לנזקקים בכל הארץ.
-                            </p>
-                            <p>
-                                באמצעות האפליקציה חולקו עד היום מליוני סלי מזון למאות אלפי מקבלי סיוע.
-                                גלו מעורבות חברתית ועזרו לנו, במאמץ קטן, להגיע לכל נזקק בישראל!
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="contact1">
-                <div>להצטרפות צרו קשר</div>
-                <div class="hagai-footer">
-
-                    <a href="https://wa.me/972507330590" target="_blank">
-                        <button mat-icon-button>
-                            <img src="assets/whatsapp.png" style="max-width:27px">
-
-                        </button>
-                        שלחו ווטסאפ
-                    </a>
-
-                    <a href="https://www.facebook.com/foodbasketdelivery/" target="_blank">
-                        <button mat-icon-button>
-                            <mat-icon>
-                                facebook
-                            </mat-icon>
-                        </button>
-                        בקרו בדף הפייסבוק של אפליקצית חגי
-                    </a>
-
-                    <a href="mailto:noam.honig@gmail.com" target="_blank">
-                        <button mat-icon-button>
-                            <mat-icon>
-                                email
-                            </mat-icon>
-                        </button>
-                        שלחו מייל noam.honig@gmail.com
-                    </a>
-                    <a href="https://noam-honig.github.io/salmaz/" target="_blank">
-                        <button mat-icon-button>
-                            <mat-icon>
-                                language
-                            </mat-icon>
-                        </button>
-                        לחצו לפרטים נוספים
-                    </a>
-                </div>
-
-            </div>
-        </mat-card>
-        <mat-card *ngIf="isGuest" style="display:flex;justify-content: center;">
-            <div class="memorial">
-                <img src="https://noam-honig.github.io/hagai/img/1e104c7e-445a-40bd-ad9c-4458d6da86f9.jfif">
-                <div>
-                    <div class="mat-headline">האפליקציה מוקדשת לזכרו של אחייני האהוב חגי איינמר שנפטר ב 15 לינואר 2020.
-                    </div>
-                    <div class="mat-headline"><a href="http://noam-honig.github.io/hagai">לחצו כאן לפרטים נוספים על
-                            חגי</a>
-                    </div>
-
-                </div>
-            </div>
-        </mat-card>
-        <a (click)="saveToExcel()" *ngIf="isGuest">יצוא ארועים לאקסל</a>
+      <app-event-card [events]="events"></app-event-card>
+    </ng-container>
+    <div style="display: flex; justify-content: center">
+      <mat-card *ngIf="events.length == 1" style="max-width: 300px">
+        <app-event-info [e]="events[0]" [noClose]="true"></app-event-info>
+      </mat-card>
     </div>
+
+    <mat-card class="headline-card" *ngIf="isGuest">
+      <div class="headline">
+        <div class="hagai-container">
+          <img src="/assets/facebook-img.png" />
+          <div>
+            <div class="head-line-text-1 mat-headline">
+              חגי - אפליקציה לחלוקת סלי מזון
+            </div>
+            <div class="mat-headline head-line-text-2">
+              לארגונים המחלקים סלי מזון למשפחות על ידי מתנדבים
+            </div>
+            <div class="description-text">
+              <p>
+                אפליקציית חגי, זוכת פרס הנשיא להתנדבות, היא אפליקציה ללא מטרות
+                רווח לזכרו של חגי איינמר ז״ל המסייעת למאות עמותות לחלק ביעילות
+                מירבית סלי מזון לנזקקים בכל הארץ.
+              </p>
+              <p>
+                באמצעות האפליקציה חולקו עד היום מליוני סלי מזון למאות אלפי מקבלי
+                סיוע. גלו מעורבות חברתית ועזרו לנו, במאמץ קטן, להגיע לכל נזקק
+                בישראל!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact1">
+        <div>להצטרפות צרו קשר</div>
+        <div class="hagai-footer">
+          <a href="https://wa.me/972507330590" target="_blank">
+            <button mat-icon-button>
+              <img src="assets/whatsapp.png" style="max-width: 27px" />
+            </button>
+            שלחו ווטסאפ
+          </a>
+
+          <a
+            href="https://www.facebook.com/foodbasketdelivery/"
+            target="_blank"
+          >
+            <button mat-icon-button>
+              <mat-icon> facebook </mat-icon>
+            </button>
+            בקרו בדף הפייסבוק של אפליקצית חגי
+          </a>
+
+          <a href="mailto:noam.honig@gmail.com" target="_blank">
+            <button mat-icon-button>
+              <mat-icon> email </mat-icon>
+            </button>
+            שלחו מייל noam.honig@gmail.com
+          </a>
+          <a href="https://noam-honig.github.io/salmaz/" target="_blank">
+            <button mat-icon-button>
+              <mat-icon> language </mat-icon>
+            </button>
+            לחצו לפרטים נוספים
+          </a>
+        </div>
+      </div>
+    </mat-card>
+    <mat-card *ngIf="isGuest" style="display: flex; justify-content: center">
+      <div class="memorial">
+        <img
+          src="https://noam-honig.github.io/hagai/img/1e104c7e-445a-40bd-ad9c-4458d6da86f9.jfif"
+        />
+        <div>
+          <div class="mat-headline">
+            האפליקציה מוקדשת לזכרו של אחייני האהוב חגי איינמר שנפטר ב 15 לינואר
+            2020.
+          </div>
+          <div class="mat-headline">
+            <a href="http://noam-honig.github.io/hagai"
+              >לחצו כאן לפרטים נוספים על חגי</a
+            >
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <a (click)="saveToExcel()" *ngIf="isGuest">יצוא ארועים לאקסל</a>
+  </div>
 </div>
 <app-events *ngIf="isAdmin()"></app-events>

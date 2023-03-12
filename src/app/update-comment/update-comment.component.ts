@@ -1,19 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { DeliveryStatus } from "../families/DeliveryStatus";
-import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings';
-import { remult } from 'remult';
+import { Component, OnInit } from '@angular/core'
+import { MatDialogRef } from '@angular/material/dialog'
+import { DeliveryStatus } from '../families/DeliveryStatus'
+import { ApplicationSettings, phoneOption } from '../manage/ApplicationSettings'
+import { remult } from 'remult'
 
-
-import { DialogService } from '../select-popup/dialog';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { DataAreaSettings } from '../common-ui-elements/interfaces';
-import { ImageInfo } from '../images/images.component';
-import { DeliveryImage } from '../families/DeiveryImages';
-import { DialogConfig } from '../common-ui-elements';
+import { DialogService } from '../select-popup/dialog'
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
+import { DataAreaSettings } from '../common-ui-elements/interfaces'
+import { ImageInfo } from '../images/images.component'
+import { DeliveryImage } from '../families/DeiveryImages'
+import { DialogConfig } from '../common-ui-elements'
 
 @DialogConfig({
-  minWidth:'98%'
+  minWidth: '98%'
 })
 @Component({
   selector: 'app-update-comment',
@@ -22,35 +21,35 @@ import { DialogConfig } from '../common-ui-elements';
 })
 export class GetVolunteerFeedback implements OnInit {
   public args: {
-    family: ActiveFamilyDeliveries,
-    showFailStatus?: boolean,
-    helpText: (s: ApplicationSettings) => string,
-    hideLocation?: boolean,
-    title?: string,
-    comment: string,
-    questionsArea?: DataAreaSettings,
-    ok: (comment: string, failStatusId: DeliveryStatus) => void,
+    family: ActiveFamilyDeliveries
+    showFailStatus?: boolean
+    helpText: (s: ApplicationSettings) => string
+    hideLocation?: boolean
+    title?: string
+    comment: string
+    questionsArea?: DataAreaSettings
+    ok: (comment: string, failStatusId: DeliveryStatus) => void
     cancel: () => void
-  };
+  }
   constructor(
     public dialogRef: MatDialogRef<any>,
     private dialog: DialogService,
     public settings: ApplicationSettings
-  ) {
-
-  }
+  ) {}
   addLocationToComment() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(x => {
-        if (this.args.comment)
-          this.args.comment += '\r\n';
-        this.args.comment += `מיקום:
+      navigator.geolocation.getCurrentPosition(
+        (x) => {
+          if (this.args.comment) this.args.comment += '\r\n'
+          this.args.comment += `מיקום:
 ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
 דיוק: ${x.coords.accuracy.toFixed()}
 `
-      }, error => {
-        this.dialog.Error("שליפת מיקום נכשלה " + error.message);
-      });
+        },
+        (error) => {
+          this.dialog.Error('שליפת מיקום נכשלה ' + error.message)
+        }
+      )
     }
   }
   failOptions: DeliveryStatus[] = [
@@ -58,60 +57,56 @@ ${x.coords.latitude.toFixed(6)},${x.coords.longitude.toFixed(6)}
     DeliveryStatus.FailedNotHome,
     DeliveryStatus.FailedDoNotWant,
     DeliveryStatus.FailedOther
-  ];
-  defaultFailStatus = DeliveryStatus.FailedBadAddress;
+  ]
+  defaultFailStatus = DeliveryStatus.FailedBadAddress
   getStatusName(s: DeliveryStatus) {
-    let r = s.caption;
-    if (r.startsWith('לא נמסר, '))
-      r = r.substring(9);
+    let r = s.caption
+    if (r.startsWith('לא נמסר, ')) r = r.substring(9)
 
-    return r;
+    return r
   }
 
   async ngOnInit() {
-
-    if (!this.args.title)
-      this.args.title = this.settings.lang.thankYou;
+    if (!this.args.title) this.args.title = this.settings.lang.thankYou
     if (this.args.showFailStatus) {
-
-      this.phoneOptions = await ApplicationSettings.getPhoneOptions(this.args.family.id);
-
+      this.phoneOptions = await ApplicationSettings.getPhoneOptions(
+        this.args.family.id
+      )
     }
     if (this.args.family) {
-      this.images = await this.args.family.loadVolunteerImages();
+      this.images = await this.args.family.loadVolunteerImages()
     }
   }
-  phoneOptions: phoneOption[] = [];
+  phoneOptions: phoneOption[] = []
   cancel() {
     if (!this.ok) {
-      this.args.cancel();
-      this.dialogRef.close();
+      this.args.cancel()
+      this.dialogRef.close()
     }
-
   }
-  ok = false;
+  ok = false
   async confirm() {
-    this.ok = true;
+    this.ok = true
     for (const image of this.images) {
-      if (image.deleted && image.entity)
-        await image.entity.delete();
+      if (image.deleted && image.entity) await image.entity.delete()
       if (!image.deleted && !image.entity) {
-        await remult.repo(DeliveryImage).create({
-          deliveryId: this.args.family.id, image: image.image
-        }).save();
-        this.args.family.needsWork = true;
+        await remult
+          .repo(DeliveryImage)
+          .create({
+            deliveryId: this.args.family.id,
+            image: image.image
+          })
+          .save()
+        this.args.family.needsWork = true
       }
     }
-    this.args.ok(this.args.comment, this.defaultFailStatus);
-    this.dialogRef.close();
-    return false;
+    this.args.ok(this.args.comment, this.defaultFailStatus)
+    this.dialogRef.close()
+    return false
   }
 
   helpText() {
-    return this.args.helpText(this.settings);
+    return this.args.helpText(this.settings)
   }
-  images: ImageInfo[] = [];
-
+  images: ImageInfo[] = []
 }
-
-

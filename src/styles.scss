@@ -1,4 +1,4 @@
-@import "~@angular/material/theming";
+@import '~@angular/material/theming';
 
 // Plus imports for other components in your app.
 
@@ -62,8 +62,8 @@ $mat-pink-noam: (
     A100: $dark-primary-text,
     A200: $light-primary-text,
     A400: $light-primary-text,
-    A700: $light-primary-text,
-  ),
+    A700: $light-primary-text
+  )
 );
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
@@ -76,7 +76,11 @@ $candy-app-accent: mat-palette($mat-pink-noam, A200, A100, A400);
 $candy-app-warn: mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+$candy-app-theme: mat-light-theme(
+  $candy-app-primary,
+  $candy-app-accent,
+  $candy-app-warn
+);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -85,12 +89,12 @@ $candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-
 
 body {
   margin: 0;
-  font-family: Rubik, Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
+  font-family: Rubik, Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-[dir="rtl"] th {
+[dir='rtl'] th {
   text-align: right;
 }
 
@@ -118,14 +122,14 @@ body {
   font-weight: 400 !important;
 }
 // solution for the table responsive rtl bug in IOS
-[dir="rtl"] .table-responsive {
+[dir='rtl'] .table-responsive {
   direction: ltr;
 }
-[dir="rtl"] .table-responsive table {
+[dir='rtl'] .table-responsive table {
   direction: rtl;
 }
 
-[dir="rtl"] .mat-snack-bar-container {
+[dir='rtl'] .mat-snack-bar-container {
   direction: rtl;
 }
 
@@ -182,8 +186,10 @@ body {
   border: solid;
   border-color: #66afe9;
   outline: 0;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(102, 175, 233, 0.6);
 }
 .mat-dialog-content {
   padding: 0 15px;
@@ -278,8 +284,8 @@ textarea {
   border-radius: 5px;
   margin-top: 8px;
   padding: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 .flip-list-move {
   transition: transform 1s !important;
@@ -334,7 +340,7 @@ textarea {
 
 .pin1::after {
   position: absolute;
-  content: "";
+  content: '';
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -356,7 +362,7 @@ textarea {
 
 .pin2::after {
   position: absolute;
-  content: "";
+  content: '';
   width: 0px;
   height: 0px;
   bottom: -30px;
@@ -458,7 +464,6 @@ textarea {
   }
 }
 
-
 .small-button {
   line-height: 32px;
   .mat-icon {
@@ -469,13 +474,13 @@ textarea {
 
 .icon-and-text {
   display: flex;
-  
+
   .mat-icon {
     font-size: medium;
     flex-grow: 0;
     flex-shrink: 0;
     line-height: 24px;
-    color: #1380FA;
+    color: #1380fa;
   }
   div {
     flex-grow: 1;
@@ -486,25 +491,26 @@ textarea {
     overflow: hidden;
   }
 }
-body[dir="rtl"] {
+body[dir='rtl'] {
   .icon-and-text {
     .mat-icon {
       text-align: end;
     }
   }
 }
-.mat-expansion-panel-header
-{height:72px}
+.mat-expansion-panel-header {
+  height: 72px;
+}
 
-* { //disables double click to zoom
+* {
+  //disables double click to zoom
   touch-action: manipulation;
 }
-@media (max-width:400px) {
-  .one-line:has(.phone-field){
+@media (max-width: 400px) {
+  .one-line:has(.phone-field) {
     flex-direction: column;
-    border-bottom: solid 2px rgba(0,0,0,0.12);
+    border-bottom: solid 2px rgba(0, 0, 0, 0.12);
     padding-bottom: 2px;
     margin-bottom: 6px;
   }
 }
-

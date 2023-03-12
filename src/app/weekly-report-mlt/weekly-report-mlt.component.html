@@ -1,67 +1,87 @@
 <app-date-range (dateChanged)="refresh()" [rangeWeekly]="true"></app-date-range>
-<mat-form-field appearance="standard" style="width:250px">
-  <mat-label style="width:150px">אתר רישום לבחירה</mat-label>
-  <mat-select [(ngModel)]="selectedUrl" >
-    <mat-option *ngFor="let u of registerUrls" [value]="u">{{u}}</mat-option>
+<mat-form-field appearance="standard" style="width: 250px">
+  <mat-label style="width: 150px">אתר רישום לבחירה</mat-label>
+  <mat-select [(ngModel)]="selectedUrl">
+    <mat-option *ngFor="let u of registerUrls" [value]="u">{{ u }}</mat-option>
   </mat-select>
 </mat-form-field>
 
 <style>
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 70%;
-    }
-    
-    td, th {
-      border: 1px solid #dddddd;
-      text-align: right;
-      padding: 8px;
-    }
-    
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 70%;
+  }
+
+  td,
+  th {
+    border: 1px solid #dddddd;
+    text-align: right;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
 </style>
 <table>
-    <tr *ngIf="selectedUrl != ''">
-        <th></th>
-        <th colspan="2">סה"כ</th>
-        <th colspan="2">{{selectedUrl}}</th>
-    </tr>
-    <tr>
-      <th></th>
-      <th>סה"כ</th>
-      <th>נוספו בתקופה נוכחית</th>
-      <th *ngIf="selectedUrl != ''">סה"כ</th>
-      <th *ngIf="selectedUrl != ''">נוספו בתקופה נוכחית</th>
+  <tr *ngIf="selectedUrl != ''">
+    <th></th>
+    <th colspan="2">סה"כ</th>
+    <th colspan="2">{{ selectedUrl }}</th>
   </tr>
   <tr>
-        <th>מתנדבים</th>
-        <td>{{getVolData('total')}}</td>
-        <td>{{getVolData('added')}} (ממוצע משפחות למתנדב: {{avgFamiliesPerVolunteer}})</td>
-        <td *ngIf="selectedUrl != ''">{{getVolData('total', selectedUrl)}}</td>
-        <td *ngIf="selectedUrl != ''">{{getVolData('added', selectedUrl)}}</td>
-    </tr>
-    <tr>
-        <th>תורמים</th>
-        <td>{{getDonorsData('total')}}</td>
-        <td>{{getDonorsData('added')}}</td>
-        <td *ngIf="selectedUrl != ''">{{getDonorsData('total', selectedUrl)}}</td>
-        <td *ngIf="selectedUrl != ''">{{getDonorsData('added', selectedUrl)}}</td>
-    </tr>
-    <tr>
-        <th>תרומות </th>
-        <td>{{getDonationsSummary('total')}}</td>
-        <td>{{getDonationsSummary('added')}}  (נאספו: {{getDonationsSummary('collected')}} נקלטו: {{getDonationsSummary('received')}})</td>
-        <td *ngIf="selectedUrl != ''">{{getDonationsSummary('total', null, selectedUrl)}}</td>
-        <td *ngIf="selectedUrl != ''">{{getDonationsSummary('added', null, selectedUrl)}}</td>
-    </tr>
-    <tr *ngFor="let b of allBaskets">
-      <td>{{b}}</td>
-      <td>{{getDonationsSummary('total', b)}}</td>
-      <td>{{getDonationsSummary('added', b)}} (נאספו: {{getDonationsSummary('collected', b)}} נקלטו: {{getDonationsSummary('received', b)}})</td>
-      <td *ngIf="selectedUrl != ''">{{getDonationsSummary('total', b, selectedUrl)}}</td>
-      <td *ngIf="selectedUrl != ''">{{getDonationsSummary('added', b, selectedUrl)}}</td>
+    <th></th>
+    <th>סה"כ</th>
+    <th>נוספו בתקופה נוכחית</th>
+    <th *ngIf="selectedUrl != ''">סה"כ</th>
+    <th *ngIf="selectedUrl != ''">נוספו בתקופה נוכחית</th>
+  </tr>
+  <tr>
+    <th>מתנדבים</th>
+    <td>{{ getVolData('total') }}</td>
+    <td>
+      {{ getVolData('added') }} (ממוצע משפחות למתנדב:
+      {{ avgFamiliesPerVolunteer }})
+    </td>
+    <td *ngIf="selectedUrl != ''">{{ getVolData('total', selectedUrl) }}</td>
+    <td *ngIf="selectedUrl != ''">{{ getVolData('added', selectedUrl) }}</td>
+  </tr>
+  <tr>
+    <th>תורמים</th>
+    <td>{{ getDonorsData('total') }}</td>
+    <td>{{ getDonorsData('added') }}</td>
+    <td *ngIf="selectedUrl != ''">{{ getDonorsData('total', selectedUrl) }}</td>
+    <td *ngIf="selectedUrl != ''">{{ getDonorsData('added', selectedUrl) }}</td>
+  </tr>
+  <tr>
+    <th>תרומות</th>
+    <td>{{ getDonationsSummary('total') }}</td>
+    <td>
+      {{ getDonationsSummary('added') }} (נאספו:
+      {{ getDonationsSummary('collected') }} נקלטו:
+      {{ getDonationsSummary('received') }})
+    </td>
+    <td *ngIf="selectedUrl != ''">
+      {{ getDonationsSummary('total', null, selectedUrl) }}
+    </td>
+    <td *ngIf="selectedUrl != ''">
+      {{ getDonationsSummary('added', null, selectedUrl) }}
+    </td>
+  </tr>
+  <tr *ngFor="let b of allBaskets">
+    <td>{{ b }}</td>
+    <td>{{ getDonationsSummary('total', b) }}</td>
+    <td>
+      {{ getDonationsSummary('added', b) }} (נאספו:
+      {{ getDonationsSummary('collected', b) }} נקלטו:
+      {{ getDonationsSummary('received', b) }})
+    </td>
+    <td *ngIf="selectedUrl != ''">
+      {{ getDonationsSummary('total', b, selectedUrl) }}
+    </td>
+    <td *ngIf="selectedUrl != ''">
+      {{ getDonationsSummary('added', b, selectedUrl) }}
+    </td>
   </tr>
 </table>

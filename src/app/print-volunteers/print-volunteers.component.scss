@@ -1,15 +1,14 @@
 .printTable {
-    -webkit-print-color-adjust: exact;
-    
-    font-size: smaller;
-    th,
-    td {
-      border: 1px solid #ddd !important;
-      padding-left: 8px !important;
-      padding-right:8px !important;
-    }
-    tr:nth-child(even) {
-      background-color: rgba(0, 0, 0, 0.05) !important;
-    }
+  -webkit-print-color-adjust: exact;
+
+  font-size: smaller;
+  th,
+  td {
+    border: 1px solid #ddd !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
-  
+  tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+}

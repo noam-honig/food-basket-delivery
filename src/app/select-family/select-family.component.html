@@ -1,63 +1,111 @@
 <div matDialogHeader>
   <form (submit)="selectFirst()">
-
-
     <mat-form-field class="full-width">
-      <input matInput [(ngModel)]="searchString" (input)="doFilter()" autocomplete="off"
-        placeholder="{{settings.lang.search}} {{args.selectStreet?settings.lang.address:settings.lang.familyName}}"
-        #search [ngModelOptions]="{standalone: true}">
-      <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+      <input
+        matInput
+        [(ngModel)]="searchString"
+        (input)="doFilter()"
+        autocomplete="off"
+        placeholder="{{ settings.lang.search }} {{
+          args.selectStreet ? settings.lang.address : settings.lang.familyName
+        }}"
+        #search
+        [ngModelOptions]="{ standalone: true }"
+      />
+      <mat-icon matSuffix (click)="searchString = ''">clear</mat-icon>
     </mat-form-field>
   </form>
-  <button mat-raised-button color="accent" *ngIf="countSelected()>0" (click)="doSelection()">{{settings.lang.assign}}
-    {{countSelected()}}
-    {{settings.lang.deliveries}}</button>
+  <button
+    mat-raised-button
+    color="accent"
+    *ngIf="countSelected() > 0"
+    (click)="doSelection()"
+  >
+    {{ settings.lang.assign }}
+    {{ countSelected() }}
+    {{ settings.lang.deliveries }}
+  </button>
 </div>
 <mat-dialog-content>
   <div>
-
-
-
-
-    <button mat-raised-button color="accent"
-      *ngIf="args.selectStreet&&families.totalRows>1&&searchString&&countSelected()==0"
-      (click)="doSelection()">{{settings.lang.assign}} {{families.totalRows}}
-      {{settings.lang.familesOnStreet}}: {{searchString}}</button>
+    <button
+      mat-raised-button
+      color="accent"
+      *ngIf="
+        args.selectStreet &&
+        families.totalRows > 1 &&
+        searchString &&
+        countSelected() == 0
+      "
+      (click)="doSelection()"
+    >
+      {{ settings.lang.assign }} {{ families.totalRows }}
+      {{ settings.lang.familesOnStreet }}: {{ searchString }}
+    </button>
     <div>
-      <div *ngFor="let f of families.items"
-        (click)="getSelected(f).selectState.selected=!getSelected(f).selectState.selected">
+      <div
+        *ngFor="let f of families.items"
+        (click)="
+          getSelected(f).selectState.selected =
+            !getSelected(f).selectState.selected
+        "
+      >
         <div>
           <h4>
-            <mat-checkbox [(ngModel)]="getSelected(f).selectState.selected" (click)="false">
-              {{f.name}}
+            <mat-checkbox
+              [(ngModel)]="getSelected(f).selectState.selected"
+              (click)="(false)"
+            >
+              {{ f.name }}
             </mat-checkbox>
           </h4>
         </div>
         <div *ngIf="showStatus(f)" class="red">
-          <h5>{{showStatus(f)}}</h5>
+          <h5>{{ showStatus(f) }}</h5>
         </div>
-        <h5 style="display: inline-block"> {{settings.lang.basket}}</h5> - {{f.basketType?.name}}
+        <h5 style="display: inline-block">{{ settings.lang.basket }}</h5>
+        - {{ f.basketType?.name }}
 
         <div *ngIf="f.deliveryComments">
-          <h5 style="display: inline-block"> {{settings.lang.commentForVolunteer}}</h5>- {{f.deliveryComments}}
+          <h5 style="display: inline-block">
+            {{ settings.lang.commentForVolunteer }}
+          </h5>
+          - {{ f.deliveryComments }}
         </div>
-        <h5>{{f.address}}</h5>
+        <h5>{{ f.address }}</h5>
 
         <hr />
       </div>
     </div>
 
-
-    <button mat-raised-button color="accent" (click)="moreFamilies()"
-      *ngIf=" families.items.length!=families.totalRows">{{settings.lang.moreFamilies}}
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="moreFamilies()"
+      *ngIf="families.items.length != families.totalRows"
+    >
+      {{ settings.lang.moreFamilies }}
     </button>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-
-  <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
-  <button mat-raised-button (click)="doSelection()" color="accent"
-    *ngIf="args.allowSelectAll">{{settings.lang.selectAll}}</button>
-  <mat-checkbox [(ngModel)]="showAll" *ngIf="args.allowShowAll" (change)="doFilter()" style="margin-right:10px">
-    {{settings.lang.showAll}}</mat-checkbox>
+  <button mat-raised-button [mat-dialog-close]>
+    {{ settings.lang.close }}
+  </button>
+  <button
+    mat-raised-button
+    (click)="doSelection()"
+    color="accent"
+    *ngIf="args.allowSelectAll"
+  >
+    {{ settings.lang.selectAll }}
+  </button>
+  <mat-checkbox
+    [(ngModel)]="showAll"
+    *ngIf="args.allowShowAll"
+    (change)="doFilter()"
+    style="margin-right: 10px"
+  >
+    {{ settings.lang.showAll }}</mat-checkbox
+  >
 </mat-dialog-actions>

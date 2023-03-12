@@ -1,26 +1,30 @@
-<div matDialogHeader style="display:flex;justify-content: space-between;">
-    <div class="mat-title">משפחות חסומות</div>
+<div matDialogHeader style="display: flex; justify-content: space-between">
+  <div class="mat-title">משפחות חסומות</div>
 </div>
 <mat-dialog-content>
-    <ul>
-        <li *ngFor="let i of ids">
-            {{families.get(i) }}
-            <button mat-icon-button (click)="remove(i)">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </li>
-    </ul>
-    <button mat-icon-button (click)="add()">
-        <mat-icon>add</mat-icon>
-    </button>
+  <ul>
+    <li *ngFor="let i of ids">
+      {{ families.get(i) }}
+      <button mat-icon-button (click)="remove(i)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  </ul>
+  <button mat-icon-button (click)="add()">
+    <mat-icon>add</mat-icon>
+  </button>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()" >
-        {{settings.lang.cancel}}
-    </button>
+  <button
+    type="button"
+    mat-raised-button
+    color="warning"
+    (click)="this.dialogRef.close()"
+  >
+    {{ settings.lang.cancel }}
+  </button>
 
-    <button mat-raised-button color="accent" (click)="confirm()">
-        {{settings.lang.confirm}}
-    </button>
-
+  <button mat-raised-button color="accent" (click)="confirm()">
+    {{ settings.lang.confirm }}
+  </button>
 </mat-dialog-actions>

@@ -1,29 +1,28 @@
-
 .registered {
-    background-color:lightgreen !important
+  background-color: lightgreen !important;
+}
+
+.phone-container {
+  display: flex;
+  padding-bottom: 10px;
+  > div {
+    padding: 0 5px;
+    align-self: center;
   }
-  
-  .phone-container {
-    display: flex;
-    padding-bottom: 10px;
-    > div {
-      padding: 0 5px;
-      align-self: center;
-    }
+}
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+}
+.space-above {
+  margin-top: 5px;
+}
+.event-image {
+  width: 120px;
+  height: 120px;
+  @media (max-width: 720px) {
+    width: 150px;
+    height: 150px;
   }
-  
-  .dialog-container{
-    display:flex;
-    flex-direction: column;
-  }
-  .space-above{
-    margin-top:5px;
-  }
-  .event-image {
-    width: 120px;
-    height: 120px;
-    @media (max-width: 720px) {
-        width: 150px;
-        height: 150px;
-    }
 }

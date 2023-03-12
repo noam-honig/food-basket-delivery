@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { BusyService } from '../common-ui-elements';
-import { GridSettings } from '../common-ui-elements/interfaces';
-import { remult } from 'remult';
-import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers';
-import { DialogService } from '../select-popup/dialog';
+import { Component, OnInit } from '@angular/core'
+import { BusyService } from '../common-ui-elements'
+import { GridSettings } from '../common-ui-elements/interfaces'
+import { remult } from 'remult'
+import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers'
+import { DialogService } from '../select-popup/dialog'
 
 @Component({
   selector: 'app-incoming-messages',
@@ -11,13 +11,12 @@ import { DialogService } from '../select-popup/dialog';
   styleUrls: ['./incoming-messages.component.scss']
 })
 export class IncomingMessagesComponent implements OnInit {
-
-  constructor(private dialog: DialogService, private busy: BusyService) { }
-  showAll = true;
+  constructor(private dialog: DialogService, private busy: BusyService) {}
+  showAll = true
   grid = new GridSettings(remult.repo(HelperCommunicationHistory), {
     where: () => ({ incoming: !this.showAll ? true : undefined }),
     knowTotalRows: true,
-    columnSettings: com => [
+    columnSettings: (com) => [
       com.message,
       com.phone,
       com.volunteer,
@@ -28,43 +27,42 @@ export class IncomingMessagesComponent implements OnInit {
       com.apiResponse,
       com.eventId
     ],
-    rowButtons: [{
-
-      textInMenu: remult.context.lang.volunteerInfo,
-      click: async (com) => {
-        const h = await com.volunteer.getHelper();
-        h.displayEditDialog(this.dialog);
+    rowButtons: [
+      {
+        textInMenu: remult.context.lang.volunteerInfo,
+        click: async (com) => {
+          const h = await com.volunteer.getHelper()
+          h.displayEditDialog(this.dialog)
+        },
+        visible: (com) => Boolean(com.volunteer)
       },
-      visible: com => Boolean(com.volunteer)
-
-    }, {
-
-      textInMenu: remult.context.lang.smsMessages,
-      click: async (com) => {
-        const h = await com.volunteer.getHelper();
-        h.smsMessages(this.dialog);
+      {
+        textInMenu: remult.context.lang.smsMessages,
+        click: async (com) => {
+          const h = await com.volunteer.getHelper()
+          h.smsMessages(this.dialog)
+        },
+        visible: (com) => Boolean(com.volunteer)
       },
-      visible: com => Boolean(com.volunteer)
-
-    },
-    {
-      textInMenu: remult.context.lang.customSmsMessage,
-      click: async (com) => {
-        const h = await com.volunteer.getHelper();
-        h.sendSmsToCourier(this.dialog);
-      },
-      visible: com => Boolean(com.volunteer)
-
-    }],
-    gridButtons: [{
-      name: remult.context.lang.showOnlyIncoming, click: () => {
-        this.showAll = !this.showAll;
-        this.grid.reloadData();
+      {
+        textInMenu: remult.context.lang.customSmsMessage,
+        click: async (com) => {
+          const h = await com.volunteer.getHelper()
+          h.sendSmsToCourier(this.dialog)
+        },
+        visible: (com) => Boolean(com.volunteer)
       }
-    }]
+    ],
+    gridButtons: [
+      {
+        name: remult.context.lang.showOnlyIncoming,
+        click: () => {
+          this.showAll = !this.showAll
+          this.grid.reloadData()
+        }
+      }
+    ]
   })
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

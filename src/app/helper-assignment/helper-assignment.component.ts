@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Helpers, HelpersBase } from '../helpers/helpers';
+import { Component, OnInit, ViewChild } from '@angular/core'
+import { MatDialogRef } from '@angular/material/dialog'
+import { Helpers, HelpersBase } from '../helpers/helpers'
 
-import { AsignFamilyComponent } from '../asign-family/asign-family.component';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { BusyService, DialogConfig } from '../common-ui-elements';
-import { DialogService } from '../select-popup/dialog';
+import { AsignFamilyComponent } from '../asign-family/asign-family.component'
+import { ApplicationSettings } from '../manage/ApplicationSettings'
+import { BusyService, DialogConfig } from '../common-ui-elements'
+import { DialogService } from '../select-popup/dialog'
 
 @Component({
   selector: 'app-helper-assignment',
@@ -16,27 +16,24 @@ import { DialogService } from '../select-popup/dialog';
   minWidth: '95%',
   height: '98%',
   panelClass: 'assign-volunteer-dialog'
-
-
 })
 export class HelperAssignmentComponent implements OnInit {
-  public argsHelper: HelpersBase;
+  public argsHelper: HelpersBase
   constructor(
     private dialogRef: MatDialogRef<any>,
     public settings: ApplicationSettings,
     private dialog: DialogService
-  ) {
-  }
-  @ViewChild("assign", { static: true }) asign: AsignFamilyComponent;
+  ) {}
+  @ViewChild('assign', { static: true }) asign: AsignFamilyComponent
   ngOnInit() {
-    this.asign.specificToHelper(this.argsHelper);
+    this.asign.specificToHelper(this.argsHelper)
   }
 
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close()
   }
   async edit() {
-    let h = await this.argsHelper.getHelper();
+    let h = await this.argsHelper.getHelper()
     await h.displayEditDialog(this.dialog)
   }
 }

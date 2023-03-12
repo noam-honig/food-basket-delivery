@@ -1,85 +1,125 @@
 <div *ngIf="showConfidentialityApproveInPrint()" class="print-only">
-  {{settings.lang.infoIsConfidential}}
+  {{ settings.lang.infoIsConfidential }}
 </div>
-  <router-outlet *ngIf="noConfHeaderAndBorders()"></router-outlet>
-<mat-sidenav-container class="app-sidenav-container" *ngIf="!noConfHeaderAndBorders()">
-
-  <mat-sidenav #sidenav class="app-sidenav mat-elevation-z10 no-print" [opened]="!dialog.isScreenSmall()"
-    *ngIf="showSideBar()" [mode]="dialog.isScreenSmall()?'over':'side'">
-
-    <div style="width:100%;text-align: center">
-      <img src="{{getLogo()}}" />
+<router-outlet *ngIf="noConfHeaderAndBorders()"></router-outlet>
+<mat-sidenav-container
+  class="app-sidenav-container"
+  *ngIf="!noConfHeaderAndBorders()"
+>
+  <mat-sidenav
+    #sidenav
+    class="app-sidenav mat-elevation-z10 no-print"
+    [opened]="!dialog.isScreenSmall()"
+    *ngIf="showSideBar()"
+    [mode]="dialog.isScreenSmall() ? 'over' : 'side'"
+  >
+    <div style="width: 100%; text-align: center">
+      <img src="{{ getLogo() }}" />
     </div>
-    <p style="text-align: center" *ngIf="!dialog.dc">{{settings.organisationName}}</p>
+    <p style="text-align: center" *ngIf="!dialog.dc">
+      {{ settings.organisationName }}
+    </p>
     <div *ngIf="dialog.dc">
-      <p style="text-align: center">{{dialog.dc.name}}
-      </p>
+      <p style="text-align: center">{{ dialog.dc.name }}</p>
       <p style="text-align: center" *ngIf="dialog.dc.addressHelper.ok">
-        {{dialog.dc.addressHelper.getGeocodeInformation.getAddress()}}</p>
+        {{ dialog.dc.addressHelper.getGeocodeInformation.getAddress() }}
+      </p>
     </div>
-    <h4 *ngIf="remult.user">{{lang.hello}} {{remult.user.name}}</h4>
-    <a href="https://noam-honig.github.io/hagai-docs/" style="padding-right:15px" *ngIf="isAdmin()&&!showEnglishUrl()"
-      target="_blank">מדריך למנהל</a>
+    <h4 *ngIf="remult.user">{{ lang.hello }} {{ remult.user.name }}</h4>
+    <a
+      href="https://noam-honig.github.io/hagai-docs/"
+      style="padding-right: 15px"
+      *ngIf="isAdmin() && !showEnglishUrl()"
+      target="_blank"
+      >מדריך למנהל</a
+    >
     <mat-nav-list role="list">
       <mat-list-item *ngIf="createNewEventAction.isAllowed()">
-        <a matLine (click)="createNewEventAction.show(dialog,settings)">
-          {{settings.lang.createNewEvent}}
+        <a matLine (click)="createNewEventAction.show(dialog, settings)">
+          {{ settings.lang.createNewEvent }}
         </a>
       </mat-list-item>
       <mat-divider></mat-divider>
       <ng-container *ngFor="let m of router.config">
-        <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">
-          <a matLine [routerLink]="m.path" (click)="routeClicked()">{{routeName(m)}}</a>
+        <mat-list-item
+          *ngIf="shouldDisplayRoute(m)"
+          routerLinkActive="active-route"
+        >
+          <a matLine [routerLink]="m.path" (click)="routeClicked()">{{
+            routeName(m)
+          }}</a>
         </mat-list-item>
         <mat-divider *ngIf="showSeperator(m)"></mat-divider>
-
-
       </ng-container>
 
       <mat-list-item *ngIf="remult.user">
-        <a matLine (click)="signOut()">{{lang.exit}}</a>
+        <a matLine (click)="signOut()">{{ lang.exit }}</a>
       </mat-list-item>
     </mat-nav-list>
-
   </mat-sidenav>
   <div class="full-page">
-    <mat-toolbar color="{{toolbarColor}}" class="no-print" style="justify-content: space-between;"
-      *ngIf="showSideBar()">
-      <div style="    display: flex;
-    
-    align-items: center;">
+    <mat-toolbar
+      color="{{ toolbarColor }}"
+      class="no-print"
+      style="justify-content: space-between"
+      *ngIf="showSideBar()"
+    >
+      <div
+        style="
+          display: flex;
+
+          align-items: center;
+        "
+      >
         <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
-        <span style="padding-left: 10px;">{{currentTitle()}}</span>
+        <span style="padding-left: 10px">{{ currentTitle() }}</span>
       </div>
-      <div style="background-color: white;color: rgba(0, 0, 0, 0.87); border-radius: 10px;
-    height: 3em;
-    padding-top: 4px;
-    padding-left: 6px;
-    padding-right: 6px;" *ngIf="this.dialog.canSeeCenter()&&dialog.distCenterArea">
-
-        <data-area [settings]="dialog.distCenterArea" *ngIf="dialog.distCenterArea&&dialog.canSeeCenter()"></data-area>
-
+      <div
+        style="
+          background-color: white;
+          color: rgba(0, 0, 0, 0.87);
+          border-radius: 10px;
+          height: 3em;
+          padding-top: 4px;
+          padding-left: 6px;
+          padding-right: 6px;
+        "
+        *ngIf="this.dialog.canSeeCenter() && dialog.distCenterArea"
+      >
+        <data-area
+          [settings]="dialog.distCenterArea"
+          *ngIf="dialog.distCenterArea && dialog.canSeeCenter()"
+        ></data-area>
       </div>
-
     </mat-toolbar>
 
-    <div class="app-sidenav-content " style="justify-content: space-between;">
-
-
-      <div [class.wrapper]="!noConfHeaderAndBorders()" [class.edge-fix]="isEdge">
+    <div class="app-sidenav-content" style="justify-content: space-between">
+      <div
+        [class.wrapper]="!noConfHeaderAndBorders()"
+        [class.edge-fix]="isEdge"
+      >
         <router-outlet></router-outlet>
-
       </div>
-
     </div>
-    <footer style="text-align:center;font-size:70%;padding-bottom: 5px;" *ngIf="!noConfHeaderAndBorders()">
-      <hr style="padding:0px">
-      <a *ngIf="!showEnglishUrl()" href="https://noam-honig.github.io/salmaz" target="_blank">{{lang.copyright}}</a>
-      <a *ngIf="showEnglishUrl()" href="https://noam-honig.github.io/salmaz/en.html"
-        target="_blank">{{lang.copyright}}</a>
-
+    <footer
+      style="text-align: center; font-size: 70%; padding-bottom: 5px"
+      *ngIf="!noConfHeaderAndBorders()"
+    >
+      <hr style="padding: 0px" />
+      <a
+        *ngIf="!showEnglishUrl()"
+        href="https://noam-honig.github.io/salmaz"
+        target="_blank"
+        >{{ lang.copyright }}</a
+      >
+      <a
+        *ngIf="showEnglishUrl()"
+        href="https://noam-honig.github.io/salmaz/en.html"
+        target="_blank"
+        >{{ lang.copyright }}</a
+      >
     </footer>
   </div>
 </mat-sidenav-container>

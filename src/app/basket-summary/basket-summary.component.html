@@ -1,49 +1,45 @@
 <div>
+  <h3 matDialogHeader>
+    {{ families.toDeliver.length }} {{ settings.lang.deliveriesToDistribute }}
+  </h3>
 
-    <h3 matDialogHeader> {{families.toDeliver.length}} {{settings.lang.deliveriesToDistribute}}</h3>
+  <div mat-dialog-content>
+    <ul
+      style="margin-block: 0; margin-block-end: 1em; padding-inline-start: 20px"
+    >
+      <li *ngFor="let c of comments">
+        <strong>{{ c.family }}</strong
+        >: {{ c.comment }}
+      </li>
+    </ul>
+    <table class="table table-bordered" style="width: 100%">
+      <tr>
+        <th>
+          {{ settings.lang.total }}
+        </th>
+        <td>
+          {{ boxes1Name }}
+        </td>
+        <td *ngIf="boxes2">
+          {{ boxes2Name }}
+        </td>
+      </tr>
+      <tr *ngFor="let b of totals">
+        <th>{{ b.name }}</th>
+        <th>{{ b.boxes1 }}</th>
+        <th *ngIf="boxes2">{{ b.boxes2 }}</th>
+      </tr>
+      <tr *ngIf="totals.length > 1">
+        <td>{{ settings.lang.total }}</td>
+        <td>{{ boxes1 }}</td>
+        <td *ngIf="boxes2">{{ boxes2 }}</td>
+      </tr>
+    </table>
+  </div>
 
-    <div mat-dialog-content>
-        <ul style="    margin-block: 0;
-        margin-block-end: 1em;
-        padding-inline-start: 20px;">
-            <li *ngFor="let c of comments"><strong>{{c.family}}</strong>: {{c.comment}}</li>
-        </ul>
-        <table class="table table-bordered" style="width: 100%;">
-            <tr>
-                <th>
-                    {{settings.lang.total}}
-                </th>
-                <td>
-                    {{boxes1Name}}
-                </td>
-                <td *ngIf="boxes2">
-                    {{boxes2Name}}
-                </td>
-
-            </tr>
-            <tr *ngFor="let b of totals">
-                <th> {{b.name}}</th>
-                <th>{{b.boxes1}}</th>
-                <th *ngIf="boxes2">{{b.boxes2}}</th>
-            </tr>
-            <tr *ngIf="totals.length>1">
-                <td>{{settings.lang.total}}</td>
-                <td>{{boxes1}}
-                </td>
-                <td *ngIf="boxes2">{{boxes2}}</td>
-            </tr>
-
-        </table>
-    </div>
-
-
-    <mat-dialog-actions>
-
-        <button mat-raised-button color="accent" [mat-dialog-close]>
-            {{settings.lang.close}}
-        </button>
-
-    </mat-dialog-actions>
-
-
+  <mat-dialog-actions>
+    <button mat-raised-button color="accent" [mat-dialog-close]>
+      {{ settings.lang.close }}
+    </button>
+  </mat-dialog-actions>
 </div>

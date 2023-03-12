@@ -1,37 +1,70 @@
 <div class="full-page">
-    <div>
-        <mat-tab-group #myTab (selectedTabChange)="tabChanged()" [selectedIndex]="0" [class.hidden]="!showChart">
-            <mat-tab *ngFor="let t of statTabs" label="{{t.name}} {{statTotal(t)}}"> </mat-tab>
-        </mat-tab-group>
-        <div [class.hidden]="!showChart">
-            <div style="display: block;width:350px;height:188px;">
-                <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
-                    [options]="options" [colors]="colors" (chartClick)="chartClicked($event)"></canvas>
-            </div>
-        </div>
-        <a [class.hidden]="!showChart" *ngFor="let s of currentTabStats.moreStats" (click)="setCurrentStat(s)">{{s.name
-            }} - {{s.value}}, </a>
-
-        <strong>{{families.totalRows}} {{settings.lang.families}} </strong> <strong *ngIf="currentStatFilter"> -
-            {{currentStatFilter.name}} - </strong> <a *ngIf="currentStatFilter"
-            (click)="clearStat()">{{settings.lang.showAll}}</a>
-
-
-        <div style="display:flex;justify-content: space-between">
-            <div>
-                <mat-form-field>
-                    <input matInput [(ngModel)]="searchString" (input)="doSearch()"
-                        placeholder="{{settings.lang.searchFamily}}" [ngModelOptions]="{standalone: true}">
-                    <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
-                </mat-form-field>
-                <br>
-            </div>
-            <div>
-                <button mat-raised-button color="primary" (click)="quickAdd()"
-                    *ngIf="canAdd">{{settings.lang.newFamily}}</button>
-            </div>
-        </div>
-
+  <div>
+    <mat-tab-group
+      #myTab
+      (selectedTabChange)="tabChanged()"
+      [selectedIndex]="0"
+      [class.hidden]="!showChart"
+    >
+      <mat-tab
+        *ngFor="let t of statTabs"
+        label="{{ t.name }} {{ statTotal(t) }}"
+      >
+      </mat-tab>
+    </mat-tab-group>
+    <div [class.hidden]="!showChart">
+      <div style="display: block; width: 350px; height: 188px">
+        <canvas
+          baseChart
+          [data]="pieChartData"
+          [labels]="pieChartLabels"
+          [chartType]="pieChartType"
+          [options]="options"
+          [colors]="colors"
+          (chartClick)="chartClicked($event)"
+        ></canvas>
+      </div>
     </div>
-    <data-grid [settings]="families" class="grow-item"></data-grid>
+    <a
+      [class.hidden]="!showChart"
+      *ngFor="let s of currentTabStats.moreStats"
+      (click)="setCurrentStat(s)"
+      >{{ s.name }} - {{ s.value }},
+    </a>
+
+    <strong>{{ families.totalRows }} {{ settings.lang.families }} </strong>
+    <strong *ngIf="currentStatFilter">
+      - {{ currentStatFilter.name }} -
+    </strong>
+    <a *ngIf="currentStatFilter" (click)="clearStat()">{{
+      settings.lang.showAll
+    }}</a>
+
+    <div style="display: flex; justify-content: space-between">
+      <div>
+        <mat-form-field>
+          <input
+            matInput
+            [(ngModel)]="searchString"
+            (input)="doSearch()"
+            placeholder="{{ settings.lang.searchFamily }}"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <mat-icon matSuffix (click)="clearSearch()">clear</mat-icon>
+        </mat-form-field>
+        <br />
+      </div>
+      <div>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="quickAdd()"
+          *ngIf="canAdd"
+        >
+          {{ settings.lang.newFamily }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <data-grid [settings]="families" class="grow-item"></data-grid>
 </div>

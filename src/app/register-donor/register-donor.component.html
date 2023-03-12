@@ -1,30 +1,50 @@
 <div class="myDiv">
-    <mat-card style="overflow-y: auto;
-    max-width: 450px;
-    max-height: 100%;
-   ">
-      <img src="/assets/mitchashvim-logo-new-colors.webp">
+  <mat-card style="overflow-y: auto; max-width: 450px; max-height: 100%">
+    <img src="/assets/mitchashvim-logo-new-colors.webp" />
 
-        <div *ngIf="!isDone">
-            <div style="text-align:center; color:#3753F6">
-                <H2>רוצים לתרום מחשבים? מעולה!</H2>
-                <H3>כל מה שצריך זה למלא טופס זה</H3>
-                <h4 style="text-align:center; color:#f6373a">אנו מגיעים לאסוף ציוד מבתי עסק בלבד ורק מעל 10 פריטים.</h4>
-                <h5 style="text-align:center; color:#3753F6">תרומות פרטיות או קטנות נשמח אם תביאו לאחת מנקודות המסירה שלנו</h5>
-            </div>
-            <h5 style="text-align:center; color:#3753F6">נקודות איסוף מחשבים של המיזם פרוסות בארץ מצפון עד דרום!</h5>
-            <div class="rowDiv">
-                <data-control style="color:#f66d37" [field]="donor.$.selfDeliver"></data-control>
-                <a mat-raised-button color="accent" href="https://www.mitchashvim.org.il/labs" target="_blank">רשימת מעבדות</a>
-            </div>
-            <data-control [field]="donor.$.name"></data-control>
-            <h5 style="color:green">במידה וציוד המחשבים ברשותך מלפני שנת 2012, לא נוכל לאסוף אותו. תודה על הכוונה!</h5>
-            <data-area [settings]="area"></data-area>
-            <app-address-input [field]="donor.$.address" [autoInit]="true"></app-address-input>
-            <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">שליחה</button>
-        </div>
-        <div *ngIf="isDone">
-            <H2>תודה רבה!</H2>
-        </div>
-    </mat-card>
+    <div *ngIf="!isDone">
+      <div style="text-align: center; color: #3753f6">
+        <H2>רוצים לתרום מחשבים? מעולה!</H2>
+        <H3>כל מה שצריך זה למלא טופס זה</H3>
+        <h4 style="text-align: center; color: #f6373a">
+          אנו מגיעים לאסוף ציוד מבתי עסק בלבד ורק מעל 10 פריטים.
+        </h4>
+        <h5 style="text-align: center; color: #3753f6">
+          תרומות פרטיות או קטנות נשמח אם תביאו לאחת מנקודות המסירה שלנו
+        </h5>
+      </div>
+      <h5 style="text-align: center; color: #3753f6">
+        נקודות איסוף מחשבים של המיזם פרוסות בארץ מצפון עד דרום!
+      </h5>
+      <div class="rowDiv">
+        <data-control
+          style="color: #f66d37"
+          [field]="donor.$.selfDeliver"
+        ></data-control>
+        <a
+          mat-raised-button
+          color="accent"
+          href="https://www.mitchashvim.org.il/labs"
+          target="_blank"
+          >רשימת מעבדות</a
+        >
+      </div>
+      <data-control [field]="donor.$.name"></data-control>
+      <h5 style="color: green">
+        במידה וציוד המחשבים ברשותך מלפני שנת 2012, לא נוכל לאסוף אותו. תודה על
+        הכוונה!
+      </h5>
+      <data-area [settings]="area"></data-area>
+      <app-address-input
+        [field]="donor.$.address"
+        [autoInit]="true"
+      ></app-address-input>
+      <button mat-raised-button (click)="submit()" [disabled]="!allowSubmit()">
+        שליחה
+      </button>
+    </div>
+    <div *ngIf="isDone">
+      <H2>תודה רבה!</H2>
+    </div>
+  </mat-card>
 </div>

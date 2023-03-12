@@ -1,11 +1,13 @@
-
-<div #gmap style="height:400px;min-width:300px" dir=ltr></div>
+<div #gmap style="height: 400px; min-width: 300px" dir="ltr"></div>
 
 <mat-dialog-actions>
-    <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
-    <button mat-raised-button (click)="markOnMap=true" *ngIf="!markOnMap">{{settings.lang.markOnMap}}</button>
-    <button mat-raised-button (click)="save()" *ngIf="selected" color="accent">{{settings.lang.save}}</button>
-    
-    
-
+  <button mat-raised-button [mat-dialog-close]>
+    {{ settings.lang.close }}
+  </button>
+  <button mat-raised-button (click)="markOnMap = true" *ngIf="!markOnMap">
+    {{ settings.lang.markOnMap }}
+  </button>
+  <button mat-raised-button (click)="save()" *ngIf="selected" color="accent">
+    {{ settings.lang.save }}
+  </button>
 </mat-dialog-actions>

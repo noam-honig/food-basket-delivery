@@ -1,82 +1,107 @@
 <mat-dialog-content class="dialog-container">
-    <div style="display: flex;
-    justify-content: space-between;
-    align-items: center;">
-        <h3>{{e.name}}</h3>
-        <button mat-icon-button (click)="edit()" *ngIf="isAdmin()">
-            <mat-icon>edit</mat-icon>
+  <div
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
+    <h3>{{ e.name }}</h3>
+    <button mat-icon-button (click)="edit()" *ngIf="isAdmin()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+  <div style="text-align: center">
+    <img class="event-image" [src]="e.eventLogo" />
+  </div>
+  <strong>{{ e.orgName }}</strong>
+  <span
+    >{{ e.city
+    }}<span *ngIf="showEventType()">, {{ e.type.caption }}</span></span
+  >
+  <span *ngIf="!isGeneralEvent()"
+    >{{ displayDate() }}<span *ngIf="e.startTime">, {{ e.startTime }}</span
+    ><span *ngIf="e.endTime"> - {{ e.endTime }}</span>
+  </span>
+  <div class="space-above" style="white-space: pre-line">
+    {{ e.description }}
+  </div>
+  <div *ngIf="e.theAddress" class="space-above">
+    <strong>{{ settings.lang.address }}</strong>
+    <div class="phone-container" style="justify-content: space-between">
+      <span (click)="openWaze()">
+        <img src="assets/waze.png" />
+      </span>
+      <div style="flex-grow: 1">
+        <a (click)="openWaze()">
+          <span style="display: block"> {{ e.theAddress }} </span>
+        </a>
+      </div>
+      <span (click)="openGoogleMap()">
+        <img src="assets/google_maps_icon.png" />
+      </span>
+    </div>
+  </div>
+  <div *ngIf="e.thePhone" class="space-above">
+    <strong>{{ settings.lang.phones }}</strong>
+    <div class="phone-container">
+      <span
+        mat-mini-fab
+        style="vertical-align: middle; cursor: pointer"
+        color="primary"
+        (click)="sendWhatsapp(e.thePhone)"
+      >
+        <img src="assets/whatsapp.png" />
+      </span>
+      <a href="tel:{{ e.thePhone }}">
+        <button mat-mini-fab style="vertical-align: middle" color="primary">
+          <mat-icon>call</mat-icon>
         </button>
+      </a>
+      <div>
+        <a href="tel:{{ e.thePhone }}">{{ e.thePhoneDisplay }}</a
+        >,
+        {{ e.thePhoneDescription }}
+      </div>
     </div>
-    <div style="text-align: center;">
-        <img class="event-image" [src]="e.eventLogo">
-    </div>
-    <strong>{{e.orgName}}</strong>
-    <span>{{e.city}}<span *ngIf="showEventType()">, {{e.type.caption}}</span></span>
-    <span *ngIf="!isGeneralEvent()">{{displayDate()}}<span *ngIf="e.startTime">,
-            {{e.startTime}}</span><span *ngIf="e.endTime"> -
-            {{e.endTime}}</span>
-    </span>
-    <div class="space-above" style="white-space: pre-line;">{{e.description}}</div>
-    <div *ngIf="e.theAddress" class="space-above">
-        <strong>{{settings.lang.address}}</strong>
-        <div class="phone-container" style="justify-content: space-between;">
+  </div>
 
-            <span (click)="openWaze()">
-                <img src="assets/waze.png">
-
-            </span>
-            <div style="flex-grow:1">
-                <a (click)="openWaze()">
-                    <span style="display:block"> {{e.theAddress}} </span>
-                </a>
-            </div>
-            <span (click)="openGoogleMap()">
-                <img src="assets/google_maps_icon.png">
-            </span>
-        </div>
-    </div>
-    <div *ngIf="e.thePhone" class="space-above">
-        <strong>{{settings.lang.phones}}</strong>
-        <div class="phone-container">
-
-            <span mat-mini-fab style="vertical-align: middle; cursor: pointer;" color="primary"
-                (click)="sendWhatsapp(e.thePhone)">
-                <img src="assets/whatsapp.png">
-            </span>
-            <a href="tel:{{e.thePhone}}">
-                <button mat-mini-fab style="vertical-align: middle" color="primary">
-                    <mat-icon>call</mat-icon>
-                </button>
-            </a>
-            <div>
-                <a href="tel:{{e.thePhone}}">{{e.thePhoneDisplay}}</a>,
-                {{e.thePhoneDescription}}
-            </div>
-        </div>
-    </div>
-
-    <div *ngIf="e.requiredVolunteers">{{settings.lang.volunteers}}:
-        {{e.requiredVolunteers}} / {{e.registeredVolunteers}} </div>
-
-
-
+  <div *ngIf="e.requiredVolunteers">
+    {{ settings.lang.volunteers }}: {{ e.requiredVolunteers }} /
+    {{ e.registeredVolunteers }}
+  </div>
 </mat-dialog-content>
-<mat-dialog-actions style="display: flex;
-justify-content: space-between;">
-    <div>
-        <button mat-raised-button color="primary"
-            *ngIf="!e.registeredToEvent && (e.registeredVolunteers<e.requiredVolunteers||e.requiredVolunteers==0)&&!isGeneralEvent()"
-            (click)="reg.registerToEvent(e,dialog)">{{settings.lang.illBeThere}}
-        </button>
-        <span mat-raised-button color="primary"
-            *ngIf="!e.registeredToEvent && e.registeredVolunteers>=e.requiredVolunteers&&e.requiredVolunteers>0">{{settings.lang.eventIsFull}}
-        </span>
-        <span *ngIf="e.registeredToEvent">
-            {{settings.lang.registeredToEvent}} <a
-                (click)="reg.removeFromEvent(e,dialog)">{{settings.lang.iCantMakeIt}}</a>
-        </span>
-    </div>
-    <div style="margin-left:5px;margin-right: 5px;" *ngIf="!noClose">
-        <button mat-raised-button [mat-dialog-close]>{{settings.lang.close}}</button>
-    </div>
+<mat-dialog-actions style="display: flex; justify-content: space-between">
+  <div>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="
+        !e.registeredToEvent &&
+        (e.registeredVolunteers < e.requiredVolunteers ||
+          e.requiredVolunteers == 0) &&
+        !isGeneralEvent()
+      "
+      (click)="reg.registerToEvent(e, dialog)"
+    >
+      {{ settings.lang.illBeThere }}
+    </button>
+    <span
+      mat-raised-button
+      color="primary"
+      *ngIf="
+        !e.registeredToEvent &&
+        e.registeredVolunteers >= e.requiredVolunteers &&
+        e.requiredVolunteers > 0
+      "
+      >{{ settings.lang.eventIsFull }}
+    </span>
+    <span *ngIf="e.registeredToEvent">
+      {{ settings.lang.registeredToEvent }}
+      <a (click)="reg.removeFromEvent(e, dialog)">{{
+        settings.lang.iCantMakeIt
+      }}</a>
+    </span>
+  </div>
+  <div style="margin-left: 5px; margin-right: 5px" *ngIf="!noClose">
+    <button mat-raised-button [mat-dialog-close]>
+      {{ settings.lang.close }}
+    </button>
+  </div>
 </mat-dialog-actions>

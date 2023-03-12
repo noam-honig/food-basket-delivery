@@ -1,71 +1,122 @@
-<button mat-mini-fab style="margin-bottom:5px" (click)="refresh()" color="primary">
+<button
+  mat-mini-fab
+  style="margin-bottom: 5px"
+  (click)="refresh()"
+  color="primary"
+>
   <mat-icon>refresh</mat-icon>
 </button>
-<a href="https://youtu.be/Pa7QJTE3cqo" target="_blank" class="no-print" *ngIf="settings.showVideo()"
-  style="margin-right:10px">{{settings.lang.volunteerFeedbackVideo}}</a>
-<div style="display:flex">
-  <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-    <mat-label>{{settings.lang.filter}}</mat-label>
-    <select matNativeControl [(ngModel)]="filters.currentFilter" (change)="filterChange()">
-      <option *ngFor="let l of filters.filters" [ngValue]="l">{{l.name}}</option>
+<a
+  href="https://youtu.be/Pa7QJTE3cqo"
+  target="_blank"
+  class="no-print"
+  *ngIf="settings.showVideo()"
+  style="margin-right: 10px"
+  >{{ settings.lang.volunteerFeedbackVideo }}</a
+>
+<div style="display: flex">
+  <mat-form-field
+    appearance="outline"
+    class="full-width-form-field dense-form-field"
+  >
+    <mat-label>{{ settings.lang.filter }}</mat-label>
+    <select
+      matNativeControl
+      [(ngModel)]="filters.currentFilter"
+      (change)="filterChange()"
+    >
+      <option *ngFor="let l of filters.filters" [ngValue]="l">
+        {{ l.name }}
+      </option>
     </select>
   </mat-form-field>
-  <mat-form-field appearance="outline" class="full-width-form-field dense-form-field">
-    <mat-label>{{settings.lang.familySource}}</mat-label>
-    <select matNativeControl [(ngModel)]="filters.currentFamilySource" (change)="filterChange()">
-      <option *ngFor="let l of familySources" [ngValue]="l.id">{{l.name}}</option>
+  <mat-form-field
+    appearance="outline"
+    class="full-width-form-field dense-form-field"
+  >
+    <mat-label>{{ settings.lang.familySource }}</mat-label>
+    <select
+      matNativeControl
+      [(ngModel)]="filters.currentFamilySource"
+      (change)="filterChange()"
+    >
+      <option *ngFor="let l of familySources" [ngValue]="l.id">
+        {{ l.name }}
+      </option>
     </select>
   </mat-form-field>
 </div>
 <mat-card *ngFor="let n of news">
   <mat-card-header>
-
     <div mat-card-avatar class="example-header-image">
-      <mat-icon>{{icon(n)}}</mat-icon>
-
+      <mat-icon>{{ icon(n) }}</mat-icon>
     </div>
 
     <mat-card-title class="newsHeader">
       <div>
-        {{n.describe()}}
+        {{ n.describe() }}
 
-        <div *ngIf="showNeedsWork(n)" style="margin-top:7px">
-          <mat-checkbox [checked]="!n.needsWork" (change)="needWorkWasChanged(n,$event)"
-            [class.handled]="!n.needsWork" style="
-          padding: 5px;
-          
-          border-radius: 7px;
-          border: solid 1px #2196f3;
-          padding-top: 2px;
-          /* display: flex; */
-      " color="primary">{{settings.lang.done}}</mat-checkbox>
+        <div *ngIf="showNeedsWork(n)" style="margin-top: 7px">
+          <mat-checkbox
+            [checked]="!n.needsWork"
+            (change)="needWorkWasChanged(n, $event)"
+            [class.handled]="!n.needsWork"
+            style="
+              padding: 5px;
+
+              border-radius: 7px;
+              border: solid 1px #2196f3;
+              padding-top: 2px;
+              /* display: flex; */
+            "
+            color="primary"
+            >{{ settings.lang.done }}</mat-checkbox
+          >
         </div>
       </div>
     </mat-card-title>
-    <mat-card-subtitle>{{ n.relativeDeliveryStatusDate()}}, {{settings.lang.updatedBy}}
-      {{n.deliveryStatusUser?.name}}
-      
-      <a (click)="deliveryImages(n)" style="display:block" *ngIf="n.numOfPhotos > 0 && isAdmin()">
+    <mat-card-subtitle
+      >{{ n.relativeDeliveryStatusDate() }}, {{ settings.lang.updatedBy }}
+      {{ n.deliveryStatusUser?.name }}
+
+      <a
+        (click)="deliveryImages(n)"
+        style="display: block"
+        *ngIf="n.numOfPhotos > 0 && isAdmin()"
+      >
         <button mat-icon-button>
           <mat-icon>photo_camera</mat-icon>
         </button>
-        {{settings.lang.photos_taken_by_volunteer}}
+        {{ settings.lang.photos_taken_by_volunteer }}
       </a>
-      
-      <a (click)="updateFamily(n)" style="display:block">
+
+      <a (click)="updateFamily(n)" style="display: block">
         <button mat-icon-button>
           <mat-icon>edit</mat-icon>
         </button>
-        {{settings.lang.deliveryDetails}}
+        {{ settings.lang.deliveryDetails }}
       </a>
 
-
-      <a (click)="showHelper(n)" *ngIf="n.courier" style="display:inline-block"  style="display:block"> <button mat-icon-button>
+      <a
+        (click)="showHelper(n)"
+        *ngIf="n.courier"
+        style="display: inline-block"
+        style="display: block"
+      >
+        <button mat-icon-button>
           <mat-icon>list_alt</mat-icon>
-        </button> {{settings.lang.deliveries}} {{settings.lang.for}} {{n.courier.name}} </a>
+        </button>
+        {{ settings.lang.deliveries }} {{ settings.lang.for }}
+        {{ n.courier.name }}
+      </a>
     </mat-card-subtitle>
-
   </mat-card-header>
 </mat-card>
-<button mat-raised-button color="accent" *ngIf="this.news.length==this.newsRows"
-  (click)="moreNews()">{{settings.lang.moreNews}}</button>
+<button
+  mat-raised-button
+  color="accent"
+  *ngIf="this.news.length == this.newsRows"
+  (click)="moreNews()"
+>
+  {{ settings.lang.moreNews }}
+</button>

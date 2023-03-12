@@ -1,13 +1,13 @@
-<h1 mat-dialog-title>{{remult.context.lang.showPreviousActivities}}</h1>
+<h1 mat-dialog-title>{{ remult.context.lang.showPreviousActivities }}</h1>
 <div mat-dialog-content>
-    <div *ngFor="let i of comments">
-        {{i.date|date}}
-        <br />
-        <span>{{i.comment}}</span>
-
-    </div>
+  <div *ngFor="let i of comments">
+    {{ i.date | date }}
+    <br />
+    <span>{{ i.comment }}</span>
+  </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="">{{remult.context.lang.close}}</button>
-
+  <button mat-button [mat-dialog-close]="">
+    {{ remult.context.lang.close }}
+  </button>
 </div>

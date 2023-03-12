@@ -1,22 +1,22 @@
 th {
-    text-align: right;
-  }
-  .table-div {
-    width: 100%;
-    overflow: scroll;
-    max-height:500px;
-  }
-  .mat-icon-button {
-    width:20px;
-    height:20px;
-    line-height:20px;
-  }
-  .newValue{
-    color:green;
-  }
-  td{
-    white-space: nowrap;
-    word-wrap: none;
-    max-width:300px;
-    overflow: hidden;
-  }
+  text-align: right;
+}
+.table-div {
+  width: 100%;
+  overflow: scroll;
+  max-height: 500px;
+}
+.mat-icon-button {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+}
+.newValue {
+  color: green;
+}
+td {
+  white-space: nowrap;
+  word-wrap: none;
+  max-width: 300px;
+  overflow: hidden;
+}

@@ -1,26 +1,41 @@
-<h1 mat-dialog-title *ngIf="theGifts.length>0">משאלות למימוש</h1>
-<h1 mat-dialog-title *ngIf="theGifts.length==0">אוספים תרומות וצוברים מתנות</h1>
+<h1 mat-dialog-title *ngIf="theGifts.length > 0">משאלות למימוש</h1>
+<h1 mat-dialog-title *ngIf="theGifts.length == 0">
+  אוספים תרומות וצוברים מתנות
+</h1>
 <div mat-dialog-content style="justify-content: center">
-        <div *ngFor="let g of theGifts">
-            <div *ngIf="!g.wasConsumed" style="justify-content: center; padding-top: 5px; padding-bottom: 5px;"> 
-                <button mat-raised-button color="primary" (click)="useTheGift(g.giftID)" title="למימוש המשאלה"> 
-                    <img src="assets/gift.png" height="50px" > 
-                </button>
-                <button mat-button color="primary" (click)="giftUsed(g.giftID)" *ngIf="g.wasClicked" title="הסר משאלה שמימשתי">
-                    השתמשתי
-                    <img src="assets/delete-icon-11.jpg" height="25px">
-                </button>
-            </div>
-        </div>
-        <mat-divider></mat-divider>
-        <div *ngIf="giftsUsed==1" style="padding-top: 5px;">
-            <span *ngIf="theGifts.length>giftsUsed"> בנוסף </span>
-            הספקת לנצל כבר משאלה אחת - מקווים שנהנית!
-        </div>
-        <div *ngIf="giftsUsed>1" style="padding-top: 5px;"> 
-            <span *ngIf="theGifts.length>giftsUsed"> בנוסף </span>
-            ניצלת כבר {{giftsUsed}} משאלות. מקווים שאהבת! 
-        </div>
+  <div *ngFor="let g of theGifts">
+    <div
+      *ngIf="!g.wasConsumed"
+      style="justify-content: center; padding-top: 5px; padding-bottom: 5px"
+    >
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="useTheGift(g.giftID)"
+        title="למימוש המשאלה"
+      >
+        <img src="assets/gift.png" height="50px" />
+      </button>
+      <button
+        mat-button
+        color="primary"
+        (click)="giftUsed(g.giftID)"
+        *ngIf="g.wasClicked"
+        title="הסר משאלה שמימשתי"
+      >
+        השתמשתי
+        <img src="assets/delete-icon-11.jpg" height="25px" />
+      </button>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div *ngIf="giftsUsed == 1" style="padding-top: 5px">
+    <span *ngIf="theGifts.length > giftsUsed"> בנוסף </span>
+    הספקת לנצל כבר משאלה אחת - מקווים שנהנית!
+  </div>
+  <div *ngIf="giftsUsed > 1" style="padding-top: 5px">
+    <span *ngIf="theGifts.length > giftsUsed"> בנוסף </span>
+    ניצלת כבר {{ giftsUsed }} משאלות. מקווים שאהבת!
+  </div>
 </div>
-<mat-dialog-actions>
-</mat-dialog-actions>
+<mat-dialog-actions> </mat-dialog-actions>

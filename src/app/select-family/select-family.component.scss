@@ -1,11 +1,11 @@
 .full-width {
-    width: 100%;
+  width: 100%;
 }
 .fullSize {
-    height: 450px;
-    min-height: 450px;
-    max-height: 450px;
-    overflow-y: scroll;
+  height: 450px;
+  min-height: 450px;
+  max-height: 450px;
+  overflow-y: scroll;
 }
 .h4,
 .h5,
@@ -13,21 +13,21 @@
 h4,
 h5,
 h6 {
-    margin-top: 3px;
-    margin-bottom: 3px;
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 hr {
-    margin-top: 5px;
-    margin-bottom: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .red {
-    color: red;
+  color: red;
 }
 .list-item {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
-.hidden{
-    visibility: hidden;
+.hidden {
+  visibility: hidden;
 }

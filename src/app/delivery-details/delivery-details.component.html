@@ -1,31 +1,53 @@
-<div style="display:flex;flex-direction:column;height:100%;
-background-color: rgb(250, 250, 250);" *ngIf="famInfo.f">
-    <div>
-        <mat-card>
-            <div>
-                <div style="    display: flex;
-                justify-content: space-between;">
-                    <button mat-icon-button style="transform: rotate(180deg);" [mat-dialog-close]>
-                        <mat-icon>arrow_back</mat-icon>
-                    </button>
-                    <app-dots-menu [buttons]="buttons"></app-dots-menu>
-                </div>
-                <h3 style="margin-bottom:8px">{{famInfo.f.name}}</h3>
-            </div>
-        </mat-card>
-    </div>
-    <div style=" flex-grow:1;padding:8px;    overflow-y: auto;    ">
-        <app-family-info [f]="famInfo.f" [userFamilies]="famInfo.userFamilies"></app-family-info>
-    </div>
-    <div style="    display: flex;
-    gap: 8px;
-    padding: 8px;
-    justify-content: space-between;" *ngIf="!famInfo.showStatus()">
-        <button mat-flat-button color="primary" (click)="deliveredToFamily()">
-            {{settings.deliveredButtonText}}
-        </button>
-        <button mat-stroked-button color="primary" (click)="couldntDeliverToFamily()">
-            {{settings.problemButtonText}}
-        </button>
-    </div>
+<div
+  style="
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: rgb(250, 250, 250);
+  "
+  *ngIf="famInfo.f"
+>
+  <div>
+    <mat-card>
+      <div>
+        <div style="display: flex; justify-content: space-between">
+          <button
+            mat-icon-button
+            style="transform: rotate(180deg)"
+            [mat-dialog-close]
+          >
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <app-dots-menu [buttons]="buttons"></app-dots-menu>
+        </div>
+        <h3 style="margin-bottom: 8px">{{ famInfo.f.name }}</h3>
+      </div>
+    </mat-card>
+  </div>
+  <div style="flex-grow: 1; padding: 8px; overflow-y: auto">
+    <app-family-info
+      [f]="famInfo.f"
+      [userFamilies]="famInfo.userFamilies"
+    ></app-family-info>
+  </div>
+  <div
+    style="
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      justify-content: space-between;
+    "
+    *ngIf="!famInfo.showStatus()"
+  >
+    <button mat-flat-button color="primary" (click)="deliveredToFamily()">
+      {{ settings.deliveredButtonText }}
+    </button>
+    <button
+      mat-stroked-button
+      color="primary"
+      (click)="couldntDeliverToFamily()"
+    >
+      {{ settings.problemButtonText }}
+    </button>
+  </div>
 </div>

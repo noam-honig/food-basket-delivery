@@ -1,31 +1,53 @@
-<div class="container" *ngIf="report" [style]="defs.getStyle(pageProps.props,report.page)">
-    <div *ngFor="let r of data" style="flex-shrink: 0;position: relative; display: inline-grid;"
-        [ngStyle]="defs.getStyle(stickerProps.props,report.sticker)">
-        <div class="item" [style.outline]="getStickerBorderSettings()">
-            <ng-container *ngFor="let f of report.controls">
-
-                <div *ngIf="r[f.fieldKey]" [ngStyle]="defs.getStyle(defs.fieldProps.props,f.propertyValues)"
-                    (click)="editControl(f)">
-                    {{f.propertyValues&& f.propertyValues[defs.textBeforeKey]}} {{r[f.fieldKey]}} {{f.propertyValues&&
-                    f.propertyValues[defs.textAfterKey]}}
-                </div>
-            </ng-container>
-            <button mat-icon-button class="edit-button" (click)="defs.editSticker(r,data)">
-                <mat-icon>edit</mat-icon>
-            </button>
+<div
+  class="container"
+  *ngIf="report"
+  [style]="defs.getStyle(pageProps.props, report.page)"
+>
+  <div
+    *ngFor="let r of data"
+    style="flex-shrink: 0; position: relative; display: inline-grid"
+    [ngStyle]="defs.getStyle(stickerProps.props, report.sticker)"
+  >
+    <div class="item" [style.outline]="getStickerBorderSettings()">
+      <ng-container *ngFor="let f of report.controls">
+        <div
+          *ngIf="r[f.fieldKey]"
+          [ngStyle]="defs.getStyle(defs.fieldProps.props, f.propertyValues)"
+          (click)="editControl(f)"
+        >
+          {{ f.propertyValues && f.propertyValues[defs.textBeforeKey] }}
+          {{ r[f.fieldKey] }}
+          {{ f.propertyValues && f.propertyValues[defs.textAfterKey] }}
         </div>
+      </ng-container>
+      <button
+        mat-icon-button
+        class="edit-button"
+        (click)="defs.editSticker(r, data)"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
     </div>
+  </div>
 </div>
 
 <app-properties-editor *ngIf="report" (change)="save()" [props]="currentProps">
-    <button (click)=" addControl()">{{remult.context.lang.addField}}</button>
-    <ng-container *ngIf="currentProps.control">
-        <button (click)="moveControl(-1)">{{remult.context.lang.moveUp}}</button>
-        <button (click)="moveControl(1)">{{remult.context.lang.moveDown}}</button>
-        <button (click)="removeControl(currentProps.control)">{{remult.context.lang.removeField}}</button>
-    </ng-container>
-    <br>
-    <button (click)="selectControl()">{{remult.context.lang.fieldProperties}}</button>
-    <button (click)="currentProps = stickerProps">{{remult.context.lang.stickerProperties}}</button>
-    <button (click)="currentProps = pageProps">{{remult.context.lang.pageProperties}}</button>
+  <button (click)="addControl()">{{ remult.context.lang.addField }}</button>
+  <ng-container *ngIf="currentProps.control">
+    <button (click)="moveControl(-1)">{{ remult.context.lang.moveUp }}</button>
+    <button (click)="moveControl(1)">{{ remult.context.lang.moveDown }}</button>
+    <button (click)="removeControl(currentProps.control)">
+      {{ remult.context.lang.removeField }}
+    </button>
+  </ng-container>
+  <br />
+  <button (click)="selectControl()">
+    {{ remult.context.lang.fieldProperties }}
+  </button>
+  <button (click)="currentProps = stickerProps">
+    {{ remult.context.lang.stickerProperties }}
+  </button>
+  <button (click)="currentProps = pageProps">
+    {{ remult.context.lang.pageProperties }}
+  </button>
 </app-properties-editor>

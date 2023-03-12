@@ -1,36 +1,38 @@
-<h3 matDialogHeader>{{args.site.name}} ({{args.site.site}})</h3>
-{{args.site.city}}
+<h3 matDialogHeader>{{ args.site.name }} ({{ args.site.site }})</h3>
+{{ args.site.city }}
 <mat-dialog-content>
-    {{args.site.lastSignIn|date}}
-    <ul>
-        <li *ngFor="let i of args.statistics">
-            {{i.caption}} - {{args.site.stats[i.caption]}}
-        </li>
-    </ul>
-    מנהלים:
-    <table>
-        <tr *ngFor="let m of managers">
-            <td><a (click)="sendWhatsapp(m)"> {{m.name}}</a></td>
-            <td> {{m.lastSignInDate|date}} </td>
-            <td> {{m.phone}}</td>
-        </tr>
-    </table>
-
-
+  {{ args.site.lastSignIn | date }}
+  <ul>
+    <li *ngFor="let i of args.statistics">
+      {{ i.caption }} - {{ args.site.stats[i.caption] }}
+    </li>
+  </ul>
+  מנהלים:
+  <table>
+    <tr *ngFor="let m of managers">
+      <td>
+        <a (click)="sendWhatsapp(m)"> {{ m.name }}</a>
+      </td>
+      <td>{{ m.lastSignInDate | date }}</td>
+      <td>{{ m.phone }}</td>
+    </tr>
+  </table>
 </mat-dialog-content>
 
 <mat-dialog-actions>
+  <button
+    type="button"
+    mat-raised-button
+    color="warning"
+    (click)="this.dialogRef.close()"
+  >
+    סגור
+  </button>
 
-
-    <button type="button" mat-raised-button color="warning" (click)="this.dialogRef.close()">
-        סגור
-    </button>
-
-    <button mat-raised-button color="accent" (click)="openSite()">
-        עבור לאתר
-    </button>
-    <button type="button" mat-raised-button (click)="this.editMessage()">
-        <mat-icon>message</mat-icon>
-    </button>
-
+  <button mat-raised-button color="accent" (click)="openSite()">
+    עבור לאתר
+  </button>
+  <button type="button" mat-raised-button (click)="this.editMessage()">
+    <mat-icon>message</mat-icon>
+  </button>
 </mat-dialog-actions>

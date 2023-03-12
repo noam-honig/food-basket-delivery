@@ -1,136 +1,130 @@
-import { IdEntity,  Entity, Allow, isBackend, EntityFilter, remult } from "remult";
-import { AddressHelper } from "../shared/googleApiHelpers";
-import { Phone } from "../model-shared/phone";
+import {
+  IdEntity,
+  Entity,
+  Allow,
+  isBackend,
+  EntityFilter,
+  remult
+} from 'remult'
+import { AddressHelper } from '../shared/googleApiHelpers'
+import { Phone } from '../model-shared/phone'
 
-import { Roles } from "../auth/roles";
-import { HelpersBase } from "../helpers/helpers";
-import { ApplicationSettings } from "./ApplicationSettings";
-import { DataControl, getEntityValueList } from "../common-ui-elements/interfaces";
-import { use, FieldType, Field } from "../translate";
-import { MyIdEntity } from "../families/MyIdEntity";
-
-
+import { Roles } from '../auth/roles'
+import { HelpersBase } from '../helpers/helpers'
+import { ApplicationSettings } from './ApplicationSettings'
+import {
+  DataControl,
+  getEntityValueList
+} from '../common-ui-elements/interfaces'
+import { use, FieldType, Field } from '../translate'
+import { MyIdEntity } from '../families/MyIdEntity'
 
 @FieldType<DistributionCenters>({
   valueConverter: {
-    toDb: x => x == null ? '' : x
+    toDb: (x) => (x == null ? '' : x)
   },
-  displayValue: (e, v) => v ? v.name : '',
-  translation: l => l.distributionList
-
+  displayValue: (e, v) => (v ? v.name : ''),
+  translation: (l) => l.distributionList
 })
 @DataControl<any, DistributionCenters>({
   hideDataOnInput: true,
-  valueList: remult => {
+  valueList: (remult) => {
     return DistributionCenters.getValueList()
   },
-  width: '150',
+  width: '150'
 })
-
-@Entity<DistributionCenters>("DistributionCenters", {
+@Entity<DistributionCenters>('DistributionCenters', {
   allowApiRead: Allow.authenticated,
   allowApiInsert: Roles.admin,
   allowApiUpdate: Roles.admin,
-  defaultOrderBy: { name: "asc" },
-
+  defaultOrderBy: { name: 'asc' },
 
   saving: async (self) => {
     if (isBackend()) {
-      await self.addressHelper.updateApiResultIfChanged();
+      await self.addressHelper.updateApiResultIfChanged()
     }
   }
 })
 export class DistributionCenters extends MyIdEntity {
-  @Field({ translation: l => l.distributionCenterName })
-  name: string;
-  @Field({ translation: l => l.distributionCenterUniqueId })
-  semel: string;
+  @Field({ translation: (l) => l.distributionCenterName })
+  name: string
+  @Field({ translation: (l) => l.distributionCenterUniqueId })
+  semel: string
   @Field()
-  addressApiResult: string;
+  addressApiResult: string
   @Field({
-    translation: l => l.deliveryCenterAddress, customInput: i => i.addressInput()
+    translation: (l) => l.deliveryCenterAddress,
+    customInput: (i) => i.addressInput()
   })
-  address: string;
-  addressHelper = new AddressHelper(() => this.$.address, () => this.$.addressApiResult);
-  @Field({ translation: l => l.distributionCenterComment })
-  comments: string;
-  @Field({ translation: l => l.phone1 })
-  phone1: Phone;
-  @Field({ translation: l => l.phone1Description })
-  phone1Description: string;
-  @Field({ translation: l => l.phone2 })
-  phone2: Phone;
-  @Field({ translation: l => l.phone2Description })
-  phone2Description: string;
-  @Field({ translation: l => l.frozen })
-  isFrozen: boolean;
+  address: string
+  addressHelper = new AddressHelper(
+    () => this.$.address,
+    () => this.$.addressApiResult
+  )
+  @Field({ translation: (l) => l.distributionCenterComment })
+  comments: string
+  @Field({ translation: (l) => l.phone1 })
+  phone1: Phone
+  @Field({ translation: (l) => l.phone1Description })
+  phone1Description: string
+  @Field({ translation: (l) => l.phone2 })
+  phone2: Phone
+  @Field({ translation: (l) => l.phone2Description })
+  phone2Description: string
+  @Field({ translation: (l) => l.frozen })
+  isFrozen: boolean
   @Field()
-  archive: boolean;
+  archive: boolean
 
-  createUser: HelpersBase;
-
+  createUser: HelpersBase
 
   static isActive: EntityFilter<DistributionCenters> = {
     isFrozen: false,
     archive: false
   }
 
-
   openWaze() {
-    this.addressHelper.openWaze();
+    this.addressHelper.openWaze()
   }
 
-
   matchesCurrentUser() {
-    return this.id == (remult.user)?.distributionCenter;
+    return this.id == remult.user?.distributionCenter
   }
 
   async SendMessageToBrowser(message: string) {
-
-    await (await import('../families/families')).Families.SendMessageToBrowsers(message,  this.id);
+    await (
+      await import('../families/families')
+    ).Families.SendMessageToBrowsers(message, this.id)
   }
-
 
   checkAllowedForUser() {
     if (remult.isAllowed(Roles.admin)) {
-      return true;
+      return true
     } else if (remult.isAllowed(Roles.distCenterAdmin))
-      return (remult.user)?.distributionCenter == this.id;
-    return false;
+      return remult.user?.distributionCenter == this.id
+    return false
   }
   async getRouteStartGeo() {
-
     if (this.addressApiResult && this.address && this.addressHelper.ok)
-      return this.addressHelper.getGeocodeInformation;
-    return (await ApplicationSettings.getAsync()).addressHelper.getGeocodeInformation;
+      return this.addressHelper.getGeocodeInformation
+    return (await ApplicationSettings.getAsync()).addressHelper
+      .getGeocodeInformation
   }
   async getRouteStartLocation() {
-
     if (this.addressApiResult && this.address && this.addressHelper.ok)
-      return this.addressHelper.location;
-    return (await ApplicationSettings.getAsync()).addressHelper.location;
+      return this.addressHelper.location
+    return (await ApplicationSettings.getAsync()).addressHelper.location
   }
-  static async getValueList( showAllOptions = false) {
-    let r = await getEntityValueList<DistributionCenters>(remult.repo(DistributionCenters), {
-      where: { archive: false }
-    })
+  static async getValueList(showAllOptions = false) {
+    let r = await getEntityValueList<DistributionCenters>(
+      remult.repo(DistributionCenters),
+      {
+        where: { archive: false }
+      }
+    )
     if (showAllOptions) {
       r.splice(0, 0, { caption: use.language.allDistributionLists, id: null })
     }
-    return r;
-
+    return r
   }
-
-
-
-
 }
-
-
-
-
-
-
-
-
-

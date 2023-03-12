@@ -1,10 +1,9 @@
 .area {
-    div 
-    {
-        background-color: red;
-    }
-    div > div > div:nth-child(7) > data-control:nth-child(4) {
-        min-width: 90px;
-        background-color: red;
-    }
+  div {
+    background-color: red;
+  }
+  div > div > div:nth-child(7) > data-control:nth-child(4) {
+    min-width: 90px;
+    background-color: red;
+  }
 }

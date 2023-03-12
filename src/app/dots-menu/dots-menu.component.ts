@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { RowButton } from '../common-ui-elements/interfaces';
-
+import { Component, Input, OnInit } from '@angular/core'
+import { RowButton } from '../common-ui-elements/interfaces'
 
 @Component({
   selector: 'app-dots-menu',
@@ -8,11 +7,8 @@ import { RowButton } from '../common-ui-elements/interfaces';
   styleUrls: ['./dots-menu.component.css']
 })
 export class DotsMenuComponent implements OnInit {
-
-  constructor() { }
-  @Input() buttons: RowButton<any>[];
-  @Input() item: any;
-  ngOnInit(): void {
-  }
-
+  constructor() {}
+  @Input() buttons: RowButton<any>[]
+  @Input() item: any
+  ngOnInit(): void {}
 }

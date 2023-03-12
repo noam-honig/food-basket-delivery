@@ -1,8 +1,8 @@
-import { Entity, Field, IdEntity,Fields  } from "remult";
+import { Entity, Field, IdEntity, Fields } from 'remult'
 
-@Entity<MemoryStats>("memoryStats", {
+@Entity<MemoryStats>('memoryStats', {
   defaultOrderBy: {
-    stamp: "desc"
+    stamp: 'desc'
   }
 })
 export class MemoryStats extends IdEntity {
@@ -14,12 +14,12 @@ export class MemoryStats extends IdEntity {
       fieldTypeInDb: 'json'
     }
   })
-  mem: any;
+  mem: any
 
   @Fields.object({
     valueConverter: {
       fieldTypeInDb: 'json'
     }
   })
-  stats: any;
+  stats: any
 }

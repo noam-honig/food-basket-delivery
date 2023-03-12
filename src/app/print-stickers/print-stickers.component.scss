@@ -1,28 +1,25 @@
 .container {
-    /* background-color: red; */
+  /* background-color: red; */
 }
 .item {
-    /* background-color: yellow; */
-    /* border: solid; */
-    box-sizing: border-box;
-    overflow: hidden;
-    
-
+  /* background-color: yellow; */
+  /* border: solid; */
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .edit-button {
-    display:none;
-    top:0;
-    right:0;
-    position: absolute;
+  display: none;
+  top: 0;
+  right: 0;
+  position: absolute;
 }
-.item:hover{
-    .edit-button{
-        display: block;
-    }
+.item:hover {
+  .edit-button {
+    display: block;
+  }
 }
 
 .edit-button:hover {
-    background-color: #2196f3;
-    color:white;
-    
+  background-color: #2196f3;
+  color: white;
 }

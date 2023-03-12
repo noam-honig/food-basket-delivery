@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Route } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Route } from '@angular/router'
 
-import { BusyService } from '../common-ui-elements';
-import { remult } from 'remult';
+import { BusyService } from '../common-ui-elements'
+import { remult } from 'remult'
 
-import { DeliveryStatus } from '../families/DeliveryStatus';
-import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries';
-import { distCenterOrLabGuard } from '../auth/guards';
-import { DialogService, DestroyHelper } from '../select-popup/dialog';
-import { ApplicationSettings } from '../manage/ApplicationSettings';
-import { GridSettings } from '../common-ui-elements/interfaces';
+import { DeliveryStatus } from '../families/DeliveryStatus'
+import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
+import { distCenterOrLabGuard } from '../auth/guards'
+import { DialogService, DestroyHelper } from '../select-popup/dialog'
+import { ApplicationSettings } from '../manage/ApplicationSettings'
+import { GridSettings } from '../common-ui-elements/interfaces'
 
 @Component({
   selector: 'app-self-pickup',
@@ -17,71 +17,74 @@ import { GridSettings } from '../common-ui-elements/interfaces';
   styleUrls: ['./self-pickup.component.scss']
 })
 export class SelfPickupComponent implements OnInit, OnDestroy {
-
-
   static route: Route = {
-    path: 'self-pickup-families', component: SelfPickupComponent, canActivate: [distCenterOrLabGuard], data: {
+    path: 'self-pickup-families',
+    component: SelfPickupComponent,
+    canActivate: [distCenterOrLabGuard],
+    data: {
       name: 'באים לקחת',
       seperator: true
     }
-  };
+  }
 
-  constructor(private busy: BusyService
-    , private dialog: DialogService, public settings: ApplicationSettings) {
+  constructor(
+    private busy: BusyService,
+    private dialog: DialogService,
+    public settings: ApplicationSettings
+  ) {
     this.dialog.onDistCenterChange(async () => {
-      this.families.reloadData();
-    }, this.destroyHelper);
+      this.families.reloadData()
+    }, this.destroyHelper)
   }
-  destroyHelper = new DestroyHelper();
+  destroyHelper = new DestroyHelper()
   ngOnDestroy(): void {
-    this.destroyHelper.destroy();
+    this.destroyHelper.destroy()
   }
-  searchString: string = '';
-  showAllFamilies = false;
-  families = new GridSettings(remult.repo(ActiveFamilyDeliveries), { knowTotalRows: true });
-  pageSize = 7;
+  searchString: string = ''
+  showAllFamilies = false
+  families = new GridSettings(remult.repo(ActiveFamilyDeliveries), {
+    knowTotalRows: true
+  })
+  pageSize = 7
 
   async doFilter() {
-    await this.busy.donotWait(async () => this.getRows());
+    await this.busy.donotWait(async () => this.getRows())
   }
   async getRows() {
-
     await this.families.get({
       where: {
         name: { $contains: this.searchString },
-        distributionCenter: remult.context.filterDistCenter(this.dialog.distCenter),
-        deliverStatus: !this.showAllFamilies ? DeliveryStatus.SelfPickup : undefined
+        distributionCenter: remult.context.filterDistCenter(
+          this.dialog.distCenter
+        ),
+        deliverStatus: !this.showAllFamilies
+          ? DeliveryStatus.SelfPickup
+          : undefined
       },
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
       limit: this.pageSize
-    });
-
-
+    })
   }
   clearHelper() {
-    this.searchString = '';
-    this.doFilter();
+    this.searchString = ''
+    this.doFilter()
   }
 
   showStatus(f: ActiveFamilyDeliveries) {
     if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
       if (f.courier) {
-        return 'משוייך למתנדב';
+        return 'משוייך למתנדב'
       } else {
-        return '';
+        return ''
       }
     }
-    return f.deliverStatus.caption;
+    return f.deliverStatus.caption
   }
   async ngOnInit() {
-    this.busy.donotWait(async () =>
-      await this.getRows());
-
+    this.busy.donotWait(async () => await this.getRows())
   }
   moreFamilies() {
-    this.pageSize += 7;
-    this.getRows();
+    this.pageSize += 7
+    this.getRows()
   }
-
-
 }

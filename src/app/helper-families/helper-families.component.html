@@ -1,330 +1,579 @@
-<div class="success-div" *ngFor="let s of visibleSigns; let i=index" @message>
-  {{s}}
+<div class="success-div" *ngFor="let s of visibleSigns; let i = index" @message>
+  {{ s }}
 </div>
 
-<mat-card class="no-print" *ngIf="familyLists.toDeliver.length>0||familyLists.forceShowMap" >
+<mat-card
+  class="no-print"
+  *ngIf="familyLists.toDeliver.length > 0 || familyLists.forceShowMap"
+>
   <mat-card-title *ngIf="familyLists.getLeftFamiliesDescription()">
-    {{familyLists.getLeftFamiliesDescription()}}
+    {{ familyLists.getLeftFamiliesDescription() }}
     <div>
       <mat-menu #appMenu="matMenu">
-        <button mat-menu-item (click)="cancelAll()" *ngIf="partOfAssign"
-          style="color:red;">{{settings.lang.cancelAllAssignments}}</button>
-        <button mat-menu-item (click)="moveBasketsToOtherVolunteer()"
-          *ngIf="partOfAssign">{{settings.lang.moveDeliveriesToAnotherVolunteer}}</button>
+        <button
+          mat-menu-item
+          (click)="cancelAll()"
+          *ngIf="partOfAssign"
+          style="color: red"
+        >
+          {{ settings.lang.cancelAllAssignments }}
+        </button>
+        <button
+          mat-menu-item
+          (click)="moveBasketsToOtherVolunteer()"
+          *ngIf="partOfAssign"
+        >
+          {{ settings.lang.moveDeliveriesToAnotherVolunteer }}
+        </button>
         <ng-container *ngFor="let h of otherDependentVolunteers">
-          <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">{{settings.lang.moveDeliveriesTo}}
-            {{h.name}}</button>
+          <button mat-menu-item (click)="moveBasketsTo(h)" *ngIf="partOfAssign">
+            {{ settings.lang.moveDeliveriesTo }} {{ h.name }}
+          </button>
         </ng-container>
-        <button mat-menu-item (click)="okAll()" *ngIf="partOfAssign"
-          class="primary-menu">{{settings.lang.markAllDeliveriesAsSuccesfull}}</button>
+        <button
+          mat-menu-item
+          (click)="okAll()"
+          *ngIf="partOfAssign"
+          class="primary-menu"
+        >
+          {{ settings.lang.markAllDeliveriesAsSuccesfull }}
+        </button>
 
-        <button mat-menu-item (click)="familyLists.showBasketSummary()"
-          *ngIf="notMLT()">{{settings.lang.parcelSummary}}</button>
-        <button mat-menu-item (click)="toggleReorder()">{{settings.lang.changeRouteOrder}}</button>
-        <button mat-menu-item (click)="refreshRoute()">{{settings.lang.replanRoute}}</button>
-        <button mat-menu-item (click)="familyLists.toggleLabs()">
-          labs</button>
-        <button mat-menu-item (click)="showRouteOnGoogleMaps()" *ngIf="isAdmin()">
-          {{settings.lang.showRouteOnGoogleMaps}}</button>
-        <button mat-menu-item (click)="familyLists.chooseNavigation(true)" *ngIf="!familyLists.useWaze">
-          {{settings.lang.navigateWithWaze}}</button>
-        <button mat-menu-item (click)="familyLists.chooseNavigation(false)" *ngIf="familyLists.useWaze">
-          {{settings.lang.navigateWithGoogleMaps}}</button>
-        <button mat-menu-item (click)="setDefaultCourier()"
-          *ngIf="partOfAssign">{{settings.lang.setAsDefaultVolunteerForTheseFamilies}}</button>
-
+        <button
+          mat-menu-item
+          (click)="familyLists.showBasketSummary()"
+          *ngIf="notMLT()"
+        >
+          {{ settings.lang.parcelSummary }}
+        </button>
+        <button mat-menu-item (click)="toggleReorder()">
+          {{ settings.lang.changeRouteOrder }}
+        </button>
+        <button mat-menu-item (click)="refreshRoute()">
+          {{ settings.lang.replanRoute }}
+        </button>
+        <button mat-menu-item (click)="familyLists.toggleLabs()">labs</button>
+        <button
+          mat-menu-item
+          (click)="showRouteOnGoogleMaps()"
+          *ngIf="isAdmin()"
+        >
+          {{ settings.lang.showRouteOnGoogleMaps }}
+        </button>
+        <button
+          mat-menu-item
+          (click)="familyLists.chooseNavigation(true)"
+          *ngIf="!familyLists.useWaze"
+        >
+          {{ settings.lang.navigateWithWaze }}
+        </button>
+        <button
+          mat-menu-item
+          (click)="familyLists.chooseNavigation(false)"
+          *ngIf="familyLists.useWaze"
+        >
+          {{ settings.lang.navigateWithGoogleMaps }}
+        </button>
+        <button
+          mat-menu-item
+          (click)="setDefaultCourier()"
+          *ngIf="partOfAssign"
+        >
+          {{ settings.lang.setAsDefaultVolunteerForTheseFamilies }}
+        </button>
       </mat-menu>
 
-
-
-      <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="familyLists.toDeliver.length>0"
-        (click)="refreshDependentVolunteers()">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="appMenu"
+        *ngIf="familyLists.toDeliver.length > 0"
+        (click)="refreshDependentVolunteers()"
+      >
         <mat-icon>more_vert</mat-icon>
       </button>
-
     </div>
   </mat-card-title>
-  <div *ngIf="familyLists.getBoxes()||this.familyLists.whatToTake" class="icon-and-text no-print"
-    style="max-width:290px">
+  <div
+    *ngIf="familyLists.getBoxes() || this.familyLists.whatToTake"
+    class="icon-and-text no-print"
+    style="max-width: 290px"
+  >
     <mat-icon>shopping_bag</mat-icon>
-    <div style="display: flex;
-    white-space: nowrap;">
-      <div style="text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      max-width:195px;
-     ">{{familyLists.getBoxes()}} {{this.familyLists.whatToTake?.replace('\n',', ')}}</div> <a (click)="showBring()"
-        *ngIf="this.familyLists.whatToTake">{{settings.lang.fullList}}</a>
+    <div style="display: flex; white-space: nowrap">
+      <div
+        style="
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          max-width: 195px;
+        "
+      >
+        {{ familyLists.getBoxes() }}
+        {{ this.familyLists.whatToTake?.replace('\n', ', ') }}
+      </div>
+      <a (click)="showBring()" *ngIf="this.familyLists.whatToTake">{{
+        settings.lang.fullList
+      }}</a>
     </div>
   </div>
   <div
-    *ngIf="familyLists.toDeliver.length>=1&&familyLists.routeStats&&familyLists.routeStats.totalKm&&showLeftFamilies()"
-    class="icon-and-text no-print">
+    *ngIf="
+      familyLists.toDeliver.length >= 1 &&
+      familyLists.routeStats &&
+      familyLists.routeStats.totalKm &&
+      showLeftFamilies()
+    "
+    class="icon-and-text no-print"
+  >
     <mat-icon>schedule</mat-icon>
-    <span *ngIf="familyLists.routeStats"> {{familyLists.routeStats.totalTime}}
-      {{settings.lang.minutes}},
-      {{familyLists.routeStats.totalKm}} {{settings.lang.km}} <span
-        style="direction: ltr;">{{familyLists.getKmDiffString()}}</span> </span>
-
+    <span *ngIf="familyLists.routeStats">
+      {{ familyLists.routeStats.totalTime }} {{ settings.lang.minutes }},
+      {{ familyLists.routeStats.totalKm }} {{ settings.lang.km }}
+      <span style="direction: ltr">{{ familyLists.getKmDiffString() }}</span>
+    </span>
   </div>
-  <mat-tab-group (selectedTabChange)="mapTabClicked()" #theTab style="margin:0"
-    [style.marginInlineStart]="disableDrag?'':'16px'">
+  <mat-tab-group
+    (selectedTabChange)="mapTabClicked()"
+    #theTab
+    style="margin: 0"
+    [style.marginInlineStart]="disableDrag ? '' : '16px'"
+  >
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">toc</mat-icon>
-        {{settings.lang.list}}
+        {{ settings.lang.list }}
       </ng-template>
-      <mat-accordion class="no-print" cdkDropList (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let f of familyLists.toDeliver;let i=index;trackBy:trackBy">
-          <mat-expansion-panel #myPanel *ngIf="limitReady.shouldShow(i)" cdkDrag [cdkDragDisabled]="disableDrag"
-            (click)="deliveryDetails(f,myPanel)" (afterExpand)="afterExpand(scrollToTop)">
+      <mat-accordion
+        class="no-print"
+        cdkDropList
+        (cdkDropListDropped)="drop($event)"
+      >
+        <ng-container
+          *ngFor="
+            let f of familyLists.toDeliver;
+            let i = index;
+            trackBy: trackBy
+          "
+        >
+          <mat-expansion-panel
+            #myPanel
+            *ngIf="limitReady.shouldShow(i)"
+            cdkDrag
+            [cdkDragDisabled]="disableDrag"
+            (click)="deliveryDetails(f, myPanel)"
+            (afterExpand)="afterExpand(scrollToTop)"
+          >
             <mat-expansion-panel-header>
               <div #scrollToTop></div>
-              <app-family-in-list [f]="f" [i]="i+1" style="width:100%"
-                [distanceFromPreviousLocation]="distanceFromPreviousLocation(f,i)" (delivered)="deliveredToFamily(f)"
-                [latestAssign]="partOfAssign&&f.courierAssingTime?.valueOf()==familyLists.maxAssignTime"
-                [newAssign]="familyLists.highlightNewFamilies&&!familyLists.familiesAlreadyAssigned.get(f.id)">
+              <app-family-in-list
+                [f]="f"
+                [i]="i + 1"
+                style="width: 100%"
+                [distanceFromPreviousLocation]="
+                  distanceFromPreviousLocation(f, i)
+                "
+                (delivered)="deliveredToFamily(f)"
+                [latestAssign]="
+                  partOfAssign &&
+                  f.courierAssingTime?.valueOf() == familyLists.maxAssignTime
+                "
+                [newAssign]="
+                  familyLists.highlightNewFamilies &&
+                  !familyLists.familiesAlreadyAssigned.get(f.id)
+                "
+              >
               </app-family-in-list>
-
-
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-
-
-              <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-                (assignmentCanceled)="cancelAssign(f)" [userFamilies]="familyLists">
-
-
-                <button mat-raised-button class="myButton" color="primary"
-                  (click)="deliveredToFamily(f)">{{settings.deliveredButtonText}}</button>
+              <app-family-info
+                [f]="f"
+                [showHelp]="true"
+                [partOfAssign]="partOfAssign"
+                (assignmentCanceled)="cancelAssign(f)"
+                [userFamilies]="familyLists"
+              >
+                <button
+                  mat-raised-button
+                  class="myButton"
+                  color="primary"
+                  (click)="deliveredToFamily(f)"
+                >
+                  {{ settings.deliveredButtonText }}
+                </button>
                 <br *ngIf="settings.showLeftThereButton" />
-                <button *ngIf="settings.showLeftThereButton" mat-raised-button class="myButton"
-                  (click)="leftThere(f)">{{settings.lang.leftDeliveryNextToHouse}}
+                <button
+                  *ngIf="settings.showLeftThereButton"
+                  mat-raised-button
+                  class="myButton"
+                  (click)="leftThere(f)"
+                >
+                  {{ settings.lang.leftDeliveryNextToHouse }}
                 </button>
                 <br />
-                <button mat-raised-button class="myButton badButton"
-                  (click)="couldntDeliverToFamily(f)">{{settings.problemButtonText}}</button>
-                <button mat-raised-button class="myButton"
-                  *ngIf="settings.isSytemForMlt||settings.volunteerCanUpdateDeliveryComment"
-                  (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
-
-
+                <button
+                  mat-raised-button
+                  class="myButton badButton"
+                  (click)="couldntDeliverToFamily(f)"
+                >
+                  {{ settings.problemButtonText }}
+                </button>
+                <button
+                  mat-raised-button
+                  class="myButton"
+                  *ngIf="
+                    settings.isSytemForMlt ||
+                    settings.volunteerCanUpdateDeliveryComment
+                  "
+                  (click)="updateComment(f)"
+                >
+                  {{ settings.lang.updateComment }}
+                </button>
               </app-family-info>
             </ng-template>
           </mat-expansion-panel>
         </ng-container>
       </mat-accordion>
-      <button mat-raised-button (click)="limitReady.showAll()" *ngIf="limitReady.showButton()"
-        style="margin-top: 10px;">{{settings.lang.showAllDeliveries}}</button>
+      <button
+        mat-raised-button
+        (click)="limitReady.showAll()"
+        *ngIf="limitReady.showButton()"
+        style="margin-top: 10px"
+      >
+        {{ settings.lang.showAllDeliveries }}
+      </button>
     </mat-tab>
 
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">room</mat-icon>
-        {{settings.lang.map}}
+        {{ settings.lang.map }}
       </ng-template>
       <app-map #map> </app-map>
     </mat-tab>
-
   </mat-tab-group>
-
 </mat-card>
 
-
-<div style="display:flex;flex-direction: column;">
-  <h4 *ngIf="!showLeftFamilies()&&familyLists.loaded">
-    {{allDoneMessage()}}
+<div style="display: flex; flex-direction: column">
+  <h4 *ngIf="!showLeftFamilies() && familyLists.loaded">
+    {{ allDoneMessage() }}
   </h4>
 
-  <div class="sendSmsButtonLine no-print"
-    *ngIf="familyLists.toDeliver.length &&(partOfAssign&&!partOfReview||partOfReview&&!helperGotSms)">
-    <button mat-raised-button color="accent"
-      style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px"
-      (click)="sendSms(false)">{{settings.lang.sendSmsWithLink}}</button>
-    <button [matMenuTriggerFor]="appMenuSms" mat-raised-button color="accent" style="border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      padding-left: 0;
-      padding-right: 0;
-      min-width: 38px;" (click)="prepareMessage(false)">
+  <div
+    class="sendSmsButtonLine no-print"
+    *ngIf="
+      familyLists.toDeliver.length &&
+      ((partOfAssign && !partOfReview) || (partOfReview && !helperGotSms))
+    "
+  >
+    <button
+      mat-raised-button
+      color="accent"
+      style="
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        width: 270px;
+      "
+      (click)="sendSms(false)"
+    >
+      {{ settings.lang.sendSmsWithLink }}
+    </button>
+    <button
+      [matMenuTriggerFor]="appMenuSms"
+      mat-raised-button
+      color="accent"
+      style="
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        padding-left: 0;
+        padding-right: 0;
+        min-width: 38px;
+      "
+      (click)="prepareMessage(false)"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #appMenuSms="matMenu">
-      <button mat-menu-item (click)="sendWhatsapp()">{{settings.lang.sendLinkOnWhatsapp}}</button>
-      <button mat-menu-item (click)="copyMessage()">{{settings.lang.copyMessageWithLink}}</button>
-      <button mat-menu-item (click)="copyLink()">{{settings.lang.copyLink}}</button>
-      <button mat-menu-item (click)="sendPhoneSms()">{{settings.lang.sendSmsFromDevice}}</button>
-      <button mat-menu-item (click)="customSms()">{{settings.lang.customSmsMessage}}</button>
-      <button mat-menu-item (click)="print()">{{settings.lang.printVolunteerPage}}</button>
-
+      <button mat-menu-item (click)="sendWhatsapp()">
+        {{ settings.lang.sendLinkOnWhatsapp }}
+      </button>
+      <button mat-menu-item (click)="copyMessage()">
+        {{ settings.lang.copyMessageWithLink }}
+      </button>
+      <button mat-menu-item (click)="copyLink()">
+        {{ settings.lang.copyLink }}
+      </button>
+      <button mat-menu-item (click)="sendPhoneSms()">
+        {{ settings.lang.sendSmsFromDevice }}
+      </button>
+      <button mat-menu-item (click)="customSms()">
+        {{ settings.lang.customSmsMessage }}
+      </button>
+      <button mat-menu-item (click)="print()">
+        {{ settings.lang.printVolunteerPage }}
+      </button>
     </mat-menu>
-
   </div>
   <div class="sendSmsButtonLine no-print">
-    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" mat-raised-button
+    <button
+      *ngIf="partOfReview && familyLists.toDeliver.length > 0"
+      mat-raised-button
       class="contact-helper-button no-print"
-      style="border-top-left-radius: 0px;border-bottom-left-radius:0px;width:270px" color="primary"
-      (click)="sendSms(true)">
-
+      style="
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        width: 270px;
+      "
+      color="primary"
+      (click)="sendSms(true)"
+    >
       <span
-        *ngIf="familyLists&&familyLists.helper&&familyLists.helper.reminderSmsDate; else elseContent">{{settings.lang.reminderSent}}
-        {{reminderSmsRelativeDate()}} {{settings.lang.resendReminder}}
-
+        *ngIf="
+          familyLists &&
+            familyLists.helper &&
+            familyLists.helper.reminderSmsDate;
+          else elseContent
+        "
+        >{{ settings.lang.reminderSent }} {{ reminderSmsRelativeDate() }}
+        {{ settings.lang.resendReminder }}
       </span>
 
       <ng-template #elseContent>
-        <span>{{settings.lang.sendReminderSms}}</span>
+        <span>{{ settings.lang.sendReminderSms }}</span>
       </ng-template>
     </button>
 
-    <button *ngIf="partOfReview&&familyLists.toDeliver.length>0" [matMenuTriggerFor]="appMenuSmsReminder"
-      mat-raised-button color="primary" style="border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      padding-left: 0;
-      padding-right: 0;
-      min-width: 38px;" (click)="prepareMessage(true)">
+    <button
+      *ngIf="partOfReview && familyLists.toDeliver.length > 0"
+      [matMenuTriggerFor]="appMenuSmsReminder"
+      mat-raised-button
+      color="primary"
+      style="
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        padding-left: 0;
+        padding-right: 0;
+        min-width: 38px;
+      "
+      (click)="prepareMessage(true)"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #appMenuSmsReminder="matMenu">
-      <button mat-menu-item (click)="sendWhatsapp()">{{settings.lang.sendLinkOnWhatsapp}}</button>
-      <button mat-menu-item (click)="copyMessage()">{{settings.lang.copyMessageWithLink}}</button>
-      <button mat-menu-item (click)="copyLink()">{{settings.lang.copyLink}}</button>
-      <button mat-menu-item (click)="sendPhoneSms()">{{settings.lang.sendSmsFromDevice}}</button>
-      <button mat-menu-item (click)="customSms()">{{settings.lang.customSmsMessage}}</button>
+      <button mat-menu-item (click)="sendWhatsapp()">
+        {{ settings.lang.sendLinkOnWhatsapp }}
+      </button>
+      <button mat-menu-item (click)="copyMessage()">
+        {{ settings.lang.copyMessageWithLink }}
+      </button>
+      <button mat-menu-item (click)="copyLink()">
+        {{ settings.lang.copyLink }}
+      </button>
+      <button mat-menu-item (click)="sendPhoneSms()">
+        {{ settings.lang.sendSmsFromDevice }}
+      </button>
+      <button mat-menu-item (click)="customSms()">
+        {{ settings.lang.customSmsMessage }}
+      </button>
     </mat-menu>
   </div>
 
   <div class="sendSmsButtonLine no-print">
-    <button mat-raised-button class="contact-helper-button no-print" *ngIf="partOfReview&&familyLists.helper"
-      (click)="callHelper()">
+    <button
+      mat-raised-button
+      class="contact-helper-button no-print"
+      *ngIf="partOfReview && familyLists.helper"
+      (click)="callHelper()"
+    >
       <mat-icon>phone</mat-icon>
-      {{settings.lang.dialTo}}{{familyLists.helper.name}}
-      {{familyLists.helper.phone.displayValue}}
-
+      {{ settings.lang.dialTo }}{{ familyLists.helper.name }}
+      {{ familyLists.helper.phone.displayValue }}
     </button>
   </div>
   <div class="sendSmsButtonLine no-print">
-    <button mat-raised-button class="contact-helper-button"
-      *ngIf="partOfReview&&familyLists.helper && familyLists.escort" (click)="callEscort()">
-      {{settings.lang.callEscort}} {{familyLists.escort.name}}
-      {{familyLists.escort.phone.displayValue}}
-
+    <button
+      mat-raised-button
+      class="contact-helper-button"
+      *ngIf="partOfReview && familyLists.helper && familyLists.escort"
+      (click)="callEscort()"
+    >
+      {{ settings.lang.callEscort }} {{ familyLists.escort.name }}
+      {{ familyLists.escort.phone.displayValue }}
     </button>
   </div>
-  <div class="sendSmsButtonLine no-print" *ngIf="partOfAssign" style="height:50px">
-  </div>
+  <div
+    class="sendSmsButtonLine no-print"
+    *ngIf="partOfAssign"
+    style="height: 50px"
+  ></div>
 
   <div class="print-only">
-    <div *ngIf="familyLists.helper&&!familyLists.helper.isNew()">
-      <h4>{{settings.lang.hello}}
-        {{familyLists.helper.name +(familyLists.helper.eventComment?' ('+familyLists.helper.eventComment+')':'')}},
-        {{settings.lang.phone}} {{familyLists.getHelperPhone() }}, {{settings.lang.thereAre}}
-        {{familyLists.getLeftFamiliesDescription()}} </h4>
-      {{getHelpText()}}
+    <div *ngIf="familyLists.helper && !familyLists.helper.isNew()">
+      <h4>
+        {{ settings.lang.hello }}
+        {{
+          familyLists.helper.name +
+            (familyLists.helper.eventComment
+              ? ' (' + familyLists.helper.eventComment + ')'
+              : '')
+        }}, {{ settings.lang.phone }} {{ familyLists.getHelperPhone() }},
+        {{ settings.lang.thereAre }}
+        {{ familyLists.getLeftFamiliesDescription() }}
+      </h4>
+      {{ getHelpText() }}
     </div>
     <table class="printTable">
       <tr>
-        <th>{{settings.lang.family}}</th>
-        <th>{{settings.lang.address}}</th>
-        <th>{{settings.lang.phones}}</th>
-        <th>{{settings.lang.basket}}</th>
+        <th>{{ settings.lang.family }}</th>
+        <th>{{ settings.lang.address }}</th>
+        <th>{{ settings.lang.phones }}</th>
+        <th>{{ settings.lang.basket }}</th>
       </tr>
-      <tr *ngFor="let f of familyLists.toDeliver;let i=index">
+      <tr *ngFor="let f of familyLists.toDeliver; let i = index">
         <td>
-          {{i+1}}. {{f.name}}
+          {{ i + 1 }}. {{ f.name }}
           <ng-container *ngIf="f.deliveryComments">
             <br />
-            <strong style="color:red">{{settings.lang.notice}} </strong> {{f.deliveryComments}}
+            <strong style="color: red">{{ settings.lang.notice }} </strong>
+            {{ f.deliveryComments }}
           </ng-container>
         </td>
 
         <td>
-          {{f.address}}
+          {{ f.address }}
           <ng-container *ngIf="f.area">
             <br />
-            {{f.$.area.metadata.caption}}: {{f.area}}
+            {{ f.$.area.metadata.caption }}: {{ f.area }}
           </ng-container>
-          <ng-container *ngIf="f.floor||f.appartment">
+          <ng-container *ngIf="f.floor || f.appartment">
             <br />
           </ng-container>
           <ng-container *ngIf="f.floor">
-            {{f.$.floor.metadata.caption}} {{f.floor}}
+            {{ f.$.floor.metadata.caption }} {{ f.floor }}
           </ng-container>
           <ng-container *ngIf="f.appartment">
-            {{f.$.appartment.metadata.caption}} {{f.appartment}}
+            {{ f.$.appartment.metadata.caption }} {{ f.appartment }}
           </ng-container>
           <ng-container *ngIf="f.entrance">
-            {{f.$.entrance.metadata.caption}} {{f.entrance}}
+            {{ f.$.entrance.metadata.caption }} {{ f.entrance }}
           </ng-container>
           <ng-container *ngIf="f.addressComment">
-            <br /> {{f.addressComment}}
+            <br />
+            {{ f.addressComment }}
           </ng-container>
         </td>
         <td>
-          {{f.phone1?.displayValue}}<ng-container *ngIf="f.phone1Description">, {{f.phone1Description}}
+          {{ f.phone1?.displayValue
+          }}<ng-container *ngIf="f.phone1Description"
+            >, {{ f.phone1Description }}
           </ng-container>
-          <div style="margin-top:5px" *ngIf="f.phone2">
-
-            <div style="display:inline-block">
-              {{f.phone2?.displayValue}}, {{f.phone2Description?f.phone2Description:f.name}}
-
+          <div style="margin-top: 5px" *ngIf="f.phone2">
+            <div style="display: inline-block">
+              {{ f.phone2?.displayValue }},
+              {{ f.phone2Description ? f.phone2Description : f.name }}
             </div>
           </div>
         </td>
         <td>
-          <span *ngIf="f.quantity>1">{{f.quantity}} x </span> {{f.$.basketType.displayValue}}
+          <span *ngIf="f.quantity > 1">{{ f.quantity }} x </span>
+          {{ f.$.basketType.displayValue }}
         </td>
       </tr>
-      <tr>
-
-
-      </tr>
+      <tr></tr>
     </table>
   </div>
 
-  <mat-card *ngIf="familyLists.problem.length>0" class="no-print">
-    <mat-card-title>{{settings.lang.failedDeliveries}} - {{familyLists.problem.length}}
+  <mat-card *ngIf="familyLists.problem.length > 0" class="no-print">
+    <mat-card-title
+      >{{ settings.lang.failedDeliveries }} - {{ familyLists.problem.length }}
     </mat-card-title>
     <mat-accordion>
-      <mat-expansion-panel #myPanel *ngFor="let f of familyLists.problem" (click)="deliveryDetails(f,myPanel)">
+      <mat-expansion-panel
+        #myPanel
+        *ngFor="let f of familyLists.problem"
+        (click)="deliveryDetails(f, myPanel)"
+      >
         <mat-expansion-panel-header>
-          <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+          <app-family-in-list [f]="f" style="width: 100%"></app-family-in-list>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
-          <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-            (assignmentCanceled)="cancelAssign(f)" (refreshList)="familyLists.reload()">
-            <button mat-raised-button class="myButton"
-              (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
-            <button mat-raised-button class="myButton badButton"
-              (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake}}</button>
-
+          <app-family-info
+            [f]="f"
+            [showHelp]="true"
+            [partOfAssign]="partOfAssign"
+            (assignmentCanceled)="cancelAssign(f)"
+            (refreshList)="familyLists.reload()"
+          >
+            <button
+              mat-raised-button
+              class="myButton"
+              (click)="updateComment(f)"
+            >
+              {{ settings.lang.updateComment }}
+            </button>
+            <button
+              mat-raised-button
+              class="myButton badButton"
+              (click)="returnToDeliver(f)"
+            >
+              {{ settings.lang.clickedByMistake }}
+            </button>
           </app-family-info>
         </ng-template>
       </mat-expansion-panel>
     </mat-accordion>
   </mat-card>
-  <mat-card *ngIf="familyLists.delivered.length>0" class="no-print">
+  <mat-card *ngIf="familyLists.delivered.length > 0" class="no-print">
     <mat-card-title>
-      {{settings.lang.deliveriesDoneInTheLastTwoDays}} - {{familyLists.delivered.length}}
+      {{ settings.lang.deliveriesDoneInTheLastTwoDays }} -
+      {{ familyLists.delivered.length }}
     </mat-card-title>
     <mat-accordion>
-      <ng-container *ngFor="let f of familyLists.delivered;let i=index">
-        <mat-expansion-panel #myPanel *ngIf="limitDelivered.shouldShow(i)" (click)="deliveryDetails(f,myPanel)">
+      <ng-container *ngFor="let f of familyLists.delivered; let i = index">
+        <mat-expansion-panel
+          #myPanel
+          *ngIf="limitDelivered.shouldShow(i)"
+          (click)="deliveryDetails(f, myPanel)"
+        >
           <mat-expansion-panel-header>
-            <app-family-in-list [f]="f" style="width:100%"></app-family-in-list>
+            <app-family-in-list
+              [f]="f"
+              style="width: 100%"
+            ></app-family-in-list>
           </mat-expansion-panel-header>
           <ng-template matExpansionPanelContent>
-            <app-family-info [f]="f" [showHelp]="true" [partOfAssign]="partOfAssign"
-              (assignmentCanceled)="cancelAssign(f)" (refreshList)="familyLists.reload()">
-              <button mat-raised-button class="myButton"
-                (click)="updateComment(f)">{{settings.lang.updateComment}}</button>
-              <button mat-raised-button class="myButton badButton"
-                (click)="returnToDeliver(f)">{{settings.lang.clickedByMistake}}</button>
+            <app-family-info
+              [f]="f"
+              [showHelp]="true"
+              [partOfAssign]="partOfAssign"
+              (assignmentCanceled)="cancelAssign(f)"
+              (refreshList)="familyLists.reload()"
+            >
+              <button
+                mat-raised-button
+                class="myButton"
+                (click)="updateComment(f)"
+              >
+                {{ settings.lang.updateComment }}
+              </button>
+              <button
+                mat-raised-button
+                class="myButton badButton"
+                (click)="returnToDeliver(f)"
+              >
+                {{ settings.lang.clickedByMistake }}
+              </button>
             </app-family-info>
           </ng-template>
         </mat-expansion-panel>
       </ng-container>
     </mat-accordion>
-    <button mat-raised-button (click)="limitDelivered.showAll()" *ngIf="limitDelivered.showButton()"
-      style="margin-top: 10px;">{{settings.lang.showAllCompletedDeliveries}}</button>
+    <button
+      mat-raised-button
+      (click)="limitDelivered.showAll()"
+      *ngIf="limitDelivered.showButton()"
+      style="margin-top: 10px"
+    >
+      {{ settings.lang.showAllCompletedDeliveries }}
+    </button>
   </mat-card>
 </div>

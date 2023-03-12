@@ -1,60 +1,90 @@
-<div mat-dialog-content style="height:65vh">
-  <div style="display:Flex">
+<div mat-dialog-content style="height: 65vh">
+  <div style="display: Flex">
     <button mat-raised-button color="warning" (click)="close()">
-      {{settings.lang.close}}
+      {{ settings.lang.close }}
     </button>
-    <button mat-raised-button style="color:red" (click)="clearHelper()">
-      {{settings.lang.clear}}
+    <button mat-raised-button style="color: red" (click)="clearHelper()">
+      {{ settings.lang.clear }}
     </button>
-    <button mat-raised-button color="accent" (click)="byLocation()" *ngIf="args&&args.location">
-      {{settings.lang.byLocation}}
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="byLocation()"
+      *ngIf="args && args.location"
+    >
+      {{ settings.lang.byLocation }}
     </button>
     <button mat-raised-button color="primary" (click)="addHelper()">
-      {{settings.lang.new}}
+      {{ settings.lang.new }}
     </button>
   </div>
-  <mat-checkbox [(ngModel)]="args.includeFrozen" (change)="getHelpers()" style="margin-right:10px" *ngIf="isMlt()">
-    {{settings.lang.showFreezed}}</mat-checkbox>
+  <mat-checkbox
+    [(ngModel)]="args.includeFrozen"
+    (change)="getHelpers()"
+    style="margin-right: 10px"
+    *ngIf="isMlt()"
+  >
+    {{ settings.lang.showFreezed }}</mat-checkbox
+  >
   <form (submit)="selectFirst()">
-
-
-
-
-    <mat-form-field style="width:100%">
-      <input matInput [(ngModel)]="searchString" cdk-focus (input)="doFilter()"
-        placeholder="{{settings.lang.searchVolunteer}}" [ngModelOptions]="{standalone: true}">
-      <mat-icon matSuffix (click)="searchString=''">clear</mat-icon>
+    <mat-form-field style="width: 100%">
+      <input
+        matInput
+        [(ngModel)]="searchString"
+        cdk-focus
+        (input)="doFilter()"
+        placeholder="{{ settings.lang.searchVolunteer }}"
+        [ngModelOptions]="{ standalone: true }"
+      />
+      <mat-icon matSuffix (click)="searchString = ''">clear</mat-icon>
     </mat-form-field>
-    <h4 *ngIf="showingRecentHelpers">{{settings.lang.recentVolunteers}}</h4>
+    <h4 *ngIf="showingRecentHelpers">{{ settings.lang.recentVolunteers }}</h4>
 
-    <div *ngFor="let h of filteredHelpers" (click)="select(h)" style="display:flex;flex-direction: column;">
-
-      <div style="display:flex;justify-content: space-between;">
-        {{h.name}}
-        <div style="text-align: end;" class="secondary-text">
-          <div *ngIf="h.assignedDeliveries>0"> {{h.assignedDeliveries}} {{settings.lang.ActiveDeliveries}}</div>
-          <div *ngIf="h.lastCompletedDeliveryString" class="{{h.isBusyVolunteer}}">
-            {{h.totalRecentDeliveries}} {{settings.lang.deliveriesCompleted}} ({{h.lastCompletedDeliveryString}})
+    <div
+      *ngFor="let h of filteredHelpers"
+      (click)="select(h)"
+      style="display: flex; flex-direction: column"
+    >
+      <div style="display: flex; justify-content: space-between">
+        {{ h.name }}
+        <div style="text-align: end" class="secondary-text">
+          <div *ngIf="h.assignedDeliveries > 0">
+            {{ h.assignedDeliveries }} {{ settings.lang.ActiveDeliveries }}
           </div>
-          <div *ngIf="h.fixedFamilies>0"> {{h.fixedFamilies}} {{settings.lang.families}}</div>
-          <div *ngIf="h.hadProblem" style="color:red"> {{settings.lang.hadProblemBefore}} </div>
+          <div
+            *ngIf="h.lastCompletedDeliveryString"
+            class="{{ h.isBusyVolunteer }}"
+          >
+            {{ h.totalRecentDeliveries }}
+            {{ settings.lang.deliveriesCompleted }} ({{
+              h.lastCompletedDeliveryString
+            }})
+          </div>
+          <div *ngIf="h.fixedFamilies > 0">
+            {{ h.fixedFamilies }} {{ settings.lang.families }}
+          </div>
+          <div *ngIf="h.hadProblem" style="color: red">
+            {{ settings.lang.hadProblemBefore }}
+          </div>
         </div>
       </div>
 
       <div class="secondary-text">
-        {{h.phone}}
+        {{ h.phone }}
       </div>
       <div *ngIf="h.location" class="secondary-text">
-        {{h.distance.toFixed(1)}} {{settings.lang.km}} {{settings.lang.from}} {{h.distanceFrom}}
+        {{ h.distance.toFixed(1) }} {{ settings.lang.km }}
+        {{ settings.lang.from }} {{ h.distanceFrom }}
       </div>
       <mat-divider></mat-divider>
     </div>
-
-
-
-
   </form>
-  <button mat-raised-button color="accent" (click)="moreHelpers()"
-    *ngIf="showingRecentHelpers|| filteredHelpers.length==limit">{{settings.lang.moreVolunteers}}
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="moreHelpers()"
+    *ngIf="showingRecentHelpers || filteredHelpers.length == limit"
+  >
+    {{ settings.lang.moreVolunteers }}
   </button>
 </div>

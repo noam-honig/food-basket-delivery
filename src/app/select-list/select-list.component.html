@@ -1,27 +1,42 @@
-<h3 matDialogHeader>{{args.title}}</h3>
+<h3 matDialogHeader>{{ args.title }}</h3>
 
 <mat-dialog-content>
-    <mat-nav-list role="list">
-        <mat-list-item *ngFor="let h of args.options" (click)="select(h)" style="height:max-content">
-
-            <mat-panel-description style="min-width:100px;" *ngIf="args.multiSelect" style="height:max-content">
-                <mat-checkbox  [(ngModel)]="h.selected">
-                    {{h.name}}
-                </mat-checkbox>
-            </mat-panel-description>
-            <mat-panel-description style="min-width:100px;" *ngIf="!args.multiSelect" style="height:max-content">
-                    {{h.name}}
-            </mat-panel-description>
-            <mat-divider></mat-divider>
-        </mat-list-item>
-    </mat-nav-list>
+  <mat-nav-list role="list">
+    <mat-list-item
+      *ngFor="let h of args.options"
+      (click)="select(h)"
+      style="height: max-content"
+    >
+      <mat-panel-description
+        style="min-width: 100px"
+        *ngIf="args.multiSelect"
+        style="height: max-content"
+      >
+        <mat-checkbox [(ngModel)]="h.selected">
+          {{ h.name }}
+        </mat-checkbox>
+      </mat-panel-description>
+      <mat-panel-description
+        style="min-width: 100px"
+        *ngIf="!args.multiSelect"
+        style="height: max-content"
+      >
+        {{ h.name }}
+      </mat-panel-description>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+  </mat-nav-list>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-raised-button color="warning" (click)="close()">
-        {{settings.lang.cancel}}
-    </button>
-    <button mat-raised-button color="accent" (click)="confirm()" *ngIf="args.multiSelect">
-        {{settings.lang.confirm}}
-    </button>
-
+  <button mat-raised-button color="warning" (click)="close()">
+    {{ settings.lang.cancel }}
+  </button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="confirm()"
+    *ngIf="args.multiSelect"
+  >
+    {{ settings.lang.confirm }}
+  </button>
 </mat-dialog-actions>

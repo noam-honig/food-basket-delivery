@@ -1,44 +1,59 @@
-<div style="    display: flex;
-justify-content: space-between;
-">
-
-    <span style="white-space: pre-line;"
-        *ngIf="!settings.callModuleMessageLink">{{settings.callModuleMessageText}}</span>
-    <a style="white-space: pre-line;" *ngIf="settings.callModuleMessageLink" [href]="settings.callModuleMessageLink"
-        target="_blank">{{settings.callModuleMessageText}}</a>
-    <app-dots-menu [buttons]="menu" *ngIf="isAdmin()"></app-dots-menu>
+<div style="display: flex; justify-content: space-between">
+  <span style="white-space: pre-line" *ngIf="!settings.callModuleMessageLink">{{
+    settings.callModuleMessageText
+  }}</span>
+  <a
+    style="white-space: pre-line"
+    *ngIf="settings.callModuleMessageLink"
+    [href]="settings.callModuleMessageLink"
+    target="_blank"
+    >{{ settings.callModuleMessageText }}</a
+  >
+  <app-dots-menu [buttons]="menu" *ngIf="isAdmin()"></app-dots-menu>
 </div>
 <div *ngIf="this.d">
-    <h3>{{d.name}}</h3>
-    <div *ngFor="let phone of famInfo.phones">
-        <button color="primary" mat-flat-button (click)="famInfo.callPhone(phone.phone)" class="small-button"
-            style="margin: 8px;">
-            <mat-icon>call</mat-icon> {{settings.lang.dial}}
-        </button>
-        <span style="display:inline-block" *ngIf="phone.desc">{{phone.desc+','}}&nbsp;</span>
-        <a (click)="famInfo.callPhone(phone.phone)">{{phone.phone.displayValue}}</a>
-        <mat-divider></mat-divider>
-    </div>
-    <app-family-info [f]="d" [callerScreen]="true" #famInfo></app-family-info>
-    <div style="display:flex;flex-wrap: wrap;gap:8px;margin:8px">
-        <button mat-raised-button color="primary" (click)="updateFamilyInfo()">עדכון פרטי משפחה</button>
-    </div>
-    <H4>האם מעוניינים במשלוח?</H4>
-    <div style="display:flex;flex-wrap: wrap;gap:8px;margin:8px">
-        <button mat-raised-button (click)="interested()">כן</button>
-        <button mat-raised-button (click)="notInterested()">לא</button>
-        <button mat-raised-button (click)="toAdmin()">העבר למנהל</button>
+  <h3>{{ d.name }}</h3>
+  <div *ngFor="let phone of famInfo.phones">
+    <button
+      color="primary"
+      mat-flat-button
+      (click)="famInfo.callPhone(phone.phone)"
+      class="small-button"
+      style="margin: 8px"
+    >
+      <mat-icon>call</mat-icon> {{ settings.lang.dial }}
+    </button>
+    <span style="display: inline-block" *ngIf="phone.desc"
+      >{{ phone.desc + ',' }}&nbsp;</span
+    >
+    <a (click)="famInfo.callPhone(phone.phone)">{{
+      phone.phone.displayValue
+    }}</a>
+    <mat-divider></mat-divider>
+  </div>
+  <app-family-info [f]="d" [callerScreen]="true" #famInfo></app-family-info>
+  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px">
+    <button mat-raised-button color="primary" (click)="updateFamilyInfo()">
+      עדכון פרטי משפחה
+    </button>
+  </div>
+  <H4>האם מעוניינים במשלוח?</H4>
+  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px">
+    <button mat-raised-button (click)="interested()">כן</button>
+    <button mat-raised-button (click)="notInterested()">לא</button>
+    <button mat-raised-button (click)="toAdmin()">העבר למנהל</button>
+  </div>
 
-    </div>
-
-    <!-- <data-area class="area" [settings]="address"></data-area> -->
+  <!-- <data-area class="area" [settings]="address"></data-area> -->
 </div>
 <H4 *ngIf="this.d">לא ענו?</H4>
-<div style="display:flex;flex-wrap: wrap;gap:8px">
-    <button mat-raised-button (click)="nextCall()">שיחה הבאה</button>
-    <button mat-raised-button *ngIf="this.d" (click)="done()">סיים</button>
-    <button mat-raised-button (click)="search()">חיפוש משפחה</button>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+  <button mat-raised-button (click)="nextCall()">שיחה הבאה</button>
+  <button mat-raised-button *ngIf="this.d" (click)="done()">סיים</button>
+  <button mat-raised-button (click)="search()">חיפוש משפחה</button>
 </div>
 <div *ngIf="this.caller">
-    השלמת {{caller.callsCompleted}} שיחות<span *ngIf="caller.callQuota"> מתוך {{caller.callQuota}} </span>
+  השלמת {{ caller.callsCompleted }} שיחות<span *ngIf="caller.callQuota">
+    מתוך {{ caller.callQuota }}
+  </span>
 </div>
