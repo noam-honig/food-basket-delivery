@@ -13,7 +13,7 @@
   >{{ settings.lang.showAllFamilies }}
 </mat-checkbox>
 <mat-accordion class="no-print">
-  <mat-expansion-panel #myPanel *ngFor="let f of families.items; let i = index">
+  <mat-expansion-panel #myPanel *ngFor="let f of families; let i = index">
     <mat-expansion-panel-header
       class="mat-expansion-panel-header {{ f.getCss() }}"
     >
@@ -32,7 +32,7 @@
   mat-raised-button
   color="accent"
   (click)="moreFamilies()"
-  *ngIf="families.items.length != families.totalRows"
+  *ngIf="families.length != totalRows"
 >
   {{ settings.lang.moreFamilies }}
 </button>

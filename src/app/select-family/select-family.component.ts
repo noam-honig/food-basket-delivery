@@ -8,6 +8,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { DistributionCenters } from '../manage/distribution-centers'
 import { BusyService } from '../common-ui-elements'
+import { Families } from '../families/families'
 
 @Component({
   selector: 'app-select-family',
@@ -31,9 +32,8 @@ export class SelectFamilyComponent implements OnInit {
     public settings: ApplicationSettings
   ) {}
   searchString: string = ''
-  families = new GridSettings(remult.repo(ActiveFamilyDeliveries), {
-    knowTotalRows: true
-  })
+  families: ActiveFamilyDeliveries[] = []
+  totalRows = 0
   pageSize = 30
   showAll = false
   selectFirst() {}
@@ -66,8 +66,9 @@ export class SelectFamilyComponent implements OnInit {
   async doFilter() {
     await this.busy.donotWait(async () => this.getRows())
   }
+
   async getRows() {
-    await this.families.get({
+    const q = remult.repo(ActiveFamilyDeliveries).query({
       where: {
         distributionCenter: remult.context.filterDistCenter(
           this.args.distCenter
@@ -81,8 +82,10 @@ export class SelectFamilyComponent implements OnInit {
         $and: [!this.showAll ? this.args.where : undefined]
       },
       orderBy: this.args.orderBy || { name: 'asc' },
-      limit: this.pageSize
+      pageSize: this.pageSize
     })
+    q.count().then((rows) => (this.totalRows = rows))
+    q.getPage(0).then((rows) => (this.families = rows))
   }
 
   clearHelper() {
@@ -99,7 +102,7 @@ export class SelectFamilyComponent implements OnInit {
       this.pageSize = 200
       await this.getRows()
 
-      this.args.onSelect(this.families.items)
+      this.args.onSelect(this.families)
     }
 
     this.dialogRef.close()
@@ -120,7 +123,7 @@ export class SelectFamilyComponent implements OnInit {
     this.search.nativeElement.focus()
   }
   moreFamilies() {
-    this.families.rowsPerPage *= 2
+    this.pageSize *= 2
     this.getRows()
   }
 }

@@ -33,7 +33,7 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
     public settings: ApplicationSettings
   ) {
     this.dialog.onDistCenterChange(async () => {
-      this.families.reloadData()
+      this.getRows()
     }, this.destroyHelper)
   }
   destroyHelper = new DestroyHelper()
@@ -42,16 +42,15 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
   }
   searchString: string = ''
   showAllFamilies = false
-  families = new GridSettings(remult.repo(ActiveFamilyDeliveries), {
-    knowTotalRows: true
-  })
+  families: ActiveFamilyDeliveries[] = []
+  totalRows = 0
   pageSize = 7
 
   async doFilter() {
     await this.busy.donotWait(async () => this.getRows())
   }
   async getRows() {
-    await this.families.get({
+    const q = remult.repo(ActiveFamilyDeliveries).query({
       where: {
         name: { $contains: this.searchString },
         distributionCenter: remult.context.filterDistCenter(
@@ -62,8 +61,10 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
           : undefined
       },
       orderBy: { name: 'asc' },
-      limit: this.pageSize
+      pageSize: this.pageSize
     })
+    q.count().then((rows) => (this.totalRows = rows))
+    q.getPage(0).then((rows) => (this.families = rows))
   }
   clearHelper() {
     this.searchString = ''

@@ -33,18 +33,18 @@
       color="accent"
       *ngIf="
         args.selectStreet &&
-        families.totalRows > 1 &&
+        totalRows > 1 &&
         searchString &&
         countSelected() == 0
       "
       (click)="doSelection()"
     >
-      {{ settings.lang.assign }} {{ families.totalRows }}
+      {{ settings.lang.assign }} {{ totalRows }}
       {{ settings.lang.familesOnStreet }}: {{ searchString }}
     </button>
     <div>
       <div
-        *ngFor="let f of families.items"
+        *ngFor="let f of families"
         (click)="
           getSelected(f).selectState.selected =
             !getSelected(f).selectState.selected
@@ -82,7 +82,7 @@
       mat-raised-button
       color="accent"
       (click)="moreFamilies()"
-      *ngIf="families.items.length != families.totalRows"
+      *ngIf="families.length != totalRows"
     >
       {{ settings.lang.moreFamilies }}
     </button>
