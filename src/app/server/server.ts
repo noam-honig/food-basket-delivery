@@ -353,8 +353,8 @@ s.parentNode.insertBefore(b, s);})();
         if (settings.forWho.args.languageFile) {
           let lang = settings.forWho.args.languageFile
           result = result.replace(
-            /document.lang = '';/g,
-            `document.lang = '${lang}';`
+            /document.lang = ''/g,
+            `document.lang = '${lang}'`
           )
         }
         if (Sites.multipleSites) {
