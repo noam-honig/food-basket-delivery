@@ -335,13 +335,17 @@ export class Event extends IdEntity {
     return ValueConverters.DateOnly.toJson(this.eventDate)
   }
 
-  openEditDialog(ui: UITools, cancel: () => void = () => {}) {
+  openEditDialog(
+    ui: UITools,
+    cancel: () => void = () => {},
+    saved?: VoidFunction
+  ) {
     ui.inputAreaDialog({
       title: use.language.eventInfo,
       fields: Event.displayColumns(this._.repository.metadata.fields, ui).map(
         (x) => mapFieldMetadataToFieldRef(this._, x)
       ),
-      ok: () => this.save(),
+      ok: () => this.save().then(() => saved && saved()),
       cancel: () => {
         this._.undoChanges()
         cancel()

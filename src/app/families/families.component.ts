@@ -120,7 +120,6 @@ export class FamiliesComponent implements OnInit {
       family,
       focusOnAddress: true,
       onSave: async () => {
-        this.families.items.push(family)
         await family.showNewDeliveryDialog(this.dialog, this.settings)
 
         this.refreshStats()

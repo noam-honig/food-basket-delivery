@@ -39,6 +39,9 @@ export class EventsComponent implements OnInit {
   events: GridSettings<Event> = new GridSettings<Event>(remult.repo(Event), {
     allowUpdate: remult.isAllowed(Roles.admin),
     allowInsert: remult.isAllowed(Roles.admin),
+    listRefreshed:()=>{
+      this.card.refresh()
+    },
 
     rowsInPage: 100,
     where: () => {
@@ -182,12 +185,16 @@ export class EventsComponent implements OnInit {
   add() {
     this.events.addNewRow()
     this.card.refresh()
-    this.events.currentRow.openEditDialog(this.dialog, () => {
-      this.events.items.splice(
-        this.events.items.indexOf(this.events.currentRow),
-        1
-      )
-      this.card.refresh()
-    })
+    this.events.currentRow.openEditDialog(
+      this.dialog,
+      () => {
+        this.events.items.splice(
+          this.events.items.indexOf(this.events.currentRow),
+          1
+        )
+        this.card.refresh()
+      },
+      () => this.card.refresh()
+    )
   }
 }

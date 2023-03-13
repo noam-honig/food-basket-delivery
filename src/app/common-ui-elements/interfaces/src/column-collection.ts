@@ -9,13 +9,13 @@ import {
   Allowed,
   FieldOptions,
   ValueConverter,
-  Unobserve,
   Repository,
   EntityOrderBy,
   EntityFilter,
   ValueListInfo,
   Remult,
-  remult
+  remult,
+  Unsubscribe
 } from 'remult'
 
 import {
@@ -394,7 +394,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
       target: undefined!
     }
   }
-  subscribe(listener: RefSubscriber): Unobserve {
+  subscribe(listener: RefSubscriber): Unsubscribe {
     throw new Error('Method not implemented.')
   }
   valueIsNull() {

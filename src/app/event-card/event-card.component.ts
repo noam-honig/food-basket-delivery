@@ -1,10 +1,8 @@
 import {
-  day,
   Event,
   EventType,
   eventDisplayDate,
   EventInList,
-  volunteersInEvent,
   eventStatus,
   isGeneralEvent
 } from '../events/events'
@@ -49,7 +47,6 @@ export class EventCardComponent implements OnInit {
           if (e.eventStatus == eventStatus.archive) {
             this.events = this.events.filter((x) => x != e)
           }
-          this.events.push(...newEvents)
           this.refresh()
         })
       }

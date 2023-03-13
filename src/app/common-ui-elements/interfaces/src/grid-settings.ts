@@ -31,7 +31,7 @@ export class GridSettings<rowType = any> {
     public settings?: IDataSettings<rowType>
   ) {
     if (!settings) this.settings = settings = {}
-    this.restList = new DataList<rowType>(repository)
+    this.restList = new DataList<rowType>(repository, settings.listRefreshed)
     if (repository) {
       this.filterHelper.filterRow = <rowType>repository.create()
       repository.addEventListener({
@@ -234,11 +234,7 @@ export class GridSettings<rowType = any> {
     )
   }
   saveCurrentRow() {
-    if (
-      this.currentRowAsRestListItemRow() &&
-      this.currentRowAsRestListItemRow()!.save!
-    )
-      this.currentRowAsRestListItemRow()!.save()
+    this.saveRow(this.currentRow)
   }
 
   allowUpdate = false
@@ -253,8 +249,8 @@ export class GridSettings<rowType = any> {
   onValidate?: (row: rowType) => Promise<any> | any
   onEnterRow!: (row: rowType) => void
   onNewRow!: (row: rowType) => void
-  _doSavingRow(s: rowType) {
-    return getEntityRef(s).save()
+  saveRow(s: rowType) {
+    this.restList.save(s)
   }
   caption!: string
 
@@ -403,10 +399,17 @@ export class GridSettings<rowType = any> {
           if (r !== undefined) return r
           return s
         })
+        let currentRow =
+          this.currentRow &&
+          this.restList.items.find(
+            (y) =>
+              this.repository.getEntityRef(y).getId() ===
+              this.repository.getEntityRef(this.currentRow).getId()
+          )
         if (this.restList.items.length == 0) {
           this.setCurrentRow(undefined!)
         } else {
-          this.setCurrentRow(this.restList.items[0])
+          this.setCurrentRow(currentRow || this.restList.items[0])
         }
         if (this.settings?.rowsLoaded) {
           this.settings?.rowsLoaded(this.restList.items)
@@ -515,6 +518,7 @@ export interface IDataSettings<rowType> {
   newRow?: (r: rowType) => void
   numOfColumnsInGrid?: number
   caption?: string
+  listRefreshed?: VoidFunction
 }
 export interface RowButton<rowType> {
   name?: string

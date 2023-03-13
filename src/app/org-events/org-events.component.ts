@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 
-import { remult, Unobserve } from 'remult'
+import { remult, Unsubscribe } from 'remult'
 import { EventInList, isGeneralEvent } from '../events/events'
 import { RegisterToEvent } from '../event-info/RegisterToEvent'
 import { Sites } from '../sites/sites'
@@ -28,7 +28,7 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.unObserve) this.unObserve()
   }
-  unObserve: Unobserve
+  unObserve: Unsubscribe
   isAdmin() {
     return remult.isAllowed(Roles.distCenterAdmin)
   }

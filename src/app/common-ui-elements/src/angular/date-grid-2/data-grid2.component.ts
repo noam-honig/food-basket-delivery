@@ -204,7 +204,7 @@ export class DataGrid2Component implements OnChanges, OnDestroy {
     await Promise.all(
       this.settings.items
         .filter((x) => this.settings.getRowHelper(x).wasChanged())
-        .map((x) => this.settings.getRowHelper(x).save())
+        .map((x) => this.settings.saveRow(x))
     )
   }
 
@@ -247,7 +247,7 @@ export class DataGrid2Component implements OnChanges, OnDestroy {
         showInLine: true,
         textInMenu: () => (this.rightToLeft ? 'שמור' : 'save'),
         click: (r) => {
-          this.settings._doSavingRow(r)
+          this.settings.saveRow(r)
         }
       })
       this.addButton({

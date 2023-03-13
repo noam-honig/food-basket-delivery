@@ -125,7 +125,7 @@ export class ManageComponent implements OnInit {
     newRow: (b) => (b.boxes = 1),
     allowUpdate: true,
     allowInsert: true,
-    allowDelete: true,
+    allowDelete: false,
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
   })
   showArchivedDistributionCenters = false
