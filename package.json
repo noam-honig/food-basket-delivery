@@ -119,7 +119,7 @@
     "typescript": "^4.1.5",
     "vuepress": "1.5.2",
     "vuepress-theme-default-rtl": "^1.0.1",
-    "webpack-bundle-analyzer": "^3.6.0"
+    "webpack-bundle-analyzer": "^4.8.0"
   },
   "browser": {
     "jsonwebtoken": false,
