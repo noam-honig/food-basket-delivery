@@ -353,7 +353,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.suspend = false
 
-    this.refresh()
+    this.refreshStats()
   }
   suspend = false;
   [leaveComponent]() {

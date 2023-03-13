@@ -10,7 +10,8 @@ import {
 import { use, Field, FieldType } from '../translate'
 
 @DataControl({
-  valueList: (remult) => getEntityValueList(remult.repo(FamilySources))
+  valueList: (remult) =>
+    getEntityValueList(remult.repo(FamilySources), { cache: true })
 })
 @FieldType<FamilySources>({
   valueConverter: {

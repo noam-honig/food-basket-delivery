@@ -29,7 +29,8 @@ import { FilterHelper } from './filter-helper'
 import {
   decorateColumnSettings,
   getEntitySettings,
-  RefSubscriber
+  RefSubscriber,
+  RepositoryImplementation
 } from 'remult/src/remult3'
 
 import { ClassType } from 'remult/classType'
@@ -467,17 +468,27 @@ function fixResult(
   }
 }
 
+const entityValueListCache = new Map<string, Promise<ExtendedValueListItem[]>>()
+
 /** returns an array of values that can be used in the value list property of a data control object */
 
-export async function getEntityValueList<T>(
+export function getEntityValueList<T>(
   repository: Repository<T>,
   args?: {
     idField?: (e: EntityMetadata<T>) => FieldMetadata
     captionField?: (e: EntityMetadata<T>) => FieldMetadata
     orderBy?: EntityOrderBy<T>
     where?: EntityFilter<T>
+    cache?: boolean
   }
 ): Promise<ExtendedValueListItem[]> {
+  let r: Promise<ExtendedValueListItem[]>
+  if (args?.cache) {
+    r = entityValueListCache.get(repository.metadata.key)
+    if (r) {
+      return r
+    }
+  }
   if (!args) {
     args = {}
   }
@@ -493,23 +504,31 @@ export async function getEntityValueList<T>(
       }
     }
   }
-  let r = (
-    await repository.find({
+  r = repository
+    .find({
       where: args.where,
       orderBy: args.orderBy,
       limit: 1000
     })
-  ).map((x) => {
-    return {
-      id: repository
-        .getEntityRef(x)
-        .fields.find(args!.idField!(repository.metadata)).value,
-      caption: repository
-        .getEntityRef(x)
-        .fields.find(args!.captionField!(repository.metadata)).value,
-      entity: x
-    }
-  })
+    .then((r) => {
+      if (args?.cache) {
+        r.map((x) =>
+          (repository as RepositoryImplementation<any>).addToCache(x)
+        )
+      }
+      return r.map((x) => {
+        return {
+          id: repository
+            .getEntityRef(x)
+            .fields.find(args!.idField!(repository.metadata)).value,
+          caption: repository
+            .getEntityRef(x)
+            .fields.find(args!.captionField!(repository.metadata)).value,
+          entity: x
+        }
+      })
+    })
+  if (args?.cache) entityValueListCache.set(repository.metadata.key, r)
   return r
 }
 export interface ExtendedValueListItem extends ValueListItem {

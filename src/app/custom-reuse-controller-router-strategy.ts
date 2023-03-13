@@ -35,7 +35,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
   }
 
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    remult.clearAllCache()
+    //remult.clearAllCache()
     if (!!route.routeConfig) {
       let h = this.handlers[route.routeConfig.path]
       if (h) {

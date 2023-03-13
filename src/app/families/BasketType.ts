@@ -22,7 +22,8 @@ import { MyIdEntity } from './MyIdEntity'
   translation: (l) => l.basketType
 })
 @DataControl({
-  valueList: (remult) => getEntityValueList(remult.repo(BasketType)),
+  valueList: (remult) =>
+    getEntityValueList(remult.repo(BasketType), { cache: true }),
   width: '100'
 })
 @Entity<BasketType>('BasketType', {

@@ -900,7 +900,7 @@ export class FamiliesComponent implements OnInit {
   [reuseComponentOnNavigationAndCallMeWhenNavigatingToIt]() {
     this.suspend = false
 
-    this.refresh()
+    this.refreshStats()
   }
   suspend = false;
   [leaveComponent]() {
@@ -908,7 +908,7 @@ export class FamiliesComponent implements OnInit {
   }
   refresh() {
     this.refreshFamilyGrid()
-    this.refreshStats()
+    
   }
 
   static route: Route = {

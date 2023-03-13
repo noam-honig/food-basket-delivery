@@ -8,7 +8,9 @@ import {
   EntityOptions,
   CaptionTransformer,
   Remult,
-  Fields as OrigFields
+  Fields as OrigFields,
+  Repository,
+  getValueList
 } from 'remult'
 import { en } from './languages/en'
 import { getLang, Sites } from './sites/sites'

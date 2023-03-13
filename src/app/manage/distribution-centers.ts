@@ -119,7 +119,8 @@ export class DistributionCenters extends MyIdEntity {
     let r = await getEntityValueList<DistributionCenters>(
       remult.repo(DistributionCenters),
       {
-        where: { archive: false }
+        where: { archive: false },
+        cache: true
       }
     )
     if (showAllOptions) {
