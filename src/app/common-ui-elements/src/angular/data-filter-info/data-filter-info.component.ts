@@ -75,7 +75,10 @@ export class DataFilterInfoComponent {
     this.filterColumnToAdd = undefined!
   }
   public async editFilter(col: FieldMetadata) {
-    this.filterColumnToAdd = this.settings.origList.find((x) => x.field == col)!
+    this.filterColumnToAdd = {
+      ...this.settings.origList.find((x) => x.field == col)!,
+      customComponent: undefined
+    }
     await openDialog(FilterDialogComponent, (x) => (x.info = this))
   }
   confirmEditFilter() {
