@@ -63,8 +63,10 @@ export class SelfPickupComponent implements OnInit, OnDestroy {
       orderBy: { name: 'asc' },
       pageSize: this.pageSize
     })
-    q.count().then((rows) => (this.totalRows = rows))
-    q.getPage(0).then((rows) => (this.families = rows))
+    return Promise.all([
+      q.count().then((rows) => (this.totalRows = rows)),
+      q.getPage(0).then((rows) => (this.families = rows))
+    ])
   }
   clearHelper() {
     this.searchString = ''
