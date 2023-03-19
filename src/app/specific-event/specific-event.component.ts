@@ -15,7 +15,7 @@ export class SpecificEventComponent implements OnInit {
   events: EventInList
   async ngOnInit() {
     const p = this.route.snapshot.params
-    console.log(p)
+    
     this.events = await OrgEventsController.getAllEvents(
       RegisterToEvent.volunteerInfo.phone,
       p['site']

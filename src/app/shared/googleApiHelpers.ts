@@ -545,7 +545,7 @@ export class AdjustGeocode extends ControllerBase {
     geo.info['manual_adjustment'] = true
 
     g.googleApiResult = geo.saveToString()
-    console.log(geo.getCity())
+    
 
     await g.save()
 

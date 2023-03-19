@@ -398,5 +398,5 @@ export function initApp(
 }
 
 Remult.onFind = (e) => {
-  console.trace(e.key)
+ // console.trace(e.key)
 }
