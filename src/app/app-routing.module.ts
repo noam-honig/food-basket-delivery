@@ -317,4 +317,4 @@ export const routes: Routes = [
 })
 export class AppRoutingModule {}
 
-AuthenticatedGuard.componentToNavigateIfNotAllowed = LoginComponent
+AuthenticatedGuard.componentToNavigateIfNotAllowed = OrgEventsComponent
