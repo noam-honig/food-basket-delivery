@@ -25,6 +25,11 @@
         <app-event-info [e]="events[0]" [noClose]="true"></app-event-info>
       </mat-card>
     </div>
+    <div *ngIf="!isGuest" style="display: flex;justify-content: center; padding-top: 150px;">
+      <button mat-raised-button color="primary" (click)="signIn()">
+        {{ lang.registeredUsersSignIn }}
+      </button>
+    </div>
 
     <mat-card class="headline-card" *ngIf="isGuest">
       <div class="headline">
@@ -107,6 +112,5 @@
     </mat-card>
     <a (click)="saveToExcel()" *ngIf="isGuest">יצוא ארועים לאקסל</a>
   </div>
-  
 </div>
 <app-events *ngIf="isAdmin()"></app-events>

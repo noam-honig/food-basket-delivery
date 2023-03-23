@@ -1522,6 +1522,7 @@ export class Language {
     'הודעה שתצא למשפחה כאשר המתנדב יוצא לדרך'
   registerRequireTz = 'חובה על המתנדב להזין תז'
   requiredField = 'שדה חובה'
+  registeredUsersSignIn = 'כניסת משתמשים רשומים';
 }
 
 const defaultLang = new Language()

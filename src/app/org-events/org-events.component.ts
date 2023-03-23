@@ -9,6 +9,9 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { DialogService } from '../select-popup/dialog'
 import { OrgEventsController } from './org-events.controller'
 import { ActivatedRoute } from '@angular/router'
+import { use } from '../translate'
+import { RouteHelperService } from '../common-ui-elements'
+import { LoginComponent } from '../users/login/login.component'
 
 @Component({
   selector: 'app-org-events',
@@ -19,11 +22,16 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
   constructor(
     public settings: ApplicationSettings,
     private dialog: DialogService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private routeHelper: RouteHelperService
+  ) { }
+  lang = use.language;
   isGuest = Sites.getOrganizationFromContext() == Sites.guestSchema
   getLogo() {
     return ApplicationSettings.get().logoUrl
+  }
+  signIn() {
+    this.routeHelper.navigateToComponent(LoginComponent);
   }
   ngOnDestroy(): void {
     if (this.unObserve) this.unObserve()
