@@ -23,3 +23,10 @@ export class MemoryStats extends IdEntity {
   })
   stats: any
 }
+
+
+/*
+select stamp, cast(stats->>'total' as integer),cast (stats->>'total$sse' as integer) from guest.memoryStats 
+order by 1 desc NULLS LAST
+limit 1000
+*/
