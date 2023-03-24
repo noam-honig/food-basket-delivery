@@ -532,6 +532,7 @@ s.parentNode.insertBefore(b, s);})();
               vals[key + '$sse'] = v2
             }
           }
+          OverviewController.stats = vals;
           await remult.repo(MemoryStats).insert({
             mem: process.memoryUsage(),
             stats: vals

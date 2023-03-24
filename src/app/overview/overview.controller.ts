@@ -28,11 +28,13 @@ import { doOnRemoteHagai } from './remoteHagai'
 import { Location } from '../shared/googleApiHelpers'
 export class OverviewController {
   static mySiteInfo = new Map<string, siteItem>()
+  static stats = {}
   @BackendMethod({ allowed: Roles.overview, queue: true })
   static async getOverview(full: boolean, progress?: ProgressListener) {
     let today = new Date()
     let onTheWay = 'בדרך'
     let inEvent = 'באירוע'
+    let connected = 'משתמשים מחוברים'
 
     let result: overviewResult = {
       statistics: [
@@ -129,6 +131,12 @@ export class OverviewController {
           value: 0,
           from: undefined,
           to: undefined
+        },
+        {
+          caption: connected,
+          value: 0,
+          from: undefined,
+          to: undefined
         }
       ],
       sites: []
@@ -184,7 +192,9 @@ export class OverviewController {
               location: s.addressHelper.location,
               site: org,
               logo: s.logoUrl,
-              stats: {},
+              stats: {
+                [connected]: +OverviewController.stats[org] || 0
+              },
               lastSignIn: null,
               isRemote: false
             })
@@ -198,7 +208,9 @@ export class OverviewController {
                 lng: 0
               },
               logo: '/assets/apple-touch-icon.png',
-              stats: {},
+              stats: {
+                [connected]: +OverviewController.stats[org] || 0
+              },
               lastSignIn: null,
               isRemote: false
             })
@@ -224,7 +236,8 @@ export class OverviewController {
 
         for (const dateRange of result.statistics) {
           let key = 'a' + cols.length
-          if (dateRange.caption == inEvent) {
+          if (dateRange.caption == connected) {
+          } else if (dateRange.caption == inEvent) {
             cols.push(builder.countInnerSelect({ from: f }, key))
           } else if (dateRange.caption == onTheWay) {
             cols.push(
@@ -280,7 +293,11 @@ export class OverviewController {
         result.sites.push(site)
         let i = 3
         for (const dateRange of result.statistics) {
-          let r = row[zz.getColumnKeyInResultForIndexInSelect(i++)]
+          let r = 0
+          if (dateRange.caption == connected) {
+            r = +OverviewController.stats[site.site] || 0
+            console.log(OverviewController.stats)
+          } else r = row[zz.getColumnKeyInResultForIndexInSelect(i++)]
 
           dateRange.value += +r
           site.stats[dateRange.caption] = r
