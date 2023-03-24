@@ -1,0 +1,52 @@
+<div style="display: flex; justify-content: center">
+  <mat-card style="max-width: 400px">
+    <div style="width: 100%; text-align: center">
+      <img src="{{ settings.logoUrl }}" />
+    </div>
+    <p style="text-align: center">{{ settings.organisationName }}</p>
+    <h3>{{ message }}</h3>
+    <ng-container *ngIf="familyName">
+      <div style="white-space: pre-line; ">
+
+        {{ text }}
+
+        <table>
+          <tr *ngFor="let f of fields">
+            <th>{{ f.metadata.caption }}:</th>
+            <td>{{ familyDelivery.$.find(f.metadata).value }}</td>
+          </tr>
+          <tr>
+            <th colspan="2">
+              {{ familyDelivery.$.addressComment.metadata.caption }}:
+            </th>
+          </tr>
+          <tr>
+            <td colspan="2">
+              {{ familyDelivery.addressComment || 'לא צריך הנחיות נוספות' }}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          gap: 16px;
+          place-content: center;
+          flex-wrap: wrap;
+          margin-top: 16px;
+        "
+      >
+        <button mat-raised-button color="primary" (click)="interested()">
+          הפרטים תקינים
+        </button>
+        <button mat-raised-button (click)="provideComment()">
+          עדכון פרטים
+        </button>
+        <button mat-raised-button color="accent" (click)="notInterested()">
+          לא מעוניינים במשלוח
+        </button>
+      </div>
+    </ng-container>
+  </mat-card>
+</div>

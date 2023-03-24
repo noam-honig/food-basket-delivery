@@ -10,7 +10,7 @@ import {
   FamilyDeliveries
 } from '../families/FamilyDeliveries'
 import { DeliveryStatus } from '../families/DeliveryStatus'
-import { Families } from '../families/families'
+import { Families, getSmsPhone } from '../families/families'
 import { BasketType } from '../families/BasketType'
 import { FamilyStatus } from '../families/FamilyStatus'
 import { SelfPickupStrategy } from '../families/familyActions'
@@ -24,6 +24,7 @@ import {
 } from '../common-ui-elements/interfaces'
 
 import { getFields } from 'remult'
+import { SendSmsUtils } from '../asign-family/send-sms-action'
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
   constructor(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
@@ -368,6 +369,37 @@ export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
       forEach: async (f) => {
         await this.archiveHelper.forEach(f)
         if (f.deliverStatus.IsAResultStatus()) f.archive = true
+      }
+    })
+  }
+}
+@Controller('SendSmsForFamilyDetailsConfirmation')
+export class SendSmsForFamilyDetailsConfirmation extends ActionOnFamilyDeliveries {
+  constructor() {
+    super({
+      title: getLang().sendMessageToFamilies,
+      additionalWhere: {
+        deliverStatus: DeliveryStatus.enquireDetails
+      },
+
+      allowed: () =>
+        remult.isAllowed(Roles.admin) &&
+        getSettings().familyConfirmDetailsEnabled,
+      forEach: async (f) => {
+        let family = await remult.repo(Families).findId(f.family)
+        if (!family || family.doNotSendSms) return
+        let messageMerger = await f.createConfirmDetailsMessage()
+        let message = await messageMerger.fetchTemplateRow()
+        let phone = getSmsPhone(family)
+        if (phone)
+          await new SendSmsUtils().sendSms(
+            phone,
+            messageMerger.merge(message.template),
+            undefined,
+            {
+              familyId: f.id
+            }
+          )
       }
     })
   }

@@ -193,12 +193,10 @@ export class ManageComponent implements OnInit {
         click: async (c) => {
           if (
             !c.archive &&
-            (await remult
-              .repo(DistributionCenters)
-              .count({
-                $and: [DistributionCenters.isActive],
-                id: { '!=': c.id }
-              })) == 0
+            (await remult.repo(DistributionCenters).count({
+              $and: [DistributionCenters.isActive],
+              id: { '!=': c.id }
+            })) == 0
           ) {
             this.dialog.Error(
               this.settings.lang.mustHaveAtLeastOneActiveDistributionList
@@ -338,6 +336,10 @@ export class ManageComponent implements OnInit {
         customComponent: {
           component: ButtonDataComponent
         }
+      },
+      {
+        caption: 'אפשר הודעות למשפחה לאישור פרטים',
+        field: this.settings.$.familyConfirmDetailsEnabled
       }
     ]
   })

@@ -14,15 +14,23 @@
   <H4>{{ settings.lang.sampleMessage }} ({{ testSms().length }} תוים)</H4>
   <pre>{{ testSms() }}</pre>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions
+  style="
+    display: flex;
+    gap: 16px;
+    place-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  "
+>
+  <button type="button" mat-raised-button color="accent" [mat-dialog-close]>
+    {{ settings.lang.cancel }}
+  </button>
   <button
     mat-raised-button
     *ngFor="let b of args.buttons"
     (click)="b.click(getButtonArgs())"
   >
     {{ b.name }}
-  </button>
-  <button type="button" mat-raised-button color="warning" [mat-dialog-close]>
-    {{ settings.lang.cancel }}
   </button>
 </mat-dialog-actions>

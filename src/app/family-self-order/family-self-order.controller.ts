@@ -7,7 +7,6 @@ import { BackendMethod, Controller, getFields, remult } from 'remult'
 import { BasketType } from '../families/BasketType'
 import { Families } from '../families/families'
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
-import { FamilyStatus } from '../families/FamilyStatus'
 import { getSettings } from '../manage/ApplicationSettings'
 import { Field } from '../translate'
 
@@ -15,7 +14,7 @@ import { Field } from '../translate'
 export class FamilySelfOrderController {
   constructor() {}
   @Field()
-  familyUrl: string = 'dcf37b47-603b-44a1-ae15-d021f3003537'
+  familyUrl: string = ''
 
   @Field()
   familyName: string = ''

@@ -216,12 +216,10 @@ export class ApplicationSettings extends EntityBase {
     let ActiveFamilyDeliveries = await (
       await import('../families/FamilyDeliveries')
     ).ActiveFamilyDeliveries
-    let d = await remult
-      .repo(ActiveFamilyDeliveries)
-      .findFirst({
-        id: deliveryId,
-        $and: [ActiveFamilyDeliveries.isAllowedForUser()]
-      })
+    let d = await remult.repo(ActiveFamilyDeliveries).findFirst({
+      id: deliveryId,
+      $and: [ActiveFamilyDeliveries.isAllowedForUser()]
+    })
     if (!d) return []
     let Families = await (await import('../families/families')).Families
     let family =
@@ -654,6 +652,9 @@ export class ApplicationSettings extends EntityBase {
   @Field({ includeInApi: Roles.admin })
   familySelfOrderMessage: string
   @Field({ includeInApi: Roles.admin })
+  familyConfirmDetailsEnabled: boolean
+  
+  @Field({ includeInApi: Roles.admin })
   inviteVolunteersMessage: string
   @Field({ allowApiUpdate: Roles.admin })
   allowVolunteerToSeePreviousActivities: boolean
@@ -838,6 +839,7 @@ export function setSettingsForSite(
   const {
     usingSelfPickupModule,
     familySelfOrderEnabled,
+    familyConfirmDetailsEnabled,
     manageEscorts,
     requireComplexPassword,
     forWho,
@@ -866,6 +868,7 @@ export function setSettingsForSite(
     usingCallModule,
     usingSelfPickupModule,
     familySelfOrderEnabled,
+    familyConfirmDetailsEnabled,
     manageEscorts,
     requireComplexPassword,
     forWho,
@@ -912,6 +915,7 @@ export class SmallSettings {
   usingSelfPickupModule: boolean = false
   usingCallModule: boolean = false
   familySelfOrderEnabled: boolean = false
+  familyConfirmDetailsEnabled = false
   manageEscorts: boolean = false
   requireComplexPassword: boolean = false
   forWho: TranslationOptions

@@ -41,6 +41,7 @@ import {
   ArchiveDeliveries,
   DeleteDeliveries,
   NewDelivery,
+  SendSmsForFamilyDetailsConfirmation,
   UpdateBasketType,
   UpdateCourier,
   UpdateDeliveriesStatus,
@@ -75,6 +76,7 @@ import { PrintVolunteerComponent } from '../print-volunteer/print-volunteer.comp
 
 import { getDeliveryGridButtons } from './getDeliveryGridButtons'
 import { FamilyDeliveriesController } from './family-deliveries.controller'
+import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
 
 @Component({
   selector: 'app-family-deliveries',
@@ -705,9 +707,7 @@ font-family: &quot;arial&quot;;
             }
           },
           (this.statusColumn = { field: deliveries.deliverStatus }),
-
           (this.groupsColumn = { field: deliveries.groups }),
-
           deliveries.deliveryComments,
 
           deliveries.special,
@@ -828,6 +828,98 @@ font-family: &quot;arial&quot;;
             settings: this.settings
           })
         ),
+        {
+          name: 'שלח הודעת אישור פרטים למשפחות',
+          visible: () =>
+            remult.isAllowed(Roles.admin) &&
+            this.settings.familyConfirmDetailsEnabled,
+          click: async () => {
+            let messageMerge =
+              await this.deliveries.items[0].createConfirmDetailsMessage()
+            const message = await messageMerge.fetchTemplateRow()
+
+            openDialog(
+              EditCustomMessageComponent,
+              (edit) =>
+                (edit.args = {
+                  message: messageMerge,
+                  templateText: message.template,
+                  helpText: '',
+                  title: use.language.smsMessageToFamilyWhenVolunteerOnTheWay,
+                  buttons: [
+                    {
+                      name: use.language.save,
+                      click: async () => {
+                        message.template = edit.args.templateText
+                        await message.save()
+                        edit.ref.close()
+                      }
+                    },
+                    {
+                      name: 'שלח הודעת אישור פרטים למשפחות',
+
+                      click: async () => {
+                        message.template = edit.args.templateText
+                        await message.save()
+                        await new SendSmsForFamilyDetailsConfirmation().runAction(
+                          {
+                            afterAction: async () => await this.refresh(),
+                            ui: this.dialog,
+                            userWhere: async () =>
+                              (
+                                await this.deliveries.getFilterWithSelectedRows()
+                              ).where,
+                            settings: this.settings
+                          }
+                        )
+                        edit.ref.close()
+                      }
+                    },
+                    {
+                      name: 'מה יופיע למשפחה אחרי לחיצה על הקישור',
+                      click: async () => {
+                        let messageMerge =
+                          await this.deliveries.items[0].createConfirmDetailsUserText()
+
+                        const message = await messageMerge.fetchTemplateRow()
+                        openDialog(
+                          EditCustomMessageComponent,
+                          (edit) =>
+                            (edit.args = {
+                              message: messageMerge,
+                              templateText: message.template,
+                              helpText: '',
+                              title: 'מה יופיע למשפחה אחרי לחיצה על הקישור',
+                              buttons: [
+                                {
+                                  name: use.language.save,
+                                  click: async () => {
+                                    message.template = edit.args.templateText
+                                    await message.save()
+                                    edit.ref.close()
+                                  }
+                                },
+                                {
+                                  name: 'הצג איך זה יראה למשפחה',
+                                  click: async () => {
+                                    message.template = edit.args.templateText
+                                    window.open(
+                                      this.deliveries.items[0].confirmDetailsLink(),
+                                      '_blank'
+                                    )
+                                    await message.save()
+                                  }
+                                }
+                              ]
+                            })
+                        )
+                      }
+                    }
+                  ]
+                })
+            )
+          }
+        },
         {
           name: getLang().printVolunteers,
           visible: () => remult.isAllowed(Roles.admin),

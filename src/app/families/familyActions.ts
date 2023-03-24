@@ -427,7 +427,7 @@ export class SendSmsToFamilies extends ActionOnRows<Families> {
         let message = await f.createSelfOrderMessage()
         let phone = getSmsPhone(f)
         if (phone)
-          new SendSmsUtils().sendSms(
+          await new SendSmsUtils().sendSms(
             phone,
             message.merge(setting.familySelfOrderMessage),
             undefined,
@@ -482,6 +482,7 @@ export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
     })
   }
 }
+
 
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries> {
   processedFamilies = new Map<string, boolean>()

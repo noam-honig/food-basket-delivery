@@ -130,6 +130,7 @@ smsPasswordInput varchar default '' not null
 smsVirtualPhoneNumber varchar default '' not null
 familySelfOrderEnabled boolean default false not null
 familySelfOrderMessage varchar default '' not null
+familyConfirmDetailsEnabled boolean default false not null
 inviteVolunteersMessage varchar default '' not null
 allowVolunteerToSeePreviousActivities boolean default false not null
 customSmsOriginForSmsToVolunteer varchar default '' not null

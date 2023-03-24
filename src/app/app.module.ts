@@ -130,7 +130,8 @@ import { ManageCallersComponent } from './manage-callers/manage-callers.componen
 import { HttpClient } from '@angular/common/http'
 import { BlockedFamiliesComponent } from './blocked-families/blocked-families.component'
 import { SpecificEventComponent } from './specific-event/specific-event.component'
-import { ButtonDataComponent } from './button-data/button-data.component'
+import { ButtonDataComponent } from './button-data/button-data.component';
+import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
 
@@ -239,7 +240,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     ManageCallersComponent,
     BlockedFamiliesComponent,
     SpecificEventComponent,
-    ButtonDataComponent
+    ButtonDataComponent,
+    FamilyConfirmDetailsComponent
   ],
   imports: [
     BrowserModule,

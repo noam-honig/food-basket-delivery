@@ -24,6 +24,7 @@ export class messageMerger {
     )
   }
   merge(message: string) {
+    if (!message) message = ''
     for (const t of this.tokens) {
       message = message.split(t.token).join(t.value)
     }

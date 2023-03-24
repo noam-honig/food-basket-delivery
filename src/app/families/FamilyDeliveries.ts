@@ -60,6 +60,7 @@ import { ImageInfo } from '../images/images.component'
 import { IdFieldRef } from 'remult/src/remult3'
 import { isDesktop } from '../shared/utils'
 import { UITools } from '../helpers/init-context'
+import { messageMerger } from '../edit-custom-message/messageMerger'
 
 @ValueListFieldType({
   translation: (l) => l.messageStatus
@@ -790,12 +791,10 @@ export class FamilyDeliveries extends IdEntity {
   static async loadFamilyInfoForExcepExport(
     deliveries: ActiveFamilyDeliveries[]
   ) {
-    let families = await remult
-      .repo(Families)
-      .find({
-        limit: deliveries.length,
-        where: { id: deliveries.map((d) => d.family) }
-      })
+    let families = await remult.repo(Families).find({
+      limit: deliveries.length,
+      where: { id: deliveries.map((d) => d.family) }
+    })
     for (const d of deliveries) {
       d.familyForExcelExport = families.find((f) => f.id == d.family)
     }
@@ -973,6 +972,48 @@ export class FamilyDeliveries extends IdEntity {
         lat: this.addressLatitude,
         lng: this.addressLongitude
       }
+  }
+  createConfirmDetailsMessage() {
+    let s = this.name.split(' ')
+
+    let message = new messageMerger(
+      [
+        { token: 'שם מלא', value: this.name },
+        { token: 'שם חלקי', value: s[s.length - 1] },
+        {
+          token: 'קישור',
+          caption: 'קישור שישמש את המשפחה לאישור הפרטים',
+          value: this.confirmDetailsLink(),
+          enabled: getSettings().familyConfirmDetailsEnabled
+        },
+        { token: 'ארגון', value: getSettings().organisationName }
+      ],
+      'family-confirm'
+    )
+    return message
+  }
+  confirmDetailsLink(): string {
+    return (
+      remult.context.getOrigin() +
+      '/' +
+      remult.context.getSite() +
+      '/fcd/' +
+      this.id
+    )
+  }
+
+  async createConfirmDetailsUserText() {
+    let s = this.name.split(' ')
+
+    let message = new messageMerger(
+      [
+        { token: 'שם מלא', value: this.name },
+        { token: 'שם חלקי', value: s[s.length - 1] },
+        { token: 'ארגון', value: getSettings().organisationName }
+      ],
+      'family-confirm-on-screen'
+    )
+    return message
   }
   openWaze() {
     const toLocation = toLongLat(this.getDrivingLocation())

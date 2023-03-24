@@ -78,6 +78,7 @@ import { CallerComponent } from './caller/caller.component'
 import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component'
 import { ManageCallersComponent } from './manage-callers/manage-callers.component'
 import { SpecificEventComponent } from './specific-event/specific-event.component'
+import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 
 @Injectable()
 export class MltOnlyGuard implements CanActivate {
@@ -152,6 +153,7 @@ export const routes: Routes = [
   DistributionMap.route,
 
   { path: 'fso/:id', component: FamilySelfOrderComponent },
+  { path: 'fcd/:id', component: FamilyConfirmDetailsComponent },
   HelpersComponent.route,
   {
     path: 'tr',
@@ -315,6 +317,6 @@ export const routes: Routes = [
     CallModuleGuard
   ]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
 
 AuthenticatedGuard.componentToNavigateIfNotAllowed = OrgEventsComponent

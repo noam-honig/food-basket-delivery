@@ -45,7 +45,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     private dialog: DialogService,
     public settings: ApplicationSettings,
     private zone: NgZone
-  ) {}
+  ) { }
   ngOnChanges(changes: SimpleChanges): void {
     this.initPhones()
   }
@@ -63,7 +63,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
 
   async ngOnInit() {
     this.initPhones()
-    if (this.f) {
+    if (this.f && remult.authenticated()) {
       this.hasImages = await this.dialog.donotWait(() =>
         FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id)
       )
@@ -113,9 +113,9 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     openDialog(
       PreviousDeliveryCommentsComponent,
       (x) =>
-        (x.args = {
-          family: this.f.family
-        })
+      (x.args = {
+        family: this.f.family
+      })
     )
   }
   courierCommentsDateRelativeDate() {
@@ -142,23 +142,23 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     openDialog(
       GetVolunteerFeedback,
       (x) =>
-        (x.args = {
-          family: f,
-          comment: f.courierComments,
-          helpText: (s) => s.commentForSuccessDelivery,
-          ok: async (comment) => {
-            f.deliverStatus = DeliveryStatus.SuccessPickedUp
-            f.courierComments = comment
-            f.checkNeedsWork()
-            try {
-              await f.save()
-              this.dialog.analytics('Self Pickup')
-            } catch (err) {
-              this.dialog.Error(err)
-            }
-          },
-          cancel: () => {}
-        })
+      (x.args = {
+        family: f,
+        comment: f.courierComments,
+        helpText: (s) => s.commentForSuccessDelivery,
+        ok: async (comment) => {
+          f.deliverStatus = DeliveryStatus.SuccessPickedUp
+          f.courierComments = comment
+          f.checkNeedsWork()
+          try {
+            await f.save()
+            this.dialog.analytics('Self Pickup')
+          } catch (err) {
+            this.dialog.Error(err)
+          }
+        },
+        cancel: () => { }
+      })
     )
   }
 
@@ -195,7 +195,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   }
 
   async familiyPickedUp(f: ActiveFamilyDeliveries) {
-    ;(await this.settings.isSytemForMlt)
+    ; (await this.settings.isSytemForMlt)
       ? this.labSelfReception(f)
       : this.getPickupComments(f)
   }
@@ -228,10 +228,10 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     copy(f.address)
     this.dialog.Info(
       use.language.address +
-        ' ' +
-        f.address +
-        ' ' +
-        use.language.wasCopiedSuccefully
+      ' ' +
+      f.address +
+      ' ' +
+      use.language.wasCopiedSuccefully
     )
   }
   showStatus() {

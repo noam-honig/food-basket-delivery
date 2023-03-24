@@ -92,8 +92,8 @@ import { SelectHelperController } from '../select-helper/select-helper.controlle
 import { SiteOverviewController } from '../site-overview/site-overview.controller'
 import { WeeklyReportMltController } from '../weekly-report-mlt/weekly-report-mlt.controller'
 import { DeliveryHistoryController } from '../delivery-history/delivery-history.controller'
-import { NewDelivery, SendSmsToFamilies } from '../families/familyActions'
-import { DeleteDeliveries } from '../family-deliveries/family-deliveries-actions'
+import { NewDelivery,  SendSmsToFamilies } from '../families/familyActions'
+import { DeleteDeliveries, SendSmsForFamilyDetailsConfirmation } from '../family-deliveries/family-deliveries-actions'
 import { PlaybackController } from '../playback/playback.controller'
 import {
   DialogController,
@@ -121,6 +121,7 @@ import {
   SubscriptionServer
 } from 'remult'
 import { MemoryStats } from './stats'
+import { FamilyConfirmDetailsController } from '../family-confirm-details/family-confirm-details.controller'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -163,6 +164,8 @@ const entities = [
   HelperCommunicationHistory
 ]
 const controllers = [
+  SendSmsForFamilyDetailsConfirmation,
+  FamilyConfirmDetailsController,
   SendTestSms,
   AdjustGeocode,
   CallerController,
@@ -459,7 +462,7 @@ s.parentNode.insertBefore(b, s);})();
       for (const entity of entities) {
         let meta = remult.repo(
           entity as {
-            new (...args: any[]): any
+            new(...args: any[]): any
           }
         ).metadata
         const db = await meta.getDbName()
@@ -515,7 +518,7 @@ s.parentNode.insertBefore(b, s);})();
           for (const key of siteEventPublishers.keys()) {
             await siteEventPublishers
               .get(key)
-              .liveQueryStorage.forEach('', async () => {})
+              .liveQueryStorage.forEach('', async () => { })
             let val =
               //@ts-ignore
               siteEventPublishers.get(key).liveQueryStorage.queries.length
@@ -700,8 +703,8 @@ async function downloadPaperTrailLogs() {
             fetch
               .default(
                 'https://papertrailapp.com/api/v1/archives/' +
-                  theTime +
-                  '/download',
+                theTime +
+                '/download',
                 requestOptions
               )
               .then(async (response) =>
@@ -737,7 +740,7 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
           res.send(Buffer.from(imageBase, 'base64'))
           return
         }
-      } catch (err) {}
+      } catch (err) { }
       try {
         res.send(fs.readFileSync(publicRoot + '/assets/apple-touch-icon.png'))
       } catch (err) {
@@ -761,7 +764,7 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
         res.send(Buffer.from(imageBase, 'base64'))
         return
       }
-    } catch (err) {}
+    } catch (err) { }
     try {
       res.send(fs.readFileSync(publicRoot + '/favicon.ico'))
     } catch (err) {
@@ -771,7 +774,7 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
   })
 }
 
-function test<t = never>(what: (a: t, b: number) => void) {}
+function test<t = never>(what: (a: t, b: number) => void) { }
 
 test<any>((a, b) => {
   a.toString()
