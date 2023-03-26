@@ -31,6 +31,8 @@ export class OverviewComponent implements OnInit {
   fromDate: Date = new Date()
   @Fields.dateOnly()
   toDate: Date = new Date()
+  @Fields.string()
+  rangeName = 'טווח תאריכים'
 
   async ngOnInit() {
     this.overview = await OverviewController.getOverview(false)
@@ -56,6 +58,7 @@ export class OverviewComponent implements OnInit {
         true,
         this.addDateFilter
           ? {
+              rangeName: this.rangeName,
               from: this.$.fromDate.metadata.valueConverter.toJson(
                 this.fromDate
               ),
@@ -66,7 +69,9 @@ export class OverviewComponent implements OnInit {
         .then((x) => {
           this.overview = x
           this.spinner = false
-          this.sort()
+          if (this.addDateFilter)
+            this.doSort(x.statistics.find((x) => x.caption === this.rangeName))
+          else this.sort()
         })
         .finally(() => (actionInfo.startBusyWithProgress = z))
     })
@@ -106,7 +111,9 @@ export class OverviewComponent implements OnInit {
   }
   doSort(s: dateRange) {
     this.sortBy = s.caption
-    this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption])
+    this.overview.sites.sort(
+      (a, b) => (b.stats[s.caption] || 0) - (a.stats[s.caption] || 0)
+    )
   }
   count() {
     if (!this.sortBy) return this.overview.sites.length

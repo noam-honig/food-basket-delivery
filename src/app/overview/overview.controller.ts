@@ -32,7 +32,7 @@ export class OverviewController {
   @BackendMethod({ allowed: Roles.overview, queue: true })
   static async getOverview(
     full: boolean,
-    dateRange?: { from: string; to: string },
+    dateRange?: { from: string; to: string; rangeName: string },
     progress?: ProgressListener
   ) {
     let today = new Date()
@@ -141,7 +141,7 @@ export class OverviewController {
     }
     if (dateRange)
       result.statistics.push({
-        caption: dateRange.from + ' - ' + dateRange.to,
+        caption: dateRange.rangeName,
         value: 0,
         from: new Date(dateRange.from),
         to: new Date(dateRange.to)
