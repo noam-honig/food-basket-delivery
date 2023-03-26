@@ -307,7 +307,6 @@ export class OverviewController {
           let r = 0
           if (dateRange.caption == connected) {
             r = +OverviewController.stats[site.site] || 0
-            console.log(OverviewController.stats)
           } else r = row[zz.getColumnKeyInResultForIndexInSelect(i++)]
 
           dateRange.value += +r

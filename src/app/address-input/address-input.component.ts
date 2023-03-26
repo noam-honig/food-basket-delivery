@@ -78,7 +78,7 @@ export class AddressInputComponent
       () => {
         const place = autocomplete.getPlace()
         if (!place) return
-        console.log(place)
+   //     console.log(place)
 
         this.zone.run(() => {
           this.field.value = this.addressInput.nativeElement.value
