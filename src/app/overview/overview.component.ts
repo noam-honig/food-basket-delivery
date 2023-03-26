@@ -45,6 +45,7 @@ export class OverviewComponent implements OnInit {
     return getFields(this)
   }
   private getFullState() {
+    this.spinner = true
     this.busy.donotWait(() => {
       const z = actionInfo.startBusyWithProgress
       actionInfo.startBusyWithProgress = () => ({
