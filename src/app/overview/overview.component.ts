@@ -78,7 +78,7 @@ export class OverviewComponent implements OnInit {
   }
   filterDates() {
     this.dialog.inputAreaDialog({
-      fields: [this.$.fromDate, this.$.toDate],
+      fields: [this.$.fromDate, this.$.toDate, this.$.rangeName],
       title: 'טווח תאריכים',
       ok: () => {
         this.addDateFilter = true
