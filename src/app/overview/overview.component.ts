@@ -14,6 +14,7 @@ import {
   overviewResult,
   siteItem
 } from './overview.controller'
+import { Fields, getFields } from 'remult'
 
 @Component({
   selector: 'app-overview',
@@ -26,15 +27,41 @@ export class OverviewComponent implements OnInit {
   sortBy: string
   progress = 0
   spinner = true
+  @Fields.dateOnly()
+  fromDate: Date = new Date()
+  @Fields.dateOnly()
+  toDate: Date = new Date()
+
   async ngOnInit() {
     this.overview = await OverviewController.getOverview(false)
+    this.getFullState()
+
+    this.sort()
+  }
+  searchString = ''
+
+  addDateFilter = false
+  get $() {
+    return getFields(this)
+  }
+  private getFullState() {
     this.busy.donotWait(() => {
       const z = actionInfo.startBusyWithProgress
       actionInfo.startBusyWithProgress = () => ({
         progress: (x) => (this.progress = x * 100),
         close: () => {}
       })
-      return OverviewController.getOverview(true)
+      return OverviewController.getOverview(
+        true,
+        this.addDateFilter
+          ? {
+              from: this.$.fromDate.metadata.valueConverter.toJson(
+                this.fromDate
+              ),
+              to: this.$.fromDate.metadata.valueConverter.toJson(this.toDate)
+            }
+          : undefined
+      )
         .then((x) => {
           this.overview = x
           this.spinner = false
@@ -42,10 +69,18 @@ export class OverviewComponent implements OnInit {
         })
         .finally(() => (actionInfo.startBusyWithProgress = z))
     })
-
-    this.sort()
   }
-  searchString = ''
+  filterDates() {
+    this.dialog.inputAreaDialog({
+      fields: [this.$.fromDate, this.$.toDate],
+      title: 'טווח תאריכים',
+      ok: () => {
+        this.addDateFilter = true
+        this.getFullState()
+      }
+    })
+  }
+
   private sort() {
     for (const s of this.overview.sites) {
       s.lastSignIn = new Date(s.lastSignIn)
@@ -72,10 +107,9 @@ export class OverviewComponent implements OnInit {
     this.sortBy = s.caption
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption])
   }
-  count(){
-    if (!this.sortBy)
-    return this.overview.sites.length;
-    return this.overview.sites.filter(x=>+(x.stats[this.sortBy])>0).length;
+  count() {
+    if (!this.sortBy) return this.overview.sites.length
+    return this.overview.sites.filter((x) => +x.stats[this.sortBy] > 0).length
   }
 
   trackBy(index: number, s: siteItem) {

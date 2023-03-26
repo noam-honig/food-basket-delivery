@@ -30,7 +30,11 @@ export class OverviewController {
   static mySiteInfo = new Map<string, siteItem>()
   static stats = {}
   @BackendMethod({ allowed: Roles.overview, queue: true })
-  static async getOverview(full: boolean, progress?: ProgressListener) {
+  static async getOverview(
+    full: boolean,
+    dateRange?: { from: string; to: string },
+    progress?: ProgressListener
+  ) {
     let today = new Date()
     let onTheWay = 'בדרך'
     let inEvent = 'באירוע'
@@ -131,16 +135,23 @@ export class OverviewController {
           value: 0,
           from: undefined,
           to: undefined
-        },
-        {
-          caption: connected,
-          value: 0,
-          from: undefined,
-          to: undefined
         }
       ],
       sites: []
     }
+    if (dateRange)
+      result.statistics.push({
+        caption: dateRange.from + ' - ' + dateRange.to,
+        value: 0,
+        from: new Date(dateRange.from),
+        to: new Date(dateRange.to)
+      })
+    result.statistics.push({
+      caption: connected,
+      value: 0,
+      from: undefined,
+      to: undefined
+    })
 
     const remultHagaiSites = doOnRemoteHagai(async (remoteRemult, url) => {
       const remote = await remoteRemult.call(
