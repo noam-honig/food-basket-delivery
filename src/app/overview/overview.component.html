@@ -25,10 +25,11 @@
         />
         <mat-icon matSuffix (click)="searchString = ''">clear</mat-icon>
       </mat-form-field>
+      {{ count() }}
     </div>
     <div>
       <button mat-raised-button color="primary" (click)="createNewSchema()">
-        {{ 'הוסף סביבה חדשה' }}
+        {{ 'סביבה חדשה' }}
       </button>
     </div>
   </div>

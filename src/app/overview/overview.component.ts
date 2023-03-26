@@ -72,6 +72,11 @@ export class OverviewComponent implements OnInit {
     this.sortBy = s.caption
     this.overview.sites.sort((a, b) => b.stats[s.caption] - a.stats[s.caption])
   }
+  count(){
+    if (!this.sortBy)
+    return this.overview.sites.length;
+    return this.overview.sites.filter(x=>+(x.stats[this.sortBy])>0).length;
+  }
 
   trackBy(index: number, s: siteItem) {
     return s.site
