@@ -828,6 +828,10 @@ export class ManageComponent implements OnInit {
     let count = await remult
       .repo(Families)
       .count({ status: FamilyStatus.ToDelete })
+    if (count == 0) {//TODO - investigate why queue crashes in this case
+      this.dialog.messageDialog("אין משפחות נוספות למחיקה")
+      return
+    }
     if (
       !(await this.dialog.YesNoPromise(
         this.settings.lang.areYouSureYouWantToDelete +
