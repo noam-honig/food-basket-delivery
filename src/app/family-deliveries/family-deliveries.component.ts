@@ -856,7 +856,7 @@ font-family: &quot;arial&quot;;
                       }
                     },
                     {
-                      name: 'שלח הודעת אישור פרטים למשפחות',
+                      name: 'שלח',
 
                       click: async () => {
                         message.template = edit.args.templateText
@@ -874,7 +874,9 @@ font-family: &quot;arial&quot;;
                         )
                         edit.ref.close()
                       }
-                    },
+                    }
+                  ],
+                  moreButtons: [
                     {
                       name: 'מה יופיע למשפחה אחרי לחיצה על הקישור',
                       click: async () => {
@@ -900,7 +902,7 @@ font-family: &quot;arial&quot;;
                                   }
                                 },
                                 {
-                                  name: 'הצג איך זה יראה למשפחה',
+                                  name: 'הדגם',
                                   click: async () => {
                                     message.template = edit.args.templateText
                                     window.open(

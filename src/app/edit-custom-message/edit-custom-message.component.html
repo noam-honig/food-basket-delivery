@@ -33,4 +33,8 @@
   >
     {{ b.name }}
   </button>
+  <app-dots-menu
+    [buttons]="args.moreButtons"
+    *ngIf="args.moreButtons?.length > 0"
+  ></app-dots-menu>
 </mat-dialog-actions>

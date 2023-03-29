@@ -379,7 +379,7 @@ export class SendSmsForFamilyDetailsConfirmation extends ActionOnFamilyDeliverie
     super({
       title: getLang().sendMessageToFamilies,
       additionalWhere: {
-        deliverStatus: DeliveryStatus.enquireDetails
+       // deliverStatus: DeliveryStatus.enquireDetails
       },
 
       allowed: () =>

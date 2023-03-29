@@ -160,6 +160,7 @@ export interface EditCustomMessageArgs {
   title: string
   helpText: string
   buttons: RowButton<{ templateText: string; close: VoidFunction }>[]
+  moreButtons?: RowButton<{ templateText: string; close: VoidFunction }>[]
 }
 
 export interface UITools {

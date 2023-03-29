@@ -4,7 +4,11 @@ import { GridButton } from '../common-ui-elements/interfaces'
 import { MatDialogRef } from '@angular/material/dialog'
 import { messageMerger } from './messageMerger'
 import { EditCustomMessageArgs } from '../helpers/init-context'
+import { DialogConfig } from '../common-ui-elements'
 
+@DialogConfig({
+  minWidth:'95vw'
+})
 @Component({
   selector: 'app-edit-custom-message',
   templateUrl: './edit-custom-message.component.html',
@@ -21,7 +25,8 @@ export class EditCustomMessageComponent implements OnInit {
     templateText: 'test',
     title: 'שליחת SMS',
     helpText: 'עזרה',
-    buttons: [] as GridButton[]
+    buttons: [] as GridButton[],
+    moreButtons: [] as GridButton[]
   }
   ngOnInit(): void {}
 
