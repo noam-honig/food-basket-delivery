@@ -149,6 +149,6 @@ export interface helperFollowupInfo {
 }
 
 function log(what: string) {
-  //console.log(what);
+  console.log(what);
   return what
 }

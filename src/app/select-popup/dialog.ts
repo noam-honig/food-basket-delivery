@@ -375,7 +375,8 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
     super.handleError(error)
     if (
       error.message.startsWith('ExpressionChangedAfterItHasBeenCheckedError') ||
-      error.message.startsWith('NG0100')
+      error.message.startsWith('NG0100')||
+      error.message.includes("unsubscribe")
     )
       return
     if (
