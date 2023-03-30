@@ -24,14 +24,17 @@ export class OrgEventsComponent implements OnInit, OnDestroy {
     private dialog: DialogService,
     private route: ActivatedRoute,
     private routeHelper: RouteHelperService
-  ) { }
-  lang = use.language;
+  ) {}
+  lang = use.language
   isGuest = Sites.getOrganizationFromContext() == Sites.guestSchema
   getLogo() {
     return ApplicationSettings.get().logoUrl
   }
   signIn() {
-    this.routeHelper.navigateToComponent(LoginComponent);
+    this.routeHelper.navigateToComponent(LoginComponent)
+    document
+      .getElementsByClassName('wrapper')[0]
+      .scrollTo({ top: 0, behavior: 'smooth' })
   }
   ngOnDestroy(): void {
     if (this.unObserve) this.unObserve()
