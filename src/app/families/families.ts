@@ -1341,8 +1341,8 @@ export class Families extends IdEntity {
     ])
     return message
   }
-  static filterPhone = Filter.createCustom<Families, string>((remult, phone) => {
-    return SqlDatabase.customFilter(async (x) => {
+  static filterPhone = Filter.createCustom<Families, string>(( phone) => {
+    return SqlDatabase.rawFilter(async (x) => {
         var phoneParam = x.addParameterAndReturnSqlToken(phone);
         var sql = new SqlBuilder();
         var fd = SqlFor(remult.repo(Families));
