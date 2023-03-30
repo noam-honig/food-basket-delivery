@@ -1523,6 +1523,7 @@ export class Language {
   registerRequireTz = 'חובה על המתנדב להזין תז'
   requiredField = 'שדה חובה'
   registeredUsersSignIn = 'כניסת משתמשים רשומים'
+  filterPhone = 'סינון לפי טלפון';
 }
 
 const defaultLang = new Language()

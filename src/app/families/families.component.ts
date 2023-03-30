@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
-import { EntityFilter, remult } from 'remult'
+import { EntityFilter, remult, Fields, getFields } from 'remult'
 
 import {
   Families,
@@ -174,6 +174,8 @@ export class FamiliesComponent implements OnInit {
     this.searchString = ''
     this.refreshFamilyGrid()
   }
+  @Fields.string()
+  filterPhone = ''
   searchString = ''
   async doSearch() {
     if (this.families.currentRow && this.families.currentRow._.wasChanged())
@@ -221,6 +223,7 @@ export class FamiliesComponent implements OnInit {
     where: () => {
       let index = 0
       let result: EntityFilter<Families>[] = []
+      if (this.filterPhone) result.push(Families.filterPhone(this.filterPhone))
 
       if (this.currentStatFilter) {
         result.push(this.currentStatFilter.rule)
@@ -347,6 +350,22 @@ export class FamiliesComponent implements OnInit {
       return r
     },
     gridButtons: [
+      {
+        textInMenu: () => use.language.filterPhone,
+        icon: 'phone',
+        click: async () => {
+          await this.dialog.inputAreaDialog({
+            fields: [getFields(this).filterPhone],
+            ok: () => {
+              this.refreshFamilyGrid()
+            },
+            cancel: () => {
+              this.filterPhone = ''
+              this.refreshFamilyGrid()
+            }
+          })
+        }
+      },
       {
         textInMenu: () => use.language.refresh,
         icon: 'refresh',
@@ -908,7 +927,6 @@ export class FamiliesComponent implements OnInit {
   }
   refresh() {
     this.refreshFamilyGrid()
-    
   }
 
   static route: Route = {

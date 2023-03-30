@@ -1341,6 +1341,19 @@ export class Families extends IdEntity {
     ])
     return message
   }
+  static filterPhone = Filter.createCustom<Families, string>((remult, phone) => {
+    return SqlDatabase.customFilter(async (x) => {
+        var phoneParam = x.addParameterAndReturnSqlToken(phone);
+        var sql = new SqlBuilder();
+        var fd = SqlFor(remult.repo(Families));
+        let filter = [];
+        for (const col of [fd.phone1, fd.phone2, fd.phone3, fd.phone4]) {
+            filter.push(sql.and(sql.build(sql.extractNumberChars(col), ' like ', "'%'||", sql.extractNumberChars(phoneParam), "||'%'"), sql.build(sql.extractNumber(phoneParam), ' <> ', 0)))
+        }
+        x.sql = await sql.or(...filter)
+
+    });
+});
 }
 
 export interface duplicateFamilyInfo {

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core'
 import { distCenterAdminGuard } from '../auth/guards'
 import { Roles } from '../auth/roles'
 import { Route } from '@angular/router'
-import { EntityFilter, Filter, remult } from 'remult'
+import { EntityFilter, Field, Fields, Filter, getFields, remult } from 'remult'
 import {
   DataControlInfo,
   DataControlSettings,
@@ -96,6 +96,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   normalColumns: DataControlInfo<ActiveFamilyDeliveries>[]
   deliverySummary: DataControlSettings<ActiveFamilyDeliveries>
   currentStatFilter: FamilyDeliveresStatistics = undefined
+  @Fields.string()
+  filterPhone = ''
   searchString = ''
   async doSearch() {
     if (this.deliveries.currentRow && this.deliveries.currentRow._.wasChanged())
@@ -649,6 +651,8 @@ font-family: &quot;arial&quot;;
             distributionCenter: this.dialog.filterDistCenter()
           }
         ]
+        if (this.filterPhone)
+          result.push(ActiveFamilyDeliveries.filterPhone(this.filterPhone))
 
         if (this.currentStatFilter) {
           result.push(this.currentStatFilter.rule)
@@ -795,6 +799,22 @@ font-family: &quot;arial&quot;;
       },
       allowSelection: true,
       gridButtons: [
+        {
+          textInMenu: () => use.language.filterPhone,
+          icon: 'phone',
+          click: async () => {
+            await this.dialog.inputAreaDialog({
+              fields: [getFields(this).filterPhone],
+              ok: () => {
+                this.refreshFamilyGrid()
+              },
+              cancel: () => {
+                this.filterPhone = ''
+                this.refreshFamilyGrid()
+              }
+            })
+          }
+        },
         {
           textInMenu: () => use.language.refresh,
           icon: 'refresh',
