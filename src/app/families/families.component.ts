@@ -424,7 +424,7 @@ export class FamiliesComponent implements OnInit {
                     }
                   },
                   {
-                    name: use.language.sendMessageToFamilies,
+                    name: "שלח",
 
                     click: async () => {
                       this.settings.familySelfOrderMessage =
