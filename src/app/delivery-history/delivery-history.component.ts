@@ -85,6 +85,7 @@ export class DeliveryHistoryComponent implements OnInit {
       remult.repo(helperHistoryInfo, this.helperStorage),
       {
         allowSelection: true,
+        liveQuery: false,
         numOfColumnsInGrid: this.settings.isSytemForMlt ? 12 : 9,
         gridButtons: [
           {

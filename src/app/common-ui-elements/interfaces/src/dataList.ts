@@ -6,7 +6,11 @@ export class DataList<T> implements Iterable<T> {
   }
 
   items: T[] = []
-  constructor(private repository: Repository<T>,private listRefreshed?:VoidFunction) {}
+  constructor(
+    private repository: Repository<T>,
+    private listRefreshed?: VoidFunction,
+    private liveQuery = false
+  ) {}
   removeItem(item: T) {
     let i = this.items.indexOf(item)
     if (i >= 0) this.items.splice(i, 1)
@@ -16,11 +20,19 @@ export class DataList<T> implements Iterable<T> {
     return this.repository.count(where)
   }
   get(options: FindOptions<T>, andDo: (rows: T[]) => void) {
-    const result = this.repository.liveQuery(options).subscribe((args) => {
-      this.items = args.applyChanges(this.items)
-      andDo(this.items)
-      return this.items
-    })
+    let unSub = () => {}
+    if (this.liveQuery) {
+      unSub = this.repository.liveQuery(options).subscribe((args) => {
+        this.items = args.applyChanges(this.items)
+        andDo(this.items)
+        return this.items
+      })
+    } else {
+      this.repository.find(options).then((items) => {
+        this.items = items
+        andDo(this.items)
+      })
+    }
     const unSub2 = this.repository.addEventListener({
       deleted: (entity) => {
         this.removeItem(entity)
@@ -39,13 +51,13 @@ export class DataList<T> implements Iterable<T> {
             ),
             1
           )
-          this.listRefreshed&&this.listRefreshed()
+          this.listRefreshed && this.listRefreshed()
         }
       }
     })
     return () => {
       unSub2()
-      result()
+      unSub()
     }
   }
   add(): T {

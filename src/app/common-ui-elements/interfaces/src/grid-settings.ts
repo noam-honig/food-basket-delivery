@@ -31,7 +31,12 @@ export class GridSettings<rowType = any> {
     public settings?: IDataSettings<rowType>
   ) {
     if (!settings) this.settings = settings = {}
-    this.restList = new DataList<rowType>(repository, settings.listRefreshed)
+    if (this.settings.liveQuery === undefined) this.settings.liveQuery = true
+    this.restList = new DataList<rowType>(
+      repository,
+      settings.listRefreshed,
+      settings.liveQuery
+    )
     if (repository) {
       this.filterHelper.filterRow = <rowType>repository.create()
       repository.addEventListener({
@@ -519,6 +524,7 @@ export interface IDataSettings<rowType> {
   numOfColumnsInGrid?: number
   caption?: string
   listRefreshed?: VoidFunction
+  liveQuery?: boolean
 }
 export interface RowButton<rowType> {
   name?: string
