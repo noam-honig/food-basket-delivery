@@ -812,7 +812,7 @@ export class volunteersInEvent extends IdEntity {
                 templateText: settings.confirmEventParticipationMessage,
                 buttons: [
                   {
-                    name: 'שמור הודעה',
+                    name: 'שמור',
                     click: async ({ templateText }) => {
                       settings.confirmEventParticipationMessage = templateText
                       await settings.save()
@@ -820,7 +820,7 @@ export class volunteersInEvent extends IdEntity {
                     }
                   },
                   {
-                    name: 'שלח הודעה',
+                    name: 'שלח',
                     click: async ({ templateText, close }) => {
                       let count = gridSettings.totalRows
                       if (
@@ -857,7 +857,7 @@ export class volunteersInEvent extends IdEntity {
                 templateText: message.template,
                 buttons: [
                   {
-                    name: 'שמור הודעה',
+                    name: 'שמור',
                     click: async ({ templateText }) => {
                       message.template = templateText
                       await message.save()
@@ -865,7 +865,7 @@ export class volunteersInEvent extends IdEntity {
                     }
                   },
                   {
-                    name: 'שלח הודעה',
+                    name: 'שלח',
                     click: async ({ templateText, close }) => {
                       let count = gridSettings.totalRows
                       if (
