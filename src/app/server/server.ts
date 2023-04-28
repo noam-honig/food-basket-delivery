@@ -430,7 +430,7 @@ s.parentNode.insertBefore(b, s);})();
         let x = new SseSubscriptionServer((channel, remult) => {
           if (channel === StatusChangeChannel.channelKey)
             return remult.isAllowed(Roles.distCenterAdmin)
-          return channel.startsWith(`users:${remult.user.id}`)
+          return channel.startsWith(`users:${remult.user?.id}`)
         })
         //x.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'dispatcher.json', JSON.stringify(x, undefined, 2))
         //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));

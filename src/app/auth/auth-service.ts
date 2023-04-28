@@ -35,6 +35,7 @@ export class TokenService {
     this.keyInStorage = 'authorization/' + org
     let token = sessionStorage.getItem(this.keyInStorage)
     if (!token) token = localStorage.getItem(this.keyInStorage)
+    if (window.location.pathname.split('/')[2] === 'x') return //ignore existing user when signing in using sms url
     await this.setToken(token, false)
   }
   initContext: () => Promise<void> = async () => {}
