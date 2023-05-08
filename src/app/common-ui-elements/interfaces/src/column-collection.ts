@@ -384,10 +384,14 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
       allowNull: settings.allowNull!,
       caption: settings.caption,
       options: this.options,
-      valueConverter: valueConverter!,
+      valueConverter: valueConverter! as any,
+      displayValue: () => '',
+      apiUpdateAllowed: () => true,
+      includedInApi: true,
+      toInput: x => x,
+      fromInput: x => x,
       valueType: settings.valueType,
       key: settings.key,
-      dbName: settings.dbName!,
       dbReadOnly: false,
       inputType: settings.inputType!,
       isServerExpression: false,
@@ -407,22 +411,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
   load(): Promise<valueType> {
     throw new Error('Method not implemented.')
   }
-  metadata: {
-    readonly key: string
-    readonly target: ClassType<valueType>
-    readonly valueType: any
-    getDbName: () => Promise<string>
-
-    caption: string
-    readonly inputType: string
-    readonly allowNull: boolean
-
-    readonly isServerExpression: boolean
-    readonly dbReadOnly: boolean
-    readonly dbName: string
-    readonly valueConverter: ValueConverter<valueType>
-    readonly options: FieldOptions
-  }
+  metadata:FieldMetadata
   _value!: valueType
   inputType: string
   error!: string

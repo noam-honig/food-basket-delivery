@@ -9,7 +9,14 @@ import {
   getSettings,
   setSettingsForSite
 } from '../manage/ApplicationSettings'
-import { Filter, OmitEB, remult, Remult, SqlDatabase } from 'remult'
+import {
+  ControllerBase,
+  Filter,
+  OmitEB,
+  remult,
+  Remult,
+  SqlDatabase
+} from 'remult'
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites'
 
 import {
@@ -92,8 +99,11 @@ import { SelectHelperController } from '../select-helper/select-helper.controlle
 import { SiteOverviewController } from '../site-overview/site-overview.controller'
 import { WeeklyReportMltController } from '../weekly-report-mlt/weekly-report-mlt.controller'
 import { DeliveryHistoryController } from '../delivery-history/delivery-history.controller'
-import { NewDelivery,  SendSmsToFamilies } from '../families/familyActions'
-import { DeleteDeliveries, SendSmsForFamilyDetailsConfirmation } from '../family-deliveries/family-deliveries-actions'
+import { NewDelivery, SendSmsToFamilies } from '../families/familyActions'
+import {
+  DeleteDeliveries,
+  SendSmsForFamilyDetailsConfirmation
+} from '../family-deliveries/family-deliveries-actions'
 import { PlaybackController } from '../playback/playback.controller'
 import {
   DialogController,
@@ -108,10 +118,15 @@ import { ChangeLog, FieldDecider } from '../change-log/change-log'
 import { CallerController } from '../caller/caller.controller'
 
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder'
-import { remultExpress } from 'remult/remult-express'
+import { remultExpress, RemultExpressServer } from 'remult/remult-express'
 import { Callers } from '../manage-callers/callers'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
-import { RemultServer, SseSubscriptionServer } from 'remult/server'
+import {
+  InitRequestOptions,
+  RemultServer,
+  RemultServerCore,
+  SseSubscriptionServer
+} from 'remult/server'
 
 import * as ably from 'ably'
 
@@ -402,55 +417,77 @@ s.parentNode.insertBefore(b, s);})();
     }
   >()
 
+  async function initRemultContext(
+    { url, origin, referer }: initRemultContextInfo,
+    options: InitRequestOptions
+  ) {
+    const site = getSiteFromUrl(url)
+    remult.context.requestRefererOnBackend = referer
+    remult.context.getSite = () => site
+    remult.context.requestUrlOnBackend = url
+    if (!remult.isAllowed(Sites.getOrgRole())) remult.user = undefined
+    remult.dataProvider = dataSource(remult)
+    remult.context.getOrigin = () => origin
+
+    let found = siteEventPublishers.get(site)
+    if (!found) {
+      let subscriptionServer: SubscriptionServer
+      //TODO YONI - review channel name
+      let x = new SseSubscriptionServer((channel, remult) => {
+        if (channel === StatusChangeChannel.channelKey)
+          return remult.isAllowed(Roles.distCenterAdmin)
+        return channel.startsWith(`users:${remult.user?.id}`)
+      })
+      //x.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'dispatcher.json', JSON.stringify(x, undefined, 2))
+      //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
+      subscriptionServer = x
+
+      var liveQueryStorage = new InMemoryLiveQueryStorage()
+      siteEventPublishers.set(
+        site,
+        (found = {
+          subscriptionServer,
+          //TODO - replace with storage that is stored in the db
+          liveQueryStorage
+        })
+      )
+      //storage.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'liveQueryStorage.json', JSON.stringify(x, undefined, 2));
+    }
+    //z.debugFileSaver = x => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(x, undefined, 2));
+    remult.subscriptionServer = found.subscriptionServer
+    options.liveQueryStorage = found.liveQueryStorage
+    await InitContext(remult, undefined)
+  }
+
   let api = remultExpress({
     entities,
     controllers,
     logApiEndPoints: process.env.logUrls == 'true',
     initRequest: async (req, options) => {
       let url = ''
+      let origin = ''
+      let referer = ''
       if (req) {
-        if (req.headers)
-          remult.context.requestRefererOnBackend =
-            req.headers['referer']?.toString()
+        if (req.headers) {
+          referer = req.headers['referer']?.toString()
+          origin = req.headers['origin'] as string
+        }
         if (req.originalUrl) url = req.originalUrl
         else if (req.url) url = req.url
         else url = req.path
       }
-      const site = getSiteFromUrl(url)
-      remult.context.getSite = () => site
-      remult.context.requestUrlOnBackend = url
-      if (!remult.isAllowed(Sites.getOrgRole())) remult.user = undefined
-      remult.dataProvider = dataSource(remult)
-      remult.context.getOrigin = () => req.headers['origin'] as string
-
-      let found = siteEventPublishers.get(site)
-      if (!found) {
-        let subscriptionServer: SubscriptionServer
-        //TODO YONI - review channel name
-        let x = new SseSubscriptionServer((channel, remult) => {
-          if (channel === StatusChangeChannel.channelKey)
-            return remult.isAllowed(Roles.distCenterAdmin)
-          return channel.startsWith(`users:${remult.user?.id}`)
-        })
-        //x.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'dispatcher.json', JSON.stringify(x, undefined, 2))
-        //x.debugMessageFileSaver = (id, channel, message) => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify({ channel, message, id }, undefined, 2));
-        subscriptionServer = x
-
-        var liveQueryStorage = new InMemoryLiveQueryStorage()
-        siteEventPublishers.set(
-          site,
-          (found = {
-            subscriptionServer,
-            //TODO - replace with storage that is stored in the db
-            liveQueryStorage
-          })
-        )
-        //storage.debugFileSaver = x => fs.writeFileSync('./tmp/' + site + 'liveQueryStorage.json', JSON.stringify(x, undefined, 2));
+      await initRemultContext({ url, origin, referer }, options)
+    },
+    contextSerializer: {
+      serialize: async () =>
+        ({
+          origin: remult.context.getOrigin(),
+          referer: remult.context.requestRefererOnBackend,
+          url: remult.context.requestUrlOnBackend
+        } as initRemultContextInfo),
+      deserialize: async (json, options) => {
+        await initRemultContext(json, options)
       }
-      //z.debugFileSaver = x => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(x, undefined, 2));
-      remult.subscriptionServer = found.subscriptionServer
-      options.liveQueryStorage = found.liveQueryStorage
-      await InitContext(remult, undefined)
     },
     initApi: async (remult) => {
       await initDatabase()
@@ -458,11 +495,29 @@ s.parentNode.insertBefore(b, s);})();
       remult.context.getSite = () => 'test1'
       remult.dataProvider = dataSource(remult)
       await InitContext(remult, undefined)
+
+      if (false) {
+        let h1 = await remult
+          .repo(Helpers)
+          .findFirst({ phone: new Phone('0507330590') })
+        console.log(h1)
+
+        let row = await SqlDatabase.getDb(remult).execute(
+          "select id, name, smsDate, doNotSendSms, company, totalKm, totalTime, shortUrlKey, distributionCenter, eventComment, needEscort, theHelperIAmEscorting, escort, leadHelper, myGiftsURL, archive, frozenTill, internalComment, blockedFamilies, case when (frozenTill is null or frozenTill <= '2023-05-07T21:00:00.000Z') then false else true end, id || escort || theHelperIAmEscorting, phone, lastSignInDate, password, socialSecurityNumber, email, addressApiResult, preferredDistributionAreaAddress, preferredDistributionAreaAddressCity, addressApiResult2, preferredDistributionAreaAddress2, preferredFinishAddressCity, createDate, passwordChangeDate, EULASignDate, reminderSmsDate, referredBy, isAdmin, labAdmin, isIndependent, distCenterAdmin, familyAdmin, caller, includeGroups, excludeGroups, callQuota\n" +
+            ` from Helpers where phone = '0507330590' Order By id  limit 1 offset 0`
+        )
+        let val = row.rows[0][row.getColumnKeyInResultForIndexInSelect(18)]
+        console.log(val)
+        console.log(
+          remult.repo(Helpers).fields.blockedFamilies.valueConverter.fromDb(val)
+        )
+      }
+
       const path = './db-structure/'
       for (const entity of entities) {
         let meta = remult.repo(
           entity as {
-            new(...args: any[]): any
+            new (...args: any[]): any
           }
         ).metadata
         const db = await meta.getDbName()
@@ -508,7 +563,7 @@ s.parentNode.insertBefore(b, s);})();
       api.withRemult(
         {
           url: '/' + Sites.guestSchema + '/xx'
-        },
+        } as any,
         undefined,
         async () => {
           let vals = {
@@ -518,7 +573,7 @@ s.parentNode.insertBefore(b, s);})();
           for (const key of siteEventPublishers.keys()) {
             await siteEventPublishers
               .get(key)
-              .liveQueryStorage.forEach('', async () => { })
+              .liveQueryStorage.forEach('', async () => {})
             let val =
               //@ts-ignore
               siteEventPublishers.get(key).liveQueryStorage.queries.length
@@ -532,7 +587,7 @@ s.parentNode.insertBefore(b, s);})();
               vals[key + '$sse'] = v2
             }
           }
-          OverviewController.stats = vals;
+          OverviewController.stats = vals
           await remult.repo(MemoryStats).insert({
             mem: process.memoryUsage(),
             stats: vals
@@ -704,8 +759,8 @@ async function downloadPaperTrailLogs() {
             fetch
               .default(
                 'https://papertrailapp.com/api/v1/archives/' +
-                theTime +
-                '/download',
+                  theTime +
+                  '/download',
                 requestOptions
               )
               .then(async (response) =>
@@ -728,7 +783,7 @@ async function downloadPaperTrailLogs() {
     console.error(err)
   }
 }
-function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
+function registerImageUrls(app, api: RemultExpressServer, sitePrefix: string) {
   app.use(
     sitePrefix + '/assets/apple-touch-icon.png',
     api.withRemult,
@@ -741,7 +796,7 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
           res.send(Buffer.from(imageBase, 'base64'))
           return
         }
-      } catch (err) { }
+      } catch (err) {}
       try {
         res.send(fs.readFileSync(publicRoot + '/assets/apple-touch-icon.png'))
       } catch (err) {
@@ -765,7 +820,7 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
         res.send(Buffer.from(imageBase, 'base64'))
         return
       }
-    } catch (err) { }
+    } catch (err) {}
     try {
       res.send(fs.readFileSync(publicRoot + '/favicon.ico'))
     } catch (err) {
@@ -775,8 +830,14 @@ function registerImageUrls(app, api: RemultServer, sitePrefix: string) {
   })
 }
 
-function test<t = never>(what: (a: t, b: number) => void) { }
+function test<t = never>(what: (a: t, b: number) => void) {}
 
 test<any>((a, b) => {
   a.toString()
 })
+
+declare type initRemultContextInfo = {
+  url: string
+  origin: string
+  referer: string
+}
