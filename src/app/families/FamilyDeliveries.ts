@@ -1,6 +1,7 @@
 import { ChangeDateColumn, relativeDateName } from '../model-shared/types'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
 import { Phone } from '../model-shared/phone'
+import * as fetch from 'node-fetch'
 
 import {
   IdEntity,
@@ -84,6 +85,7 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
     previousDeliveryStatus: fd.$.deliverStatus.originalValue
   })
 }
+
 @Entity<FamilyDeliveries>('FamilyDeliveries', {
   dbName: 'FamilyDeliveries',
   translation: (l) => l.deliveries,
@@ -142,6 +144,28 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
           self.courierComments.length > 0
         )
           self.courierCommentsDate = new Date()
+        if (self.$.deliverStatus.valueChanged()) {
+          let env = process.env['ESHEL']
+          if (env) {
+            if (env.split(',').includes(remult.context.getSite())) {
+              if (
+                self.courier.id === remult.user.id &&
+                self.deliverStatus.IsAResultStatus()
+              ) {
+                const fam = await remult.repo(Families).findId(self.family)
+                if (fam.iDinExcel) {
+                  const eshelUrl = `https://ok-rsoft.com/EshelIT.Service.Phone/IVRDriverConfirmation.aspx?cphone=${
+                    self.courier.phone
+                  }&accountId=${fam.iDinExcel}&action=${
+                    self.deliverStatus.isProblem ? 2 : 1
+                  }&text=${encodeURI(self.courierComments)}`
+                  console.log({eshelUrl})
+                  fetch.default(eshelUrl)
+                }
+              }
+            }
+          }
+        }
 
         logChanged(
           self.$.deliverStatus,
