@@ -159,8 +159,10 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
                   }&accountId=${fam.iDinExcel}&action=${
                     self.deliverStatus.isProblem ? 2 : 1
                   }&text=${encodeURI(self.courierComments)}`
-                  console.log({eshelUrl})
-                  fetch.default(eshelUrl)
+                  console.log({ eshelUrl })
+                  fetch.default(eshelUrl).catch((err) => {
+                    console.error('failed', { eshelUrl, err })
+                  })
                 }
               }
             }
