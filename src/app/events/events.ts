@@ -636,6 +636,20 @@ export class volunteersInEvent extends IdEntity {
   })
   helperEmail: string
   @Field<volunteersInEvent>({
+    translation: (l) => l.socialSecurityNumber,
+    sqlExpression: async (selfDefs) => {
+      let sql = new SqlBuilder()
+      let self = SqlFor(selfDefs)
+      let h = SqlFor(remult.repo(Helpers))
+      return sql.columnInnerSelect(self, {
+        from: h,
+        select: () => [h.socialSecurityNumber],
+        where: () => [sql.eq(h.id, self.helper)]
+      })
+    }
+  })
+  helperSocialSecurityNumber: string
+  @Field<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -788,7 +802,8 @@ export class volunteersInEvent extends IdEntity {
           ev.preferredDistributionAreaAddress,
           ev.preferredFinishAddress,
           ev.preferredDistributionAreaAddressCity,
-          ev.preferredFinishAddressCity
+          ev.preferredFinishAddressCity,
+          ev.helperSocialSecurityNumber
         ],
         rowCssClass: (v) => {
           if (v.canceled) return 'forzen'
