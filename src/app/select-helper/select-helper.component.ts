@@ -93,6 +93,7 @@ export class SelectHelperComponent implements OnInit {
       this.filteredHelpers = mapHelpers(
         await remult.repo(HelpersAndStats).find({
           orderBy: { name: 'asc' },
+          limit: 100,
           where: {
             name: { $contains: this.searchString },
             $and: [
