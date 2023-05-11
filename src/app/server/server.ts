@@ -3,7 +3,7 @@
 import { ApplicationImages } from '../manage/ApplicationImages'
 import * as express from 'express'
 import * as fs from 'fs' //
-import * as heapdump from 'heapdump'
+//import * as heapdump from 'heapdump'
 import { serverInit } from './serverInit'
 import {
   ApplicationSettings,
@@ -813,7 +813,7 @@ function registerImageUrls(app, api: RemultExpressServer, sitePrefix: string) {
       key = randomUUID()
       console.log("begin dump")
       console.time("dump")
-      heapdump.writeSnapshot('./test.heapsnapshot')
+//      heapdump.writeSnapshot('./test.heapsnapshot')
       console.timeEnd("dump")
       res.send(key)
     } else res.send('not cool!!!')
