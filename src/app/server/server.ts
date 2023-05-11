@@ -3,6 +3,7 @@
 import { ApplicationImages } from '../manage/ApplicationImages'
 import * as express from 'express'
 import * as fs from 'fs' //
+import * as heapdump from 'heapdump'
 import { serverInit } from './serverInit'
 import {
   ApplicationSettings,
@@ -137,6 +138,7 @@ import {
 } from 'remult'
 import { MemoryStats } from './stats'
 import { FamilyConfirmDetailsController } from '../family-confirm-details/family-confirm-details.controller'
+import { randomUUID } from 'crypto'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -805,6 +807,21 @@ function registerImageUrls(app, api: RemultExpressServer, sitePrefix: string) {
       }
     }
   )
+  let key = ''
+  app.get('/guest/dump', api.withRemult, async (req, res: express.Response) => {
+    if (remult.isAllowed(Roles.overview)) {
+      key = randomUUID()
+      console.log("begin dump")
+      console.time("dump")
+      heapdump.writeSnapshot('./test.heapsnapshot')
+      console.timeEnd("dump")
+      res.send(key)
+    } else res.send('not cool!!!')
+  })
+  app.get('/guest/download', (req: express.Request, res: express.Response) => {
+    if (req.query.key == key) res.sendFile(process.cwd() + '/test.heapsnapshot')
+    else res.send('not cool!!!')
+  })
   app.use('/guest/favicon.ico', async (req, res) => {
     try {
       res.send(fs.readFileSync(publicRoot + '/favicon.ico'))
@@ -841,5 +858,3 @@ declare type initRemultContextInfo = {
   origin: string
   referer: string
 }
-
-

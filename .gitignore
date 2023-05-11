@@ -45,3 +45,4 @@ Thumbs.db
 .env
 .vs/slnx.sqlite
 .vs
+test.heapsnapshot
