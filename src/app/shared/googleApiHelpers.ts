@@ -25,7 +25,7 @@ export class GeoCodeOptions {
   static disableGeocode = false
 }
 
-var pendingRequests = new Map<string, Promise<GeocodeInformation>>()
+var pendingRequests = new Map<string,GeocodeResult| Promise<GeocodeResult>>()
 export async function GetGeoInformation(address: string) {
   if (!address || address == '' || address.trim() == '')
     return new GeocodeInformation()
@@ -78,7 +78,8 @@ export async function GetGeoInformation(address: string) {
               let g = new GeocodeInformation(r as GeocodeResult)
               if (!g.ok())
                 console.log('api error:' + g.info.status + ' for ' + address)
-              return g
+              pendingRequests.set(address, g.info)
+              return g.info
             })
         )
         .catch((err) => {
@@ -86,10 +87,11 @@ export async function GetGeoInformation(address: string) {
             process.env.GOOGLE_GECODE_API_KEY,
             '****'
           )
+          console.error("google api error",{message})
           throw { message }
         })
       pendingRequests.set(address, r)
-      return await r
+      return new GeocodeInformation( await r)
     } catch (err) {
       pendingRequests.delete(address)
       return new GeocodeInformation({
@@ -100,7 +102,7 @@ export async function GetGeoInformation(address: string) {
     }
   } else {
   }
-  return await x
+  return new GeocodeInformation( await x)
 }
 
 @Entity('geocodeCache', {
@@ -545,7 +547,6 @@ export class AdjustGeocode extends ControllerBase {
     geo.info['manual_adjustment'] = true
 
     g.googleApiResult = geo.saveToString()
-    
 
     await g.save()
 
