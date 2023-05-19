@@ -125,7 +125,8 @@ export class OrgEventsController {
       thePhoneDescription: '',
       thePhoneDisplay: s.phoneInOrganizationListDisplay,
       type: EventType.other,
-      site: org
+      site: org,
+      settings:{} as any
     }
   }
 

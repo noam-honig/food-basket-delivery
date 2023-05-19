@@ -37,6 +37,7 @@ import { Location } from '../shared/googleApiHelpers'
 import { Sites } from '../sites/sites'
 import '../helpers/init-context'
 import {
+  BELOW_18_ERROR,
   EditCustomMessageArgs,
   evil,
   GridDialogArgs,
@@ -52,6 +53,7 @@ import { DialogController, StatusChangeChannel } from './dialog.controller'
 import { AddressInputComponent } from '../address-input/address-input.component'
 import { AreaDataComponent } from '../area-data/area-data.component'
 import { BlockedFamiliesComponent } from '../blocked-families/blocked-families.component'
+import { BelowEightteenMessageComponent } from '../below-eightteen-message/below-eightteen-message.component'
 
 declare var gtag
 
@@ -86,7 +88,9 @@ export class DialogService implements UITools {
   }
 
   async Error(err: string) {
-    await this.messageDialog(extractError(err))
+    let extract = extractError(err)
+    if (extract === BELOW_18_ERROR) openDialog(BelowEightteenMessageComponent)
+    else await this.messageDialog(extract)
   }
   private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 720px)`)
 
@@ -375,8 +379,8 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
     super.handleError(error)
     if (
       error.message.startsWith('ExpressionChangedAfterItHasBeenCheckedError') ||
-      error.message.startsWith('NG0100')||
-      error.message.includes("unsubscribe")
+      error.message.startsWith('NG0100') ||
+      error.message.includes('unsubscribe')
     )
       return
     if (

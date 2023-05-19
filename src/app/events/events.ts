@@ -21,7 +21,7 @@ import {
   RowButton
 } from '../common-ui-elements/interfaces'
 import { use, ValueListFieldType, Field, Fields } from '../translate'
-import { getLang } from '../sites/sites'
+import { getLang, Sites } from '../sites/sites'
 import { Roles } from '../auth/roles'
 import { Helpers, HelpersBase } from '../helpers/helpers'
 import { DateTimeColumn, ChangeDateColumn } from '../model-shared/types'
@@ -94,6 +94,21 @@ export class eventStatus {
 })
 export class Event extends IdEntity {
   async toEventInList(helper: HelpersBase): Promise<EventInList> {
+    const {
+      questionForRegistration1Caption,
+      questionForRegistration2Caption,
+      questionForRegistration3Caption,
+      questionForRegistration4Caption,
+      registerAskEmail,
+      registerAskPreferredDistributionAreaAddress,
+      registerAskPreferredFinishAddress,
+      registerAskTz,
+      questionForRegistration1Values,
+      questionForRegistration2Values,
+      questionForRegistration3Values,
+      questionForRegistration4Values,
+    } = await remult.context.getSettings()
+
     let {
       id,
       name,
@@ -133,7 +148,24 @@ export class Event extends IdEntity {
       registeredToEvent: await this.volunteeredIsRegisteredToEvent(helper),
       eventLogo,
       location,
-      orgName
+      orgName,
+      settings: {
+        questionForRegistration1Caption,
+        questionForRegistration2Caption,
+        questionForRegistration3Caption,
+        questionForRegistration4Caption,
+        questionForRegistration1Values,
+        questionForRegistration2Values,
+        questionForRegistration3Values,
+        questionForRegistration4Values,
+        registerAskEmail,
+        registerAskPreferredDistributionAreaAddress,
+        registerAskPreferredFinishAddress,
+        registerAskTz,
+        registerOnlyOver18: ['test1', 'shabatm'].includes(
+          Sites.getOrganizationFromContext()
+        )
+      }
     }
   }
   async volunteeredIsRegisteredToEvent(helper: HelpersBase) {
@@ -1037,6 +1069,22 @@ export interface EventInList {
   location: Location
   orgName: string
   remoteUrl?: string
+  settings?: EventSettings
+}
+export interface EventSettings {
+  registerAskTz: boolean
+  registerAskEmail: boolean
+  registerAskPreferredDistributionAreaAddress: boolean
+  registerAskPreferredFinishAddress: boolean
+  questionForRegistration1Caption: string
+  questionForRegistration1Values: string
+  questionForRegistration2Caption: string
+  questionForRegistration2Values: string
+  questionForRegistration3Caption: string
+  questionForRegistration3Values: string
+  questionForRegistration4Caption: string
+  questionForRegistration4Values: string
+  registerOnlyOver18: boolean
 }
 
 export const day = 86400000

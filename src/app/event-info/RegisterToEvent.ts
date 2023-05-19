@@ -1,4 +1,7 @@
-import { DataControl } from '../common-ui-elements/interfaces'
+import {
+  DataAreaFieldsSetting,
+  DataControl
+} from '../common-ui-elements/interfaces'
 import {
   BackendMethod,
   Controller,
@@ -16,10 +19,11 @@ import {
   EventInList,
   volunteersInEvent,
   Event,
-  eventDisplayDate
+  eventDisplayDate,
+  EventSettings
 } from '../events/events'
 import { Helpers } from '../helpers/helpers'
-import { InitContext, UITools } from '../helpers/init-context'
+import { BELOW_18_ERROR, InitContext, UITools } from '../helpers/init-context'
 import {
   CustomColumn,
   getSettings,
@@ -38,7 +42,8 @@ function storedInfo(): VolunteerInfo {
   return {
     phone: '',
     name: '',
-    lastName: ''
+    lastName: '',
+    over18: false
   }
 }
 
@@ -52,20 +57,22 @@ export class RegisterToEvent {
     field: FieldRef
     show: () => boolean
     helperField?: FieldMetadata
+    caption?: string
+    values?: string
     getFieldToUpdate: (
       h: FieldsRef<Helpers>,
       e: FieldsRef<volunteersInEvent>
     ) => FieldRef
   }[] = []
   inited = false
-  async init() {
+  async init(s: EventSettings) {
     if (this.inited) return
     this.inited = true
-    let s = await remult.context.getSettings()
     if (!actionInfo.runningOnServer) {
       this.phone = new Phone(RegisterToEvent.volunteerInfo.phone)
       this.name = RegisterToEvent.volunteerInfo.name
       this.lastName = RegisterToEvent.volunteerInfo.lastName || ''
+      this.over18 = RegisterToEvent.volunteerInfo.over18
       let h = await remult.context.getCurrentUser()
       if (h) {
         this.socialSecurityNumber = h.socialSecurityNumber
@@ -97,21 +104,29 @@ export class RegisterToEvent {
     })
     this.questions.push({
       field: this.$.a1,
+      caption: s.questionForRegistration1Caption,
+      values: s.questionForRegistration1Values,
       show: () => !!s.questionForRegistration1Caption,
       getFieldToUpdate: (h, e) => e.a1
     })
     this.questions.push({
       field: this.$.a2,
+      caption: s.questionForRegistration2Caption,
+      values: s.questionForRegistration2Values,
       show: () => !!s.questionForRegistration2Caption,
       getFieldToUpdate: (h, e) => e.a2
     })
     this.questions.push({
       field: this.$.a3,
+      caption: s.questionForRegistration3Caption,
+      values: s.questionForRegistration3Values,
       show: () => !!s.questionForRegistration3Caption,
       getFieldToUpdate: (h, e) => e.a3
     })
     this.questions.push({
       field: this.$.a4,
+      caption: s.questionForRegistration4Caption,
+      values: s.questionForRegistration4Values,
       show: () => !!s.questionForRegistration4Caption,
       getFieldToUpdate: (h, e) => e.a4
     })
@@ -119,12 +134,12 @@ export class RegisterToEvent {
   static volunteerInfo: VolunteerInfo
   static volunteerInfoChanged = new EventSource()
   @DataControl({ allowClick: () => false })
-  @Field<RegisterToEvent>({
+  @Field<RegisterToEvent, Phone>({
     translation: (l) => l.phone,
     valueType: Phone,
     validate: (e, c) => {
       if (!remult.authenticated()) {
-        c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone))
+        if (c.value) c.value = new Phone(Phone.fixPhoneInput(c.value.thePhone))
         Phone.validatePhone(c, true)
       }
     }
@@ -143,16 +158,18 @@ export class RegisterToEvent {
     caption: use.language.lastName
   })
   lastName: string
+  @Field({ translation: (l) => 'אני מעל גיל 18?' })
+  over18: boolean
   @Field({ translation: (l) => l.rememberMeOnThisDevice })
   rememberMeOnThisDevice: boolean
 
-  @CustomColumn(() => registerQuestionForVolunteers[1])
+  @Field()
   a1: string = ''
-  @CustomColumn(() => registerQuestionForVolunteers[2])
+  @Field()
   a2: string = ''
-  @CustomColumn(() => registerQuestionForVolunteers[3])
+  @Field()
   a3: string = ''
-  @CustomColumn(() => registerQuestionForVolunteers[4])
+  @Field()
   a4: string = ''
   @Field<RegisterToEvent>({
     translation: (l) => l.socialSecurityNumber,
@@ -181,7 +198,10 @@ export class RegisterToEvent {
   }
   async registerToEvent(e: EventInList, ui: UITools) {
     ui.trackVolunteer('register-event:' + e.site)
-    await this.init()
+    if (!e.settings) {
+      e.settings = {} as any
+    }
+    await this.init(e.settings)
     this.a1 = ''
     this.a2 = ''
     this.a3 = ''
@@ -210,9 +230,22 @@ export class RegisterToEvent {
           { field: this.$.name, visible: () => !remult.authenticated() },
           { field: this.$.lastName, visible: () => !remult.authenticated() },
           { field: this.$.phone, visible: () => !remult.authenticated() },
+          {
+            field: this.$.over18,
+            visible: () => e.settings.registerOnlyOver18
+          },
           ...this.questions
             .filter((x) => x.show())
-            .map((x) => ({ field: x.field, click: null })),
+            .map(
+              (x) =>
+                ({
+                  field: x.field,
+                  click: null,
+                  caption: x.caption,
+                  valueList:
+                    x.values && x.values.split(',').map((x) => x.trim())
+                } as DataAreaFieldsSetting)
+            ),
           this.$.rememberMeOnThisDevice
         ],
         cancel: () => {},
@@ -229,7 +262,8 @@ export class RegisterToEvent {
           RegisterToEvent.volunteerInfo = {
             phone: this.phone.thePhone,
             name: this.name,
-            lastName: this.lastName
+            lastName: this.lastName,
+            over18: this.over18
           }
           if (this.rememberMeOnThisDevice)
             localStorage.setItem(
@@ -262,6 +296,7 @@ export class RegisterToEvent {
   }
   async removeFromEvent(e: EventInList, ui: UITools) {
     ui.trackVolunteer('un-register-event:' + e.site)
+    await this.init(e.settings)
     this.updateEvent(
       e,
       await this.registerVolunteerToEvent(e.id, e.site, false, e.remoteUrl)
@@ -277,21 +312,13 @@ export class RegisterToEvent {
     if (remoteUrl)
       return await doOnRemoteHagai(async (remote, url) => {
         return await remote
-          .call(
-            this.registerVolunteerToEvent,
-            this,
-            id,
-            site,
-            register,
-            remoteUrl
-          )
+          .call(this.registerVolunteerToEvent, this, id, site, register)
           .then((x: EventInList) => ({
             ...x,
             remoteUrl: url,
             eventLogo: remoteUrl + x.eventLogo
           }))
       })
-    await this.init()
     if (site) {
       let dp = Sites.getDataProviderForOrg(site)
 
@@ -299,6 +326,11 @@ export class RegisterToEvent {
       Sites.setSiteToContext(site)
       await InitContext(remult)
     }
+    const event = await remult.repo(Event).findId(id)
+    const eventSettings = (await event.toEventInList(undefined)).settings
+    await this.init(eventSettings)
+    if (eventSettings.registerOnlyOver18 && !this.over18 && register)
+      throw BELOW_18_ERROR
     let helper: Helpers
     if (remult.authenticated()) {
       helper = await remult.repo(Helpers).findId(remult.user.id)
@@ -344,7 +376,7 @@ export class RegisterToEvent {
       helperInEvent.canceled = true
       await helperInEvent.save()
     }
-    const event = await remult.repo(Event).findId(id)
+
     try {
       const l = remult.context.lang
       const what =
@@ -374,4 +406,5 @@ interface VolunteerInfo {
   phone: string
   name: string
   lastName: string
+  over18: boolean
 }

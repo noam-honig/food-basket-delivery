@@ -260,3 +260,4 @@ declare module 'remult' {
     width?: string
   }
 }
+export const BELOW_18_ERROR = 'BELOW_18_ERROR'
