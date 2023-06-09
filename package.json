@@ -112,7 +112,7 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "npm": "^6.14.7",
+    "npm": "^9.6.1",
     "protractor": "~7.0.0",
     "source-map-explorer": "^2.5.2",
     "tsc-watch": "^4.6.0",
