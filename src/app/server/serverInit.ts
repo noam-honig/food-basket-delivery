@@ -29,6 +29,7 @@ import { actionInfo } from 'remult/src/server-action'
 import { OverviewController } from '../overview/overview.controller'
 import { FamilyInfoController } from '../family-info/family-info.controller'
 import { MemoryStats } from './stats'
+import { ChangeLog } from '../change-log/change-log'
 
 declare const lang = ''
 export const initSettings = {
@@ -221,7 +222,8 @@ async function initDatabase(
       Helpers,
       SitesEntity,
       DistributionCenters,
-      MemoryStats
+      MemoryStats,
+      ChangeLog
     ]) {
       await builder.createIfNotExist(remult.repo(entity).metadata)
       await builder.verifyAllColumns(remult.repo(entity).metadata)
