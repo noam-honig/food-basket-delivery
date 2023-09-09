@@ -31,8 +31,20 @@ When developing we run two servers:
 ### To  run the dev environment
 1. Run Task `ng-serve`  to run angular cli development server (on port 4200)
 2. Run Task `node-serve` to build and run the `node js` server.
-
+3. Run the following script in postgres:
+   ```sql
+   create extension if not exists pg_trgm with schema pg_catalog;
+   ```
+4. Insert the first admin user:
+   ```sql
+   insert into guest.helpers (id,name,phone,isadmin) values ('stam','noam','0507330590',true)
+   ```
+5. Navigate to: http://localhost:4200/guest/login
+6. Click on the circle at the bottom left and type the admin phone number.
+7. Set the password you want
+8. click on create new environment and add environment (Either `test1` or `test2` or configure more in the `proxy.conf.ts` file)
 * if you need to debug something, run the `Attach to Running Node Server` debug configuration
+  
 
 
 ## Running the application for the first time
