@@ -633,6 +633,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async sendWhatsapp() {
+    this.dialog.analytics('Send WhatsApp');
     Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage)
     await this.updateMessageSent('Whatsapp')
   }
