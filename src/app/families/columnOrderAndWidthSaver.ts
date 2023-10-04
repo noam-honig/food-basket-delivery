@@ -46,7 +46,9 @@ export class columnOrderAndWidthSaver {
         if (element)
           x.push({
             caption: element.caption,
-            key: getFieldDefinition(element.field)?.key,
+            key:
+              element.storeColumnInfoKey ||
+              getFieldDefinition(element.field)?.key,
             width: element.width
           })
       }

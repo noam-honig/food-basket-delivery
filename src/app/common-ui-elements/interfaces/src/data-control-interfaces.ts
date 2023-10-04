@@ -39,7 +39,7 @@ export interface DataControlSettings<entityType = any, valueType = any> {
   inputType?: string //used: password,date,tel,text,checkbox,number
   hideDataOnInput?: boolean //consider also setting the width of the data on input - for datas with long input
   useContainsFilter?: boolean
-
+  storeColumnInfoKey?: string
   width?: string
   customComponent?: {
     component: any

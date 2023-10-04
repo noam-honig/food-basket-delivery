@@ -735,6 +735,21 @@ export class FamilyDeliveries extends IdEntity {
     dbName: 'callCount'
   })
   callCounter: number
+  @Field<FamilyDeliveries>({
+    translation: (l) => l.familyHelpContact,
+    includeInApi: Roles.distCenterAdmin,
+    sqlExpression: async (selfDefs) => {
+      let sql = new SqlBuilder()
+      let self = SqlFor(selfDefs)
+      let f = SqlFor(remult.repo(Families))
+      return sql.columnInnerSelect(self, {
+        from: f,
+        select: () => [f.socialWorker],
+        where: () => [sql.eq(f.id, self.family)]
+      })
+    }
+  })
+  socialWorker: string
 
   static customFilter = Filter.createCustom<
     FamilyDeliveries,

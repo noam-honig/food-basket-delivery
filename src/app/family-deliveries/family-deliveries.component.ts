@@ -700,7 +700,8 @@ font-family: &quot;arial&quot;;
             readonly: true,
             valueList: async (c) => DeliveryStatus.getOptions(),
             getValue: (f) => f.getDeliveryDescription(),
-            width: '300'
+            width: '300',
+            storeColumnInfoKey: 'deliverySummary'
           }),
           { field: deliveries.createDate, width: '150' },
           {
@@ -758,7 +759,8 @@ font-family: &quot;arial&quot;;
           deliveries.callerComment,
           deliveries.callerAssignDate,
           deliveries.lastCallDate,
-          deliveries.items
+          deliveries.items,
+          deliveries.socialWorker
         ]
         for (const c of [
           deliveries.a1,
