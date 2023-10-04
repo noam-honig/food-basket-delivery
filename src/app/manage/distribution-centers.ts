@@ -123,7 +123,7 @@ export class DistributionCenters extends MyIdEntity {
         cache: true
       }
     )
-    if (showAllOptions) {
+    if (showAllOptions && !r.find((y) => y.id === null)) {
       r.splice(0, 0, { caption: use.language.allDistributionLists, id: null })
     }
     return r
