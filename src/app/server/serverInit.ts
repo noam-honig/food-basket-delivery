@@ -25,7 +25,7 @@ import { DistributionCenters } from '../manage/distribution-centers'
 import { ClassType } from 'remult/classType'
 
 import { InitContext as InitRemult } from '../helpers/init-context'
-import { actionInfo } from 'remult/src/server-action'
+import { actionInfo } from 'remult/internals'
 import { OverviewController } from '../overview/overview.controller'
 import { FamilyInfoController } from '../family-info/family-info.controller'
 import { MemoryStats } from './stats'

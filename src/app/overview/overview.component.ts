@@ -6,7 +6,7 @@ import { DialogService } from '../select-popup/dialog'
 import { extractError } from '../select-popup/extractError'
 import { SiteOverviewComponent } from '../site-overview/site-overview.component'
 import { BusyService, openDialog } from '../common-ui-elements'
-import { actionInfo } from 'remult/src/server-action'
+import { actionInfo } from 'remult/internals'
 import { InputField } from '../common-ui-elements/interfaces'
 import {
   dateRange,

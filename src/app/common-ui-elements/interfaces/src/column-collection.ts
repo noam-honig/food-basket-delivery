@@ -15,7 +15,8 @@ import {
   ValueListInfo,
   Remult,
   remult,
-  Unsubscribe
+  Unsubscribe,
+  RefSubscriber
 } from 'remult'
 
 import {
@@ -26,12 +27,7 @@ import {
   ValueOrEntityExpression
 } from './data-control-interfaces'
 import { FilterHelper } from './filter-helper'
-import {
-  decorateColumnSettings,
-  getEntitySettings,
-  RefSubscriber,
-  RepositoryImplementation
-} from 'remult/src/remult3'
+import { decorateColumnSettings, getEntitySettings } from 'remult/internals'
 
 import { ClassType } from 'remult/classType'
 
@@ -388,8 +384,8 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
       displayValue: () => '',
       apiUpdateAllowed: () => true,
       includedInApi: true,
-      toInput: x => x,
-      fromInput: x => x,
+      toInput: (x) => x,
+      fromInput: (x) => x,
       valueType: settings.valueType,
       key: settings.key,
       dbReadOnly: false,
@@ -411,7 +407,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
   load(): Promise<valueType> {
     throw new Error('Method not implemented.')
   }
-  metadata:FieldMetadata
+  metadata: FieldMetadata
   _value!: valueType
   inputType: string
   error!: string
@@ -501,9 +497,6 @@ export function getEntityValueList<T>(
     })
     .then((r) => {
       if (args?.cache) {
-        r.map((x) =>
-          (repository as RepositoryImplementation<any>).addToCache(x)
-        )
       }
       return r.map((x) => {
         return {

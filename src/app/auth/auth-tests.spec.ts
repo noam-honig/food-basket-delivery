@@ -6,7 +6,7 @@ import { Roles } from './roles'
 import { AuthService, TokenService } from './auth-service'
 import { Phone } from '../model-shared/phone'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
-import { actionInfo } from 'remult/src/server-action'
+import { actionInfo } from 'remult/internals'
 import { initConfig, InitContext } from '../helpers/init-context'
 import { AuthServiceController } from './auth-service.controller'
 

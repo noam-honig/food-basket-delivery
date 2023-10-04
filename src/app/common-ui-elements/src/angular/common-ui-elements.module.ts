@@ -8,7 +8,7 @@ import { DataFilterInfoComponent } from './data-filter-info/data-filter-info.com
 import { DataGrid2Component } from './date-grid-2/data-grid2.component'
 
 import { Remult, FieldMetadata, ValueListItem, remult } from 'remult'
-import { actionInfo } from 'remult/src/server-action'
+import { actionInfo } from 'remult/internals'
 
 import {
   NotAuthenticatedGuard,

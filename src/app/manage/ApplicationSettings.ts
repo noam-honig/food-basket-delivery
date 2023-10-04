@@ -28,7 +28,7 @@ export function CustomColumn(
 }
 
 import { Location, AddressHelper } from '../shared/googleApiHelpers'
-import { Entity } from 'remult'
+import { Entity, ValueListFieldType } from 'remult'
 import { logChanges } from '../model-shared/types'
 import { Phone } from '../model-shared/phone'
 import { Roles } from '../auth/roles'
@@ -50,7 +50,6 @@ import { BasketType } from '../families/BasketType'
 import { Sites, getLang, setLangForSite } from '../sites/sites'
 import { routeStrategy } from '../asign-family/route-strategy'
 
-import { ValueListFieldType } from 'remult/src/remult3'
 import { GroupsValue } from './groups'
 import { recordChanges } from '../change-log/change-log'
 import { ManageController } from './manage.controller'
@@ -653,7 +652,7 @@ export class ApplicationSettings extends EntityBase {
   familySelfOrderMessage: string
   @Field({ includeInApi: Roles.admin })
   familyConfirmDetailsEnabled: boolean
-  
+
   @Field({ includeInApi: Roles.admin })
   inviteVolunteersMessage: string
   @Field({ allowApiUpdate: Roles.admin })

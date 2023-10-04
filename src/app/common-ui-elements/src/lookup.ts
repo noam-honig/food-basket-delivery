@@ -1,5 +1,5 @@
 import { Filter, EntityFilter, FindOptions, Repository } from 'remult'
-import { __updateEntityBasedOnWhere } from 'remult/src/remult3'
+import { __updateEntityBasedOnWhere } from 'remult/internals'
 
 export class Lookup<entityType> {
   constructor(private repository: Repository<entityType>) {}

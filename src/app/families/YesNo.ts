@@ -1,5 +1,5 @@
 import { DataControl } from '../common-ui-elements/interfaces'
-import { ValueListFieldType } from 'remult/src/remult3'
+import { ValueListFieldType } from 'remult/internals'
 
 @DataControl({ width: '100' })
 @ValueListFieldType()

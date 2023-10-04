@@ -1,4 +1,4 @@
-import { ValueListFieldType } from 'remult/src/remult3'
+import { ValueListFieldType } from 'remult'
 
 @ValueListFieldType({
   displayValue: (e, val) => val.caption

@@ -14,7 +14,7 @@ import {
   FieldsRef,
   remult
 } from 'remult'
-import { actionInfo } from 'remult/src/server-action'
+import { actionInfo } from 'remult/internals'
 import {
   EventInList,
   volunteersInEvent,

@@ -21,7 +21,7 @@ import {
 import { Groups, GroupsValue } from '../manage/groups'
 import { FamilySources } from './FamilySources'
 
-import { controllerRefImpl, getControllerRef } from 'remult/src/remult3'
+import { controllerRefImpl, getControllerRef } from 'remult/internals'
 import { getSettings } from '../manage/ApplicationSettings'
 import { Roles } from '../auth/roles'
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action'
@@ -483,7 +483,6 @@ export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
   }
 }
 
-
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries> {
   processedFamilies = new Map<string, boolean>()
 
@@ -496,12 +495,10 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
         forEach: async (fd) => {
           if (this.processedFamilies.get(fd.family)) return
           this.processedFamilies.set(fd.family, true)
-          let f = await remult
-            .repo(Families)
-            .findFirst({
-              id: fd.family,
-              $and: [await Filter.resolve(orig.args.additionalWhere)]
-            })
+          let f = await remult.repo(Families).findFirst({
+            id: fd.family,
+            $and: [await Filter.resolve(orig.args.additionalWhere)]
+          })
           if (f) {
             await orig.args.forEach(f)
             if (!f._.wasDeleted()) await f.save()

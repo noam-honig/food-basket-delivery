@@ -7,7 +7,7 @@ import {
 } from 'remult'
 import { FieldMetadata } from 'remult'
 
-import { getEntitySettings } from 'remult/src/remult3'
+import { getEntitySettings } from 'remult/internals'
 import { getFieldDefinition } from './data-control-interfaces'
 
 export class FilterHelper<rowType> {

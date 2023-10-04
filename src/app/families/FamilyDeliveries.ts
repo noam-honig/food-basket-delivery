@@ -12,7 +12,8 @@ import {
   isBackend,
   EntityFilter,
   SqlDatabase,
-  remult
+  remult,
+  IdFieldRef
 } from 'remult'
 import { BasketType } from './BasketType'
 import { Families, iniFamilyDeliveriesInFamiliesCode } from './families'
@@ -58,7 +59,7 @@ import { Groups, GroupsValue } from '../manage/groups'
 import { FamilySources } from './FamilySources'
 import { DeliveryImage, FamilyImage } from './DeiveryImages'
 import { ImageInfo } from '../images/images.component'
-import { IdFieldRef } from 'remult/src/remult3'
+
 import { isDesktop } from '../shared/utils'
 import { UITools } from '../helpers/init-context'
 import { messageMerger } from '../edit-custom-message/messageMerger'
