@@ -62,3 +62,14 @@ callerComment varchar default '' not null
 lastCallDate timestamp
 callerAssignDate timestamp
 callCount numeric default 0 not null
+hasAddress_2 boolean default false not null
+addressApiResult_2 varchar default '' not null
+address_2 varchar default '' not null
+floor_2 varchar default '' not null
+appartment_2 varchar default '' not null
+entrance_2 varchar default '' not null
+addressComment_2 varchar default '' not null
+phone1_2 varchar default '' not null
+phone1Description_2 varchar default '' not null
+phone2_2 varchar default '' not null
+phone2Description_2 varchar default '' not null

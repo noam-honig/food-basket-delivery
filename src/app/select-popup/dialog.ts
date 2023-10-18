@@ -121,9 +121,10 @@ export class DialogService implements UITools {
     plugInService.dataControlAugmenter = (f, s) => {
       if (f?.options.customInput) {
         f.options.customInput({
-          addressInput: () =>
+          addressInput: (onSelect) =>
             (s.customComponent = {
-              component: AddressInputComponent
+              component: AddressInputComponent,
+              args: onSelect
             }),
           textArea: () =>
             (s.customComponent = {

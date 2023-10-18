@@ -33,6 +33,8 @@ import { SendSmsAction } from '../asign-family/send-sms-action'
 import { PreviousDeliveryCommentsComponent } from '../previous-delivery-comments/previous-delivery-comments.component'
 import { quantityHelper } from '../families/BasketType'
 import { FamilyInfoController } from './family-info.controller'
+import { AddressInfoArgs } from '../address-info/address-info.component'
+import { openGoogleMaps, openWaze } from '../shared/googleApiHelpers'
 
 @Component({
   selector: 'app-family-info',
@@ -45,7 +47,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     private dialog: DialogService,
     public settings: ApplicationSettings,
     private zone: NgZone
-  ) { }
+  ) {}
   ngOnChanges(changes: SimpleChanges): void {
     this.initPhones()
   }
@@ -60,19 +62,53 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   hasImages = false
   images: ImageInfo[]
   phones: { phone: Phone; desc: string }[]
-
+  secondAddressArgs: AddressInfoArgs
   async ngOnInit() {
-    this.initPhones()
+    this.initPhones() //[ ] remove
     if (this.f && remult.authenticated()) {
       this.hasImages = await this.dialog.donotWait(() =>
         FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id)
       )
+    }
+    if (this.f.hasAddress_2) {
+      this.secondAddressArgs = {
+        useWaze: this.userFamilies.useWaze,
+        title: 'כתובת שנייה',
+        callerScreen: this.callerScreen,
+        f: {
+          $: {
+            phone1: this.f.$.phone1_2,
+            phone1Description: this.f.$.phone1Description_2,
+            phone2: this.f.$.phone2_2,
+            phone2Description: this.f.$.phone2Description_2,
+            appartment: this.f.$.appartment_2,
+            floor: this.f.$.floor_2,
+            entrance: this.f.$.entrance_2
+          },
+          addressComment: this.f.addressComment_2,
+          addressOk: true,
+          getAddressDescription: () => {
+            return this.f.address_2
+          },
+          openGoogleMaps: () => {
+            openGoogleMaps(
+              this.f.addressHelper_2.getGeocodeInformation.getAddress()
+            )
+          },
+          openWaze: () => {
+            const toLocation = this.f.addressHelper_2.getlonglat
+            const address = this.f.address
+            openWaze(toLocation, address)
+          }
+        }
+      }
     }
 
     this.refreshWhatToTake()
   }
   whatToTake: string = ''
   initPhones() {
+    //[ ] remove
     this.phones = [
       { phone: this.f.phone1, desc: this.f.phone1Description },
       { phone: this.f.phone2, desc: this.f.phone2Description },
@@ -113,9 +149,9 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     openDialog(
       PreviousDeliveryCommentsComponent,
       (x) =>
-      (x.args = {
-        family: this.f.family
-      })
+        (x.args = {
+          family: this.f.family
+        })
     )
   }
   courierCommentsDateRelativeDate() {
@@ -142,23 +178,23 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     openDialog(
       GetVolunteerFeedback,
       (x) =>
-      (x.args = {
-        family: f,
-        comment: f.courierComments,
-        helpText: (s) => s.commentForSuccessDelivery,
-        ok: async (comment) => {
-          f.deliverStatus = DeliveryStatus.SuccessPickedUp
-          f.courierComments = comment
-          f.checkNeedsWork()
-          try {
-            await f.save()
-            this.dialog.analytics('Self Pickup')
-          } catch (err) {
-            this.dialog.Error(err)
-          }
-        },
-        cancel: () => { }
-      })
+        (x.args = {
+          family: f,
+          comment: f.courierComments,
+          helpText: (s) => s.commentForSuccessDelivery,
+          ok: async (comment) => {
+            f.deliverStatus = DeliveryStatus.SuccessPickedUp
+            f.courierComments = comment
+            f.checkNeedsWork()
+            try {
+              await f.save()
+              this.dialog.analytics('Self Pickup')
+            } catch (err) {
+              this.dialog.Error(err)
+            }
+          },
+          cancel: () => {}
+        })
     )
   }
 
@@ -182,9 +218,11 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
       })
   }
   callPhone(col: Phone) {
+    //[ ] remove
     col?.call()
   }
   async sendWhatsapp(phone: Phone) {
+    //[ ] remove
     phone.sendWhatsapp(
       SendSmsAction.getSuccessMessage(
         this.settings.successMessageText,
@@ -195,7 +233,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   }
 
   async familiyPickedUp(f: ActiveFamilyDeliveries) {
-    ; (await this.settings.isSytemForMlt)
+    ;(await this.settings.isSytemForMlt)
       ? this.labSelfReception(f)
       : this.getPickupComments(f)
   }
@@ -204,6 +242,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     this.assignmentCanceled.emit()
   }
   navigate(f: ActiveFamilyDeliveries) {
+    //[ ] - remove
     if (!f.addressOk) {
       this.dialog.YesNoQuestion(use.language.addressNotOkOpenWaze, () => {
         if (this.userFamilies.useWaze) f.openWaze()
@@ -228,10 +267,10 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     copy(f.address)
     this.dialog.Info(
       use.language.address +
-      ' ' +
-      f.address +
-      ' ' +
-      use.language.wasCopiedSuccefully
+        ' ' +
+        f.address +
+        ' ' +
+        use.language.wasCopiedSuccefully
     )
   }
   showStatus() {

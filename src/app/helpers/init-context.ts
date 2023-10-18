@@ -11,7 +11,11 @@ import { BasketType } from '../families/BasketType'
 import { DistributionCenters } from '../manage/distribution-centers'
 
 import { Helpers } from './helpers'
-import { GetDistanceBetween, Location } from '../shared/googleApiHelpers'
+import {
+  GeocodeResult,
+  GetDistanceBetween,
+  Location
+} from '../shared/googleApiHelpers'
 import { Roles } from '../auth/roles'
 import { getLang, Sites } from '../sites/sites'
 import { Language } from '../translate'
@@ -254,10 +258,21 @@ declare module 'remult' {
       ui: UITools
     ) => void
     customInput?: (select: {
-      addressInput: VoidFunction
+      addressInput(
+        onSelect?: (
+          result: InputAddressResult,
+          entityInstance: entityType
+        ) => void
+      ): void
       textArea: VoidFunction
     }) => void
     width?: string
   }
+}
+export interface InputAddressResult {
+  addressByGoogle: string
+  location: Location
+  city: string
+  autoCompleteResult: GeocodeResult
 }
 export const BELOW_18_ERROR = 'BELOW_18_ERROR'

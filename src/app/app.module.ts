@@ -132,7 +132,8 @@ import { BlockedFamiliesComponent } from './blocked-families/blocked-families.co
 import { SpecificEventComponent } from './specific-event/specific-event.component'
 import { ButtonDataComponent } from './button-data/button-data.component';
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component';
-import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component'
+import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component';
+import { AddressInfoComponent } from './address-info/address-info.component'
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
 
@@ -243,7 +244,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     SpecificEventComponent,
     ButtonDataComponent,
     FamilyConfirmDetailsComponent,
-    BelowEightteenMessageComponent
+    BelowEightteenMessageComponent,
+    AddressInfoComponent
   ],
   imports: [
     BrowserModule,

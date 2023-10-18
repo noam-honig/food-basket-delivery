@@ -21,6 +21,7 @@ import {
   getCity,
   GeocodeResult
 } from '../shared/googleApiHelpers'
+import { InputAddressResult } from '../helpers/init-context'
 
 @Component({
   selector: 'app-address-input',
@@ -33,9 +34,15 @@ export class AddressInputComponent
   @Input() field: FieldRef<any, string>
   @Input() autoInit: boolean = false
   @Input() caption: string
+  onSelect?: (result: InputAddressResult) => void
   constructor(private settings: ApplicationSettings, private zone: NgZone) {}
   set args(value: CustomComponentArgs) {
     this.field = value.fieldRef
+    if (value.args) {
+      this.onSelect = (result) => {
+        value.args(result, value.fieldRef.container)
+      }
+    }
     this.autoInit = true
   }
   initAddressAutoComplete = false
@@ -50,14 +57,7 @@ export class AddressInputComponent
   }
 
   @ViewChild('addressInput', { static: false }) addressInput: ElementRef
-  initAddress(
-    consumer: (x: {
-      addressByGoogle: string
-      location: Location
-      city: string
-      autoCompleteResult: GeocodeResult
-    }) => void
-  ) {
+  initAddress(consumer: (x: InputAddressResult) => void) {
     if (this.initAddressAutoComplete) return
     this.initAddressAutoComplete = true
     let b = this.settings.forWho.args.bounds
@@ -78,7 +78,7 @@ export class AddressInputComponent
       () => {
         const place = autocomplete.getPlace()
         if (!place) return
-   //     console.log(place)
+        //     console.log(place)
 
         this.zone.run(() => {
           this.field.value = this.addressInput.nativeElement.value
@@ -86,38 +86,48 @@ export class AddressInputComponent
             formatted_address: this.field.value,
             address_components: place.address_components
           })
-          consumer({
-            autoCompleteResult: {
-              results: [
-                {
-                  address_components: place.address_components,
-                  formatted_address: place.formatted_address,
-                  partial_match: false,
-                  geometry: {
-                    location_type: '',
-                    location: toLocation(place.geometry.location),
-                    viewport: {
-                      northeast: toLocation(
-                        place.geometry.viewport.getNorthEast()
-                      ),
-                      southwest: toLocation(
-                        place.geometry.viewport.getSouthWest()
-                      )
-                    }
-                  },
-                  place_id: place.place_id,
-                  types: place.types
+
+          consumer(
+            !place.geometry
+              ? {
+                  autoCompleteResult: undefined!,
+                  location: undefined!,
+                  addressByGoogle: undefined!,
+                  city: undefined!
                 }
-              ],
-              status: 'OK'
-            },
-            location: {
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng()
-            },
-            addressByGoogle: getAddress(place),
-            city: getCity(place.address_components)
-          })
+              : {
+                  autoCompleteResult: {
+                    results: [
+                      {
+                        address_components: place.address_components,
+                        formatted_address: place.formatted_address,
+                        partial_match: false,
+                        geometry: {
+                          location_type: '',
+                          location: toLocation(place.geometry!.location)!,
+                          viewport: {
+                            northeast: toLocation(
+                              place.geometry!.viewport.getNorthEast()
+                            ),
+                            southwest: toLocation(
+                              place.geometry!.viewport.getSouthWest()
+                            )
+                          }
+                        },
+                        place_id: place.place_id!,
+                        types: place.types!
+                      }
+                    ],
+                    status: 'OK'
+                  },
+                  location: {
+                    lat: place.geometry!.location.lat(),
+                    lng: place.geometry!.location.lng()
+                  },
+                  addressByGoogle: getAddress(place),
+                  city: getCity(place.address_components!)
+                }
+          )
         })
       }
     )
@@ -128,7 +138,9 @@ export class AddressInputComponent
 
   ngAfterViewInit() {
     if (this.autoInit) {
-      this.initAddress((x) => {})
+      this.initAddress((x) => {
+        this.onSelect?.(x)
+      })
     }
   }
   ngOnDestroy(): void {

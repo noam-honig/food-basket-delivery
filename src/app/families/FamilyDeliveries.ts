@@ -16,7 +16,12 @@ import {
   IdFieldRef
 } from 'remult'
 import { BasketType } from './BasketType'
-import { Families, iniFamilyDeliveriesInFamiliesCode } from './families'
+import {
+  Families,
+  autocompleteResult,
+  iniFamilyDeliveriesInFamiliesCode,
+  parseUrlInAddress
+} from './families'
 import { DeliveryStatus } from './DeliveryStatus'
 import { Helpers, HelpersBase } from '../helpers/helpers'
 
@@ -28,7 +33,9 @@ import {
   Location,
   toLongLat,
   isGpsAddress,
-  openWaze
+  openWaze,
+  AddressHelper,
+  openGoogleMaps
 } from '../shared/googleApiHelpers'
 
 import {
@@ -751,6 +758,59 @@ export class FamilyDeliveries extends IdEntity {
   })
   socialWorker: string
 
+  @Fields.boolean({
+    caption: 'כתובת נוספת?',
+    allowApiUpdate: Roles.distCenterAdmin
+  })
+  hasAddress_2 = false
+
+  @Field({ allowApiUpdate: Roles.distCenterAdmin })
+  addressApiResult_2: string
+
+  @Field<FamilyDeliveries, string>({
+    allowApiUpdate: Roles.distCenterAdmin,
+    translation: (t) => t.address,
+    customInput: (c) =>
+      c.addressInput((x, d) => {
+        d.addressApiResult_2 = JSON.stringify({
+          address: d.address_2,
+          result: x.autoCompleteResult
+        } as autocompleteResult)
+      })
+  })
+  @DataControl<FamilyDeliveries>({
+    valueChange: (self) => {
+      if (!self.address_2) return
+      let y = parseUrlInAddress(self.address_2)
+      if (y != self.address_2) self.address_2 = y
+    }
+  })
+  address_2: string
+  addressHelper_2 = new AddressHelper(
+    () => this.$.address_2,
+    () => this.$.addressApiResult_2
+  )
+
+  @Field({ translation: (t) => t.floor })
+  floor_2: string
+  @Field({ translation: (t) => t.appartment })
+  appartment_2: string
+  @Field({ translation: (t) => t.entrance })
+  entrance_2: string
+
+  @Field({ translation: (t) => t.addressComment })
+  addressComment_2: string
+  @Field({ translation: (t) => t.phone1 })
+  @DataControl<Families>({})
+  phone1_2: Phone
+  @Field({ translation: (t) => t.phone1Description })
+  phone1Description_2: string
+  @Field({ translation: (t) => t.phone2 })
+  @DataControl<Families>({})
+  phone2_2: Phone
+  @Field({ translation: (t) => t.phone2Description })
+  phone2Description_2: string
+
   static customFilter = Filter.createCustom<
     FamilyDeliveries,
     {
@@ -1063,13 +1123,7 @@ export class FamilyDeliveries extends IdEntity {
     openWaze(toLocation, address)
   }
   openGoogleMaps() {
-    window.open(
-      'https://www.google.com/maps/search/?api=1&hl=' +
-        getLang().languageCode +
-        '&query=' +
-        this.addressByGoogle,
-      '_blank'
-    )
+    openGoogleMaps(this.addressByGoogle)
   }
   showOnGoogleMaps() {
     window.open(
@@ -1190,6 +1244,28 @@ export class FamilyDeliveries extends IdEntity {
       this.$.items,
       this.$.courier,
       { field: this.$.distributionCenter, visible: () => ui.hasManyCenters },
+      { field: this.$.hasAddress_2 },
+      { field: this.$.address_2, visible: () => this.hasAddress_2 },
+      [
+        { field: this.$.appartment_2, visible: () => this.hasAddress_2 },
+        { field: this.$.floor_2, visible: () => this.hasAddress_2 },
+        { field: this.$.entrance_2, visible: () => this.hasAddress_2 }
+      ],
+      { field: this.$.addressComment_2, visible: () => this.hasAddress_2 },
+      {
+        caption: use.language.addressByGoogle,
+        getValue: () => this.addressHelper_2.getAddress,
+        visible: () => this.hasAddress_2
+      },
+      [
+        { field: this.$.phone1_2, visible: () => this.hasAddress_2 },
+        { field: this.$.phone1Description_2, visible: () => this.hasAddress_2 }
+      ],
+      [
+        { field: this.$.phone2_2, visible: () => this.hasAddress_2 },
+        { field: this.$.phone2Description_2, visible: () => this.hasAddress_2 }
+      ],
+
       this.$.needsWork,
       this.$.courierComments,
       this.$.a1,

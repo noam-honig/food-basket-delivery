@@ -63,7 +63,8 @@ export class DataControl2Component implements OnChanges {
       if (this.componentRef) {
         this.componentRef.instance.args = {
           fieldRef: this._getColumn() as FieldRef,
-          settings: this.map
+          settings: this.map,
+          args: this.map.customComponent.args
         }
       }
     }

@@ -154,6 +154,14 @@ export function Field<entityType = any, valueType = any>(
 }
 
 export class Fields {
+  static string<entityType = any>(options?: FieldOptions<entityType, string>) {
+    return OrigFields.string(options)
+  }
+  static boolean<entityType = any>(
+    options?: FieldOptions<entityType, boolean>
+  ) {
+    return OrigFields.boolean(options)
+  }
   static integer<entityType = any>(
     settings?: FieldOptions<entityType, number> & TranslatedCaption,
     ...options: (
@@ -1523,7 +1531,7 @@ export class Language {
   registerRequireTz = 'חובה על המתנדב להזין תז'
   requiredField = 'שדה חובה'
   registeredUsersSignIn = 'כניסת משתמשים רשומים'
-  filterPhone = 'סינון לפי טלפון';
+  filterPhone = 'סינון לפי טלפון'
 }
 
 const defaultLang = new Language()

@@ -25,7 +25,7 @@ export class GeoCodeOptions {
   static disableGeocode = false
 }
 
-var pendingRequests = new Map<string,GeocodeResult| Promise<GeocodeResult>>()
+var pendingRequests = new Map<string, GeocodeResult | Promise<GeocodeResult>>()
 export async function GetGeoInformation(address: string) {
   if (!address || address == '' || address.trim() == '')
     return new GeocodeInformation()
@@ -87,11 +87,11 @@ export async function GetGeoInformation(address: string) {
             process.env.GOOGLE_GECODE_API_KEY,
             '****'
           )
-          console.error("google api error",{message})
+          console.error('google api error', { message })
           throw { message }
         })
       pendingRequests.set(address, r)
-      return new GeocodeInformation( await r)
+      return new GeocodeInformation(await r)
     } catch (err) {
       pendingRequests.delete(address)
       return new GeocodeInformation({
@@ -102,7 +102,7 @@ export async function GetGeoInformation(address: string) {
     }
   } else {
   }
-  return new GeocodeInformation( await x)
+  return new GeocodeInformation(await x)
 }
 
 @Entity('geocodeCache', {
@@ -617,4 +617,13 @@ export class AdjustGeocode extends ControllerBase {
       cancel: () => {}
     })
   }
+}
+export function openGoogleMaps(addressByGoogle: string) {
+  window.open(
+    'https://www.google.com/maps/search/?api=1&hl=' +
+      getLang().languageCode +
+      '&query=' +
+      addressByGoogle,
+    '_blank'
+  )
 }

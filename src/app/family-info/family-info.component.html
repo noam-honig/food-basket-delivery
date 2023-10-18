@@ -102,175 +102,20 @@
       <span style="white-space: pre">{{ whatToTake }}</span>
     </mat-card>
   </div>
-
-  <h4>{{ settings.lang.address }}</h4>
-  <mat-card style="font-size: 20px; line-height: 28px">
-    <div style="display: flex; gap: 4px; align-items: center">
-      <div style="flex-grow: 1">
-        <a (click)="navigate(f)">
-          <span style="display: block"> {{ f.getAddressDescription() }} </span>
-          <ng-container *ngIf="f.floor || f.appartment || f.entrance">
-          </ng-container>
-          <ng-container *ngIf="f.entrance">
-            {{ f.$.entrance.metadata.caption }} {{ f.entrance }}
-          </ng-container>
-          <ng-container *ngIf="f.floor">
-            {{ f.$.floor.metadata.caption }} {{ f.floor }}
-          </ng-container>
-          <ng-container *ngIf="f.appartment">
-            {{ f.$.appartment.metadata.caption }} {{ f.appartment }}
-          </ng-container>
-        </a>
-      </div>
-      <div>
-        <button
-          mat-flat-button
-          color="primary"
-          class="small-button"
-          (click)="navigate(f)"
-          *ngIf="!callerScreen"
-        >
-          <mat-icon *ngIf="!userFamilies?.useWaze"> navigation </mat-icon>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            *ngIf="userFamilies?.useWaze"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15.6928 6.30219C16.1465 8.98531 14.7259 11.5497 12.1562 12.8062C12.5625 13.8719 11.7687 15 10.6462 15C10.2326 14.9997 9.83488 14.8407 9.53504 14.5558C9.2352 14.2709 9.05609 13.8818 9.03464 13.4688C8.83339 13.4747 7.02839 13.4688 6.64933 13.4487C6.64076 13.6608 6.59049 13.8691 6.50137 14.0618C6.41226 14.2544 6.28605 14.4276 6.12997 14.5714C5.97389 14.7152 5.791 14.8269 5.59174 14.9C5.39248 14.9731 5.18077 15.0063 4.9687 14.9975C3.91058 14.955 3.15777 13.9088 3.49995 12.875C2.33714 12.4653 1.23308 11.7853 0.386828 10.6625C-0.019422 10.1225 0.371828 9.35625 1.03808 9.35625C2.48527 9.35625 2.04495 7.66344 2.38652 5.91062C2.96245 2.975 6.03495 1 9.00277 1C12.2053 1 15.1637 3.20844 15.6928 6.30219ZM11.6721 12.1337C12.9846 11.5344 14.2137 10.3616 14.6812 8.94188C15.9462 5.09531 12.6765 1.81687 9.00277 1.81687C6.39495 1.81687 3.68027 3.54875 3.18808 6.06687C2.89027 7.59531 3.34433 10.1716 1.03964 10.1716C1.81902 11.2062 2.86245 11.8159 3.9687 12.1731C4.73933 11.4919 5.96464 11.6897 6.46339 12.6213C6.90777 12.6525 8.93808 12.6581 9.21027 12.6469C9.32017 12.4322 9.47676 12.2448 9.66854 12.0986C9.86031 11.9523 10.0824 11.8509 10.3185 11.8017C10.5546 11.7524 10.7988 11.7567 11.033 11.8142C11.2672 11.8717 11.4856 11.9809 11.6721 12.1337ZM6.40995 5.84781C6.40995 4.76219 7.9987 4.76188 7.9987 5.84781C7.9987 6.93375 6.40995 6.93344 6.40995 5.84781ZM10.0528 5.84781C10.0528 4.76219 11.6421 4.76188 11.6421 5.84781C11.6421 6.93375 10.0528 6.93375 10.0528 5.84781ZM6.2212 8.05688C6.1137 7.5275 6.91433 7.36375 7.02183 7.89406L7.0237 7.90281C7.15308 8.57219 7.95652 9.27781 9.02745 9.24875C10.1425 9.21937 10.879 8.55469 11.0309 7.91219C11.1703 7.41062 11.9246 7.58844 11.8268 8.09969C11.6634 8.79281 10.8515 10.0372 8.9687 10.0653C7.63902 10.0653 6.4412 9.19531 6.22183 8.0575L6.2212 8.05688Z"
-              fill="white"
-            />
-          </svg>
-          {{ settings.lang.navigate }}
-        </button>
-      </div>
-    </div>
-    <div *ngIf="!f.addressOk" class="icon-and-text">
-      <mat-icon color="accent" style="color: red">warning</mat-icon>
-      <div>
-        <strong>{{ settings.lang.inacurateAddress }}</strong>
-      </div>
-    </div>
-    <div *ngIf="f.buildingCode" class="icon-and-text">
-      <mat-icon>vpn_key</mat-icon>
-      <div>
-        {{ settings.lang.buildingCode }}: <strong> {{ f.buildingCode }}</strong>
-      </div>
-    </div>
-    <div *ngIf="f.addressComment" class="icon-and-text">
-      <mat-icon> announcement</mat-icon>
-      <strong>
-        {{ f.addressComment }}
-      </strong>
-    </div>
-    <a
-      *ngIf="hasImages && !images"
-      class="icon-and-text"
-      (click)="loadImages()"
-    >
-      <mat-icon> image</mat-icon>
-      <div>
-        {{ settings.lang.loadImages }}
-      </div>
-    </a>
-    <app-images [readonly]="true" [images]="images"></app-images>
-  </mat-card>
-
-  <ng-container
-    *ngIf="
-      !settings.hideFamilyPhoneFromVolunteer &&
-      phones.length > 0 &&
-      !callerScreen
-    "
-  >
-    <h4>{{ settings.lang.contact }}</h4>
-    <mat-card>
-      <ng-container *ngFor="let phone of phones; let first = first">
-        <div *ngIf="!first">
-          <div style="height: 16px"></div>
-          <mat-divider></mat-divider>
-          <div style="height: 16px"></div>
-        </div>
-        <div *ngIf="phone">
-          <ng-container *ngIf="!phone.phone.isUrl()">
-            <div style="padding-bottom: 18px">
-              <strong *ngIf="first">{{ f.name }}, &nbsp;</strong>
-              <span style="display: inline-block" *ngIf="phone.desc"
-                >{{ phone.desc + ',' }}&nbsp;</span
-              >
-              <a (click)="callPhone(phone.phone)">{{
-                phone.phone.displayValue
-              }}</a>
-            </div>
-            <div style="display: flex; gap: 16px">
-              <button
-                color="primary"
-                mat-stroked-button
-                (click)="callPhone(phone.phone)"
-                class="small-button"
-              >
-                <mat-icon>call</mat-icon> {{ settings.lang.dial }}
-              </button>
-              <button
-                color="primary"
-                mat-stroked-button
-                (click)="sendWhatsapp(phone.phone)"
-                class="small-button"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style="color: #00e676"
-                >
-                  <g clip-path="url(#clip0_327_3901)">
-                    <path
-                      d="M4.18267 13.7033L4.44121 13.8326C5.51858 14.479 6.72513 14.7806 7.93174 14.7806C11.7239 14.7806 14.8265 11.678 14.8265 7.88585C14.8265 6.076 14.0939 4.3092 12.8012 3.01642C11.5084 1.72363 9.78465 0.991089 7.93174 0.991089C4.13962 0.991089 1.03691 4.09373 1.08003 7.92897C1.08003 9.2217 1.46786 10.4714 2.11423 11.5487L2.28658 11.8073L1.59716 14.3497L4.18267 13.7033Z"
-                      fill="#00E676"
-                    />
-                    <path
-                      d="M13.5337 2.32698C12.0685 0.81878 10.0432 0 7.97476 0C3.5794 0 0.0458052 3.57665 0.0888632 7.92896C0.0888632 9.30792 0.476693 10.6438 1.12312 11.8504L0.00268555 15.9442L4.18264 14.8668C5.34613 15.5133 6.63886 15.8149 7.9317 15.8149C12.284 15.8149 15.8176 12.2382 15.8176 7.88596C15.8176 5.77439 14.9988 3.79212 13.5337 2.32698H13.5337ZM7.97476 14.4791C6.81127 14.4791 5.64778 14.1775 4.65665 13.5742L4.39811 13.4449L1.89878 14.0912L2.54514 11.635L2.37279 11.3764C0.476693 8.31691 1.38165 4.26613 4.48429 2.37004C7.58693 0.474008 11.5945 1.37897 13.4906 4.48161C15.3867 7.58425 14.4817 11.5918 11.3791 13.4879C10.3879 14.1343 9.18137 14.479 7.97476 14.479V14.4791ZM11.7669 9.69588L11.2929 9.4804C11.2929 9.4804 10.6035 9.17875 10.1725 8.96327C10.1294 8.96327 10.0863 8.92016 10.0432 8.92016C9.91391 8.92016 9.82774 8.96327 9.74156 9.00639C9.74156 9.00639 9.6985 9.04945 9.0952 9.73893C9.05208 9.82511 8.9659 9.86823 8.87972 9.86823H8.8366C8.79354 9.86823 8.70737 9.82511 8.66425 9.78205L8.44877 9.69588C7.97476 9.4804 7.54387 9.22181 7.1991 8.8771C7.11293 8.79092 6.98363 8.70474 6.89745 8.61856C6.5958 8.31691 6.29415 7.97214 6.07873 7.58431L6.03561 7.49813C5.99255 7.45501 5.99255 7.41195 5.94943 7.32578C5.94943 7.2396 5.94943 7.15342 5.99255 7.1103C5.99255 7.1103 6.16491 6.89483 6.29415 6.76559C6.38038 6.67935 6.42344 6.55012 6.50962 6.46394C6.5958 6.33464 6.63892 6.16229 6.5958 6.03299C6.55274 5.81751 6.03561 4.65402 5.90638 4.39549C5.82014 4.26619 5.73402 4.22314 5.60472 4.18002H5.13072C5.04448 4.18002 4.95836 4.22314 4.87212 4.22314L4.829 4.26619C4.74282 4.30931 4.65665 4.39549 4.57047 4.43855C4.48429 4.52479 4.44117 4.6109 4.35499 4.69714C4.05334 5.08497 3.88099 5.55898 3.88099 6.03299C3.88099 6.3777 3.96716 6.72247 4.09646 7.02412L4.13958 7.15342C4.52741 7.97214 5.04448 8.70474 5.73402 9.3511L5.90638 9.52346C6.03561 9.65276 6.16491 9.73893 6.25109 9.86817C7.15604 10.6439 8.19024 11.2041 9.35373 11.5057C9.48303 11.5488 9.65538 11.5488 9.78468 11.5919H10.2156C10.431 11.5919 10.6896 11.5057 10.862 11.4196C10.9912 11.3334 11.0774 11.3334 11.1636 11.2472L11.2498 11.161C11.336 11.0748 11.4222 11.0317 11.5084 10.9455C11.5945 10.8594 11.6807 10.7732 11.7238 10.6869C11.81 10.5146 11.8531 10.2991 11.8962 10.0837V9.78205C11.8962 9.78205 11.8531 9.73893 11.7669 9.69588Z"
-                      fill="white"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_327_3901">
-                      <rect width="15.82" height="16" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                {{ settings.lang.whatsApp }}
-              </button>
-            </div>
-          </ng-container>
-          <a
-            *ngIf="phone.phone.isUrl()"
-            [href]="phone.phone.displayValue"
-            target="_blank"
-            ><strong> {{ phone.desc }} </strong></a
-          >
-        </div>
-      </ng-container>
-    </mat-card>
-  </ng-container>
-  <ng-container *ngIf="settings.usePhoneProxy">
-    <div class="phone-container">
-      <a (click)="privateCall()">
-        <button mat-mini-fab style="vertical-align: middle" color="primary">
-          <mat-icon>call</mat-icon>
-        </button>
-      </a>
-      <div>
-        <a (click)="privateCall()">לחץ לחיוג מאובטח למשפחה</a>,
-        {{ f.phone1Description ? f.phone1Description : f.name }}
-      </div>
-    </div>
-  </ng-container>
+  <app-address-info
+    [args]="{
+      f: f,
+      callerScreen,
+      useWaze: userFamilies?.useWaze,
+      hasImages,
+      images,
+      loadImages
+    }"
+  ></app-address-info>
+  <app-address-info
+    *ngIf="secondAddressArgs"
+    [args]="secondAddressArgs"
+  ></app-address-info>
 </div>
 <div class="button-area">
   <ng-content></ng-content>
