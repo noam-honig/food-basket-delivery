@@ -95,6 +95,12 @@ export function getLang() {
   return use.language
 }
 
+export function usesIntakeForm() {
+  return ['ssderot', 'test', 'test1'].includes(
+    Sites.getOrganizationFromContext()
+  )
+}
+
 //SELECT string_agg(id::text, ',') FROM guest.sites
 
 //count all tables

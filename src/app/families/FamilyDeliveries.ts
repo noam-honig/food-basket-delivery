@@ -154,10 +154,10 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
           self.courierCommentsDate = new Date()
         if (self.$.deliverStatus.valueChanged()) {
           let env = process.env['ESHEL']
-          if (env) {
+          if (env && remult.authenticated()) {
             if (env.split(',').includes(remult.context.getSite())) {
               if (
-                self.courier.id === remult.user.id &&
+                self.courier?.id === remult.user.id &&
                 self.deliverStatus.IsAResultStatus()
               ) {
                 const fam = await remult.repo(Families).findId(self.family)

@@ -60,7 +60,7 @@ import { EventsComponent } from './events/events.component'
 import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
 import { RegisterDonorComponent } from './register-donor/register-donor.component'
 import { RegisterHelperComponent } from './register-helper/register-helper.component'
-import { Sites } from './sites/sites'
+import { Sites, usesIntakeForm } from './sites/sites'
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
@@ -79,6 +79,7 @@ import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.componen
 import { ManageCallersComponent } from './manage-callers/manage-callers.component'
 import { SpecificEventComponent } from './specific-event/specific-event.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
+import { IntakeFormComponent } from './intake-form/intake-form.component'
 
 @Injectable()
 export class MltOnlyGuard implements CanActivate {
@@ -94,6 +95,19 @@ export class MltOnlyGuard implements CanActivate {
 
     if (site == 'mlt') return true
     return false
+  }
+}
+@Injectable()
+export class IntakeFormGuard implements CanActivate {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | boolean
+    | import('@angular/router').UrlTree
+    | import('rxjs').Observable<boolean | import('@angular/router').UrlTree>
+    | Promise<boolean | import('@angular/router').UrlTree> {
+    return usesIntakeForm()
   }
 }
 
@@ -214,6 +228,12 @@ export const routes: Routes = [
     data: { hide: true }
   },
   {
+    path: 'intake',
+    component: IntakeFormComponent,
+    canActivate: [IntakeFormGuard],
+    data: { hide: true }
+  },
+  {
     path: 'register-donor-cc',
     component: RegisterDonorComponent,
     canActivate: [MltOnlyGuard],
@@ -303,6 +323,7 @@ export const routes: Routes = [
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
     AdminGuard,
+    IntakeFormGuard,
     FamilyAdminGuard,
     OverviewGuard,
     distCenterAdminGuard,
@@ -317,6 +338,6 @@ export const routes: Routes = [
     CallModuleGuard
   ]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
 
 AuthenticatedGuard.componentToNavigateIfNotAllowed = OrgEventsComponent

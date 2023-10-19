@@ -49,6 +49,8 @@ export class BasketType extends MyIdEntity {
     clickWithTools: (u, fr, ui) => editItems(fr, ui)
   })
   whatToTake: string = ''
+  @Fields.string({ caption: 'הנחיות לטופס' })
+  intakeCommentInstructions: string = ''
 
   static boxes1Name = !use ? '' : use.language.boxes1Name
   static boxes2Name = !use ? '' : use.language.boxes2Name

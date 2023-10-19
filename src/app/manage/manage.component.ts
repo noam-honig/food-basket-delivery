@@ -116,6 +116,9 @@ export class ManageComponent implements OnInit {
       },
       {
         field: x.whatToTake
+      },
+      {
+        field: x.intakeCommentInstructions
       }
     ],
     saving: () => this.refreshEnvironmentAfterSave(),
@@ -828,8 +831,9 @@ export class ManageComponent implements OnInit {
     let count = await remult
       .repo(Families)
       .count({ status: FamilyStatus.ToDelete })
-    if (count == 0) {//TODO - investigate why queue crashes in this case
-      this.dialog.messageDialog("אין משפחות נוספות למחיקה")
+    if (count == 0) {
+      //TODO - investigate why queue crashes in this case
+      this.dialog.messageDialog('אין משפחות נוספות למחיקה')
       return
     }
     if (

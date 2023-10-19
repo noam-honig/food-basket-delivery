@@ -1,0 +1,17 @@
+<div style="text-align: center">
+  <a href="https://noam-honig.github.io/salmaz/"
+    ><img src="{{ settings.logoUrl }}" style="max-width: 120px"
+  /></a>
+  <div class="mat-headline" style="align-self: center">
+    {{ settings.organisationName }}
+  </div>
+</div>
+<div *ngIf="area">
+  <data-area [settings]="area" *ngIf="area"> </data-area>
+  <div>
+    <strong>{{ getInstructions() }}</strong>
+    <data-control [field]="i.$.deliveryComments"></data-control>
+  </div>
+  <button mat-raised-button color="primary" (click)="send()">שליחת בקשה</button>
+</div>
+<div *ngIf="response">הפנייה התקבלה, תודה רבה</div>

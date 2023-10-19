@@ -130,10 +130,11 @@ import { ManageCallersComponent } from './manage-callers/manage-callers.componen
 import { HttpClient } from '@angular/common/http'
 import { BlockedFamiliesComponent } from './blocked-families/blocked-families.component'
 import { SpecificEventComponent } from './specific-event/specific-event.component'
-import { ButtonDataComponent } from './button-data/button-data.component';
-import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component';
-import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component';
+import { ButtonDataComponent } from './button-data/button-data.component'
+import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
+import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component'
 import { AddressInfoComponent } from './address-info/address-info.component'
+import { IntakeFormComponent } from './intake-form/intake-form.component'
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
 
@@ -245,7 +246,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     ButtonDataComponent,
     FamilyConfirmDetailsComponent,
     BelowEightteenMessageComponent,
-    AddressInfoComponent
+    AddressInfoComponent,
+    IntakeFormComponent
   ],
   imports: [
     BrowserModule,
@@ -404,5 +406,5 @@ export function initApp(
 }
 
 Remult.onFind = (e) => {
- // console.trace(e.key)
+  // console.trace(e.key)
 }

@@ -1,5 +1,5 @@
 import { DataControl } from '../common-ui-elements/interfaces'
-import { FieldRef } from 'remult'
+import { FieldRef, remult } from 'remult'
 import { getSettings } from '../manage/ApplicationSettings'
 import { getLang } from '../sites/sites'
 import { FieldType, translationConfig } from '../translate'
@@ -14,7 +14,7 @@ import { FieldType, translationConfig } from '../translate'
 })
 @DataControl<any, Phone>({
   click: (e, x) => window.open('tel:' + x.displayValue),
-  allowClick: (e, x) => !!x.displayValue,
+  allowClick: (e, x) => !!x.displayValue && remult.authenticated(),
   clickIcon: 'phone',
   inputType: 'tel'
 })

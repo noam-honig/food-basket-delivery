@@ -139,6 +139,7 @@ import {
 import { MemoryStats } from './stats'
 import { FamilyConfirmDetailsController } from '../family-confirm-details/family-confirm-details.controller'
 import { randomUUID } from 'crypto'
+import { IntakeFormController } from '../intake-form/intake-form.controllet'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -225,7 +226,8 @@ const controllers = [
   DialogController,
   ShipmentAssignScreenController,
   PrintVolunteersController,
-  OverviewController
+  OverviewController,
+  IntakeFormController
 ]
 
 let publicRoot = 'hagai'
@@ -811,10 +813,10 @@ function registerImageUrls(app, api: RemultExpressServer, sitePrefix: string) {
   app.get('/guest/dump', api.withRemult, async (req, res: express.Response) => {
     if (remult.isAllowed(Roles.overview)) {
       key = randomUUID()
-      console.log("begin dump")
-      console.time("dump")
+      console.log('begin dump')
+      console.time('dump')
       //heapdump.writeSnapshot('./test.heapsnapshot')
-      console.timeEnd("dump")
+      console.timeEnd('dump')
       res.send(key)
     } else res.send('not cool!!!')
   })
