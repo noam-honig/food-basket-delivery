@@ -22,8 +22,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus'
 @Controller('intake-form')
 export class IntakeFormController extends ControllerBase {
   @Field({
-    translation: (l) => l.socialSecurityNumber,
-    validate: Validators.required
+    translation: (l) => l.socialSecurityNumber
   })
   tz: string
 
