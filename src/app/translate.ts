@@ -1532,7 +1532,7 @@ export class Language {
   requiredField = 'שדה חובה'
   registeredUsersSignIn = 'כניסת משתמשים רשומים'
   filterPhone = 'סינון לפי טלפון'
-  numOfSuccessfulDeliveries = 'מספר משלוחים מוצלחים'
+  totalDeliveries = 'מספר משלוחים'
 }
 
 const defaultLang = new Language()

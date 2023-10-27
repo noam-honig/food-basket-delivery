@@ -923,7 +923,7 @@ export class Families extends IdEntity {
   })
   numOfActiveReadyDeliveries: number
   @Fields.integer({
-    translation: (l) => l.numOfSuccessfulDeliveries,
+    translation: (l) => l.totalDeliveries,
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
       let fd = SqlFor(remult.repo(FamilyDeliveries))
@@ -933,13 +933,13 @@ export class Families extends IdEntity {
         where: () => [
           sql.eq(fd.family, self.id),
           fd.where({
-            deliverStatus: DeliveryStatus.isSuccess()
+            deliverStatus: { $ne: DeliveryStatus.isProblem() }
           })
         ]
       })
     }
   })
-  numOfSuccessfulDeliveries: number
+  totalDeliveries: number
   @Field()
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLongitude: number

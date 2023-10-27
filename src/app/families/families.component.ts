@@ -320,7 +320,7 @@ export class FamiliesComponent implements OnInit {
         families.defaultDistributionCenter,
         families.special,
         families.numOfActiveReadyDeliveries,
-        families.numOfSuccessfulDeliveries
+        families.totalDeliveries
       ]
       for (const c of [
         families.custom1,
