@@ -7,7 +7,8 @@ import {
   FindOptions,
   getEntityRef,
   Repository,
-  Filter
+  Filter,
+  MembersToInclude
 } from 'remult'
 
 import { FieldCollection } from './column-collection'
@@ -21,6 +22,16 @@ import { DataList } from './dataList'
 import { FilterHelper } from './filter-helper'
 
 export class GridSettings<rowType = any> {
+  addNewRowToGrid(v: rowType) {
+    setTimeout(() => {
+      const refId = getEntityRef(v).getId()
+      const index = this.items.findIndex(
+        (x) => getEntityRef(x).getId() == refId
+      )
+      if (index >= 0) this.items.splice(index, 1)
+      this.items.splice(0, 0, v)
+    }, 300)
+  }
   undoChanges(r: rowType) {
     let helper = this.getRowHelper(r)
     helper.undoChanges()
@@ -439,6 +450,7 @@ export class GridSettings<rowType = any> {
     if (this.settings!.where) {
       opt.where = await Filter.resolve(this.settings!.where)
     }
+    if (this.settings?.include) opt.include = this.settings.include
     if (this.settings!.orderBy) opt.orderBy = this.settings!.orderBy
 
     if (this._currentOrderBy)
@@ -486,7 +498,7 @@ export interface IDataSettings<rowType> {
   rowCssClass?: (row: rowType) => string
   rowButtons?: RowButton<rowType>[]
   gridButtons?: GridButton[]
-
+  include?: MembersToInclude<rowType>
   /** filters the data
    * @example
    * await taskRepo.find({where: { completed:false }})
@@ -529,7 +541,7 @@ export interface IDataSettings<rowType> {
 export interface RowButton<rowType> {
   name?: string
   visible?: (r: rowType) => boolean
-  click?: (r: rowType) => void
+  click: (r: rowType) => void
   showInLine?: boolean
   textInMenu?: string | ((row: rowType) => string)
   icon?: string
@@ -539,7 +551,7 @@ export interface RowButton<rowType> {
 export interface GridButton {
   name?: string
   visible?: () => boolean
-  click?: () => void
+  click: () => void
   textInMenu?: () => string
   icon?: string
   cssClass?: string | (() => string)

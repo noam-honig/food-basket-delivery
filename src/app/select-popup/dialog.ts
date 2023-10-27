@@ -17,7 +17,8 @@ import {
   DataControlInfo,
   DataControlSettings,
   GridSettings,
-  IDataSettings
+  IDataSettings,
+  clearEntityValueListCache
 } from '../common-ui-elements/interfaces'
 import {
   BusyService,
@@ -223,6 +224,7 @@ export class DialogService implements UITools {
   }
   refreshFamiliesAndDistributionCenters() {
     ;(<CustomReuseStrategy>this.routeReuseStrategy).recycleAll()
+    clearEntityValueListCache()
     this.refreshCanSeeCenter()
   }
   analytics(action: string, value?: number) {

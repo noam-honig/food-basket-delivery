@@ -454,6 +454,9 @@ function fixResult(
 }
 
 const entityValueListCache = new Map<string, Promise<ExtendedValueListItem[]>>()
+export function clearEntityValueListCache() {
+  entityValueListCache.clear()
+}
 
 /** returns an array of values that can be used in the value list property of a data control object */
 
