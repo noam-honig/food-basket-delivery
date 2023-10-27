@@ -91,9 +91,12 @@ export class UpdateFamilyDialogComponent
   getAddressDescription() {
     let f = this.families.currentRow
     if (!f.$.address.valueChanged()) return f.getAddressDescription()
-    return (
-      f.$.address.originalValue + ' (' + this.settings.lang.previousValue + ')'
-    )
+    return f.$.address.originalValue
+      ? f.$.address.originalValue +
+          ' (' +
+          this.settings.lang.previousValue +
+          ')'
+      : ''
   }
 
   addressOpen() {
