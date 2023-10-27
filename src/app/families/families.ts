@@ -180,14 +180,12 @@ declare type factoryFor<T> = {
       let statusChangedOutOfActive =
         self.$.status.valueChanged() && self.status != FamilyStatus.Active
       if (statusChangedOutOfActive) {
-        let activeDeliveries = remult
-          .repo(ActiveFamilyDeliveries)
-          .query({
-            where: {
-              family: self.id,
-              deliverStatus: DeliveryStatus.isNotAResultStatus()
-            }
-          })
+        let activeDeliveries = remult.repo(ActiveFamilyDeliveries).query({
+          where: {
+            family: self.id,
+            deliverStatus: DeliveryStatus.isNotAResultStatus()
+          }
+        })
         if ((await activeDeliveries.count()) > 0) {
           if (
             await evil.YesNoPromise(
@@ -392,12 +390,10 @@ export class Families extends IdEntity {
   ) {
     if (!args) args = {}
     if (!args.doNotCheckIfHasExistingDeliveries) {
-      let hasExisting = await remult
-        .repo(ActiveFamilyDeliveries)
-        .count({
-          family: this.id,
-          deliverStatus: DeliveryStatus.isNotAResultStatus()
-        })
+      let hasExisting = await remult.repo(ActiveFamilyDeliveries).count({
+        family: this.id,
+        deliverStatus: DeliveryStatus.isNotAResultStatus()
+      })
       if (hasExisting > 0) {
         if (
           await ui.YesNoPromise(
@@ -926,6 +922,24 @@ export class Families extends IdEntity {
     }
   })
   numOfActiveReadyDeliveries: number
+  @Fields.integer({
+    translation: (l) => l.numOfSuccessfulDeliveries,
+    sqlExpression: async (selfDefs) => {
+      let self = SqlFor(selfDefs)
+      let fd = SqlFor(remult.repo(FamilyDeliveries))
+      let sql = new SqlBuilder()
+      return sql.columnCount(self, {
+        from: fd,
+        where: () => [
+          sql.eq(fd.family, self.id),
+          fd.where({
+            deliverStatus: DeliveryStatus.isSuccess()
+          })
+        ]
+      })
+    }
+  })
+  numOfSuccessfulDeliveries: number
   @Field()
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLongitude: number
@@ -1341,19 +1355,29 @@ export class Families extends IdEntity {
     ])
     return message
   }
-  static filterPhone = Filter.createCustom<Families, string>(( phone) => {
+  static filterPhone = Filter.createCustom<Families, string>((phone) => {
     return SqlDatabase.rawFilter(async (x) => {
-        var phoneParam = x.addParameterAndReturnSqlToken(phone);
-        var sql = new SqlBuilder();
-        var fd = SqlFor(remult.repo(Families));
-        let filter = [];
-        for (const col of [fd.phone1, fd.phone2, fd.phone3, fd.phone4]) {
-            filter.push(sql.and(sql.build(sql.extractNumberChars(col), ' like ', "'%'||", sql.extractNumberChars(phoneParam), "||'%'"), sql.build(sql.extractNumber(phoneParam), ' <> ', 0)))
-        }
-        x.sql = await sql.or(...filter)
-
-    });
-});
+      var phoneParam = x.addParameterAndReturnSqlToken(phone)
+      var sql = new SqlBuilder()
+      var fd = SqlFor(remult.repo(Families))
+      let filter = []
+      for (const col of [fd.phone1, fd.phone2, fd.phone3, fd.phone4]) {
+        filter.push(
+          sql.and(
+            sql.build(
+              sql.extractNumberChars(col),
+              ' like ',
+              "'%'||",
+              sql.extractNumberChars(phoneParam),
+              "||'%'"
+            ),
+            sql.build(sql.extractNumber(phoneParam), ' <> ', 0)
+          )
+        )
+      }
+      x.sql = await sql.or(...filter)
+    })
+  })
 }
 
 export interface duplicateFamilyInfo {

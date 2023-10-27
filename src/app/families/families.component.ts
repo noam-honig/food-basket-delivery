@@ -319,7 +319,8 @@ export class FamiliesComponent implements OnInit {
         families.fixedCourier,
         families.defaultDistributionCenter,
         families.special,
-        families.numOfActiveReadyDeliveries
+        families.numOfActiveReadyDeliveries,
+        families.numOfSuccessfulDeliveries,
       ]
       for (const c of [
         families.custom1,
