@@ -32,6 +32,11 @@ export class GridSettings<rowType = any> {
       this.items.splice(0, 0, v)
     }, 300)
   }
+  addNewRow() {
+    let r: any = this.restList.add()
+    if (this.onNewRow) this.onNewRow(r)
+    this.setCurrentRow(r)
+  }
   undoChanges(r: rowType) {
     let helper = this.getRowHelper(r)
     helper.undoChanges()
