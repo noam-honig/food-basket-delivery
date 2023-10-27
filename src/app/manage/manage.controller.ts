@@ -138,7 +138,9 @@ export class ManageController {
         (field.valueType == String ||
           field.valueType == Phone ||
           field.valueType == GroupsValue) &&
-        !fieldsToKeep[field.key]
+        !fieldsToKeep[field.key] &&
+        !field.dbReadOnly &&
+        !field.options.sqlExpression
       ) {
         set.push([field, "''"])
       } else {
