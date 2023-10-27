@@ -121,7 +121,7 @@ export class FamiliesComponent implements OnInit {
       focusOnAddress: true,
       onSave: async () => {
         await family.showNewDeliveryDialog(this.dialog, this.settings)
-
+        this.families.addNewRowToGrid(family)
         this.refreshStats()
       }
     })
@@ -320,7 +320,7 @@ export class FamiliesComponent implements OnInit {
         families.defaultDistributionCenter,
         families.special,
         families.numOfActiveReadyDeliveries,
-        families.numOfSuccessfulDeliveries,
+        families.numOfSuccessfulDeliveries
       ]
       for (const c of [
         families.custom1,
@@ -425,7 +425,7 @@ export class FamiliesComponent implements OnInit {
                     }
                   },
                   {
-                    name: "שלח",
+                    name: 'שלח',
 
                     click: async () => {
                       this.settings.familySelfOrderMessage =
