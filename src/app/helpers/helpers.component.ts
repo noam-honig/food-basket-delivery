@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Helpers } from './helpers'
 import { Route } from '@angular/router'
-import { getFields, remult } from 'remult'
+import { getFields, remult, repo } from 'remult'
 import { DialogService, DestroyHelper } from '../select-popup/dialog'
 import { DataControlInfo, GridSettings } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
@@ -42,9 +42,10 @@ export class HelpersComponent implements OnInit, OnDestroy {
   @Field()
   city: string = ''
   quickAdd() {
-    this.helpers.addNewRow()
-
-    this.helpers.currentRow.displayEditDialog(this.dialog)
+    const helper = repo(Helpers).create()
+    helper.displayEditDialog(this.dialog, () => {
+      this.helpers.addNewRowToGrid(helper)
+    })
   }
   destroyHelper = new DestroyHelper()
   ngOnDestroy(): void {

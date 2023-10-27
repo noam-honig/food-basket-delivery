@@ -427,12 +427,13 @@ export class Helpers extends HelpersBase {
   async getHelper(): Promise<Helpers> {
     return this
   }
-  async displayEditDialog(ui: UITools) {
+  async displayEditDialog(ui: UITools, onSave?: VoidFunction) {
     let settings = await remult.context.getSettings()
     await ui.inputAreaDialog({
       title: this.isNew() ? settings.lang.newVolunteers : this.name,
       ok: async () => {
         await this.save()
+        onSave?.()
       },
       validate: async () => {
         if (!this.phone) {

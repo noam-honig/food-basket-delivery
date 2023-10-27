@@ -151,12 +151,6 @@ export class GridSettings<rowType = any> {
     this.columns.numOfColumnsInGrid--
   }
 
-  addNewRow() {
-    let r: any = this.restList.add()
-    if (this.onNewRow) this.onNewRow(r)
-    this.setCurrentRow(r)
-  }
-
   noam!: string
 
   addArea(settings: IDataAreaSettings<rowType>) {

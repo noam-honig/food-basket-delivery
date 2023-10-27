@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
-import { remult } from 'remult'
+import { remult, repo } from 'remult'
 import { GridSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
 import { Event, eventStatus } from './events'
@@ -39,7 +39,7 @@ export class EventsComponent implements OnInit {
   events: GridSettings<Event> = new GridSettings<Event>(remult.repo(Event), {
     allowUpdate: remult.isAllowed(Roles.admin),
     allowInsert: remult.isAllowed(Roles.admin),
-    listRefreshed:()=>{
+    listRefreshed: () => {
       this.card.refresh()
     },
 
@@ -183,18 +183,15 @@ export class EventsComponent implements OnInit {
   }
   @ViewChild(EventCardComponent) card: EventCardComponent
   add() {
-    this.events.addNewRow()
-    this.card.refresh()
-    this.events.currentRow.openEditDialog(
+    const event = repo(Event).create()
+
+    event.openEditDialog(
       this.dialog,
+      () => {},
       () => {
-        this.events.items.splice(
-          this.events.items.indexOf(this.events.currentRow),
-          1
-        )
+        this.events.addNewRowToGrid(event)
         this.card.refresh()
-      },
-      () => this.card.refresh()
+      }
     )
   }
 }
