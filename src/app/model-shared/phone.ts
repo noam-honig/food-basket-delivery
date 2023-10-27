@@ -44,8 +44,12 @@ export class Phone {
     if (!s) return s
     let orig = s.trim()
     s = s.replace(/\D/g, '')
-    if (orig.startsWith('+')) return '+' + s
     let forWho = getSettings().forWho
+    if (orig.startsWith('+')) {
+      if (forWho.args.googleMapCountry == 'IL' && s.startsWith('972')) {
+        s = s.substring(3)
+      } else return '+' + s
+    }
     if (forWho && forWho.args.suppressPhoneZeroAddition) return s
     if (s.length == 9 && s[0] != '0' && s[0] != '3') s = '0' + s
     return s
