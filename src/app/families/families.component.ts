@@ -927,6 +927,7 @@ export class FamiliesComponent implements OnInit {
     this.suspend = true
   }
   refresh() {
+    this.refreshStats()
     this.refreshFamilyGrid()
   }
 

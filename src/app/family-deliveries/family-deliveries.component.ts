@@ -626,7 +626,10 @@ font-family: &quot;arial&quot;;
     if (!settings.usingSelfPickupModule)
       this.statTabs.splice(this.statTabs.indexOf(this.selfPickupBaskets), 1)
     dialog.onDistCenterChange(() => this.refresh(), this.destroyHelper)
-    dialog.onStatusChange(() => this.refreshStats(), this.destroyHelper)
+    dialog.onStatusChange(() => {
+      this.refreshStats()
+      this.deliveries.refreshCount()
+    }, this.destroyHelper)
   }
   destroyHelper = new DestroyHelper()
   ngOnDestroy(): void {

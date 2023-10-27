@@ -431,12 +431,15 @@ export class GridSettings<rowType = any> {
         return this.restList
       })
       if (this.settings && !(this.settings.knowTotalRows === false)) {
-        this.restList.count(opt.where).then((x) => {
-          this.totalRows = x
-        })
+        this.refreshCount = () =>
+          this.restList.count(opt.where).then((x) => {
+            this.totalRows = x
+          })
+        this.refreshCount()
       }
     })
   }
+  refreshCount = () => {}
 
   restList: DataList<rowType>
   async _internalBuildFindOptions() {

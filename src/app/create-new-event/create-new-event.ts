@@ -109,15 +109,13 @@ export class CreateNewEvent {
     await settings.save()
 
     let pt = new PromiseThrottle(10)
-    for await (const fd of remult
-      .repo(ActiveFamilyDeliveries)
-      .query({
-        where: {
-          distributionCenter: remult.context.filterDistCenter(
-            this.selectedDistributionList
-          )
-        }
-      })) {
+    for await (const fd of remult.repo(ActiveFamilyDeliveries).query({
+      where: {
+        distributionCenter: remult.context.filterDistCenter(
+          this.selectedDistributionList
+        )
+      }
+    })) {
       this.archiveHelper.forEach(fd)
       fd.archive = true
       await pt.push(fd.save())
@@ -197,22 +195,13 @@ export class CreateNewEvent {
     this._selectedDistributionList = ui.distCenter
     if (ui.distCenter == null) this.allDistCenters = true
 
-    let notDoneDeliveries = await remult
-      .repo(ActiveFamilyDeliveries)
-      .count({
-        ...FamilyDeliveries.readyFilter(),
-        distributionCenter: remult.context.filterDistCenter(
-          this.selectedDistributionList
-        )
-      })
-    if (notDoneDeliveries > 0) {
-      await ui.messageDialog(
-        getLang().thereAre +
-          ' ' +
-          notDoneDeliveries +
-          ' ' +
-          getLang().notDoneDeliveriesShouldArchiveThem
+    let notDoneDeliveries = await remult.repo(ActiveFamilyDeliveries).count({
+      ...FamilyDeliveries.readyFilter(),
+      distributionCenter: remult.context.filterDistCenter(
+        this.selectedDistributionList
       )
+    })
+    if (notDoneDeliveries > 0) {
       ui.navigateToComponent(
         (await import('../family-deliveries/family-deliveries.component'))
           .FamilyDeliveriesComponent
@@ -276,13 +265,11 @@ export class CreateNewEvent {
       },
       cancel: () => {},
       validate: async () => {
-        let count = await remult
-          .repo(ActiveFamilyDeliveries)
-          .count({
-            distributionCenter: remult.context.filterDistCenter(
-              this.selectedDistributionList
-            )
-          })
+        let count = await remult.repo(ActiveFamilyDeliveries).count({
+          distributionCenter: remult.context.filterDistCenter(
+            this.selectedDistributionList
+          )
+        })
         if (count > 0) {
           if (
             !(await ui.YesNoPromise(
