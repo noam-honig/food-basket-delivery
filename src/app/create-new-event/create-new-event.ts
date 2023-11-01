@@ -202,6 +202,13 @@ export class CreateNewEvent {
       )
     })
     if (notDoneDeliveries > 0) {
+      await ui.messageDialog(
+        getLang().thereAre +
+          ' ' +
+          notDoneDeliveries +
+          ' ' +
+          getLang().notDoneDeliveriesShouldArchiveThem
+      )
       ui.navigateToComponent(
         (await import('../family-deliveries/family-deliveries.component'))
           .FamilyDeliveriesComponent
@@ -256,12 +263,7 @@ export class CreateNewEvent {
         let deliveriesCreated = await this.createNewEvent()
         ui.refreshFamiliesAndDistributionCenters()
         ui.distCenter = ui.distCenter
-        if (await ui.YesNoPromise(settings.lang.doneDotGotoDeliveries)) {
-          ui.navigateToComponent(
-            (await import('../family-deliveries/family-deliveries.component'))
-              .FamilyDeliveriesComponent
-          )
-        }
+        ui.Error(deliveriesCreated + ' ' + settings.lang.deliveriesCreated)
       },
       cancel: () => {},
       validate: async () => {
