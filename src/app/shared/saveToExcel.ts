@@ -57,9 +57,8 @@ export async function saveToExcel<
     while (currentPage != null) {
       if (loadPage) await loadPage(currentPage.items)
       for (const f of currentPage.items) {
-        let colPrefix = ''
-        let colName = 'A'
         let colIndex = 0
+        let colName = 'A'
 
         let addColumn = (
           caption: string,
@@ -68,29 +67,21 @@ export async function saveToExcel<
           hidden?: boolean
         ) => {
           if (rowNum == titleRow + 1) {
-            ws[colPrefix + colName + titleRow] = { v: caption }
+            ws[colName + titleRow] = { v: caption }
             ws['!cols'].push({
               wch: caption.length,
               hidden: hidden
             })
           }
 
-          ws[colPrefix + colName + rowNum.toString()] = {
+          ws[colName + rowNum.toString()] = {
             v: v,
             t: t
           }
-          maxChar = colPrefix + colName
-          {
-            let i = colName.charCodeAt(0)
-            i++
-            colName = String.fromCharCode(i)
-            if (colName > 'Z') {
-              colName = 'A'
-              if (colPrefix == 'A') colPrefix = 'B'
-              else if (colPrefix == 'B') colPrefix = 'C'
-              else colPrefix = 'A'
-            }
-          }
+          XLSX.utils.encode_col(colIndex)
+          maxChar = colName
+
+          colName = XLSX.utils.encode_col(colIndex)
           let col = ws['!cols'][colIndex++]
           if (v) {
             let len = v.length
