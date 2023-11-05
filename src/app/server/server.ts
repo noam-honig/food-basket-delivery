@@ -16,6 +16,7 @@ import {
   OmitEB,
   remult,
   Remult,
+  repo,
   SqlDatabase
 } from 'remult'
 import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites'
@@ -534,6 +535,9 @@ s.parentNode.insertBefore(b, s);})();
           fs.writeFileSync(path + meta.key + '.sql', s)
         }
       }
+
+      // var d = await repo(FamilyDeliveries).findFirst()
+      // console.log(d.deliveryType)
 
       //console.table(remult.repo(FamilyDeliveries).metadata.fields.toArray().map(x => ({ key: x.key, api: x.options.includeInApi })));
       if (false) {

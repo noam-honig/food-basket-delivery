@@ -447,6 +447,7 @@ export class Families extends IdEntity {
       field: selfPickup,
       visible: () => settings.usingSelfPickupModule
     })
+    fields.push(...newDelivery.secondAddressFieldsForUI())
 
     await ui.inputAreaDialog({
       fields,

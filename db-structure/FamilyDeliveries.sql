@@ -62,7 +62,8 @@ callerComment varchar default '' not null
 lastCallDate timestamp
 callerAssignDate timestamp
 callCount numeric default 0 not null
-hasAddress_2 boolean default false not null
+deliveryType varchar default '' not null
+pickupVolunteer varchar default '' not null
 addressApiResult_2 varchar default '' not null
 address_2 varchar default '' not null
 floor_2 varchar default '' not null

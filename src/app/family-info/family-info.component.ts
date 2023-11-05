@@ -70,10 +70,10 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
         FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id)
       )
     }
-    if (this.f.hasAddress_2) {
+    if (this.f.deliveryType.displaySecondAddress) {
       this.secondAddressArgs = {
         useWaze: this.userFamilies.useWaze,
-        title: 'כתובת שנייה',
+        title: this.f.deliveryType.secondAddressCaption,
         callerScreen: this.callerScreen,
         f: {
           $: {
@@ -97,12 +97,12 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
           },
           openWaze: () => {
             const toLocation = this.f.addressHelper_2.getlonglat
-            const address = this.f.address
+            const address = this.f.address_2
             openWaze(toLocation, address)
           }
         }
       }
-    }
+    } else this.secondAddressArgs = undefined
 
     this.refreshWhatToTake()
   }
@@ -262,6 +262,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
       }
     })
     if (x != f.courier) if (this.userFamilies) this.userFamilies.reload()
+    this.ngOnInit()
   }
   copyAddress(f: ActiveFamilyDeliveries) {
     copy(f.address)

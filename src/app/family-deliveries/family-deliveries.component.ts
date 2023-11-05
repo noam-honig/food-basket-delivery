@@ -763,7 +763,18 @@ font-family: &quot;arial&quot;;
           deliveries.callerAssignDate,
           deliveries.lastCallDate,
           deliveries.items,
-          deliveries.socialWorker
+          deliveries.socialWorker,
+          deliveries.deliveryType,
+          deliveries.pickupVolunteer,
+          deliveries.address_2,
+          deliveries.floor_2,
+          deliveries.entrance_2,
+          deliveries.appartment_2,
+          deliveries.addressComment_2,
+          deliveries.phone1_2,
+          deliveries.phone1Description_2,
+          deliveries.phone2_2,
+          deliveries.phone2Description_2
         ]
         for (const c of [
           deliveries.a1,

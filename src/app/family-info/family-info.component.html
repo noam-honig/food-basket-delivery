@@ -103,17 +103,24 @@
     </mat-card>
   </div>
   <app-address-info
+    *ngIf="secondAddressArgs && f.deliveryType.showSecondAddressAsPickupAddress"
+    [args]="secondAddressArgs"
+  ></app-address-info>
+  <app-address-info
     [args]="{
       f: f,
       callerScreen,
       useWaze: userFamilies?.useWaze,
       hasImages,
       images,
-      loadImages
+      loadImages,
+      title: f.deliveryType.firstAddressCaption
     }"
   ></app-address-info>
   <app-address-info
-    *ngIf="secondAddressArgs"
+    *ngIf="
+      secondAddressArgs && !f.deliveryType.showSecondAddressAsPickupAddress
+    "
     [args]="secondAddressArgs"
   ></app-address-info>
 </div>

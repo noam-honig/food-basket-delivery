@@ -13,7 +13,8 @@ import {
   EntityFilter,
   SqlDatabase,
   remult,
-  IdFieldRef
+  IdFieldRef,
+  getValueList
 } from 'remult'
 import { BasketType } from './BasketType'
 import {
@@ -35,7 +36,8 @@ import {
   isGpsAddress,
   openWaze,
   AddressHelper,
-  openGoogleMaps
+  openGoogleMaps,
+  GeocodeResult
 } from '../shared/googleApiHelpers'
 
 import {
@@ -70,6 +72,7 @@ import { ImageInfo } from '../images/images.component'
 import { isDesktop } from '../shared/utils'
 import { UITools } from '../helpers/init-context'
 import { messageMerger } from '../edit-custom-message/messageMerger'
+import { DeliveryType } from './deliveryType'
 
 @ValueListFieldType({
   translation: (l) => l.messageStatus
@@ -758,27 +761,57 @@ export class FamilyDeliveries extends IdEntity {
   })
   socialWorker: string
 
-  @Fields.boolean({
-    caption: 'כתובת נוספת?',
-    allowApiUpdate: Roles.distCenterAdmin
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => self.deliverStatus.IsAResultStatus()
   })
-  hasAddress_2 = false
+  @Field({
+    allowApiUpdate: Roles.familyAdmin
+  })
+  deliveryType: DeliveryType = DeliveryType.delivery
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputPickupVolunteer
+  })
+  @Field<FamilyDeliveries, HelpersBase>({
+    translation: (l) => 'מתנדב לאיסוף',
+    allowApiUpdate: Roles.familyAdmin,
 
-  @Field({ allowApiUpdate: Roles.distCenterAdmin })
+    clickWithTools: async (self, _, ui) =>
+      ui.selectHelper({
+        onSelect: async (helper) => {
+          self.pickupVolunteer = helper
+          if (self.deliveryType.inputPickupVolunteer) {
+            const h = helper && (await helper.getHelper())
+            self.address_2 =
+              h?.preferredDistributionAreaAddress ||
+              h?.preferredFinishAddress ||
+              ''
+            self.addressApiResult_2 = h?.preferredDistributionAreaAddress
+              ? h?.addressApiResult
+              : h?.addressApiResult2
+
+            self.phone1_2 = h.phone || undefined
+            self.phone1Description_2 = h.name || ''
+          }
+        },
+        location: self.getDrivingLocation(),
+        familyId: self.family
+      })
+  })
+  pickupVolunteer: HelpersBase
+
+  @Field({ allowApiUpdate: Roles.familyAdmin })
   addressApiResult_2: string
 
   @Field<FamilyDeliveries, string>({
-    allowApiUpdate: Roles.distCenterAdmin,
-    translation: (t) => t.address,
+    allowApiUpdate: Roles.familyAdmin,
+    translation: (t) => t.address + ' 2',
     customInput: (c) =>
       c.addressInput((x, d) => {
-        d.addressApiResult_2 = JSON.stringify({
-          address: d.address_2,
-          result: x.autoCompleteResult
-        } as autocompleteResult)
+        d.addressApiResult_2 = JSON.stringify(x.autoCompleteResult)
       })
   })
   @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress,
     valueChange: (self) => {
       if (!self.address_2) return
       let y = parseUrlInAddress(self.address_2)
@@ -790,25 +823,47 @@ export class FamilyDeliveries extends IdEntity {
     () => this.$.address_2,
     () => this.$.addressApiResult_2
   )
-
-  @Field({ translation: (t) => t.floor })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @Field({
+    translation: (t) => t.floor + ' כתובת 2',
+    allowApiUpdate: Roles.familyAdmin
+  })
   floor_2: string
-  @Field({ translation: (t) => t.appartment })
+  @Field({
+    translation: (t) => t.appartment + ' כתובת 2',
+    allowApiUpdate: Roles.familyAdmin
+  })
   appartment_2: string
-  @Field({ translation: (t) => t.entrance })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @Field({
+    translation: (t) => t.entrance + ' כתובת 2',
+    allowApiUpdate: Roles.familyAdmin
+  })
   entrance_2: string
 
-  @Field({ translation: (t) => t.addressComment })
+  @Field({
+    translation: (t) => t.addressComment + ' כתובת 2',
+    allowApiUpdate: Roles.familyAdmin
+  })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
   addressComment_2: string
-  @Field({ translation: (t) => t.phone1 })
-  @DataControl<Families>({})
+  @Field({
+    translation: (t) => t.phone1 + ' כתובת 2',
+    allowApiUpdate: Roles.familyAdmin
+  })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
   phone1_2: Phone
-  @Field({ translation: (t) => t.phone1Description })
+  @Field({
+    translation: (t) => t.phone1Description + ' כתובת 2',
+    allowApiUpdate: Roles.familyAdmin
+  })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
   phone1Description_2: string
-  @Field({ translation: (t) => t.phone2 })
-  @DataControl<Families>({})
+  @Field({ translation: (t) => t.phone2 + ' כתובת 2' })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
   phone2_2: Phone
-  @Field({ translation: (t) => t.phone2Description })
+  @Field({ translation: (t) => t.phone2Description + ' כתובת 2' })
+  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
   phone2Description_2: string
 
   static customFilter = Filter.createCustom<
@@ -1232,6 +1287,64 @@ export class FamilyDeliveries extends IdEntity {
       fields: this.deilveryDetailsAreaSettings(callerHelper.ui)
     })
   }
+  secondAddressFieldsForUI() {
+    return [
+      {
+        field: this.$.deliveryType
+      },
+      {
+        field: this.$.pickupVolunteer,
+        visible: () => this.deliveryType.inputPickupVolunteer
+      },
+      {
+        field: this.$.address_2,
+        visible: () => this.deliveryType.inputSecondAddress
+      },
+      [
+        {
+          field: this.$.appartment_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        },
+        {
+          field: this.$.floor_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        },
+        {
+          field: this.$.entrance_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        }
+      ],
+      {
+        field: this.$.addressComment_2,
+        visible: () => this.deliveryType.inputSecondAddress
+      },
+      {
+        caption: use.language.addressByGoogle,
+        getValue: () => this.addressHelper_2.getAddress,
+        visible: () => this.deliveryType.inputSecondAddress
+      },
+      [
+        {
+          field: this.$.phone1_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        },
+        {
+          field: this.$.phone1Description_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        }
+      ],
+      [
+        {
+          field: this.$.phone2_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        },
+        {
+          field: this.$.phone2Description_2,
+          visible: () => this.deliveryType.inputSecondAddress
+        }
+      ]
+    ]
+  }
 
   deilveryDetailsAreaSettings(ui: UITools): DataAreaFieldsSetting[] {
     return [
@@ -1244,28 +1357,7 @@ export class FamilyDeliveries extends IdEntity {
       this.$.items,
       this.$.courier,
       { field: this.$.distributionCenter, visible: () => ui.hasManyCenters },
-      { field: this.$.hasAddress_2 },
-      { field: this.$.address_2, visible: () => this.hasAddress_2 },
-      [
-        { field: this.$.appartment_2, visible: () => this.hasAddress_2 },
-        { field: this.$.floor_2, visible: () => this.hasAddress_2 },
-        { field: this.$.entrance_2, visible: () => this.hasAddress_2 }
-      ],
-      { field: this.$.addressComment_2, visible: () => this.hasAddress_2 },
-      {
-        caption: use.language.addressByGoogle,
-        getValue: () => this.addressHelper_2.getAddress,
-        visible: () => this.hasAddress_2
-      },
-      [
-        { field: this.$.phone1_2, visible: () => this.hasAddress_2 },
-        { field: this.$.phone1Description_2, visible: () => this.hasAddress_2 }
-      ],
-      [
-        { field: this.$.phone2_2, visible: () => this.hasAddress_2 },
-        { field: this.$.phone2Description_2, visible: () => this.hasAddress_2 }
-      ],
-
+      ...this.secondAddressFieldsForUI(),
       this.$.needsWork,
       this.$.courierComments,
       this.$.a1,

@@ -26,6 +26,7 @@ import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpe
 import { Helpers } from '../helpers/helpers'
 import { Roles } from '../auth/roles'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
+import { DeliveryType } from '../families/deliveryType'
 
 export async function initSchema(pool1: PostgresPool, org: string) {
   var dataSource = new SqlDatabase(new PostgresDataProvider(pool1))
@@ -697,6 +698,12 @@ export async function initSchema(pool1: PostgresPool, org: string) {
         ')'
       )
     )
+  })
+  await version(49, async () => {
+    await sql.update(fd, {
+      set: () => [[fd.deliveryType, DeliveryType.deliveryToOtherAddress.id]],
+      where: () => ['hasAddress_2=true']
+    })
   })
 
   setLangForSite(org, settings.forWho)
