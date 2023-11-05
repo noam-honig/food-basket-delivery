@@ -244,7 +244,9 @@ export class UserFamiliesList {
       this.distCenter = undefined
     }
     this.toDeliver = this.allFamilies.filter(
-      (f) => f.deliverStatus == DeliveryStatus.ReadyForDelivery
+      (f) =>
+        f.deliverStatus == DeliveryStatus.ReadyForDelivery ||
+        f.deliverStatus == DeliveryStatus.DriverPickedUp
     )
     let notOnTheWay = this.toDeliver.filter((x) => x.onTheWayDate == null)
     this.hasDeliveriesNotOnTheWay =

@@ -196,6 +196,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       where: {
         deliverStatus: [
           DeliveryStatus.ReadyForDelivery,
+          DeliveryStatus.DriverPickedUp,
           DeliveryStatus.SelfPickup
         ],
         routeOrder: 0
@@ -217,6 +218,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
       where: {
         deliverStatus: [
           DeliveryStatus.ReadyForDelivery,
+          DeliveryStatus.DriverPickedUp,
           DeliveryStatus.SelfPickup
         ],
         courier: filterVolunteer

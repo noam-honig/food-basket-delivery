@@ -188,6 +188,7 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         this.stats.selfPickup,
         this.stats.frozen,
         this.stats.onTheWay,
+        this.stats.driverPickedUp,
         this.stats.delivered,
         this.stats.problem
       ],

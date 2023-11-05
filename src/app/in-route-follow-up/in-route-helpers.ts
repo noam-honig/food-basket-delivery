@@ -109,21 +109,36 @@ import { UITools } from '../helpers/init-context'
           sql.countDistinctInnerSelect(
             f.family,
             helperFamilies(() => [
-              f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })
+              f.where({
+                deliverStatus: [
+                  DeliveryStatus.ReadyForDelivery,
+                  DeliveryStatus.DriverPickedUp
+                ]
+              })
             ]),
             self.deliveriesInProgress
           ),
           sql.minInnerSelect(
             f.courierAssingTime,
             helperFamilies(() => [
-              f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })
+              f.where({
+                deliverStatus: [
+                  DeliveryStatus.ReadyForDelivery,
+                  DeliveryStatus.DriverPickedUp
+                ]
+              })
             ]),
             self.minAssignDate
           ),
           sql.maxInnerSelect(
             f.courierAssingTime,
             helperFamilies(() => [
-              f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })
+              f.where({
+                deliverStatus: [
+                  DeliveryStatus.ReadyForDelivery,
+                  DeliveryStatus.DriverPickedUp
+                ]
+              })
             ]),
             self.maxAssignDate
           ),
@@ -160,7 +175,12 @@ import { UITools } from '../helpers/init-context'
               select: () => [f.courier],
               from: f,
               where: () => [
-                f.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })
+                f.where({
+                  deliverStatus: [
+                    DeliveryStatus.ReadyForDelivery,
+                    DeliveryStatus.DriverPickedUp
+                  ]
+                })
               ]
             }),
             ')'

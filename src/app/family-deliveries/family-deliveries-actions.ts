@@ -236,6 +236,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
         if (
           deliveriesWithResultStatus > 0 &&
           (this.status == DeliveryStatus.ReadyForDelivery ||
+            this.status == DeliveryStatus.DriverPickedUp ||
             this.status == DeliveryStatus.SelfPickup)
         ) {
           if (
@@ -257,6 +258,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
           !(
             this.status == DeliveryStatus.Frozen &&
             f.deliverStatus != DeliveryStatus.ReadyForDelivery &&
+            f.deliverStatus != DeliveryStatus.DriverPickedUp &&
             f.deliverStatus != DeliveryStatus.enquireDetails
           )
         ) {
@@ -338,7 +340,8 @@ export class ArchiveHelper {
   }
   async forEach(f: ActiveFamilyDeliveries) {
     if (
-      f.deliverStatus == DeliveryStatus.ReadyForDelivery &&
+      (f.deliverStatus == DeliveryStatus.ReadyForDelivery ||
+        f.deliverStatus == DeliveryStatus.DriverPickedUp) &&
       f.courier &&
       this.markOnTheWayAsDelivered
     )
@@ -379,7 +382,7 @@ export class SendSmsForFamilyDetailsConfirmation extends ActionOnFamilyDeliverie
     super({
       title: getLang().sendMessageToFamilies,
       additionalWhere: {
-       // deliverStatus: DeliveryStatus.enquireDetails
+        // deliverStatus: DeliveryStatus.enquireDetails
       },
 
       allowed: () =>

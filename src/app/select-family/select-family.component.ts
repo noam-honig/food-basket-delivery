@@ -111,7 +111,10 @@ export class SelectFamilyComponent implements OnInit {
   }
 
   showStatus(f: ActiveFamilyDeliveries) {
-    if (f.deliverStatus == DeliveryStatus.ReadyForDelivery) {
+    if (
+      f.deliverStatus == DeliveryStatus.ReadyForDelivery ||
+      f.deliverStatus == DeliveryStatus.DriverPickedUp
+    ) {
       if (f.courier) {
         return this.settings.lang.assignedToVolunteer + ' ' + f.courier.name
       } else {

@@ -96,4 +96,5 @@ export interface AddressInfoArgs {
   hasImages?: boolean
   images?: ImageInfo[]
   loadImages?: VoidFunction
+  completed?: () => boolean
 }

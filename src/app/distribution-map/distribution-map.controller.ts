@@ -152,6 +152,7 @@ export class Statuses {
       case DeliveryStatus.ReadyForDelivery.id:
       case DeliveryStatus.enquireDetails.id:
       case DeliveryStatus.waitingForAdmin.id:
+      case DeliveryStatus.DriverPickedUp.id:
         if (courierId) return this.onTheWay
         else return this.ready
         break

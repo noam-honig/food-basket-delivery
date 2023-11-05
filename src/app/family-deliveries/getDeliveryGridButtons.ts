@@ -177,12 +177,15 @@ export function getDeliveryGridButtons(
         ) {
           {
             d.courier = null
+            d.deliverStatus = DeliveryStatus.ReadyForDelivery
             await d.save()
           }
         }
       },
       visible: (d) =>
-        d.deliverStatus == DeliveryStatus.ReadyForDelivery && d.courier
+        d.deliverStatus ==
+          (DeliveryStatus.ReadyForDelivery ||
+            d.deliverStatus == DeliveryStatus.DriverPickedUp) && d.courier
     },
     {
       name: getLang().familyDeliveries,

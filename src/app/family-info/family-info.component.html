@@ -102,10 +102,28 @@
       <span style="white-space: pre">{{ whatToTake }}</span>
     </mat-card>
   </div>
-  <app-address-info
+  <div
     *ngIf="secondAddressArgs && f.deliveryType.showSecondAddressAsPickupAddress"
-    [args]="secondAddressArgs"
-  ></app-address-info>
+  >
+    <app-address-info [args]="secondAddressArgs"></app-address-info>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="showPickedUp()"
+      (click)="updatePickedUp()"
+    >
+      אספתי בהצלחה
+    </button>
+    <button
+      mat-raised-button
+      color="error"
+      *ngIf="showCancelUpdatePickedUp()"
+      (click)="cancelUpdatePickedUp()"
+    >
+      לחצתי בטעות על אספתי בהצלחה
+    </button>
+    <hr />
+  </div>
   <app-address-info
     [args]="{
       f: f,

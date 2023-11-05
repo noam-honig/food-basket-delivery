@@ -1,4 +1,4 @@
- import { ValueFilter, getValueList } from 'remult'
+import { ValueFilter, getValueList } from 'remult'
 
 import { use, ValueListFieldType } from '../translate'
 
@@ -47,6 +47,7 @@ export class DeliveryStatus {
     2,
     !use ? '' : use.language.selfPickup
   )
+  static DriverPickedUp: DeliveryStatus = new DeliveryStatus(5, 'חבילה נאספה')
   static Frozen: DeliveryStatus = new DeliveryStatus(
     9,
     !use ? '' : use.language.frozen
@@ -117,7 +118,10 @@ export class DeliveryStatus {
       case DeliveryStatus.Frozen:
         return 'forzen'
       default:
-        if (this == DeliveryStatus.ReadyForDelivery && courier)
+        if (
+          (this == DeliveryStatus.ReadyForDelivery && courier) ||
+          DeliveryStatus.DriverPickedUp
+        )
           return 'on-the-way'
         return ''
     }

@@ -135,7 +135,10 @@ export class InRouteFollowUpComponent implements OnInit {
 
                     where: {
                       courier: helper,
-                      deliverStatus: DeliveryStatus.ReadyForDelivery
+                      deliverStatus: [
+                        DeliveryStatus.ReadyForDelivery,
+                        DeliveryStatus.DriverPickedUp
+                      ]
                     },
                     orderBy: { deliveryStatusDate: 'desc' },
                     rowsInPage: 25

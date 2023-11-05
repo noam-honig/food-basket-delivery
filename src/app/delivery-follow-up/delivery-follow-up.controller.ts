@@ -58,7 +58,12 @@ export class DeliveryFollowUpController {
                 sql.sumWithAlias(
                   1,
                   'inprogress',
-                  fd.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })
+                  fd.where({
+                    deliverStatus: [
+                      DeliveryStatus.ReadyForDelivery,
+                      DeliveryStatus.DriverPickedUp
+                    ]
+                  })
                 ),
                 sql.sumWithAlias(
                   1,
@@ -149,6 +154,6 @@ export interface helperFollowupInfo {
 }
 
 function log(what: string) {
-//  console.log(what);
+  //  console.log(what);
   return what
 }

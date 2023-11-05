@@ -120,6 +120,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   icon(n: ActiveFamilyDeliveries) {
     switch (n.deliverStatus) {
       case DeliveryStatus.ReadyForDelivery:
+      case DeliveryStatus.DriverPickedUp:
         break
       case DeliveryStatus.Success:
       case DeliveryStatus.SuccessLeftThere:

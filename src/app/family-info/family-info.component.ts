@@ -75,6 +75,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
         useWaze: this.userFamilies.useWaze,
         title: this.f.deliveryType.secondAddressCaption,
         callerScreen: this.callerScreen,
+        completed: () => this.f.deliverStatus === DeliveryStatus.DriverPickedUp,
         f: {
           $: {
             phone1: this.f.$.phone1_2,
@@ -137,7 +138,9 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   }
   actuallyShowHelp() {
     return (
-      this.showHelp && this.f.deliverStatus != DeliveryStatus.ReadyForDelivery
+      this.showHelp &&
+      this.f.deliverStatus != DeliveryStatus.ReadyForDelivery &&
+      this.f.deliverStatus != DeliveryStatus.DriverPickedUp
     )
   }
   async showTz() {
@@ -162,7 +165,8 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     return (
       this.partOfAssign &&
       f.courier &&
-      f.deliverStatus == DeliveryStatus.ReadyForDelivery
+      (f.deliverStatus == DeliveryStatus.ReadyForDelivery ||
+        f.deliverStatus == DeliveryStatus.DriverPickedUp)
     )
   }
   showFamilyPickedUp(f: ActiveFamilyDeliveries) {
@@ -172,6 +176,20 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
         !f.courier &&
         this.selfPickupScreen)
     )
+  }
+  async updatePickedUp() {
+    this.f.deliverStatus = DeliveryStatus.DriverPickedUp
+    await this.f.save()
+  }
+  async cancelUpdatePickedUp() {
+    this.f.deliverStatus = DeliveryStatus.ReadyForDelivery
+    await this.f.save()
+  }
+  showPickedUp() {
+    return this.f.deliverStatus == DeliveryStatus.ReadyForDelivery
+  }
+  showCancelUpdatePickedUp() {
+    return this.f.deliverStatus == DeliveryStatus.DriverPickedUp
   }
 
   async getPickupComments(f: ActiveFamilyDeliveries) {
@@ -279,6 +297,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     if (this.selfPickupScreen) return true
     return (
       this.f.deliverStatus != DeliveryStatus.ReadyForDelivery &&
+      this.f.deliverStatus != DeliveryStatus.DriverPickedUp &&
       !this.callerScreen
     )
   }

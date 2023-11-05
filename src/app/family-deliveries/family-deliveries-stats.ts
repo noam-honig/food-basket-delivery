@@ -55,7 +55,11 @@ export class FamilyDeliveryStats {
     },
     colors.orange
   )
-
+  driverPickedUp = new FamilyDeliveresStatistics(
+    'נאסף על ידי הנהג',
+    { deliverStatus: DeliveryStatus.DriverPickedUp },
+    colors.blue
+  )
   onTheWay = new FamilyDeliveresStatistics(
     getLang().onTheWay,
     FamilyDeliveries.onTheWayFilter(),

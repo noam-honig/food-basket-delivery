@@ -544,6 +544,7 @@
             <app-family-info
               [f]="f"
               [showHelp]="true"
+              [userFamilies]="familyLists"
               [partOfAssign]="partOfAssign"
               (assignmentCanceled)="cancelAssign(f)"
               (refreshList)="familyLists.reload()"

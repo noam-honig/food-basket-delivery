@@ -1,4 +1,6 @@
-<h4>{{ args.title || lang.address }}</h4>
+<h4>
+  {{ args.title || lang.address }} {{args.completed?.()?' - הושלם בהצלחה':''}}
+</h4>
 <mat-card style="font-size: 20px; line-height: 28px">
   <div style="display: flex; gap: 4px; align-items: center">
     <div style="flex-grow: 1">

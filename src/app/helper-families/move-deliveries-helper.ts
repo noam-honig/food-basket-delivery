@@ -24,7 +24,13 @@ export class moveDeliveriesHelper {
     allowSelect = false
   ) {
     let deliveries = await remult.repo(ActiveFamilyDeliveries).find({
-      where: { courier: from, deliverStatus: DeliveryStatus.ReadyForDelivery },
+      where: {
+        courier: from,
+        deliverStatus: [
+          DeliveryStatus.ReadyForDelivery,
+          DeliveryStatus.DriverPickedUp
+        ]
+      },
       limit: 1000
     })
     if (deliveries.length > 0) {
@@ -66,7 +72,10 @@ export class moveDeliveriesHelper {
               allowSelectAll: true,
               where: {
                 courier: from,
-                deliverStatus: DeliveryStatus.ReadyForDelivery
+                deliverStatus: [
+                  DeliveryStatus.ReadyForDelivery,
+                  DeliveryStatus.DriverPickedUp
+                ]
               }
             })
         )

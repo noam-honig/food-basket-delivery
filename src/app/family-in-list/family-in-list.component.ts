@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { TranslationOptions } from '../translate'
 import { Location } from '../shared/googleApiHelpers'
+import { DeliveryStatus } from '../families/DeliveryStatus'
 
 @Component({
   selector: 'app-family-in-list',
@@ -35,6 +36,11 @@ export class FamilyInListComponent implements OnInit {
   }
   offsetXValue = 0
   getAddressDescription() {
+    if (
+      this.f.deliveryType.showSecondAddressAsPickupAddress &&
+      this.f.deliverStatus === DeliveryStatus.ReadyForDelivery
+    )
+      return this.f.address_2
     let r = this.f.getAddressDescription()
     if (this.distanceFromPreviousLocation === 0) {
       let x = ''

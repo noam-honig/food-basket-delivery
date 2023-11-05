@@ -288,10 +288,12 @@ export class FamilyDeliveries extends IdEntity {
     var status = this.deliverStatus.caption
     switch (this.deliverStatus) {
       case DeliveryStatus.ReadyForDelivery:
+      case DeliveryStatus.DriverPickedUp:
         if (this.courier) status = getLang().onTheWay
         else status = getLang().unAsigned
         break
       case DeliveryStatus.SelfPickup:
+
       case DeliveryStatus.Frozen:
         break
       case DeliveryStatus.Success:
@@ -645,7 +647,12 @@ export class FamilyDeliveries extends IdEntity {
             when: [
               sql.or(
                 sql.gtAny(self.deliveryStatusDate, 'current_date -1'),
-                self.where({ deliverStatus: DeliveryStatus.ReadyForDelivery })
+                self.where({
+                  deliverStatus: [
+                    DeliveryStatus.ReadyForDelivery,
+                    DeliveryStatus.DriverPickedUp
+                  ]
+                })
               )
             ],
             then: true
@@ -931,7 +938,10 @@ export class FamilyDeliveries extends IdEntity {
     return this.customFilter({ city, group, area, basketId: basket?.id })
   }
   static onTheWayFilter = Filter.createCustom<FamilyDeliveries>(() => ({
-    deliverStatus: DeliveryStatus.ReadyForDelivery,
+    deliverStatus: [
+      DeliveryStatus.ReadyForDelivery,
+      DeliveryStatus.DriverPickedUp
+    ],
     courier: { '!=': null }
   }))
 
@@ -1056,6 +1066,7 @@ export class FamilyDeliveries extends IdEntity {
   getDeliveryDescription() {
     switch (this.deliverStatus) {
       case DeliveryStatus.ReadyForDelivery:
+      case DeliveryStatus.DriverPickedUp:
         if (this.courier) {
           let c = this.courier
 
@@ -1212,7 +1223,8 @@ export class FamilyDeliveries extends IdEntity {
   checkNeedsWork() {
     if (
       this.courierComments &&
-      this.deliverStatus != DeliveryStatus.ReadyForDelivery
+      this.deliverStatus != DeliveryStatus.ReadyForDelivery &&
+      this.deliverStatus != DeliveryStatus.DriverPickedUp
     )
       this.needsWork = true
     switch (this.deliverStatus) {
