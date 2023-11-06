@@ -773,11 +773,11 @@ export class FamilyDeliveries extends IdEntity {
   @DataControl<FamilyDeliveries>({
     readonly: (self) => self.deliverStatus.IsAResultStatus()
   })
+  @Fields.boolean({ caption: 'דחוף', allowApiUpdate: Roles.familyAdmin })
+  urgent: boolean = false
   @Field({
     allowApiUpdate: Roles.familyAdmin
   })
-  @Fields.boolean({ caption: 'דחוף' })
-  urgent: boolean = false
   deliveryType: DeliveryType = DeliveryType.delivery
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputPickupVolunteer

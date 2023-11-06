@@ -63,6 +63,7 @@ lastCallDate timestamp
 callerAssignDate timestamp
 callCount numeric default 0 not null
 urgent boolean default false not null
+deliveryType varchar default '' not null
 pickupVolunteer varchar default '' not null
 addressApiResult_2 varchar default '' not null
 address_2 varchar default '' not null
