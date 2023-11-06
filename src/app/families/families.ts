@@ -465,6 +465,11 @@ export class Families extends IdEntity {
         }
       },
       ok: async () => {
+        let more = {}
+        for (const f of newDelivery.getFieldsToCopyOnCreateDelivery()) {
+          if (f.value)
+            more[f.metadata.key] = f.metadata.valueConverter.toJson(f.value)
+        }
         let newId = await Families.addDelivery(
           newDelivery.family,
           newDelivery.basketType,
@@ -474,7 +479,8 @@ export class Families extends IdEntity {
             quantity: newDelivery.quantity,
             comment: newDelivery.deliveryComments,
             items: newDelivery.items,
-            selfPickup: selfPickup.value
+            selfPickup: selfPickup.value,
+            more
           }
         )
         if (
@@ -504,6 +510,7 @@ export class Families extends IdEntity {
       deliverStatus?: DeliveryStatus
       archive?: boolean
       items?: string
+      more?: {}
     }
   ) {
     let f = await remult.repo(Families).findId(familyId)
@@ -513,6 +520,12 @@ export class Families extends IdEntity {
           f.addressHelper.location
         )
       let fd = f.createDelivery(distCenter)
+      if (settings.more) {
+        for (const f of fd.getFieldsToCopyOnCreateDelivery()) {
+          const val = settings.more[f.metadata.key]
+          if (val) f.value = f.metadata.valueConverter.fromJson(val)
+        }
+      }
       fd.basketType = basketType
       fd.quantity = settings.quantity
       fd.deliveryComments = settings.comment

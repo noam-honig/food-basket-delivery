@@ -1299,6 +1299,21 @@ export class FamilyDeliveries extends IdEntity {
       fields: this.deilveryDetailsAreaSettings(callerHelper.ui)
     })
   }
+
+  getFieldsToCopyOnCreateDelivery() {
+    const fields: FieldRef[] = []
+    for (const level1 of this.secondAddressFieldsForUI()) {
+      if (Array.isArray(level1)) {
+        for (const level2 of level1) {
+          fields.push(level2.field)
+        }
+      } else if (level1.field) {
+        fields.push(level1.field)
+      }
+    }
+    return fields
+  }
+
   secondAddressFieldsForUI() {
     return [
       {
