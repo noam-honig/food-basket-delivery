@@ -32,6 +32,7 @@ export class IntakeFormComponent implements OnInit {
             },
             [i.appartment, i.floor, i.entrance],
             i.addressComment,
+            [i.fillerName, i.fillerPhone, i.role],
             [i.phone1, i.phone1Description],
             [i.phone2, i.phone2Description],
             {

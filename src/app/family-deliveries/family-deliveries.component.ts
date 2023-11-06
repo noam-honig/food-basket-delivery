@@ -667,7 +667,7 @@ font-family: &quot;arial&quot;;
         }
         return { $and: result }
       },
-      orderBy: { name: 'asc' },
+      orderBy: { urgent: 'desc', name: 'asc' },
       columnSettings: (deliveries) => {
         let r: DataControlInfo<ActiveFamilyDeliveries>[] = [
           {
@@ -765,7 +765,9 @@ font-family: &quot;arial&quot;;
           deliveries.lastCallDate,
           deliveries.items,
           deliveries.socialWorker,
+          deliveries.urgent,
           deliveries.deliveryType,
+
           deliveries.pickupVolunteer,
           deliveries.address_2,
           deliveries.floor_2,

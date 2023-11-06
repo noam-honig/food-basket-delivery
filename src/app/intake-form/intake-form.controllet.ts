@@ -5,7 +5,8 @@ import {
   Validators,
   repo,
   remult,
-  isBackend
+  isBackend,
+  Fields
 } from 'remult'
 import { Field, use } from '../translate'
 import {
@@ -82,6 +83,21 @@ export class IntakeFormController extends ControllerBase {
   phone2: Phone
   @Field()
   phone2Description: string
+  @Field({ caption: 'שם ממלא הטופס', validate: Validators.required })
+  fillerName: string
+  @Field({
+    caption: 'טלפון ממלא הטופס',
+    validate: [
+      Validators.required,
+      (f, p) => {
+        if (!isPhoneValidForIsrael(p.value?.thePhone)) throw 'טלפון שגוי'
+      }
+    ]
+  })
+  fillerPhone: Phone
+  @DataControl({ valueList: ['', 'מוקד', 'עובדת סוציאלית', 'מתנדב'] })
+  @Field({ caption: 'תפקיד', validate: Validators.required })
+  role: string = ''
 
   basketTypes: Awaited<ReturnType<typeof IntakeFormController.getBasketTypes>>
   @Field<IntakeFormController, string>({
@@ -133,7 +149,9 @@ export class IntakeFormController extends ControllerBase {
       phone2: this.phone2,
       phone2Description: this.phone2Description,
       basketType: await repo(BasketType).findId(this.basketType),
-      deliveryComments: this.deliveryComments
+      deliveryComments: this.deliveryComments,
+      socialWorker: this.fillerName + ' ' + this.role,
+      socialWorkerPhone1: this.fillerPhone
     })
     const d = await f.createDelivery(
       await remult.context.defaultDistributionCenter()

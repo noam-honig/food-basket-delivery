@@ -226,7 +226,9 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
 })
 export class FamilyDeliveries extends IdEntity {
   getCss(): string {
-    return this.deliverStatus.getCss(this.courier)
+    return (
+      this.deliverStatus.getCss(this.courier) + (this.urgent ? ' urgent' : '')
+    )
   }
   disableRouteReCalc = false
   @BackendMethod<FamilyDeliveries>({
@@ -774,6 +776,8 @@ export class FamilyDeliveries extends IdEntity {
   @Field({
     allowApiUpdate: Roles.familyAdmin
   })
+  @Fields.boolean({ caption: 'דחוף' })
+  urgent: boolean = false
   deliveryType: DeliveryType = DeliveryType.delivery
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputPickupVolunteer
@@ -1316,6 +1320,9 @@ export class FamilyDeliveries extends IdEntity {
 
   secondAddressFieldsForUI() {
     return [
+      {
+        field: this.$.urgent
+      },
       {
         field: this.$.deliveryType
       },
