@@ -78,11 +78,10 @@ export async function saveToExcel<
             v: v,
             t: t
           }
-          XLSX.utils.encode_col(colIndex)
-          maxChar = colName
 
-          colName = XLSX.utils.encode_col(colIndex)
+          maxChar = colName
           let col = ws['!cols'][colIndex++]
+          colName = XLSX.utils.encode_col(colIndex)
           if (v) {
             let len = v.length
             if (len > col.wch) {
