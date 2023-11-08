@@ -120,7 +120,7 @@ export class DeliveryStatus {
       default:
         if (
           (this == DeliveryStatus.ReadyForDelivery && courier) ||
-          DeliveryStatus.DriverPickedUp
+          this == DeliveryStatus.DriverPickedUp
         )
           return 'on-the-way'
         return ''
