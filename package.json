@@ -124,6 +124,7 @@
   "browser": {
     "jsonwebtoken": false,
     "password-hash": false,
-    "nodemailer": false
+    "nodemailer": false,
+    "fs": false
   }
 }
