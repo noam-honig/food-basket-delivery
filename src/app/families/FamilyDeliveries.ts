@@ -14,7 +14,8 @@ import {
   SqlDatabase,
   remult,
   IdFieldRef,
-  getValueList
+  getValueList,
+  repo
 } from 'remult'
 import { BasketType } from './BasketType'
 import {
@@ -73,6 +74,7 @@ import { isDesktop } from '../shared/utils'
 import { UITools } from '../helpers/init-context'
 import { messageMerger } from '../edit-custom-message/messageMerger'
 import { DeliveryType } from './deliveryType'
+import { updateMondayBasedOnDriver } from '../server/monday'
 
 @ValueListFieldType({
   translation: (l) => l.messageStatus
@@ -155,6 +157,17 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
           self.courierComments.length > 0
         )
           self.courierCommentsDate = new Date()
+        if (self.$.courier.valueChanged()) {
+          if (remult.context.getSite() === 'bian') {
+            const f = await repo(Families).findId(self.family)
+            if (f.iDinExcel.startsWith('m:')) {
+              updateMondayBasedOnDriver(
+                Number(f.iDinExcel.substring(2)),
+                Boolean(self.courier)
+              )
+            }
+          }
+        }
         if (self.$.deliverStatus.valueChanged()) {
           let env = process.env['ESHEL']
           if (env && remult.authenticated()) {

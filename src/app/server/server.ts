@@ -141,6 +141,7 @@ import { MemoryStats } from './stats'
 import { FamilyConfirmDetailsController } from '../family-confirm-details/family-confirm-details.controller'
 import { randomUUID } from 'crypto'
 import { IntakeFormController } from '../intake-form/intake-form.controllet'
+import { testMonday, updateReceivedFromMonday } from './monday'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -610,6 +611,10 @@ s.parentNode.insertBefore(b, s);})();
   } else {
     registerImageUrls(app, api, '')
   }
+  app.use('/bian/api/monday', api.withRemult, async (req, res) => {
+    await updateReceivedFromMonday(req.body)
+    res.send(req.body)
+  })
   app.use('/*/api/incoming-sms', api.withRemult, async (req, res) => {
     try {
       let org = Sites.getOrganizationFromContext()
