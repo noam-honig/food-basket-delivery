@@ -923,16 +923,20 @@ export class Families extends IdEntity {
       let self = SqlFor(selfDefs)
       let fd = SqlFor(remult.repo(FamilyDeliveries))
       let sql = new SqlBuilder()
-      return sql.columnCount(self, {
-        from: fd,
-        where: () => [
-          sql.eq(fd.family, self.id),
-          fd.where({
-            archive: false,
-            deliverStatus: DeliveryStatus.isNotAResultStatus()
-          })
-        ]
-      })
+      return sql.columnCountWithAs(
+        self,
+        {
+          from: fd,
+          where: () => [
+            sql.eq(fd.family, self.id),
+            fd.where({
+              archive: false,
+              deliverStatus: DeliveryStatus.isNotAResultStatus()
+            })
+          ]
+        },
+        'numOfActiveReadyDeliveries'
+      )
     }
   })
   numOfActiveReadyDeliveries: number
@@ -942,15 +946,19 @@ export class Families extends IdEntity {
       let self = SqlFor(selfDefs)
       let fd = SqlFor(remult.repo(FamilyDeliveries))
       let sql = new SqlBuilder()
-      return sql.columnCount(self, {
-        from: fd,
-        where: () => [
-          sql.eq(fd.family, self.id),
-          fd.where({
-            deliverStatus: { $ne: DeliveryStatus.isProblem() }
-          })
-        ]
-      })
+      return sql.columnCountWithAs(
+        self,
+        {
+          from: fd,
+          where: () => [
+            sql.eq(fd.family, self.id),
+            fd.where({
+              deliverStatus: { $ne: DeliveryStatus.isProblem() }
+            })
+          ]
+        },
+        'totalDeliveries'
+      )
     }
   })
   totalDeliveries: number
