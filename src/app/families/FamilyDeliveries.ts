@@ -918,7 +918,7 @@ export class FamilyDeliveries extends IdEntity {
     let result: EntityFilter<FamilyDeliveries>[] = []
     let user = await remult.context.getCurrentUser()
     if (!remult.isAllowed([Roles.admin, Roles.lab])) {
-      if (!remult.isAllowed(Roles.familyAdmin))
+      if (!remult.isAllowed([Roles.familyAdmin, Roles.distCenterAdmin]))
         result.push(FamilyDeliveries.active)
       let $or: EntityFilter<FamilyDeliveries>[] = []
       if (remult.isAllowed(Roles.distCenterAdmin))
