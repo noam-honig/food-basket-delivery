@@ -612,6 +612,7 @@ s.parentNode.insertBefore(b, s);})();
     registerImageUrls(app, api, '')
   }
   app.use('/bian/api/monday', api.withRemult, async (req, res) => {
+    console.log("Monday's request", req.path, req.body)
     await updateReceivedFromMonday(req.body)
     res.send(req.body)
   })
