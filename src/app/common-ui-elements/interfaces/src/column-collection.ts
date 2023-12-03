@@ -384,7 +384,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
       valueConverter: valueConverter! as any,
       displayValue: () => '',
       apiUpdateAllowed: () => true,
-      includedInApi: true,
+      includedInApi: () => true,
       toInput: (x) => x,
       fromInput: (x) => x,
       valueType: settings.valueType,
