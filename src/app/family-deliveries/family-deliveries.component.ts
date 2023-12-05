@@ -2,7 +2,15 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core'
 import { distCenterAdminGuard } from '../auth/guards'
 import { Roles } from '../auth/roles'
 import { Route } from '@angular/router'
-import { EntityFilter, Field, Fields, Filter, getFields, remult } from 'remult'
+import {
+  ControllerBase,
+  EntityFilter,
+  Field,
+  Fields,
+  Filter,
+  getFields,
+  remult
+} from 'remult'
 import {
   DataControlInfo,
   DataControlSettings,
@@ -1068,7 +1076,25 @@ font-family: &quot;arial&quot;;
           refresh: () => this.refresh(),
           settings: this.settings,
           showAllBeforeNew: this.settings.isSytemForMlt
-        })
+        }),
+        {
+          name: 'עדכון תאריך סטטוס',
+          visible: () => remult.isAllowed(Roles.admin),
+          click: async (fd) => {
+            class x extends ControllerBase {
+              @Fields.string({ caption: 'תאריך', inputType: 'date' })
+              date = fd.$.deliveryStatusDate.inputValue.substring(0, 10)
+            }
+            let y = new x()
+            this.dialog.inputAreaDialog({
+              fields: [y.$.date],
+              ok: async () => {
+                await FamilyDeliveries.updateStatusDate(fd.id, y.date)
+                fd._.reload()
+              }
+            })
+          }
+        }
       ]
     }
   )

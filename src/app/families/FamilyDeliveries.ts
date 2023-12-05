@@ -1436,6 +1436,14 @@ export class FamilyDeliveries extends IdEntity {
       }
     ]
   }
+  @BackendMethod({ allowed: Roles.admin })
+  static async updateStatusDate(id: string, date: string) {
+    let fd = await remult.repo(FamilyDeliveries).findId(id)
+    if (fd) {
+      fd.deliveryStatusDate = new Date(date)
+      await fd.save()
+    }
+  }
 }
 SqlBuilder.filterTranslators.push({
   translate: async (f) => {
