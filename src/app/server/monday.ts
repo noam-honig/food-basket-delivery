@@ -181,6 +181,8 @@ async function updateBasedOnMondayItem(item: MondayItem) {
       }
     )
   } else {
+    fd.basketType = f.basketType
+    fd.quantity = quantity
     fd._disableMessageToUsers = true
     fd.deliveryComments = f.deliveryComments
     await fd.save()
