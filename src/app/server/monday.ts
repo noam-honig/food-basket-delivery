@@ -9,6 +9,7 @@ import {
 import { Roles } from '../auth/roles'
 import { Helpers } from '../helpers/helpers'
 import { FamilyStatus } from '../families/FamilyStatus'
+import { BasketType } from '../families/BasketType'
 
 const boardId = 1298919396
 export async function updateReceivedFromMonday(event: EventRoot) {
@@ -147,6 +148,19 @@ async function updateBasedOnMondayItem(item: MondayItem) {
   if (f.phone2Description) {
     f.phone2Description += ' הפונה'
   }
+  const basket = get(item, 'single_select15')
+  if (basket) {
+    f.basketType = await remult
+      .repo(BasketType)
+      .findFirst({ name: basket }, { createIfNotFound: true })
+    if (f.basketType.isNew()) {
+      f.basketType.boxes = 1
+      await f.basketType.save()
+    }
+  }
+  let quantity = Number(get(item, 'single_select4'))
+  if (!Number.isInteger(quantity)) quantity = 1
+
   await f.save()
   let fd = f._.isNew()
     ? undefined
@@ -162,7 +176,7 @@ async function updateBasedOnMondayItem(item: MondayItem) {
       undefined,
       {
         comment: f.deliveryComments,
-        quantity: 1,
+        quantity,
         selfPickup: false
       }
     )
