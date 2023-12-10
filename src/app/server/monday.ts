@@ -155,6 +155,7 @@ async function updateBasedOnMondayItem(item: MondayItem) {
       .findFirst({ name: basket }, { createIfNotFound: true })
     if (f.basketType.isNew()) {
       f.basketType.boxes = 1
+      f.basketType.whatToTake = basket
       await f.basketType.save()
     }
   }
