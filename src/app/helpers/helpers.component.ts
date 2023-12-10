@@ -83,7 +83,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
               (x.args = {
                 title: use.language.filterCity,
                 helpText: use.language.filterCityHelp,
-                fields: [getFields(this).city],
+                fields: [getFields<HelpersComponent>(this).city],
                 ok: async () => {
                   this.helpers.reloadData()
                 },

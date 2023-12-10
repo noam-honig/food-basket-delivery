@@ -30,7 +30,7 @@ export class DateRangeComponent implements OnInit {
   @Fields.dateOnly()
   toDate: Date
   get $() {
-    return getFields(this)
+    return getFields<DateRangeComponent>(this)
   }
   rangeArea = new DataAreaSettings({
     fields: () => [[this.$.fromDate, this.$.toDate]]

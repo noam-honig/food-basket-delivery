@@ -10,7 +10,8 @@ import {
   BackendMethod,
   ProgressListener,
   ValueConverters,
-  remult
+  remult,
+  repo
 } from 'remult'
 import {
   DataControl,
@@ -106,7 +107,7 @@ export class Event extends IdEntity {
       questionForRegistration1Values,
       questionForRegistration2Values,
       questionForRegistration3Values,
-      questionForRegistration4Values,
+      questionForRegistration4Values
     } = await remult.context.getSettings()
 
     let {
@@ -374,8 +375,8 @@ export class Event extends IdEntity {
   ) {
     ui.inputAreaDialog({
       title: use.language.eventInfo,
-      fields: Event.displayColumns(this._.repository.metadata.fields, ui).map(
-        (x) => mapFieldMetadataToFieldRef(this._, x)
+      fields: Event.displayColumns(repo(Event).fields, ui).map((x) =>
+        mapFieldMetadataToFieldRef(this._, x)
       ),
       ok: () => this.save().then(() => saved && saved()),
       cancel: () => {

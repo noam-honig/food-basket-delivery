@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     fields: () => [this.$.phone, this.$.remember]
   })
   get $() {
-    return getFields(this)
+    return getFields<LoginComponent>(this)
   }
 
   setPasswordArea = new DataAreaSettings({

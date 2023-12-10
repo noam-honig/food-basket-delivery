@@ -10,7 +10,8 @@ import {
   getFields,
   Repository,
   QueryOptions,
-  remult
+  remult,
+  FieldsRefForEntityBase
 } from 'remult'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { use } from '../translate'
@@ -61,7 +62,7 @@ export abstract class ActionOnRows<T extends IdEntity> {
     }
   }
   get $() {
-    return getFields<this>(this)
+    return getFields<this>(this) as unknown as FieldsRefForEntityBase<this>
   }
 
   gridButton(component: actionDialogNeeds<T>) {

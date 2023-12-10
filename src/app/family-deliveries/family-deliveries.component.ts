@@ -831,7 +831,7 @@ font-family: &quot;arial&quot;;
           icon: 'phone',
           click: async () => {
             await this.dialog.inputAreaDialog({
-              fields: [getFields(this).filterPhone],
+              fields: [getFields<FamilyDeliveriesComponent>(this).filterPhone],
               ok: () => {
                 this.refreshFamilyGrid()
               },

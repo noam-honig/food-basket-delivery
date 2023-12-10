@@ -6,7 +6,13 @@ import {
   getFieldDefinition
 } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
-import { FieldRef, FieldMetadata, FieldsRef, remult } from 'remult'
+import {
+  FieldRef,
+  FieldMetadata,
+  FieldsRef,
+  remult,
+  FieldsRefForEntityBase
+} from 'remult'
 import { MatDialogRef } from '@angular/material/dialog'
 import { Roles } from '../auth/roles'
 import { DialogService } from '../select-popup/dialog'
@@ -52,7 +58,9 @@ export class MergeFamiliesComponent implements OnInit {
     this.family._disableAutoDuplicateCheck = true
     this.rebuildCompare(true)
   }
-  updateSimilarColumns(getCols: (f: FieldsRef<Families>) => FieldRef<any>[][]) {
+  updateSimilarColumns(
+    getCols: (f: FieldsRefForEntityBase<Families>) => FieldRef<any>[][]
+  ) {
     let eCols = getCols(this.family.$)
 
     for (const f of this.families) {
@@ -181,12 +189,10 @@ export class MergeFamiliesComponent implements OnInit {
       )
       this.merged = true
       this.dialogRef.close()
-      let deliveries = await remult
-        .repo(ActiveFamilyDeliveries)
-        .count({
-          family: this.family.id,
-          deliverStatus: DeliveryStatus.isNotAResultStatus()
-        })
+      let deliveries = await remult.repo(ActiveFamilyDeliveries).count({
+        family: this.family.id,
+        deliverStatus: DeliveryStatus.isNotAResultStatus()
+      })
       if (deliveries > 0) {
         await this.family.showDeliveryHistoryDialog({
           settings: this.settings,

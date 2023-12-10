@@ -290,7 +290,7 @@ export class ArchiveHelper {
   markSelfPickupAsDelivered: boolean
 
   get $() {
-    return getFields(this)
+    return getFields<ArchiveHelper>(this)
   }
   async initArchiveHelperBasedOnCurrentDeliveryInfo(
     where: EntityFilter<ActiveFamilyDeliveries>,

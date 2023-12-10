@@ -13,7 +13,6 @@ import {
 import {
   ControllerBase,
   Filter,
-  OmitEB,
   remult,
   Remult,
   repo,

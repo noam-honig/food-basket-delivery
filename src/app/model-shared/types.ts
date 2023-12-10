@@ -7,7 +7,8 @@ import {
   ValueConverter,
   FieldRef,
   FieldOptions,
-  EntityRef
+  EntityRef,
+  EntityRefForEntityBase
 } from 'remult'
 import {
   TranslationOptions,
@@ -130,7 +131,7 @@ export function relativeDateName(args: {
 }
 
 export function logChanges(
-  e: EntityRef<any>,
+  e: EntityRefForEntityBase<any>,
   remult: Remult,
   args?: {
     excludeColumns?: FieldRef<any, any>[]

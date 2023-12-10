@@ -62,7 +62,7 @@ export class FamilySelfOrderController {
   message: string = ''
 
   get $() {
-    return getFields(this)
+    return getFields<FamilySelfOrderController>(this)
   }
   area = new DataAreaSettings({
     fields: () => [

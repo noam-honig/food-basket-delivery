@@ -356,7 +356,7 @@ export class FamiliesComponent implements OnInit {
         icon: 'phone',
         click: async () => {
           await this.dialog.inputAreaDialog({
-            fields: [getFields(this).filterPhone],
+            fields: [getFields<FamiliesComponent>(this).filterPhone],
             ok: () => {
               this.refreshFamilyGrid()
             },

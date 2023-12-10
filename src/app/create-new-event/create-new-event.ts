@@ -91,7 +91,7 @@ export class CreateNewEvent {
     return remult.isAllowed(Roles.admin)
   }
   get $() {
-    return getFields(this, remult)
+    return getFields<CreateNewEvent>(this, remult)
   }
   @BackendMethod({ queue: true, allowed: Roles.admin })
   async createNewEvent(progress?: ProgressListener) {

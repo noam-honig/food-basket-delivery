@@ -53,7 +53,7 @@ export class DuplicateFamiliesComponent implements OnInit {
   })
   tz: boolean = false
   get $() {
-    return getFields(this, remult)
+    return getFields<DuplicateFamiliesComponent>(this, remult)
   }
   area = new DataAreaSettings({
     fields: () => [

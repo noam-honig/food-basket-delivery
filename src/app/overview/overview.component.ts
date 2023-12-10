@@ -44,7 +44,7 @@ export class OverviewComponent implements OnInit {
 
   addDateFilter = false
   get $() {
-    return getFields(this)
+    return getFields<OverviewComponent>(this)
   }
   private getFullState() {
     this.spinner = true

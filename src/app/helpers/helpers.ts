@@ -14,7 +14,8 @@ import {
   isBackend,
   SqlDatabase,
   Fields as remultFields,
-  ValueConverters
+  ValueConverters,
+  repo
 } from 'remult'
 import {
   DataControl,
@@ -447,12 +448,10 @@ export class Helpers extends HelpersBase {
       cancel: () => {
         this._.undoChanges()
       },
-      fields: Helpers.selectColumns(this._.repository.metadata.fields).map(
-        (map) => ({
-          ...map,
-          field: this.$.find(map.field ? (map.field as any) : map)
-        })
-      ),
+      fields: Helpers.selectColumns(repo(Helpers).fields).map((map) => ({
+        ...map,
+        field: this.$.find(map.field ? (map.field as any) : map)
+      })),
       buttons: [
         {
           text: settings.lang.deliveries,

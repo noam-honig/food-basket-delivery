@@ -35,6 +35,7 @@ import { Email } from '../model-shared/types'
 import { doOnRemoteHagai } from '../overview/remoteHagai'
 import { Sites } from '../sites/sites'
 import { Field, use } from '../translate'
+import { FieldsRefForEntityBase } from 'remult'
 
 function storedInfo(): VolunteerInfo {
   let r = localStorage.getItem(infoKeyInStorage)
@@ -60,8 +61,8 @@ export class RegisterToEvent {
     caption?: string
     values?: string
     getFieldToUpdate: (
-      h: FieldsRef<Helpers>,
-      e: FieldsRef<volunteersInEvent>
+      h: FieldsRefForEntityBase<Helpers>,
+      e: FieldsRefForEntityBase<volunteersInEvent>
     ) => FieldRef
   }[] = []
   inited = false
@@ -194,7 +195,7 @@ export class RegisterToEvent {
   preferredFinishAddress: string = ''
 
   get $() {
-    return getFields(this, remult)
+    return getFields<RegisterToEvent>(this, remult)
   }
   async registerToEvent(e: EventInList, ui: UITools) {
     ui.trackVolunteer('register-event:' + e.site)

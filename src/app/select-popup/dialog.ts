@@ -278,7 +278,7 @@ export class DialogService implements UITools {
   }
   dc: DistributionCenters
   get $() {
-    return getFields(this, remult)
+    return getFields<DialogService>(this, remult)
   }
   async refreshCanSeeCenter() {
     this.hasManyCenters = false

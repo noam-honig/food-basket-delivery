@@ -1,4 +1,3 @@
-
 import { BackendMethod, Controller, getFields, remult } from 'remult'
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 import { getSettings } from '../manage/ApplicationSettings'
@@ -21,7 +20,7 @@ export class FamilyConfirmDetailsController {
   message: string = ''
 
   get $() {
-    return getFields(this)
+    return getFields < FamilyConfirmDetailsController >( this)
   }
   @Field()
   text: string = ''

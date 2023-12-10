@@ -916,7 +916,7 @@ export class ImportFromExcelComponent implements OnInit {
   @Field({ translation: (l) => l.useFamilyMembersAsQuantity })
   useFamilyMembersAsNumOfBaskets: boolean
   get $() {
-    return getFields(this, remult)
+    return getFields<ImportFromExcelComponent>(this, remult)
   }
 
   moveToAdvancedSettings() {
@@ -1648,12 +1648,10 @@ class columnUpdateHelper {
     updateResultTo: FieldRef<any, Y>,
     additionalUpdates?: (entity: T) => void
   ) {
-    let x = await remult
-      .repo(c)
-      .findFirst(searchForExistingValueFilter(val), {
-        createIfNotFound: true,
-        useCache: true
-      })
+    let x = await remult.repo(c).findFirst(searchForExistingValueFilter(val), {
+      createIfNotFound: true,
+      useCache: true
+    })
     if (x.isNew()) {
       let s =
         updateResultTo.metadata.caption +

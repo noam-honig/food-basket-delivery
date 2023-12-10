@@ -26,15 +26,13 @@ export class ShipmentAssignScreenController {
 
     let i = 0
     //collect helpers
-    for (let h of await remult
-      .repo(Helpers)
-      .find({
-        where: {
-          ...Helpers.active,
-          preferredDistributionAreaAddress: { '!=': '' }
-        },
-        limit: 1000
-      })) {
+    for (let h of await remult.repo(Helpers).find({
+      where: {
+        ...Helpers.active,
+        preferredDistributionAreaAddress: { '!=': '' }
+      },
+      limit: 1000
+    })) {
       result.helpers[h.id] =
         ShipmentAssignScreenController.helperInfoFromHelper(h)
       i++

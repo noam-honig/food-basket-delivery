@@ -50,7 +50,7 @@ export class DeliveryHistoryComponent implements OnInit {
   @Field({ translation: (l) => l.showOnlyArchivedDeliveries })
   onlyArchived: boolean = false
   get $() {
-    return getFields(this, remult)
+    return getFields<DeliveryHistoryComponent>(this, remult)
   }
   rangeArea = new DataAreaSettings({
     fields: () => {

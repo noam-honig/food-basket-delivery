@@ -6,7 +6,6 @@ import {
   ProgressListener,
   Controller,
   SqlDatabase,
-  OmitEB,
   FieldMetadata,
   ControllerBase,
   remult
@@ -155,7 +154,7 @@ export class ManageController {
     )
   }
 }
-declare type select<T> = { [Properties in keyof Partial<OmitEB<T>>]?: boolean }
+declare type select<T> = { [Properties in keyof Partial<T>]?: boolean }
 
 @Controller('sendTestSms')
 export class SendTestSms extends ControllerBase {
