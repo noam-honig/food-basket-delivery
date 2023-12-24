@@ -676,6 +676,19 @@ export class FilterConsumerBridgeToSqlRequest implements FilterConsumer {
       })()
     )
   }
+  public notContainsCaseInsensitive(col: FieldMetadata, val: any): void {
+    this.promises.push(
+      (async () => {
+        this.addToWhere(
+          'not lower (' +
+            (await col.getDbName()) +
+            ") like lower ('%" +
+            val.replace(/'/g, "''") +
+            "%')"
+        )
+      })()
+    )
+  }
 
   private add(col: FieldMetadata, val: any, operator: string) {
     this.promises.push(
