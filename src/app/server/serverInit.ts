@@ -119,14 +119,20 @@ export async function serverInit() {
 
     Sites.getDataProviderForOrg = (org) =>
       new SqlDatabase(
-        new PostgresDataProvider(new PostgresSchemaWrapper(pool, org))
+        new PostgresDataProvider(pool, {
+          caseInsensitiveIdentifiers: true,
+          schema: org
+        })
       )
     return {
       dataSource: (y: Remult) => {
         let org = Sites.getValidSchemaFromContext()
 
         return new SqlDatabase(
-          new PostgresDataProvider(new PostgresSchemaWrapper(pool, org))
+          new PostgresDataProvider(pool, {
+            caseInsensitiveIdentifiers: true,
+            schema: org
+          })
         )
       },
       initDatabase: () => initDatabase(pool, InitSchemas)
@@ -146,7 +152,10 @@ export async function serverInit() {
       for (const s of Sites.schemas) {
         try {
           let db = new SqlDatabase(
-            new PostgresDataProvider(new PostgresSchemaWrapper(pool, s))
+            new PostgresDataProvider(pool, {
+              caseInsensitiveIdentifiers: true,
+              schema: s
+            })
           )
           let h = await SqlFor(remult.repo(Helpers))
           var sql = new SqlBuilder()
@@ -209,8 +218,13 @@ async function initDatabase(
   if (!initSettings.disableSchemaInit) {
     await verifySchemaExistance(pool, Sites.guestSchema)
   }
-  let adminSchemaPool = new PostgresSchemaWrapper(pool, Sites.guestSchema)
-  let dp = new SqlDatabase(new PostgresDataProvider(adminSchemaPool))
+
+  let dp = new SqlDatabase(
+    new PostgresDataProvider(pool, {
+      caseInsensitiveIdentifiers: true,
+      schema: Sites.guestSchema
+    })
+  )
   remult.dataProvider = dp
   await InitRemult(remult)
 
@@ -250,8 +264,13 @@ async function initDatabase(
 
 async function InitSpecificSchema(pool: Pool, s: any) {
   await verifySchemaExistance(pool, s)
-  let schemaPool = new PostgresSchemaWrapper(pool, s)
-  let db = new SqlDatabase(new PostgresDataProvider(schemaPool))
+
+  let db = new SqlDatabase(
+    new PostgresDataProvider(pool, {
+      caseInsensitiveIdentifiers: true,
+      schema: s
+    })
+  )
   remult.dataProvider = db
   await InitRemult(remult)
   if (!initSettings.disableSchemaInit) {
@@ -260,7 +279,7 @@ async function InitSpecificSchema(pool: Pool, s: any) {
     await b.createIfNotExist(settings.metadata)
     await b.verifyAllColumns(settings.metadata)
     await b.verifyStructureOfAllEntities(remult)
-    await initSchema(schemaPool, s)
+    await initSchema(db, s)
   }
   return db
 }

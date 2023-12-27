@@ -28,8 +28,7 @@ import { Roles } from '../auth/roles'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
 import { DeliveryType } from '../families/deliveryType'
 
-export async function initSchema(pool1: PostgresPool, org: string) {
-  var dataSource = new SqlDatabase(new PostgresDataProvider(pool1))
+export async function initSchema(dataSource: SqlDatabase, org: string) {
   remult.context.getSite = () => org
   await InitContext(remult)
   remult.dataProvider = dataSource

@@ -378,6 +378,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
         settings.inputType = valueConverter.inputType
       }
     this.metadata = {
+      dbName: this.options.dbName,
       allowNull: settings.allowNull!,
       caption: settings.caption,
       options: this.options,
