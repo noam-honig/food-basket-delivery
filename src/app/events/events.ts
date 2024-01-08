@@ -267,7 +267,7 @@ export class Event extends IdEntity {
   @Field<Event>({
     translation: (l) => l.eventName,
     validate: (s, c) =>
-      Validators.required(s, c, remult.context.lang.nameIsTooShort)
+      Validators.required(remult.context.lang.nameIsTooShort)(s, c)
   })
   name: string
   @Field()

@@ -343,11 +343,11 @@ export class HelpersBase extends IdEntity {
       }
       self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone))
       if (!self._disableDuplicateCheck)
-        await Validators.unique(
-          self,
-          self.$.phone,
-          remult.context.lang?.alreadyExist
-        )
+        if (self.$.phone.valueChanged() || self.isNew()) {
+          if ((await self._.repository.count({ phone: self.phone })) > 0)
+            self.$.phone.error = remult.context.lang?.alreadyExist
+        }
+
       if (self.isNew()) self.createDate = new Date()
       self.veryUrlKeyAndReturnTrueIfSaveRequired()
       if (!self.needEscort) self.escort = null

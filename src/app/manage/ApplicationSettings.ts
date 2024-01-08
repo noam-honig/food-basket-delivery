@@ -6,7 +6,8 @@ import {
   FieldMetadata,
   Allow,
   isBackend,
-  remult
+  remult,
+  ValidateFieldEvent
 } from 'remult'
 import { DataControl } from '../common-ui-elements/interfaces'
 export function CustomColumn(
@@ -958,7 +959,10 @@ export function includePhoneInApi() {
   if (remult.isAllowed(Roles.distCenterAdmin)) return true
   return false
 }
-export function validateSmsContent(entity: any, c: FieldRef<string, any>) {
+export function validateSmsContent(
+  entity: any,
+  c: ValidateFieldEvent<string, any>
+) {
   return
   if (c.value && c.value.indexOf('!אתר!') < 0 && c.value.indexOf('!URL!') < 0)
     c.error = this.lang.mustIncludeUrlKeyError

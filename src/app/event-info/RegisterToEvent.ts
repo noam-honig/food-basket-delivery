@@ -150,7 +150,7 @@ export class RegisterToEvent {
     caption: 'שם',
     validate: (e, name) => {
       if (!remult.authenticated()) {
-        Validators.required(e, name, remult.context.lang.nameIsTooShort)
+        Validators.required(remult.context.lang.nameIsTooShort)(e, name)
       }
     }
   })
@@ -176,7 +176,7 @@ export class RegisterToEvent {
     translation: (l) => l.socialSecurityNumber,
     validate: (e, tz) => {
       if (getSettings().registerRequireTz) {
-        Validators.required(e, tz, remult.context.lang.requiredField)
+        Validators.required(remult.context.lang.requiredField)(e, tz)
       }
     }
   })

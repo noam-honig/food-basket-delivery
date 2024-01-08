@@ -1,5 +1,5 @@
 import { DataControl } from '../common-ui-elements/interfaces'
-import { FieldRef, remult } from 'remult'
+import { FieldRef, ValidateFieldEvent, remult } from 'remult'
 import { getSettings } from '../manage/ApplicationSettings'
 import { getLang } from '../sites/sites'
 import { FieldType, translationConfig } from '../translate'
@@ -82,7 +82,7 @@ export class Phone {
       )
   }
 
-  static validatePhone(col: FieldRef<any, Phone>, required = false) {
+  static validatePhone(col: { error: string; value: Phone }, required = false) {
     if (!col.value || col.value.thePhone == '') {
       if (required) col.error = getLang().invalidPhoneNumber
       return

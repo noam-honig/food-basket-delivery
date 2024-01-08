@@ -69,7 +69,7 @@ export class donorForm {
   @Field<donorForm, string>({
     caption: 'כתובת',
     validate: (e, col) => {
-      if (!e.selfDeliver) Validators.required(e, col, 'אנא הזן ערך')
+      if (!e.selfDeliver) Validators.required('אנא הזן ערך')(e, col)
     }
   })
   address: string
