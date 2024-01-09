@@ -79,7 +79,8 @@ export class eventStatus {
   constructor(public id: number, public caption: string) {}
 }
 @Entity<Event>('events', {
-  allowApiCrud: Roles.admin,
+  allowApiCrud: Roles.familyAdmin,
+  allowApiDelete: false,
   allowApiRead: Allow.authenticated,
   saving: async (self) => {
     if (isBackend()) {

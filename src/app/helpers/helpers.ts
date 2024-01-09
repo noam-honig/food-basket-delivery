@@ -341,12 +341,12 @@ export class HelpersBase extends IdEntity {
       if (self.isNew() && (await remult.repo(Helpers).count()) == 0) {
         self.admin = true
       }
-      self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone))
-      if (!self._disableDuplicateCheck)
-        if (self.$.phone.valueChanged() || self.isNew()) {
+      if (self.$.phone.valueChanged() || self.isNew()) {
+        self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone))
+        if (!self._disableDuplicateCheck)
           if ((await self._.repository.count({ phone: self.phone })) > 0)
             self.$.phone.error = remult.context.lang?.alreadyExist
-        }
+      }
 
       if (self.isNew()) self.createDate = new Date()
       self.veryUrlKeyAndReturnTrueIfSaveRequired()
@@ -385,7 +385,7 @@ export class HelpersBase extends IdEntity {
         ],
         excludeValues: [self.$.realStoredPassword]
       })
-      recordChanges(self, {
+      await recordChanges(self, {
         excludeColumns: (f) => [
           f.smsDate,
           f.createDate,
