@@ -522,7 +522,8 @@ export class ManageComponent implements OnInit {
           this.settings.$.familyCustom4Caption,
           this.settings.$.familyCustom4Values
         ],
-        this.settings.$.forWho
+        this.settings.$.forWho,
+        this.settings.$.webhookUrl
       ]
 
       if (this.settings.isSytemForMlt)

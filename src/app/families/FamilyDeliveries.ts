@@ -157,6 +157,7 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
           self.courierComments.length > 0
         )
           self.courierCommentsDate = new Date()
+
         if (self.$.courier.valueChanged()) {
           if (remult.context.getSite() === 'bian') {
             const f = await repo(Families).findId(self.family)
@@ -232,6 +233,43 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
       }
       if (self.isNew() && !self._disableMessageToUsers) {
         self.distributionCenter.SendMessageToBrowser(getLang().newDelivery)
+      }
+    }
+  },
+  saved: async (self) => {
+    if (
+      !self.isNew() &&
+      (self.$.deliverStatus.valueChanged() || self.$.courier.valueChanged())
+    ) {
+      const s = await remult.context.getSettings()
+      if (s.webhookUrl) {
+        const f = await remult.repo(Families).findId(self.family)
+        const h = await self.$.courier.load()
+        const images = await remult
+          .repo(DeliveryImage)
+          .find({ where: { deliveryId: self.id } })
+        fetch
+          .default(s.webhookUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+              deliveryId: self.id,
+              familyId: self.family,
+              name: self.name,
+              status: self.deliverStatus,
+              courierComments: self.courierComments,
+              driver: h?.name,
+              driverPhone: h?.phone?.thePhone,
+              familyIdInExcel: f?.iDinExcel,
+              images
+            })
+          })
+          .then((y) => {
+            console.log({
+              site: remult.context.getSite(),
+              delivery: self.id,
+              status: y.status
+            })
+          })
       }
     }
   },
