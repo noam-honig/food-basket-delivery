@@ -43,6 +43,7 @@ import { EventInfoComponent } from '../event-info/event-info.component'
 import { OrgEventsController } from '../org-events/org-events.controller'
 import { ButtonDataComponent } from '../button-data/button-data.component'
 import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
+import { Helpers } from '../helpers/helpers'
 
 @Component({
   selector: 'app-manage',
@@ -928,6 +929,17 @@ export class ManageComponent implements OnInit {
           ''
         ))
     )
+  }
+  forNoam() {
+    Object.assign(globalThis, {
+      forNoam: {
+        remult: remult,
+        repo: remult.repo,
+        families: remult.repo(Families),
+        familyDeliveries: remult.repo(ActiveFamilyDeliveries),
+        helpers: remult.repo(Helpers)
+      }
+    })
   }
 }
 

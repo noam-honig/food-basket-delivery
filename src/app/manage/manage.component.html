@@ -382,9 +382,10 @@
     <mat-expansion-panel *ngIf="isSuperAdmin()">
       <mat-expansion-panel-header> superadmin </mat-expansion-panel-header>
       <data-area [settings]="superAdmin"></data-area>
+      <button mat-raised-button (click)="forNoam()">debug noam</button>
     </mat-expansion-panel>
   </mat-accordion>
-  <button mat-button (click)="changeLog()">
+  <button mat-raised-button (click)="changeLog()">
     {{ settings.lang.changeLog }}
   </button>
 </div>
