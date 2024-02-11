@@ -41,6 +41,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
   @Field({ translation: (l) => l.phone, valueType: Phone })
   phone: Phone
   @Field({
+    translation: (l) => 'קוד שהתקבל בSMS',
+    inputType: 'tel'
+  })
+  otp: string
+  @Field({
     translation: (l) => l.password,
     inputType: 'password'
   })
@@ -65,7 +70,17 @@ export class LoginComponent implements OnInit, AfterViewInit {
   @Field({ translation: (l) => l.rememberMeOnThisDevice })
   remember: boolean
   passwordArea = new DataAreaSettings({
-    fields: () => [{ field: this.$.password }, this.$.remember]
+    fields: () => [
+      {
+        field: this.$.password,
+        visible: () => !this.loginResult?.requireToSetOtp
+      },
+      {
+        field: this.$.otp,
+        visible: () => this.loginResult?.requireToSetOtp
+      },
+      this.$.remember
+    ]
   })
   phoneArea = new DataAreaSettings({
     fields: () => [this.$.phone, this.$.remember]
@@ -127,7 +142,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
         phone: this.phone.thePhone,
         password: this.password,
         newPassword: this.newPassword,
-        EULASigned: this.confirmEula
+        EULASigned: this.confirmEula,
+        otp: this.otp
       },
       this.remember
     )
@@ -136,8 +152,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.dialog.Error(this.settings.lang.userNotFound)
       return
     }
-    if (this.loginResult.needPasswordToLogin) {
+    if (
+      this.loginResult.needPasswordToLogin ||
+      this.loginResult.requireToSetOtp
+    ) {
       this.setState(this.passwordState)
+      if (this.loginResult.requiredToSetPasswordReason)
+        this.dialog.Error(this.loginResult.requiredToSetPasswordReason)
       return
     }
     if (this.loginResult.invalidPassword) {

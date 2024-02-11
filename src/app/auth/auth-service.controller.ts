@@ -6,7 +6,21 @@ import { Roles } from './roles'
 import { Sites } from '../sites/sites'
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { Phone } from '../model-shared/phone'
+import { SendSmsUtils } from '../asign-family/send-sms-action'
 
+const otps = new Map<string, { otp: string; expire: Date }>()
+function getOtp(userId: string) {
+  const otp = otps.get(userId)
+  if (!otp || otp.expire < new Date()) return undefined
+  return otp.otp
+}
+function generateRandomSixDigitNumber() {
+  // Generate a random number between 100,000 (inclusive) and 1,000,000 (exclusive)
+  const min = 100000
+  const max = 1000000
+  const randomNumber = Math.floor(Math.random() * (max - min)) + min
+  return randomNumber.toString()
+}
 export class AuthServiceController {
   @BackendMethod({ allowed: true })
   static async loginFromSms(key: string) {
@@ -41,73 +55,98 @@ export class AuthServiceController {
       r.invalidUser = true
       return r
     }
-
-    let userHasPassword = h.realStoredPassword.length > 0
-    if (userHasPassword && !args.password) {
-      r.needPasswordToLogin = true
-      return r
-    }
-    if (userHasPassword && args.password) {
-      if (!(await Helpers.verifyHash(args.password, h.realStoredPassword))) {
-        r.invalidPassword = true
-        return r
-      }
-    }
-
     let result = await buildHelperUserInfo(h)
-
     remult.user = result
-
-    if (args.newPassword) {
-      if (args.password == args.newPassword) {
-        r = {
-          requiredToSetPassword: true,
-          requiredToSetPasswordReason: settings.lang.newPasswordMustBeNew
+    if (settings.enableOtp) {
+      if (h.userRequiresPassword()) {
+        if (!args.otp) {
+          var d = new Date()
+          d.setMinutes(d.getMinutes() + 5)
+          const otp = generateRandomSixDigitNumber()
+          console.log({ otp })
+          await new SendSmsUtils()
+            .sendSms(
+              h.phone.thePhone,
+              `הקוד לכניסה ל${settings.organisationName} הוא: ` +
+                otp +
+                ' \n\n@sal.hagai.co #' +
+                otp,
+              h
+            )
+            .then((x) => console.log('sent', x))
+          otps.set(h.id, { otp: otp, expire: d })
+          r.requireToSetOtp = true
+          return r
+        } else if (args.otp !== getOtp(h.id)) {
+          r.requireToSetOtp = true
+          r.requiredToSetPasswordReason = 'קוד שגוי'
+          return r
         }
+      }
+    } else {
+      let userHasPassword = h.realStoredPassword.length > 0
+      if (userHasPassword && !args.password) {
+        r.needPasswordToLogin = true
         return r
       }
-      h.password = args.newPassword
-      try {
-        await h.save()
-        args.password = args.newPassword
-      } catch (error) {
-        let message = h.$.password.error
-        if (!message) message = extractError(error)
+      if (userHasPassword && args.password) {
+        if (!(await Helpers.verifyHash(args.password, h.realStoredPassword))) {
+          r.invalidPassword = true
+          return r
+        }
+      }
+
+      if (args.newPassword) {
+        if (args.password == args.newPassword) {
+          r = {
+            requiredToSetPassword: true,
+            requiredToSetPasswordReason: settings.lang.newPasswordMustBeNew
+          }
+          return r
+        }
+        h.password = args.newPassword
+        try {
+          await h.save()
+          args.password = args.newPassword
+        } catch (error) {
+          let message = h.$.password.error
+          if (!message) message = extractError(error)
+          r.requiredToSetPassword = true
+          r.requiredToSetPasswordReason = message
+          return r
+        }
+      }
+
+      if (
+        userHasPassword &&
+        settings.daysToForcePasswordChange > 0 &&
+        (!h.passwordChangeDate ||
+          new Date().getTime() >
+            h.passwordChangeDate.getTime() +
+              86400000 * settings.daysToForcePasswordChange)
+      ) {
         r.requiredToSetPassword = true
-        r.requiredToSetPasswordReason = message
+        r.requiredToSetPasswordReason = settings.lang.passwordExpired
         return r
       }
-    }
 
-    if (
-      userHasPassword &&
-      settings.daysToForcePasswordChange > 0 &&
-      (!h.passwordChangeDate ||
-        new Date().getTime() >
-          h.passwordChangeDate.getTime() +
-            86400000 * settings.daysToForcePasswordChange)
-    ) {
-      r.requiredToSetPassword = true
-      r.requiredToSetPasswordReason = settings.lang.passwordExpired
-      return r
-    }
-
-    if (h.userRequiresPassword()) {
-      let ok = true
-      if (!userHasPassword && !args.newPassword) {
-        r.requiredToSetPassword = true
-        r.requiredToSetPasswordReason = settings.lang.adminRequireToSetPassword
-        if (!(h.admin || h.distCenterAdmin || h.labAdmin))
-          settings.lang.indieRequireToSetPassword
-        ok = false
+      if (h.userRequiresPassword()) {
+        let ok = true
+        if (!userHasPassword && !args.newPassword) {
+          r.requiredToSetPassword = true
+          r.requiredToSetPasswordReason =
+            settings.lang.adminRequireToSetPassword
+          if (!(h.admin || h.distCenterAdmin || h.labAdmin))
+            settings.lang.indieRequireToSetPassword
+          ok = false
+        }
+        if (settings.requireEULA && !h.EULASignDate && !args.EULASigned) {
+          r.requiredToSignEULA = true
+          ok = false
+        }
+        if (!ok) return r
       }
-      if (settings.requireEULA && !h.EULASignDate && !args.EULASigned) {
-        r.requiredToSignEULA = true
-        ok = false
-      }
-      if (!ok) return r
     }
-
     if (args.EULASigned && !h.EULASignDate) {
       h.EULASignDate = new Date()
       await h.save()
@@ -193,9 +232,11 @@ export interface loginResult {
   invalidUser?: boolean
   requiredToSetPassword?: boolean
   requiredToSetPasswordReason?: string
+  requireToSetOtp?: boolean
   requiredToSignEULA?: boolean
 }
 export interface loginArgs {
+  otp: string
   phone: string
   password: string
   newPassword: string
