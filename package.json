@@ -72,7 +72,7 @@
     "path": "^0.12.7",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
-    "remult": "^0.24.2-exp.1",
+    "remult": "^0.25.5-exp.24",
     "rxjs": "~6.5.3",
     "spherical-geometry-js": "^2.0.0",
     "twilio": "^3.48.1",
