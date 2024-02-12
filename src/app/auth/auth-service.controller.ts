@@ -199,7 +199,8 @@ async function buildHelperUserInfo(h: Helpers) {
     }
     if (
       h.phone.thePhone.endsWith('507330590') ||
-      h.phone.thePhone.endsWith('523307014')
+      h.phone.thePhone.endsWith('523307014') ||
+      h.phone.thePhone.endsWith('544643137') //ohad
     )
       result.roles.push(Roles.superAdmin)
   }
