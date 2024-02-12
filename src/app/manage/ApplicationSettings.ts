@@ -672,6 +672,8 @@ export class ApplicationSettings extends EntityBase {
 
   @Field({ allowApiUpdate: Roles.superAdmin })
   customSmsOriginForSmsToFamily: string
+  @Field({ allowApiUpdate: Roles.superAdmin })
+  enableOtp: boolean
 
   @Fields.string()
   webhookUrl = ''

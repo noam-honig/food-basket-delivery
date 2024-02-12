@@ -344,6 +344,9 @@ export class ManageComponent implements OnInit {
       {
         caption: 'אפשר הודעות למשפחה לאישור פרטים',
         field: this.settings.$.familyConfirmDetailsEnabled
+      },
+      {
+        field:this.settings.$.enableOtp
       }
     ]
   })

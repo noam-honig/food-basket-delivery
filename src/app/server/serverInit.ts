@@ -124,9 +124,15 @@ export async function serverInit() {
           schema: org
         })
       )
+    const schemas = new Map<string, Promise<SqlDatabase>>()
     return {
-      dataSource: (y: Remult) => {
+      dataSource: async (y: Remult) => {
         let org = Sites.getValidSchemaFromContext()
+        let x = schemas.get(org)
+        if (!x) {
+          schemas.set(org, (x = InitSpecificSchema(pool, org)))
+        }
+        await x
 
         return new SqlDatabase(
           new PostgresDataProvider(pool, {
@@ -185,19 +191,9 @@ export async function serverInit() {
       let i = 0
       for (const s of sortedSchemas) {
         if (s.name.toLowerCase() == Sites.guestSchema)
-          throw 'admin is an ivalid schema name'
+          throw 'admin is an invalid schema name'
         try {
-          console.log(
-            'init schema for ' +
-              s.name +
-              ' - ' +
-              ++i +
-              '/' +
-              Sites.schemas.length +
-              ' last-sign-in:' +
-              s.lastSignIn
-          )
-          await InitSpecificSchema(pool, s.name)
+          //await InitSpecificSchema(pool, s.name)
         } catch (err) {
           console.error(err)
         }
@@ -262,7 +258,8 @@ async function initDatabase(
   InitSchemas(pool)
 }
 
-async function InitSpecificSchema(pool: Pool, s: any) {
+async function InitSpecificSchema(pool: Pool, s: string) {
+  console.log('init schema for ' + s)
   await verifySchemaExistance(pool, s)
 
   let db = new SqlDatabase(

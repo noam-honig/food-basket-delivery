@@ -431,7 +431,7 @@ s.parentNode.insertBefore(b, s);})();
     remult.context.getSite = () => site
     remult.context.requestUrlOnBackend = url
     if (!remult.isAllowed(Sites.getOrgRole())) remult.user = undefined
-    remult.dataProvider = dataSource(remult)
+    remult.dataProvider =await dataSource(remult)
     remult.context.getOrigin = () => origin
 
     let found = siteEventPublishers.get(site)
@@ -498,7 +498,7 @@ s.parentNode.insertBefore(b, s);})();
       await initDatabase()
       if (!process.env.DEV_MODE) return
       remult.context.getSite = () => 'test1'
-      remult.dataProvider = dataSource(remult)
+      remult.dataProvider = await dataSource(remult)
       await InitContext(remult, undefined)
 
       if (false) {
@@ -564,7 +564,7 @@ s.parentNode.insertBefore(b, s);})();
       // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
     },
     rootPath: '/*/api',
-    queueStorage: await preparePostgresQueueStorage(dataSource(new Remult()))
+    queueStorage: await preparePostgresQueueStorage(await dataSource(new Remult()))
   })
   if (true)
     setInterval(() => {

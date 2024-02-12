@@ -138,4 +138,5 @@ allowSmsToFamily boolean default false not null
 sendOnTheWaySMSToFamily boolean default false not null
 sendOnTheWaySMSToFamilyOnSendSmsToVolunteer boolean default false not null
 customSmsOriginForSmsToFamily varchar default '' not null
+enableOtp boolean default false not null
 webhookUrl varchar default '' not null
