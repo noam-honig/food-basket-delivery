@@ -124,13 +124,15 @@ export async function serverInit() {
           schema: org
         })
       )
-    const schemas = new Map<string, Promise<SqlDatabase>>()
+    const schemas = new Map<string, Promise<void>>()
     return {
       dataSource: async (y: Remult) => {
         let org = Sites.getValidSchemaFromContext()
         let x = schemas.get(org)
         if (!x) {
-          schemas.set(org, (x = InitSpecificSchema(pool, org)))
+          schemas.set(org, (x = InitSpecificSchema(pool, org).then(() => {})))
+          await x
+          schemas.set(org, Promise.resolve())
         }
         await x
 
