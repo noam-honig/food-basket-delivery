@@ -292,6 +292,18 @@ serverInit().then(async ({ dataSource, initDatabase }) => {
         let key = process.env.GOOGLE_MAP_JAVASCRIPT_KEY
         if (!key) key = 'AIzaSyDbGtO6VwaRqGoduRaGjSAB15mZPiPt9mM' //default key to use only for development
         result = result.replace(/GOOGLE_MAP_JAVASCRIPT_KEY/g, key)
+        if (org == 'test1' || org == 'uga') {
+          result = result.replace(
+            '<!--ANOTHER_GOOGLE_TAG_MANAGER-->',
+            `<!-- Google Tag Manager -->
+          <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-MH3Q3RKZ');</script>
+          <!-- End Google Tag Manager -->`
+          )
+        }
 
         let tagid = 'UA-121891791-1' // default key for Google Analytics
         if (settings.isSytemForMlt) {
@@ -431,7 +443,7 @@ s.parentNode.insertBefore(b, s);})();
     remult.context.getSite = () => site
     remult.context.requestUrlOnBackend = url
     if (!remult.isAllowed(Sites.getOrgRole())) remult.user = undefined
-    remult.dataProvider =await dataSource(remult)
+    remult.dataProvider = await dataSource(remult)
     remult.context.getOrigin = () => origin
 
     let found = siteEventPublishers.get(site)
@@ -564,7 +576,9 @@ s.parentNode.insertBefore(b, s);})();
       // console.table((await remult.repo(ActiveFamilyDeliveries).find({ where: ActiveFamilyDeliveries.filterPhone('315') })).map(({name, phone1}) => ({ name, phone1 })))
     },
     rootPath: '/*/api',
-    queueStorage: await preparePostgresQueueStorage(await dataSource(new Remult()))
+    queueStorage: await preparePostgresQueueStorage(
+      await dataSource(new Remult())
+    )
   })
   if (true)
     setInterval(() => {
