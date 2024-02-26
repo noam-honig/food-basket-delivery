@@ -161,6 +161,10 @@ export class RegisterToEvent {
   lastName: string
   @Field({ translation: (l) => 'אני מעל גיל 18?' })
   over18: boolean
+  @Field({
+    translation: (l) => 'קראתי את הצהרת ההתנדבות ואני מאשר/ת את הכתוב בה'
+  })
+  agreeToTerms: boolean
   @Field({ translation: (l) => l.rememberMeOnThisDevice })
   rememberMeOnThisDevice: boolean
 
@@ -202,6 +206,8 @@ export class RegisterToEvent {
     if (!e.settings) {
       e.settings = {} as any
     }
+    const site = e.site || remult.context.getSite()
+    const isUga = site == 'uga' || site === 'test1'
     await this.init(e.settings)
     this.a1 = ''
     this.a2 = ''
@@ -233,8 +239,16 @@ export class RegisterToEvent {
           { field: this.$.phone, visible: () => !remult.authenticated() },
           {
             field: this.$.over18,
-            visible: () => e.settings.registerOnlyOver18
+            caption: isUga
+              ? 'אני מעל גיל 18 או שאגיע למקום ההתנדבות בליווי מבוגר'
+              : this.$.over18.metadata.caption,
+            visible: () => e.settings.registerOnlyOver18 || isUga
           },
+          {
+            field: this.$.agreeToTerms,
+            visible: () => isUga
+          },
+
           ...this.questions
             .filter((x) => x.show())
             .map(
@@ -250,6 +264,30 @@ export class RegisterToEvent {
           this.$.rememberMeOnThisDevice
         ],
         cancel: () => {},
+        buttons: isUga
+          ? [
+              {
+                text: 'הצהרת התנדבות',
+                click: () => {
+                  window.open('https://forms.gle/QDUxgmoNYodTWFA9A')
+                }
+              }
+            ]
+          : [],
+        validate: async () => {
+          if (isUga) {
+            if (!remult.authenticated()) {
+              if (!this.over18) {
+                throw 'חובה להיות מעל גיל 18 או להגיע בליווי מבוגר'
+              }
+              if (!this.lastName?.trim()) {
+                this.$.lastName.error = 'חסר ערך'
+                throw 'חובה להזין שם משפחה'
+              }
+              if (!this.agreeToTerms) throw 'יש לאשר את הצהרת ההתנדבות'
+            }
+          }
+        },
         ok: async () => {
           this.updateEvent(
             e,
