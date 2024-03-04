@@ -45,7 +45,7 @@ export class SelfPickupStrategy {
     (x) => {
       x.newDelivery.deliverStatus =
         x.existingDelivery.deliverStatus == DeliveryStatus.SuccessPickedUp ||
-        x.existingDelivery.deliverStatus == DeliveryStatus.SelfPickup
+          x.existingDelivery.deliverStatus == DeliveryStatus.SelfPickup
           ? DeliveryStatus.SelfPickup
           : DeliveryStatus.ReadyForDelivery
     }
@@ -73,7 +73,7 @@ export class SelfPickupStrategy {
       newDelivery: ActiveFamilyDeliveries
       family: Families
     }) => void
-  ) {}
+  ) { }
 }
 
 @Controller('NewDelivery')
@@ -153,7 +153,7 @@ export class NewDelivery extends ActionOnRows<Families> {
           this.$.excludeGroups
         ]
       },
-      additionalWhere: { status: FamilyStatus.Active },
+
 
       title: getLang().newDelivery,
       icon: 'add_shopping_cart',
@@ -186,7 +186,7 @@ export class NewDelivery extends ActionOnRows<Families> {
         let count = await fd.duplicateCount()
         if (count == 0) await fd.save()
       },
-      onEnd: async () => {}
+      onEnd: async () => { }
     })
   }
 }
@@ -224,7 +224,7 @@ export class UpdateGroupStrategy {
       val: string,
       set: (newVal: GroupsValue) => void
     ) => void
-  ) {}
+  ) { }
 }
 
 @Controller('updateGroup')
@@ -531,9 +531,9 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
       },
       {
         serializeOnClient: async () =>
-          (this.familyActionInfo = (
-            getControllerRef(orig) as unknown as controllerRefImpl
-          ).toApiJson()),
+        (this.familyActionInfo = (
+          getControllerRef(orig) as unknown as controllerRefImpl
+        ).toApiJson()),
         deserializeOnServer: async () =>
           await (
             getControllerRef(orig) as unknown as controllerRefImpl
