@@ -258,6 +258,7 @@ declare module 'remult' {
       ui: UITools
     ) => void
     customInput?: (select: {
+      ugaConfirm(): void
       addressInput(
         onSelect?: (
           result: InputAddressResult,

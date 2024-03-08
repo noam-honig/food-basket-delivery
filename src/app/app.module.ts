@@ -134,7 +134,8 @@ import { ButtonDataComponent } from './button-data/button-data.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component'
 import { AddressInfoComponent } from './address-info/address-info.component'
-import { IntakeFormComponent } from './intake-form/intake-form.component'
+import { IntakeFormComponent } from './intake-form/intake-form.component';
+import { UgaConfirmCheckboxComponent } from './uga-confirm-checkbox/uga-confirm-checkbox.component'
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
 
@@ -247,7 +248,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     FamilyConfirmDetailsComponent,
     BelowEightteenMessageComponent,
     AddressInfoComponent,
-    IntakeFormComponent
+    IntakeFormComponent,
+    UgaConfirmCheckboxComponent
   ],
   imports: [
     BrowserModule,

@@ -55,6 +55,7 @@ import { AddressInputComponent } from '../address-input/address-input.component'
 import { AreaDataComponent } from '../area-data/area-data.component'
 import { BlockedFamiliesComponent } from '../blocked-families/blocked-families.component'
 import { BelowEightteenMessageComponent } from '../below-eightteen-message/below-eightteen-message.component'
+import { UgaConfirmCheckboxComponent } from '../uga-confirm-checkbox/uga-confirm-checkbox.component'
 
 declare var gtag
 
@@ -130,7 +131,12 @@ export class DialogService implements UITools {
           textArea: () =>
             (s.customComponent = {
               component: AreaDataComponent
+            }),
+          ugaConfirm: () => {
+            return (s.customComponent = {
+              component: UgaConfirmCheckboxComponent
             })
+          }
         })
       }
       if (f?.options.clickWithTools)
