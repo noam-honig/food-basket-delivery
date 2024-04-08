@@ -1569,7 +1569,7 @@ export function buildVolunteerOnTheWayMessage(f: familyLikeEntity) {
   )
 }
 
-export async function sendWhatsappToFamily(
+export function sendWhatsappToFamily(
   f: familyLikeEntity,
   phone?: string,
   message?: string
@@ -1578,7 +1578,7 @@ export async function sendWhatsappToFamily(
     phone = getSmsPhone(f)
   }
   if (!message) {
-    message = await buildFamilyMessage(f).mergeFromTemplate()
+    message = buildFamilyMessage(f).mergeFromTemplateSync()
   }
   Phone.sendWhatsappToPhone(phone, message)
 }

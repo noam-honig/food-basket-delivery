@@ -1,9 +1,30 @@
-import { Entity, EntityBase, Fields, IdEntity, remult, Remult } from 'remult'
+import {
+  Entity,
+  EntityBase,
+  Fields,
+  IdEntity,
+  remult,
+  Remult,
+  repo
+} from 'remult'
 import { Roles } from '../auth/roles'
 
 export class messageMerger {
   async mergeFromTemplate() {
     return this.merge((await this.fetchTemplateRow()).template)
+  }
+  mergeFromTemplateSync() {
+    let template = messageMerger.templates.find((x) => x.id == this.key)
+    return this.merge(template?.template || this.defaultTemplate)
+  }
+  static templates: MessageTemplate[]
+  static load(force = false) {
+    if (remult.isAllowed(Roles.admin)) {
+      if (!force && messageMerger.templates) return
+      repo(MessageTemplate)
+        .find()
+        .then((x) => (messageMerger.templates = x))
+    }
   }
   constructor(
     public tokens: {

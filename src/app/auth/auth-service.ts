@@ -21,6 +21,7 @@ import {
   TIMEOUT_MULTIPLIER_IN_SECONDS
 } from './auth-service.controller'
 import { CallerComponent } from '../caller/caller.component'
+import { messageMerger } from '../edit-custom-message/messageMerger'
 
 let staticToken = ''
 export function getToken() {
@@ -116,6 +117,7 @@ export class AuthService {
       tokenService.userChanged = () => {
         dialog.refreshEventListener()
         dialog.refreshFamiliesAndDistributionCenters()
+        messageMerger.load(false)
       }
       tokenService.userChanged()
     }

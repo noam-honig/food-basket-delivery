@@ -162,7 +162,8 @@ export class RegisterToEvent {
   @Field({ translation: (l) => 'אני מעל גיל 18?' })
   over18: boolean
   @Field({
-    translation: (l) => 'קראתי את הצהרת ההתנדבות ואני מאשר/ת את הכתוב בה'
+    translation: (l) => 'קראתי את הצהרת ההתנדבות ואני מאשר/ת את הכתוב בה',
+    customInput: (x) => x.ugaConfirm()
   })
   agreeToTerms: boolean
   @Field({ translation: (l) => l.rememberMeOnThisDevice })
@@ -237,17 +238,6 @@ export class RegisterToEvent {
           { field: this.$.name, visible: () => !remult.authenticated() },
           { field: this.$.lastName, visible: () => !remult.authenticated() },
           { field: this.$.phone, visible: () => !remult.authenticated() },
-          {
-            field: this.$.over18,
-            caption: isUga
-              ? 'אני מעל גיל 18 או שאגיע למקום ההתנדבות בליווי מבוגר'
-              : this.$.over18.metadata.caption,
-            visible: () => e.settings.registerOnlyOver18 || isUga
-          },
-          {
-            field: this.$.agreeToTerms,
-            visible: () => isUga
-          },
 
           ...this.questions
             .filter((x) => x.show())
@@ -261,19 +251,21 @@ export class RegisterToEvent {
                     x.values && x.values.split(',').map((x) => x.trim())
                 } as DataAreaFieldsSetting)
             ),
+          {
+            field: this.$.over18,
+            caption: isUga
+              ? 'אני מעל גיל 18 או שאגיע למקום ההתנדבות בליווי מבוגר'
+              : this.$.over18.metadata.caption,
+            visible: () => e.settings.registerOnlyOver18 || isUga
+          },
+          {
+            field: this.$.agreeToTerms,
+            visible: () => isUga
+          },
           this.$.rememberMeOnThisDevice
         ],
         cancel: () => {},
-        buttons: isUga
-          ? [
-              {
-                text: 'הצהרת התנדבות',
-                click: () => {
-                  window.open('https://forms.gle/QDUxgmoNYodTWFA9A')
-                }
-              }
-            ]
-          : [],
+
         validate: async () => {
           if (isUga) {
             if (!remult.authenticated()) {
