@@ -128,7 +128,14 @@ export async function saveToExcel<
                     'd',
                     false
                   )
-              } else
+              } else if (c.metadata.valueType === Number)
+                addColumn(
+                  c.metadata.caption,
+                  v.toString(),
+                  'n',
+                  hideColumn(<E>f, c)
+                )
+              else
                 addColumn(
                   c.metadata.caption,
                   v.toString(),
