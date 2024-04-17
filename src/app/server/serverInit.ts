@@ -124,17 +124,22 @@ export async function serverInit() {
           schema: org
         })
       )
-    const schemas = new Map<string, Promise<void>>()
+    const schemas = new Map<string, { promise: Promise<void> }>()
     return {
       dataSource: async (y: Remult) => {
         let org = Sites.getValidSchemaFromContext()
         let x = schemas.get(org)
         if (!x) {
-          schemas.set(org, (x = InitSpecificSchema(pool, org).then(() => {})))
-          await x
-          schemas.set(org, Promise.resolve())
+          schemas.set(
+            org,
+            (x = {
+              promise: InitSpecificSchema(pool, org).then(() => {
+                x.promise = undefined
+              })
+            })
+          )
         }
-        await x
+        await x.promise
 
         return new SqlDatabase(
           new PostgresDataProvider(pool, {
