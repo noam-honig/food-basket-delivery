@@ -1,6 +1,5 @@
 {
-    "cSpell.words": [
-        "waypoint"
-    ],
-    "cmake.configureOnOpen": false
+  "cSpell.words": ["waypoint"],
+  "cmake.configureOnOpen": false,
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

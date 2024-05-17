@@ -15,6 +15,7 @@ import {
   getColumnDisplayValue,
   ImportHelpersFromExcelController
 } from './import-helpers-from-excel.controller'
+import { use } from '../translate'
 @Component({
   selector: 'app-import-helpers-from-excel',
   templateUrl: './import-helpers-from-excel.component.html',
@@ -351,6 +352,18 @@ export class ImportHelpersFromExcelComponent implements OnInit {
       },
       columns: [this.helper.name],
       searchNames: ['פרטי']
+    })
+    this.columns.push({
+      key: 'city',
+      name: 'עיר אזור חלוקה',
+      updateFamily: async (v, f, h) => {
+        h.laterSteps.push({
+          step: 2,
+          what: async () => updateCol(f.$.preferredDistributionAreaAddress, v)
+        })
+      },
+      columns: [this.helper.preferredFinishAddress],
+      searchNames: ['עיר']
     })
 
     for (const c of [this.helper.phone]) {
