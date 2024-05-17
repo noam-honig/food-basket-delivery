@@ -1637,3 +1637,20 @@ class dateInput {
   dbName: 'families'
 })
 class FamiliesWithoutUserRestrictions extends Families {}
+/*
+--update latetzafon.helpers set internalcomment='מצפון'
+with zf as (select * from latetzafon.families ff where ff."groups" like '%עובר למרכז%')
+, zd as (select * from latetzafon.familydeliveries where family in (select id from zf))
+, zh as (select * from latetzafon.helpers where id in  (select distinct id from (select statususer id from zf union select fixedcourier from zf union select createuser from zf union select lastupdateuser from zf union select courier from zd union select courierAssignUser from zd union select deliveryStatusUser from zd union select createuser from zd union select needsworkuser from zd union select fixedCourier from zd union select archiveUser from zd union select caller from zd union select pickupvolunteer from zd ) as x where id !=''))
+
+--insert into latetmercaz.families select * from zf
+--insert into latetmercaz.familydeliveries select * from zd
+--insert into latetmercaz.baskettype  select * from latetzafon.baskettype where id in ( select distinct baskettype from (select baskettype from zf union all select baskettype from zd) as x where basketType !='')
+--insert into latetmercaz.helpers select * from zh
+--insert into latetmercaz.distributioncenters select * from latetzafon.distributioncenters where id in (  select defaultDistributionCenter id from zf union select distributioncenter from zd union  select distributioncenter from zh) and id!=''
+--insert into latetmercaz.changelog select * from latetzafon.changelog where relatedid in (select id from zf) or relatedid in (select id from zd) or relatedid in (select id from zh)
+--insert into latetmercaz.delivery_images  select * from latetzafon.delivery_images  where deliveryid in (select id from zd)
+--insert into latetmercaz.deliverychanges select * from latetzafon.deliverychanges where deliveryid in (select id from zd)
+--insert into latetmercaz.helpercommunicationhistory select * from latetzafon.helpercommunicationhistory where volunteer in (select id from zh)
+
+*/
