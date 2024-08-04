@@ -14,10 +14,7 @@ export async function foreachSync<T>(
   }
 }
 
-export function sortColumns(
-  list: GridSettings<any>,
-  columns: DataControlInfo<any>[]
-) {
+export function sortColumns(list: GridSettings, columns: DataControlInfo[]) {
   if (list.origList && list.origList.length > 0) list.resetColumns()
   list.columns.items.sort((a, b) =>
     a.caption > b.caption ? 1 : a.caption < b.caption ? -1 : 0

@@ -31,13 +31,17 @@ import { InputAddressResult } from '../helpers/init-context'
 export class AddressInputComponent
   implements AfterViewInit, CustomDataComponent
 {
-  @Input() field: FieldRef<any, string>
+  @Input() field: FieldRef<unknown, string>
   @Input() autoInit: boolean = false
   @Input() caption: string
   onSelect?: (result: InputAddressResult) => void
   constructor(private settings: ApplicationSettings, private zone: NgZone) {}
-  set args(value: CustomComponentArgs) {
-    this.field = value.fieldRef
+  set args(
+    value: CustomComponentArgs<
+      (result: InputAddressResult, entityInstance: unknown) => void
+    >
+  ) {
+    this.field = value.fieldRef as FieldRef<any, string>
     if (value.args) {
       this.onSelect = (result) => {
         value.args(result, value.fieldRef.container)

@@ -125,14 +125,12 @@ export class MltFamiliesComponent implements OnInit {
 
   async countFamilies() {
     let consumed: string[] = []
-    let list: FamilyDeliveries[] = await remult
-      .repo(FamilyDeliveries)
-      .find({
-        where: {
-          courier: await remult.context.getCurrentUser(),
-          deliverStatus: DeliveryStatus.isSuccess()
-        }
-      })
+    let list: FamilyDeliveries[] = await remult.repo(FamilyDeliveries).find({
+      where: {
+        courier: await remult.context.getCurrentUser(),
+        deliverStatus: DeliveryStatus.isSuccess()
+      }
+    })
     let result = 0
     for (const f of list) {
       if (!consumed.includes(f.family)) {
@@ -201,7 +199,7 @@ export class MltFamiliesComponent implements OnInit {
               this.busy.doWhileShowingBusy(async () => {
                 let ids: string[] = []
                 for (const selectedItem of selectedItems) {
-                  let d: DeliveryInList = selectedItem.item
+                  let d = selectedItem.item as DeliveryInList
                   ids.push(...d.ids)
                 }
                 await MltFamiliesController.assignFamilyDeliveryToIndie(ids)
@@ -314,7 +312,7 @@ export class MltFamiliesComponent implements OnInit {
             item: y
           })),
           onSelect: async (x) => {
-            await MltFamiliesController.changeDestination(x[0].item.id)
+            await MltFamiliesController.changeDestination((x[0].item as any).id)
             this.familyLists.reload()
           }
         })

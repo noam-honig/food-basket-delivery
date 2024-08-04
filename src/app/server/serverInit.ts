@@ -304,6 +304,9 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
 
 export class PostgresSchemaWrapper implements PostgresPool {
   constructor(private pool: Pool, private schema: string) {}
+  end(): Promise<void> {
+    return this.pool.end()
+  }
   async connect(): Promise<PostgresClient> {
     let r = await this.pool.connect()
 

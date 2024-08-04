@@ -324,7 +324,7 @@ export class HelperFamiliesComponent implements OnInit {
             this.busy.doWhileShowingBusy(async () => {
               let ids: string[] = []
               for (const selectedItem of selectedItems) {
-                let d: DeliveryInList = selectedItem.item
+                let d = selectedItem.item as DeliveryInList
                 ids.push(...d.ids)
               }
               await MltFamiliesController.assignFamilyDeliveryToIndie(ids)
@@ -633,7 +633,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async sendWhatsapp() {
-    this.dialog.analytics('Send WhatsApp');
+    this.dialog.analytics('Send WhatsApp')
     Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage)
     await this.updateMessageSent('Whatsapp')
   }

@@ -446,7 +446,7 @@ export class FamilyDeliveries extends IdEntity {
   }
   @Field()
   deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery
-  @Field({
+  @Field<FamilyDeliveries>({
     translation: (l) => l.volunteer,
     allowApiUpdate: Roles.distCenterAdmin,
     clickWithTools: async (self, _, ui) =>
@@ -638,7 +638,7 @@ export class FamilyDeliveries extends IdEntity {
   })
   phone4Description: string
 
-  @Field({
+  @Field<FamilyDeliveries>({
     sqlExpression: async (self) => {
       var sql = new SqlBuilder()
 
@@ -690,7 +690,7 @@ export class FamilyDeliveries extends IdEntity {
   onTheWayDate: Date
   @Field({ includeInApi: Roles.admin, translation: (l) => l.archiveUser })
   archiveUser: HelpersBase
-  @Field({
+  @Field<FamilyDeliveries>({
     sqlExpression: async (selfDefs) => {
       var sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -716,7 +716,7 @@ export class FamilyDeliveries extends IdEntity {
     }
   })
   visibleToCourier: boolean
-  @Field({
+  @Field<FamilyDeliveries>({
     sqlExpression: async (self) => {
       var sql = new SqlBuilder()
 
@@ -765,7 +765,7 @@ export class FamilyDeliveries extends IdEntity {
   @CustomColumn(() => questionForVolunteers[4])
   a4: string
 
-  @Field({
+  @Field<FamilyDeliveries>({
     includeInApi: Roles.admin,
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
@@ -885,7 +885,9 @@ export class FamilyDeliveries extends IdEntity {
     () => this.$.address_2,
     () => this.$.addressApiResult_2
   )
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   @Field({
     translation: (t) => t.floor + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
@@ -896,7 +898,9 @@ export class FamilyDeliveries extends IdEntity {
     allowApiUpdate: Roles.familyAdmin
   })
   appartment_2: string
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   @Field({
     translation: (t) => t.entrance + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
@@ -907,25 +911,35 @@ export class FamilyDeliveries extends IdEntity {
     translation: (t) => t.addressComment + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   addressComment_2: string
   @Field({
     translation: (t) => t.phone1 + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   phone1_2: Phone
   @Field({
     translation: (t) => t.phone1Description + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   phone1Description_2: string
   @Field({ translation: (t) => t.phone2 + ' כתובת 2' })
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   phone2_2: Phone
   @Field({ translation: (t) => t.phone2Description + ' כתובת 2' })
-  @DataControl({ readonly: (self) => !self.deliveryType.inputSecondAddress })
+  @DataControl<FamilyDeliveries>({
+    readonly: (self) => !self.deliveryType.inputSecondAddress
+  })
   phone2Description_2: string
 
   static customFilter = Filter.createCustom<
@@ -1485,7 +1499,7 @@ export class FamilyDeliveries extends IdEntity {
 }
 SqlBuilder.filterTranslators.push({
   translate: async (f) => {
-    return Filter.translateCustomWhere<FamilyDeliveries>(
+    return Filter.translateCustomWhere(
       f,
       remult.repo(FamilyDeliveries).metadata,
       remult
@@ -1547,9 +1561,9 @@ function editItems(fr: FieldRef<FamilyDeliveries, string>, ui: UITools) {
 }
 
 function logChanged(
-  col: FieldRef<any>,
-  dateCol: FieldRef<any, Date>,
-  user: IdFieldRef<any, HelpersBase>,
+  col: FieldRef,
+  dateCol: FieldRef,
+  user: IdFieldRef<unknown, HelpersBase>,
   wasChanged: () => void
 ) {
   if (col.value != col.originalValue) {

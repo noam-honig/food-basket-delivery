@@ -528,7 +528,7 @@ s.parentNode.insertBefore(b, s);})();
           .findFirst({ phone: new Phone('0507330590') })
         console.log(h1)
 
-        let row = await SqlDatabase.getDb(remult).execute(
+        let row = await SqlDatabase.getDb().execute(
           "select id, name, smsDate, doNotSendSms, company, totalKm, totalTime, shortUrlKey, distributionCenter, eventComment, needEscort, theHelperIAmEscorting, escort, leadHelper, myGiftsURL, archive, frozenTill, internalComment, blockedFamilies, case when (frozenTill is null or frozenTill <= '2023-05-07T21:00:00.000Z') then false else true end, id || escort || theHelperIAmEscorting, phone, lastSignInDate, password, socialSecurityNumber, email, addressApiResult, preferredDistributionAreaAddress, preferredDistributionAreaAddressCity, addressApiResult2, preferredDistributionAreaAddress2, preferredFinishAddressCity, createDate, passwordChangeDate, EULASignDate, reminderSmsDate, referredBy, isAdmin, labAdmin, isIndependent, distCenterAdmin, familyAdmin, caller, includeGroups, excludeGroups, callQuota\n" +
             ` from Helpers where phone = '0507330590' Order By id  limit 1 offset 0`
         )

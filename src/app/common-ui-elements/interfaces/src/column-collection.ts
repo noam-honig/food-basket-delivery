@@ -31,26 +31,23 @@ import { decorateColumnSettings, getEntitySettings } from 'remult/internals'
 
 import { ClassType } from 'remult/classType'
 
-export class FieldCollection<rowType = any> {
+export class FieldCollection<rowType = unknown> {
   constructor(
     public currentRow: () => any,
     private allowUpdate: () => boolean,
     public filterHelper: FilterHelper<rowType>,
     private showArea: () => boolean,
-    private _getRowColumn: (
-      row: rowType,
-      col: FieldMetadata
-    ) => FieldRef<any, any>
+    private _getRowColumn: (row: rowType, col: FieldMetadata) => FieldRef
   ) {}
   __showArea() {
     return this.showArea()
   }
   __getColumn(map: DataControlSettings, record: any) {
     if (!map.field) return undefined
-    let result: FieldRef<any, any> | undefined = undefined
+    let result: FieldRef | undefined = undefined
     if (record)
       result = getEntityRef(record).fields.find(getFieldDefinition(map.field)!)
-    if (!result) result = map.field as unknown as FieldRef<any, any>
+    if (!result) result = map.field as unknown as FieldRef
     return result
   }
 
@@ -58,7 +55,7 @@ export class FieldCollection<rowType = any> {
     if (col.visible === undefined) return true
     return this.getRowColumn({ col, row }, (c, row) => col.visible!(row, c))
   }
-  allowClick(col: DataControlSettings<any, any>, row: any) {
+  allowClick(col: DataControlSettings, row: any) {
     if (!col.click) return false
     if (!this._getEditable(col, row)) return false
     if (col.allowClick === undefined) {
@@ -68,14 +65,14 @@ export class FieldCollection<rowType = any> {
   }
   getRowColumn<T>(
     args: { col: DataControlSettings<any>; row: any },
-    what: (c: FieldRef<any, any>, row: any) => T
+    what: (c: FieldRef, row: any) => T
   ) {
-    let field: FieldRef<any, any> | undefined = undefined
+    let field: FieldRef | undefined = undefined
     let row = args.row
     if (this._getRowColumn! && args.col.field && row) {
       field = this._getRowColumn(row, getFieldDefinition(args.col.field)!)
     }
-    if (!field) field = args.col.field as unknown as FieldRef<any, any>
+    if (!field) field = args.col.field as unknown as FieldRef
     if (!row && field) row = field.container
     return what(field, row)
   }
@@ -99,7 +96,7 @@ export class FieldCollection<rowType = any> {
       let s: DataControlSettings<rowType>
       let x = c as DataControlSettings<rowType>
       let col = c as FieldMetadata
-      let ecol = c as FieldRef<any, any>
+      let ecol = c as FieldRef
       if ((!x.field && col.valueConverter) || ecol.metadata) {
         x = {
           field: c
@@ -209,7 +206,7 @@ export class FieldCollection<rowType = any> {
   _getEditable(col: DataControlSettings, row: rowType) {
     if (!this.allowUpdate()) return false
     if (!col.field) return false
-    if (!row) row = (col.field as FieldRef).container
+    if (!row) row = (col.field as FieldRef<rowType, undefined>).container
     if (col.readonly !== undefined)
       return !valueOrEntityExpressionToValue(col.readonly, row)
     return true
@@ -386,8 +383,8 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
       displayValue: () => '',
       apiUpdateAllowed: () => true,
       includedInApi: () => true,
-      toInput: (x) => x,
-      fromInput: (x) => x,
+      toInput: (x) => x as any,
+      fromInput: (x) => x as any,
       valueType: settings.valueType,
       key: settings.key,
       dbReadOnly: false,
@@ -409,7 +406,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
   load(): Promise<valueType> {
     throw new Error('Method not implemented.')
   }
-  metadata: FieldMetadata
+  metadata: FieldMetadata<valueType>
   _value!: valueType
   inputType: string
   error!: string
@@ -441,10 +438,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
   container: any
 }
 
-function fixResult(
-  result: ValueListItem[],
-  inField: FieldMetadata | FieldRef<any, any>
-) {
+function fixResult(result: ValueListItem[], inField: FieldMetadata | FieldRef) {
   let field = getFieldDefinition(inField)
   if (field?.valueType === Number) {
     result.splice(

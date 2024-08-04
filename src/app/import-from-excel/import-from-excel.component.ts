@@ -530,11 +530,7 @@ export class ImportFromExcelComponent implements OnInit {
     if (this.distributionCenter == null)
       this.distributionCenter = await remult.context.defaultDistributionCenter()
 
-    let updateCol = (
-      col: FieldRef<any>,
-      val: string,
-      seperator: string = ' '
-    ) => {
+    let updateCol = (col: FieldRef, val: string, seperator: string = ' ') => {
       if (col.value) {
         col.inputValue = (col.inputValue + seperator + val).trim()
       } else col.inputValue = val
@@ -1645,7 +1641,7 @@ class columnUpdateHelper {
     searchForExistingValueFilter: (val: dataType) => EntityFilter<T>,
     val: dataType,
     getResult: (entity: T) => Y,
-    updateResultTo: FieldRef<any, Y>,
+    updateResultTo: FieldRef<unknown, Y>,
     additionalUpdates?: (entity: T) => void
   ) {
     let x = await remult.repo(c).findFirst(searchForExistingValueFilter(val), {

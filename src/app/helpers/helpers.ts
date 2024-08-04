@@ -50,7 +50,7 @@ import { recordChanges } from '../change-log/change-log'
 import { GroupsValue } from '../manage/groups'
 import { ValueConverter } from '@angular/compiler/src/render3/view/template'
 
-export function CompanyColumn<entityType = any>(
+export function CompanyColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, string>
 ) {
   return (target, key) => {
@@ -241,7 +241,7 @@ export class HelpersBase extends IdEntity {
   allowApiDelete: false,
   allowApiUpdate: Allow.authenticated,
   allowApiInsert: true,
-  saving: async (self) => {
+  saving: async (self, e) => {
     if (self._disableOnSavingRow) return
     if (self.escort) {
       if (self.escort.id == self.id) self.escort = null
@@ -344,7 +344,7 @@ export class HelpersBase extends IdEntity {
       if (self.$.phone.valueChanged() || self.isNew()) {
         self.phone = new Phone(Phone.fixPhoneInput(self.phone?.thePhone))
         if (!self._disableDuplicateCheck)
-          if ((await self._.repository.count({ phone: self.phone })) > 0)
+          if ((await e.repository.count({ phone: self.phone })) > 0)
             self.$.phone.error = remult.context.lang?.alreadyExist
       }
 
@@ -1109,7 +1109,7 @@ export class Helpers extends HelpersBase {
   }
 }
 
-export function validatePasswordColumn(password: FieldRef<any, string>) {
+export function validatePasswordColumn(password: FieldRef<unknown, string>) {
   if (getSettings().requireComplexPassword) {
     var l = getLang()
     if (password.value.length < 8) password.error = l.passwordTooShort
@@ -1131,3 +1131,5 @@ export function makeId() {
 function isNotSmsSignIn() {
   return remult.authenticated && !remult.isAllowed(Roles.smsSignIn)
 }
+
+var helper: HelpersBase = new Helpers()

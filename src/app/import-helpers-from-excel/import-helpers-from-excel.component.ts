@@ -290,11 +290,7 @@ export class ImportHelpersFromExcelComponent implements OnInit {
   @ViewChild('stepper', { static: true }) stepper: MatStepper
 
   async ngOnInit() {
-    let updateCol = (
-      col: FieldRef<any>,
-      val: string,
-      seperator: string = ' '
-    ) => {
+    let updateCol = (col: FieldRef, val: string, seperator: string = ' ') => {
       if (col.inputValue) {
         col.inputValue = (col.inputValue + seperator + val).trim()
       } else col.inputValue = val

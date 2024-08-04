@@ -59,18 +59,18 @@ export class MergeFamiliesComponent implements OnInit {
     this.rebuildCompare(true)
   }
   updateSimilarColumns(
-    getCols: (f: FieldsRefForEntityBase<Families>) => FieldRef<any>[][]
+    getCols: (f: FieldsRefForEntityBase<Families>) => FieldRef[][]
   ) {
     let eCols = getCols(this.family.$)
 
     for (const f of this.families) {
       for (const c of getCols(f.$)) {
         if (c[0].value) {
-          let digits = phoneDigits(c[0].value)
+          let digits = phoneDigits(c[0].value as Phone | string)
           let found = false
           for (const ec of eCols) {
             if (ec[0].value) {
-              let ecDigits = phoneDigits(ec[0].value)
+              let ecDigits = phoneDigits(ec[0].value as Phone | string)
 
               if (ecDigits == digits) {
                 found = true

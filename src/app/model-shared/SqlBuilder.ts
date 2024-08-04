@@ -8,10 +8,10 @@ import {
   EntityMetadata,
   SqlResult,
   EntityFilter,
-  CustomSqlFilterObject,
   CustomSqlFilterBuilder,
   remult,
-  SqlDatabase
+  SqlDatabase,
+  type CustomSqlFilterBuilderFunction
 } from 'remult'
 
 import { FilterConsumer } from 'remult/src/filter/filter-interfaces'
@@ -110,7 +110,7 @@ export class SqlBuilder {
   eqAny(a: string, b: any) {
     return this.build(a, ' = ', b)
   }
-  ne<T>(a: FieldMetadata<T>, b: T | FieldMetadata<T>) {
+  ne<T>(a: FieldMetadata<T>, b: T | FieldMetadata<T> | string) {
     return this.build(a, ' <> ', b)
   }
   notNull(col: FieldMetadata) {
@@ -475,6 +475,9 @@ export class myDummySQLCommand implements SqlCommand {
     throw new Error('Method not implemented.')
   }
   addParameterAndReturnSqlToken(val: any): string {
+    return this.param(val)
+  }
+  param(val: any): string {
     if (val === null) return 'null'
     if (val instanceof Date) val = val.toISOString()
     if (typeof val == 'string') {
@@ -592,6 +595,19 @@ export class FilterConsumerBridgeToSqlRequest implements FilterConsumer {
   custom(key: string, customItem: any): void {
     throw new Error('Custom filter should be translated before it gets here')
   }
+  not(element: Filter) {
+    this.promises.push(
+      (async () => {
+        let f = new FilterConsumerBridgeToSqlRequest(this.r)
+        f._addWhere = false
+        element.__applyToConsumer(f)
+        let where = await f.resolveWhere()
+        if (!where) return //since if any member of or is empty, then the entire or is irrelevant
+
+        this.addToWhere('not (' + where + ')')
+      })()
+    )
+  }
 
   or(orElements: Filter[]) {
     let statement = ''
@@ -663,6 +679,32 @@ export class FilterConsumerBridgeToSqlRequest implements FilterConsumer {
   isLessThan(col: FieldMetadata, val: any): void {
     this.add(col, val, '<')
   }
+  public startsWithCaseInsensitive(col: FieldMetadata, val: any): void {
+    this.promises.push(
+      (async () => {
+        this.addToWhere(
+          'lower (' +
+            (await col.getDbName()) +
+            ") like lower ('" +
+            val.replace(/'/g, "''") +
+            "%')"
+        )
+      })()
+    )
+  }
+  public endsWithCaseInsensitive(col: FieldMetadata, val: any): void {
+    this.promises.push(
+      (async () => {
+        this.addToWhere(
+          'lower (' +
+            (await col.getDbName()) +
+            ") like lower ('%" +
+            val.replace(/'/g, "''") +
+            "')"
+        )
+      })()
+    )
+  }
   public containsCaseInsensitive(col: FieldMetadata, val: any): void {
     this.promises.push(
       (async () => {
@@ -710,11 +752,13 @@ export class FilterConsumerBridgeToSqlRequest implements FilterConsumer {
     } else this.where += ' and '
     this.where += x
   }
-  databaseCustom(databaseCustom: CustomSqlFilterObject): void {
+  databaseCustom(databaseCustom: {
+    buildSql: CustomSqlFilterBuilderFunction
+  }): void {
     this.promises.push(
       (async () => {
         if (databaseCustom?.buildSql) {
-          let item = new CustomSqlFilterBuilder(this.r)
+          let item = new CustomSqlFilterBuilder(this.r, (x) => x)
           await databaseCustom.buildSql(item)
           if (item.sql) {
             this.addToWhere('(' + item.sql + ')')

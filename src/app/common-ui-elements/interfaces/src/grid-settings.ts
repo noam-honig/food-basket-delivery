@@ -21,7 +21,7 @@ import {
 import { DataList } from './dataList'
 import { FilterHelper } from './filter-helper'
 
-export class GridSettings<rowType = any> {
+export class GridSettings<rowType = unknown> {
   addNewRowToGrid(v: rowType) {
     setTimeout(() => {
       const refId = getEntityRef(v).getId()

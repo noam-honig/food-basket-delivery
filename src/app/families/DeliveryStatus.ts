@@ -10,7 +10,7 @@ import { DataControl } from '../common-ui-elements/interfaces'
   valueList: async (remult) => DeliveryStatus.getOptions(),
   width: '150'
 })
-@ValueListFieldType({
+@ValueListFieldType<DeliveryStatus>({
   displayValue: (e, val) => val.caption,
   translation: (l) => l.deliveryStatus
 })

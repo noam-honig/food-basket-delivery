@@ -3,7 +3,7 @@ import { Fields, FieldsMetadata } from 'remult'
 import { FieldCollection } from './column-collection'
 import { DataControlInfo, DataControlSettings } from './data-control-interfaces'
 
-export interface IDataAreaSettings<rowType = any> {
+export interface IDataAreaSettings<rowType = unknown> {
   fields?: (
     rowType: FieldsMetadata<rowType>
   ) => DataAreaFieldsSetting<rowType>[]
@@ -11,7 +11,7 @@ export interface IDataAreaSettings<rowType = any> {
   labelWidth?: number
 }
 
-export class DataAreaSettings<rowType = any> {
+export class DataAreaSettings<rowType = unknown> {
   lines: DataControlSettings[][] = []
   constructor(
     public settings?: IDataAreaSettings<rowType>,
@@ -51,6 +51,6 @@ export class DataAreaSettings<rowType = any> {
   }
 }
 
-export type DataAreaFieldsSetting<rowType = any> =
+export type DataAreaFieldsSetting<rowType = unknown> =
   | DataControlInfo<rowType>
   | DataControlInfo<rowType>[]

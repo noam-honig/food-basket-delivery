@@ -103,7 +103,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: ''
+      password: '',
+      otp: ''
     })
     if (!r.authToken) {
       throw 'should have worked'
@@ -123,7 +124,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: ''
+      password: '',
+      otp: ''
     })
     expect(r.authToken).toBe(undefined)
     expect(r.requiredToSetPassword).toBe(true)
@@ -139,7 +141,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: '456'
+      password: '456',
+      otp: ''
     })
     expect(r.authToken).toBe(undefined)
     expect(r.invalidPassword).toBe(true)
@@ -155,7 +158,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: '123'
+      password: '123',
+      otp: ''
     })
     if (!r.authToken) {
       throw 'should have worked'
@@ -172,7 +176,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '123',
-      password: '123'
+      password: '123',
+      otp: ''
     })
     expect(r.authToken).toBe(undefined)
     expect(r.requiredToSetPassword).toBe(true)
@@ -188,7 +193,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '456',
-      password: '123'
+      password: '123',
+      otp: ''
     })
     if (!r.authToken) {
       throw r
@@ -250,7 +256,8 @@ describe('users and security', () => {
       phone: PHONE,
       password: '123',
       EULASigned: true,
-      newPassword: ''
+      newPassword: '',
+      otp: ''
     })
     if (!l.authToken) throw l
     let jwt = getAuthService()

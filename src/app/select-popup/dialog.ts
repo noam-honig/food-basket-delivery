@@ -194,7 +194,7 @@ export class DialogService implements UITools {
       (x) => (x.args = args)
     )
   }
-  async gridDialog(args: GridDialogArgs): Promise<void> {
+  async gridDialog<T>(args: GridDialogArgs<T>): Promise<void> {
     await openDialog(
       (
         await import('../grid-dialog/grid-dialog.component')

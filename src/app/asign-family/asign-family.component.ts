@@ -464,7 +464,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     )
   }
 
-  filterOptions: FieldRef<any, boolean>[] = []
+  filterOptions: FieldRef<unknown, boolean>[] = []
   async ngOnInit() {
     this.filterOptions.push(
       this.settings.$.showGroupsOnAssing,
@@ -476,11 +476,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     this.initArea()
     this.familyLists.userClickedOnFamilyOnMap = async (families) => {
       families = await (
-        await remult
-          .repo(ActiveFamilyDeliveries)
-          .find({
-            where: { id: families, $and: [FamilyDeliveries.readyFilter()] }
-          })
+        await remult.repo(ActiveFamilyDeliveries).find({
+          where: { id: families, $and: [FamilyDeliveries.readyFilter()] }
+        })
       ).map((x) => x.id)
       if (families.length == 1)
         await this.assignFamilyBasedOnIdFromMap(families[0])
@@ -628,7 +626,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
             this.busy.doWhileShowingBusy(async () => {
               let ids: string[] = []
               for (const selectedItem of selectedItems) {
-                let d: DeliveryInList = selectedItem.item
+                let d = selectedItem.item as DeliveryInList
                 ids.push(...d.ids)
               }
               await MltFamiliesController.assignFamilyDeliveryToIndie(ids)

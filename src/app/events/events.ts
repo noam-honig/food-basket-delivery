@@ -313,7 +313,7 @@ export class Event extends IdEntity {
   phone1: Phone
   @Field({ translation: (l) => l.phone1Description })
   phone1Description: string
-  @Field({
+  @Field<Event>({
     translation: (l) => l.attendingVolunteers,
     sqlExpression: async (selfDefs) => {
       var vie = SqlFor(remult.repo(volunteersInEvent))
@@ -329,7 +329,7 @@ export class Event extends IdEntity {
     }
   })
   registeredVolunteers: number
-  @Field({
+  @Field<Event>({
     translation: (l) => l.confirmedVolunteers,
     sqlExpression: async (selfDefs) => {
       var vie = SqlFor(remult.repo(volunteersInEvent))
@@ -534,7 +534,7 @@ export function mapFieldMetadataToFieldRef(
   e: EntityRef<any>,
   x: DataControlInfo<any>
 ) {
-  let y = x as DataControlSettings<any, any>
+  let y = x as DataControlSettings
   if (y.getValue) {
     return y
   }
@@ -598,7 +598,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   volunteerComment: string
-  @Field({
+  @Field<volunteersInEvent>({
     translation: (l) => l.volunteerPhoneNumber,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -612,7 +612,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   helperPhone: Phone
-  @Field({
+  @Field<volunteersInEvent>({
     translation: (l) => l.deliveriesAssigned,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -635,7 +635,7 @@ export class volunteersInEvent extends IdEntity {
   @Field({ allowApiUpdate: Roles.distCenterAdmin })
   canceled: boolean
 
-  @Field({
+  @Field<volunteersInEvent>({
     translation: (l) => l.delveriesSuccessfulEver,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -735,7 +735,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   preferredFinishAddressCity: string
-  @Field({
+  @Field<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -748,7 +748,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   lastSmsTime: Date
-  @Field({
+  @Field<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)

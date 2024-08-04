@@ -965,8 +965,8 @@ export function includePhoneInApi() {
   return false
 }
 export function validateSmsContent(
-  entity: any,
-  c: ValidateFieldEvent<string, any>
+  entity: unknown,
+  c: ValidateFieldEvent<unknown, string>
 ) {
   return
   if (c.value && c.value.indexOf('!אתר!') < 0 && c.value.indexOf('!URL!') < 0)

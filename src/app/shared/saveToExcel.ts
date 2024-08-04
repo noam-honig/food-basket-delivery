@@ -16,8 +16,8 @@ export async function saveToExcel<
   grid: T,
   fileName: string,
   ui: UITools,
-  hideColumn?: (e: E, c: FieldRef<any>) => boolean,
-  excludeColumn?: (e: E, c: FieldRef<any>) => boolean,
+  hideColumn?: (e: E, c: FieldRef<E, any>) => boolean,
+  excludeColumn?: (e: E, c: FieldRef<E, any>) => boolean,
   moreColumns?: (
     e: E,
     addfield: (

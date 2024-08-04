@@ -15,7 +15,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
   minWidth: '95vw'
 })
 export class GridDialogComponent implements OnInit {
-  args: GridDialogArgs
+  args: GridDialogArgs<unknown>
 
   constructor(
     public dialogRef: MatDialogRef<any>,

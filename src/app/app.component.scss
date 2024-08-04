@@ -1,9 +1,11 @@
 .active-route {
   background-color: #f2f2f2;
 }
+
 .mat-toolbar {
   font-size: 16px;
 }
+
 .app-sidenav-container {
   flex: 1;
   width: 100%;
@@ -13,20 +15,24 @@
   min-height: 100%;
   //   border:1px solid rgba(0,0,0,0.5);
 }
+
 .app-sidenav-content {
   display: flex;
   height: 100%;
   flex-direction: column;
 }
+
 .app-sidenav {
   width: 240px;
 }
+
 @media not print {
   .wrapper {
     margin: 5px 10px 0px;
     height: 10px;
     flex-grow: 1;
     overflow-x: auto;
+
     @media (max-width: 720px) {
       margin: 5px 2px 0px;
     }
@@ -39,11 +45,13 @@ $iconWidth: 56px;
   padding: 0;
   margin: 8px;
   min-width: $iconWidth;
+
   @media (max-width: 720px) {
     display: flex;
-    align-item: center;
+    align-items: center;
     justify-content: center;
   }
+
   mat-icon {
     font-size: 30px;
     height: $iconWidth;
@@ -52,15 +60,18 @@ $iconWidth: 56px;
     color: white;
   }
 }
+
 h4 {
   margin-left: 10px;
   margin-right: 10px;
 }
+
 @media not print {
   .footer {
     height: 75px;
   }
 }
+
 .edge-fix ::ng-deep.dataGridHeaderArea {
   position: inherit !important;
 }

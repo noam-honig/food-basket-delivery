@@ -119,8 +119,8 @@ export async function recordChanges<entityType extends EntityBase>(
   }
 }
 interface ColumnDeciderArgs<entityType> {
-  excludeColumns?: (e: FieldsRef<entityType>) => FieldRef<any>[]
-  excludeValues?: (e: FieldsRef<entityType>) => FieldRef<any>[]
+  excludeColumns?: (e: FieldsRef<entityType>) => FieldRef<entityType>[]
+  excludeValues?: (e: FieldsRef<entityType>) => FieldRef<entityType>[]
 }
 export class FieldDecider<entityType> {
   fields: FieldRef<entityType>[]

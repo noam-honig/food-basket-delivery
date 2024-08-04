@@ -159,7 +159,7 @@ export class DuplicateFamiliesComponent implements OnInit {
                 name: this.settings.lang.exportToExcel,
                 click: async () => {
                   await saveFamiliesToExcel(
-                    x.args.settings,
+                    x.args.settings as GridSettings<Families>,
                     this.dialog,
                     this.settings.lang.families
                   )
@@ -196,10 +196,11 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
 
   private async mergeFamilies(x: GridDialogComponent) {
-    let items =
+    let items = (
       x.args.settings.selectedRows.length > 0
         ? [...x.args.settings.selectedRows]
         : [...x.args.settings.items]
+    ) as Families[]
     if (items.length == 0) {
       await this.dialog.Error(this.settings.lang.noFamiliesSelected)
       return

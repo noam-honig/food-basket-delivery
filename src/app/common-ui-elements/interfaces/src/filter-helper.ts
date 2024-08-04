@@ -18,11 +18,11 @@ export class FilterHelper<rowType> {
     private reloadData: () => void,
     private repository: Repository<rowType>
   ) {}
-  isFiltered(columnInput: FieldMetadata | FieldRef<any, any>) {
+  isFiltered(columnInput: FieldMetadata | FieldRef) {
     return this.filterColumns.indexOf(getFieldDefinition(columnInput)!) >= 0
   }
   filterColumn(
-    columnInput: FieldMetadata | FieldRef<any, any>,
+    columnInput: FieldMetadata | FieldRef,
     clearFilter: boolean,
     useContainsFilter: boolean
   ) {

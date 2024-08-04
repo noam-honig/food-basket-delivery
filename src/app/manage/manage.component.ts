@@ -346,7 +346,7 @@ export class ManageComponent implements OnInit {
         field: this.settings.$.familyConfirmDetailsEnabled
       },
       {
-        field:this.settings.$.enableOtp
+        field: this.settings.$.enableOtp
       }
     ]
   })
@@ -723,7 +723,7 @@ export class ManageComponent implements OnInit {
     )
   }
 
-  onFileChange(id: string, column: FieldRef<any, string>) {
+  onFileChange(id: string, column: FieldRef<unknown, string>) {
     const inputNode: any = document.querySelector('#' + id)
 
     if (typeof FileReader !== 'undefined') {

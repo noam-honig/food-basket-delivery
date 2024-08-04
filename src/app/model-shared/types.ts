@@ -47,7 +47,7 @@ export class Email {
   constructor(public readonly address: string) {}
 }
 
-export function DateTimeColumn<entityType = any>(
+export function DateTimeColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, Date> & TranslatedCaption,
   ...options: (
     | FieldOptions<entityType, Date>
@@ -62,7 +62,7 @@ export function DateTimeColumn<entityType = any>(
     ...options
   )
 }
-export function ChangeDateColumn<entityType = any>(
+export function ChangeDateColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, Date> & TranslatedCaption,
   ...options: (
     | FieldOptions<entityType, Date>
@@ -131,11 +131,11 @@ export function relativeDateName(args: {
 }
 
 export function logChanges(
-  e: EntityRefForEntityBase<any>,
+  e: EntityRefForEntityBase<unknown>,
   remult: Remult,
   args?: {
-    excludeColumns?: FieldRef<any, any>[]
-    excludeValues?: FieldRef<any, any>[]
+    excludeColumns?: FieldRef[]
+    excludeValues?: FieldRef[]
   }
 ) {
   if (!args) {

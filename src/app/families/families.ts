@@ -779,7 +779,7 @@ export class Families extends IdEntity {
     includeInApi: Roles.familyAdmin
   })
   statusUser: HelpersBase
-  @Field({
+  @Field<Families>({
     translation: (l) => l.defaultVolunteer,
     clickWithTools: async (e, col, ui) => {
       ui.selectHelper({
@@ -884,7 +884,7 @@ export class Families extends IdEntity {
     }
   }
 
-  @Field({
+  @Field<Families>({
     includeInApi: Roles.familyAdmin,
     translation: (l) => l.previousDeliveryStatus,
     sqlExpression: (self) => {
@@ -896,7 +896,7 @@ export class Families extends IdEntity {
     }
   })
   previousDeliveryStatus: DeliveryStatus
-  @ChangeDateColumn({
+  @ChangeDateColumn<Families>({
     includeInApi: Roles.familyAdmin,
     sqlExpression: (self) => {
       return dbNameFromLastDelivery(
@@ -918,7 +918,7 @@ export class Families extends IdEntity {
     }
   })
   previousDeliveryComment: string
-  @Fields.integer({
+  @Fields.integer<Families>({
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
       let fd = SqlFor(remult.repo(FamilyDeliveries))
@@ -940,7 +940,7 @@ export class Families extends IdEntity {
     }
   })
   numOfActiveReadyDeliveries: number
-  @Fields.integer({
+  @Fields.integer<Families>({
     translation: (l) => l.totalDeliveries,
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)

@@ -183,8 +183,10 @@ export class DataGrid2Component implements OnChanges, OnDestroy {
   }
 
   showSaveAllButton() {
-    return this.settings.items.find((x) =>
-      this.settings.getRowHelper(x).wasChanged()
+    return Boolean(
+      this.settings.items.find((x) =>
+        this.settings.getRowHelper(x).wasChanged()
+      )
     )
   }
   saveAllText() {

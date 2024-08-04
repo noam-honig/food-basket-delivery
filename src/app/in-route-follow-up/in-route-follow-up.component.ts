@@ -195,7 +195,8 @@ export class InRouteFollowUpComponent implements OnInit {
   currentOption = this.radioOption[0]
 
   async doSearch() {
-    if (this.helpers.currentRow && this.helpers.currentRow.wasChanged()) return
+    if (this.helpers.currentRow && this.helpers.currentRow._.wasChanged())
+      return
     this.busy.donotWait(async () => await this.helpers.reloadData())
   }
 

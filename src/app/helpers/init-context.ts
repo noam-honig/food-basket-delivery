@@ -97,14 +97,14 @@ export async function InitContext(remult: Remult, user?: UserInfo) {
   }
   remult.context.lang = getLang()
 }
-export interface selectListItem<itemType = any> {
+export interface selectListItem<itemType = unknown> {
   name: string
   item: itemType
   selected?: boolean
 }
-export interface GridDialogArgs {
+export interface GridDialogArgs<entityType> {
   title: string
-  settings: GridSettings<any>
+  settings: GridSettings<entityType>
   stateName?: string
   ok?: () => void
   cancel?: () => void
@@ -119,7 +119,7 @@ export interface button {
 export interface InputAreaArgs {
   title?: string
   helpText?: string
-  fields: DataAreaFieldsSetting<any>[]
+  fields: DataAreaFieldsSetting[]
   ok: () => void
   cancel?: () => void
   validate?: () => Promise<void>
@@ -174,7 +174,7 @@ export interface UITools {
   Error(err: string): Promise<void>
   Info(message: string): void
 
-  gridDialog(args: GridDialogArgs): Promise<void>
+  gridDialog<entityType>(args: GridDialogArgs<entityType>): Promise<void>
   inputAreaDialog(args: InputAreaArgs): Promise<void>
   selectValuesDialog<
     T extends {

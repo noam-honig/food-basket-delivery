@@ -19,10 +19,10 @@ export class DateRangeComponent implements OnInit {
   @Output() dateChanged = new EventEmitter<void>()
 
   @Fields.dateOnly()
-  @DataControl({
+  @DataControl<DateRangeComponent>({
     valueChange: (self) => {
-      if (self.toDate.value < self.fromDate.value) {
-        self.toDate.value = self.getEndOfMonth()
+      if (self.toDate < self.fromDate) {
+        self.toDate = self.getEndOfMonth()
       }
     }
   })

@@ -44,7 +44,7 @@ export class BasketType extends MyIdEntity {
   boxes: number = 1
   @Fields.integer({}, (options) => (options.caption = BasketType.boxes2Name))
   boxes2: number = 0
-  @Field<any, string>({
+  @Field<BasketType, string>({
     translation: (l) => l.whatToTake,
     clickWithTools: (u, fr, ui) => editItems(fr, ui)
   })
@@ -104,7 +104,7 @@ export interface totalItem {
   name: string
   quantity: number
 }
-export function editItems(fr: FieldRef<FamilyDeliveries, string>, ui: UITools) {
+export function editItems(fr: FieldRef<unknown, string>, ui: UITools) {
   const field = new InputField<string>({
     customInput: (c) => c.textArea(),
     caption: fr.metadata.caption

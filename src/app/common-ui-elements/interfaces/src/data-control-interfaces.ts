@@ -9,11 +9,14 @@ import {
 
 import { InputField } from './column-collection'
 
-export type DataControlInfo<rowType> =
+export type DataControlInfo<rowType = unknown> =
   | DataControlSettings<rowType>
-  | FieldRef<any, any>
-export interface DataControlSettings<entityType = any, valueType = any> {
-  field?: FieldMetadata | FieldRef<any, any>
+  | FieldRef
+export interface DataControlSettings<
+  entityType = unknown,
+  valueType = unknown
+> {
+  field?: FieldMetadata | FieldRef
   getValue?: (row: entityType, val: FieldRef<entityType, valueType>) => any
   readonly?: ValueOrEntityExpression<boolean, entityType>
   cssClass?: string | ((row: entityType) => string)
@@ -47,10 +50,10 @@ export interface DataControlSettings<entityType = any, valueType = any> {
   }
 }
 
-export interface CustomDataComponent<argsType = any> {
+export interface CustomDataComponent<argsType = unknown> {
   args: CustomComponentArgs<argsType>
 }
-export declare type CustomComponentArgs<argsType = any> = {
+export declare type CustomComponentArgs<argsType = unknown> = {
   fieldRef: FieldRef
   settings: DataControlSettings
   args?: argsType
@@ -58,15 +61,15 @@ export declare type CustomComponentArgs<argsType = any> = {
 
 export const configDataControlField = Symbol('configDataControlField')
 
-export function getFieldDefinition(col: FieldMetadata | FieldRef<any, any>) {
+export function getFieldDefinition(col: FieldMetadata | FieldRef) {
   if (!col) return undefined
   let r = col as FieldMetadata
-  let c = col as FieldRef<any, any>
+  let c = col as FieldRef
   if (c.metadata) r = c.metadata
   return r
 }
 export function decorateDataSettings(
-  colInput: FieldMetadata | FieldRef<any, any>,
+  colInput: FieldMetadata | FieldRef,
   x: DataControlSettings
 ) {
   if (colInput instanceof InputField) {
@@ -142,7 +145,7 @@ export declare type ValueOrEntityExpression<valueType, entityType> =
   | valueType
   | ((e: entityType) => valueType)
 
-export function DataControl<entityType = any, colType = any>(
+export function DataControl<entityType = unknown, colType = unknown>(
   settings: DataControlSettings<entityType, colType>
 ) {
   return (target: any, key?: string) => {

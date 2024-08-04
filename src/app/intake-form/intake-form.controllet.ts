@@ -85,7 +85,7 @@ export class IntakeFormController extends ControllerBase {
   phone2Description: string
   @Field({ caption: 'שם ממלא הטופס', validate: Validators.required })
   fillerName: string
-  @Field({
+  @Field<IntakeFormController, Phone>({
     caption: 'טלפון ממלא הטופס',
     validate: [
       Validators.required,

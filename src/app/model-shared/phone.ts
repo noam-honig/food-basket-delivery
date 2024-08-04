@@ -82,7 +82,10 @@ export class Phone {
       )
   }
 
-  static validatePhone(col: { error: string; value: Phone }, required = false) {
+  static validatePhone(
+    col: { error?: string; value: Phone },
+    required = false
+  ) {
     if (!col.value || col.value.thePhone == '') {
       if (required) col.error = getLang().invalidPhoneNumber
       return
