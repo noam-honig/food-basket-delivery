@@ -93,11 +93,6 @@ import { CommonUIElementsPluginsService } from './CommonUIElementsPluginsService
     DataGrid2Component,
     DataArea2Component,
     SelectValueDialogComponent
-  ],
-  entryComponents: [
-    WaitComponent,
-    SelectValueDialogComponent,
-    FilterDialogComponent
   ]
 })
 export class CommonUIElementsModule {

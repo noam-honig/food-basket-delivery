@@ -1,9 +1,9 @@
 //import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/dist/server/radweb/projects');
 import { ApplicationImages } from '../manage/ApplicationImages'
-import * as express from 'express'
-import * as fs from 'fs' //
-//import * as heapdump from 'heapdump'
+import express from 'express'
+import fs from 'fs' //
+//import heapdump from 'heapdump'
 import { serverInit } from './serverInit'
 import {
   ApplicationSettings,
@@ -30,13 +30,13 @@ import {
   PostgresSchemaBuilder,
   preparePostgresQueueStorage
 } from 'remult/postgres'
-import * as forceHttps from 'express-force-https'
-import * as jwt from 'express-jwt'
-import * as compression from 'compression'
+import forceHttps from 'express-force-https'
+import jwt from 'express-jwt'
+import compression from 'compression'
 import { InitContext } from '../helpers/init-context'
 import { Helpers, HelpersBase } from '../helpers/helpers'
 import { Phone } from '../model-shared/phone'
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 import { volunteersInEvent, Event, eventStatus } from '../events/events'
 
 import { OverviewController } from '../overview/overview.controller'
@@ -129,7 +129,7 @@ import {
   SseSubscriptionServer
 } from 'remult/server'
 
-import * as ably from 'ably'
+import ably from 'ably'
 
 import {
   LiveQueryStorage,
@@ -649,7 +649,7 @@ s.parentNode.insertBefore(b, s);})();
         })
         const target = process.env.REDIRECT_TARGET + req.originalUrl
         try {
-          await fetch.default(target)
+          await fetch(target)
         } catch (err) {
           console.error('Incoming sms redirect err', err)
         }
@@ -792,13 +792,12 @@ async function downloadPaperTrailLogs() {
         if (!fs.existsSync(file)) {
           console.log('fetch', theTime)
           await t.push(
-            fetch
-              .default(
-                'https://papertrailapp.com/api/v1/archives/' +
-                  theTime +
-                  '/download',
-                requestOptions
-              )
+            fetch(
+              'https://papertrailapp.com/api/v1/archives/' +
+                theTime +
+                '/download',
+              requestOptions
+            )
               .then(async (response) =>
                 fs.writeFileSync(file, await response.buffer())
               )

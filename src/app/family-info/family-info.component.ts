@@ -9,7 +9,7 @@ import {
   SimpleChanges
 } from '@angular/core'
 
-import * as copy from 'copy-to-clipboard'
+import copy from 'copy-to-clipboard'
 import { DialogService } from '../select-popup/dialog'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 import { remult } from 'remult'

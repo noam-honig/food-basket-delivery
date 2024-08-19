@@ -21,7 +21,7 @@ import {
   Location
 } from '../shared/googleApiHelpers'
 import { Sites } from '../sites/sites'
-import * as copy from 'copy-to-clipboard'
+import copy from 'copy-to-clipboard'
 const AllTypes = {
   id: 'asdfaetfsafads',
   caption: 'כל הסוגים',

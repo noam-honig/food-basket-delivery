@@ -17,7 +17,7 @@ import {
   FieldType,
   TranslatedCaption
 } from '../translate'
-import * as moment from 'moment'
+import moment from 'moment'
 import { Sites, getLang } from '../sites/sites'
 import { EmailSvc, isDesktop } from '../shared/utils'
 import { isDate } from 'util'

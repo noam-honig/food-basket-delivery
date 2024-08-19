@@ -1,4 +1,4 @@
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 import {
   UrlBuilder,
   Entity,
@@ -64,8 +64,7 @@ export async function GetGeoInformation(address: string) {
     }
     try {
       if (process.env.LOG_GEOCODE) console.log(u.url)
-      let r = fetch
-        .default(u.url)
+      let r = fetch(u.url)
         .then(
           async (x) =>
             await x.json().then(async (r: GeocodeResult) => {

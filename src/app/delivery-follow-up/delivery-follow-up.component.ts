@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 
 import { UserFamiliesList } from '../my-families/user-families'
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 
 import { BusyService, openDialog } from '../common-ui-elements'
 import { Helpers } from '../helpers/helpers'
@@ -83,15 +83,16 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   options: chart.ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.currentStatFilter = this.pieChartStatObjects[legendItem.index]
+    maintainAspectRatio: false
+    //TODO - find alternative for legend
+    // legend: {
+    //   position: 'right',
+    //   onClick: (event: MouseEvent, legendItem: any) => {
+    //     this.currentStatFilter = this.pieChartStatObjects[legendItem.index]
 
-        return false
-      }
-    }
+    //     return false
+    //   }
+    // }
   }
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {

@@ -14,7 +14,7 @@ import {
   InputField
 } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
-import * as copy from 'copy-to-clipboard'
+import copy from 'copy-to-clipboard'
 import { UserFamiliesList } from '../my-families/user-families'
 import { MapComponent } from '../map/map.component'
 
@@ -63,7 +63,7 @@ import {
 } from './helper-families.controller'
 import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
 import { MatExpansionPanel } from '@angular/material/expansion'
-import { NgDialogAnimationService } from 'ng-dialog-animation'
+
 import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component'
 import { environment } from '../../environments/environment'
 import { Roles } from '../auth/roles'
@@ -108,71 +108,70 @@ export class HelperFamiliesComponent implements OnInit {
   }
   deliveryDetails(f: FamilyDeliveries, p: MatExpansionPanel) {
     if (this.familyLists.labs) {
-      const dialogRef = this.animDialog.open(
-        DeliveryDetailsComponent,
-        this.dialog.isScreenSmall()
-          ? {
-              width: '100%',
-              minWidth: '100%',
-              height: '100vh',
-              panelClass: 'no-padding',
-
-              // option1
-              // animation: { to: 'aside' },
-
-              // option2
-              animation: {
-                to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
-                incomingOptions: {
-                  keyframeAnimationOptions: { duration: 200 }
-                },
-                outgoingOptions: {
-                  keyframeAnimationOptions: { duration: 200 }
-                }
-              },
-              position: { rowEnd: '0' }
-            }
-          : {
-              maxWidth: '400px',
-              width: '400px',
-              height: '90vh',
-              maxHeight: '100vh',
-              panelClass: 'no-padding'
-            }
-      )
-      assign(dialogRef.componentInstance.famInfo, {
-        f: f,
-        showHelp: true,
-        partOfAssign: this.partOfAssign,
-        userFamilies: this.familyLists
-      })
-      assign(dialogRef.componentInstance, {
-        deliveredToFamily: () => {
-          this.deliveredToFamilyOk(
-            f,
-            DeliveryStatus.Success,
-            () => this.settings.commentForSuccessDelivery,
-            () => {
-              dialogRef.close()
-            }
-          )
-        },
-        updateComment: () => this.updateComment(f),
-        couldntDeliverToFamily: () => {
-          this.couldntDeliverToFamily(f, () => dialogRef.close())
-        },
-        returnToDeliver: () => {
-          this.returnToDeliver(f)
-        }
-      })
-      const sub =
-        dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() =>
-          this.cancelAssign(f)
-        )
-      dialogRef.afterClosed().subscribe((x) => sub.unsubscribe())
-      dialogRef.componentInstance.famInfo.ngOnInit()
-      if (p) p.close()
-      return false
+      //TODO - fix animations
+      // const dialogRef = this.animDialog.open(
+      //   DeliveryDetailsComponent,
+      //   this.dialog.isScreenSmall()
+      //     ? {
+      //         width: '100%',
+      //         minWidth: '100%',
+      //         height: '100vh',
+      //         panelClass: 'no-padding',
+      //         // option1
+      //         // animation: { to: 'aside' },
+      //         // option2
+      //         animation: {
+      //           to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
+      //           incomingOptions: {
+      //             keyframeAnimationOptions: { duration: 200 }
+      //           },
+      //           outgoingOptions: {
+      //             keyframeAnimationOptions: { duration: 200 }
+      //           }
+      //         },
+      //         position: { rowEnd: '0' }
+      //       }
+      //     : {
+      //         maxWidth: '400px',
+      //         width: '400px',
+      //         height: '90vh',
+      //         maxHeight: '100vh',
+      //         panelClass: 'no-padding'
+      //       }
+      // )
+      // assign(dialogRef.componentInstance.famInfo, {
+      //   f: f,
+      //   showHelp: true,
+      //   partOfAssign: this.partOfAssign,
+      //   userFamilies: this.familyLists
+      // })
+      // assign(dialogRef.componentInstance, {
+      //   deliveredToFamily: () => {
+      //     this.deliveredToFamilyOk(
+      //       f,
+      //       DeliveryStatus.Success,
+      //       () => this.settings.commentForSuccessDelivery,
+      //       () => {
+      //         dialogRef.close()
+      //       }
+      //     )
+      //   },
+      //   updateComment: () => this.updateComment(f),
+      //   couldntDeliverToFamily: () => {
+      //     this.couldntDeliverToFamily(f, () => dialogRef.close())
+      //   },
+      //   returnToDeliver: () => {
+      //     this.returnToDeliver(f)
+      //   }
+      // })
+      // const sub =
+      //   dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() =>
+      //     this.cancelAssign(f)
+      //   )
+      // dialogRef.afterClosed().subscribe((x) => sub.unsubscribe())
+      // dialogRef.componentInstance.famInfo.ngOnInit()
+      // if (p) p.close()
+      // return false
     }
   }
   signs = ['🙂', '👌', '😉', '😍', '🤩', '💖', '👍', '🙏']
@@ -217,8 +216,7 @@ export class HelperFamiliesComponent implements OnInit {
     public auth: AuthService,
     private dialog: DialogService,
     private busy: BusyService,
-    public settings: ApplicationSettings,
-    public animDialog: NgDialogAnimationService
+    public settings: ApplicationSettings
   ) {}
   @Input() familyLists: UserFamiliesList
   @Input() partOfAssign = false

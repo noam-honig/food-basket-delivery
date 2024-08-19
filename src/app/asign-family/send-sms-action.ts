@@ -1,12 +1,12 @@
 import { BackendMethod, remult } from 'remult'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { HelpersBase } from '../helpers/helpers'
-import * as fetch from 'node-fetch'
+import fetch, { Headers } from 'node-fetch'
 import { Roles } from '../auth/roles'
 import { Sites } from '../sites/sites'
 import { getLang } from '../sites/sites'
 import { TranslationOptions } from '../translate'
-import * as FormData from 'form-data'
+import FormData from 'form-data'
 export class SendSmsAction {
   static getSuccessMessage(template: string, orgName: string, family: string) {
     return template
@@ -272,10 +272,10 @@ export class SendSmsUtils {
               '</sendSmsToRecipients>' +
               '</soap12:Body>' +
               '</soap12:Envelope>'
-            let h = new fetch.Headers()
+            let h = new Headers()
             h.append('Content-Type', 'text/xml; charset=utf-8')
             h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients')
-            let r = await fetch.default(
+            let r = await fetch(
               'https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx',
               {
                 method: 'POST',
@@ -311,12 +311,12 @@ export class SendSmsUtils {
 <Sender>${from}</Sender>
 </Settings>
 </Inforu>`
-            let h = new fetch.Headers()
+            let h = new Headers()
             var formData = new FormData()
 
             formData.append('InforuXML', data)
 
-            let r = await fetch.default(
+            let r = await fetch(
               'https://api.inforu.co.il/SendMessageXml.ashx',
               {
                 method: 'POST',

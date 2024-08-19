@@ -1,5 +1,5 @@
 /// <reference types="@types/googlemaps" />
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core'
 
 import { DialogService, DestroyHelper } from '../select-popup/dialog'
@@ -372,15 +372,16 @@ export class DistributionMap implements OnInit, OnDestroy {
   }
   options: chart.ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.selectedStatus = this.statuses.statuses[legendItem.index]
-        this.refreshDeliveries()
-        return false
-      }
-    }
+    maintainAspectRatio: false
+    //TODO - implement legend
+    // legend: {
+    //   position: 'right',
+    //   onClick: (event: MouseEvent, legendItem: any) => {
+    //     this.selectedStatus = this.statuses.statuses[legendItem.index]
+    //     this.refreshDeliveries()
+    //     return false
+    //   }
+    // }
   }
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {

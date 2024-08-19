@@ -6,7 +6,7 @@ import {
   toLongLat,
   GetDistanceBetween
 } from '../shared/googleApiHelpers'
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 
 import { foreachSync } from '../shared/utils'
 import { Helpers } from '../helpers/helpers'
@@ -122,7 +122,7 @@ export async function getRouteInfo(
   }
   u.addObject(args)
 
-  let r = await (await fetch.default(u.url)).json()
+  let r = await (await fetch(u.url)).json()
   if (!r || r.status != 'OK') {
     let status = 'no response'
     if (r && r.status) {

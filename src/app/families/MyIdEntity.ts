@@ -1,5 +1,5 @@
 import { Fields, EntityBase } from 'remult'
-import * as uuid from 'uuid'
+import uuid from 'uuid'
 
 export class MyIdEntity extends EntityBase {
   @Fields.string({

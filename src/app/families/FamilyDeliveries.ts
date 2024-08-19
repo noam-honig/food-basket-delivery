@@ -1,7 +1,7 @@
 import { ChangeDateColumn, relativeDateName } from '../model-shared/types'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
 import { Phone } from '../model-shared/phone'
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 
 import {
   IdEntity,
@@ -185,7 +185,7 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
                     self.deliverStatus.isProblem ? 2 : 1
                   }&text=${encodeURI(self.courierComments)}`
                   console.log({ eshelUrl })
-                  fetch.default(eshelUrl).catch((err) => {
+                  fetch(eshelUrl).catch((err) => {
                     console.error('failed', { eshelUrl, err })
                   })
                 }
@@ -248,28 +248,26 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
         const images = await remult
           .repo(DeliveryImage)
           .find({ where: { deliveryId: self.id } })
-        fetch
-          .default(s.webhookUrl, {
-            method: 'POST',
-            body: JSON.stringify({
-              deliveryId: self.id,
-              familyId: self.family,
-              name: self.name,
-              status: self.deliverStatus,
-              courierComments: self.courierComments,
-              driver: h?.name,
-              driverPhone: h?.phone?.thePhone,
-              familyIdInExcel: f?.iDinExcel,
-              images
-            })
+        fetch(s.webhookUrl, {
+          method: 'POST',
+          body: JSON.stringify({
+            deliveryId: self.id,
+            familyId: self.family,
+            name: self.name,
+            status: self.deliverStatus,
+            courierComments: self.courierComments,
+            driver: h?.name,
+            driverPhone: h?.phone?.thePhone,
+            familyIdInExcel: f?.iDinExcel,
+            images
           })
-          .then((y) => {
-            console.log({
-              site: remult.context.getSite(),
-              delivery: self.id,
-              status: y.status
-            })
+        }).then((y) => {
+          console.log({
+            site: remult.context.getSite(),
+            delivery: self.id,
+            status: y.status
           })
+        })
       }
     }
   },

@@ -9,7 +9,7 @@ import { AppRoutingModule, routes } from './app-routing.module'
 import { AppComponent, routeMap } from './app.component'
 import { CommonUIElementsModule } from './common-ui-elements'
 import { MaterialModule } from './shared/material.module'
-import { ChartsModule } from 'ng2-charts'
+import { BaseChartDirective } from 'ng2-charts'
 import { FormsModule } from '@angular/forms'
 import { NgxPaginationModule } from 'ngx-pagination'
 import { HelpersComponent } from './helpers/helpers.component'
@@ -119,7 +119,7 @@ import { FamilySelfOrderComponent } from './family-self-order/family-self-order.
 import { RegisterToEvent } from './event-info/RegisterToEvent'
 import { PreviousDeliveryCommentsComponent } from './previous-delivery-comments/previous-delivery-comments.component'
 import { AreaDataComponent } from './area-data/area-data.component'
-import { NgDialogAnimationService } from 'ng-dialog-animation'
+
 import { DeliveryDetailsComponent } from './delivery-details/delivery-details.component'
 import { ChangeLogComponent } from './change-log/change-log.component'
 import { INVALID_TOKEN_ERROR } from './auth/auth-service.controller'
@@ -134,7 +134,7 @@ import { ButtonDataComponent } from './button-data/button-data.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component'
 import { AddressInfoComponent } from './address-info/address-info.component'
-import { IntakeFormComponent } from './intake-form/intake-form.component';
+import { IntakeFormComponent } from './intake-form/intake-form.component'
 import { UgaConfirmCheckboxComponent } from './uga-confirm-checkbox/uga-confirm-checkbox.component'
 
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
@@ -260,14 +260,13 @@ export class MyHammerConfig extends HammerGestureConfig {
     BrowserAnimationsModule,
     CommonUIElementsModule,
     AppRoutingModule,
-    ChartsModule,
+    BaseChartDirective,
     PlatformModule,
     JwtModule.forRoot({
       config: { tokenGetter: getToken }
     })
   ],
   providers: [
-    NgDialogAnimationService,
     DialogService,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
 
@@ -301,28 +300,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     SettingsService
   ],
 
-  bootstrap: [AppComponent],
-  entryComponents: [
-    SelectHelperComponent,
-    SelectFamilyComponent,
-    SelectListComponent,
-    CommonQuestionsComponent,
-    YesNoQuestionComponent,
-    InputAreaComponent,
-    GridDialogComponent,
-    UpdateFamilyDialogComponent,
-    PreviewFamilyComponent,
-    SelectCompanyComponent,
-    HelperAssignmentComponent,
-    MergeFamiliesComponent,
-    SiteOverviewComponent,
-    ShowOnMapComponent,
-    GetVolunteerFeedback,
-    UpdateGroupDialogComponent,
-    BasketSummaryComponent,
-    GeneralImportFromExcelComponent,
-    MyGiftsDialogComponent
-  ]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
 

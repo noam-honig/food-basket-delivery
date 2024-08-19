@@ -45,7 +45,7 @@ import { AddressHelper, Location } from '../shared/googleApiHelpers'
 
 import { DeliveryStatus } from '../families/DeliveryStatus'
 
-import * as moment from 'moment'
+import moment from 'moment'
 
 import {
   messageMerger,

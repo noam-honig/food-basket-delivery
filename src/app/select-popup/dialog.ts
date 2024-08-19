@@ -270,7 +270,7 @@ export class DialogService implements UITools {
     valueList: (remult) => DistributionCenters.getValueList(true),
     valueChange: async (self) => {
       if (remult.authenticated()) {
-        self.refreshDistCenter.next()
+        self.refreshDistCenter.next({})
       }
     }
   })
@@ -313,7 +313,7 @@ export class DialogService implements UITools {
     if (this.unsubscribePromise) this.unsubscribePromise.then((x) => x())
     if (remult.isAllowed(Roles.distCenterAdmin))
       this.unsubscribePromise = StatusChangeChannel.subscribe((data) => {
-        this.statusRefreshThrottle.do(() => this.refreshStatusStats.next())
+        this.statusRefreshThrottle.do(() => this.refreshStatusStats.next({}))
         this.Info(data + ' ')
       })
   }

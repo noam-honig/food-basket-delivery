@@ -20,7 +20,7 @@ import {
   GridSettings
 } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { Stats, FaimilyStatistics, colors } from './stats-action'
 
 import {
@@ -155,14 +155,15 @@ export class FamiliesComponent implements OnInit {
 
   options: chart.ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
-        return false
-      }
-    }
+    maintainAspectRatio: false
+    // TODO - implement legend
+    // legend: {
+    //   position: 'right',
+    //   onClick: (event: MouseEvent, legendItem: any) => {
+    //     this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
+    //     return false
+    //   }
+    // }
   }
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {

@@ -34,7 +34,7 @@ import {
   leaveComponent
 } from '../custom-reuse-controller-router-strategy'
 
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { colors } from '../families/stats-action'
 import { BasketType, quantityHelper } from '../families/BasketType'
 
@@ -294,14 +294,15 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   previousTabStats: statsOnTab = this.currentTabStats
   options: chart.ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
-        return false
-      }
-    }
+    maintainAspectRatio: false
+    //TODO - implement legend
+    // legend: {
+    //   position: 'right',
+    //   onClick: (event: MouseEvent, legendItem: any) => {
+    //     this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
+    //     return false
+    //   }
+    // }
   }
   public chartClicked(e: any): void {
     if (e.active && e.active.length > 0) {

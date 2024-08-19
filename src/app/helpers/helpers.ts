@@ -48,7 +48,6 @@ import { EntityFilter } from 'remult'
 import { UITools } from './init-context'
 import { recordChanges } from '../change-log/change-log'
 import { GroupsValue } from '../manage/groups'
-import { ValueConverter } from '@angular/compiler/src/render3/view/template'
 
 export function CompanyColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, string>

@@ -52,7 +52,7 @@ import {
   getSettings
 } from '../manage/ApplicationSettings'
 
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 import { Roles } from '../auth/roles'
 
 import { Fields, Field, use, Entity } from '../translate'
@@ -860,7 +860,7 @@ export class Families extends IdEntity {
     }
     try {
       let r = await (
-        await fetch.default('https://www.zipy.co.il/findzip', {
+        await fetch('https://www.zipy.co.il/findzip', {
           method: 'post',
           headers: {
             'X-Requested-With': 'XMLHttpRequest',

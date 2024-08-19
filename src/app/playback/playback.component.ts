@@ -4,7 +4,7 @@ import {
   statusClass,
   Statuses
 } from '../distribution-map/distribution-map.controller'
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 import { DateRangeComponent } from '../date-range/date-range.component'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
@@ -33,13 +33,14 @@ export class PlaybackComponent implements OnInit {
   public pieChartType: chart.ChartType = 'pie'
   options: chart.ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        return false
-      }
-    }
+    maintainAspectRatio: false
+    //TODO - implement legend
+    // legend: {
+    //   position: 'right',
+    //   onClick: (event: MouseEvent, legendItem: any) => {
+    //     return false
+    //   }
+    // }
   }
 
   bounds = new google.maps.LatLngBounds()
