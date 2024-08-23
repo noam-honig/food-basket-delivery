@@ -58,15 +58,11 @@ import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component'
 import { EventsComponent } from './events/events.component'
 import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
-import { RegisterDonorComponent } from './register-donor/register-donor.component'
-import { RegisterHelperComponent } from './register-helper/register-helper.component'
 import { Sites, usesIntakeForm } from './sites/sites'
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
-import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component'
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component'
-import { RegisterURLComponent } from './resgister-url/regsiter-url.component'
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component'
 import { OrgEventsComponent } from './org-events/org-events.component'
 import { PrintStickersComponent } from './print-stickers/print-stickers.component'
@@ -221,28 +217,11 @@ export const routes: Routes = [
     canActivate: [AdminGuard],
     data: { hide: true }
   },
-  {
-    path: 'register-donor',
-    component: RegisterDonorComponent,
-    canActivate: [MltOnlyGuard],
-    data: { hide: true }
-  },
+
   {
     path: 'intake',
     component: IntakeFormComponent,
     canActivate: [IntakeFormGuard],
-    data: { hide: true }
-  },
-  {
-    path: 'register-donor-cc',
-    component: RegisterDonorComponent,
-    canActivate: [MltOnlyGuard],
-    data: { hide: true, isCC: true }
-  },
-  {
-    path: 'register-helper',
-    component: RegisterHelperComponent,
-    canActivate: [MltOnlyGuard],
     data: { hide: true }
   },
 
@@ -259,11 +238,6 @@ export const routes: Routes = [
   {
     path: 'helper-gifts',
     component: HelperGiftsComponent,
-    canActivate: [MltAdminGuard]
-  },
-  {
-    path: 'register-url',
-    component: RegisterURLComponent,
     canActivate: [MltAdminGuard]
   },
 
@@ -300,11 +274,6 @@ export const routes: Routes = [
   { path: 'event/:site/:id', component: SpecificEventComponent },
   UpdateInfoComponent.route,
   LoginComponent.route,
-  {
-    path: 'weekly-report-mlt',
-    component: WeeklyReportMltComponent,
-    canActivate: [MltOnlyGuard]
-  },
 
   { path: '', redirectTo: '/assign-families', pathMatch: 'full' },
   { path: '**', redirectTo: '/assign-families', pathMatch: 'full' }

@@ -57,7 +57,7 @@ export function CompanyColumn<entityType = unknown>(
       width: '300'
     })(target, key)
 
-    return Field<entityType, string>({
+    return Fields.string<entityType, string>({
       clickWithTools: (e, col, ui) => ui.selectCompany((x) => (col.value = x)),
       translation: (l) => l.company,
       ...settings
@@ -101,7 +101,7 @@ export class HelpersBase extends IdEntity {
     return this.id == remult.user.id
   }
 
-  @Field<HelpersBase>({
+  @Fields.string<HelpersBase>({
     translation: (l) => l.volunteerName,
     validate: (h) => {
       if (!h.name) h.$.name.error = getLang().nameIsTooShort
@@ -109,12 +109,12 @@ export class HelpersBase extends IdEntity {
   })
   name: string
 
-  @Field({ translation: (l) => l.phone })
+  @Field(() => Phone, { translation: (l) => l.phone })
   phone: Phone
   @DateTimeColumn({ translation: (l) => l.smsDate })
   smsDate: Date
 
-  @Field()
+  @Fields.boolean()
   doNotSendSms: boolean = false
   @CompanyColumn()
   company: string
@@ -122,63 +122,62 @@ export class HelpersBase extends IdEntity {
   totalKm: number
   @Fields.integer({ allowApiUpdate: Roles.distCenterAdmin })
   totalTime: number
-  @Field({ includeInApi: Roles.distCenterAdmin })
+  @Fields.string({ includeInApi: Roles.distCenterAdmin })
   shortUrlKey: string
 
-  @Field({ allowApiUpdate: Roles.admin })
+  @Field(() => DistributionCenters, { allowApiUpdate: Roles.admin })
   distributionCenter: DistributionCenters
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.helperComment,
     allowApiUpdate: Roles.admin,
     customInput: (c) => c.textArea()
   })
   eventComment: string
 
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: Roles.admin
   })
   needEscort: boolean
 
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.assignedDriver,
     allowApiUpdate: Roles.admin,
     lazy: true
   })
   theHelperIAmEscorting: HelpersBase
 
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.escort,
     allowApiUpdate: Roles.admin,
     lazy: true
   })
   escort: HelpersBase
 
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.leadHelper,
     allowApiUpdate: Roles.admin,
     lazy: true
   })
   leadHelper: HelpersBase
-  @Field({
+  @Fields.string({
     allowApiUpdate: Roles.admin,
     includeInApi: Roles.admin,
     translation: (l) => l.myGiftsURL
   })
   myGiftsURL: string
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: Roles.admin,
     includeInApi: Roles.admin
   })
   archive: boolean
 
-  @Field({
+  @Fields.dateOnly({
     allowApiUpdate: Allow.authenticated,
     includeInApi: Allow.authenticated
   })
-  @Fields.dateOnly()
   frozenTill: Date
-  @Field({
+  @Fields.string({
     allowApiUpdate: Roles.admin,
     includeInApi: Roles.admin,
     translation: (l) => l.helperInternalComment
@@ -192,7 +191,7 @@ export class HelpersBase extends IdEntity {
     }
   })
   blockedFamilies: string[]
-  @Field<Helpers>({
+  @Fields.boolean<Helpers>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -723,7 +722,7 @@ export class Helpers extends HelpersBase {
 
   static usingCompanyModule: boolean
 
-  @Field<Helpers>({
+  @Fields.string<Helpers>({
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
       let sql = new SqlBuilder()
@@ -742,29 +741,32 @@ export class Helpers extends HelpersBase {
   _disableDuplicateCheck = false
   public static emptyPassword = 'password'
 
-  @Field({ translation: (l) => l.phone, allowApiUpdate: isNotSmsSignIn })
+  @Field(() => Phone, {
+    translation: (l) => l.phone,
+    allowApiUpdate: isNotSmsSignIn
+  })
   phone: Phone
   @ChangeDateColumn()
   lastSignInDate: Date
-  @Field({
+  @Fields.string({
     dbName: 'password',
     includeInApi: false
   })
   realStoredPassword: string
-  @Field({ translation: (l) => l.socialSecurityNumber })
+  @Fields.string({ translation: (l) => l.socialSecurityNumber })
   socialSecurityNumber: string
-  @Field()
+  @Field(() => Email)
   email: Email
-  @Field()
+  @Fields.string()
   addressApiResult: string
-  @Field({ customInput: (i) => i.addressInput() })
+  @Fields.string({ customInput: (i) => i.addressInput() })
   preferredDistributionAreaAddress: string
   preferredDistributionAreaAddressHelper = new AddressHelper(
     () => this.$.preferredDistributionAreaAddress,
     () => this.$.addressApiResult,
     () => this.$.preferredDistributionAreaAddressCity
   )
-  @Field()
+  @Fields.string()
   preferredDistributionAreaAddressCity: string
 
   async setAsDefaultVolunteerToDeliveries(
@@ -873,9 +875,9 @@ export class Helpers extends HelpersBase {
     }
   }
 
-  @Field()
+  @Fields.string()
   addressApiResult2: string
-  @Field({
+  @Fields.string({
     dbName: 'preferredDistributionAreaAddress2',
     customInput: (i) => i.addressInput()
   })
@@ -885,10 +887,10 @@ export class Helpers extends HelpersBase {
     () => this.$.addressApiResult2,
     () => this.$.preferredFinishAddressCity
   )
-  @Field()
+  @Fields.string()
   preferredFinishAddressCity: string
 
-  @Field<Helpers>({
+  @Fields.string<Helpers>({
     inputType: 'password',
     allowApiUpdate: isNotSmsSignIn,
     serverExpression: (self) =>
@@ -907,28 +909,28 @@ export class Helpers extends HelpersBase {
     translation: (l) => l.remiderSmsDate
   })
   reminderSmsDate: Date
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   referredBy: string
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: Roles.admin,
     includeInApi: Roles.admin,
     dbName: 'isAdmin'
   })
   admin: boolean
-  @Field({
+  @Fields.boolean({
     translation: (l) => l.lab,
     allowApiUpdate: Roles.lab,
     includeInApi: Roles.lab
   })
   labAdmin: boolean
-  @Field({
+  @Fields.boolean({
     translation: (l) => l.indie,
     allowApiUpdate: Roles.admin,
     includeInApi: Roles.admin
   })
   isIndependent: boolean
 
-  @Field<Helpers>({
+  @Fields.boolean<Helpers>({
     translation: (l) => l.responsibleForAssign,
     allowApiUpdate: Roles.distCenterAdmin,
     includeInApi: Roles.distCenterAdmin,
@@ -951,7 +953,7 @@ export class Helpers extends HelpersBase {
     }
   })
   distCenterAdmin: boolean
-  @Field<Helpers>({
+  @Fields.boolean<Helpers>({
     allowApiUpdate: Roles.familyAdmin,
     includeInApi: Roles.familyAdmin,
 
@@ -973,16 +975,16 @@ export class Helpers extends HelpersBase {
     }
   })
   familyAdmin: boolean
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: Roles.admin,
     includeInApi: Roles.admin
   })
   caller: boolean
 
-  @Field({ translation: (l) => l.includeGroups })
+  @Field(() => GroupsValue, { translation: (l) => l.includeGroups })
   @DataControl<Helpers>({ visible: (self) => self.caller })
   includeGroups: GroupsValue
-  @Field({ translation: (l) => l.excludeGroups })
+  @Field(() => GroupsValue, { translation: (l) => l.excludeGroups })
   @DataControl<Helpers>({ visible: (self) => self.caller })
   excludeGroups: GroupsValue
   @Fields.integer({ translation: (l) => l.callQuota })
@@ -1069,7 +1071,7 @@ export class Helpers extends HelpersBase {
       title: remult.context.lang.sendMessageToVolunteer + ' ' + h.name
     })
   }
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin, paramTypes: [HelpersBase] })
   static async SendCustomMessageToCourier(h: HelpersBase, message: string) {
     return await new (
       await import('../asign-family/send-sms-action')

@@ -15,7 +15,7 @@ import { saveFamiliesToExcel } from '../families/families.component'
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component'
 import { Roles } from '../auth/roles'
-import { Field } from '../translate'
+import { Field, Fields } from '../translate'
 import {
   duplicateFamilies,
   DuplicateFamiliesController
@@ -27,27 +27,27 @@ import {
   styleUrls: ['./duplicate-families.component.scss']
 })
 export class DuplicateFamiliesComponent implements OnInit {
-  @Field({ translation: (l) => l.address })
+  @Fields.string({ translation: (l) => l.address })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   address: boolean
-  @Field({ translation: (l) => l.familyName })
+  @Fields.string({ translation: (l) => l.familyName })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   name: boolean = false
-  @Field({ translation: (l) => l.phone })
+  @Fields.string({ translation: (l) => l.phone })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   phone: boolean = false
-  @Field({ translation: (l) => l.activeDeliveries })
+  @Fields.string({ translation: (l) => l.activeDeliveries })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   onlyActive: boolean = true
-  @Field({ translation: (l) => l.socialSecurityNumber })
+  @Fields.string({ translation: (l) => l.socialSecurityNumber })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })

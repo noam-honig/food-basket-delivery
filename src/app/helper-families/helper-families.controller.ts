@@ -147,7 +147,7 @@ export class HelperFamiliesController {
     result.splice(15)
     return result
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin, paramTypes: [HelpersBase] })
   static async cancelAssignAllForHelperOnServer(helper: HelpersBase) {
     let dist: DistributionCenters = null
     await pagedRowsIterator(remult.repo(ActiveFamilyDeliveries), {
@@ -164,7 +164,7 @@ export class HelperFamiliesController {
     })
     await dist.SendMessageToBrowser(getLang().cancelAssignmentForHelperFamilies)
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({ allowed: Roles.distCenterAdmin, paramTypes: [HelpersBase] })
   static async okAllForHelperOnServer(helper: HelpersBase) {
     let dist: DistributionCenters = null
 

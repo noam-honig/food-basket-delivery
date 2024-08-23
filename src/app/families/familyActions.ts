@@ -45,7 +45,7 @@ export class SelfPickupStrategy {
     (x) => {
       x.newDelivery.deliverStatus =
         x.existingDelivery.deliverStatus == DeliveryStatus.SuccessPickedUp ||
-          x.existingDelivery.deliverStatus == DeliveryStatus.SelfPickup
+        x.existingDelivery.deliverStatus == DeliveryStatus.SelfPickup
           ? DeliveryStatus.SelfPickup
           : DeliveryStatus.ReadyForDelivery
     }
@@ -73,37 +73,37 @@ export class SelfPickupStrategy {
       newDelivery: ActiveFamilyDeliveries
       family: Families
     }) => void
-  ) { }
+  ) {}
 }
 
 @Controller('NewDelivery')
 export class NewDelivery extends ActionOnRows<Families> {
-  @Field({ translation: (l) => l.useFamilyDefaultBasketType })
+  @Fields.boolean({ translation: (l) => l.useFamilyDefaultBasketType })
   useFamilyBasket: boolean = true
-  @Field()
+  @Field(() => BasketType)
   basketType: BasketType
-  @Field({ translation: (l) => l.useFamilyQuantity })
+  @Fields.boolean({ translation: (l) => l.useFamilyQuantity })
   useFamilyQuantity: boolean = true
-  @Field({ translation: (l) => l.useFamilyMembersAsQuantity })
+  @Fields.boolean({ translation: (l) => l.useFamilyMembersAsQuantity })
   useFamilyMembersAsQuantity: boolean
   @Fields.quantity()
   quantity: number
-  @Field({ translation: (l) => l.useFamilyDistributionList })
+  @Fields.boolean({ translation: (l) => l.useFamilyDistributionList })
   useFamilyDistributionList: boolean = true
-  @Field()
+  @Field(() => DistributionCenters)
   distributionCenter: DistributionCenters
-  @Field({ translation: (l) => l.defaultVolunteer })
+  @Fields.boolean({ translation: (l) => l.defaultVolunteer })
   useDefaultVolunteer: boolean = true
-  @Field()
+  @Field(() => HelpersBase)
   courier: HelpersBase
-  @Field()
+  @Field(() => SelfPickupStrategy)
   @DataControl({
     valueList: gvl(SelfPickupStrategy).filter(
       (x) => x != SelfPickupStrategy.byCurrentDelivery
     )
   })
   selfPickup: SelfPickupStrategy = SelfPickupStrategy.familyDefault
-  @Field({
+  @Field(() => GroupsValue, {
     translation: (l) => l.excludeGroups
   })
   excludeGroups: GroupsValue
@@ -154,7 +154,6 @@ export class NewDelivery extends ActionOnRows<Families> {
         ]
       },
 
-
       title: getLang().newDelivery,
       icon: 'add_shopping_cart',
       forEach: async (f) => {
@@ -186,7 +185,7 @@ export class NewDelivery extends ActionOnRows<Families> {
         let count = await fd.duplicateCount()
         if (count == 0) await fd.save()
       },
-      onEnd: async () => { }
+      onEnd: async () => {}
     })
   }
 }
@@ -224,12 +223,12 @@ export class UpdateGroupStrategy {
       val: string,
       set: (newVal: GroupsValue) => void
     ) => void
-  ) { }
+  ) {}
 }
 
 @Controller('updateGroup')
 export class updateGroup extends ActionOnRows<Families> {
-  @Field({
+  @Fields.string({
     translation: (l) => l.familyGroup
   })
   @DataControl({
@@ -242,7 +241,7 @@ export class updateGroup extends ActionOnRows<Families> {
       ).map(({ id, caption }) => ({ id, caption }))
   })
   group: string
-  @Field()
+  @Field(() => UpdateGroupStrategy)
   action: UpdateGroupStrategy = UpdateGroupStrategy.add
   constructor() {
     super(Families, {
@@ -258,15 +257,15 @@ export class updateGroup extends ActionOnRows<Families> {
 
 @Controller('UpdateFamilyStatus')
 export class UpdateStatus extends ActionOnRows<Families> {
-  @Field()
+  @Field(() => FamilyStatus)
   status: FamilyStatus = FamilyStatus.Active
-  @Field({ translation: (l) => l.archiveFinishedDeliveries })
+  @Fields.boolean({ translation: (l) => l.archiveFinishedDeliveries })
   archiveFinshedDeliveries: boolean = true
-  @Field({ translation: (l) => l.deletePendingDeliveries })
+  @Fields.boolean({ translation: (l) => l.deletePendingDeliveries })
   deletePendingDeliveries: boolean = true
-  @Field({ translation: (l) => l.internalComment })
+  @Fields.string({ translation: (l) => l.internalComment })
   comment: string
-  @Field({ translation: (l) => l.deleteExistingComment })
+  @Fields.boolean({ translation: (l) => l.deleteExistingComment })
   deleteExistingComment: boolean
 
   constructor() {
@@ -322,7 +321,7 @@ export class UpdateStatus extends ActionOnRows<Families> {
 }
 @Controller('UpdateFamilyBasketType')
 export class UpdateBasketType extends ActionOnRows<Families> {
-  @Field()
+  @Field(() => BasketType)
   basket: BasketType
 
   constructor() {
@@ -337,9 +336,9 @@ export class UpdateBasketType extends ActionOnRows<Families> {
 
 @Controller('UpdateSelfPickup')
 export class UpdateSelfPickup extends ActionOnRows<Families> {
-  @Field({ translation: (l) => l.selfPickup })
+  @Fields.boolean({ translation: (l) => l.selfPickup })
   selfPickup: boolean
-  @Field({ translation: (l) => l.updateExistingDeliveries })
+  @Fields.boolean({ translation: (l) => l.updateExistingDeliveries })
   updateExistingDeliveries: boolean
 
   constructor() {
@@ -372,7 +371,7 @@ export class UpdateSelfPickup extends ActionOnRows<Families> {
 }
 @Controller('UpdateArea')
 export class UpdateArea extends ActionOnRows<Families> {
-  @Field({ translation: (l) => l.region })
+  @Fields.string({ translation: (l) => l.region })
   area: string
 
   constructor() {
@@ -400,7 +399,7 @@ export class UpdateQuantity extends ActionOnRows<Families> {
 }
 @Controller('UpdateFamilySource')
 export class UpdateFamilySource extends ActionOnRows<Families> {
-  @Field()
+  @Field(() => FamilySources)
   familySource: FamilySources
 
   constructor() {
@@ -441,9 +440,9 @@ export class SendSmsToFamilies extends ActionOnRows<Families> {
 }
 @Controller('UpdateDefaultVolunteer')
 export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
-  @Field({ translation: (l) => l.clearVolunteer })
+  @Fields.boolean({ translation: (l) => l.clearVolunteer })
   clearVoulenteer: boolean
-  @Field()
+  @Field(() => HelpersBase)
   courier: HelpersBase
   constructor() {
     super(Families, {
@@ -466,7 +465,9 @@ export class UpdateDefaultVolunteer extends ActionOnRows<Families> {
 }
 @Controller('UpdateDefaultDistributionList')
 export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
-  @Field({ translation: (l) => l.defaultDistributionCenter })
+  @Field(() => DistributionCenters, {
+    translation: (l) => l.defaultDistributionCenter
+  })
   distributionCenter: DistributionCenters
   constructor() {
     super(Families, {
@@ -486,7 +487,7 @@ export class UpdateDefaultDistributionList extends ActionOnRows<Families> {
 export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<ActiveFamilyDeliveries> {
   processedFamilies = new Map<string, boolean>()
 
-  @Field()
+  @Field(() => undefined)
   familyActionInfo: any
   constructor(public orig: ActionOnRows<Families>) {
     super(
@@ -531,9 +532,9 @@ export abstract class bridgeFamilyDeliveriesToFamilies extends ActionOnRows<Acti
       },
       {
         serializeOnClient: async () =>
-        (this.familyActionInfo = (
-          getControllerRef(orig) as unknown as controllerRefImpl
-        ).toApiJson()),
+          (this.familyActionInfo = (
+            getControllerRef(orig) as unknown as controllerRefImpl
+          ).toApiJson()),
         deserializeOnServer: async () =>
           await (
             getControllerRef(orig) as unknown as controllerRefImpl

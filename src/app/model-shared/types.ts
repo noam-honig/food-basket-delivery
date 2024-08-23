@@ -15,7 +15,8 @@ import {
   use,
   Field,
   FieldType,
-  TranslatedCaption
+  TranslatedCaption,
+  Fields
 } from '../translate'
 import moment from 'moment'
 import { Sites, getLang } from '../sites/sites'
@@ -54,7 +55,7 @@ export function DateTimeColumn<entityType = unknown>(
     | ((options: FieldOptions<entityType, Date>) => void)
   )[]
 ) {
-  return Field<entityType, Date>(
+  return Fields.date<entityType>(
     {
       ...{ displayValue: (e, x) => (x ? x.toLocaleString('he-il') : '') },
       ...settings

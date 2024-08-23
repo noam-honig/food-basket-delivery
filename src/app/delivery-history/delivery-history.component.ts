@@ -45,9 +45,9 @@ export class DeliveryHistoryComponent implements OnInit {
 
   @ViewChild(DateRangeComponent, { static: true }) dateRange
 
-  @Field({ translation: (l) => l.showOnlyCompletedDeliveries })
+  @Fields.boolean({ translation: (l) => l.showOnlyCompletedDeliveries })
   onlyDone: boolean = true
-  @Field({ translation: (l) => l.showOnlyArchivedDeliveries })
+  @Fields.boolean({ translation: (l) => l.showOnlyArchivedDeliveries })
   onlyArchived: boolean = false
   get $() {
     return getFields<DeliveryHistoryComponent>(this, remult)
@@ -382,11 +382,11 @@ export class DeliveryHistoryComponent implements OnInit {
 
 @Entity(undefined)
 export class helperHistoryInfo extends EntityBase {
-  @Field()
+  @Fields.string()
   courier: string
-  @Field({ translation: (l) => l.volunteerName })
+  @Fields.string({ translation: (l) => l.volunteerName })
   name: string
-  @Field({ translation: (l) => l.phone })
+  @Field(() => Phone, { translation: (l) => l.phone })
   phone: Phone
   @CompanyColumn()
   company: string
@@ -404,8 +404,8 @@ export class helperHistoryInfo extends EntityBase {
   giftsConsumed: number
   @Fields.integer({ caption: 'מתנות זמינות' })
   giftsPending: number
-  @Field({ translation: (l) => l.firstDelivery })
+  @Fields.string({ translation: (l) => l.firstDelivery })
   firstDelivery: string
-  @Field({ translation: (l) => l.lastDelivery })
+  @Fields.string({ translation: (l) => l.lastDelivery })
   lastDelivery: string
 }

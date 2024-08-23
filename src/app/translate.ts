@@ -10,7 +10,8 @@ import {
   Remult,
   Fields as OrigFields,
   Repository,
-  getValueList
+  getValueList,
+  type StringFieldOptions
 } from 'remult'
 import { en } from './languages/en'
 import { getLang, Sites } from './sites/sites'
@@ -144,6 +145,15 @@ function adjustSettings<entityType, valueType>(
   return opts
 }
 export function Field<entityType = unknown, valueType = unknown>(
+  valueType:
+    | (() => valueType extends number
+        ? Number
+        : valueType extends string
+        ? String
+        : valueType extends boolean
+        ? Boolean
+        : ClassType<valueType>)
+    | undefined,
   settings?: FieldOptions<entityType, valueType> & TranslatedCaption,
   ...options: (
     | FieldOptions<entityType, valueType>
@@ -151,19 +161,26 @@ export function Field<entityType = unknown, valueType = unknown>(
   )[]
 ) {
   return origField<entityType, valueType>(
-    undefined,
+    valueType,
     ...adjustSettings(settings, options)
   )
 }
 
 export class Fields {
-  static string<entityType = unknown>(
-    options?: FieldOptions<entityType, string>
+  static string<entityType = unknown, valueType = string>(
+    ...options: (
+      | (StringFieldOptions<entityType, valueType> & TranslatedCaption)
+      | ((
+          options: StringFieldOptions<entityType, valueType>,
+          remult: Remult
+        ) => void)
+    )[]
   ) {
-    return OrigFields.string(options)
+    return OrigFields.string(...options)
   }
+  static object = OrigFields.object
   static boolean<entityType = unknown>(
-    options?: FieldOptions<entityType, boolean>
+    options?: FieldOptions<entityType, boolean> & TranslatedCaption
   ) {
     return OrigFields.boolean(options)
   }
@@ -175,6 +192,15 @@ export class Fields {
     )[]
   ) {
     return OrigFields.integer<entityType>(...adjustSettings(settings, options))
+  }
+  static number<entityType = unknown>(
+    settings?: FieldOptions<entityType, number> & TranslatedCaption,
+    ...options: (
+      | FieldOptions<entityType, number>
+      | ((options: FieldOptions<entityType, number>, remult: Remult) => void)
+    )[]
+  ) {
+    return OrigFields.number<entityType>(...adjustSettings(settings, options))
   }
   static quantity<entityType>(
     settings?: FieldOptions<entityType, number> & TranslatedCaption,
@@ -196,6 +222,15 @@ export class Fields {
     )[]
   ) {
     return OrigFields.dateOnly<entityType>(...adjustSettings(settings, options))
+  }
+  static date<entityType = unknown>(
+    settings?: FieldOptions<entityType, Date> & TranslatedCaption,
+    ...options: (
+      | FieldOptions<entityType, Date>
+      | ((options: FieldOptions<entityType, Date>, remult: Remult) => void)
+    )[]
+  ) {
+    return OrigFields.date<entityType>(...adjustSettings(settings, options))
   }
 }
 

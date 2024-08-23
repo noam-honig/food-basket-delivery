@@ -41,7 +41,7 @@ import {
   ApplicationSettings,
   getCustomColumnVisible
 } from '../manage/ApplicationSettings'
-import { Field, use } from '../translate'
+import { Field, Fields, use } from '../translate'
 import { getLang } from '../sites/sites'
 
 import { Groups } from '../manage/groups'
@@ -902,18 +902,18 @@ export class ImportFromExcelComponent implements OnInit {
   newRows: excelRowInfo[] = []
   identicalRows: excelRowInfo[] = []
   updateRows: excelRowInfo[] = []
-  @Field({ translation: (l) => l.defineDeliveriesForFamiliesInExcel })
+  @Fields.boolean({ translation: (l) => l.defineDeliveriesForFamiliesInExcel })
   addDelivery: boolean
-  @Field({
+  @Fields.boolean({
     translation: (l) =>
       l.ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery
   })
   compareBasketType: boolean
-  @Field({ translation: (l) => l.basketType })
+  @Field(() => BasketType, { translation: (l) => l.basketType })
   defaultBasketType: BasketType
-  @Field({ translation: (l) => l.distributionList })
+  @Field(() => DistributionCenters, { translation: (l) => l.distributionList })
   distributionCenter: DistributionCenters
-  @Field({ translation: (l) => l.useFamilyMembersAsQuantity })
+  @Fields.boolean({ translation: (l) => l.useFamilyMembersAsQuantity })
   useFamilyMembersAsNumOfBaskets: boolean
   get $() {
     return getFields<ImportFromExcelComponent>(this, remult)

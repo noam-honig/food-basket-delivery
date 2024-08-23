@@ -156,7 +156,8 @@ export abstract class ActionOnRows<T extends IdEntity> {
 
   @BackendMethod<ActionOnRows<any>>({
     allowed: (self) => remult.isAllowed(self.args.allowed),
-    queue: true
+    queue: true,
+    paramTypes: [Object, ProgressListener]
   })
   async execute(info: packetServerUpdateInfo, progress?: ProgressListener) {
     await this.serialHelper?.deserializeOnServer()

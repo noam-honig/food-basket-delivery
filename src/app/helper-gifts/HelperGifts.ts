@@ -5,7 +5,7 @@ import { ChangeDateColumn } from '../model-shared/types'
 import { Helpers, HelpersBase } from '../helpers/helpers'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { MyGiftsDialogComponent } from './my-gifts-dialog.component'
-import { Field, use } from '../translate'
+import { Field, Fields, use } from '../translate'
 import { UITools } from '../helpers/init-context'
 
 @Entity<HelperGifts>('HelperGifts', {
@@ -44,13 +44,19 @@ import { UITools } from '../helpers/init-context'
   }
 })
 export class HelperGifts extends IdEntity {
-  @Field({ translation: (l) => l.myGiftsURL, allowApiUpdate: Roles.admin })
+  @Fields.string({
+    translation: (l) => l.myGiftsURL,
+    allowApiUpdate: Roles.admin
+  })
   giftURL: string
   @ChangeDateColumn({ translation: (l) => l.createDate })
   dateCreated: Date
-  @Field({ translation: (l) => l.createUser, allowApiUpdate: false })
+  @Field(() => Helpers, {
+    translation: (l) => l.createUser,
+    allowApiUpdate: false
+  })
   userCreated: Helpers
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.volunteer,
     allowApiUpdate: Roles.admin,
     clickWithTools: (x, col, ui) => {
@@ -64,11 +70,14 @@ export class HelperGifts extends IdEntity {
   assignedToHelper: HelpersBase
   @ChangeDateColumn({ translation: (l) => l.dateGranted })
   dateGranted: Date
-  @Field({ translation: (l) => l.assignUser, allowApiUpdate: false })
+  @Field(() => Helpers, {
+    translation: (l) => l.assignUser,
+    allowApiUpdate: false
+  })
   assignedByUser: Helpers
-  @Field({ caption: 'מתנה מומשה' })
+  @Fields.boolean({ caption: 'מתנה מומשה' })
   wasConsumed: boolean
-  @Field()
+  @Fields.boolean()
   wasClicked: boolean
 
   @BackendMethod({ allowed: Roles.admin })
@@ -106,7 +115,7 @@ export class HelperGifts extends IdEntity {
       }
     }
   }
-  @BackendMethod({ allowed: true })
+  @BackendMethod({ allowed: true, paramTypes: [Helpers] })
   static async getMyPendingGiftsCount(h: Helpers) {
     let gifts = await remult
       .repo(HelperGifts)
@@ -114,7 +123,7 @@ export class HelperGifts extends IdEntity {
     return gifts.length
   }
 
-  @BackendMethod({ allowed: true })
+  @BackendMethod({ allowed: true, paramTypes: [HelpersBase] })
   static async getMyFirstGiftURL(h: HelpersBase) {
     let gifts = await remult.repo(HelperGifts).find({
       where: { assignedToHelper: h, wasConsumed: false },

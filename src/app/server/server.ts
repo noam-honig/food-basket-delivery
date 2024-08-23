@@ -64,7 +64,7 @@ import { Groups } from '../manage/groups'
 import { GroupsStatsPerDistributionCenter } from '../manage/GroupsStatsPerDistributionCenter'
 import { GroupsStatsForAllDeliveryCenters } from '../manage/GroupsStatsForAllDeliveryCenters'
 import { VolunteerReportInfo } from '../print-volunteer/VolunteerReportInfo'
-import { RegisterURL } from '../resgister-url/regsiter-url'
+
 import { SitesEntity } from '../sites/sites.entity'
 import { SendSmsAction } from '../asign-family/send-sms-action'
 import { AsignFamilyController } from '../asign-family/asign-family.controller'
@@ -94,11 +94,9 @@ import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
 import { OrgEventsController } from '../org-events/org-events.controller'
 import { PreviousDeliveryController } from '../previous-delivery-comments/previous-delivery-comments.controller'
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs'
-import { donorForm } from '../register-donor/register-donor.controller'
 import { SelectCompanyController } from '../select-company/select-company.controller'
 import { SelectHelperController } from '../select-helper/select-helper.controller'
 import { SiteOverviewController } from '../site-overview/site-overview.controller'
-import { WeeklyReportMltController } from '../weekly-report-mlt/weekly-report-mlt.controller'
 import { DeliveryHistoryController } from '../delivery-history/delivery-history.controller'
 import { NewDelivery, SendSmsToFamilies } from '../families/familyActions'
 import {
@@ -170,7 +168,7 @@ const entities = [
   GroupsStatsForAllDeliveryCenters,
   GroupsStatsPerDistributionCenter,
   VolunteerReportInfo,
-  RegisterURL,
+
   GeocodeCache,
   SitesEntity,
   Families,
@@ -213,11 +211,11 @@ const controllers = [
   OrgEventsController,
   PreviousDeliveryController,
   VolunteerReportDefs,
-  donorForm,
+
   SelectCompanyController,
   SelectHelperController,
   SiteOverviewController,
-  WeeklyReportMltController,
+
   DeliveryHistoryController,
   NewDelivery,
   DeleteDeliveries,
@@ -519,16 +517,6 @@ s.parentNode.insertBefore(b, s);})();
       remult.context.getSite = () => 'test1'
       remult.dataProvider = await dataSource(remult)
       await InitContext(remult, undefined)
-      const fam = repo(Families)
-      var f = await fam.create({ phone1: new Phone('0507330590') })
-      console.log('a')
-      console.log({
-        p1: f.phone1,
-        p2: f.phone2,
-        p3: f.phone3,
-        toJson: fam.fields.phone1.valueConverter.toJson(f.phone1),
-        toInput: fam.fields.phone1.options.valueConverter.toInput.toString()
-      })
 
       if (false) {
         let h1 = await remult

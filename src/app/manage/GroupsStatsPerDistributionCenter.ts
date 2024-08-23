@@ -7,7 +7,7 @@ import {
   FamilyDeliveries
 } from '../families/FamilyDeliveries'
 import { Groups } from './groups'
-import { Field } from '../translate'
+import { Field, Fields } from '../translate'
 import { GroupsStats } from './manage.component'
 
 @Entity<GroupsStatsPerDistributionCenter>('GroupsStatsPerDistributionCenter', {
@@ -47,10 +47,10 @@ export class GroupsStatsPerDistributionCenter
   extends EntityBase
   implements GroupsStats
 {
-  @Field()
+  @Fields.string()
   name: string
-  @Field()
+  @Field(() => DistributionCenters)
   distCenter: DistributionCenters
-  @Field()
+  @Fields.number()
   familiesCount: number
 }

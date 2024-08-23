@@ -16,7 +16,10 @@ import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { SendSmsAction, SendSmsUtils } from '../asign-family/send-sms-action'
 
 export class DeliveryFollowUpController {
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [DistributionCenters]
+  })
   static async helpersStatus(distCenter: DistributionCenters) {
     let fd = SqlFor(remult.repo(FamilyDeliveries))
 
@@ -116,7 +119,7 @@ export class DeliveryFollowUpController {
       return res
     })
   }
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin, paramTypes: [String] })
   static async sendAttendanceReminder(ids: string[]) {
     const message = await remult
       .repo(MessageTemplate)

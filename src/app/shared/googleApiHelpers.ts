@@ -108,9 +108,9 @@ export async function GetGeoInformation(address: string) {
   allowApiCrud: Roles.admin
 })
 export class GeocodeCache extends EntityBase {
-  @Field()
+  @Fields.string()
   id: string
-  @Field()
+  @Fields.string()
   googleApiResult: string
   @DateTimeColumn()
   createDate: Date

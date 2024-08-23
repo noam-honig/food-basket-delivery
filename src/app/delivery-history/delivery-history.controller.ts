@@ -11,7 +11,10 @@ import { DeliveryStatus } from '../families/DeliveryStatus'
 import { DistributionCenters } from '../manage/distribution-centers'
 
 export class DeliveryHistoryController {
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({
+    allowed: Roles.admin,
+    paramTypes: [Date, Date, DistributionCenters, Boolean, Boolean]
+  })
   static async getHelperHistoryInfo(
     fromDate: Date,
     toDate: Date,

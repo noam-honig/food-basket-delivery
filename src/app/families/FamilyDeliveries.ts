@@ -392,12 +392,12 @@ export class FamilyDeliveries extends IdEntity {
     })
   }
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.familyIdInHagaiApp,
     allowApiUpdate: false
   })
   family: string
-  @Field({
+  @Fields.string({
     allowApiUpdate: false,
     translation: (l) => l.familyName,
     sqlExpression: async (entity) => {
@@ -411,7 +411,7 @@ export class FamilyDeliveries extends IdEntity {
   })
   name: string
 
-  @Field({
+  @Field(() => BasketType, {
     //translation: l => l.basketType,
     allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
   })
@@ -422,7 +422,7 @@ export class FamilyDeliveries extends IdEntity {
   @DataControl({ width: '100' })
   quantity: number
 
-  @Field<FamilyDeliveries, string>({
+  @Fields.string<FamilyDeliveries>({
     translation: (l) => l.items,
     clickWithTools: (_, fr, ui) => {
       editItems(fr, ui)
@@ -433,7 +433,7 @@ export class FamilyDeliveries extends IdEntity {
     return getSettings().isSytemForMlt && this.quantity > 10
   }
 
-  @Field({
+  @Field(() => DistributionCenters, {
     allowApiUpdate: Roles.admin
   })
   distributionCenter: DistributionCenters
@@ -441,9 +441,9 @@ export class FamilyDeliveries extends IdEntity {
   isDistCenterInactive() {
     return this.distributionCenter && this.distributionCenter.isFrozen
   }
-  @Field()
+  @Field(() => DeliveryStatus)
   deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery
-  @Field<FamilyDeliveries>({
+  @Field<FamilyDeliveries>(() => HelpersBase, {
     translation: (l) => l.volunteer,
     allowApiUpdate: Roles.distCenterAdmin,
     clickWithTools: async (self, _, ui) =>
@@ -454,24 +454,27 @@ export class FamilyDeliveries extends IdEntity {
       })
   })
   courier: HelpersBase
-  @Field({ translation: (l) => l.commentsWritteByVolunteer })
+  @Fields.string({ translation: (l) => l.commentsWritteByVolunteer })
   courierComments: string
   @ChangeDateColumn()
   courierCommentsDate: Date
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   internalDeliveryComment: string
   @Fields.integer({
     allowApiUpdate: true
   })
   routeOrder: number
-  @Field({ includeInApi: Roles.admin, translation: (l) => l.specialAsignment })
+  @Field(() => YesNo, {
+    includeInApi: Roles.admin,
+    translation: (l) => l.specialAsignment
+  })
   special: YesNo
   @ChangeDateColumn()
   deliveryStatusDate: Date
   relativeDeliveryStatusDate() {
     return relativeDateName({ d: this.deliveryStatusDate })
   }
-  @Field({
+  @Field(() => HelpersBase, {
     allowApiUpdate: false,
     translation: (l) => l.courierAsignUser,
     includeInApi: Roles.distCenterAdmin
@@ -479,7 +482,7 @@ export class FamilyDeliveries extends IdEntity {
   courierAssignUser: HelpersBase
   @ChangeDateColumn({ translation: (l) => l.courierAsignDate })
   courierAssingTime: Date
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.statusChangeUser,
     allowApiUpdate: false,
     includeInApi: Roles.admin
@@ -490,102 +493,102 @@ export class FamilyDeliveries extends IdEntity {
     translation: (l) => l.deliveryCreateDate
   })
   createDate: Date
-  @Field({
+  @Field(() => HelpersBase, {
     includeInApi: Roles.admin,
     translation: (l) => l.deliveryCreateUser,
     allowApiUpdate: false
   })
   createUser: HelpersBase
-  @Field({
+  @Fields.boolean({
     translation: (l) => l.requireFollowUp
   })
   needsWork: boolean
 
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.requireFollowUpUpdateUser,
     includeInApi: Roles.distCenterAdmin
   })
   needsWorkUser: HelpersBase
   @ChangeDateColumn({ translation: (l) => l.requireFollowUpUpdateDate })
   needsWorkDate: Date
-  @Field({
+  @Fields.string({
     translation: (l) => l.commentForVolunteer,
     allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
   })
   deliveryComments: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.commentForReception,
     allowApiUpdate: [Roles.lab, Roles.callPerson]
   })
   receptionComments: string
-  @Field({
+  @Field(() => FamilySources, {
     includeInApi: Roles.admin,
     allowApiUpdate: false,
     translation: (l) => l.familySource
   })
   familySource: FamilySources
-  @Field({
+  @Field(() => GroupsValue, {
     includeInApi: Roles.distCenterAdmin,
     allowApiUpdate: false
   })
   groups: GroupsValue
 
-  @Field({
+  @Fields.string({
     allowApiUpdate: false
   })
   address: string
-  @Field({
+  @Fields.string({
     allowApiUpdate: false
   })
   floor: string
-  @Field({
+  @Fields.string({
     allowApiUpdate: false
   })
   appartment: string
-  @Field({
+  @Fields.string({
     allowApiUpdate: false
   })
   entrance: string
-  @Field({
+  @Fields.string({
     allowApiUpdate: false
   })
   buildingCode: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.cityAutomaticallyUpdatedByGoogle,
     allowApiUpdate: false
   })
   city: string
-  @Field({ translation: (l) => l.region, allowApiUpdate: false })
+  @Fields.string({ translation: (l) => l.region, allowApiUpdate: false })
   area: string
-  @Field({
+  @Fields.string({
     allowApiUpdate: false
   })
   addressComment: string
-  @Field({
+  @Fields.number({
     allowApiUpdate: false
   })
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLongitude: number
-  @Field({
+  @Fields.number({
     allowApiUpdate: false
   })
   addressLatitude: number
-  @Field({
+  @Fields.number({
     allowApiUpdate: false
   })
   //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
   drivingLongitude: number
-  @Field({
+  @Fields.number({
     allowApiUpdate: false
   })
   drivingLatitude: number
-  @Field({ allowApiUpdate: false })
+  @Fields.string({ allowApiUpdate: false })
   addressByGoogle: string
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: false
   })
   addressOk: boolean
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.defaultVolunteer,
     allowApiUpdate: false,
     includeInApi: Roles.distCenterAdmin
@@ -593,49 +596,49 @@ export class FamilyDeliveries extends IdEntity {
   fixedCourier: HelpersBase
   @Fields.integer({ allowApiUpdate: false })
   familyMembers: number
-  @Field({
+  @Field(() => Phone, {
     dbName: 'phone',
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone1: Phone
-  @Field({
+  @Fields.string({
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone1Description: string
-  @Field({
+  @Field(() => Phone, {
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone2: Phone
-  @Field({
+  @Fields.string({
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone2Description: string
-  @Field({
+  @Field(() => Phone, {
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone3: Phone
-  @Field({
+  @Fields.string({
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone3Description: string
-  @Field({
+  @Field(() => Phone, {
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone4: Phone
-  @Field({
+  @Fields.string({
     includeInApi: () => includePhoneInApi(),
     allowApiUpdate: false
   })
   phone4Description: string
 
-  @Field<FamilyDeliveries>({
+  @Fields.boolean<FamilyDeliveries>({
     sqlExpression: async (self) => {
       var sql = new SqlBuilder()
 
@@ -668,7 +671,7 @@ export class FamilyDeliveries extends IdEntity {
     }
   })
   courierBeenHereBefore: boolean
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: (c) =>
       remult.authenticated() &&
       (getSettings().isSytemForMlt || remult.isAllowed(Roles.familyAdmin))
@@ -680,11 +683,14 @@ export class FamilyDeliveries extends IdEntity {
   })
   archiveDate: Date
 
-  @Field({ allowApiUpdate: false, allowNull: true })
+  @Fields.date({ allowApiUpdate: false, allowNull: true })
   onTheWayDate: Date
-  @Field({ includeInApi: Roles.admin, translation: (l) => l.archiveUser })
+  @Field(() => HelpersBase, {
+    includeInApi: Roles.admin,
+    translation: (l) => l.archiveUser
+  })
   archiveUser: HelpersBase
-  @Field<FamilyDeliveries>({
+  @Fields.boolean<FamilyDeliveries>({
     sqlExpression: async (selfDefs) => {
       var sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -710,7 +716,7 @@ export class FamilyDeliveries extends IdEntity {
     }
   })
   visibleToCourier: boolean
-  @Field<FamilyDeliveries>({
+  @Field<FamilyDeliveries>(() => MessageStatus, {
     sqlExpression: async (self) => {
       var sql = new SqlBuilder()
 
@@ -759,7 +765,7 @@ export class FamilyDeliveries extends IdEntity {
   @CustomColumn(() => questionForVolunteers[4])
   a4: string
 
-  @Field<FamilyDeliveries>({
+  @Fields.integer<FamilyDeliveries>({
     includeInApi: Roles.admin,
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
@@ -773,33 +779,33 @@ export class FamilyDeliveries extends IdEntity {
   })
   numOfPhotos: number
 
-  @Field({
+  @Field(() => HelpersBase, {
     includeInApi: Roles.callPerson,
     allowApiUpdate: Roles.callPerson,
     translation: (l) => l.caller
   })
   caller: HelpersBase
-  @Field({
+  @Fields.string({
     includeInApi: Roles.callPerson,
     allowApiUpdate: Roles.callPerson,
     customInput: (c) => c.textArea()
   })
   callerComment: string
-  @Field({
+  @Fields.date({
     includeInApi: Roles.callPerson,
     allowApiUpdate: false,
     allowNull: true
   })
   lastCallDate: Date
-  @Field({ includeInApi: Roles.callPerson, allowApiUpdate: false })
+  @Fields.date({ includeInApi: Roles.callPerson, allowApiUpdate: false })
   callerAssignDate: Date
-  @Field({
+  @Fields.number({
     includeInApi: Roles.callPerson,
     allowApiUpdate: false,
     dbName: 'callCount'
   })
   callCounter: number
-  @Field<FamilyDeliveries>({
+  @Fields.string<FamilyDeliveries>({
     translation: (l) => l.familyHelpContact,
     includeInApi: Roles.distCenterAdmin,
     sqlExpression: async (selfDefs) => {
@@ -820,14 +826,14 @@ export class FamilyDeliveries extends IdEntity {
   })
   @Fields.boolean({ caption: 'דחוף', allowApiUpdate: Roles.familyAdmin })
   urgent: boolean = false
-  @Field({
+  @Field(() => DeliveryType, {
     allowApiUpdate: Roles.familyAdmin
   })
   deliveryType: DeliveryType = DeliveryType.delivery
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputPickupVolunteer
   })
-  @Field<FamilyDeliveries, HelpersBase>({
+  @Field<FamilyDeliveries, HelpersBase>(() => HelpersBase, {
     translation: (l) => 'מתנדב לאיסוף',
     allowApiUpdate: Roles.familyAdmin,
 
@@ -855,10 +861,10 @@ export class FamilyDeliveries extends IdEntity {
   })
   pickupVolunteer: HelpersBase
 
-  @Field({ allowApiUpdate: Roles.familyAdmin })
+  @Fields.string({ allowApiUpdate: Roles.familyAdmin })
   addressApiResult_2: string
 
-  @Field<FamilyDeliveries, string>({
+  @Fields.string<FamilyDeliveries>({
     allowApiUpdate: Roles.familyAdmin,
     translation: (t) => t.address + ' 2',
     customInput: (c) =>
@@ -882,12 +888,12 @@ export class FamilyDeliveries extends IdEntity {
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
-  @Field({
+  @Fields.string({
     translation: (t) => t.floor + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
   floor_2: string
-  @Field({
+  @Fields.string({
     translation: (t) => t.appartment + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
@@ -895,13 +901,13 @@ export class FamilyDeliveries extends IdEntity {
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
-  @Field({
+  @Fields.string({
     translation: (t) => t.entrance + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
   entrance_2: string
 
-  @Field({
+  @Fields.string({
     translation: (t) => t.addressComment + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
@@ -909,7 +915,7 @@ export class FamilyDeliveries extends IdEntity {
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
   addressComment_2: string
-  @Field({
+  @Fields.string({
     translation: (t) => t.phone1 + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
@@ -917,7 +923,7 @@ export class FamilyDeliveries extends IdEntity {
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
   phone1_2: Phone
-  @Field({
+  @Fields.string({
     translation: (t) => t.phone1Description + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
@@ -925,12 +931,12 @@ export class FamilyDeliveries extends IdEntity {
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
   phone1Description_2: string
-  @Field({ translation: (t) => t.phone2 + ' כתובת 2' })
+  @Fields.string({ translation: (t) => t.phone2 + ' כתובת 2' })
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
   phone2_2: Phone
-  @Field({ translation: (t) => t.phone2Description + ' כתובת 2' })
+  @Fields.string({ translation: (t) => t.phone2Description + ' כתובת 2' })
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
@@ -1574,41 +1580,43 @@ function logChanged(
   }
 })
 export class DeliveryChanges extends IdEntity {
-  @Field()
+  @Fields.string()
   deliveryId: string = ''
-  @Field({
+  @Fields.string({
     translation: (l) => l.family
   })
   deliveryName: string = ''
-  @Field()
+  @Fields.string()
   familyId: string = ''
-  @Field()
+  @Fields.string()
   appUrl: string = remult.context.requestRefererOnBackend
-  @Field()
+  @Fields.string()
   apiUrl: string = remult.context.requestUrlOnBackend
-  @Field({ translation: (l) => l.lastUpdateDate })
+  @Fields.date({ translation: (l) => l.lastUpdateDate })
   changeDate: Date = new Date()
-  @Field()
+  @Fields.string()
   userId: string = remult.user?.id
-  @Field({
+  @Fields.string({
     translation: (l) => l.lastUpdateUser
   })
   userName: string = remult.user?.name
   @DataControl({ width: '100' })
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.volunteer
   })
   courier: HelpersBase
   @DataControl({ width: '100' })
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.volunteer + ' ' + l.previous
   })
   previousCourier: HelpersBase
-  @Field({ translation: (l) => l.deliveryStatus })
+  @Field(() => DeliveryStatus, { translation: (l) => l.deliveryStatus })
   status: DeliveryStatus
-  @Field({ translation: (l) => l.deliveryStatus + ' ' + l.previous })
+  @Field(() => DeliveryStatus, {
+    translation: (l) => l.deliveryStatus + ' ' + l.previous
+  })
   previousDeliveryStatus: DeliveryStatus
   @DataControl({ width: '100' })
-  @Field()
+  @Fields.boolean()
   deleted: boolean
 }

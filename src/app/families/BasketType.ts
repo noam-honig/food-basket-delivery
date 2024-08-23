@@ -1,7 +1,7 @@
-import { Entity, IdEntity, Allow, Fields, FieldRef } from 'remult'
+import { Entity, IdEntity, Allow, FieldRef } from 'remult'
 
 import { Roles } from '../auth/roles'
-import { use, Field, FieldType } from '../translate'
+import { use, Fields, FieldType } from '../translate'
 import { getLang } from '../sites/sites'
 import {
   DataControl,
@@ -38,13 +38,13 @@ import { MyIdEntity } from './MyIdEntity'
   defaultOrderBy: { name: 'asc' }
 })
 export class BasketType extends MyIdEntity {
-  @Field({ translation: (l) => l.basketTypeName })
+  @Fields.string({ translation: (l) => l.basketTypeName })
   name: string
   @Fields.integer({}, (options) => (options.caption = BasketType.boxes1Name))
   boxes: number = 1
   @Fields.integer({}, (options) => (options.caption = BasketType.boxes2Name))
   boxes2: number = 0
-  @Field<BasketType, string>({
+  @Fields.string<BasketType, string>({
     translation: (l) => l.whatToTake,
     clickWithTools: (u, fr, ui) => editItems(fr, ui)
   })

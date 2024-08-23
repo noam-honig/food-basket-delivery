@@ -178,7 +178,7 @@ export class Event extends IdEntity {
       canceled: false
     }))
   }
-  @Field<Event>({
+  @Fields.boolean<Event>({
     serverExpression: async (self) =>
       self.volunteeredIsRegisteredToEvent(await remult.context.getCurrentUser())
   })
@@ -202,7 +202,11 @@ export class Event extends IdEntity {
     await this._.reload()
   }
 
-  @BackendMethod({ allowed: Roles.admin, queue: true })
+  @BackendMethod({
+    allowed: Roles.admin,
+    queue: true,
+    paramTypes: [ProgressListener]
+  })
   async sendParticipationConfirmMessage(progress?: ProgressListener) {
     let settings = await ApplicationSettings.getAsync()
     if (!settings.bulkSmsEnabled) throw 'אינך רשאי לשלוח הודעות לקבוצה'
@@ -232,7 +236,11 @@ export class Event extends IdEntity {
     }
     return 'נשלחו ' + i + ' הודעות'
   }
-  @BackendMethod({ allowed: Roles.admin, queue: true })
+  @BackendMethod({
+    allowed: Roles.admin,
+    queue: true,
+    paramTypes: [ProgressListener]
+  })
   async sendParticipationReminderMessageMessage(progress?: ProgressListener) {
     let settings = await ApplicationSettings.getAsync()
     if (!settings.bulkSmsEnabled) throw 'אינך רשאי לשלוח הודעות לקבוצה'
@@ -265,17 +273,17 @@ export class Event extends IdEntity {
     return 'נשלחו ' + i + ' הודעות'
   }
 
-  @Field<Event>({
+  @Fields.string<Event>({
     translation: (l) => l.eventName,
     validate: (s, c) =>
       Validators.required(remult.context.lang.nameIsTooShort)(s, c)
   })
   name: string
-  @Field()
+  @Field(() => EventType)
   type: EventType = EventType.foodDelivery
-  @Field()
+  @Field(() => eventStatus)
   eventStatus: eventStatus = eventStatus.active
-  @Field({
+  @Fields.string({
     translation: (l) => l.eventDescription,
     customInput: (x) => x.textArea()
   })
@@ -288,32 +296,32 @@ export class Event extends IdEntity {
     }
   })
   eventDate: Date = new Date()
-  @Field({ inputType: 'time', translation: (l) => l.eventTime })
+  @Fields.string({ inputType: 'time', translation: (l) => l.eventTime })
   @DataControl({ width: '110' })
   startTime: string
-  @Field({ inputType: 'time', translation: (l) => l.eventEndTime })
+  @Fields.string({ inputType: 'time', translation: (l) => l.eventEndTime })
   @DataControl({ width: '110' })
   endTime: string
   @Fields.integer({ translation: (l) => l.requiredVolunteers })
   requiredVolunteers: number
-  @Field()
+  @Fields.string()
   addressApiResult: string
-  @Field({ translation: (l) => l.address })
+  @Fields.string({ translation: (l) => l.address })
   address: string
   addressHelper = new AddressHelper(
     () => this.$.address,
     () => this.$.addressApiResult
   )
-  @Field<Event>({
+  @Field<Event>(() => DistributionCenters, {
     allowApiUpdate: Roles.admin
   })
   distributionCenter: DistributionCenters
 
-  @Field({ translation: (l) => l.phone1 })
+  @Field(() => Phone, { translation: (l) => l.phone1 })
   phone1: Phone
-  @Field({ translation: (l) => l.phone1Description })
+  @Fields.string({ translation: (l) => l.phone1Description })
   phone1Description: string
-  @Field<Event>({
+  @Fields.integer<Event>({
     translation: (l) => l.attendingVolunteers,
     sqlExpression: async (selfDefs) => {
       var vie = SqlFor(remult.repo(volunteersInEvent))
@@ -329,7 +337,7 @@ export class Event extends IdEntity {
     }
   })
   registeredVolunteers: number
-  @Field<Event>({
+  @Fields.number<Event>({
     translation: (l) => l.confirmedVolunteers,
     sqlExpression: async (selfDefs) => {
       var vie = SqlFor(remult.repo(volunteersInEvent))
@@ -350,9 +358,9 @@ export class Event extends IdEntity {
   })
   confirmedVolunteers: number
 
-  @Field()
+  @Fields.string()
   specificUrl: string = ''
-  @Field()
+  @Fields.string()
   imageUrl: string = ''
 
   get eventLogo() {
@@ -564,12 +572,12 @@ export function mapFieldMetadataToFieldRef(
   }
 })
 export class volunteersInEvent extends IdEntity {
-  @Field()
+  @Fields.string()
   eventId: string
-  @Field()
+  @Fields.string()
   helper: HelpersBase
 
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     translation: (l) => l.volunteerName,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -584,7 +592,7 @@ export class volunteersInEvent extends IdEntity {
   })
   helperName: string
 
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     translation: (l) => l.volunteerComment,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -598,7 +606,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   volunteerComment: string
-  @Field<volunteersInEvent>({
+  @Field<volunteersInEvent>(() => Phone, {
     translation: (l) => l.volunteerPhoneNumber,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -612,7 +620,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   helperPhone: Phone
-  @Field<volunteersInEvent>({
+  @Fields.integer<volunteersInEvent>({
     translation: (l) => l.deliveriesAssigned,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -626,16 +634,16 @@ export class volunteersInEvent extends IdEntity {
   })
   assignedDeliveries: number
 
-  @Field({
+  @Fields.boolean({
     allowApiUpdate: Roles.distCenterAdmin,
     translation: (l) => l.confirmed
   })
   confirmed: boolean
 
-  @Field({ allowApiUpdate: Roles.distCenterAdmin })
+  @Fields.boolean({ allowApiUpdate: Roles.distCenterAdmin })
   canceled: boolean
 
-  @Field<volunteersInEvent>({
+  @Fields.integer<volunteersInEvent>({
     translation: (l) => l.delveriesSuccessfulEver,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -655,7 +663,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   succesfulDeliveries: number
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     translation: (l) => l.email,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -669,7 +677,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   helperEmail: string
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     translation: (l) => l.socialSecurityNumber,
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
@@ -683,7 +691,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   helperSocialSecurityNumber: string
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -696,7 +704,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   preferredDistributionAreaAddress: string
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -709,7 +717,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   preferredFinishAddress: string
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -722,7 +730,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   preferredDistributionAreaAddressCity: string
-  @Field<volunteersInEvent>({
+  @Fields.string<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -735,7 +743,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   preferredFinishAddressCity: string
-  @Field<volunteersInEvent>({
+  @Fields.date<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -748,7 +756,7 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   lastSmsTime: Date
-  @Field<volunteersInEvent>({
+  @Fields.date<volunteersInEvent>({
     sqlExpression: async (selfDefs) => {
       let sql = new SqlBuilder()
       let self = SqlFor(selfDefs)
@@ -762,19 +770,25 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   lastAssignTime: Date
-  @Field({ translation: (l) => l.duplicateForNextEvent })
+  @Fields.boolean({ translation: (l) => l.duplicateForNextEvent })
   duplicateToNextEvent: boolean
   @ChangeDateColumn({ translation: (l) => l.createDate })
   createDate: Date
-  @Field({ translation: (l) => l.createUser, allowApiUpdate: false })
+  @Field(() => HelpersBase, {
+    translation: (l) => l.createUser,
+    allowApiUpdate: false
+  })
   createUser: HelpersBase
 
   @ChangeDateColumn()
   registerStatusDate: Date
-  @Field({ translation: (l) => l.cancelUser, allowApiUpdate: false })
+  @Field(() => HelpersBase, {
+    translation: (l) => l.cancelUser,
+    allowApiUpdate: false
+  })
   cancelUser: HelpersBase
 
-  @Field({ allowApiUpdate: false })
+  @Fields.boolean({ allowApiUpdate: false })
   fromGeneralList: boolean
 
   @CustomColumn(() => registerQuestionForVolunteers[1])

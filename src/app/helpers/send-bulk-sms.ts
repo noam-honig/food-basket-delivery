@@ -18,7 +18,7 @@ import { messageMerger } from '../edit-custom-message/messageMerger'
 import { Sites } from '../sites/sites'
 import { SendSmsUtils } from '../asign-family/send-sms-action'
 import { UITools } from './init-context'
-import { Field } from '../translate'
+import { Fields } from '../translate'
 
 @Controller('SendBulkSms')
 export class SendBulkSms {
@@ -132,11 +132,11 @@ export class SendBulkSms {
       ]
     })
   }
-  @Field({ caption: 'רק כאלו שהתנדבו בעבר בעיר' })
+  @Fields.string({ caption: 'רק כאלו שהתנדבו בעבר בעיר' })
   city: string = ''
-  @Field({ caption: 'הגבלת מספר הודעות' })
+  @Fields.integer({ caption: 'הגבלת מספר הודעות' })
   limit: number = 100
-  @Field({ caption: 'הגבלת שעות משליחה קודמת' })
+  @Fields.integer({ caption: 'הגבלת שעות משליחה קודמת' })
   hours: number = 48
 
   @BackendMethod({ allowed: Roles.admin })

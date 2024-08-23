@@ -29,7 +29,11 @@ import { Location } from '../shared/googleApiHelpers'
 export class OverviewController {
   static mySiteInfo = new Map<string, siteItem>()
   static stats = {}
-  @BackendMethod({ allowed: Roles.overview, queue: true })
+  @BackendMethod({
+    allowed: Roles.overview,
+    queue: true,
+    paramTypes: [Boolean, Object, ProgressListener]
+  })
   static async getOverview(
     full: boolean,
     dateRange?: { from: string; to: string; rangeName: string },

@@ -14,7 +14,10 @@ export class SendSmsAction {
       .replace('!ORG!', orgName)
       .replace('!משפחה!', family)
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [HelpersBase, Boolean]
+  })
   static async SendSms(h: HelpersBase, reminder: Boolean) {
     try {
       await SendSmsAction.generateMessage(

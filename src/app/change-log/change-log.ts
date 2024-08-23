@@ -4,7 +4,6 @@ import {
   EntityMetadata,
   EntityRef,
   FieldRef,
-  Fields,
   FieldsRef,
   FieldType,
   getEntityRef,
@@ -13,7 +12,7 @@ import {
   remult
 } from 'remult'
 import { Roles } from '../auth/roles'
-import { Field } from '../translate'
+import { Fields } from '../translate'
 
 @Entity<ChangeLog>('changeLog', {
   allowApiRead: Roles.admin,
@@ -22,25 +21,25 @@ import { Field } from '../translate'
   }
 })
 export class ChangeLog extends IdEntity {
-  @Field()
+  @Fields.string()
   relatedId: string = ''
-  @Field()
+  @Fields.string()
   relatedName: string = ''
-  @Field()
+  @Fields.string()
   entity: string = ''
-  @Field()
+  @Fields.string()
   appUrl: string = ''
-  @Field()
+  @Fields.string()
   apiUrl: string = ''
-  @Field()
+  @Fields.date()
   changeDate: Date = new Date()
-  @Field()
+  @Fields.string()
   userId: string
-  @Field()
+  @Fields.string()
   userName: string
-  @Field()
+  @Fields.object()
   changes: change[] = []
-  @Field()
+  @Fields.object()
   changedFields: string[] = []
 }
 export interface changeEvent {

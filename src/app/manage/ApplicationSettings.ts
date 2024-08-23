@@ -2,7 +2,6 @@ import {
   BackendMethod,
   Allowed,
   EntityBase,
-  FieldRef,
   FieldMetadata,
   Allow,
   isBackend,
@@ -19,7 +18,7 @@ export function CustomColumn(
       valueList: () => info().values?.map((x) => ({ id: x, caption: x })),
       visible: () => info().visible
     })(target, key)
-    return Field(
+    return Fields.string(
       {
         includeInApi: includeInApi
       },
@@ -192,7 +191,7 @@ export class ApplicationSettings extends EntityBase {
       this.questionForRegistration4Values
     )
   }
-  @Field<ApplicationSettings>({
+  @Fields.boolean<ApplicationSettings>({
     serverExpression: (self) =>
       !!self.smsCredentials?.password &&
       !!self.smsUsername &&
@@ -251,42 +250,42 @@ export class ApplicationSettings extends EntityBase {
 
   @Fields.integer()
   id: number
-  @Field()
+  @Fields.string()
   organisationName: string
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.smsMessageContentCaption,
     validate: validateSmsContent
   })
   smsText: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.smsReminderMessageContentCaption,
     validate: validateSmsContent
   })
   reminderSmsText: string
 
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   confirmEventParticipationMessage: string = ''
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.emailDonorContentCaption,
     validate: validateSmsContent
   })
   registerFamilyReplyEmailText: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.emailHelperContentCaption,
     validate: validateSmsContent
   })
   registerHelperReplyEmailText: string
-  @Field({ caption: 'gMail UserName', includeInApi: Roles.admin })
+  @Fields.string({ caption: 'gMail UserName', includeInApi: Roles.admin })
   gmailUserName: string
-  @Field({ caption: 'gMail password', includeInApi: Roles.admin })
+  @Fields.string({ caption: 'gMail password', includeInApi: Roles.admin })
   gmailPassword: string
-  @Field()
+  @Fields.string()
   logoUrl: string
-  @Field()
+  @Fields.string()
   addressApiResult: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.deliveryCenterAddress,
     customInput: (i) => i.addressInput()
   })
@@ -295,19 +294,19 @@ export class ApplicationSettings extends EntityBase {
     () => this.$.address,
     () => this.$.addressApiResult
   )
-  @Field({ translation: (l) => l.successMessageColumnName })
+  @Fields.string({ translation: (l) => l.successMessageColumnName })
   commentForSuccessDelivery: string
-  @Field({ translation: (l) => l.leftByDoorMessageColumnName })
+  @Fields.string({ translation: (l) => l.leftByDoorMessageColumnName })
   commentForSuccessLeft: string
-  @Field({ translation: (l) => l.problemCommentColumnName })
+  @Fields.string({ translation: (l) => l.problemCommentColumnName })
   commentForProblem: string
-  @Field({ translation: (l) => l.messageForVolunteerWhenDoneCaption })
+  @Fields.string({ translation: (l) => l.messageForVolunteerWhenDoneCaption })
   messageForDoneDelivery: string
-  @Field({ translation: (l) => l.helpName })
+  @Fields.string({ translation: (l) => l.helpName })
   helpText: string
-  @Field()
+  @Field(() => Phone)
   helpPhone: Phone
-  @Field()
+  @Fields.string()
   phoneStrategy: string
 
   getPhoneStrategy(): PhoneItem[] {
@@ -330,69 +329,72 @@ export class ApplicationSettings extends EntityBase {
       return []
     }
   }
-  @Field()
+  @Fields.string()
   commonQuestions: string
   @Fields.integer({ allowApiUpdate: false })
   dataStructureVersion: number
-  @Field({ translation: (l) => l.successButtonSettingName })
+  @Fields.string({ translation: (l) => l.successButtonSettingName })
   deliveredButtonText: string
-  @Field({ translation: (l) => l.problemButtonSettingName })
+  @Fields.string({ translation: (l) => l.problemButtonSettingName })
   problemButtonText: string
-  @Field()
+  @Fields.string()
   AddressProblemStatusText: string
-  @Field()
+  @Fields.string()
   NotHomeProblemStatusText: string
-  @Field()
+  @Fields.string()
   DoNotWantProblemStatusText: string
-  @Field()
+  @Fields.string()
   OtherProblemStatusText: string
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.descriptionInOrganizationList,
     customInput: (x) => x.textArea()
   })
   descriptionInOrganizationList: string
-  @Field({ translation: (l) => l.phoneInOrganizationList })
+  @Field(() => Phone, { translation: (l) => l.phoneInOrganizationList })
   phoneInOrganizationList: Phone
-  @Field({ caption: 'צריכים מתנדבים' })
+  @Field(() => VolunteerNeedType, { caption: 'צריכים מתנדבים' })
   volunteerNeedStatus: VolunteerNeedType = VolunteerNeedType.none
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.freeText1ForVolunteer,
     customInput: (x) => x.textArea()
   })
   message1Text: string
-  @Field({ translation: (l) => l.urlFreeText1 })
+  @Fields.string({ translation: (l) => l.urlFreeText1 })
   message1Link: string
-  @Field({ translation: (l) => l.showText1OnlyWhenDone })
+  @Fields.boolean({ translation: (l) => l.showText1OnlyWhenDone })
   message1OnlyWhenDone: boolean
-  @Field({
+  @Fields.string({
     translation: (l) => l.freeText2ForVolunteer,
     customInput: (x) => x.textArea()
   })
   message2Text: string
-  @Field({ translation: (l) => l.urlFreeText2 })
+  @Fields.string({ translation: (l) => l.urlFreeText2 })
   message2Link: string
-  @Field({ translation: (l) => l.showText2OnlyWhenDone })
+  @Fields.boolean({ translation: (l) => l.showText2OnlyWhenDone })
   message2OnlyWhenDone: boolean
-  @Field({ translation: (l) => l.hideVolunteerVideo })
+  @Fields.boolean({ translation: (l) => l.hideVolunteerVideo })
   hideVolunteerVideo: boolean
-  @Field()
+  @Field(() => TranslationOptions)
   forWho: TranslationOptions = TranslationOptions.Families
   get lang() {
     return langByCode(this.forWho.args.languageFile)
   }
-  @Field({ dbName: 'forSoldiers' })
+  @Fields.boolean({ dbName: 'forSoldiers' })
   _old_for_soliders: boolean
-  @Field({ translation: (l) => l.enableSelfPickupModule })
+  @Fields.boolean({ translation: (l) => l.enableSelfPickupModule })
   usingSelfPickupModule: boolean
-  @Field()
+  @Fields.boolean()
   usingCallModule: boolean
-  @Field({ caption: 'הנחיה בראש המסך', customInput: (x) => x.textArea() })
+  @Fields.string({
+    caption: 'הנחיה בראש המסך',
+    customInput: (x) => x.textArea()
+  })
   callModuleMessageText: string
-  @Field({ caption: 'כתובת אינטרנט להנחיה בראש המסך' })
+  @Fields.string({ caption: 'כתובת אינטרנט להנחיה בראש המסך' })
   callModuleMessageLink: string
-  @Field({ includeInApi: Roles.familyAdmin })
+  @Fields.boolean({ includeInApi: Roles.familyAdmin })
   defaultDeliveryStatusIsEnquireDetails: boolean
   getDefaultStatus(): DeliveryStatus {
     return this.usingCallModule && this.defaultDeliveryStatusIsEnquireDetails
@@ -404,75 +406,77 @@ export class ApplicationSettings extends EntityBase {
     return this.forWho == TranslationOptions.donors
   }
 
-  @Field({ translation: (l) => l.showVolunteerCompany })
+  @Fields.boolean({ translation: (l) => l.showVolunteerCompany })
   showCompanies: boolean
-  @Field({ translation: (l) => l.activateEscort })
+  @Fields.boolean({ translation: (l) => l.activateEscort })
   manageEscorts: boolean
-  @Field()
+  @Fields.boolean()
   showHelperComment: boolean
-  @Field({ translation: (l) => l.filterFamilyGroups })
+  @Fields.boolean({ translation: (l) => l.filterFamilyGroups })
   showGroupsOnAssing: boolean
-  @Field({ translation: (l) => l.filterCity })
+  @Fields.boolean({ translation: (l) => l.filterCity })
   showCityOnAssing: boolean
-  @Field({ translation: (l) => l.filterRegion })
+  @Fields.boolean({ translation: (l) => l.filterRegion })
   showAreaOnAssing: boolean
-  @Field({ translation: (l) => l.filterBasketType })
+  @Fields.boolean({ translation: (l) => l.filterBasketType })
   showBasketOnAssing: boolean
-  @Field({ translation: (l) => l.selectNumberOfFamilies })
+  @Fields.boolean({ translation: (l) => l.selectNumberOfFamilies })
   showNumOfBoxesOnAssing: boolean
-  @Field({ translation: (l) => l.showLeftByHouseButton })
+  @Fields.boolean({ translation: (l) => l.showLeftByHouseButton })
   showLeftThereButton: boolean
-  @Field()
+  @Fields.boolean()
   redTitleBar: boolean
-  @Field({ translation: (l) => l.defaultPhonePrefixForExcelImport })
+  @Fields.string({ translation: (l) => l.defaultPhonePrefixForExcelImport })
   defaultPrefixForExcelImport: string
-  @Field()
+  @Fields.boolean()
   checkIfFamilyExistsInDb: boolean
-  @Field({ translation: (l) => l.existsInRemovedFromListStrategy })
+  @Field(() => RemovedFromListExcelImportStrategy, {
+    translation: (l) => l.existsInRemovedFromListStrategy
+  })
   removedFromListStrategy: RemovedFromListExcelImportStrategy
-  @Field()
+  @Fields.boolean()
   checkIfFamilyExistsInFile: boolean
-  @Field()
+  @Fields.boolean()
   excelImportAutoAddValues: boolean
-  @Field()
+  @Fields.boolean()
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery: boolean
-  @Field()
+  @Fields.boolean()
   checkDuplicatePhones: boolean
-  @Field()
+  @Fields.boolean()
   volunteerCanUpdateComment: boolean
-  @Field()
+  @Fields.boolean()
   volunteerCanUpdateDeliveryComment: boolean
-  @Field()
+  @Fields.boolean()
   hideFamilyPhoneFromVolunteer: boolean
 
   static serverHasPhoneProxy = false
-  @Field({ allowApiUpdate: false })
+  @Fields.boolean({ allowApiUpdate: false })
   usePhoneProxy: boolean
-  @Field()
+  @Fields.boolean()
   showOnlyLastNamePartToVolunteer: boolean
-  @Field()
+  @Fields.boolean()
   showTzToVolunteer: boolean
-  @Field({ allowApiUpdate: false })
+  @Fields.boolean({ allowApiUpdate: false })
   allowSendSuccessMessageOption: boolean
-  @Field()
+  @Fields.boolean()
   sendSuccessMessageToFamily: boolean
-  @Field()
+  @Fields.string()
   successMessageText: string
-  @Field()
+  @Fields.boolean()
   requireEULA: boolean
-  @Field()
+  @Fields.boolean()
   requireConfidentialityApprove: boolean
-  @Field()
+  @Fields.boolean()
   requireComplexPassword: boolean
   @Fields.integer()
   timeToDisconnect: number
   @Fields.integer()
   daysToForcePasswordChange: number
-  @Field()
+  @Fields.boolean()
   showDeliverySummaryToVolunteerOnFirstSignIn: boolean
-  @Field()
+  @Fields.boolean()
   showDistCenterAsEndAddressForVolunteer: boolean
-  @Field()
+  @Field(() => routeStrategy)
   routeStrategy: routeStrategy
   @Fields.integer({ translation: (l) => l.maxDeliveriesBeforeBusy })
   BusyHelperAllowedFreq_nom: number
@@ -482,12 +486,12 @@ export class ApplicationSettings extends EntityBase {
   MaxItemsQuantityInDeliveryThatAnIndependentVolunteerCanSee: number
   @Fields.integer()
   MaxDeliverisQuantityThatAnIndependentVolunteerCanAssignHimself: number
-  @Field()
+  @Fields.boolean()
   donotShowEventsInGeneralList: boolean
   @DataControl({
     clickIcon: 'mark_email_read'
   })
-  @Field<ApplicationSettings>({
+  @Fields.string<ApplicationSettings>({
     includeInApi: Roles.admin,
     clickWithTools: async (self, col, ui) => {
       if (await ui.YesNoPromise(use.language.sendTestEmail)) {
@@ -500,7 +504,7 @@ export class ApplicationSettings extends EntityBase {
   })
   emailForVolunteerRegistrationNotification: string
 
-  @Field({
+  @Field(() => DeliveryStatus, {
     translation: (l) => l.defaultStatusType
   })
   @DataControl({
@@ -508,171 +512,187 @@ export class ApplicationSettings extends EntityBase {
   })
   defaultStatusType: DeliveryStatus
 
-  @Field({ translation: (l) => l.boxes1NameCaption })
+  @Fields.string({ translation: (l) => l.boxes1NameCaption })
   boxes1Name: string
-  @Field({ translation: (l) => l.boxes2NameCaption })
+  @Fields.string({ translation: (l) => l.boxes2NameCaption })
   boxes2Name: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 1 ' + l.caption,
     includeInApi: Roles.familyAdmin
   })
   familyCustom1Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 1 ' + l.optionalValues,
     includeInApi: Roles.familyAdmin
   })
   familyCustom1Values: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 2 ' + l.caption,
     includeInApi: Roles.familyAdmin
   })
   familyCustom2Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 2 ' + l.optionalValues,
     includeInApi: Roles.familyAdmin
   })
   familyCustom2Values: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 3 ' + l.caption,
     includeInApi: Roles.familyAdmin
   })
   familyCustom3Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 3 ' + l.optionalValues,
     includeInApi: Roles.familyAdmin
   })
   familyCustom3Values: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 4 ' + l.caption,
     includeInApi: Roles.familyAdmin
   })
   familyCustom4Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.customColumn + ' 4 ' + l.optionalValues,
     includeInApi: Roles.familyAdmin
   })
   familyCustom4Values: string
-  @Field<ApplicationSettings>({
+  @Fields.boolean<ApplicationSettings>({
     serverExpression: (self) => remult.authenticated()
   })
   currentUserIsValidForAppLoadTest: boolean
-  @Field({ translation: (l) => l.questionForVolunteer + ' 1 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForVolunteer + ' 1 ' + l.caption
+  })
   questionForVolunteer1Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForVolunteer + ' 1 ' + l.optionalValues
   })
   questionForVolunteer1Values: string
-  @Field({ translation: (l) => l.questionForVolunteer + ' 2 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForVolunteer + ' 2 ' + l.caption
+  })
   questionForVolunteer2Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForVolunteer + ' 2 ' + l.optionalValues
   })
   questionForVolunteer2Values: string
-  @Field({ translation: (l) => l.questionForVolunteer + ' 3 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForVolunteer + ' 3 ' + l.caption
+  })
   questionForVolunteer3Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForVolunteer + ' 3 ' + l.optionalValues
   })
   questionForVolunteer3Values: string
-  @Field({ translation: (l) => l.questionForVolunteer + ' 4 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForVolunteer + ' 4 ' + l.caption
+  })
   questionForVolunteer4Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForVolunteer + ' 4 ' + l.optionalValues
   })
   questionForVolunteer4Values: string
 
-  @Field({ translation: (l) => l.questionForRegistration + ' 1 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForRegistration + ' 1 ' + l.caption
+  })
   questionForRegistration1Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForRegistration + ' 1 ' + l.optionalValues
   })
   questionForRegistration1Values: string
-  @Field({ translation: (l) => l.questionForRegistration + ' 2 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForRegistration + ' 2 ' + l.caption
+  })
   questionForRegistration2Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForRegistration + ' 2 ' + l.optionalValues
   })
   questionForRegistration2Values: string
-  @Field({ translation: (l) => l.questionForRegistration + ' 3 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForRegistration + ' 3 ' + l.caption
+  })
   questionForRegistration3Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForRegistration + ' 3 ' + l.optionalValues
   })
   questionForRegistration3Values: string
-  @Field({ translation: (l) => l.questionForRegistration + ' 4 ' + l.caption })
+  @Fields.string({
+    translation: (l) => l.questionForRegistration + ' 4 ' + l.caption
+  })
   questionForRegistration4Caption: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.questionForRegistration + ' 4 ' + l.optionalValues
   })
   questionForRegistration4Values: string
 
-  @Field()
+  @Fields.boolean()
   registerAskTz: boolean
-  @Field()
+  @Fields.boolean()
   registerRequireTz: boolean
 
-  @Field()
+  @Fields.boolean()
   registerAskEmail: boolean
-  @Field()
+  @Fields.boolean()
   registerAskPreferredDistributionAreaAddress: boolean
-  @Field()
+  @Fields.boolean()
   registerAskPreferredFinishAddress: boolean
-  @Field()
+  @Fields.boolean()
   askVolunteerForLocationOnDelivery: boolean
-  @Field()
+  @Fields.boolean()
   askVolunteerForAPhotoToHelp: boolean
-  @Field()
+  @Fields.string()
   questionForVolunteerWhenUploadingPhoto: string
-  @Field({ includeInApi: Roles.admin })
+  @Fields.boolean({ includeInApi: Roles.admin })
   createBasketsForAllFamiliesInCreateEvent: boolean
-  @Field({ includeInApi: Roles.admin })
+  @Field(() => GroupsValue, { includeInApi: Roles.admin })
   includeGroupsInCreateEvent: GroupsValue
-  @Field({ includeInApi: Roles.admin })
+  @Field(() => GroupsValue, { includeInApi: Roles.admin })
   excludeGroupsInCreateEvent: GroupsValue
 
-  @Field({ includeInApi: false, allowNull: true })
+  @Fields.object({ includeInApi: false, allowNull: true })
   smsCredentials?: {
     password: string
   }
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   smsClientNumber: string
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   smsUsername: string
-  @Field<ApplicationSettings>({
+  @Fields.string<ApplicationSettings>({
     includeInApi: Roles.admin,
     inputType: 'password',
     serverExpression: (self) => (self.smsCredentials?.password ? '****' : '')
   })
   smsPasswordInput: string
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string
 
-  @Field({ includeInApi: Roles.admin })
+  @Fields.boolean({ includeInApi: Roles.admin })
   familySelfOrderEnabled: boolean
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   familySelfOrderMessage: string
-  @Field({ includeInApi: Roles.admin })
+  @Fields.boolean({ includeInApi: Roles.admin })
   familyConfirmDetailsEnabled: boolean
 
-  @Field({ includeInApi: Roles.admin })
+  @Fields.string({ includeInApi: Roles.admin })
   inviteVolunteersMessage: string
-  @Field({ allowApiUpdate: Roles.admin })
+  @Fields.boolean({ allowApiUpdate: Roles.admin })
   allowVolunteerToSeePreviousActivities: boolean
 
-  @Field({ allowApiUpdate: Roles.superAdmin })
+  @Fields.string({ allowApiUpdate: Roles.superAdmin })
   customSmsOriginForSmsToVolunteer: string
 
-  @Field({ allowApiUpdate: Roles.superAdmin })
+  @Fields.boolean({ allowApiUpdate: Roles.superAdmin })
   allowSmsToFamily: boolean
 
-  @Field({ allowApiUpdate: Roles.superAdmin })
+  @Fields.boolean({ allowApiUpdate: Roles.superAdmin })
   sendOnTheWaySMSToFamily: boolean
-  @Field({ allowApiUpdate: Roles.superAdmin })
+  @Fields.boolean({ allowApiUpdate: Roles.superAdmin })
   sendOnTheWaySMSToFamilyOnSendSmsToVolunteer: boolean
 
-  @Field({ allowApiUpdate: Roles.superAdmin })
+  @Fields.string({ allowApiUpdate: Roles.superAdmin })
   customSmsOriginForSmsToFamily: string
-  @Field({ allowApiUpdate: Roles.superAdmin })
+  @Fields.boolean({ allowApiUpdate: Roles.superAdmin })
   enableOtp: boolean
 
   @Fields.string()

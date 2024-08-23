@@ -7,4 +7,6 @@ mat-flat-button
 
 ## Todo
 
--[ ] search for all column with alias to find it
+- [ ] search for all column with alias to find it
+- [ ] sms credentials
+- [ ]

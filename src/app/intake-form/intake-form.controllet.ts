@@ -5,10 +5,9 @@ import {
   Validators,
   repo,
   remult,
-  isBackend,
-  Fields
+  isBackend
 } from 'remult'
-import { Field, use } from '../translate'
+import { Field, use, Fields } from '../translate'
 import {
   DataControl,
   getEntityValueList
@@ -22,24 +21,24 @@ import { DeliveryStatus } from '../families/DeliveryStatus'
 
 @Controller('intake-form')
 export class IntakeFormController extends ControllerBase {
-  @Field({
+  @Fields.string({
     translation: (l) => l.socialSecurityNumber
   })
   tz: string
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.firstName,
     validate: Validators.required.withMessage(use.language.nameIsTooShort)
   })
   firstName: string
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.lastName,
     validate: Validators.required.withMessage(use.language.nameIsTooShort)
   })
   name: string
 
-  @Field<IntakeFormController, string>({
+  @Fields.string<IntakeFormController, string>({
     translation: (t) => t.address,
     customInput: (c) =>
       c.addressInput((x, d) => {
@@ -56,20 +55,20 @@ export class IntakeFormController extends ControllerBase {
   address: string
 
   addressByGoogle: string
-  @Field()
+  @Fields.string()
   addressApiResult: string
 
-  @Field()
+  @Fields.string()
   floor: string
-  @Field()
+  @Fields.string()
   appartment: string
-  @Field()
+  @Fields.string()
   entrance: string
 
-  @Field()
+  @Fields.string()
   addressComment: string
 
-  @Field<IntakeFormController, Phone>({
+  @Field<IntakeFormController, Phone>(() => Phone, {
     validate: [
       (f, p) => {
         if (!isPhoneValidForIsrael(p.value?.thePhone)) throw 'טלפון שגוי'
@@ -77,15 +76,15 @@ export class IntakeFormController extends ControllerBase {
     ]
   })
   phone1: Phone
-  @Field()
+  @Fields.string()
   phone1Description: string
-  @Field()
+  @Field(() => Phone)
   phone2: Phone
-  @Field()
+  @Fields.string()
   phone2Description: string
-  @Field({ caption: 'שם ממלא הטופס', validate: Validators.required })
+  @Fields.string({ caption: 'שם ממלא הטופס', validate: Validators.required })
   fillerName: string
-  @Field<IntakeFormController, Phone>({
+  @Field<IntakeFormController, Phone>(() => Phone, {
     caption: 'טלפון ממלא הטופס',
     validate: [
       Validators.required,
@@ -96,11 +95,11 @@ export class IntakeFormController extends ControllerBase {
   })
   fillerPhone: Phone
   @DataControl({ valueList: ['', 'מוקד', 'עובדת סוציאלית', 'מתנדב'] })
-  @Field({ caption: 'תפקיד', validate: Validators.required })
+  @Fields.string({ caption: 'תפקיד', validate: Validators.required })
   role: string = ''
 
   basketTypes: Awaited<ReturnType<typeof IntakeFormController.getBasketTypes>>
-  @Field<IntakeFormController, string>({
+  @Fields.string<IntakeFormController, string>({
     caption: 'איך אפשר לעזור?',
     validate: async (i, b) => {
       if (!i.basketTypes)
@@ -110,7 +109,7 @@ export class IntakeFormController extends ControllerBase {
     }
   })
   basketType: string
-  @Field<IntakeFormController, string>({
+  @Fields.string<IntakeFormController, string>({
     caption: 'מידע נוסף'
   })
   deliveryComments: string

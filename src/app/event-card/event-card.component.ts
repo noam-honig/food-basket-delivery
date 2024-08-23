@@ -14,7 +14,7 @@ import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
 import { DialogService } from '../select-popup/dialog'
 import { Roles } from '../auth/roles'
-import { use, Field } from '../translate'
+import { use, Field, Fields } from '../translate'
 import {
   getCurrentLocation,
   GetDistanceBetween,
@@ -96,11 +96,11 @@ export class EventCardComponent implements OnInit {
     return e.id
   }
 
-  @Field({
+  @Fields.string({
     caption: 'איפה?'
   })
   city: string = ''
-  @Field({ caption: 'סוג התנדבות' })
+  @Field(() => EventType, { caption: 'סוג התנדבות' })
   type: EventType = AllTypes
   area: DataAreaSettings
 

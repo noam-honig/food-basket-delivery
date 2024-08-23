@@ -21,7 +21,10 @@ export class MltFamiliesController {
       }
     }
   }
-  @BackendMethod({ allowed: Allow.authenticated })
+  @BackendMethod({
+    allowed: Allow.authenticated,
+    paramTypes: [DistributionCenters]
+  })
   static async changeDestination(newDestinationId: DistributionCenters) {
     let s = await remult.context.getSettings()
     if (!s.isSytemForMlt) throw 'not allowed'

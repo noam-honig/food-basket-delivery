@@ -265,7 +265,7 @@ export class DialogService implements UITools {
   }
   private allCenters: DistributionCenters[]
 
-  @Field()
+  @Field(() => DistributionCenters)
   @DataControl<DialogService>({
     valueList: (remult) => DistributionCenters.getValueList(true),
     valueChange: async (self) => {

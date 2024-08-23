@@ -85,17 +85,13 @@ import { DateRangeComponent } from './date-range/date-range.component'
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component'
 import { EventsComponent } from './events/events.component'
 import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
-import { RegisterDonorComponent } from './register-donor/register-donor.component'
-import { RegisterHelperComponent } from './register-helper/register-helper.component'
 import { AddressInputComponent } from './address-input/address-input.component'
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
-import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component'
 import { PlatformModule } from '@angular/cdk/platform'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component'
-import { RegisterURLComponent } from './resgister-url/regsiter-url.component'
 
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component'
 import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component'
@@ -209,15 +205,11 @@ export class MyHammerConfig extends HammerGestureConfig {
     ShowOnMapComponent,
     EventsComponent,
     DeliveryReceptionComponent,
-    RegisterDonorComponent,
-    RegisterHelperComponent,
     AddressInputComponent,
     InRouteFollowUpComponent,
     ShipmentAssignScreenComponent,
     VolunteerCrossAssignComponent,
-    WeeklyReportMltComponent,
     HelperGiftsComponent,
-    RegisterURLComponent,
     GeneralImportFromExcelComponent,
     MyGiftsDialogComponent,
     MltFamiliesComponent,
@@ -365,13 +357,8 @@ export function initApp(
       routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent)
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent)
       routeMap.set(LoginComponent, l.LoginComponent)
-
       routeMap.set(EventsComponent, l.eventsComponent)
-
-      routeMap.set(WeeklyReportMltComponent, l.weeklyReportMltComponent)
-
       routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent)
-      routeMap.set(RegisterURLComponent, l.RegisterURLComponent)
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities)
 
       RegisterToEvent.init()

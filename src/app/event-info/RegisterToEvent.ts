@@ -10,7 +10,6 @@ import {
   EventSource,
   FieldMetadata,
   FieldRef,
-  Fields,
   FieldsRef,
   remult
 } from 'remult'
@@ -34,7 +33,7 @@ import { Phone } from '../model-shared/phone'
 import { Email } from '../model-shared/types'
 import { doOnRemoteHagai } from '../overview/remoteHagai'
 import { Sites } from '../sites/sites'
-import { Field, use } from '../translate'
+import { Field, use, Fields } from '../translate'
 import { FieldsRefForEntityBase } from 'remult'
 
 function storedInfo(): VolunteerInfo {
@@ -135,7 +134,7 @@ export class RegisterToEvent {
   static volunteerInfo: VolunteerInfo
   static volunteerInfoChanged = new EventSource()
   @DataControl({ allowClick: () => false })
-  @Field<RegisterToEvent, Phone>({
+  @Field<RegisterToEvent, Phone>(() => Phone, {
     translation: (l) => l.phone,
     valueType: Phone,
     validate: (e, c) => {
@@ -146,7 +145,7 @@ export class RegisterToEvent {
     }
   })
   phone: Phone
-  @Field<RegisterToEvent>({
+  @Fields.string<RegisterToEvent>({
     caption: 'שם',
     validate: (e, name) => {
       if (!remult.authenticated()) {
@@ -155,29 +154,29 @@ export class RegisterToEvent {
     }
   })
   name: string
-  @Field<RegisterToEvent>({
+  @Fields.string<RegisterToEvent>({
     caption: use.language.lastName
   })
   lastName: string
-  @Field({ translation: (l) => 'אני מעל גיל 18?' })
+  @Fields.boolean({ translation: (l) => 'אני מעל גיל 18?' })
   over18: boolean
-  @Field({
+  @Fields.boolean({
     translation: (l) => 'קראתי את הצהרת ההתנדבות ואני מאשר/ת את הכתוב בה',
     customInput: (x) => x.ugaConfirm()
   })
   agreeToTerms: boolean
-  @Field({ translation: (l) => l.rememberMeOnThisDevice })
+  @Fields.boolean({ translation: (l) => l.rememberMeOnThisDevice })
   rememberMeOnThisDevice: boolean
 
-  @Field()
+  @Fields.string()
   a1: string = ''
-  @Field()
+  @Fields.string()
   a2: string = ''
-  @Field()
+  @Fields.string()
   a3: string = ''
-  @Field()
+  @Fields.string()
   a4: string = ''
-  @Field<RegisterToEvent>({
+  @Fields.string<RegisterToEvent>({
     translation: (l) => l.socialSecurityNumber,
     validate: (e, tz) => {
       if (getSettings().registerRequireTz) {
@@ -186,14 +185,14 @@ export class RegisterToEvent {
     }
   })
   socialSecurityNumber: string = ''
-  @Field()
+  @Fields.string()
   email: Email = new Email('')
-  @Field({
+  @Fields.string({
     translation: (l) => l.preferredDistributionAreaAddress,
     customInput: (c) => c.addressInput()
   })
   preferredDistributionAreaAddress: string = ''
-  @Field({
+  @Fields.string({
     dbName: 'preferredDistributionAreaAddress2',
     customInput: (c) => c.addressInput()
   })

@@ -16,7 +16,7 @@ import {
   DataControl,
   getEntityValueList
 } from '../common-ui-elements/interfaces'
-import { use, FieldType, Field } from '../translate'
+import { use, FieldType, Field, Fields } from '../translate'
 import { MyIdEntity } from '../families/MyIdEntity'
 
 @FieldType<DistributionCenters>({
@@ -46,13 +46,13 @@ import { MyIdEntity } from '../families/MyIdEntity'
   }
 })
 export class DistributionCenters extends MyIdEntity {
-  @Field({ translation: (l) => l.distributionCenterName })
+  @Fields.string({ translation: (l) => l.distributionCenterName })
   name: string
-  @Field({ translation: (l) => l.distributionCenterUniqueId })
+  @Fields.string({ translation: (l) => l.distributionCenterUniqueId })
   semel: string
-  @Field()
+  @Fields.string()
   addressApiResult: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.deliveryCenterAddress,
     customInput: (i) => i.addressInput()
   })
@@ -61,19 +61,19 @@ export class DistributionCenters extends MyIdEntity {
     () => this.$.address,
     () => this.$.addressApiResult
   )
-  @Field({ translation: (l) => l.distributionCenterComment })
+  @Fields.string({ translation: (l) => l.distributionCenterComment })
   comments: string
-  @Field({ translation: (l) => l.phone1 })
+  @Field(() => Phone, { translation: (l) => l.phone1 })
   phone1: Phone
-  @Field({ translation: (l) => l.phone1Description })
+  @Fields.string({ translation: (l) => l.phone1Description })
   phone1Description: string
-  @Field({ translation: (l) => l.phone2 })
+  @Field(() => Phone, { translation: (l) => l.phone2 })
   phone2: Phone
-  @Field({ translation: (l) => l.phone2Description })
+  @Fields.string({ translation: (l) => l.phone2Description })
   phone2Description: string
-  @Field({ translation: (l) => l.frozen })
+  @Fields.boolean({ translation: (l) => l.frozen })
   isFrozen: boolean
-  @Field()
+  @Fields.boolean()
   archive: boolean
 
   createUser: HelpersBase

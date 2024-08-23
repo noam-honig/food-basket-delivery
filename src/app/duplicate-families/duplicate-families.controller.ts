@@ -10,7 +10,10 @@ import { getSettings } from '../manage/ApplicationSettings'
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 
 export class DuplicateFamiliesController {
-  @BackendMethod({ allowed: true })
+  @BackendMethod({
+    allowed: true,
+    paramTypes: [Boolean, Boolean, Boolean, Boolean, Boolean]
+  })
   static async familiesInSameAddress(compare: {
     address: boolean
     name: boolean

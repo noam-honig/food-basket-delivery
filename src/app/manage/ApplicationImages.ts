@@ -8,9 +8,9 @@ import { Field, Fields } from '../translate'
 export class ApplicationImages extends EntityBase {
   @Fields.integer()
   id: number
-  @Field({ caption: 'איקון דף base64' })
+  @Fields.string({ caption: 'איקון דף base64' })
   base64Icon: string
-  @Field({ caption: 'איקון דף הבית בטלפון base64' })
+  @Fields.string({ caption: 'איקון דף הבית בטלפון base64' })
   base64PhoneHomeImage: string
 
   static async getAsync(): Promise<ApplicationImages> {

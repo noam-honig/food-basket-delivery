@@ -2,7 +2,7 @@ import { Allow, Entity, IdEntity, SqlDatabase, remult } from 'remult'
 import { Roles } from '../auth/roles'
 import { HelpersBase } from '../helpers/helpers'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
-import { Field } from '../translate'
+import { Fields } from '../translate'
 import { Families } from './families'
 
 @Entity<DeliveryImage>('delivery_images', {
@@ -19,11 +19,11 @@ import { Families } from './families'
   }
 })
 export class DeliveryImage extends IdEntity {
-  @Field()
+  @Fields.string()
   deliveryId: string
-  @Field()
+  @Fields.string()
   uploadingVolunteer: HelpersBase
-  @Field()
+  @Fields.string()
   image: string
 }
 @Entity('family_images', {
@@ -55,10 +55,10 @@ export class DeliveryImage extends IdEntity {
   }
 })
 export class FamilyImage extends IdEntity {
-  @Field()
+  @Fields.string()
   familyId: string
-  @Field()
+  @Fields.string()
   imageInDeliveryId: string
-  @Field()
+  @Fields.string()
   image: string
 }
