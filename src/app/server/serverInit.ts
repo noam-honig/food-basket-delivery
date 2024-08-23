@@ -39,6 +39,7 @@ actionInfo.runningOnServer = true
 export async function serverInit() {
   try {
     config()
+    console.log(process.env['DATABASE_URL'])
     let ssl: boolean | ConnectionOptions = {
       rejectUnauthorized: false
     }
@@ -73,7 +74,7 @@ export async function serverInit() {
       const proxyService = process.env.twilio_proxyService
       if (!accountSID) throw 'לא הוגדר שירות טלפונים'
       let twilio = await import('twilio')
-      let client = twilio(accountSID, authToken)
+      let client = twilio.default(accountSID, authToken)
 
       let service = client.proxy.services(proxyService)
 
@@ -107,7 +108,7 @@ export async function serverInit() {
         }
 
         let twilio = await import('twilio')
-        let client = twilio(accountSID, authToken)
+        let client = twilio.default(accountSID, authToken)
         await client.messages.create({
           to: to,
           from: twilio_sms_from_number,

@@ -31,7 +31,7 @@ export async function DoIt() {
     const authToken = process.env.twilio_authToken
 
     let twilio = await import('twilio')
-    let client = twilio(accountSID, authToken)
+    let client = twilio.default(accountSID, authToken)
     try {
       let r = await client.messages.create({
         to: '+972507330590',

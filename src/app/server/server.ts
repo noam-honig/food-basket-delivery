@@ -36,7 +36,7 @@ import compression from 'compression'
 import { InitContext } from '../helpers/init-context'
 import { Helpers, HelpersBase } from '../helpers/helpers'
 import { Phone } from '../model-shared/phone'
-import fetch from 'node-fetch'
+
 import { volunteersInEvent, Event, eventStatus } from '../events/events'
 
 import { OverviewController } from '../overview/overview.controller'
@@ -128,8 +128,6 @@ import {
   RemultServerCore,
   SseSubscriptionServer
 } from 'remult/server'
-
-import ably from 'ably'
 
 import {
   LiveQueryStorage,
@@ -521,6 +519,16 @@ s.parentNode.insertBefore(b, s);})();
       remult.context.getSite = () => 'test1'
       remult.dataProvider = await dataSource(remult)
       await InitContext(remult, undefined)
+      const fam = repo(Families)
+      var f = await fam.create({ phone1: new Phone('0507330590') })
+      console.log('a')
+      console.log({
+        p1: f.phone1,
+        p2: f.phone2,
+        p3: f.phone3,
+        toJson: fam.fields.phone1.valueConverter.toJson(f.phone1),
+        toInput: fam.fields.phone1.options.valueConverter.toInput.toString()
+      })
 
       if (false) {
         let h1 = await remult
@@ -772,7 +780,7 @@ export interface monitorResult {
 
 async function downloadPaperTrailLogs() {
   try {
-    var myHeaders = new fetch.Headers()
+    var myHeaders = new Headers()
     myHeaders.append('X-Papertrail-Token', process.env.PaperTrailToken)
 
     var requestOptions = {
@@ -799,7 +807,7 @@ async function downloadPaperTrailLogs() {
               requestOptions
             )
               .then(async (response) =>
-                fs.writeFileSync(file, await response.buffer())
+                fs.writeFileSync(file, await response.text())
               )
               .then((result) => console.log('done', theTime))
               .catch((error) => console.log('error ' + theTime, error))

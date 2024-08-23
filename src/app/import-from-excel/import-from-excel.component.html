@@ -22,8 +22,7 @@
         </button>
         <button
           (click)="saveSettings(); moveToAdvancedSettings()"
-          mat-raised-button
-          color="accent"
+          mat-flat-button
         >
           {{ settings.lang.nextStep }}
         </button>
@@ -103,7 +102,7 @@
       </ng-container>
     </mat-step>
     <mat-step label="{{ settings.lang.excelImportFinalSettings }}">
-      <button (click)="testImport()" mat-raised-button color="accent">
+      <button (click)="testImport()" mat-flat-button>
         {{ settings.lang.nextStep }}
       </button>
       <h3>{{ settings.lang.excelImportFinalSettings }}</h3>
@@ -345,7 +344,7 @@
           label="{{ settings.lang.newFamilies }} - {{ newRows.length }}"
           *ngIf="newRows && newRows.length"
         >
-          <button (click)="addAll()" mat-raised-button color="accent">
+          <button (click)="addAll()" mat-flat-button>
             {{ settings.lang.addAllFamilies }}
           </button>
           <div class="table-div">

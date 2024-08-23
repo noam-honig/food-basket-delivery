@@ -41,7 +41,7 @@
     "@angular/platform-browser": "^18.0.0",
     "@angular/platform-browser-dynamic": "^18.0.0",
     "@angular/router": "^18.0.0",
-    "@auth0/angular-jwt": "^5.0.2",
+    "@auth0/angular-jwt": "^5.2.0",
     "@google/markerclustererplus": "^5.0.3",
     "@types/form-data": "^2.5.0",
     "angular2-qrcode": "^2.0.3",
@@ -65,7 +65,6 @@
     "moment": "^2.29.2",
     "ng2-charts": "^6.0.1",
     "ngx-pagination": "^4.1.0",
-    "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.1",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
@@ -78,7 +77,7 @@
     "twilio": "^3.48.1",
     "uuid": "^3.3.2",
     "web-animations-js": "^2.3.2",
-    "xlsx": "^0.17.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
@@ -97,7 +96,6 @@
     "@types/jasminewd2": "^2.0.8",
     "@types/jsonwebtoken": "^8.3.5",
     "@types/node": "^18.11.0",
-    "@types/node-fetch": "^2.5.2",
     "@types/password-hash": "^1.2.20",
     "@types/pg": "^7.14.4",
     "@types/xlsx": "0.0.36",

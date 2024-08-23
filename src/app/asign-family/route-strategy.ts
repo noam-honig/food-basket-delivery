@@ -6,7 +6,6 @@ import {
   toLongLat,
   GetDistanceBetween
 } from '../shared/googleApiHelpers'
-import fetch from 'node-fetch'
 
 import { foreachSync } from '../shared/utils'
 import { Helpers } from '../helpers/helpers'

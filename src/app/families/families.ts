@@ -23,7 +23,8 @@ import {
   Filter,
   EntityFilter,
   ValueConverters,
-  remult
+  remult,
+  Field as xx
 } from 'remult'
 
 import {
@@ -52,7 +53,6 @@ import {
   getSettings
 } from '../manage/ApplicationSettings'
 
-import fetch from 'node-fetch'
 import { Roles } from '../auth/roles'
 
 import { Fields, Field, use, Entity } from '../translate'
@@ -734,6 +734,7 @@ export class Families extends IdEntity {
   })
   @Field()
   doNotSendSms: boolean
+  //  @xx(() => Phone,
   @Field({
     dbName: 'phone'
   })

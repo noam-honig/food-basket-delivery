@@ -28,7 +28,6 @@
               "zone.js"
             ],
             "externalDependencies": [
-              "node-fetch",
               "jsonwebtoken",
               "password-hash",
               "nodemailer",

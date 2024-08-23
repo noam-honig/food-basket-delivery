@@ -1,7 +1,6 @@
 import { ChangeDateColumn, relativeDateName } from '../model-shared/types'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
 import { Phone } from '../model-shared/phone'
-import fetch from 'node-fetch'
 
 import {
   IdEntity,
@@ -644,30 +643,27 @@ export class FamilyDeliveries extends IdEntity {
       let f = SqlFor(self)
       sql.addEntity(f, 'FamilyDeliveries')
       sql.addEntity(fd, 'fd')
-      return sql.columnWithAlias(
-        sql.case(
-          [
-            {
-              when: [sql.ne(f.courier, "''")],
-              then: sql.build(
-                'exists (select 1 from ',
-                fd,
-                ' as ',
-                'fd',
-                ' where ',
-                sql.and(
-                  sql.not(sql.eq(fd.id, f.id)),
-                  sql.eq(fd.family, f.family),
-                  sql.eq(fd.courier, f.courier),
-                  fd.where({ deliverStatus: DeliveryStatus.isAResultStatus() })
-                ),
-                ')'
-              )
-            }
-          ],
-          false
-        ),
-        'courierBeenHereBefore'
+      return sql.case(
+        [
+          {
+            when: [sql.ne(f.courier, "''")],
+            then: sql.build(
+              'exists (select 1 from ',
+              fd,
+              ' as ',
+              'fd',
+              ' where ',
+              sql.and(
+                sql.not(sql.eq(fd.id, f.id)),
+                sql.eq(fd.family, f.family),
+                sql.eq(fd.courier, f.courier),
+                fd.where({ deliverStatus: DeliveryStatus.isAResultStatus() })
+              ),
+              ')'
+            )
+          }
+        ],
+        false
       )
     }
   })

@@ -25,7 +25,10 @@
         <app-event-info [e]="events[0]" [noClose]="true"></app-event-info>
       </mat-card>
     </div>
-    <div *ngIf="!isGuest" style="display: flex;justify-content: center; padding-top: 150px;">
+    <div
+      *ngIf="!isGuest"
+      style="display: flex; justify-content: center; padding-top: 150px"
+    >
       <button mat-raised-button color="primary" (click)="signIn()">
         {{ lang.registeredUsersSignIn }}
       </button>
@@ -81,7 +84,7 @@
             <button mat-icon-button>
               <mat-icon> email </mat-icon>
             </button>
-            שלחו מייל noam.honig@gmail.com
+            שלחו מייל noam.honig&#64;gmail.com
           </a>
           <a href="https://noam-honig.github.io/salmaz/" target="_blank">
             <button mat-icon-button>

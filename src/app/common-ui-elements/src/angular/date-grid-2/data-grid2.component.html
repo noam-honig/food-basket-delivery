@@ -1,4 +1,7 @@
-<div style="height: 100%; display: flex; flex-direction: column">
+<div
+  style="height: 100%; display: flex; flex-direction: column"
+  class="grid-root"
+>
   <Data-Filter [settings]="settings" #dataFilter style="flex-shrink: 0">
   </Data-Filter>
   <div
@@ -195,70 +198,75 @@
     *ngIf="settings.restList && settings.settings?.showPagination"
   >
     <div class="dataGridFooterButtonGroup">
-      <button mat-icon-button (click)="settings.userChooseColumns()">
-        <mat-icon>settings</mat-icon>
-      </button>
+      <div class="dataGridFooterButtonGroup">
+        <button mat-icon-button (click)="settings.userChooseColumns()">
+          <mat-icon>settings</mat-icon>
+        </button>
 
-      <span class="hide-on-narrow"
-        >{{ rightToLeft ? 'שורות בדף' : 'lines per page' }}
-        <select
-          class="form-control"
-          style="width: 80px; display: inline-block"
-          [(ngModel)]="settings.rowsPerPage"
-          (change)="settings.reloadData()"
+        <span class="hide-on-narrow"
+          >{{ rightToLeft ? 'שורות בדף' : 'lines per page' }}
+          <select
+            class="form-control"
+            style="width: 80px; display: inline-block"
+            [(ngModel)]="settings.rowsPerPage"
+            (change)="settings.reloadData()"
+          >
+            <option
+              *ngFor="let r of settings.rowsPerPageOptions"
+              value="{{ r }}"
+            >
+              {{ r }}
+            </option>
+          </select>
+        </span>
+      </div>
+      <div class="dataGridFooterButtonGroup">
+        <button mat-icon-button (click)="settings.firstPage()">
+          <mat-icon>{{ rightToLeft ? 'last_page' : 'first_page' }} </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [disabled]="settings.page == 1"
+          (click)="settings.previousPage()"
         >
-          <option *ngFor="let r of settings.rowsPerPageOptions" value="{{ r }}">
-            {{ r }}
-          </option>
-        </select>
-      </span>
-    </div>
-    <div class="dataGridFooterButtonGroup">
-      <button mat-icon-button (click)="settings.firstPage()">
-        <mat-icon>{{ rightToLeft ? 'last_page' : 'first_page' }} </mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        [disabled]="settings.page == 1"
-        (click)="settings.previousPage()"
-      >
-        <mat-icon>{{
-          rightToLeft ? 'chevron_right' : 'chevron_left'
-        }}</mat-icon>
-      </button>
-      {{ getBottomLine() }}
+          <mat-icon>{{
+            rightToLeft ? 'chevron_right' : 'chevron_left'
+          }}</mat-icon>
+        </button>
+        {{ getBottomLine() }}
 
-      <button
-        mat-icon-button
-        [disabled]="
-          !(settings.restList.items && settings.restList.items.length > 0)
-        "
-        (click)="settings.nextPage()"
-      >
-        <mat-icon>{{
-          !rightToLeft ? 'chevron_right' : 'chevron_left'
-        }}</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        *ngIf="settings.allowUpdate && settings.allowInsert"
-        (click)="settings.addNewRow()"
-      >
-        <mat-icon>add</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        *ngIf="showSaveAllButton()"
-        (click)="saveAllClick()"
-        style="line-height: 36px; max-height: 28px"
-      >
-        <mat-icon
-          [matTooltip]="saveAllText()"
-          class="row-button"
-          style="font-size: 24px"
-          >done_all</mat-icon
+        <button
+          mat-icon-button
+          [disabled]="
+            !(settings.restList.items && settings.restList.items.length > 0)
+          "
+          (click)="settings.nextPage()"
         >
-      </button>
+          <mat-icon>{{
+            !rightToLeft ? 'chevron_right' : 'chevron_left'
+          }}</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          *ngIf="settings.allowUpdate && settings.allowInsert"
+          (click)="settings.addNewRow()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          *ngIf="showSaveAllButton()"
+          (click)="saveAllClick()"
+          style="line-height: 36px; max-height: 28px"
+        >
+          <mat-icon
+            [matTooltip]="saveAllText()"
+            class="row-button"
+            style="font-size: 24px"
+            >done_all</mat-icon
+          >
+        </button>
+      </div>
     </div>
     <div *ngIf="settings.showSelectColumn" class="selectColumnsArea">
       Select Columns

@@ -498,6 +498,10 @@ export class ImportFromExcelComponent implements OnInit {
         }
 
         if (c.value !== undefined) {
+          var i1 = c.inputValue
+          var i2 = c.metadata.valueConverter.toInput(c.value)
+          var i3 = c.metadata.options.valueConverter.toInput(c.value)
+
           info.values[
             keyFromColumnInCompare({
               e: e._.repository.metadata,

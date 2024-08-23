@@ -1,7 +1,7 @@
 import { BackendMethod, remult } from 'remult'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { HelpersBase } from '../helpers/helpers'
-import fetch, { Headers } from 'node-fetch'
+
 import { Roles } from '../auth/roles'
 import { Sites } from '../sites/sites'
 import { getLang } from '../sites/sites'
@@ -320,8 +320,9 @@ export class SendSmsUtils {
               'https://api.inforu.co.il/SendMessageXml.ashx',
               {
                 method: 'POST',
-                headers: formData.getHeaders(),
-                body: formData
+                headers: formData.getHeaders()
+                //TODO - fix form data and body
+                //body: [formData]
               }
             )
 

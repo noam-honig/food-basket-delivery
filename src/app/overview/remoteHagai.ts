@@ -1,5 +1,4 @@
 import { Remult } from 'remult'
-import fetch from 'node-fetch'
 
 export async function doOnRemoteHagai<T>(
   what: (remoteRemult: Remult, url: string) => Promise<T>,
