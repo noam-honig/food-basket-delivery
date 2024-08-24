@@ -227,7 +227,7 @@ const controllers = [
   IntakeFormController
 ]
 
-let publicRoot = 'hagai'
+let publicRoot = 'hagai/browser'
 if (!fs.existsSync(publicRoot + '/index.html'))
   publicRoot = 'dist/' + publicRoot
 serverInit().then(async ({ dataSource, initDatabase }) => {
