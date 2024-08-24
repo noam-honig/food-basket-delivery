@@ -17,11 +17,7 @@ import { MatDialog } from '@angular/material/dialog'
 })
 export class TestMapComponent implements OnInit {
   private dialog = inject(MatDialog)
-  ngOnInit(): void {
-    this.dialog.open(WaitComponent, {
-      panelClass: 'wait-dialog'
-    })
-  }
+  ngOnInit(): void {}
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
 

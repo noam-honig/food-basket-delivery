@@ -798,21 +798,3 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
   }
 }
-
-interface familyQueryResult {
-  addressLatitude: number
-  addressLongitude: number
-}
-
-function getInfo(r: any) {
-  let dist = 0
-  let duration = 0
-  r.routes[0].legs.forEach((e) => {
-    dist += e.distance.value
-    duration += e.duration.value
-  })
-  return {
-    dist,
-    duration
-  }
-}

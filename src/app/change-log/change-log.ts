@@ -23,6 +23,7 @@ import { Fields } from '../translate'
 export class ChangeLog extends IdEntity {
   @Fields.string()
   relatedId: string = ''
+
   @Fields.string()
   relatedName: string = ''
   @Fields.string()

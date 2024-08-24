@@ -50,8 +50,11 @@ $angular-starter-project-theme: mat.define-theme((color: (theme-type: light,
 :root {
   --sys-title-large-size: 1rem;
   --sys-title-large-weight: 500;
+  --sys-title-medium-size: 1.1rem;
+  --sys-title-medium-weight: 500;
   --mat-card-subtitle-text-color: rgba(0, 0, 0, 0.54); //var(--sys-on-surface-variant)
   --mat-card-subtitle-text-weight: 400;
+  --mat-checkbox-label-text-size: 1rem;
 }
 
 .mdc-text-field__input::-webkit-calendar-picker-indicator {
@@ -532,7 +535,7 @@ body[dir='rtl'] {
 }
 
 .mat-expansion-panel-header {
-  height: 72px;
+  height: 72px !important;
 }
 
 * {

@@ -1,35 +1,43 @@
 .name-div {
   display: flex;
 }
+
 .filter-div {
   display: flex;
   flex-wrap: wrap;
   margin-left: -5px;
   margin-right: -5px;
   align-items: center;
-  .mat-form-field,
-  .mat-checkbox {
+
+  .mat-mdc-form-field,
+  .mat-mdc-checkbox {
+
     width: 150px;
     flex-grow: 1;
     margin-left: 5px;
     margin-right: 5px;
   }
 }
+
 .clickable-icon {
   vertical-align: middle;
   cursor: pointer;
 }
+
 .myDiv {
   display: flex;
   flex-direction: column;
 }
+
 .largeInput {
   font-size: 24px;
 }
+
 .no-baskets {
   color: red;
   text-align: center;
 }
+
 .help {
   font-size: 20px;
   text-align: center;
@@ -39,6 +47,7 @@
 input {
   //font-size:20px;
 }
+
 .line-container {
   width: 100%;
   display: flex;
@@ -48,16 +57,18 @@ input {
   margin-bottom: 5px;
 }
 
-.line-container > div > input {
+.line-container>div>input {
   border-width: 0px;
   width: 100%;
   outline: 0;
   padding: 0;
 }
+
 .same-line {
   background-color: gainsboro;
   flex: auto;
 }
+
 .input-same-line {
   width: auto;
   flex: auto;
@@ -69,6 +80,7 @@ h4 {
   margin-bottom: 2px;
   margin-top: 3px;
 }
+
 h5 {
   margin-bottom: 2px;
   margin-top: 5px;
@@ -81,12 +93,14 @@ h5 {
   justify-content: space-between;
 }
 
-.numOfBasketsDiv > div {
+.numOfBasketsDiv>div {
   width: 200px;
 }
+
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
   border-radius: 5px;
 }
+
 ::ng-deep .mat-form-field-infix {
   width: auto !important;
 }
