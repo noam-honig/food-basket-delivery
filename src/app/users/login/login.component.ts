@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   @Fields.string({ translation: (l) => l.preferredDistributionAreaAddress })
   preferredDistributionArea: string
-  @Fields.string({ translation: (l) => l.rememberMeOnThisDevice })
+  @Fields.boolean({ translation: (l) => l.rememberMeOnThisDevice })
   remember: boolean
   passwordArea = new DataAreaSettings({
     fields: () => [

@@ -17,3 +17,6 @@ mat-flat-button
 - [ ] "aot": false,
 - [ ] checkbox don't look good on area / data-control
 - [ ] fix pie rendering to call update / render correctly
+- [ ] fix accordion to look ok
+- [ ] fix buttons in assign deliveries
+- [ ] fix button color on login et..

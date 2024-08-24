@@ -127,7 +127,7 @@ CaptionTransformer.transformCaption = (remult, key, caption) => {
 }
 function adjustSettings<entityType, valueType>(
   settings: FieldOptions<entityType, valueType> & TranslatedCaption,
-  options: (
+  options?: (
     | FieldOptions<entityType, valueType>
     | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void)
   )[]
@@ -141,7 +141,7 @@ function adjustSettings<entityType, valueType>(
       o.caption = settings.translation(getLang())
     })
   }
-  opts.push(...options)
+  if (options) opts.push(...options)
   return opts
 }
 export function Field<entityType = unknown, valueType = unknown>(
@@ -168,6 +168,7 @@ export function Field<entityType = unknown, valueType = unknown>(
 
 export class Fields {
   static string<entityType = unknown, valueType = string>(
+    settings?: FieldOptions<entityType, valueType> & TranslatedCaption,
     ...options: (
       | (StringFieldOptions<entityType, valueType> & TranslatedCaption)
       | ((
@@ -176,13 +177,13 @@ export class Fields {
         ) => void)
     )[]
   ) {
-    return OrigFields.string(...options)
+    return OrigFields.string(...adjustSettings(settings, options))
   }
   static object = OrigFields.object
   static boolean<entityType = unknown>(
     options?: FieldOptions<entityType, boolean> & TranslatedCaption
   ) {
-    return OrigFields.boolean(options)
+    return OrigFields.boolean(...adjustSettings(options))
   }
   static integer<entityType = unknown>(
     settings?: FieldOptions<entityType, number> & TranslatedCaption,

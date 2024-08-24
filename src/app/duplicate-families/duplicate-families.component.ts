@@ -27,27 +27,27 @@ import {
   styleUrls: ['./duplicate-families.component.scss']
 })
 export class DuplicateFamiliesComponent implements OnInit {
-  @Fields.string({ translation: (l) => l.address })
+  @Fields.boolean({ translation: (l) => l.address })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   address: boolean
-  @Fields.string({ translation: (l) => l.familyName })
+  @Fields.boolean({ translation: (l) => l.familyName })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   name: boolean = false
-  @Fields.string({ translation: (l) => l.phone })
+  @Fields.boolean({ translation: (l) => l.phone })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   phone: boolean = false
-  @Fields.string({ translation: (l) => l.activeDeliveries })
+  @Fields.boolean({ translation: (l) => l.activeDeliveries })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   onlyActive: boolean = true
-  @Fields.string({ translation: (l) => l.socialSecurityNumber })
+  @Fields.boolean({ translation: (l) => l.socialSecurityNumber })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
