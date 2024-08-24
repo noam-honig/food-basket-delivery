@@ -33,11 +33,10 @@
         <div [hidden]="!ready" style="display: block; width: 350px">
           <canvas
             baseChart
-            [data]="pieChartData"
-            [labels]="pieChartLabels"
-            [chartType]="pieChartType"
-            [options]="options"
-            [colors]="colors"
+            [data]="pie.data"
+            type="pie"
+            [options]="pie.options"
+            (chartClick)="pie.chartClicked($event)"
           ></canvas>
         </div>
       </div>

@@ -13,3 +13,7 @@ mat-flat-button
 - [ ] fix toolbar button and maybe color
 - [ ] fix name of name in families and create new delivery etc...
 - [ ] fix combo on grid
+- [ ] "optimization": false,
+- [ ] "aot": false,
+- [ ] checkbox don't look good on area / data-control
+- [ ] fix pie rendering to call update / render correctly
