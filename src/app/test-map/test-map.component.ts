@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, ViewChild, inject } from '@angular/core'
 import type {
   ChartConfiguration,
   ChartData,
@@ -6,13 +6,23 @@ import type {
   ChartType
 } from 'chart.js'
 import { BaseChartDirective } from 'ng2-charts'
+import { BusyService, openDialog } from '../common-ui-elements'
+import { WaitComponent } from '../common-ui-elements/src/angular/wait/wait.component'
+import { MatDialog } from '@angular/material/dialog'
 
 @Component({
   selector: 'app-test-map',
   templateUrl: './test-map.component.html',
   styleUrls: ['./test-map.component.scss']
 })
-export class TestMapComponent {
+export class TestMapComponent implements OnInit {
+  private dialog = inject(MatDialog)
+  ngOnInit(): void {
+    this.dialog.open(WaitComponent, {
+      panelClass: 'wait-dialog'
+    })
+  }
+
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
 
   public pieChartOptions: ChartConfiguration['options'] = {

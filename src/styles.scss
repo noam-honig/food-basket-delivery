@@ -561,3 +561,11 @@ textarea {
 .warning-button {
   @include mat.button-color($angular-starter-project-theme, $color-variant: error)
 }
+
+.wait-dialog {
+  .mat-mdc-dialog-surface {
+
+    width: 6rem;
+    min-width: 6rem;
+  }
+}
