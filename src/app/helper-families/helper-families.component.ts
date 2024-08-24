@@ -61,7 +61,7 @@ import {
   DeliveryInList,
   HelperFamiliesController
 } from './helper-families.controller'
-import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
+
 import { MatExpansionPanel } from '@angular/material/expansion'
 
 import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component'
@@ -325,7 +325,6 @@ export class HelperFamiliesComponent implements OnInit {
                 let d = selectedItem.item as DeliveryInList
                 ids.push(...d.ids)
               }
-              await MltFamiliesController.assignFamilyDeliveryToIndie(ids)
               await this.familyLists.refreshRoute({
                 volunteerLocation: this.volunteerLocation
               })

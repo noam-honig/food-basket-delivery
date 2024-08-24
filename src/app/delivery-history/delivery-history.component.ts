@@ -23,15 +23,11 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { getLang } from '../sites/sites'
 import { DateRangeComponent } from '../date-range/date-range.component'
 import { DestroyHelper, DialogService } from '../select-popup/dialog'
-import { HelperGifts } from '../helper-gifts/HelperGifts'
+
 import { use, Field, Fields } from '../translate'
 import { DeliveryStatus } from '../families/DeliveryStatus'
-import { DistributionCenters } from '../manage/distribution-centers'
-import {
-  BusyService,
-  openDialog,
-  RouteHelperService
-} from '../common-ui-elements'
+
+import { BusyService, RouteHelperService } from '../common-ui-elements'
 import { DeliveryHistoryController } from './delivery-history.controller'
 import { PlaybackComponent } from '../playback/playback.component'
 
@@ -101,43 +97,6 @@ export class DeliveryHistoryComponent implements OnInit {
                 (d: helperHistoryInfo, c) => c == d.$.courier
               )
             }
-          },
-          {
-            name: 'הענק מתנה',
-            visible: () =>
-              this.settings.isSytemForMlt && remult.isAllowed(Roles.admin),
-            click: async () => {
-              let rows = this.helperInfo.selectedRows
-
-              if (rows.length == 0) {
-                this.dialog.Error('לא נבחרו מתנדבים')
-                return
-              }
-
-              if (
-                await openDialog(
-                  YesNoQuestionComponent,
-                  (q) =>
-                    (q.args = {
-                      question: 'האם להעניק מתנה ל ' + rows.length + ' מתנדבים?'
-                    }),
-                  (q) => q.yes
-                )
-              ) {
-                if (
-                  (await remult
-                    .repo(HelperGifts)
-                    .count({ assignedToHelper: null })) >= rows.length
-                ) {
-                  for (const h of rows) {
-                    await HelperGifts.assignGift(h.courier)
-                  }
-                  this.refresh()
-                } else {
-                  this.dialog.Error('אין מספיק מתנות לחלוקה')
-                }
-              }
-            }
           }
         ],
         rowButtons: [
@@ -146,15 +105,6 @@ export class DeliveryHistoryComponent implements OnInit {
             click: async (x) => {
               let h = await remult.repo(Helpers).findId(x.courier)
               h.showDeliveryHistory(this.dialog)
-            }
-          },
-          {
-            name: 'הענק מתנה',
-            visible: () =>
-              this.settings.isSytemForMlt && remult.isAllowed(Roles.admin),
-            click: async (x) => {
-              await HelperGifts.assignGift(x.courier)
-              this.refresh()
             }
           }
         ],

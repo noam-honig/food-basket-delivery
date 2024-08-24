@@ -54,7 +54,7 @@ import {
   CitiesStatsPerDistCenter,
   FamilyDeliveryStats
 } from '../family-deliveries/family-deliveries-stats'
-import { HelperGifts } from '../helper-gifts/HelperGifts'
+
 import {
   HelperCommunicationHistory,
   InRouteHelpers
@@ -90,7 +90,7 @@ import { ImportFromExcelController } from '../import-from-excel/import-from-exce
 import { ImportHelpersFromExcelController } from '../import-helpers-from-excel/import-helpers-from-excel.controller'
 import { ManageController, SendTestSms } from '../manage/manage.controller'
 import { MergeFamiliesController } from '../merge-families/merge-families.controller'
-import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
+
 import { OrgEventsController } from '../org-events/org-events.controller'
 import { PreviousDeliveryController } from '../previous-delivery-comments/previous-delivery-comments.controller'
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs'
@@ -157,7 +157,6 @@ const entities = [
   FamilySources,
   CitiesStats,
   CitiesStatsPerDistCenter,
-  HelperGifts,
   HelpersBase,
   Helpers,
   InRouteHelpers,
@@ -207,7 +206,7 @@ const controllers = [
   ImportHelpersFromExcelController,
   ManageController,
   MergeFamiliesController,
-  MltFamiliesController,
+
   OrgEventsController,
   PreviousDeliveryController,
   VolunteerReportDefs,

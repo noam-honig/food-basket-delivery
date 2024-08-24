@@ -7,8 +7,6 @@ mat-flat-button
 
 ## Todo
 
-- [ ] search for all column with alias to find it
-- [ ] sms credentials
 - [ ] fix progress indicator to look ok
 - [ ] fix toolbar button and maybe color
 - [ ] fix name of name in families and create new delivery etc...
@@ -20,3 +18,7 @@ mat-flat-button
 - [ ] fix accordion to look ok
 - [ ] fix buttons in assign deliveries
 - [ ] fix button color on login et..
+- [ ] fix filter dialog with top padding
+- [ ] fix basket type and ammount in deliveries screen to look ok
+- [ ] check font size of checkboxes
+- [ ]

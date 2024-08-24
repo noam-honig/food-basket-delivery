@@ -91,14 +91,10 @@ import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
 import { PlatformModule } from '@angular/cdk/platform'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component'
 
 import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component'
-import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component'
-import { MltFamiliesComponent } from './mlt-families/mlt-families.component'
 import { remult, Remult } from 'remult'
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component'
-import { Helpers } from './helpers/helpers'
 import { ImagesComponent } from './images/images.component'
 import { DeliveryImagesComponent } from './delivery-images/delivery-images.component'
 import { InitContext } from './helpers/init-context'
@@ -209,10 +205,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     InRouteFollowUpComponent,
     ShipmentAssignScreenComponent,
     VolunteerCrossAssignComponent,
-    HelperGiftsComponent,
     GeneralImportFromExcelComponent,
-    MyGiftsDialogComponent,
-    MltFamiliesComponent,
     PrintVolunteersComponent,
     ImagesComponent,
     DeliveryImagesComponent,
@@ -360,7 +353,7 @@ export function initApp(
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent)
       routeMap.set(LoginComponent, l.LoginComponent)
       routeMap.set(EventsComponent, l.eventsComponent)
-      routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent)
+
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities)
 
       RegisterToEvent.init()

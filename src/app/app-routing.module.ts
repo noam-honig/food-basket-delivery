@@ -56,20 +56,20 @@ import { TokenReplacerComponent } from './token-replacer/token-replacer.componen
 import { TestMapComponent } from './test-map/test-map.component'
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component'
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component'
-import { EventsComponent } from './events/events.component'
+
 import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
 import { Sites, usesIntakeForm } from './sites/sites'
 import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
 import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
 import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
-import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component'
+
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component'
 import { OrgEventsComponent } from './org-events/org-events.component'
 import { PrintStickersComponent } from './print-stickers/print-stickers.component'
 import { PrintVolunteerComponent } from './print-volunteer/print-volunteer.component'
 import { IncomingMessagesComponent } from './incoming-messages/incoming-messages.component'
 import { FamilySelfOrderComponent } from './family-self-order/family-self-order.component'
-import { getSettings } from '../app/manage/ApplicationSettings'
+
 import { CallerComponent } from './caller/caller.component'
 import { AdjustGeocodeComponent } from './adjust-geocode/adjust-geocode.component'
 import { ManageCallersComponent } from './manage-callers/manage-callers.component'
@@ -77,22 +77,6 @@ import { SpecificEventComponent } from './specific-event/specific-event.componen
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { IntakeFormComponent } from './intake-form/intake-form.component'
 
-@Injectable()
-export class MltOnlyGuard implements CanActivate {
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ):
-    | boolean
-    | import('@angular/router').UrlTree
-    | import('rxjs').Observable<boolean | import('@angular/router').UrlTree>
-    | Promise<boolean | import('@angular/router').UrlTree> {
-    let site = Sites.getOrganizationFromContext()
-
-    if (site == 'mlt') return true
-    return false
-  }
-}
 @Injectable()
 export class IntakeFormGuard implements CanActivate {
   canActivate(
@@ -235,11 +219,6 @@ export const routes: Routes = [
     component: ImportHelpersFromExcelComponent,
     canActivate: [AdminGuard]
   },
-  {
-    path: 'helper-gifts',
-    component: HelperGiftsComponent,
-    canActivate: [MltAdminGuard]
-  },
 
   {
     path: 'duplicate-families',
@@ -300,7 +279,6 @@ export const routes: Routes = [
     OverviewOrAdminGuard,
     LabGuard,
     distCenterOrLabGuard,
-    MltOnlyGuard,
     MltAdminGuard,
     SignedInAndNotOverviewGuard,
     EventListGuard,

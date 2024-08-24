@@ -43,7 +43,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 
 import { HelperFamiliesComponent } from '../helper-families/helper-families.component'
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper'
-import { SelectListComponent } from '../select-list/select-list.component'
+
 import { use } from '../translate'
 import { getLang } from '../sites/sites'
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
@@ -52,11 +52,6 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
-import {
-  DeliveryInList,
-  HelperFamiliesController
-} from '../helper-families/helper-families.controller'
-import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
 
 @Component({
   selector: 'app-asign-family',
@@ -606,38 +601,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
       SelectCompanyComponent,
       (s) => (s.argOnSelect = (x) => (this.helper.company = x))
     )
-  }
-  async assignClosestDeliveries() {
-    let afdList = await HelperFamiliesController.getDeliveriesByLocation(
-      this.familyLists.helper.preferredDistributionAreaAddressHelper.location,
-      false
-    )
-
-    await openDialog(SelectListComponent, (x) => {
-      x.args = {
-        title:
-          use.language.closestDeliveries +
-          ' (' +
-          use.language.mergeFamilies +
-          ')',
-        multiSelect: true,
-        onSelect: async (selectedItems) => {
-          if (selectedItems.length > 0)
-            this.busy.doWhileShowingBusy(async () => {
-              let ids: string[] = []
-              for (const selectedItem of selectedItems) {
-                let d = selectedItem.item as DeliveryInList
-                ids.push(...d.ids)
-              }
-              await MltFamiliesController.assignFamilyDeliveryToIndie(ids)
-
-              await this.familyLists.reload()
-              this.doRefreshRoute()
-            })
-        },
-        options: afdList
-      }
-    })
   }
 
   addSpecial() {
