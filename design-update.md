@@ -9,4 +9,7 @@ mat-flat-button
 
 - [ ] search for all column with alias to find it
 - [ ] sms credentials
-- [ ]
+- [ ] fix progress indicator to look ok
+- [ ] fix toolbar button and maybe color
+- [ ] fix name of name in families and create new delivery etc...
+- [ ] fix combo on grid

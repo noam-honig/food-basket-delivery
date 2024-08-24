@@ -132,7 +132,7 @@ import { BelowEightteenMessageComponent } from './below-eightteen-message/below-
 import { AddressInfoComponent } from './address-info/address-info.component'
 import { IntakeFormComponent } from './intake-form/intake-form.component'
 import { UgaConfirmCheckboxComponent } from './uga-confirm-checkbox/uga-confirm-checkbox.component'
-
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts'
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
 
 export class MyHammerConfig extends HammerGestureConfig {
@@ -249,6 +249,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     DragDropModule,
     NgxPaginationModule,
     MaterialModule,
+
     BrowserAnimationsModule,
     CommonUIElementsModule,
     AppRoutingModule,
@@ -259,6 +260,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     })
   ],
   providers: [
+    provideCharts(withDefaultRegisterables()),
     DialogService,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
 

@@ -11,6 +11,7 @@
   width: 100%;
   //    position:fixed;
   height: 100%;
+  background-color: #fafafa;
   min-width: 100%;
   min-height: 100%;
   //   border:1px solid rgba(0,0,0,0.5);
@@ -24,6 +25,7 @@
 
 .app-sidenav {
   width: 240px;
+  box-shadow: var(--mat-app-elevation-shadow-level-10, none);
 }
 
 @media not print {

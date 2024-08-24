@@ -45,6 +45,8 @@ import {
   statusClass,
   Statuses
 } from './distribution-map.controller'
+import { BaseChartDirective } from 'ng2-charts'
+import { PieHelper } from '../delivery-follow-up/pie-helper'
 
 @Component({
   selector: 'app-distribution-map',
@@ -370,45 +372,21 @@ export class DistributionMap implements OnInit, OnDestroy {
   async ngOnInit() {
     this.test()
   }
-  options: chart.ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-    //TODO - implement legend
-    // legend: {
-    //   position: 'right',
-    //   onClick: (event: MouseEvent, legendItem: any) => {
-    //     this.selectedStatus = this.statuses.statuses[legendItem.index]
-    //     this.refreshDeliveries()
-    //     return false
-    //   }
-    // }
-  }
-  public chartClicked(e: any): void {
-    if (e.active && e.active.length > 0) {
-      this.selectedStatus = this.statuses.statuses[e.active[0]._index]
+  first = true
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
+  pie = new PieHelper({
+    render: () => this.chart.render(),
+    click: (index) => {
+      this.selectedStatus = this.statuses.statuses[index]
       this.refreshDeliveries()
     }
-  }
+  })
+
   updateChart() {
-    this.pieChartData = []
-    this.pieChartLabels.splice(0)
-    this.colors[0].backgroundColor.splice(0)
+    this.pie.reset()
 
     this.statuses.statuses.forEach((s) => {
-      this.pieChartLabels.push(s.name + ' ' + s.value)
-      this.pieChartData.push(s.value)
-      this.colors[0].backgroundColor.push(s.color)
+      this.pie.add(s.name + ' ' + s.value, s.value, s.color)
     })
   }
-
-  public pieChartLabels: string[] = []
-  public pieChartData: number[] = []
-
-  public colors: Array<any> = [
-    {
-      backgroundColor: []
-    }
-  ]
-
-  public pieChartType: chart.ChartType = 'pie'
 }

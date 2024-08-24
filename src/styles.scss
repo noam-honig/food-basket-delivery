@@ -47,6 +47,13 @@ $angular-starter-project-theme: mat.define-theme((color: (theme-type: light,
   width: 100%;
 }
 
+:root {
+  --sys-title-large-size: 1rem;
+  --sys-title-large-weight: 500;
+  --mat-card-subtitle-text-color: rgba(0, 0, 0, 0.54); //var(--sys-on-surface-variant)
+  --mat-card-subtitle-text-weight: 400;
+}
+
 .mdc-text-field__input::-webkit-calendar-picker-indicator {
   display: inherit !important;
 }
@@ -246,15 +253,21 @@ text-area {
   padding-left: 0em;
 }
 
-.mat-card {
+.mdc-card {
   margin-bottom: 5px;
+  padding: 16px;
+  @include mat.elevation(1);
 }
 
-.mat-card-title {
+.mat-mdc-card-title {
   font-size: 18px;
   display: flex !important;
   align-items: center;
   justify-content: space-between;
+}
+
+.mat-mdc-card-subtitle {
+  color: var(--sys-on-secondary)
 }
 
 .title-with-menu {

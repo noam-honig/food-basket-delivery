@@ -1,14 +1,12 @@
 <div class="full-page">
   <div>
-    <div style="display: block; width: 350px" *ngIf="showChart">
+    <div style="display: block; max-height: 150px" *ngIf="showChart">
       <canvas
         baseChart
-        [data]="pieChartData"
-        [labels]="pieChartLabels"
-        [chartType]="pieChartType"
-        [options]="options"
-        [colors]="colors"
-        (chartClick)="chartClicked($event)"
+        [data]="pie.data"
+        type="pie"
+        [options]="pie.options"
+        (chartClick)="pie.chartClicked($event)"
       ></canvas>
     </div>
     <h4 style="display: inline">

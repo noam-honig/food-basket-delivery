@@ -214,7 +214,7 @@ export const routes: Routes = [
   {
     path: 'testmap',
     component: TestMapComponent,
-    canActivate: [AdminGuard],
+    //canActivate: [AdminGuard],
     data: { hide: true }
   },
 
