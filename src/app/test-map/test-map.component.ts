@@ -37,4 +37,12 @@ export class TestMapComponent implements OnInit {
       }
     ]
   }
+  update() {
+    this.pieChartData.datasets[0].data = [
+      Math.random() * 100,
+      Math.random() * 100,
+      Math.random() * 100
+    ]
+    this.chart?.update()
+  }
 }

@@ -26,6 +26,7 @@ $angular-starter-project-theme: mat.define-theme((color: (theme-type: light,
   @include mat.all-component-themes($angular-starter-project-theme);
   @include mat.system-level-colors($angular-starter-project-theme);
   @include mat.system-level-typography($angular-starter-project-theme);
+  @include mat.toolbar-color($angular-starter-project-theme);
 }
 
 
@@ -55,6 +56,9 @@ $angular-starter-project-theme: mat.define-theme((color: (theme-type: light,
   --mat-card-subtitle-text-color: rgba(0, 0, 0, 0.54); //var(--sys-on-surface-variant)
   --mat-card-subtitle-text-weight: 400;
   --mat-checkbox-label-text-size: 1rem;
+  --mat-toolbar-container-background-color: var(--sys-primary);
+  --mat-toolbar-container-text-color: var(--sys-on-primary);
+  --sys-label-large-size: 1rem;
 }
 
 .mdc-text-field__input::-webkit-calendar-picker-indicator {
@@ -562,7 +566,8 @@ textarea {
 }
 
 .warning-button {
-  @include mat.button-color($angular-starter-project-theme, $color-variant: error)
+  @include mat.button-color($angular-starter-project-theme, $color-variant: error);
+
 }
 
 .wait-dialog {

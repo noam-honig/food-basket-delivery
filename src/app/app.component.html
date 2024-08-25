@@ -71,7 +71,11 @@
           align-items: center;
         "
       >
-        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+        <button
+          mat-icon-button
+          class="sidenav-toggle"
+          (click)="sidenav.toggle()"
+        >
           <mat-icon>menu</mat-icon>
         </button>
         <span style="padding-left: 10px">{{ currentTitle() }}</span>
