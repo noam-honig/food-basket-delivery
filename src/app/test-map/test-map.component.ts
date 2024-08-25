@@ -20,6 +20,11 @@ export class TestMapComponent implements OnInit {
   private dialog = inject(MatDialog)
   ngOnInit(): void {}
 
+  exist() {
+    console.count('exist')
+    return 1
+  }
+
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
   pie = new PieHelper({})
 

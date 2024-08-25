@@ -1,5 +1,6 @@
 <div class="data-control3" #myDiv>
-  <div style="display: flex; width: 100%" *ngIf="showTextBox()">
+  @if(showTextBox()) {
+  <div style="display: flex; width: 100%">
     <input
       #theId
       matInput
@@ -12,8 +13,8 @@
         updateOn: settings._getColDataType(map) == 'number' ? 'blur' : 'change'
       }"
     />
+    @if(showDescription()){
     <div
-      *ngIf="showDescription()"
       style="
         white-space: nowrap;
         overflow: hidden;
@@ -25,22 +26,18 @@
     >
       {{ settings._getColDisplayValue(map, record) }}&nbsp;
     </div>
-    <button
-      mat-icon-button
-      *ngIf="showClick()"
-      (click)="click()"
-      class="row-button"
-    >
+    } @if(showClick()){
+    <button mat-icon-button (click)="click()" class="row-button">
       <mat-icon>{{ getClickIcon() }} </mat-icon>
     </button>
+    }
   </div>
-  <div
-    *ngIf="showReadonlyText() && !showCheckbox()"
-    style="overflow: hidden; padding-left: 10px; width: 100%"
-  >
+  } @if(showReadonlyText() && !showCheckbox()){
+  <div style="overflow: hidden; padding-left: 10px; width: 100%">
     {{ settings._getColDisplayValue(map, record) }}&nbsp;
   </div>
-  <div *ngIf="isSelect()" class="my-select" [class.rtl-select]="rightToLeft">
+  } @if(isSelect()) {
+  <div class="my-select" [class.rtl-select]="rightToLeft">
     <select
       matNativeControl
       [(ngModel)]="_getColumn()!.inputValue"
@@ -51,22 +48,22 @@
       </option>
     </select>
   </div>
+  } @if(showCheckbox()){
 
-  <div *ngIf="showCheckbox()">
+  <div>
+    @if(showReadonlyText()){
     <mat-checkbox
-      *ngIf="!showReadonlyText()"
       #theId1
       [(ngModel)]="_getColumn()!.inputValue"
       (ngModelChange)="settings._colValueChanged(map, record)"
       class="fix-label"
     ></mat-checkbox>
-    <mat-icon
-      style="font-size: 18px; height: 20px"
-      *ngIf="showReadonlyText() && _getColumn()!.inputValue"
-      >check
-    </mat-icon>
+    } @if(showReadonlyText() && _getColumn()!.inputValue){
+    <mat-icon style="font-size: 18px; height: 20px">check </mat-icon>
+    }
   </div>
+  }
 </div>
-<mat-error *ngIf="getError()" [id]="theId" style="font-size: 75%">{{
-  getError()
-}}</mat-error>
+@if(getError()){
+<mat-error [id]="theId" style="font-size: 75%">{{ getError() }}</mat-error>
+}
