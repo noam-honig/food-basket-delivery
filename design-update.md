@@ -9,7 +9,7 @@ mat-flat-button
 
 - [ ] "optimization": false,
 - [ ] "aot": false,
-- [ ] fix performance of grid in active family deliveries
+- [ ] fix update family screen
 - [ ]
   later
 - [ ] check why status change doesn't update the chart in real time
