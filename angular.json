@@ -60,7 +60,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": false,
+              "optimization": true,
               "aot": false,
               "outputHashing": "all",
               "sourceMap": true,
