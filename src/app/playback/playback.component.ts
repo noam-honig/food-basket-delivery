@@ -197,12 +197,7 @@ export class PlaybackComponent implements OnInit {
     return ''
   }
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
-  pie = new PieHelper({
-    render: () => this.chart?.render(),
-    click: (index) => {
-      // this.currentStatFilter = this.pieChartStatObjects[index]
-    }
-  })
+  pie = new PieHelper({})
 
   updateChart() {
     this.pie.reset()
@@ -210,6 +205,7 @@ export class PlaybackComponent implements OnInit {
     this.statuses.statuses.forEach((s) => {
       this.pie.add(s.name + ' ' + s.value, s.value, s.color)
     })
+    this.chart?.update()
   }
   timeline: timelineStep[] = []
 }

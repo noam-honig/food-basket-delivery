@@ -6,7 +6,6 @@ export class PieHelper {
   constructor(
     private args: {
       click?: (index: number) => void
-      render: () => void
     }
   ) {}
   private z = inject(NgZone)
@@ -42,7 +41,7 @@ export class PieHelper {
   }
   private colors: string[] = []
   reset() {
-    this.data.datasets[0].data.splice(0)
+    this.data.datasets[0].data = []
     this.data.labels.splice(0)
     this.colors.splice(0)
   }
@@ -62,7 +61,6 @@ export class PieHelper {
       color = this.usefulColors[this.colors.length % this.usefulColors.length]
     }
     this.colors.push(color)
-    this.args.render()
   }
   public data: ChartData<'pie', number[], string | string[]> = {
     labels: [],

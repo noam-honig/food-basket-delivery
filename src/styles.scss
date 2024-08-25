@@ -17,6 +17,15 @@ $angular-starter-project-theme: mat.define-theme((color: (theme-type: light,
       typography:(plain-family:'Rubik', brand-family:'Rubik', use-system-variables: true),
     ));
 
+$green-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$green-palette,
+        tertiary: mat.$blue-palette,
+        use-system-variables: true),
+      typography:(plain-family:'Rubik', brand-family:'Rubik', use-system-variables: true),
+    ));
+
+
+
 
 
 // Include theme styles for core and each component used in your app.
@@ -567,6 +576,11 @@ textarea {
 
 .warning-button {
   @include mat.button-color($angular-starter-project-theme, $color-variant: error);
+}
+
+.accept-button {
+  --mdc-filled-button-container-color: #026e00;
+  --mdc-filled-button-label-text-color: #ffffff;
 
 }
 
@@ -576,4 +590,24 @@ textarea {
     width: 6rem;
     min-width: 6rem;
   }
+}
+
+.startButtonPart:dir(ltr) {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px
+}
+
+.startButtonPart:dir(rtl) {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px
+}
+
+.endButtonPart:dir(rtl) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.endButtonPart:dir(ltr) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }

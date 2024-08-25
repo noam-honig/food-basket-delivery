@@ -66,8 +66,7 @@
       <button
         *ngIf="showCancelAssign(f)"
         mat-stroked-button
-        color="accent"
-        class="rounded-button"
+        class="warning-button"
         (click)="cancelAssign(f)"
       >
         <mat-icon>person_add_disabled</mat-icon>
@@ -75,19 +74,13 @@
       </button>
       <button
         mat-flat-button
-        color="primary"
         *ngIf="showFamilyPickedUp(f)"
         class="rounded-button"
         (click)="familiyPickedUp(f)"
       >
         {{ settings.lang.packageWasPickedUp }}
       </button>
-      <button
-        mat-stroked-button
-        color="primary"
-        class="rounded-button"
-        (click)="udpateInfo(f)"
-      >
+      <button mat-stroked-button class="rounded-button" (click)="udpateInfo(f)">
         <mat-icon>edit</mat-icon>
         {{ settings.lang.deliveryDetails }}
       </button>
@@ -108,7 +101,7 @@
     <app-address-info [args]="secondAddressArgs"></app-address-info>
     <button
       mat-raised-button
-      color="primary"
+      class="accept-button"
       *ngIf="showPickedUp()"
       (click)="updatePickedUp()"
     >
@@ -116,7 +109,7 @@
     </button>
     <button
       mat-raised-button
-      color="error"
+      class="warning-button"
       *ngIf="showCancelUpdatePickedUp()"
       (click)="cancelUpdatePickedUp()"
     >

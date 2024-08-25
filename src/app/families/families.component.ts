@@ -149,7 +149,6 @@ export class FamiliesComponent implements OnInit {
   currentStatFilter: FaimilyStatistics = undefined
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
   pie = new PieHelper({
-    render: () => this.chart?.render(),
     click: (index) => {
       this.setCurrentStat(this.pieChartStatObjects[index])
     }
@@ -797,6 +796,7 @@ export class FamiliesComponent implements OnInit {
         this.pieChartStatObjects.push(s)
       }
     })
+    this.chart?.update()
   }
 
   refreshStats() {

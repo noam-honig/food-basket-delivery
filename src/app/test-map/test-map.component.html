@@ -1,3 +1,12 @@
+<button (click)="update()">update</button>
 <canvas baseChart [data]="pieChartData" type="pie" [options]="pieChartOptions">
 </canvas>
-<button (click)="update()">update</button>
+<div style="display: block; width: 350px; height: 188px">
+  <!-- <canvas
+    baseChart
+    [data]="pie.data"
+    type="pie"
+    [options]="pie.options"
+    (chartClick)="pie.chartClicked($event)"
+  ></canvas> -->
+</div>

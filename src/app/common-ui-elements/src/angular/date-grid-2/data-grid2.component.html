@@ -257,14 +257,8 @@
           mat-icon-button
           *ngIf="showSaveAllButton()"
           (click)="saveAllClick()"
-          style="line-height: 36px; max-height: 28px"
         >
-          <mat-icon
-            [matTooltip]="saveAllText()"
-            class="row-button"
-            style="font-size: 24px"
-            >done_all</mat-icon
-          >
+          <mat-icon [matTooltip]="saveAllText()">done_all</mat-icon>
         </button>
       </div>
     </div>

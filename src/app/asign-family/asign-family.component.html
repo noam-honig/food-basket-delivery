@@ -247,11 +247,10 @@
         #assignButton
       >
         <button
-          mat-raised-button
-          color="primary"
+          mat-flat-button
           (click)="assignItem()"
           [disabled]="basketType.unassignedFamilies == 0 || assigning"
-          style="border-top-left-radius: 0px; border-bottom-left-radius: 0px"
+          class="startButtonPart"
         >
           {{
             assigning
@@ -273,17 +272,10 @@
           {{ getBasketsToClick() }}
         </button>
         <button
-          mat-button
+          class="endButtonPart"
           [matMenuTriggerFor]="basketMenu"
-          mat-raised-button
-          color="primary"
-          style="
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            padding-left: 0;
-            padding-right: 0;
-            min-width: 38px;
-          "
+          mat-flat-button
+          style="padding-left: 0; padding-right: 0; min-width: 38px"
           *ngIf="baskets.length"
         >
           <mat-icon>more_vert</mat-icon>

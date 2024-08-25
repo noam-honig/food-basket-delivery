@@ -85,7 +85,6 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
   pie = new PieHelper({
-    render: () => this.chart?.render(),
     click: (index) => {
       this.currentStatFilter = this.pieChartStatObjects[index]
     }
@@ -194,7 +193,9 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
         this.pieChartStatObjects.push(s)
       }
     })
+    this.chart?.update()
   }
+  first = true
   hasChart = true
   async refreshStats() {
     this.helpers = await DeliveryFollowUpController.helpersStatus(

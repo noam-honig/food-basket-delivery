@@ -309,7 +309,6 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
   pie = new PieHelper({
-    render: () => this.chart?.render(),
     click: (index) => {
       this.setCurrentStat(this.pieChartStatObjects[index])
     }
@@ -341,6 +340,8 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
         this.pieChartStatObjects.push(s)
       }
     })
+
+    this.chart?.update()
   }
   statTotal(t: statsOnTab) {
     if (!t.showTotal) return

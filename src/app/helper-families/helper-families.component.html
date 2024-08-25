@@ -52,7 +52,7 @@
         <button mat-menu-item (click)="refreshRoute()">
           {{ settings.lang.replanRoute }}
         </button>
-        <button mat-menu-item (click)="familyLists.toggleLabs()">labs</button>
+
         <button
           mat-menu-item
           (click)="showRouteOnGoogleMaps()"
@@ -193,9 +193,8 @@
                 [userFamilies]="familyLists"
               >
                 <button
-                  mat-raised-button
-                  class="myButton"
-                  color="primary"
+                  mat-flat-button
+                  class="myButton accept-button"
                   (click)="deliveredToFamily(f)"
                 >
                   {{ settings.deliveredButtonText }}
@@ -266,28 +265,18 @@
     "
   >
     <button
-      mat-raised-button
-      color="accent"
-      style="
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
-        width: 270px;
-      "
+      mat-flat-button
+      style="width: 270px"
+      class="startButtonPart accept-button"
       (click)="sendSms(false)"
     >
       {{ settings.lang.sendSmsWithLink }}
     </button>
     <button
       [matMenuTriggerFor]="appMenuSms"
-      mat-raised-button
-      color="accent"
-      style="
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        padding-left: 0;
-        padding-right: 0;
-        min-width: 38px;
-      "
+      mat-flat-button
+      class="endButtonPart accept-button"
+      style="padding-left: 0; padding-right: 0; min-width: 38px"
       (click)="prepareMessage(false)"
     >
       <mat-icon>more_vert</mat-icon>
@@ -317,13 +306,8 @@
     <button
       *ngIf="partOfReview && familyLists.toDeliver.length > 0"
       mat-raised-button
-      class="contact-helper-button no-print"
-      style="
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
-        width: 270px;
-      "
-      color="primary"
+      class="contact-helper-button no-print startButtonPart"
+      style="width: 270px"
       (click)="sendSms(true)"
     >
       <span
@@ -346,14 +330,8 @@
       *ngIf="partOfReview && familyLists.toDeliver.length > 0"
       [matMenuTriggerFor]="appMenuSmsReminder"
       mat-raised-button
-      color="primary"
-      style="
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        padding-left: 0;
-        padding-right: 0;
-        min-width: 38px;
-      "
+      class="endButtonPart"
+      style="padding-left: 0; padding-right: 0; min-width: 38px"
       (click)="prepareMessage(true)"
     >
       <mat-icon>more_vert</mat-icon>

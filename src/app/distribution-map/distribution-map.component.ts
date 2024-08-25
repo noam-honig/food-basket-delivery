@@ -375,7 +375,6 @@ export class DistributionMap implements OnInit, OnDestroy {
   first = true
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
   pie = new PieHelper({
-    render: () => this.chart.render(),
     click: (index) => {
       this.selectedStatus = this.statuses.statuses[index]
       this.refreshDeliveries()
@@ -388,5 +387,6 @@ export class DistributionMap implements OnInit, OnDestroy {
     this.statuses.statuses.forEach((s) => {
       this.pie.add(s.name + ' ' + s.value, s.value, s.color)
     })
+    this.chart?.update()
   }
 }

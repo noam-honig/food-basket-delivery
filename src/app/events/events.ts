@@ -45,8 +45,6 @@ import { AddressHelper, Location } from '../shared/googleApiHelpers'
 
 import { DeliveryStatus } from '../families/DeliveryStatus'
 
-import moment from 'moment'
-
 import {
   messageMerger,
   MessageTemplate
@@ -1123,21 +1121,18 @@ export function eventDisplayDate(
     let todayJson = ValueConverters.DateOnly.toJson(today)
     let t = today.valueOf()
     let d = edd.valueOf()
+    const dayMonthFormatter = new Intl.DateTimeFormat(
+      use.language.languageCodeHe,
+      {
+        day: '2-digit',
+        month: '2-digit'
+      }
+    )
     if (d > t - day) {
       if (d < t + day)
-        return (
-          use.language.today +
-          ' (' +
-          moment(d).locale(use.language.languageCodeHe).format('DD/MM') +
-          ')'
-        )
+        return use.language.today + ' (' + dayMonthFormatter.format(d) + ')'
       if (d < t + day * 2)
-        return (
-          use.language.tomorrow +
-          ' (' +
-          moment(d).locale(use.language.languageCodeHe).format('DD/MM') +
-          ')'
-        )
+        return use.language.tomorrow + ' (' + dayMonthFormatter.format(d) + ')'
       if (group) {
         let endOfWeek = t - today.getDay() * day + day * 7
         if (d < endOfWeek) return use.language.thisWeek
@@ -1150,8 +1145,11 @@ export function eventDisplayDate(
       }
     }
     if (group) return use.language.past
+    const weekdayFormatter = new Intl.DateTimeFormat('he-IL', {
+      weekday: 'long'
+    })
 
-    return moment(d).locale(use.language.languageCodeHe).format('DD/MM (dddd)')
+    return `${dayMonthFormatter.format(d)} (${weekdayFormatter.format(d)})`
   }
   if (group) return use.language.past
 }

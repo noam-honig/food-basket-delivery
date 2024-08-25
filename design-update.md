@@ -7,10 +7,9 @@ mat-flat-button
 
 ## Todo
 
-- [ ] fix buttons in assign deliveries
-
-- [ ] fix button color on login et..
-- [ ] fix pie rendering to call update / render correctly
 - [ ] "optimization": false,
 - [ ] "aot": false,
+- [ ] fix performance of grid in active family deliveries
 - [ ]
+  later
+- [ ] check why status change doesn't update the chart in real time
