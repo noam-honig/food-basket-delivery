@@ -40,7 +40,7 @@
             <button mat-menu-item (click)="b.click!()">
               @if (b.icon){
               <mat-icon>{{ b.icon }}</mat-icon>
-              } >{{ b.textInMenu ? b.textInMenu() : b.name }}</button
+              } {{ b.textInMenu ? b.textInMenu() : b.name }}</button
             >} }
           </mat-menu>
           @for(map of
