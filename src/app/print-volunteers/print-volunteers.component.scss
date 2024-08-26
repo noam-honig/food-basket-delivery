@@ -1,14 +1,38 @@
+.printTableContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.printColumn {
+  width: 48%;
+}
+
 .printTable {
   -webkit-print-color-adjust: exact;
-
   font-size: smaller;
+  border-collapse: collapse;
+  width: 100%;
+
   th,
   td {
     border: 1px solid #ddd !important;
     padding-left: 8px !important;
     padding-right: 8px !important;
+    word-break: break-word;
   }
+
   tr:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+@media print {
+  .printTableContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .printColumn {
+    width: 48%;
   }
 }
