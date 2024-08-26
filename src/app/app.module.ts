@@ -11,7 +11,6 @@ import { CommonUIElementsModule } from './common-ui-elements'
 import { MaterialModule } from './shared/material.module'
 import { BaseChartDirective } from 'ng2-charts'
 import { FormsModule } from '@angular/forms'
-import { NgxPaginationModule } from 'ngx-pagination'
 import { HelpersComponent } from './helpers/helpers.component'
 import { JwtModule } from '@auth0/angular-jwt'
 
@@ -84,15 +83,9 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 import { DateRangeComponent } from './date-range/date-range.component'
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component'
 import { EventsComponent } from './events/events.component'
-import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
 import { AddressInputComponent } from './address-input/address-input.component'
-import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
-import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
-import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
 import { PlatformModule } from '@angular/cdk/platform'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-
-import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component'
 import { remult, Remult } from 'remult'
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component'
 import { ImagesComponent } from './images/images.component'
@@ -200,12 +193,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     DateRangeComponent,
     ShowOnMapComponent,
     EventsComponent,
-    DeliveryReceptionComponent,
     AddressInputComponent,
-    InRouteFollowUpComponent,
-    ShipmentAssignScreenComponent,
-    VolunteerCrossAssignComponent,
-    GeneralImportFromExcelComponent,
     PrintVolunteersComponent,
     ImagesComponent,
     DeliveryImagesComponent,
@@ -240,7 +228,6 @@ export class MyHammerConfig extends HammerGestureConfig {
     BrowserModule,
     FormsModule,
     DragDropModule,
-    NgxPaginationModule,
     MaterialModule,
 
     BrowserAnimationsModule,

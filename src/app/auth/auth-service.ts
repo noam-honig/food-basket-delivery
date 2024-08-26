@@ -11,7 +11,7 @@ import { OverviewComponent } from '../overview/overview.component'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component'
 import { Subject } from 'rxjs'
-import { DeliveryReceptionComponent } from '../delivery-reception/delivery-reception.component'
+
 import { JwtHelperService } from '@auth0/angular-jwt'
 import { InitContext } from '../helpers/init-context'
 import {
@@ -158,8 +158,6 @@ export class AuthService {
           (await import('../asign-family/asign-family.component'))
             .AsignFamilyComponent
         )
-      else if (remult.isAllowed(Roles.lab))
-        this.routeHelper.navigateToComponent(DeliveryReceptionComponent)
       else if (remult.isAllowed(Roles.overview))
         this.routeHelper.navigateToComponent(OverviewComponent)
       else if (remult.isAllowed(Roles.callPerson))

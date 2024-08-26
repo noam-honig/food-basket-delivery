@@ -9,7 +9,6 @@ import {
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { ApplicationImages } from '../manage/ApplicationImages'
 import { Remult, Entity, SqlDatabase, remult } from 'remult'
-import '../create-new-event/create-new-event'
 
 import { Helpers } from '../helpers/helpers'
 

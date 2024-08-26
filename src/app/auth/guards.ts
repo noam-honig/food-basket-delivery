@@ -69,19 +69,6 @@ export class SignedInAndNotOverviewGuard extends AuthenticatedGuard {
 }
 
 @Injectable()
-export class IndieGuard extends AuthenticatedGuard {
-  isAllowed() {
-    return Roles.indie
-  }
-}
-@Injectable()
-export class LabGuard extends AuthenticatedGuard {
-  isAllowed() {
-    return Roles.lab
-  }
-}
-
-@Injectable()
 export class distCenterOrLabGuard extends AuthenticatedGuard {
   isAllowed() {
     return (c) =>

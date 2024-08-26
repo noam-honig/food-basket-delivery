@@ -36,7 +36,6 @@ import {
   distCenterAdminGuard,
   distCenterOrOverviewOrAdmin,
   OverviewOrAdminGuard,
-  LabGuard,
   distCenterOrLabGuard,
   SignedInAndNotOverviewGuard,
   EventListGuard,
@@ -57,11 +56,7 @@ import { TestMapComponent } from './test-map/test-map.component'
 import { FamilyDeliveriesComponent } from './family-deliveries/family-deliveries.component'
 import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-families.component'
 
-import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
 import { Sites, usesIntakeForm } from './sites/sites'
-import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
-import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
-import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
 
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component'
 import { OrgEventsComponent } from './org-events/org-events.component'
@@ -117,24 +112,6 @@ export const routes: Routes = [
   },
   SelfPickupComponent.route,
   FamilyDeliveriesComponent.route,
-  {
-    path: 'in-route-helpers',
-    component: InRouteFollowUpComponent,
-    canActivate: [MltAdminGuard],
-    data: { name: 'מתנדבים בדרך' }
-  },
-  {
-    path: 'cross-assign',
-    component: ShipmentAssignScreenComponent,
-    canActivate: [MltAdminGuard],
-    data: { name: 'תורמים שטרם שויכו' }
-  },
-  {
-    path: 'volunteer-cross-assign',
-    component: VolunteerCrossAssignComponent,
-    canActivate: [MltAdminGuard],
-    data: { name: 'מתנדבים שטרם שויכו' }
-  },
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
 
@@ -154,13 +131,6 @@ export const routes: Routes = [
     component: TokenReplacerComponent,
     canActivate: [OverviewGuard],
     data: { hide: true }
-  },
-
-  {
-    path: 'reception',
-    component: DeliveryReceptionComponent,
-    canActivate: [LabGuard],
-    data: { name: 'קליטת משלוח' }
   },
 
   DeliveryHistoryComponent.route,
@@ -277,7 +247,6 @@ export const routes: Routes = [
     distCenterAdminGuard,
     distCenterOrOverviewOrAdmin,
     OverviewOrAdminGuard,
-    LabGuard,
     distCenterOrLabGuard,
     MltAdminGuard,
     SignedInAndNotOverviewGuard,

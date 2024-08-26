@@ -108,7 +108,6 @@ import {
   DialogController,
   StatusChangeChannel
 } from '../select-popup/dialog.controller'
-import { ShipmentAssignScreenController } from '../shipment-assign-screen/shipment-assign-screen.controller'
 import { PrintVolunteersController } from '../print-volunteers/print-volunteers.controller'
 import { PromiseThrottle } from '../shared/utils'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
@@ -220,7 +219,6 @@ const controllers = [
   DeleteDeliveries,
   PlaybackController,
   DialogController,
-  ShipmentAssignScreenController,
   PrintVolunteersController,
   OverviewController,
   IntakeFormController
