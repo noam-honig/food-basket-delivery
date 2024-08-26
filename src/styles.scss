@@ -271,7 +271,7 @@ text-area {
 
 .mdc-card {
   margin-bottom: 5px;
-  padding: 16px;
+  padding: 8px;
   @include mat.elevation(1);
 }
 
@@ -510,6 +510,7 @@ textarea {
 
 .small-button {
   line-height: 32px;
+  text-wrap: nowrap;
 
   .mat-icon {
     font-size: 16px;
