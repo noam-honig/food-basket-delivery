@@ -1,4 +1,6 @@
-<div style="margin-bottom: 15px">
+<div
+  style="margin-bottom: 10px; display: flex; justify-content: center; gap: 10px"
+>
   <button mat-raised-button (click)="previous()">
     <mat-icon>keyboard_arrow_right</mat-icon>
   </button>
@@ -8,15 +10,15 @@
   <button mat-raised-button (click)="next()">
     <mat-icon>keyboard_arrow_left</mat-icon>
   </button>
-</div>
-<div style="display: flex; align-content: flex-end">
-  <data-area [settings]="rangeArea"></data-area>
   <button
     mat-mini-fab
-    style="margin: 15px"
+    style="margin: 0px"
     (click)="dateChanged.emit()"
     color="primary"
   >
     <mat-icon>refresh</mat-icon>
   </button>
+</div>
+<div style="display: flex; align-content: flex-end">
+  <data-area [settings]="rangeArea"></data-area>
 </div>
