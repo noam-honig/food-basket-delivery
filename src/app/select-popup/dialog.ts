@@ -152,11 +152,11 @@ export class DialogService implements UITools {
     return this.busy.donotWait(what)
   }
   async editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void> {
-    openDialog(
-      (await import('../edit-custom-message/edit-custom-message.component'))
-        .EditCustomMessageComponent,
-      (x) => (x.args = args)
-    )
+    // openDialog(
+    //   (await import('../edit-custom-message/edit-custom-message.component'))
+    //     .EditCustomMessageComponent,
+    //   (x) => (x.args = args)
+    // )
   }
   navigateToComponent(component: any): void {
     this.routeHelper.navigateToComponent(component)
@@ -170,13 +170,13 @@ export class DialogService implements UITools {
     )
   }
   async updateGroup(args: UpdateGroupArgs): Promise<void> {
-    openDialog(
-      (await import('../update-group-dialog/update-group-dialog.component'))
-        .UpdateGroupDialogComponent,
-      (s) => {
-        s.init(args)
-      }
-    )
+    // openDialog(
+    //   (await import('../update-group-dialog/update-group-dialog.component'))
+    //     .UpdateGroupDialogComponent,
+    //   (s) => {
+    //     s.init(args)
+    //   }
+    //)
   }
   async helperAssignment(helper: HelpersBase): Promise<void> {
     await openDialog(
@@ -195,12 +195,12 @@ export class DialogService implements UITools {
     )
   }
   async gridDialog<T>(args: GridDialogArgs<T>): Promise<void> {
-    await openDialog(
-      (
-        await import('../grid-dialog/grid-dialog.component')
-      ).GridDialogComponent,
-      (x) => (x.args = args)
-    )
+    // await openDialog(
+    //   (
+    //     await import('../grid-dialog/grid-dialog.component')
+    //   ).GridDialogComponent,
+    //   (x) => (x.args = args)
+    // )
   }
   async inputAreaDialog(args: InputAreaArgs): Promise<void> {
     await openDialog(
@@ -211,12 +211,12 @@ export class DialogService implements UITools {
     )
   }
   async selectHelper(args: SelectHelperArgs): Promise<void> {
-    await openDialog(
-      (
-        await import('../select-helper/select-helper.component')
-      ).SelectHelperComponent,
-      (x) => (x.args = args)
-    )
+    // await openDialog(
+    // (
+    //   await import('../select-helper/select-helper.component')
+    // ).SelectHelperComponent,
+    // (x) => (x.args = args)
+    //)
   }
   async selectValuesDialog<T extends { caption?: string }>(args: {
     values: T[]

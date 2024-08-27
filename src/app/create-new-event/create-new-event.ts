@@ -19,7 +19,7 @@ import { Families } from '../families/families'
 import { BasketType } from '../families/BasketType'
 import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions'
 import { PromiseThrottle } from '../shared/utils'
-import { async } from 'rxjs/internal/scheduler/async'
+
 import { FamilyStatus } from '../families/FamilyStatus'
 import { use, Field, Fields } from '../translate'
 import { GroupsValue } from '../manage/groups'
@@ -213,10 +213,10 @@ export class CreateNewEvent {
           ' ' +
           getLang().notDoneDeliveriesShouldArchiveThem
       )
-      ui.navigateToComponent(
-        (await import('../family-deliveries/family-deliveries.component'))
-          .FamilyDeliveriesComponent
-      )
+      // ;(await import('../family-deliveries/family-deliveries.component'))
+      //   .FamilyDeliveriesComponent
+      // ui.navigateToComponent(
+      // )
       return
     }
     let threeHoursAgo = new Date()
@@ -238,10 +238,10 @@ export class CreateNewEvent {
           getLang().deliveresOnTheWayAssignedInTheLast3Hours
       ))
     ) {
-      ui.navigateToComponent(
-        (await import('../family-deliveries/family-deliveries.component'))
-          .FamilyDeliveriesComponent
-      )
+      // ui.navigateToComponent(
+      //   (await import('../family-deliveries/family-deliveries.component'))
+      //     .FamilyDeliveriesComponent
+      // )
       return
     }
     this.useFamilyBasket = true

@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, type OnInit } from '@angular/core'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
-import { GridButton } from '../common-ui-elements/interfaces'
+import type { GridButton } from '../common-ui-elements/interfaces'
 import { MatDialogRef } from '@angular/material/dialog'
 import { messageMerger } from './messageMerger'
-import { EditCustomMessageArgs } from '../helpers/init-context'
+import type { EditCustomMessageArgs } from '../helpers/init-context'
 import { DialogConfig } from '../common-ui-elements'
 
 @DialogConfig({
-  minWidth:'95vw'
+  minWidth: '95vw'
 })
 @Component({
   selector: 'app-edit-custom-message',
