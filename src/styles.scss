@@ -214,7 +214,7 @@ text-area {
 }
 
 .mat-expansion-panel-header {
-  padding-left: 2px !important;
+  padding-left: 10px !important;
   padding-right: 2px !important;
 }
 
@@ -252,13 +252,16 @@ text-area {
 .one-line {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .one-line>* {
   padding-left: 0.2em;
   padding-right: 0.2em;
-  flex-basis: 1px;
+  flex-basis: auto;
   flex-grow: 1;
+  min-width: 0;
 }
 
 .one-line> :first-child {
@@ -271,7 +274,7 @@ text-area {
 
 .mdc-card {
   margin-bottom: 5px;
-  padding: 16px;
+  padding: 8px;
   @include mat.elevation(1);
 }
 
@@ -510,6 +513,7 @@ textarea {
 
 .small-button {
   line-height: 32px;
+  text-wrap: nowrap;
 
   .mat-icon {
     font-size: 16px;
