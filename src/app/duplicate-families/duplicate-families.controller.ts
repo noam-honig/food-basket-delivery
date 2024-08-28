@@ -12,7 +12,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 export class DuplicateFamiliesController {
   @BackendMethod({
     allowed: true,
-    paramTypes: [Boolean, Boolean, Boolean, Boolean, Boolean]
+    paramTypes: [Object]
   })
   static async familiesInSameAddress(compare: {
     address: boolean
