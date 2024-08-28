@@ -1,6 +1,6 @@
 {
   "name": "hug-moms",
-  "version": "0.9.300",
+  "version": "0.9.301",
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
