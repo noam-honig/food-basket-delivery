@@ -323,9 +323,8 @@ export class SendSmsUtils {
               'https://api.inforu.co.il/SendMessageXml.ashx',
               {
                 method: 'POST',
-                headers: formData.getHeaders()
-                //TODO - fix form data and body
-                //body: [formData]
+                headers: formData.getHeaders(),
+                body: formData.getBuffer()
               }
             )
 
