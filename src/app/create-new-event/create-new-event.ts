@@ -213,10 +213,10 @@ export class CreateNewEvent {
           ' ' +
           getLang().notDoneDeliveriesShouldArchiveThem
       )
-      // ;(await import('../family-deliveries/family-deliveries.component'))
-      //   .FamilyDeliveriesComponent
-      // ui.navigateToComponent(
-      // )
+      ui.navigateToComponent(
+        (await import('../family-deliveries/family-deliveries.component'))
+          .FamilyDeliveriesComponent
+      )
       return
     }
     let threeHoursAgo = new Date()
@@ -238,10 +238,10 @@ export class CreateNewEvent {
           getLang().deliveresOnTheWayAssignedInTheLast3Hours
       ))
     ) {
-      // ui.navigateToComponent(
-      //   (await import('../family-deliveries/family-deliveries.component'))
-      //     .FamilyDeliveriesComponent
-      // )
+      ui.navigateToComponent(
+        (await import('../family-deliveries/family-deliveries.component'))
+          .FamilyDeliveriesComponent
+      )
       return
     }
     this.useFamilyBasket = true

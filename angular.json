@@ -42,7 +42,7 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "aot": false,
+            "aot": true,
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
@@ -61,7 +61,7 @@
                 }
               ],
               "optimization": true,
-              "aot": false,
+              "aot": true,
               "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
@@ -75,6 +75,7 @@
               ]
             },
             "development": {
+              "aot": true,
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
