@@ -36,7 +36,7 @@
           </div>
           }
           <mat-menu #updatedRowOptions="matMenu">
-            @for(b of gridButtons;track b.name){ @if(b.visible?.()){
+            @for(b of gridButtons;track b){ @if(b.visible?.()){
             <button mat-menu-item (click)="b.click!()">
               @if (b.icon){
               <mat-icon>{{ b.icon }}</mat-icon>
@@ -120,7 +120,7 @@
           </div>
           }
           <mat-menu #updatedRowOptions="matMenu">
-            @for(b of rowButtons;track b.name){ @if(b.visible!(record)){
+            @for(b of rowButtons;track b){ @if(b.visible!(record)){
             <button mat-menu-item (click)="b.click!(record)">
               @if(b.icon){
               <mat-icon>{{ b.icon }}</mat-icon
