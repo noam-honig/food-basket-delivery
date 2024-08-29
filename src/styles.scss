@@ -279,6 +279,7 @@ text-area {
 }
 
 .mat-mdc-card-title {
+  margin-top: 15px;
   font-size: 18px;
   display: flex !important;
   align-items: center;
@@ -593,6 +594,7 @@ textarea {
     background-color: transparent;
     width: 6rem;
     min-width: 6rem;
+    overflow-x: hidden !important;
   }
 }
 
