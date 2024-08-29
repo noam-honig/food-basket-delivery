@@ -572,7 +572,7 @@ export function mapFieldMetadataToFieldRef(
 export class volunteersInEvent extends IdEntity {
   @Fields.string()
   eventId: string
-  @Fields.string()
+  @Field(() => HelpersBase)
   helper: HelpersBase
 
   @Fields.string<volunteersInEvent>({

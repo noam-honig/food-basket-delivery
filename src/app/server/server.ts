@@ -481,6 +481,7 @@ s.parentNode.insertBefore(b, s);})();
   let api = remultExpress({
     entities,
     controllers,
+    admin: true,
     logApiEndPoints: process.env.logUrls == 'true',
     initRequest: async (req, options) => {
       let url = ''
@@ -516,20 +517,8 @@ s.parentNode.insertBefore(b, s);})();
       await InitContext(remult, undefined)
 
       if (false) {
-        let h1 = await remult
-          .repo(Helpers)
-          .findFirst({ phone: new Phone('0507330590') })
-        console.log(h1)
-
-        let row = await SqlDatabase.getDb().execute(
-          "select id, name, smsDate, doNotSendSms, company, totalKm, totalTime, shortUrlKey, distributionCenter, eventComment, needEscort, theHelperIAmEscorting, escort, leadHelper, myGiftsURL, archive, frozenTill, internalComment, blockedFamilies, case when (frozenTill is null or frozenTill <= '2023-05-07T21:00:00.000Z') then false else true end, id || escort || theHelperIAmEscorting, phone, lastSignInDate, password, socialSecurityNumber, email, addressApiResult, preferredDistributionAreaAddress, preferredDistributionAreaAddressCity, addressApiResult2, preferredDistributionAreaAddress2, preferredFinishAddressCity, createDate, passwordChangeDate, EULASignDate, reminderSmsDate, referredBy, isAdmin, labAdmin, isIndependent, distCenterAdmin, familyAdmin, caller, includeGroups, excludeGroups, callQuota\n" +
-            ` from Helpers where phone = '0507330590' Order By id  limit 1 offset 0`
-        )
-        let val = row.rows[0][row.getColumnKeyInResultForIndexInSelect(18)]
-        console.log(val)
-        console.log(
-          remult.repo(Helpers).fields.blockedFamilies.valueConverter.fromDb(val)
-        )
+        let h1 = await remult.repo(volunteersInEvent).findFirst({})
+        console.log(h1.helper)
       }
 
       const path = './db-structure/'
