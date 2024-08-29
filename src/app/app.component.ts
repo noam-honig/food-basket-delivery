@@ -1,27 +1,24 @@
-import { Component, Injector, ViewChild } from '@angular/core'
-import {
-  Router,
-  Route,
-  CanActivate,
-  ActivatedRoute,
-  ActivatedRouteSnapshot
-} from '@angular/router'
+import { Component, ViewChild } from '@angular/core'
+import { ActivatedRoute, Route, Router } from '@angular/router'
 import { AuthService } from './auth/auth-service'
 
 import { MatSidenav } from '@angular/material/sidenav'
-import { DialogService } from './select-popup/dialog'
-import { ApplicationSettings } from './manage/ApplicationSettings'
-import { SettingsService } from './manage/SettingsService'
-import { FamiliesComponent } from './families/families.component'
 import { remult } from 'remult'
-import { RouteHelperService, BusyService } from './common-ui-elements'
 import { Roles } from './auth/roles'
-import { translationConfig, Language } from './translate'
+import { BusyService, RouteHelperService } from './common-ui-elements'
+import { ApplicationSettings } from './manage/ApplicationSettings'
+import { DialogService } from './select-popup/dialog'
+import { Language } from './translate'
 
-import { SelfPickupComponent } from './self-pickup/self-pickup.component'
-import { DeliveryStatus } from './families/DeliveryStatus'
 import { AssignEscortComponent } from './assign-escort/assign-escort.component'
 import { CreateNewEvent } from './create-new-event/create-new-event'
+import { DeliveryStatus } from './families/DeliveryStatus'
+import { SelfPickupComponent } from './self-pickup/self-pickup.component'
+import { EditCustomMessageComponent } from './edit-custom-message/edit-custom-message.component'
+import { GridDialogComponent } from './grid-dialog/grid-dialog.component'
+import { Dial } from 'twilio/lib/twiml/VoiceResponse'
+import { SelectHelperComponent } from './select-helper/select-helper.component'
+import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component'
 
 @Component({
   selector: 'app-root',
@@ -154,3 +151,7 @@ export class AppComponent {
 }
 
 export const routeMap = new Map<any, string>()
+DialogService.EditCustomMessageComponent = EditCustomMessageComponent
+DialogService.GridDialogComponent = GridDialogComponent
+DialogService.SelectHelperComponent = SelectHelperComponent
+DialogService.UpdateGroupDialogComponent = UpdateGroupDialogComponent
