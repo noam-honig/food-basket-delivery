@@ -27,8 +27,8 @@
     "release-docs": "deploy-docs.sh",
     "test": "ng test",
     "t-build": "npm run ng-build -- --configuration=production && npm run server:build",
-    "release-prod": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master",
-    "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-test.git master",
+    "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master",
+    "release-dev": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-test.git master",
     "quick-release": "npm run t-build &&  copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-test.git master"
   },
   "private": true,
