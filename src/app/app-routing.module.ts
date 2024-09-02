@@ -239,7 +239,6 @@ export const routes: Routes = [
   declarations: [],
   exports: [RouterModule],
   providers: [
-    { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
     AdminGuard,
     IntakeFormGuard,
     FamilyAdminGuard,

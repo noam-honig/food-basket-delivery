@@ -114,7 +114,6 @@ export class DialogService implements UITools {
     public zone: NgZone,
     private busy: BusyService,
     private snackBar: MatSnackBar,
-    private routeReuseStrategy: RouteReuseStrategy,
     private routeHelper: RouteHelperService,
     plugInService: CommonUIElementsPluginsService
   ) {
@@ -222,7 +221,6 @@ export class DialogService implements UITools {
     return this.busy.doWhileShowingBusy(what)
   }
   refreshFamiliesAndDistributionCenters() {
-    ;(<CustomReuseStrategy>this.routeReuseStrategy).recycleAll()
     clearEntityValueListCache()
     this.refreshCanSeeCenter()
   }

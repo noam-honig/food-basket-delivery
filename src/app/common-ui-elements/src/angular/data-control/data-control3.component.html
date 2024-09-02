@@ -51,7 +51,7 @@
   } @if(showCheckbox()){
 
   <div>
-    @if(showReadonlyText()){
+    @if(!showReadonlyText()){
     <mat-checkbox
       #theId1
       [(ngModel)]="_getColumn()!.inputValue"
