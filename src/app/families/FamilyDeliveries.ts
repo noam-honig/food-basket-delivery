@@ -915,7 +915,7 @@ export class FamilyDeliveries extends IdEntity {
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
   addressComment_2: string
-  @Fields.string({
+  @Field(() => Phone, {
     translation: (t) => t.phone1 + ' כתובת 2',
     allowApiUpdate: Roles.familyAdmin
   })
@@ -931,7 +931,7 @@ export class FamilyDeliveries extends IdEntity {
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
   phone1Description_2: string
-  @Fields.string({ translation: (t) => t.phone2 + ' כתובת 2' })
+  @Field(() => Phone, { translation: (t) => t.phone2 + ' כתובת 2' })
   @DataControl<FamilyDeliveries>({
     readonly: (self) => !self.deliveryType.inputSecondAddress
   })
