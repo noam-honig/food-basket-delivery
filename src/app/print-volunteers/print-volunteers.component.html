@@ -1,26 +1,36 @@
-<div class="printTableContainer">
-  <div class="printColumn">
-    <table class="printTable">
-      <tr>
-        <th>מתנדבים</th>
-        <th>כמות</th>
-      </tr>
-      <tr *ngFor="let v of volunteers | slice: 0:volunteers.length / 2">
-        <td>{{ v.name }}</td>
-        <td>{{ v.quantity }}</td>
-      </tr>
-    </table>
-  </div>
-  <div class="printColumn">
-    <table class="printTable">
-      <tr>
-        <th>מתנדבים</th>
-        <th>כמות</th>
-      </tr>
-      <tr *ngFor="let v of volunteers | slice: volunteers.length / 2">
-        <td>{{ v.name }}</td>
-        <td>{{ v.quantity }}</td>
-      </tr>
+<div class="no-print" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+  <mat-radio-group [(ngModel)]="columns" style="display: flex; align-items: center; margin-right: 5px;">
+    <span style="margin-right: 5px;">מספר עמודות:</span>
+    <mat-radio-button value="1" style="margin-right: 5px;">1</mat-radio-button>
+    <mat-radio-button value="2" style="margin-right: 5px;">2</mat-radio-button>
+    <mat-radio-button value="3" style="margin-right: 5px;">3</mat-radio-button>
+  </mat-radio-group>
+  <button mat-raised-button color="primary" (click)="print()" style="margin-left: 20px;">הדפס</button>
+</div>
+
+<div>
+  <mat-card style="padding: 0;">
+    <mat-card-content style="padding: 8px;">
+      <p>סה״כ מתנדבים: <strong>{{ total }}</strong> | סה״כ כמות: <strong>{{ totalBaskets }}</strong></p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="printTableContainer" [ngClass]="'columns-' + columns">
+  <div class="printColumn" *ngFor="let col of getColumns()">
+    <table mat-table [dataSource]="col" class="mat-elevation-z8 printTable">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>מתנדבים</th>
+        <td mat-cell *matCellDef="let v">{{ v.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>כמות</th>
+        <td mat-cell *matCellDef="let v">{{ v.quantity }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </div>
 </div>

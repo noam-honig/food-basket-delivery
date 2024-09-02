@@ -13,6 +13,10 @@ import { BaseChartDirective } from 'ng2-charts'
 import { FormsModule } from '@angular/forms'
 import { HelpersComponent } from './helpers/helpers.component'
 import { JwtModule } from '@auth0/angular-jwt'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatTableModule } from '@angular/material/table'
 
 import {
   DialogService,
@@ -237,7 +241,11 @@ export class MyHammerConfig extends HammerGestureConfig {
     PlatformModule,
     JwtModule.forRoot({
       config: { tokenGetter: getToken }
-    })
+    }),
+    MatButtonModule,
+    MatCardModule,
+    MatRadioModule,
+    MatTableModule
   ],
   providers: [
     provideCharts(withDefaultRegisterables()),
