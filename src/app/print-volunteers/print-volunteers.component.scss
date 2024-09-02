@@ -14,7 +14,7 @@
 }
 
 .columns-1 .printColumn {
-  width: 30%;
+  width: 50%;
   margin-left: auto;
 }
 
@@ -24,6 +24,13 @@
 
 .columns-3 .printColumn {
   width: 50%;
+}
+
+.quantity-column {
+  width: 30px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .printTable {
@@ -74,5 +81,9 @@
 
   .columns-3 .printColumn {
     width: 32%;
+  }
+
+  .quantity-column {
+    width: 30px;
   }
 }
