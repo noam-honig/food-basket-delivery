@@ -501,7 +501,7 @@ export class NewDelivery extends ActionOnFamilyDeliveries {
   basketType: BasketType
   @Fields.quantity()
   quantity: number
-  @Field(() => HelpersAndStats)
+  @Field(() => HelperStrategy)
   helperStrategy: HelperStrategy = HelperStrategy.familyDefault
   @Field(() => HelpersBase)
   helper: HelpersBase
