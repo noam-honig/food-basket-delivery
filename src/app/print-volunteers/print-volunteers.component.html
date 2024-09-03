@@ -16,21 +16,11 @@
   </mat-card>
 </div>
 
-<div class="printTableContainer" [ngClass]="'columns-' + columns">
-  <div class="printColumn" *ngFor="let col of getColumns()">
-    <table class="printTable">
-      <thead>
-        <tr>
-          <th>מתנדבים</th>
-          <th class="quantity-column">כמות</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let v of col">
-          <td>{{ v.name }}</td>
-          <td class="quantity-column">{{ v.quantity }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div [ngClass]="'columns-' + columns">
+  <div class="printContent">
+    <div class="volunteer-item" *ngFor="let v of volunteers">
+      <span class="volunteer-name">{{ v.name }}</span>
+      <span class="volunteer-quantity">{{ v.quantity }}</span>
+    </div>
   </div>
 </div>

@@ -4,102 +4,86 @@
   }
 }
 
-.printTableContainer {
+// Styles for screen display
+.printContent {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.volunteer-item {
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.printColumn {
-  width: 100%;
+.volunteer-quantity {
+  min-width: 30px;
+  text-align: right;
 }
 
-.columns-1 .printColumn {
-  width: 50%;
-  margin-left: auto;
+// Columns for screen display
+.columns-1 .printContent {
+  flex-direction: column;
 }
 
-.columns-2 .printColumn {
-  width: 48%;
-}
-
-.columns-3 .printColumn {
-  width: 50%;
-}
-
-.quantity-column {
-  width: 30px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.printTable {
-  -webkit-print-color-adjust: exact;
-  font-size: smaller;
-  border-collapse: collapse;
-  width: 100%;
-
-  th,
-  td {
-    border: 1px solid #ddd !important;
-    padding: 4px 8px !important;
-    word-break: break-word;
-  }
-
-  th {
-    font-size: 0.9rem;
-    font-weight: bold;
-  }
-
-  td {
-    font-size: 0.8rem;
-  }
-
-  tr:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+.columns-2 .printContent {
+  .volunteer-item {
+    width: 48%;
+    margin-right: 2%;
   }
 }
 
+.columns-3 .printContent {
+  .volunteer-item {
+    width: 31%;
+    margin-right: 2%;
+  }
+}
+
+// Styles for print
 @media print {
-  .printTableContainer {
+  .no-print {
+    display: none;
+  }
+
+  .printContent {
+    display: block;
+    column-gap: 20px;
+    column-fill: balance;
+  }
+
+  .columns-1 .printContent {
+    column-count: 1;
+    width: 50%;
+  }
+
+  .columns-2 .printContent {
+    column-count: 2;
+  }
+
+  .columns-3 .printContent {
+    column-count: 3;
+  }
+
+  .volunteer-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
     display: flex;
     justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+    width: 100% !important;
+    margin-right: 0 !important;
   }
 
-  .printColumn {
-    width: 100%;
+  .volunteer-quantity {
+    min-width: 30px;
+    text-align: right;
   }
 
-  .columns-1 .printColumn {
-    width: 30%;
-    margin-left: auto;
-  }
-
-  .columns-2 .printColumn {
-    width: 48%;
-  }
-
-  .columns-3 .printColumn {
-    width: 32%;
-  }
-
-  .quantity-column {
-    width: 30px;
-  }
-
-  .printTable {
-    box-shadow: none !important;
-
-    th,
-    td {
-      border: 1px solid #000 !important;
-      height: auto !important;
-      line-height: 1.2 !important;
-      font-size: 12pt !important;
-    }
-
-    tr:nth-child(even) {
-      background-color: transparent !important;
-    }
+  @page {
+    margin: 1cm;
   }
 }

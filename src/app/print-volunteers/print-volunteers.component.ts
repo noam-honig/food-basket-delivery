@@ -15,8 +15,7 @@ export class PrintVolunteersComponent implements OnInit {
   volunteers: volunteer[] = []
   total: number = 0
   totalBaskets: number = 0
-  columns: number = 2
-  displayedColumns: string[] = ['name', 'quantity']
+  columns: string = '2'
 
   ngOnInit() {
     PrintVolunteersController.volunteersForPrint().then((x) => {
@@ -24,15 +23,6 @@ export class PrintVolunteersComponent implements OnInit {
       this.total = x.total
       this.totalBaskets = this.volunteers.reduce((sum, v) => sum + v.quantity, 0)
     })
-  }
-
-  getColumns() {
-    const colSize = Math.ceil(this.volunteers.length / this.columns)
-    const columns = []
-    for (let i = 0; i < this.columns; i++) {
-      columns.push(this.volunteers.slice(i * colSize, (i + 1) * colSize))
-    }
-    return columns
   }
 
   print() {
