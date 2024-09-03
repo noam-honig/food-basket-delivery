@@ -86,4 +86,20 @@
   .quantity-column {
     width: 30px;
   }
+
+  .printTable {
+    box-shadow: none !important;
+
+    th,
+    td {
+      border: 1px solid #000 !important;
+      height: auto !important;
+      line-height: 1.2 !important;
+      font-size: 12pt !important;
+    }
+
+    tr:nth-child(even) {
+      background-color: transparent !important;
+    }
+  }
 }
