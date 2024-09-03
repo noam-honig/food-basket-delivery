@@ -76,6 +76,10 @@
     border-bottom: 1px solid #ddd;
     width: 100% !important;
     margin-right: 0 !important;
+
+    &:nth-child(even) {
+      background-color: #e0e0e0;
+    }
   }
 
   .volunteer-quantity {
