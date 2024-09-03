@@ -21,6 +21,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "statsJson": true,
             "outputPath": "dist/hagai",
             "index": "src/index_dev.html",
             "browser": "src/main.ts",
@@ -62,6 +63,7 @@
               ],
               "optimization": true,
               "aot": true,
+              "statsJson": true,
               "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
