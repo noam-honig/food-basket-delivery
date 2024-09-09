@@ -185,7 +185,7 @@ export class RegisterToEvent {
     }
   })
   socialSecurityNumber: string = ''
-  @Fields.string()
+  @Field(() => Email)
   email: Email = new Email('')
   @Fields.string({
     translation: (l) => l.preferredDistributionAreaAddress,
