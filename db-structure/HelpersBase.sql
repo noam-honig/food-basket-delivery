@@ -2,7 +2,7 @@ create table Helpers
 id varchar default '' not null
 name varchar default '' not null
 phone varchar default '' not null
-smsDate timestamp
+smsDate timestamptz
 doNotSendSms boolean default false not null
 company varchar default '' not null
 totalKm integer default 0 not null

@@ -1,73 +1,66 @@
 import {
   Component,
-  OnInit,
-  Input,
-  ViewChild,
-  Output,
   EventEmitter,
-  ElementRef,
-  TrackByFunction
+  Input,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core'
+import copy from 'copy-to-clipboard'
+import { BusyService, openDialog } from '../common-ui-elements'
 import {
   DataAreaSettings,
   GridButton,
   InputField
 } from '../common-ui-elements/interfaces'
-import { BusyService, openDialog } from '../common-ui-elements'
-import * as copy from 'copy-to-clipboard'
-import { UserFamiliesList } from '../my-families/user-families'
 import { MapComponent } from '../map/map.component'
+import { UserFamiliesList } from '../my-families/user-families'
 
-import { DeliveryStatus } from '../families/DeliveryStatus'
-import { AuthService } from '../auth/auth-service'
-import { DialogService } from '../select-popup/dialog'
 import { SendSmsAction } from '../asign-family/send-sms-action'
+import { AuthService } from '../auth/auth-service'
+import { DeliveryStatus } from '../families/DeliveryStatus'
+import { DialogService } from '../select-popup/dialog'
 
-import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { remult } from 'remult'
+import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 
-import { use } from '../translate'
-import { Helpers, HelpersBase } from '../helpers/helpers'
-import { GetVolunteerFeedback } from '../update-comment/update-comment.component'
+import { MatTabGroup } from '@angular/material/tabs'
 import { CommonQuestionsComponent } from '../common-questions/common-questions.component'
 import {
   ActiveFamilyDeliveries,
   FamilyDeliveries
 } from '../families/FamilyDeliveries'
+import { Helpers, HelpersBase } from '../helpers/helpers'
 import {
-  isGpsAddress,
-  Location,
-  toLongLat,
   GetDistanceBetween,
-  getCurrentLocation
+  Location,
+  getCurrentLocation,
+  isGpsAddress,
+  toLongLat
 } from '../shared/googleApiHelpers'
-import { MatTabGroup } from '@angular/material/tabs'
+import { use } from '../translate'
+import { GetVolunteerFeedback } from '../update-comment/update-comment.component'
 
-import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
 import { relativeDateName } from '../model-shared/types'
+import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
 
 import { Phone } from '../model-shared/phone'
-import { getLang } from '../sites/sites'
-import { SelectListComponent } from '../select-list/select-list.component'
 import { SelectHelperComponent } from '../select-helper/select-helper.component'
+import { getLang } from '../sites/sites'
 import { moveDeliveriesHelper } from './move-deliveries-helper'
 
-import { trigger, transition, style, animate } from '@angular/animations'
+import { animate, style, transition, trigger } from '@angular/animations'
 
-import { routeStrategy } from '../asign-family/route-strategy'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
-import { assign, PromiseThrottle } from '../shared/utils'
-import {
-  DeliveryInList,
-  HelperFamiliesController
-} from './helper-families.controller'
-import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
+import { routeStrategy } from '../asign-family/route-strategy'
+import { PromiseThrottle } from '../shared/utils'
+import { HelperFamiliesController } from './helper-families.controller'
+
 import { MatExpansionPanel } from '@angular/material/expansion'
-import { NgDialogAnimationService } from 'ng-dialog-animation'
-import { DeliveryDetailsComponent } from '../delivery-details/delivery-details.component'
+
 import { environment } from '../../environments/environment'
-import { Roles } from '../auth/roles'
 import { AsignFamilyController } from '../asign-family/asign-family.controller'
+import { Roles } from '../auth/roles'
 
 @Component({
   selector: 'app-helper-families',
@@ -108,71 +101,70 @@ export class HelperFamiliesComponent implements OnInit {
   }
   deliveryDetails(f: FamilyDeliveries, p: MatExpansionPanel) {
     if (this.familyLists.labs) {
-      const dialogRef = this.animDialog.open(
-        DeliveryDetailsComponent,
-        this.dialog.isScreenSmall()
-          ? {
-              width: '100%',
-              minWidth: '100%',
-              height: '100vh',
-              panelClass: 'no-padding',
-
-              // option1
-              // animation: { to: 'aside' },
-
-              // option2
-              animation: {
-                to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
-                incomingOptions: {
-                  keyframeAnimationOptions: { duration: 200 }
-                },
-                outgoingOptions: {
-                  keyframeAnimationOptions: { duration: 200 }
-                }
-              },
-              position: { rowEnd: '0' }
-            }
-          : {
-              maxWidth: '400px',
-              width: '400px',
-              height: '90vh',
-              maxHeight: '100vh',
-              panelClass: 'no-padding'
-            }
-      )
-      assign(dialogRef.componentInstance.famInfo, {
-        f: f,
-        showHelp: true,
-        partOfAssign: this.partOfAssign,
-        userFamilies: this.familyLists
-      })
-      assign(dialogRef.componentInstance, {
-        deliveredToFamily: () => {
-          this.deliveredToFamilyOk(
-            f,
-            DeliveryStatus.Success,
-            () => this.settings.commentForSuccessDelivery,
-            () => {
-              dialogRef.close()
-            }
-          )
-        },
-        updateComment: () => this.updateComment(f),
-        couldntDeliverToFamily: () => {
-          this.couldntDeliverToFamily(f, () => dialogRef.close())
-        },
-        returnToDeliver: () => {
-          this.returnToDeliver(f)
-        }
-      })
-      const sub =
-        dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() =>
-          this.cancelAssign(f)
-        )
-      dialogRef.afterClosed().subscribe((x) => sub.unsubscribe())
-      dialogRef.componentInstance.famInfo.ngOnInit()
-      if (p) p.close()
-      return false
+      //TODO - fix animations
+      // const dialogRef = this.animDialog.open(
+      //   DeliveryDetailsComponent,
+      //   this.dialog.isScreenSmall()
+      //     ? {
+      //         width: '100%',
+      //         minWidth: '100%',
+      //         height: '100vh',
+      //         panelClass: 'no-padding',
+      //         // option1
+      //         // animation: { to: 'aside' },
+      //         // option2
+      //         animation: {
+      //           to: this.settings.forWho.args.leftToRight ? 'left' : 'right',
+      //           incomingOptions: {
+      //             keyframeAnimationOptions: { duration: 200 }
+      //           },
+      //           outgoingOptions: {
+      //             keyframeAnimationOptions: { duration: 200 }
+      //           }
+      //         },
+      //         position: { rowEnd: '0' }
+      //       }
+      //     : {
+      //         maxWidth: '400px',
+      //         width: '400px',
+      //         height: '90vh',
+      //         maxHeight: '100vh',
+      //         panelClass: 'no-padding'
+      //       }
+      // )
+      // assign(dialogRef.componentInstance.famInfo, {
+      //   f: f,
+      //   showHelp: true,
+      //   partOfAssign: this.partOfAssign,
+      //   userFamilies: this.familyLists
+      // })
+      // assign(dialogRef.componentInstance, {
+      //   deliveredToFamily: () => {
+      //     this.deliveredToFamilyOk(
+      //       f,
+      //       DeliveryStatus.Success,
+      //       () => this.settings.commentForSuccessDelivery,
+      //       () => {
+      //         dialogRef.close()
+      //       }
+      //     )
+      //   },
+      //   updateComment: () => this.updateComment(f),
+      //   couldntDeliverToFamily: () => {
+      //     this.couldntDeliverToFamily(f, () => dialogRef.close())
+      //   },
+      //   returnToDeliver: () => {
+      //     this.returnToDeliver(f)
+      //   }
+      // })
+      // const sub =
+      //   dialogRef.componentInstance.famInfo.assignmentCanceled.subscribe(() =>
+      //     this.cancelAssign(f)
+      //   )
+      // dialogRef.afterClosed().subscribe((x) => sub.unsubscribe())
+      // dialogRef.componentInstance.famInfo.ngOnInit()
+      // if (p) p.close()
+      // return false
     }
   }
   signs = ['🙂', '👌', '😉', '😍', '🤩', '💖', '👍', '🙏']
@@ -217,8 +209,7 @@ export class HelperFamiliesComponent implements OnInit {
     public auth: AuthService,
     private dialog: DialogService,
     private busy: BusyService,
-    public settings: ApplicationSettings,
-    public animDialog: NgDialogAnimationService
+    public settings: ApplicationSettings
   ) {}
   @Input() familyLists: UserFamiliesList
   @Input() partOfAssign = false
@@ -304,40 +295,6 @@ export class HelperFamiliesComponent implements OnInit {
     return relativeDateName({ d: this.familyLists.helper.reminderSmsDate })
   }
 
-  async assignNewDelivery() {
-    await this.updateCurrentLocation(true)
-    let afdList = await HelperFamiliesController.getDeliveriesByLocation(
-      this.volunteerLocation,
-      false
-    )
-
-    await openDialog(SelectListComponent, (x) => {
-      x.args = {
-        title:
-          use.language.closestDeliveries +
-          ' (' +
-          use.language.mergeFamilies +
-          ')',
-        multiSelect: true,
-        onSelect: async (selectedItems) => {
-          if (selectedItems.length > 0)
-            this.busy.doWhileShowingBusy(async () => {
-              let ids: string[] = []
-              for (const selectedItem of selectedItems) {
-                let d: DeliveryInList = selectedItem.item
-                ids.push(...d.ids)
-              }
-              await MltFamiliesController.assignFamilyDeliveryToIndie(ids)
-              await this.familyLists.refreshRoute({
-                volunteerLocation: this.volunteerLocation
-              })
-              if (this.familyLists) await this.familyLists.reload()
-            })
-        },
-        options: afdList
-      }
-    })
-  }
   reloadList() {
     this.familyLists.reload()
   }
@@ -633,7 +590,7 @@ export class HelperFamiliesComponent implements OnInit {
   }
 
   async sendWhatsapp() {
-    this.dialog.analytics('Send WhatsApp');
+    this.dialog.analytics('Send WhatsApp')
     Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage)
     await this.updateMessageSent('Whatsapp')
   }

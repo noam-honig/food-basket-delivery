@@ -18,7 +18,17 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { BasketType } from '../families/BasketType'
 
 export class DistributionMapController {
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [
+      Boolean,
+      String,
+      String,
+      DistributionCenters,
+      String,
+      BasketType
+    ]
+  })
   static async GetDeliveriesLocation(
     onlyPotentialAsignment?: boolean,
     city?: string,

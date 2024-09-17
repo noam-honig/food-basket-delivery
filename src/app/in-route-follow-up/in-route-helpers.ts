@@ -251,51 +251,51 @@ export class InRouteHelpers extends IdEntity {
     await ui.helperAssignment(h)
     this._.reload()
   }
-  @Field({ translation: (l) => l.volunteerName })
+  @Fields.string({ translation: (l) => l.volunteerName })
   name: string
   relativeDate(val: Date) {
     return relativeDateName({ d: val })
   }
-  @Field<InRouteHelpers, Date>({
+  @Fields.date<InRouteHelpers>({
     displayValue: (e, val) => e.relativeDate(val),
     caption: 'שיוך ראשון'
   })
   minAssignDate: Date
-  @Field<InRouteHelpers, Date>({
+  @Fields.date<InRouteHelpers>({
     displayValue: (e, val) => e.relativeDate(val),
     caption: ' תקשורת אחרונה'
   })
   lastCommunicationDate: Date
-  @Field({ caption: 'תקשורת אחרונה' })
+  @Fields.string({ caption: 'תקשורת אחרונה' })
   lastComment: string
-  @Field({ caption: 'תקשורת אחרונה על ידי' })
+  @Fields.string({ caption: 'תקשורת אחרונה על ידי' })
   lastCommunicationUser: string
-  @Field<InRouteHelpers, Date>({
+  @Fields.date<InRouteHelpers>({
     displayValue: (e, val) => e.relativeDate(val),
     caption: 'כניסה אחרונה למערכת'
   })
   lastSignInDate: Date
-  @Field({ translation: (l) => l.delveriesInProgress })
+  @Fields.integer({ translation: (l) => l.delveriesInProgress })
   @DataControl({ width: '100' })
   deliveriesInProgress: number
-  @Field<InRouteHelpers, Date>({
+  @Fields.date<InRouteHelpers>({
     displayValue: (e, val) => e.relativeDate(val),
     caption: ' שיוך אחרון'
   })
   maxAssignDate: Date
-  @Field<InRouteHelpers, Date>({
+  @Fields.date<InRouteHelpers>({
     displayValue: (e, val) => e.relativeDate(val),
     caption: 'תאריך איסוף מוצלח אחרון'
   })
   lastCompletedDelivery: Date
-  @Field({ caption: 'איסופים מוצלחים' })
+  @Fields.integer({ caption: 'איסופים מוצלחים' })
   @DataControl({ width: '100' })
   completedDeliveries: number
-  @Field({ caption: 'ראה את השיוך הראשון' })
+  @Fields.boolean({ caption: 'ראה את השיוך הראשון' })
   seenFirstAssign: boolean
-  @Field({ caption: 'הערה פנימית' })
+  @Fields.string({ caption: 'הערה פנימית' })
   internalComment: string
-  @Field({ caption: 'ארגון' })
+  @Fields.string({ caption: 'ארגון' })
   company: string
   @Fields.dateOnly({
     caption: 'מוקפא עד לתאריך'
@@ -319,38 +319,38 @@ export class InRouteHelpers extends IdEntity {
 export class HelperCommunicationHistory extends IdEntity {
   @ChangeDateColumn({ translation: (l) => l.when })
   createDate: Date
-  @Field({ translation: (l) => l.createUser })
+  @Field(() => HelpersBase, { translation: (l) => l.createUser })
   @DataControl({ width: '150' })
   createUser: HelpersBase
   @DataControl({ width: '100' })
-  @Field({ translation: (l) => l.volunteer })
+  @Field(() => HelpersBase, { translation: (l) => l.volunteer })
   volunteer: HelpersBase
-  @Field()
+  @Fields.string()
   family: string
-  @Field()
+  @Fields.string()
   origin: string
-  @Field({ allowApiUpdate: false })
+  @Fields.string({ allowApiUpdate: false })
   eventId: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.message,
     customInput: (c) => c.textArea(),
     width: '200'
   })
   message: string
-  @Field({ allowApiUpdate: false })
+  @Fields.object({ allowApiUpdate: false })
   apiResponse: any
 
-  @Field()
+  @Fields.string()
   @DataControl({ width: '100' })
   phone: string
-  @Field({ allowApiUpdate: false })
+  @Fields.boolean({ allowApiUpdate: false })
   @DataControl({
     width: '70px'
   })
   incoming: boolean = false
-  @Field({ allowApiUpdate: false })
+  @Fields.string({ allowApiUpdate: false })
   automaticAction: string
 
-  @Field({ translation: (l) => l.done })
+  @Fields.boolean({ translation: (l) => l.done })
   handled: boolean = false
 }

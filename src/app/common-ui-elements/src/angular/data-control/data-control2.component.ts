@@ -27,7 +27,7 @@ import { CommonUIElementsPluginsService } from '../CommonUIElementsPluginsServic
 })
 export class DataControl2Component implements OnChanges {
   @Input() map!: DataControlSettings
-  @Input() set field(value: FieldMetadata | FieldRef<any, any>) {
+  @Input() set field(value: FieldMetadata | FieldRef) {
     this.map = {
       field: value
     }

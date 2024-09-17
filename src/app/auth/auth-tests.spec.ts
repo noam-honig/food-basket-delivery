@@ -1,4 +1,4 @@
-import { TestBed, async, inject } from '@angular/core/testing'
+import { TestBed, inject } from '@angular/core/testing'
 import { Remult, InMemoryDataProvider, remult } from 'remult'
 
 import { Helpers, HelpersBase } from '../helpers/helpers'
@@ -23,7 +23,7 @@ AuthService.decodeJwt = async (x) => JSON.parse(x)
 describe('users and security', () => {
   initConfig.disableForTesting = true
   actionInfo.runningOnServer = true
-  it('user can only update their own info', async(async () => {
+  it('user can only update their own info', async () => {
     let { c } = await getHelperContext()
     let h2 = await c
       .create({
@@ -51,8 +51,8 @@ describe('users and security', () => {
     await h.save()
     h = await c.findFirst()
     expect(h.name).toBe('123')
-  }))
-  it('admin can update anyone', async(async () => {
+  })
+  it('admin can update anyone', async () => {
     let { c } = await getHelperContext()
     let h2 = await c
       .create({
@@ -71,8 +71,8 @@ describe('users and security', () => {
     }
     await h.save()
     expect(h.name).toBe('123')
-  }))
-  it('admin can only be updated with admin privilege', async(async () => {
+  })
+  it('admin can only be updated with admin privilege', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.admin = true
@@ -93,8 +93,8 @@ describe('users and security', () => {
       roles: [Roles.admin]
     }
     await h.save()
-  }))
-  it('test login', async(async () => {
+  })
+  it('test login', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {}
     })
@@ -103,7 +103,8 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: ''
+      password: '',
+      otp: ''
     })
     if (!r.authToken) {
       throw 'should have worked'
@@ -111,8 +112,8 @@ describe('users and security', () => {
     let jwt = getAuthService()
     jwt.setToken(r.authToken, false)
     expect(remult.user.name).toBe('test')
-  }))
-  it('test login for admin without a password', async(async () => {
+  })
+  it('test login for admin without a password', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.admin = true
@@ -123,12 +124,13 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: ''
+      password: '',
+      otp: ''
     })
     expect(r.authToken).toBe(undefined)
     expect(r.requiredToSetPassword).toBe(true)
-  }))
-  it('test login  with invalid password', async(async () => {
+  })
+  it('test login  with invalid password', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -139,12 +141,13 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: '456'
+      password: '456',
+      otp: ''
     })
     expect(r.authToken).toBe(undefined)
     expect(r.invalidPassword).toBe(true)
-  }))
-  it('test login  with valid password', async(async () => {
+  })
+  it('test login  with valid password', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -155,13 +158,14 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '',
-      password: '123'
+      password: '123',
+      otp: ''
     })
     if (!r.authToken) {
       throw 'should have worked'
     }
-  }))
-  it('change password to same password should fail', async(async () => {
+  })
+  it('change password to same password should fail', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -172,12 +176,13 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '123',
-      password: '123'
+      password: '123',
+      otp: ''
     })
     expect(r.authToken).toBe(undefined)
     expect(r.requiredToSetPassword).toBe(true)
-  }))
-  it('change password should work', async(async () => {
+  })
+  it('change password should work', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -188,13 +193,14 @@ describe('users and security', () => {
       phone: PHONE,
       EULASigned: false,
       newPassword: '456',
-      password: '123'
+      password: '123',
+      otp: ''
     })
     if (!r.authToken) {
       throw r
     }
-  }))
-  it('sign in from sms and renewLease should stay with no privileges or even fail', async(async () => {
+  })
+  it('sign in from sms and renewLease should stay with no privileges or even fail', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -205,8 +211,8 @@ describe('users and security', () => {
 
     let r = await AuthServiceController.loginFromSms('1234567890')
     expect(r.valid).toBe(false)
-  }))
-  it('sign in from sms, for a user with a password or with privliges, should move to login screen', async(async () => {
+  })
+  it('sign in from sms, for a user with a password or with privliges, should move to login screen', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -216,8 +222,8 @@ describe('users and security', () => {
     })
     let r = await AuthServiceController.loginFromSms('1234567890')
     expect(r.valid).toBe(false)
-  }))
-  it('helper can sign in from sms', async(async () => {
+  })
+  it('helper can sign in from sms', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.admin = false
@@ -226,8 +232,8 @@ describe('users and security', () => {
     })
     let r = await AuthServiceController.loginFromSms('1234567890')
     expect(r.valid).toBe(true)
-  }))
-  it('helper with password cannot sign in from sms', async(async () => {
+  })
+  it('helper with password cannot sign in from sms', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -237,8 +243,8 @@ describe('users and security', () => {
     })
     let r = await AuthServiceController.loginFromSms('1234567890')
     expect(r.valid).toBe(false)
-  }))
-  it('signed in user should sign in ok', async(async () => {
+  })
+  it('signed in user should sign in ok', async () => {
     let { c } = await getHelperContext({
       setValues: (h) => {
         h.password = '123'
@@ -250,7 +256,8 @@ describe('users and security', () => {
       phone: PHONE,
       password: '123',
       EULASigned: true,
-      newPassword: ''
+      newPassword: '',
+      otp: ''
     })
     if (!l.authToken) throw l
     let jwt = getAuthService()
@@ -260,7 +267,7 @@ describe('users and security', () => {
 
     let r = await AuthServiceController.loginFromSms('1234567890')
     expect(r.valid).toBe(true)
-  }))
+  })
 })
 
 function getAuthService() {

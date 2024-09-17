@@ -1,28 +1,28 @@
 import { BackendMethod, Controller, getFields, remult } from 'remult'
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 import { getSettings } from '../manage/ApplicationSettings'
-import { Field } from '../translate'
+import { Fields } from '../translate'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 
 @Controller('family-confirm-details')
 export class FamilyConfirmDetailsController {
   constructor() {}
-  @Field()
+  @Fields.string()
   deliveryId: string = ''
 
-  @Field()
+  @Fields.string()
   familyName: string = ''
 
-  @Field({ caption: 'מה לעדכן?', customInput: (x) => x.textArea() })
+  @Fields.string({ caption: 'מה לעדכן?', customInput: (x) => x.textArea() })
   comment: string
 
-  @Field()
+  @Fields.string()
   message: string = ''
 
   get $() {
-    return getFields < FamilyConfirmDetailsController >( this)
+    return getFields<FamilyConfirmDetailsController>(this)
   }
-  @Field()
+  @Fields.string()
   text: string = ''
 
   familyDelivery = remult.repo(ActiveFamilyDeliveries).create()

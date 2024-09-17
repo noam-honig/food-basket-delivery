@@ -1,6 +1,6 @@
 create table HelperCommunicationHistory
 id varchar default '' not null
-createDate timestamp
+createDate timestamptz
 createUser varchar default '' not null
 volunteer varchar default '' not null
 family varchar default '' not null

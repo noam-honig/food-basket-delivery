@@ -22,7 +22,7 @@ function generateRandomSixDigitNumber() {
   return randomNumber.toString()
 }
 export class AuthServiceController {
-  @BackendMethod({ allowed: true })
+  @BackendMethod({ allowed: true, paramTypes: [String] })
   static async loginFromSms(key: string) {
     let r: LoginResponse = { valid: false }
     let h = await remult.repo(Helpers).findFirst({ shortUrlKey: key })
@@ -168,7 +168,7 @@ export class AuthServiceController {
   }
 
   static async signJwt(result: any, timeToDisconnect: number) {
-    let jwt = await import('jsonwebtoken')
+    let { default: jwt } = await import('jsonwebtoken')
     if (timeToDisconnect)
       return jwt.sign(result, process.env.TOKEN_SIGN_KEY, {
         expiresIn:

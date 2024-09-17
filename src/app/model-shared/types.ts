@@ -15,9 +15,10 @@ import {
   use,
   Field,
   FieldType,
-  TranslatedCaption
+  TranslatedCaption,
+  Fields
 } from '../translate'
-import * as moment from 'moment'
+
 import { Sites, getLang } from '../sites/sites'
 import { EmailSvc, isDesktop } from '../shared/utils'
 import { isDate } from 'util'
@@ -47,14 +48,14 @@ export class Email {
   constructor(public readonly address: string) {}
 }
 
-export function DateTimeColumn<entityType = any>(
+export function DateTimeColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, Date> & TranslatedCaption,
   ...options: (
     | FieldOptions<entityType, Date>
     | ((options: FieldOptions<entityType, Date>) => void)
   )[]
 ) {
-  return Field<entityType, Date>(
+  return Fields.date<entityType>(
     {
       ...{ displayValue: (e, x) => (x ? x.toLocaleString('he-il') : '') },
       ...settings
@@ -62,7 +63,7 @@ export function DateTimeColumn<entityType = any>(
     ...options
   )
 }
-export function ChangeDateColumn<entityType = any>(
+export function ChangeDateColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, Date> & TranslatedCaption,
   ...options: (
     | FieldOptions<entityType, Date>
@@ -127,15 +128,46 @@ export function relativeDateName(args: {
 }) {
   let d = args.d
   if (!d) return ''
-  return moment(d).locale(getLang().languageCodeHe).fromNow()
+
+  return getRelativeTimeString(d, getLang().languageCodeHe)
+}
+function getRelativeTimeString(date, lang = 'he') {
+  const timeMs = date.getTime()
+  const deltaSeconds = Math.round((timeMs - Date.now()) / 1000)
+
+  const cutoffs = [
+    60,
+    3600,
+    86400,
+    86400 * 7,
+    86400 * 30,
+    86400 * 365,
+    Infinity
+  ]
+  const units: Intl.RelativeTimeFormatUnit[] = [
+    'second',
+    'minute',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year'
+  ]
+  const unitIndex = cutoffs.findIndex(
+    (cutoff) => cutoff > Math.abs(deltaSeconds)
+  )
+  const divisor = unitIndex ? cutoffs[unitIndex - 1] : 1
+
+  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' })
+  return rtf.format(Math.floor(deltaSeconds / divisor), units[unitIndex])
 }
 
 export function logChanges(
-  e: EntityRefForEntityBase<any>,
+  e: EntityRefForEntityBase<unknown>,
   remult: Remult,
   args?: {
-    excludeColumns?: FieldRef<any, any>[]
-    excludeValues?: FieldRef<any, any>[]
+    excludeColumns?: FieldRef[]
+    excludeValues?: FieldRef[]
   }
 ) {
   if (!args) {

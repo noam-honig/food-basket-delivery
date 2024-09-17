@@ -1,9 +1,9 @@
 //import { CustomModuleLoader } from '../../../../radweb/projects/test-angular/src/app/server/CustomModuleLoader';
 //let moduleLoader = new CustomModuleLoader('/dist/server/radweb/projects');
 import { ApplicationImages } from '../manage/ApplicationImages'
-import * as express from 'express'
-import * as fs from 'fs' //
-//import * as heapdump from 'heapdump'
+import express from 'express'
+import fs from 'fs' //
+//import heapdump from 'heapdump'
 import { serverInit } from './serverInit'
 import {
   ApplicationSettings,
@@ -30,13 +30,13 @@ import {
   PostgresSchemaBuilder,
   preparePostgresQueueStorage
 } from 'remult/postgres'
-import * as forceHttps from 'express-force-https'
-import * as jwt from 'express-jwt'
-import * as compression from 'compression'
+import forceHttps from 'express-force-https'
+import jwt from 'express-jwt'
+import compression from 'compression'
 import { InitContext } from '../helpers/init-context'
 import { Helpers, HelpersBase } from '../helpers/helpers'
 import { Phone } from '../model-shared/phone'
-import * as fetch from 'node-fetch'
+
 import { volunteersInEvent, Event, eventStatus } from '../events/events'
 
 import { OverviewController } from '../overview/overview.controller'
@@ -54,7 +54,7 @@ import {
   CitiesStatsPerDistCenter,
   FamilyDeliveryStats
 } from '../family-deliveries/family-deliveries-stats'
-import { HelperGifts } from '../helper-gifts/HelperGifts'
+
 import {
   HelperCommunicationHistory,
   InRouteHelpers
@@ -64,7 +64,7 @@ import { Groups } from '../manage/groups'
 import { GroupsStatsPerDistributionCenter } from '../manage/GroupsStatsPerDistributionCenter'
 import { GroupsStatsForAllDeliveryCenters } from '../manage/GroupsStatsForAllDeliveryCenters'
 import { VolunteerReportInfo } from '../print-volunteer/VolunteerReportInfo'
-import { RegisterURL } from '../resgister-url/regsiter-url'
+
 import { SitesEntity } from '../sites/sites.entity'
 import { SendSmsAction } from '../asign-family/send-sms-action'
 import { AsignFamilyController } from '../asign-family/asign-family.controller'
@@ -90,15 +90,13 @@ import { ImportFromExcelController } from '../import-from-excel/import-from-exce
 import { ImportHelpersFromExcelController } from '../import-helpers-from-excel/import-helpers-from-excel.controller'
 import { ManageController, SendTestSms } from '../manage/manage.controller'
 import { MergeFamiliesController } from '../merge-families/merge-families.controller'
-import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
+
 import { OrgEventsController } from '../org-events/org-events.controller'
 import { PreviousDeliveryController } from '../previous-delivery-comments/previous-delivery-comments.controller'
 import { VolunteerReportDefs } from '../print-stickers/VolunteerReportDefs'
-import { donorForm } from '../register-donor/register-donor.controller'
 import { SelectCompanyController } from '../select-company/select-company.controller'
 import { SelectHelperController } from '../select-helper/select-helper.controller'
 import { SiteOverviewController } from '../site-overview/site-overview.controller'
-import { WeeklyReportMltController } from '../weekly-report-mlt/weekly-report-mlt.controller'
 import { DeliveryHistoryController } from '../delivery-history/delivery-history.controller'
 import { NewDelivery, SendSmsToFamilies } from '../families/familyActions'
 import {
@@ -110,7 +108,6 @@ import {
   DialogController,
   StatusChangeChannel
 } from '../select-popup/dialog.controller'
-import { ShipmentAssignScreenController } from '../shipment-assign-screen/shipment-assign-screen.controller'
 import { PrintVolunteersController } from '../print-volunteers/print-volunteers.controller'
 import { PromiseThrottle } from '../shared/utils'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
@@ -128,8 +125,6 @@ import {
   RemultServerCore,
   SseSubscriptionServer
 } from 'remult/server'
-
-import * as ably from 'ably'
 
 import {
   LiveQueryStorage,
@@ -161,7 +156,6 @@ const entities = [
   FamilySources,
   CitiesStats,
   CitiesStatsPerDistCenter,
-  HelperGifts,
   HelpersBase,
   Helpers,
   InRouteHelpers,
@@ -172,7 +166,7 @@ const entities = [
   GroupsStatsForAllDeliveryCenters,
   GroupsStatsPerDistributionCenter,
   VolunteerReportInfo,
-  RegisterURL,
+
   GeocodeCache,
   SitesEntity,
   Families,
@@ -211,27 +205,26 @@ const controllers = [
   ImportHelpersFromExcelController,
   ManageController,
   MergeFamiliesController,
-  MltFamiliesController,
+
   OrgEventsController,
   PreviousDeliveryController,
   VolunteerReportDefs,
-  donorForm,
+
   SelectCompanyController,
   SelectHelperController,
   SiteOverviewController,
-  WeeklyReportMltController,
+
   DeliveryHistoryController,
   NewDelivery,
   DeleteDeliveries,
   PlaybackController,
   DialogController,
-  ShipmentAssignScreenController,
   PrintVolunteersController,
   OverviewController,
   IntakeFormController
 ]
 
-let publicRoot = 'hagai'
+let publicRoot = 'hagai/browser'
 if (!fs.existsSync(publicRoot + '/index.html'))
   publicRoot = 'dist/' + publicRoot
 serverInit().then(async ({ dataSource, initDatabase }) => {
@@ -488,6 +481,7 @@ s.parentNode.insertBefore(b, s);})();
   let api = remultExpress({
     entities,
     controllers,
+    admin: true,
     logApiEndPoints: process.env.logUrls == 'true',
     initRequest: async (req, options) => {
       let url = ''
@@ -523,20 +517,8 @@ s.parentNode.insertBefore(b, s);})();
       await InitContext(remult, undefined)
 
       if (false) {
-        let h1 = await remult
-          .repo(Helpers)
-          .findFirst({ phone: new Phone('0507330590') })
-        console.log(h1)
-
-        let row = await SqlDatabase.getDb(remult).execute(
-          "select id, name, smsDate, doNotSendSms, company, totalKm, totalTime, shortUrlKey, distributionCenter, eventComment, needEscort, theHelperIAmEscorting, escort, leadHelper, myGiftsURL, archive, frozenTill, internalComment, blockedFamilies, case when (frozenTill is null or frozenTill <= '2023-05-07T21:00:00.000Z') then false else true end, id || escort || theHelperIAmEscorting, phone, lastSignInDate, password, socialSecurityNumber, email, addressApiResult, preferredDistributionAreaAddress, preferredDistributionAreaAddressCity, addressApiResult2, preferredDistributionAreaAddress2, preferredFinishAddressCity, createDate, passwordChangeDate, EULASignDate, reminderSmsDate, referredBy, isAdmin, labAdmin, isIndependent, distCenterAdmin, familyAdmin, caller, includeGroups, excludeGroups, callQuota\n" +
-            ` from Helpers where phone = '0507330590' Order By id  limit 1 offset 0`
-        )
-        let val = row.rows[0][row.getColumnKeyInResultForIndexInSelect(18)]
-        console.log(val)
-        console.log(
-          remult.repo(Helpers).fields.blockedFamilies.valueConverter.fromDb(val)
-        )
+        let h1 = await remult.repo(volunteersInEvent).findFirst({})
+        console.log(h1.helper)
       }
 
       const path = './db-structure/'
@@ -649,7 +631,7 @@ s.parentNode.insertBefore(b, s);})();
         })
         const target = process.env.REDIRECT_TARGET + req.originalUrl
         try {
-          await fetch.default(target)
+          await fetch(target)
         } catch (err) {
           console.error('Incoming sms redirect err', err)
         }
@@ -772,7 +754,7 @@ export interface monitorResult {
 
 async function downloadPaperTrailLogs() {
   try {
-    var myHeaders = new fetch.Headers()
+    var myHeaders = new Headers()
     myHeaders.append('X-Papertrail-Token', process.env.PaperTrailToken)
 
     var requestOptions = {
@@ -792,15 +774,14 @@ async function downloadPaperTrailLogs() {
         if (!fs.existsSync(file)) {
           console.log('fetch', theTime)
           await t.push(
-            fetch
-              .default(
-                'https://papertrailapp.com/api/v1/archives/' +
-                  theTime +
-                  '/download',
-                requestOptions
-              )
+            fetch(
+              'https://papertrailapp.com/api/v1/archives/' +
+                theTime +
+                '/download',
+              requestOptions
+            )
               .then(async (response) =>
-                fs.writeFileSync(file, await response.buffer())
+                fs.writeFileSync(file, await response.text())
               )
               .then((result) => console.log('done', theTime))
               .catch((error) => console.log('error ' + theTime, error))

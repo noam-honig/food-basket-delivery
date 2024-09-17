@@ -7,7 +7,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
 
 import { DestroyHelper, DialogService } from '../select-popup/dialog'
-import * as copy from 'copy-to-clipboard'
+import copy from 'copy-to-clipboard'
 import { getLang, Sites } from '../sites/sites'
 import { Roles } from '../auth/roles'
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver'

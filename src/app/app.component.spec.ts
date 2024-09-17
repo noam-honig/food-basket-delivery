@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing'
+import { TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import '../app/manage/ApplicationSettings'
 
@@ -29,7 +29,7 @@ import { parseAddress, Families, parseUrlInAddress } from './families/families'
 import { BasketType } from './families/BasketType'
 import { fitAsync, itAsync } from './shared/test-helper'
 import { Helpers } from './helpers/helpers'
-import { RegisterURL, urlDbOperator } from './resgister-url/regsiter-url'
+
 import { initConfig } from './helpers/init-context'
 import { eventDisplayDate, EventInList } from './events/events'
 import { TranslationOptions } from './translate'
@@ -89,35 +89,6 @@ describe('AppComponent', () => {
   })
   it('test build', async () => {
     expect(await sql.func('max', f.id)).toBe('max(id)')
-  })
-  it('test bla bla', async () => {
-    let h = SqlFor(remult.repo(Helpers))
-    let u = SqlFor(remult.repo(RegisterURL))
-    let sql = new SqlBuilder()
-    let urls = []
-
-    let q = await sql.query({
-      select: async () => [
-        sql.build(
-          'distinct ',
-          urlDbOperator(await h.referredBy.getDbName()),
-          ' as url'
-        )
-      ],
-      from: h,
-      outerJoin: () => [
-        {
-          to: u,
-          on: () => [
-            sql.build(h, " like textcat(textcat('%',", u.URL, "),'%')")
-          ]
-        }
-      ],
-      where: () => [sql.build(u.URL, ' is null')]
-    })
-    expect(q).toBe(
-      "select distinct split_part(referredBy, '/', 3) as url from Helpers e1 left outer join RegisterURL e2 on Helpers like textcat(textcat('%',e2.URL),'%') where e2.URL is null"
-    )
   })
 
   it('select with promise', async () => {

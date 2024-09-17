@@ -1,89 +1,89 @@
-@import '~@angular/material/theming';
-
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
 // Plus imports for other components in your app.
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+@include mat.core();
 
-$custom-typography: mat-typography-config($font-family: 'Rubik,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;',
-    $display-4: mat-typography-level(112px, 112px, 300),
-    $display-3: mat-typography-level(56px, 56px, 400),
-    $display-2: mat-typography-level(45px, 48px, 400),
-    $display-1: mat-typography-level(34px, 40px, 400),
-    $headline: mat-typography-level(28px, 34px, 400),
-    $title: mat-typography-level(24px, 32px, 500),
-    $subheading-2: mat-typography-level(20px, 28px, 400),
-    $subheading-1: mat-typography-level(20px, 28px, 400),
-    $body-2: mat-typography-level(18px, 24px, 500),
-    $body-1: mat-typography-level(18px, 24px, 400),
-    $caption: mat-typography-level(18px, 24px, 400),
-    $button: mat-typography-level(18px, 16px, 500),
-    $input: mat-typography-level(18px, 1.125, 400));
-// Override typography CSS classes (e.g., mat-h1, mat-display-1, mat-typography, etc.).
-@include mat-base-typography($custom-typography);
+// Define the theme object.
+$angular-starter-project-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+        use-system-variables: true),
+      typography:(plain-family:'Rubik', brand-family:'Rubik', use-system-variables: true),
+    ));
 
-// Override typography for a specific Angular Material components.
-@include mat-checkbox-typography($custom-typography);
+$green-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$green-palette,
+        tertiary: mat.$blue-palette,
+        use-system-variables: true),
+      typography:(plain-family:'Rubik', brand-family:'Rubik', use-system-variables: true),
+    ));
 
-// Override typography for all Angular Material, including mat-base-typography and all components.
-@include angular-material-typography($custom-typography);
-$mat-pink-noam: (
-  50: #fce4ec,
-  100: #f8bbd0,
-  200: #f48fb1,
-  300: #f06292,
-  400: #ec407a,
-  500: #e91e63,
-  600: #d81b60,
-  700: #c2185b,
-  800: #ad1457,
-  900: #880e4f,
-  A100: #ff80ab,
-  A200: #ff4081,
-  A400: #f50057,
-  A700: #c51162,
-  contrast: (50: $dark-primary-text,
-    100: $dark-primary-text,
-    200: $dark-primary-text,
-    300: $dark-primary-text,
-    400: $dark-primary-text,
-    500: $light-primary-text,
-    600: $light-primary-text,
-    700: $light-primary-text,
-    800: $light-primary-text,
-    900: $light-primary-text,
-    A100: $dark-primary-text,
-    A200: $light-primary-text,
-    A400: $light-primary-text,
-    A700: $light-primary-text )
-);
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://www.google.com/design/spec/style/color.html
-$candy-app-primary: mat-palette($mat-blue);
-$candy-app-accent: mat-palette($mat-pink-noam, A200, A100, A400);
 
-// The warn palette is optional (defaults to red).
-$candy-app-warn: mat-palette($mat-red);
 
-// Create the theme object (a Sass map containing all of the palettes).
-$candy-app-theme: mat-light-theme($candy-app-primary,
-    $candy-app-accent,
-    $candy-app-warn);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($candy-app-theme);
+:root {
+  @include mat.all-component-themes($angular-starter-project-theme);
+  @include mat.system-level-colors($angular-starter-project-theme);
+  @include mat.system-level-typography($angular-starter-project-theme);
+  @include mat.toolbar-color($angular-starter-project-theme);
+}
+
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($angular-starter-project-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($angular-starter-project-theme);
+/* You can add global styles to this file, and also import other style files */
+
+
+// Start input stuff
+:root {
+  @include mat.form-field-density(-5)
+}
+
+.full-width-form-field {
+  width: 100%;
+}
+
+:root {
+  --sys-title-large-size: 1rem;
+  --sys-title-large-weight: 500;
+  --sys-title-medium-size: 1.1rem;
+  --sys-title-medium-weight: 500;
+  --mat-card-subtitle-text-color: rgba(0, 0, 0, 0.54); //var(--sys-on-surface-variant)
+  --mat-card-subtitle-text-weight: 400;
+  --mat-checkbox-label-text-size: 1rem;
+  --mat-toolbar-container-background-color: var(--sys-primary);
+  --mat-toolbar-container-text-color: var(--sys-on-primary);
+  --sys-label-large-size: 1rem;
+}
+
+.mdc-text-field__input::-webkit-calendar-picker-indicator {
+  display: inherit !important;
+}
+
+// End input stuff
+html {
+  font-size: 18px;
+}
 
 body {
   margin: 0;
   font-family: Rubik, Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue',
     sans-serif;
+
   -webkit-font-smoothing: antialiased;
 }
 
@@ -214,7 +214,7 @@ text-area {
 }
 
 .mat-expansion-panel-header {
-  padding-left: 2px !important;
+  padding-left: 10px !important;
   padding-right: 2px !important;
 }
 
@@ -252,13 +252,16 @@ text-area {
 .one-line {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .one-line>* {
   padding-left: 0.2em;
   padding-right: 0.2em;
-  flex-basis: 1px;
+  flex-basis: auto;
   flex-grow: 1;
+  min-width: 0;
 }
 
 .one-line> :first-child {
@@ -269,15 +272,21 @@ text-area {
   padding-left: 0em;
 }
 
-.mat-card {
+.mdc-card {
   margin-bottom: 5px;
+  padding: 8px;
+  @include mat.elevation(1);
 }
 
-.mat-card-title {
+.mat-mdc-card-title {
   font-size: 18px;
   display: flex !important;
   align-items: center;
   justify-content: space-between;
+}
+
+.mat-mdc-card-subtitle {
+  color: var(--sys-on-secondary)
 }
 
 .title-with-menu {
@@ -504,6 +513,7 @@ textarea {
 
 .small-button {
   line-height: 32px;
+  text-wrap: nowrap;
 
   .mat-icon {
     font-size: 16px;
@@ -542,7 +552,7 @@ body[dir='rtl'] {
 }
 
 .mat-expansion-panel-header {
-  height: 72px;
+  height: 72px !important;
 }
 
 * {
@@ -566,4 +576,42 @@ body[dir='rtl'] {
 textarea {
   font-family: Rubik, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 18px
+}
+
+.warning-button {
+  @include mat.button-color($angular-starter-project-theme, $color-variant: error);
+}
+
+.accept-button {
+  --mdc-filled-button-container-color: #026e00;
+  --mdc-filled-button-label-text-color: #ffffff;
+
+}
+
+.wait-dialog {
+  .mat-mdc-dialog-surface {
+    background-color: transparent;
+    width: 6rem;
+    min-width: 6rem;
+  }
+}
+
+.startButtonPart:dir(ltr) {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px
+}
+
+.startButtonPart:dir(rtl) {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px
+}
+
+.endButtonPart:dir(rtl) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.endButtonPart:dir(ltr) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }

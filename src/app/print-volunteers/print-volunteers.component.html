@@ -1,14 +1,26 @@
-<table class="printTable">
-  <tr>
-    <th>מתנדבים</th>
-    <th>כמות</th>
-  </tr>
-  <tr *ngFor="let v of volunteers">
-    <td>{{ v.name }}</td>
-    <td>{{ v.quantity }}</td>
-  </tr>
-  <tr>
-    <th>סה"כ</th>
-    <th>{{ total }}</th>
-  </tr>
-</table>
+<div class="no-print" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+  <mat-radio-group [(ngModel)]="columns" style="display: flex; align-items: center; margin-right: 5px;">
+    <span style="margin-right: 5px;">מספר עמודות:</span>
+    <mat-radio-button value="1" style="margin-right: 5px;">1</mat-radio-button>
+    <mat-radio-button value="2" style="margin-right: 5px;">2</mat-radio-button>
+    <mat-radio-button value="3" style="margin-right: 5px;">3</mat-radio-button>
+  </mat-radio-group>
+  <button mat-raised-button color="primary" (click)="print()" style="margin-left: 20px;">הדפס</button>
+</div>
+
+<div>
+  <mat-card style="padding: 0;">
+    <mat-card-content style="padding: 8px;">
+      <p>סה״כ מתנדבים: <strong>{{ total }}</strong> | סה״כ כמות: <strong>{{ totalBaskets }}</strong></p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div [ngClass]="'columns-' + columns">
+  <div class="printContent">
+    <div class="volunteer-item" *ngFor="let v of volunteers">
+      <span class="volunteer-name">{{ v.name }}</span>
+      <span class="volunteer-quantity">{{ v.quantity }}</span>
+    </div>
+  </div>
+</div>

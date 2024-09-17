@@ -14,7 +14,7 @@ import {
   Property,
   SizeProperty
 } from './VolunteerReportDefs'
-import { Entity, Field } from '../translate'
+import { Entity, Field, Fields } from '../translate'
 import { VolunteerReportDefs } from './VolunteerReportDefs'
 
 import { DialogService } from '../select-popup/dialog'
@@ -161,9 +161,9 @@ export class PrintStickersComponent implements OnInit {
   allowApiCrud: Roles.admin
 })
 class StickerInfo extends IdEntity {
-  @Field()
+  @Fields.string()
   key: string
-  @Field({ allowNull: true })
+  @Fields.object({ allowNull: true })
   info: ReportInfo
 }
 interface ReportInfo {

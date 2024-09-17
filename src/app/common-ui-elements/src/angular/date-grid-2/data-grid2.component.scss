@@ -1,3 +1,10 @@
+@use '@angular/material' as mat;
+
+.grid-root {
+  @include mat.checkbox-density(-5);
+  @include mat.icon-button-density(-5);
+}
+
 .row-button {
   height: auto;
   line-height: normal;
@@ -6,22 +13,24 @@
 .inner-wrapper {
   display: inline-block;
 }
+
 .dataGrid {
   overflow: auto;
   border: 1px solid #e0e0e0;
   height: 100%;
 }
-.dataGridBodyArea {
-}
-.dataGridHeaderCell {
-}
-.dataGridButtonHeaderCell {
-}
-.dataGridButtonCell {
-}
+
+.dataGridBodyArea {}
+
+.dataGridHeaderCell {}
+
+.dataGridButtonHeaderCell {}
+
+.dataGridButtonCell {}
+
 .dataGridDataCell,
-.dataGridHeaderCell {
-}
+.dataGridHeaderCell {}
+
 .dataGridRow {
   display: flex;
 }
@@ -33,16 +42,24 @@
   clear: both;
   background-color: rgb(245, 245, 245);
   z-index: 3;
+
   mat-icon {
-    font-size: 16px;
-    height: 18px;
-    width: 18px;
-    line-height: 18px;
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
   }
 }
+
 .dataGridFooterButtonGroup {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+
+  button {
+    box-sizing: content-box;
+  }
 }
+
 .dataGridFooterArea {
   width: 100%;
   bottom: 0;
@@ -56,34 +73,42 @@
 .dataGridDataCell {
   padding: 4px;
 }
-.dataGridHeaderCell {
-}
+
+.dataGridHeaderCell {}
+
 .dataGridDataCell {
   border-top: 1px solid #e0e0e0;
 }
+
 .data-grid-row-more-buttons {
   border-left: 1px solid #e0e0e0;
   border-right: 1px solid #e0e0e0;
   padding-left: 0;
   padding-right: 0;
-  width: 18px;
+  width: 24px;
+
   mat-icon {
-    font-size: 16px;
+    font-size: 24px;
     height: 17px;
-    width: 18px;
+    width: 24px;
     line-height: 17px;
   }
+
   button {
-    width: auto;
-    height: auto;
-    line-height: 18px;
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px;
+    padding: 0 !important;
   }
 }
+
 .data-grid-row-selection {
-  width: 18px;
+  width: 24px;
 }
+
 .dataGridFooterArea {
   border: 1px solid #e0e0e0;
+
 }
 
 .filterDialog {
@@ -110,37 +135,44 @@
 .designModeButton:hover span {
   visibility: visible;
 }
+
 .selectColumnCombo {
   display: inline-block;
   width: auto;
 }
+
 .selectColumnsArea {
   display: block;
 }
 
-.headerWithFilter {
-}
+.headerWithFilter {}
+
 .headerWithFilter .filterButton {
   visibility: hidden;
 }
+
 .headerWithFilter .filteredFilterButton {
   visibility: visible;
 }
+
 .headerWithFilter:hover .filterButton {
   visibility: visible;
 }
 
-.filterButton {
-}
+.filterButton {}
+
 table input {
   min-width: 75px;
 }
+
 table select {
   min-width: 100px;
 }
+
 .dataGridFooterArea {
   box-sizing: border-box;
 }
+
 .hide-on-narrow {
   @media (max-width: 500px) {
     display: none;

@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { DataFilterInfoComponent } from './data-filter-info/data-filter-info.component'
 import { DataGrid2Component } from './date-grid-2/data-grid2.component'
 
-import { Remult, FieldMetadata, ValueListItem, remult } from 'remult'
+import { Remult, FieldMetadata, ValueListItem, remult, ClassType } from 'remult'
 import { actionInfo } from 'remult/internals'
 
 import {
@@ -93,11 +93,6 @@ import { CommonUIElementsPluginsService } from './CommonUIElementsPluginsService
     DataGrid2Component,
     DataArea2Component,
     SelectValueDialogComponent
-  ],
-  entryComponents: [
-    WaitComponent,
-    SelectValueDialogComponent,
-    FilterDialogComponent
   ]
 })
 export class CommonUIElementsModule {
@@ -120,7 +115,7 @@ const dialogConfigMember = Symbol('dialogConfigMember')
 var _matDialog: MatDialog
 
 export async function openDialog<T, C>(
-  component: { new (...args: any[]): C },
+  component: ClassType<C>,
   setParameters?: (it: C) => void,
   returnAValue?: (it: C) => T
 ): Promise<T> {

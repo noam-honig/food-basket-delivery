@@ -23,11 +23,7 @@
           <ng-template matStepLabel>{{ settings.lang.signIn }}</ng-template>
           <data-area [settings]="phoneArea"></data-area>
           <div style="width: 100%; text-align: end; margin-top: 10px">
-            <button
-              mat-raised-button
-              color="accent"
-              (click)="phoneState.nextStep()"
-            >
+            <button mat-flat-button (click)="phoneState.nextStep()">
               {{ settings.lang.signIn }}
             </button>
           </div>
@@ -50,11 +46,7 @@
             </a>
           </div>
           <div style="width: 100%; text-align: end; margin-top: 10px">
-            <button
-              mat-raised-button
-              color="accent"
-              (click)="loginState.nextStep()"
-            >
+            <button mat-flat-button (click)="loginState.nextStep()">
               {{ settings.lang.signIn }}
             </button>
           </div>

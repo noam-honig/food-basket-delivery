@@ -23,13 +23,17 @@ import { SitesEntity } from '../sites/sites.entity'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 import { InitContext } from '../helpers/init-context'
 import { Phone } from '../model-shared/phone'
-import fetch from 'node-fetch'
+
 import { doOnRemoteHagai } from './remoteHagai'
 import { Location } from '../shared/googleApiHelpers'
 export class OverviewController {
   static mySiteInfo = new Map<string, siteItem>()
   static stats = {}
-  @BackendMethod({ allowed: Roles.overview, queue: true })
+  @BackendMethod({
+    allowed: Roles.overview,
+    queue: true,
+    paramTypes: [Boolean, Object, ProgressListener]
+  })
   static async getOverview(
     full: boolean,
     dateRange?: { from: string; to: string; rangeName: string },

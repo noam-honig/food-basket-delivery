@@ -1,14 +1,14 @@
 import { DataControl } from '../common-ui-elements/interfaces'
 import { IdEntity, Entity } from 'remult'
 import { Roles } from '../auth/roles'
-import { Field, FieldType, use } from '../translate'
+import { Fields, FieldType, use } from '../translate'
 
 @Entity('groups', {
   allowApiRead: Roles.admin,
   allowApiCrud: Roles.admin
 })
 export class Groups extends IdEntity {
-  @Field({ translation: (l) => l.group })
+  @Fields.string({ translation: (l) => l.group })
   name: string
 }
 

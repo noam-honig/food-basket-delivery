@@ -2,7 +2,7 @@
 //let moduleLoader = new CustomModuleLoader('/dist-server/radweb');
 
 import { SqlDatabase, FieldRef } from 'remult'
-import * as AWS from 'aws-sdk'
+import AWS from 'aws-sdk'
 
 import { serverInit } from './serverInit'
 
@@ -13,7 +13,7 @@ import {
   getAddress
 } from '../shared/googleApiHelpers'
 import { Sites } from '../sites/sites'
-import * as fs from 'fs'
+import fs from 'fs'
 import { processPhone } from '../import-from-excel/import-from-excel.component'
 
 import { Helpers } from '../helpers/helpers'
@@ -31,7 +31,7 @@ export async function DoIt() {
     const authToken = process.env.twilio_authToken
 
     let twilio = await import('twilio')
-    let client = twilio(accountSID, authToken)
+    let client = twilio.default(accountSID, authToken)
     try {
       let r = await client.messages.create({
         to: '+972507330590',

@@ -36,7 +36,10 @@ import { optimizeRoute, routeStats, routeStrategy } from './route-strategy'
 import { SendSmsUtils } from './send-sms-action'
 
 export class AsignFamilyController {
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [HelpersBase, BasketType, DistributionCenters, Object]
+  })
   static async getBasketStatus(
     helper: HelpersBase,
     basket: BasketType,
@@ -213,7 +216,11 @@ export class AsignFamilyController {
 
     return result
   }
-  @BackendMethod({ allowed: Allow.authenticated, blockUser: false })
+  @BackendMethod({
+    allowed: Allow.authenticated,
+    blockUser: false,
+    paramTypes: [HelpersBase, Object, routeStrategy]
+  })
   static async RefreshRoute(
     helper: HelpersBase,
     args: refreshRouteArgs,
@@ -244,7 +251,17 @@ export class AsignFamilyController {
     )
     return r
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin, queue: false })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    queue: false,
+    paramTypes: [
+      HelpersBase,
+      BasketType,
+      DistributionCenters,
+      Object,
+      ProgressListener
+    ]
+  })
   static async AddBox(
     helper: HelpersBase,
     basketType: BasketType,
@@ -562,7 +579,10 @@ export class AsignFamilyController {
     Families.SendMessageToBrowsers(settings.lang.deliveriesAssigned, '')
     return result
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [BasketType, DistributionCenters, Object]
+  })
   static async selectBuildings(
     basket: BasketType,
     distCenter: DistributionCenters,
@@ -610,7 +630,10 @@ export class AsignFamilyController {
     }))
     return r
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [HelpersBase, Object]
+  })
   static async assignMultipleFamilies(
     helper: HelpersBase,
     args: {
@@ -639,7 +662,11 @@ export class AsignFamilyController {
       await fd.save()
     }
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin, blockUser: false })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    blockUser: false,
+    paramTypes: [String]
+  })
   static async getHelperStats(id: string) {
     const sql = new SqlBuilder()
     var fd = SqlFor(remult.repo(FamilyDeliveries))
@@ -670,7 +697,10 @@ export class AsignFamilyController {
     } else return ''
   }
 
-  @BackendMethod({ allowed: () => getSettings().sendOnTheWaySMSToFamily })
+  @BackendMethod({
+    allowed: () => getSettings().sendOnTheWaySMSToFamily,
+    paramTypes: [HelpersBase]
+  })
   static async sendOnTheWaySmsMessageToVolunteersFamilies(
     courier: HelpersBase
   ) {

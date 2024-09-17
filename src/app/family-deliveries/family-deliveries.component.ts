@@ -34,7 +34,7 @@ import {
   leaveComponent
 } from '../custom-reuse-controller-router-strategy'
 
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { colors } from '../families/stats-action'
 import { BasketType, quantityHelper } from '../families/BasketType'
 
@@ -85,6 +85,8 @@ import { PrintVolunteerComponent } from '../print-volunteer/print-volunteer.comp
 import { getDeliveryGridButtons } from './getDeliveryGridButtons'
 import { FamilyDeliveriesController } from './family-deliveries.controller'
 import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
+import { BaseChartDirective } from 'ng2-charts'
+import { PieHelper } from '../delivery-follow-up/pie-helper'
 
 @Component({
   selector: 'app-family-deliveries',
@@ -294,67 +296,52 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   previousTabStats: statsOnTab = this.currentTabStats
   options: chart.ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
-        return false
-      }
-    }
+    maintainAspectRatio: false
+    //TODO - implement legend
+    // legend: {
+    //   position: 'right',
+    //   onClick: (event: MouseEvent, legendItem: any) => {
+    //     this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
+    //     return false
+    //   }
+    // }
   }
-  public chartClicked(e: any): void {
-    if (e.active && e.active.length > 0) {
-      this.setCurrentStat(this.pieChartStatObjects[e.active[0]._index])
+
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
+  pie = new PieHelper({
+    click: (index) => {
+      this.setCurrentStat(this.pieChartStatObjects[index])
     }
-  }
+  })
+
   setCurrentStat(s: FamilyDeliveresStatistics) {
     this.currentStatFilter = s
     this.searchString = ''
     this.refreshFamilyGrid()
   }
-  public pieChartLabels: string[] = []
-  public pieChartData: number[] = []
+
   pieChartStatObjects: FamilyDeliveresStatistics[] = []
-  public colors: Array<any> = [
-    {
-      backgroundColor: []
-    }
-  ]
 
   public pieChartType: chart.ChartType = 'pie'
   async updateChart() {
     this.currentTabStats = this.statTabs[this.myTab.selectedIndex]
     if (this.currentTabStats.refreshStats)
       await this.currentTabStats.refreshStats(this.currentTabStats)
-    this.pieChartData = []
+
     this.pieChartStatObjects = []
-    this.pieChartLabels.splice(0)
-    this.colors[0].backgroundColor.splice(0)
+
+    this.pie.reset()
     let stats = this.currentTabStats.stats
 
     stats.forEach((s) => {
       if (s.value > 0) {
-        this.pieChartLabels.push(s.name + ' ' + s.value)
-        this.pieChartData.push(s.value)
-        if (s.color != undefined) this.colors[0].backgroundColor.push(s.color)
+        this.pie.add(s.name + ' ' + s.value, s.value, s.color)
+
         this.pieChartStatObjects.push(s)
       }
     })
-    if (this.pieChartData.length == 0) {
-      this.pieChartData.push(0)
-      this.pieChartLabels.push(getLang().empty)
-    }
-    if (this.colors[0].backgroundColor.length == 0) {
-      this.colors[0].backgroundColor.push(
-        colors.green,
-        colors.blue,
-        colors.yellow,
-        colors.red,
-        colors.orange,
-        colors.gray
-      )
-    }
+
+    this.chart?.update()
   }
   statTotal(t: statsOnTab) {
     if (!t.showTotal) return

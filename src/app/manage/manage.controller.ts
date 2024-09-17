@@ -21,7 +21,7 @@ import { FamilyStatus } from '../families/FamilyStatus'
 
 import { GroupsValue } from './groups'
 import { EmailSvc } from '../shared/utils'
-import { Field } from '../translate'
+import { Field, Fields } from '../translate'
 import { Phone } from '../model-shared/phone'
 import { DeliveryImage, FamilyImage } from '../families/DeiveryImages'
 import { ChangeLog } from '../change-log/change-log'
@@ -84,7 +84,11 @@ export class ManageController {
     }
   }
 
-  @BackendMethod({ allowed: Roles.admin, queue: true })
+  @BackendMethod({
+    allowed: Roles.admin,
+    queue: true,
+    paramTypes: [ProgressListener]
+  })
   static async deleteFamiliesOnServer(progress?: ProgressListener) {
     let i = 0
     for await (const f of remult.repo(Families).query({
@@ -158,9 +162,9 @@ declare type select<T> = { [Properties in keyof Partial<T>]?: boolean }
 
 @Controller('sendTestSms')
 export class SendTestSms extends ControllerBase {
-  @Field({ translation: (l) => l.phone })
+  @Fields.string({ translation: (l) => l.phone })
   phone: string
-  @Field({ translation: (l) => l.customSmsMessage })
+  @Fields.string({ translation: (l) => l.customSmsMessage })
   message: string
   @BackendMethod({ allowed: Roles.admin })
   async sendTestMessage(forFamily?: boolean) {

@@ -8,7 +8,8 @@ import {
   FieldRef,
   FieldMetadata,
   remult,
-  Unsubscribe
+  Unsubscribe,
+  type ClassType
 } from 'remult'
 
 import {
@@ -56,6 +57,10 @@ import { AreaDataComponent } from '../area-data/area-data.component'
 import { BlockedFamiliesComponent } from '../blocked-families/blocked-families.component'
 import { BelowEightteenMessageComponent } from '../below-eightteen-message/below-eightteen-message.component'
 import { UgaConfirmCheckboxComponent } from '../uga-confirm-checkbox/uga-confirm-checkbox.component'
+import type { UpdateGroupDialogComponent } from '../update-group-dialog/update-group-dialog.component'
+import type { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
+import type { GridDialogComponent } from '../grid-dialog/grid-dialog.component'
+import type { SelectHelperComponent } from '../select-helper/select-helper.component'
 
 declare var gtag
 
@@ -109,7 +114,6 @@ export class DialogService implements UITools {
     public zone: NgZone,
     private busy: BusyService,
     private snackBar: MatSnackBar,
-    private routeReuseStrategy: RouteReuseStrategy,
     private routeHelper: RouteHelperService,
     plugInService: CommonUIElementsPluginsService
   ) {
@@ -151,32 +155,25 @@ export class DialogService implements UITools {
   donotWait<T>(what: () => Promise<T>): Promise<T> {
     return this.busy.donotWait(what)
   }
+  static EditCustomMessageComponent: ClassType<EditCustomMessageComponent>
   async editCustomMessageDialog(args: EditCustomMessageArgs): Promise<void> {
-    openDialog(
-      (await import('../edit-custom-message/edit-custom-message.component'))
-        .EditCustomMessageComponent,
-      (x) => (x.args = args)
-    )
+    openDialog(DialogService.EditCustomMessageComponent, (x) => (x.args = args))
   }
   navigateToComponent(component: any): void {
     this.routeHelper.navigateToComponent(component)
   }
 
   async selectCompany(args: (selectedValue: string) => void): Promise<void> {
-    openDialog(
-      (await import('../select-company/select-company.component'))
-        .SelectCompanyComponent,
-      (s) => (s.argOnSelect = args)
-    )
+    var x = (await import('../select-company/select-company.component'))
+      .SelectCompanyComponent
+    console.log(x)
+    openDialog(x, (s) => (s.argOnSelect = args))
   }
+  static UpdateGroupDialogComponent: ClassType<UpdateGroupDialogComponent>
   async updateGroup(args: UpdateGroupArgs): Promise<void> {
-    openDialog(
-      (await import('../update-group-dialog/update-group-dialog.component'))
-        .UpdateGroupDialogComponent,
-      (s) => {
-        s.init(args)
-      }
-    )
+    openDialog(DialogService.UpdateGroupDialogComponent, (s) => {
+      s.init(args)
+    })
   }
   async helperAssignment(helper: HelpersBase): Promise<void> {
     await openDialog(
@@ -194,13 +191,9 @@ export class DialogService implements UITools {
       (x) => (x.args = args)
     )
   }
-  async gridDialog(args: GridDialogArgs): Promise<void> {
-    await openDialog(
-      (
-        await import('../grid-dialog/grid-dialog.component')
-      ).GridDialogComponent,
-      (x) => (x.args = args)
-    )
+  static GridDialogComponent: ClassType<GridDialogComponent>
+  async gridDialog<T>(args: GridDialogArgs<T>): Promise<void> {
+    await openDialog(DialogService.GridDialogComponent, (x) => (x.args = args))
   }
   async inputAreaDialog(args: InputAreaArgs): Promise<void> {
     await openDialog(
@@ -210,11 +203,10 @@ export class DialogService implements UITools {
       (x) => (x.args = args)
     )
   }
+  static SelectHelperComponent: ClassType<SelectHelperComponent>
   async selectHelper(args: SelectHelperArgs): Promise<void> {
     await openDialog(
-      (
-        await import('../select-helper/select-helper.component')
-      ).SelectHelperComponent,
+      DialogService.SelectHelperComponent,
       (x) => (x.args = args)
     )
   }
@@ -229,7 +221,6 @@ export class DialogService implements UITools {
     return this.busy.doWhileShowingBusy(what)
   }
   refreshFamiliesAndDistributionCenters() {
-    ;(<CustomReuseStrategy>this.routeReuseStrategy).recycleAll()
     clearEntityValueListCache()
     this.refreshCanSeeCenter()
   }
@@ -265,12 +256,12 @@ export class DialogService implements UITools {
   }
   private allCenters: DistributionCenters[]
 
-  @Field()
+  @Field(() => DistributionCenters)
   @DataControl<DialogService>({
     valueList: (remult) => DistributionCenters.getValueList(true),
     valueChange: async (self) => {
       if (remult.authenticated()) {
-        self.refreshDistCenter.next()
+        self.refreshDistCenter.next({})
       }
     }
   })
@@ -313,7 +304,7 @@ export class DialogService implements UITools {
     if (this.unsubscribePromise) this.unsubscribePromise.then((x) => x())
     if (remult.isAllowed(Roles.distCenterAdmin))
       this.unsubscribePromise = StatusChangeChannel.subscribe((data) => {
-        this.statusRefreshThrottle.do(() => this.refreshStatusStats.next())
+        this.statusRefreshThrottle.do(() => this.refreshStatusStats.next({}))
         this.Info(data + ' ')
       })
   }

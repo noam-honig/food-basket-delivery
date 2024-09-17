@@ -21,7 +21,9 @@ import {
 import { DataList } from './dataList'
 import { FilterHelper } from './filter-helper'
 
-export class GridSettings<rowType = any> {
+const rowChangedKey = Symbol('rowChanged')
+
+export class GridSettings<rowType = unknown> {
   addNewRowToGrid(v: rowType) {
     setTimeout(() => {
       const refId = getEntityRef(v).getId()
@@ -247,6 +249,23 @@ export class GridSettings<rowType = any> {
       this.currentRowAsRestListItemRow() &&
       this.currentRowAsRestListItemRow()!.wasChanged()
     )
+  }
+  wasThereAChangeToTheRow(row: any) {
+    let result = row[rowChangedKey]
+    if (result == undefined) {
+      const helper = this.getRowHelper(row)
+      helper.subscribe({
+        reportObserved: () => {},
+        reportChanged: () => {
+          row[rowChangedKey] = -1
+        }
+      })
+      result = row[rowChangedKey] = -1
+    }
+    if (result == -1) {
+      row[rowChangedKey] = result = this.getRowHelper(row).wasChanged() ? 1 : 0
+    }
+    return result == 1
   }
   saveCurrentRow() {
     this.saveRow(this.currentRow)

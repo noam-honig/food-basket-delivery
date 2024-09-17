@@ -14,10 +14,18 @@ export class PrintVolunteersComponent implements OnInit {
   constructor(private busy: BusyService) {}
   volunteers: volunteer[] = []
   total: number = 0
+  totalBaskets: number = 0
+  columns: string = '2'
+
   ngOnInit() {
     PrintVolunteersController.volunteersForPrint().then((x) => {
       this.volunteers = x.volunteers
       this.total = x.total
+      this.totalBaskets = this.volunteers.reduce((sum, v) => sum + v.quantity, 0)
     })
+  }
+
+  print() {
+    window.print()
   }
 }

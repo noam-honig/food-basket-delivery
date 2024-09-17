@@ -14,7 +14,7 @@ import { saveToExcel } from '../shared/saveToExcel'
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component'
 import { HelperAssignmentComponent } from '../helper-assignment/helper-assignment.component'
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
-import { use, Field } from '../translate'
+import { use, Field, Fields } from '../translate'
 import { getLang } from '../sites/sites'
 import { columnOrderAndWidthSaver } from '../families/columnOrderAndWidthSaver'
 import { SendBulkSms } from './send-bulk-sms'
@@ -39,7 +39,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
       this.helpers.reloadData()
     }, this.destroyHelper)
   }
-  @Field()
+  @Fields.string()
   city: string = ''
   quickAdd() {
     const helper = repo(Helpers).create()

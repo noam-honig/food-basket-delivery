@@ -1,7 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  Inject,
+  NgZone,
+  inject
+} from '@angular/core'
 
 import { UserFamiliesList } from '../my-families/user-families'
-import * as chart from 'chart.js'
 
 import { BusyService, openDialog } from '../common-ui-elements'
 import { Helpers } from '../helpers/helpers'
@@ -23,6 +30,8 @@ import {
 } from './delivery-follow-up.controller'
 import { Roles } from '../auth/roles'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
+import { BaseChartDirective } from 'ng2-charts'
+import { PieHelper } from './pie-helper'
 
 @Component({
   selector: 'app-delivery-follow-up',
@@ -69,35 +78,17 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
       (!this.currentStatFilter || this.currentStatFilter.rule(h))
     )
   }
-  public pieChartLabels: string[] = []
-  public pieChartData: number[] = []
-  pieChartStatObjects: DeliveryStatistic[] = []
-  public colors: Array<any> = [
-    {
-      backgroundColor: []
-    }
-  ]
 
-  public pieChartType: chart.ChartType = 'pie'
+  pieChartStatObjects: DeliveryStatistic[] = []
+
   currentStatFilter: DeliveryStatistic = undefined
 
-  options: chart.ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.currentStatFilter = this.pieChartStatObjects[legendItem.index]
-
-        return false
-      }
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
+  pie = new PieHelper({
+    click: (index) => {
+      this.currentStatFilter = this.pieChartStatObjects[index]
     }
-  }
-  public chartClicked(e: any): void {
-    if (e.active && e.active.length > 0) {
-      this.currentStatFilter = this.pieChartStatObjects[e.active[0]._index]
-    }
-  }
+  })
   clearFilter() {
     this.currentStatFilter = undefined
   }
@@ -185,10 +176,8 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     for (const h of this.helpers) {
       this.stats.process(h)
     }
-    this.pieChartData = []
     this.pieChartStatObjects = []
-    this.pieChartLabels.splice(0)
-    this.colors[0].backgroundColor.splice(0)
+    this.pie.reset()
 
     this.hasChart = false
     ;[
@@ -200,13 +189,13 @@ export class DeliveryFollowUpComponent implements OnInit, OnDestroy {
     ].forEach((s) => {
       if (s.value > 0) {
         this.hasChart = true
-        this.pieChartLabels.push(s.name + ' ' + s.value)
-        this.pieChartData.push(s.value)
-        this.colors[0].backgroundColor.push(s.color)
+        this.pie.add(s.name + ' ' + s.value, s.value, s.color)
         this.pieChartStatObjects.push(s)
       }
     })
+    this.chart?.update()
   }
+  first = true
   hasChart = true
   async refreshStats() {
     this.helpers = await DeliveryFollowUpController.helpersStatus(

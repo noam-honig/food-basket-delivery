@@ -25,6 +25,7 @@ import {
 
 import { getFields } from 'remult'
 import { SendSmsUtils } from '../asign-family/send-sms-action'
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats'
 
 export abstract class ActionOnFamilyDeliveries extends ActionOnRows<ActiveFamilyDeliveries> {
   constructor(args: ActionOnRowsArgs<ActiveFamilyDeliveries>) {
@@ -56,9 +57,9 @@ function buildArgsForFamilyDeliveries(
 
 @Controller('deleteDeliveries')
 export class DeleteDeliveries extends ActionOnFamilyDeliveries {
-  @Field({ translation: (l) => l.updateFamilyStatus })
+  @Fields.boolean({ translation: (l) => l.updateFamilyStatus })
   updateFamilyStatus: boolean
-  @Field()
+  @Field(() => FamilyStatus)
   status: FamilyStatus
 
   constructor() {
@@ -85,11 +86,11 @@ export class DeleteDeliveries extends ActionOnFamilyDeliveries {
 const asCurrentBasket = 'AS_CURRENT_BASKET'
 @Controller('UpdateFamilyDefaults')
 export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
-  @Field({ translation: (l) => l.defaultVolunteer })
+  @Fields.boolean({ translation: (l) => l.defaultVolunteer })
   byCurrentCourier: boolean
-  @Field({ translation: (l) => l.defaultBasketType })
+  @Fields.boolean({ translation: (l) => l.defaultBasketType })
   basketType: boolean
-  @Field({ translation: (l) => l.basketType })
+  @Fields.string({ translation: (l) => l.basketType })
   @DataControl({
     valueList: async (remult) => {
       let r = await getEntityValueList(remult.repo(BasketType))
@@ -101,13 +102,13 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
     }
   })
   selectBasket: string = asCurrentBasket
-  @Field({ translation: (l) => l.defaultDistributionCenter })
+  @Fields.boolean({ translation: (l) => l.defaultDistributionCenter })
   defaultDistributionCenter: boolean
-  @Field({ translation: (l) => l.defaultQuantity })
+  @Fields.boolean({ translation: (l) => l.defaultQuantity })
   quantity: boolean
-  @Field({ translation: (l) => l.commentForVolunteer })
+  @Fields.boolean({ translation: (l) => l.commentForVolunteer })
   comment: boolean
-  @Field({ translation: (l) => l.selfPickup })
+  @Fields.boolean({ translation: (l) => l.selfPickup })
   selfPickup: boolean
 
   constructor() {
@@ -165,11 +166,11 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
 }
 @Controller('updateCourier')
 export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
-  @Field({ translation: (l) => l.clearVolunteer })
+  @Fields.boolean({ translation: (l) => l.clearVolunteer })
   clearVoulenteer: boolean
-  @Field()
+  @Field(() => HelpersBase)
   courier: HelpersBase
-  @Field({ translation: (l) => l.setAsDefaultVolunteer })
+  @Fields.boolean({ translation: (l) => l.setAsDefaultVolunteer })
   updateAlsoAsFixed: boolean
   usedCouriers: string[] = []
   constructor() {
@@ -208,11 +209,11 @@ export class UpdateCourier extends ActionOnRows<ActiveFamilyDeliveries> {
 }
 @Controller('updateDeliveriesStatus')
 export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
-  @Field()
+  @Field(() => DeliveryStatus)
   status: DeliveryStatus
-  @Field({ translation: (l) => l.internalComment })
+  @Fields.string({ translation: (l) => l.internalComment })
   comment: string
-  @Field({ translation: (l) => l.deleteExistingComment })
+  @Fields.boolean({ translation: (l) => l.deleteExistingComment })
   deleteExistingComment: boolean
 
   constructor() {
@@ -284,9 +285,9 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
   }
 })
 export class ArchiveHelper {
-  @Field()
+  @Fields.boolean()
   markOnTheWayAsDelivered: boolean
-  @Field()
+  @Fields.boolean()
   markSelfPickupAsDelivered: boolean
 
   get $() {
@@ -356,7 +357,7 @@ export class ArchiveHelper {
 
 @Controller('archiveDeliveries')
 export class ArchiveDeliveries extends ActionOnFamilyDeliveries {
-  @Field()
+  @Field(() => ArchiveHelper)
   archiveHelper: ArchiveHelper = new ArchiveHelper()
   constructor() {
     super({
@@ -410,7 +411,7 @@ export class SendSmsForFamilyDetailsConfirmation extends ActionOnFamilyDeliverie
 
 @Controller('updateBasketType')
 export class UpdateBasketType extends ActionOnFamilyDeliveries {
-  @Field()
+  @Field(() => BasketType)
   basketType: BasketType
 
   constructor() {
@@ -441,7 +442,7 @@ export class UpdateQuantity extends ActionOnFamilyDeliveries {
 
 @Controller('updateDistributionCenter')
 export class UpdateDistributionCenter extends ActionOnFamilyDeliveries {
-  @Field()
+  @Field(() => DistributionCenters)
   distributionCenter: DistributionCenters
 
   constructor() {
@@ -494,29 +495,29 @@ class HelperStrategy {
 
 @Controller('newDeliveryForDeliveries')
 export class NewDelivery extends ActionOnFamilyDeliveries {
-  @Field({ translation: (l) => l.useBusketTypeFromCurrentDelivery })
+  @Fields.boolean({ translation: (l) => l.useBusketTypeFromCurrentDelivery })
   useExistingBasket: boolean = true
-  @Field()
+  @Field(() => BasketType)
   basketType: BasketType
   @Fields.quantity()
   quantity: number
-  @Field()
+  @Field(() => HelperStrategy)
   helperStrategy: HelperStrategy = HelperStrategy.familyDefault
-  @Field()
+  @Field(() => HelpersBase)
   helper: HelpersBase
-  @Field({ translation: (l) => l.archiveCurrentDelivery })
+  @Fields.boolean({ translation: (l) => l.archiveCurrentDelivery })
   autoArchive: boolean = true
-  @Field({ translation: (l) => l.newDeliveryForAll })
+  @Fields.boolean({ translation: (l) => l.newDeliveryForAll })
   newDeliveryForAll: boolean
-  @Field()
+  @Field(() => SelfPickupStrategy)
   selfPickup: SelfPickupStrategy = SelfPickupStrategy.familyDefault
-  @Field()
+  @Field(() => ArchiveHelper)
   archiveHelper: ArchiveHelper = new ArchiveHelper()
 
-  @Field()
+  @Field(() => DistributionCenters)
   distributionCenter: DistributionCenters
 
-  @Field({ translation: (l) => l.distributionListAsCurrentDelivery })
+  @Fields.boolean({ translation: (l) => l.distributionListAsCurrentDelivery })
   useCurrentDistributionCenter: boolean
 
   constructor() {

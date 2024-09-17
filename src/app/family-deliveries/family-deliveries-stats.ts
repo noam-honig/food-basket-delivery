@@ -21,7 +21,7 @@ import { DistributionCenters } from '../manage/distribution-centers'
 
 import { colors } from '../families/stats-action'
 import { getLang } from '../sites/sites'
-import { Field } from '../translate'
+import { Field, Fields } from '../translate'
 
 export class FamilyDeliveryStats {
   enquireDetails = new FamilyDeliveresStatistics(
@@ -103,7 +103,10 @@ export class FamilyDeliveryStats {
     )
     return r
   }
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [DistributionCenters]
+  })
   static async getFamilyDeliveryStatsFromServer(
     distCenter: DistributionCenters
   ) {
@@ -341,9 +344,9 @@ export interface groupStats {
   }
 })
 export class CitiesStats {
-  @Field()
+  @Fields.string()
   city: string
-  @Field()
+  @Fields.integer()
   deliveries: number
 }
 @Entity<CitiesStatsPerDistCenter>('citiesStatsPerDistCenter', {
@@ -379,10 +382,10 @@ export class CitiesStats {
   }
 })
 export class CitiesStatsPerDistCenter extends EntityBase {
-  @Field()
+  @Fields.string()
   city: string
-  @Field()
+  @Field(() => DistributionCenters)
   distributionCenter: DistributionCenters
-  @Field()
+  @Fields.integer()
   families: number
 }

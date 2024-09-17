@@ -1,7 +1,6 @@
 export async function gql(variables: any, s: string, authorization?: string) {
-  const fetch = await import('node-fetch')
   if (!authorization) authorization = process.env['MONDAY_C_KEY']!
-  const result = await fetch.default('https://api.monday.com/v2', {
+  const result = await fetch('https://api.monday.com/v2', {
     body: JSON.stringify({
       query: s,
       variables: variables

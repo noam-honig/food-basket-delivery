@@ -20,7 +20,7 @@ import {
   GridSettings
 } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { Stats, FaimilyStatistics, colors } from './stats-action'
 
 import {
@@ -76,6 +76,8 @@ import { ChangeLogComponent } from '../change-log/change-log.component'
 import { async } from 'rxjs/internal/scheduler/async'
 import { GridDialogComponent } from '../grid-dialog/grid-dialog.component'
 import { DeliveryChanges } from './FamilyDeliveries'
+import { BaseChartDirective } from 'ng2-charts'
+import { PieHelper } from '../delivery-follow-up/pie-helper'
 
 @Component({
   selector: 'app-families',
@@ -141,34 +143,17 @@ export class FamiliesComponent implements OnInit {
     await Promise.all(wait)
     this.refreshStats()
   }
-  public pieChartLabels: string[] = []
-  public pieChartData: number[] = []
+
   pieChartStatObjects: FaimilyStatistics[] = []
-  public colors: Array<any> = [
-    {
-      backgroundColor: []
-    }
-  ]
 
-  public pieChartType: ChartType = 'pie'
   currentStatFilter: FaimilyStatistics = undefined
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
+  pie = new PieHelper({
+    click: (index) => {
+      this.setCurrentStat(this.pieChartStatObjects[index])
+    }
+  })
 
-  options: chart.ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        this.setCurrentStat(this.pieChartStatObjects[legendItem.index])
-        return false
-      }
-    }
-  }
-  public chartClicked(e: any): void {
-    if (e.active && e.active.length > 0) {
-      this.setCurrentStat(this.pieChartStatObjects[e.active[0]._index])
-    }
-  }
   setCurrentStat(s: FaimilyStatistics) {
     this.currentStatFilter = s
     this.searchString = ''
@@ -798,34 +783,20 @@ export class FamiliesComponent implements OnInit {
     this.currentTabStats = this.statTabs[this.myTab.selectedIndex]
     if (this.currentTabStats.refreshStats)
       await this.currentTabStats.refreshStats(this.currentTabStats)
-    this.pieChartData = []
+    this.pie.reset()
+
     this.pieChartStatObjects = []
-    this.pieChartLabels.splice(0)
-    this.colors[0].backgroundColor.splice(0)
+
     let stats = this.currentTabStats.stats
 
     stats.forEach((s) => {
       if (s.value > 0) {
-        this.pieChartLabels.push(s.name + ' ' + s.value)
-        this.pieChartData.push(s.value)
-        if (s.color != undefined) this.colors[0].backgroundColor.push(s.color)
+        this.pie.add(s.name + ' ' + s.value, s.value, s.color)
+
         this.pieChartStatObjects.push(s)
       }
     })
-    if (this.pieChartData.length == 0) {
-      this.pieChartData.push(0)
-      this.pieChartLabels.push(use.language.empty)
-    }
-    if (this.colors[0].backgroundColor.length == 0) {
-      this.colors[0].backgroundColor.push(
-        colors.green,
-        colors.blue,
-        colors.yellow,
-        colors.red,
-        colors.orange,
-        colors.gray
-      )
-    }
+    this.chart?.update()
   }
 
   refreshStats() {

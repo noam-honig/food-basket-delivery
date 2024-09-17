@@ -7,7 +7,9 @@ import { FieldType, translationConfig } from '../translate'
 @FieldType<Phone>({
   valueConverter: {
     toJson: (x) => (x ? x.thePhone : ''),
-    fromJson: (x) => (x ? new Phone(x) : null)
+    fromJson: (x) => (x ? new Phone(x) : null),
+    toInput: (x) => (x ? x.thePhone : ''),
+    fromInput: (x) => (x ? new Phone(x) : null)
   },
   inputType: 'tel',
   displayValue: (e, x) => x && getSettings().forWho?.formatPhone(x.thePhone)
@@ -82,7 +84,10 @@ export class Phone {
       )
   }
 
-  static validatePhone(col: { error: string; value: Phone }, required = false) {
+  static validatePhone(
+    col: { error?: string; value: Phone },
+    required = false
+  ) {
     if (!col.value || col.value.thePhone == '') {
       if (required) col.error = getLang().invalidPhoneNumber
       return

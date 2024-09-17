@@ -56,17 +56,7 @@
                 </select>
               </th>
             </tr>
-            <ng-container
-              *ngFor="
-                let r of rows
-                  | paginate
-                    : {
-                        itemsPerPage: 10,
-                        currentPage: excelPage,
-                        id: 'excelPage'
-                      }
-              "
-            >
+            <ng-container *ngFor="let r of rows">
               <tr>
                 <td>{{ r }}</td>
 
@@ -77,12 +67,7 @@
             </ng-container>
           </table>
         </div>
-        <pagination-controls
-          (pageChange)="excelPage = $event"
-          previousLabel="{{ settings.lang.previous }}"
-          nextLabel="{{ settings.lang.next }}"
-          id="excelPage"
-        ></pagination-controls
+
         >{{ settings.lang.total }} {{ rows.length }}
         {{ settings.lang.linesInExcel }}
       </ng-container>
@@ -103,17 +88,7 @@
                   {{ c.caption }}
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of newRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: newRowsPage,
-                          id: 'newRows'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of newRows">
                 <tr>
                   <td>
                     <mat-icon
@@ -131,13 +106,7 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="newRowsPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="newRows"
-          >
-          </pagination-controls>
+
           <button (click)="addAll()" mat-raised-button color="accent">
             {{ settings.lang.addAllVolunteers }}
           </button>
@@ -161,17 +130,7 @@
                   </mat-icon>
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of updateRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: updateRowsPage,
-                          id: 'updateRows'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of updateRows">
                 <tr>
                   <td>
                     <mat-icon
@@ -219,12 +178,6 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="updateRowsPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="updateRows"
-          ></pagination-controls>
         </mat-tab>
         <mat-tab
           label="{{ settings.lang.existingVolunteers }} - {{
@@ -240,17 +193,7 @@
                   {{ c.caption }}
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of identicalRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: existingFamiliesPage,
-                          id: 'existingFamiliesPage'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of identicalRows">
                 <tr>
                   <td>{{ i.rowInExcel }}<br /></td>
                   <td *ngFor="let c of columnsInCompare">
@@ -260,12 +203,6 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="existingFamiliesPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="existingFamiliesPage"
-          ></pagination-controls>
         </mat-tab>
         <mat-tab
           label="{{ settings.lang.errors }} -  {{ errorRows.length }}"
@@ -279,17 +216,7 @@
                   {{ c.caption }}
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of errorRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: errorRowsPage,
-                          id: 'errorRows'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of errorRows">
                 <tr>
                   <td>{{ i.rowInExcel }}<br /></td>
                   <td *ngFor="let c of columnsInCompare">
@@ -318,13 +245,6 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="errorRowsPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="errorRows"
-          >
-          </pagination-controls>
         </mat-tab>
       </mat-tab-group>
     </mat-step>

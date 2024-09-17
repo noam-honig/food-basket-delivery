@@ -8,18 +8,18 @@ import { BasketType } from '../families/BasketType'
 import { Families } from '../families/families'
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 import { getSettings } from '../manage/ApplicationSettings'
-import { Field } from '../translate'
+import { Field, Fields } from '../translate'
 
 @Controller('family-self-order')
 export class FamilySelfOrderController {
   constructor() {}
-  @Field()
+  @Fields.string()
   familyUrl: string = ''
 
-  @Field()
+  @Fields.string()
   familyName: string = ''
 
-  @Field({ caption: 'סוג מזון' })
+  @Fields.string({ caption: 'סוג מזון' })
   @DataControl({
     valueList: async () => getEntityValueList(remult.repo(BasketType))
   })
@@ -34,7 +34,7 @@ export class FamilySelfOrderController {
       }))
     ]
   })
-  @Field({ caption: 'מידת טיטולים' })
+  @Fields.string({ caption: 'מידת טיטולים' })
   titulim: string = ''
 
   @DataControl({
@@ -46,19 +46,19 @@ export class FamilySelfOrderController {
       }))
     ]
   })
-  @Field({ caption: 'מידת בגד' })
+  @Fields.string({ caption: 'מידת בגד' })
   size: string = ''
 
-  @Field({ caption: 'גרבר' })
+  @Fields.boolean({ caption: 'גרבר' })
   gerber: boolean
 
-  @Field({ caption: 'דייסה' })
+  @Fields.boolean({ caption: 'דייסה' })
   daisa: boolean
 
-  @Field({ caption: 'הערה' })
+  @Fields.string({ caption: 'הערה' })
   comment: string
 
-  @Field()
+  @Fields.string()
   message: string = ''
 
   get $() {

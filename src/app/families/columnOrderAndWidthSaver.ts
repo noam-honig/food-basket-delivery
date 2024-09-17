@@ -8,7 +8,7 @@ import { sortColumns } from '../shared/utils'
 const storageEntryName = 'grid-state'
 export class columnOrderAndWidthSaver {
   suspend = false
-  constructor(private grid: GridSettings<any>) {}
+  constructor(private grid: GridSettings) {}
   getStorage() {
     let state = localStorage.getItem(storageEntryName)
     if (state) {

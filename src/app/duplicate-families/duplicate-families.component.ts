@@ -15,7 +15,7 @@ import { saveFamiliesToExcel } from '../families/families.component'
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
 import { MergeFamiliesComponent } from '../merge-families/merge-families.component'
 import { Roles } from '../auth/roles'
-import { Field } from '../translate'
+import { Field, Fields } from '../translate'
 import {
   duplicateFamilies,
   DuplicateFamiliesController
@@ -27,27 +27,27 @@ import {
   styleUrls: ['./duplicate-families.component.scss']
 })
 export class DuplicateFamiliesComponent implements OnInit {
-  @Field({ translation: (l) => l.address })
+  @Fields.boolean({ translation: (l) => l.address })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   address: boolean
-  @Field({ translation: (l) => l.familyName })
+  @Fields.boolean({ translation: (l) => l.familyName })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   name: boolean = false
-  @Field({ translation: (l) => l.phone })
+  @Fields.boolean({ translation: (l) => l.phone })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   phone: boolean = false
-  @Field({ translation: (l) => l.activeDeliveries })
+  @Fields.boolean({ translation: (l) => l.activeDeliveries })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
   onlyActive: boolean = true
-  @Field({ translation: (l) => l.socialSecurityNumber })
+  @Fields.boolean({ translation: (l) => l.socialSecurityNumber })
   @DataControl<DuplicateFamiliesComponent>({
     valueChange: (self) => self.ngOnInit()
   })
@@ -159,7 +159,7 @@ export class DuplicateFamiliesComponent implements OnInit {
                 name: this.settings.lang.exportToExcel,
                 click: async () => {
                   await saveFamiliesToExcel(
-                    x.args.settings,
+                    x.args.settings as GridSettings<Families>,
                     this.dialog,
                     this.settings.lang.families
                   )
@@ -196,10 +196,11 @@ export class DuplicateFamiliesComponent implements OnInit {
   }
 
   private async mergeFamilies(x: GridDialogComponent) {
-    let items =
+    let items = (
       x.args.settings.selectedRows.length > 0
         ? [...x.args.settings.selectedRows]
         : [...x.args.settings.items]
+    ) as Families[]
     if (items.length == 0) {
       await this.dialog.Error(this.settings.lang.noFamiliesSelected)
       return

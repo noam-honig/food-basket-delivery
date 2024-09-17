@@ -41,7 +41,7 @@ import {
   ApplicationSettings,
   getCustomColumnVisible
 } from '../manage/ApplicationSettings'
-import { Field, use } from '../translate'
+import { Field, Fields, use } from '../translate'
 import { getLang } from '../sites/sites'
 
 import { Groups } from '../manage/groups'
@@ -498,6 +498,10 @@ export class ImportFromExcelComponent implements OnInit {
         }
 
         if (c.value !== undefined) {
+          var i1 = c.inputValue
+          var i2 = c.metadata.valueConverter.toInput(c.value)
+          var i3 = c.metadata.options.valueConverter.toInput(c.value)
+
           info.values[
             keyFromColumnInCompare({
               e: e._.repository.metadata,
@@ -530,11 +534,7 @@ export class ImportFromExcelComponent implements OnInit {
     if (this.distributionCenter == null)
       this.distributionCenter = await remult.context.defaultDistributionCenter()
 
-    let updateCol = (
-      col: FieldRef<any>,
-      val: string,
-      seperator: string = ' '
-    ) => {
+    let updateCol = (col: FieldRef, val: string, seperator: string = ' ') => {
       if (col.value) {
         col.inputValue = (col.inputValue + seperator + val).trim()
       } else col.inputValue = val
@@ -902,18 +902,18 @@ export class ImportFromExcelComponent implements OnInit {
   newRows: excelRowInfo[] = []
   identicalRows: excelRowInfo[] = []
   updateRows: excelRowInfo[] = []
-  @Field({ translation: (l) => l.defineDeliveriesForFamiliesInExcel })
+  @Fields.boolean({ translation: (l) => l.defineDeliveriesForFamiliesInExcel })
   addDelivery: boolean
-  @Field({
+  @Fields.boolean({
     translation: (l) =>
       l.ifBasketTypeInExcelIsDifferentFromExistingOneCreateNewDelivery
   })
   compareBasketType: boolean
-  @Field({ translation: (l) => l.basketType })
+  @Field(() => BasketType, { translation: (l) => l.basketType })
   defaultBasketType: BasketType
-  @Field({ translation: (l) => l.distributionList })
+  @Field(() => DistributionCenters, { translation: (l) => l.distributionList })
   distributionCenter: DistributionCenters
-  @Field({ translation: (l) => l.useFamilyMembersAsQuantity })
+  @Fields.boolean({ translation: (l) => l.useFamilyMembersAsQuantity })
   useFamilyMembersAsNumOfBaskets: boolean
   get $() {
     return getFields<ImportFromExcelComponent>(this, remult)
@@ -1645,7 +1645,7 @@ class columnUpdateHelper {
     searchForExistingValueFilter: (val: dataType) => EntityFilter<T>,
     val: dataType,
     getResult: (entity: T) => Y,
-    updateResultTo: FieldRef<any, Y>,
+    updateResultTo: FieldRef<unknown, Y>,
     additionalUpdates?: (entity: T) => void
   ) {
     let x = await remult.repo(c).findFirst(searchForExistingValueFilter(val), {

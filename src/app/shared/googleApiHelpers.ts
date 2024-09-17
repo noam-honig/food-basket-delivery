@@ -1,4 +1,3 @@
-import * as fetch from 'node-fetch'
 import {
   UrlBuilder,
   Entity,
@@ -64,8 +63,7 @@ export async function GetGeoInformation(address: string) {
     }
     try {
       if (process.env.LOG_GEOCODE) console.log(u.url)
-      let r = fetch
-        .default(u.url)
+      let r = fetch(u.url)
         .then(
           async (x) =>
             await x.json().then(async (r: GeocodeResult) => {
@@ -110,9 +108,9 @@ export async function GetGeoInformation(address: string) {
   allowApiCrud: Roles.admin
 })
 export class GeocodeCache extends EntityBase {
-  @Field()
+  @Fields.string()
   id: string
-  @Field()
+  @Fields.string()
   googleApiResult: string
   @DateTimeColumn()
   createDate: Date

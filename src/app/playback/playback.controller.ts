@@ -5,7 +5,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus'
 import { FamilyDeliveries } from '../families/FamilyDeliveries'
 
 export class PlaybackController {
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.admin, paramTypes: [Date, Date] })
   static async GetTimeline(fromDateDate: Date, toDateDate: Date) {
     let f = SqlFor(remult.repo(FamilyDeliveries))
 

@@ -145,7 +145,7 @@ export class CallerComponent implements OnInit {
     function visible(ref: FieldRef, arr: FieldRef[]) {
       return arr.map((f) => ({
         field: f,
-        visible: () => ref.value || arr.find((f) => f.value)
+        visible: () => Boolean(ref.value || arr.find((f) => f.value))
       }))
     }
 

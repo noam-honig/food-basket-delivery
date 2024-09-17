@@ -43,7 +43,7 @@ import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
 
 import { HelperFamiliesComponent } from '../helper-families/helper-families.component'
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper'
-import { SelectListComponent } from '../select-list/select-list.component'
+
 import { use } from '../translate'
 import { getLang } from '../sites/sites'
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
@@ -52,11 +52,6 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
-import {
-  DeliveryInList,
-  HelperFamiliesController
-} from '../helper-families/helper-families.controller'
-import { MltFamiliesController } from '../mlt-families/mlt-families.controller'
 
 @Component({
   selector: 'app-asign-family',
@@ -464,7 +459,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     )
   }
 
-  filterOptions: FieldRef<any, boolean>[] = []
+  filterOptions: FieldRef<unknown, boolean>[] = []
   async ngOnInit() {
     this.filterOptions.push(
       this.settings.$.showGroupsOnAssing,
@@ -476,11 +471,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     this.initArea()
     this.familyLists.userClickedOnFamilyOnMap = async (families) => {
       families = await (
-        await remult
-          .repo(ActiveFamilyDeliveries)
-          .find({
-            where: { id: families, $and: [FamilyDeliveries.readyFilter()] }
-          })
+        await remult.repo(ActiveFamilyDeliveries).find({
+          where: { id: families, $and: [FamilyDeliveries.readyFilter()] }
+        })
       ).map((x) => x.id)
       if (families.length == 1)
         await this.assignFamilyBasedOnIdFromMap(families[0])
@@ -608,38 +601,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
       SelectCompanyComponent,
       (s) => (s.argOnSelect = (x) => (this.helper.company = x))
     )
-  }
-  async assignClosestDeliveries() {
-    let afdList = await HelperFamiliesController.getDeliveriesByLocation(
-      this.familyLists.helper.preferredDistributionAreaAddressHelper.location,
-      false
-    )
-
-    await openDialog(SelectListComponent, (x) => {
-      x.args = {
-        title:
-          use.language.closestDeliveries +
-          ' (' +
-          use.language.mergeFamilies +
-          ')',
-        multiSelect: true,
-        onSelect: async (selectedItems) => {
-          if (selectedItems.length > 0)
-            this.busy.doWhileShowingBusy(async () => {
-              let ids: string[] = []
-              for (const selectedItem of selectedItems) {
-                let d: DeliveryInList = selectedItem.item
-                ids.push(...d.ids)
-              }
-              await MltFamiliesController.assignFamilyDeliveryToIndie(ids)
-
-              await this.familyLists.reload()
-              this.doRefreshRoute()
-            })
-        },
-        options: afdList
-      }
-    })
   }
 
   addSpecial() {
@@ -835,23 +796,5 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
         })
       )
     }
-  }
-}
-
-interface familyQueryResult {
-  addressLatitude: number
-  addressLongitude: number
-}
-
-function getInfo(r: any) {
-  let dist = 0
-  let duration = 0
-  r.routes[0].legs.forEach((e) => {
-    dist += e.distance.value
-    duration += e.duration.value
-  })
-  return {
-    dist,
-    duration
   }
 }

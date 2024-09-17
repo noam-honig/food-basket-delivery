@@ -4,7 +4,7 @@ import {
   statusClass,
   Statuses
 } from '../distribution-map/distribution-map.controller'
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 import { DateRangeComponent } from '../date-range/date-range.component'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
@@ -12,6 +12,8 @@ import { DialogService } from '../select-popup/dialog'
 
 import { familyQueryResult, PlaybackController } from './playback.controller'
 import { ValueConverters } from 'remult'
+import { BaseChartDirective } from 'ng2-charts'
+import { PieHelper } from '../delivery-follow-up/pie-helper'
 
 @Component({
   selector: 'app-playback',
@@ -23,24 +25,6 @@ export class PlaybackComponent implements OnInit {
     public settings: ApplicationSettings,
     public dialog: DialogService
   ) {}
-  public pieChartLabels: string[] = []
-  public pieChartData: number[] = []
-  public colors: Array<any> = [
-    {
-      backgroundColor: []
-    }
-  ]
-  public pieChartType: chart.ChartType = 'pie'
-  options: chart.ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    legend: {
-      position: 'right',
-      onClick: (event: MouseEvent, legendItem: any) => {
-        return false
-      }
-    }
-  }
 
   bounds = new google.maps.LatLngBounds()
   dict = new Map<string, infoOnMap>()
@@ -212,17 +196,16 @@ export class PlaybackComponent implements OnInit {
       return this.timeline[this.position].timeline.toLocaleString('he-il')
     return ''
   }
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined
+  pie = new PieHelper({})
 
   updateChart() {
-    this.pieChartData = []
-    this.pieChartLabels.splice(0)
-    this.colors[0].backgroundColor.splice(0)
+    this.pie.reset()
 
     this.statuses.statuses.forEach((s) => {
-      this.pieChartLabels.push(s.name + ' ' + s.value)
-      this.pieChartData.push(s.value)
-      this.colors[0].backgroundColor.push(s.color)
+      this.pie.add(s.name + ' ' + s.value, s.value, s.color)
     })
+    this.chart?.update()
   }
   timeline: timelineStep[] = []
 }

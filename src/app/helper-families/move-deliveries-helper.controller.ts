@@ -12,7 +12,10 @@ import { openDialog } from '../common-ui-elements'
 import { SelectFamilyComponent } from '../select-family/select-family.component'
 
 export class moveDeliveriesHelperController {
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [Object, HelpersBase]
+  })
   static async moveDeliveriesBetweenVolunteers(
     deliveries: string[],
     to: HelpersBase

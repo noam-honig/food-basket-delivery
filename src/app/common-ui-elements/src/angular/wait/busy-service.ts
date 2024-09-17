@@ -58,6 +58,7 @@ export class BusyService {
     }
     let suspendWait = false
     let waitRef = this.dialog.open(WaitComponent, {
+      panelClass: 'wait-dialog',
       disableClose: true,
       autoFocus: false,
       restoreFocus: false
@@ -88,7 +89,12 @@ export class BusyService {
       setTimeout(() => {
         if (this.numOfWaits > 0 && !this.waitRef) {
           this.log(id, 'actual start busy ')
-          this.waitRef = this.dialog.open(WaitComponent, { disableClose: true })
+          this.waitRef = this.dialog.open(WaitComponent, {
+            disableClose: true,
+            panelClass: 'wait-dialog',
+            autoFocus: false,
+            restoreFocus: false
+          })
         }
       }, 300)
     }

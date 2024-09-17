@@ -36,6 +36,7 @@ import { actionInfo } from 'remult/internals'
 import { InitContext } from './app/helpers/init-context'
 import { AsignFamilyController } from './app/asign-family/asign-family.controller'
 import { getDb } from './app/model-shared/SqlBuilder'
+import { columnOrderAndWidthSaver } from './app/common-ui-elements/interfaces'
 initSettings.disableSchemaInit = true
 
 function init() {
@@ -138,8 +139,13 @@ function init() {
       await createDelivery(10)
       await createDelivery(5)
       let r = await callAddBox()
-      expect(r.families.length).toBe(1)
-      expect(r.families[0].internalDeliveryComment).toBe('10')
+      const families = await remult.repo(ActiveFamilyDeliveries).find({
+        orderBy: {
+          routeOrder: 'asc'
+        }
+      })
+      expect(families.length).toBe(1)
+      expect(families[0].internalDeliveryComment).toBe('10')
     })
     itAsync('chooses closest to previous delivery', async () => {
       await createDelivery(10)
@@ -151,13 +157,18 @@ function init() {
         await remult.repo(ActiveFamilyDeliveries).count({ courier: null })
       ).toBe(2)
       let r = await callAddBox()
-      expect(r.families.length).toBe(2)
+      const families = await remult.repo(ActiveFamilyDeliveries).find({
+        orderBy: {
+          routeOrder: 'asc'
+        }
+      })
+      expect(families.length).toBe(2)
 
       expect(
-        r.families.some((d) => d.internalDeliveryComment == '6')
+        families.some((d) => d.internalDeliveryComment == '6')
       ).toBeTruthy()
       expect(
-        r.families.some((d) => d.internalDeliveryComment == '5')
+        families.some((d) => d.internalDeliveryComment == '5')
       ).toBeTruthy()
     })
     itAsync('chooses closest to previous delivery2', async () => {
@@ -173,19 +184,24 @@ function init() {
         await remult.repo(ActiveFamilyDeliveries).count({ courier: null })
       ).toBe(5)
       let r = await callAddBox(3)
-      expect(r.families.length).toBe(4)
+      const families = await remult.repo(ActiveFamilyDeliveries).find({
+        orderBy: {
+          routeOrder: 'asc'
+        }
+      })
+      expect(families.length).toBe(4)
 
       expect(
-        r.families.some((d) => d.internalDeliveryComment == '6')
+        families.some((d) => d.internalDeliveryComment == '6')
       ).toBeTruthy()
       expect(
-        r.families.some((d) => d.internalDeliveryComment == '5')
+        families.some((d) => d.internalDeliveryComment == '5')
       ).toBeTruthy()
       expect(
-        r.families.some((d) => d.internalDeliveryComment == '7')
+        families.some((d) => d.internalDeliveryComment == '7')
       ).toBeTruthy()
       expect(
-        r.families.some((d) => d.internalDeliveryComment == '8')
+        families.some((d) => d.internalDeliveryComment == '8')
       ).toBeTruthy()
     })
     itAsync('chooses closest to helper', async () => {
@@ -217,9 +233,14 @@ function init() {
       await helperWhoIsAdmin.save()
 
       let r = await callAddBox()
-      expect(r.families.length).toBe(1)
+      const families = await remult.repo(ActiveFamilyDeliveries).find({
+        orderBy: {
+          routeOrder: 'asc'
+        }
+      })
+      expect(families.length).toBe(1)
 
-      expect(r.families[0].internalDeliveryComment).toBe('5')
+      expect(families[0].internalDeliveryComment).toBe('5')
     })
     itAsync('prefer repeat family', async () => {
       await createDelivery(10)
@@ -230,8 +251,13 @@ function init() {
       await d.save()
       await createDelivery(5)
       let r = await callAddBox()
-      expect(r.families.length).toBe(1)
-      expect(r.families[0].internalDeliveryComment).toBe('5')
+      const families = await remult.repo(ActiveFamilyDeliveries).find({
+        orderBy: {
+          routeOrder: 'asc'
+        }
+      })
+      expect(families.length).toBe(1)
+      expect(families[0].internalDeliveryComment).toBe('5')
     })
     itAsync('prefer repeat family over helper preference', async () => {
       await createDelivery(10)
@@ -265,8 +291,13 @@ function init() {
       await helperWhoIsAdmin.save()
 
       let r = await callAddBox()
-      expect(r.families.length).toBe(1)
-      expect(r.families[0].internalDeliveryComment).toBe('5')
+      const families = await remult.repo(ActiveFamilyDeliveries).find({
+        orderBy: {
+          routeOrder: 'asc'
+        }
+      })
+      expect(families.length).toBe(1)
+      expect(families[0].internalDeliveryComment).toBe('5')
     })
   })
   describe('test update family status', () => {

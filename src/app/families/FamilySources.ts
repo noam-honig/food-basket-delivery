@@ -7,7 +7,7 @@ import {
   DataControl,
   getEntityValueList
 } from '../common-ui-elements/interfaces'
-import { use, Field, FieldType } from '../translate'
+import { use, Field, FieldType, Fields } from '../translate'
 
 @DataControl({
   valueList: (remult) =>
@@ -26,10 +26,10 @@ import { use, Field, FieldType } from '../translate'
   defaultOrderBy: { name: 'asc' }
 })
 export class FamilySources extends IdEntity {
-  @Field({ translation: (l) => l.familySourceName })
+  @Fields.string({ translation: (l) => l.familySourceName })
   name: string
-  @Field({ translation: (l) => l.contactPersonName })
+  @Fields.string({ translation: (l) => l.contactPersonName })
   contactPerson: string
-  @Field()
+  @Field(() => Phone)
   phone: Phone
 }

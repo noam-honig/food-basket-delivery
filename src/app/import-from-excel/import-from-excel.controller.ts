@@ -322,7 +322,7 @@ function columnFromKey(
   f: Families,
   fd: ActiveFamilyDeliveries,
   key: string
-): FieldRef<any> {
+): FieldRef {
   let split = key.split('.')
   if (split[0] == f._.repository.metadata.key) return f.$[split[1]]
   else return fd.$[split[1]]
@@ -373,7 +373,7 @@ function onlyNameMatch(f: duplicateFamilyInfo) {
     !f.tz2
   )
 }
-export async function getColumnDisplayValue(c: FieldRef<any>) {
+export async function getColumnDisplayValue(c: FieldRef) {
   let v = c.displayValue
 
   return v?.trim()

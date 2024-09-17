@@ -1,5 +1,5 @@
 import { Entity, EntityBase, remult } from 'remult'
-import { Field } from '../translate'
+import { Fields } from '../translate'
 import { Roles } from '../auth/roles'
 import { Sites } from './sites'
 import { getDb } from '../model-shared/SqlBuilder'
@@ -21,11 +21,11 @@ import { getDb } from '../model-shared/SqlBuilder'
   //, (_, _1) => getDb().execute("SELECT setting FROM pg_settings WHERE name = 'search_path';").then(x => console.log(x.rows[0]))
 )
 export class SitesEntity extends EntityBase {
-  @Field()
+  @Fields.string()
   id: string
-  @Field({ caption: 'מועד הוספה', allowApiUpdate: false })
+  @Fields.date({ caption: 'מועד הוספה', allowApiUpdate: false })
   createDate: Date
-  @Field()
+  @Fields.string()
   createUser: string
 
   static async completeInit() {

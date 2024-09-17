@@ -9,7 +9,6 @@ import {
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { ApplicationImages } from '../manage/ApplicationImages'
 import { Remult, Entity, SqlDatabase, remult } from 'remult'
-import '../create-new-event/create-new-event'
 
 import { Helpers } from '../helpers/helpers'
 
@@ -39,6 +38,7 @@ actionInfo.runningOnServer = true
 export async function serverInit() {
   try {
     config()
+    console.log(process.env['DATABASE_URL'])
     let ssl: boolean | ConnectionOptions = {
       rejectUnauthorized: false
     }
@@ -73,7 +73,7 @@ export async function serverInit() {
       const proxyService = process.env.twilio_proxyService
       if (!accountSID) throw 'לא הוגדר שירות טלפונים'
       let twilio = await import('twilio')
-      let client = twilio(accountSID, authToken)
+      let client = twilio.default(accountSID, authToken)
 
       let service = client.proxy.services(proxyService)
 
@@ -107,7 +107,7 @@ export async function serverInit() {
         }
 
         let twilio = await import('twilio')
-        let client = twilio(accountSID, authToken)
+        let client = twilio.default(accountSID, authToken)
         await client.messages.create({
           to: to,
           from: twilio_sms_from_number,
@@ -304,6 +304,9 @@ export async function verifySchemaExistance(pool: Pool, s: string) {
 
 export class PostgresSchemaWrapper implements PostgresPool {
   constructor(private pool: Pool, private schema: string) {}
+  end(): Promise<void> {
+    return this.pool.end()
+  }
   async connect(): Promise<PostgresClient> {
     let r = await this.pool.connect()
 

@@ -1,4 +1,4 @@
-<div matDialogHeader>
+<div mat-dialog-title>
   <form (submit)="selectFirst()">
     <mat-form-field class="full-width">
       <input
@@ -54,7 +54,7 @@
           <h4>
             <mat-checkbox
               [(ngModel)]="getSelected(f).selectState.selected"
-              (click)="(false)"
+              (click)="$event.stopPropagation()"
             >
               {{ f.name }}
             </mat-checkbox>

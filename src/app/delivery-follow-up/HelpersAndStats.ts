@@ -4,7 +4,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers'
 import { SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
 import { Roles } from '../auth/roles'
 import { ActiveFamilyDeliveries } from '../families/FamilyDeliveries'
-import { use, Field } from '../translate'
+import { use, Field, Fields } from '../translate'
 
 function log(s: string) {
   console.log(s)
@@ -72,12 +72,12 @@ function log(s: string) {
   }
 })
 export class HelpersAndStats extends HelpersBase {
-  @Field({
+  @Fields.integer({
     dbReadOnly: true,
     translation: (l) => l.delveriesInProgress
   })
   deliveriesInProgress: number
-  @Field({
+  @Fields.integer({
     dbReadOnly: true,
     translation: (l) => l.families
   })

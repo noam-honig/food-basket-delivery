@@ -7,17 +7,15 @@
   <mat-icon>refresh</mat-icon>
 </button>
 <div>
-  <div style="display: block; width: 350px">
+  <div style="display: block; width: 350px; height: 188px">
     <canvas
-      *ngIf="hasChart"
       baseChart
-      [data]="pieChartData"
-      [labels]="pieChartLabels"
-      [chartType]="pieChartType"
-      [options]="options"
-      [colors]="colors"
-      (chartClick)="chartClicked($event)"
-    ></canvas>
+      [data]="pie.data"
+      type="pie"
+      [options]="pie.options"
+      (chartClick)="pie.chartClicked($event)"
+    >
+    </canvas>
   </div>
 </div>
 <h4 *ngIf="currentStatFilter">
@@ -60,25 +58,22 @@
         (click)="deliveryDetails(c)"
         *ngIf="showHelper(c)"
       >
-        <a matLine
-          >{{ c.name }}
-          <span *ngIf="c.eventComment">, {{ c.eventComment }}</span></a
-        >
-        <mat-panel-description matLine>
-          {{ settings.lang.completed }} {{ c.deliveries - c.inProgress }}/{{
-            c.deliveries
-          }}
-          <span *ngIf="c.problem > 0"
-            >&nbsp; ({{ c.problem }} {{ settings.lang.notDelivered }})</span
-          >
-          <span *ngIf="c.viewedSms && c.smsWasSent"
-            >, {{ settings.lang.smsSent }} {{ c.smsDateName }}</span
-          >
-          <span *ngIf="!c.viewedSms && c.smsWasSent"
-            >,{{ settings.lang.smsNotOpened }}</span
-          >
-          <span *ngIf="!c.smsWasSent">,{{ settings.lang.smsNotSent }}</span>
-        </mat-panel-description>
+        <div matLine style="display: flex; justify-content: space-between;">
+          <div style="font-weight: 500;">
+            <a>{{ c.name }}
+              <span *ngIf="c.eventComment">, {{ c.eventComment }}</span>
+            </a>
+          </div>
+          <div>
+            <span *ngIf="c.viewedSms && c.smsWasSent">{{ settings.lang.smsSent }} {{ c.smsDateName }}</span>
+            <span *ngIf="!c.viewedSms && c.smsWasSent">{{ settings.lang.smsNotOpened }}</span>
+            <span *ngIf="!c.smsWasSent">{{ settings.lang.smsNotSent }}</span>
+          </div>
+        </div>
+        <div matLine  style="font-size: 0.8em;">
+          {{ settings.lang.completed }} {{ c.deliveries - c.inProgress }}/{{ c.deliveries }}
+          <span *ngIf="c.problem > 0">&nbsp; ({{ c.problem }} {{ settings.lang.notDelivered }})</span>
+        </div>
       </mat-list-item>
       <mat-divider></mat-divider>
     </ng-container>

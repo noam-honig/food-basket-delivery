@@ -4,7 +4,7 @@
 <h1 mat-dialog-title *ngIf="info.rightToLeft">
   סינון {{ this.info.filterColumnToAdd?.caption }}
 </h1>
-<div mat-dialog-content>
+<div mat-dialog-content style="padding-top: 5px">
   <data-control
     *ngIf="this.info.filterColumnToAdd"
     [settings]="info.settings.columns"

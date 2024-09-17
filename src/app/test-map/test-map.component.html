@@ -1,1 +1,18 @@
-<input [(ngModel)]="a" /> <app-edit-custom-message></app-edit-custom-message>
+@if(1+1==0){
+<div>
+  {{ exist() }}
+</div>
+}
+
+<button (click)="update()">update</button>
+<canvas baseChart [data]="pieChartData" type="pie" [options]="pieChartOptions">
+</canvas>
+<div style="display: block; width: 350px; height: 188px">
+  <!-- <canvas
+    baseChart
+    [data]="pie.data"
+    type="pie"
+    [options]="pie.options"
+    (chartClick)="pie.chartClicked($event)"
+  ></canvas> -->
+</div>

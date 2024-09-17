@@ -181,29 +181,30 @@ export class DataGrid2Component implements OnChanges, OnDestroy {
     if (this.page <= 1) return
     this.page--
   }
+  wasThereAChangeToTheRow(row: any) {
+    return this.settings.wasThereAChangeToTheRow(row)
+  }
 
   showSaveAllButton() {
-    return this.settings.items.find((x) =>
-      this.settings.getRowHelper(x).wasChanged()
+    return Boolean(
+      this.settings.items.find((x) => this.wasThereAChangeToTheRow(x))
     )
   }
   saveAllText() {
     return this.rightToLeft
       ? 'שמור ' +
-          this.settings.items.filter((x) =>
-            this.settings.getRowHelper(x).wasChanged()
-          ).length +
+          this.settings.items.filter((x) => this.wasThereAChangeToTheRow(x))
+            .length +
           ' שורות'
       : 'save ' +
-          this.settings.items.filter((x) =>
-            this.settings.getRowHelper(x).wasChanged()
-          ).length +
+          this.settings.items.filter((x) => this.wasThereAChangeToTheRow(x))
+            .length +
           ' rows'
   }
   async saveAllClick() {
     await Promise.all(
       this.settings.items
-        .filter((x) => this.settings.getRowHelper(x).wasChanged())
+        .filter((x) => this.wasThereAChangeToTheRow(x))
         .map((x) => this.settings.saveRow(x))
     )
   }
@@ -243,7 +244,7 @@ export class DataGrid2Component implements OnChanges, OnDestroy {
         name: '',
         icon: 'check',
         cssClass: 'glyphicon glyphicon-ok btn-success',
-        visible: (r) => this.settings.getRowHelper(r).wasChanged(),
+        visible: (r) => this.wasThereAChangeToTheRow(r),
         showInLine: true,
         textInMenu: () => (this.rightToLeft ? 'שמור' : 'save'),
         click: (r) => {
@@ -254,7 +255,7 @@ export class DataGrid2Component implements OnChanges, OnDestroy {
         name: '',
         icon: 'cancel',
         cssClass: 'btn btn-danger glyphicon glyphicon-ban-circle',
-        visible: (r) => this.settings.getRowHelper(r).wasChanged(),
+        visible: (r) => this.wasThereAChangeToTheRow(r),
         showInLine: true,
         textInMenu: () => (this.rightToLeft ? 'בטל שינוים' : 'cancel'),
 

@@ -22,7 +22,7 @@ import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component'
   ]
 })
 export class DataFilterInfoComponent {
-  @Input() settings!: GridSettings<any>
+  @Input() settings!: GridSettings
   filterColumnToAdd!: DataControlSettings
   getCurrentFilterValue(col: FieldMetadata) {
     this.settings.initOrigList()

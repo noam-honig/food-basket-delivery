@@ -1,7 +1,7 @@
 create table Helpers
 id varchar default '' not null
 name varchar default '' not null
-smsDate timestamp
+smsDate timestamptz
 doNotSendSms boolean default false not null
 company varchar default '' not null
 totalKm integer default 0 not null
@@ -19,7 +19,7 @@ frozenTill date
 internalComment varchar default '' not null
 blockedFamilies json
 phone varchar default '' not null
-lastSignInDate timestamp
+lastSignInDate timestamptz
 password varchar default '' not null
 socialSecurityNumber varchar default '' not null
 email varchar default '' not null
@@ -30,10 +30,10 @@ addressApiResult2 varchar default '' not null
 preferredDistributionAreaAddress2 varchar default '' not null
 preferredFinishAddressCity varchar default '' not null
 password varchar default '' not null
-createDate timestamp
-passwordChangeDate timestamp
-EULASignDate timestamp
-reminderSmsDate timestamp
+createDate timestamptz
+passwordChangeDate timestamptz
+EULASignDate timestamptz
+reminderSmsDate timestamptz
 referredBy varchar default '' not null
 isAdmin boolean default false not null
 labAdmin boolean default false not null

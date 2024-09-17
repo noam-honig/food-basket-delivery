@@ -38,7 +38,7 @@ phone4 varchar default '' not null
 phone4Description varchar default '' not null
 email varchar default '' not null
 status integer default 0 not null
-statusDate timestamp
+statusDate timestamptz
 statusUser varchar default '' not null
 fixedCourier varchar default '' not null
 routeOrder integer default 0 not null
@@ -54,8 +54,8 @@ drivingLatitude numeric default 0 not null
 addressByGoogle varchar default '' not null
 autoCompleteResult varchar default '' not null
 addressOk boolean default false not null
-createDate timestamp
+createDate timestamptz
 createUser varchar default '' not null
-lastUpdateDate timestamp
+lastUpdateDate timestamptz
 lastUpdateUser varchar default '' not null
 shortUrlKey varchar default '' not null

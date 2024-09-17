@@ -70,17 +70,17 @@ export class AddressInfoComponent implements OnInit {
 export interface AddressInfoArgs {
   f: {
     $: {
-      floor: FieldRef<any, string>
-      appartment: FieldRef<any, string>
-      entrance: FieldRef<any, string>
-      phone1: FieldRef<any, Phone>
-      phone1Description: FieldRef<any, string>
-      phone2: FieldRef<any, Phone>
-      phone2Description: FieldRef<any, string>
-      phone3?: FieldRef<any, Phone>
-      phone3Description?: FieldRef<any, string>
-      phone4?: FieldRef<any, Phone>
-      phone4Description?: FieldRef<any, string>
+      floor: FieldRef<unknown, string>
+      appartment: FieldRef<unknown, string>
+      entrance: FieldRef<unknown, string>
+      phone1: FieldRef<unknown, Phone>
+      phone1Description: FieldRef<unknown, string>
+      phone2: FieldRef<unknown, Phone>
+      phone2Description: FieldRef<unknown, string>
+      phone3?: FieldRef<unknown, Phone>
+      phone3Description?: FieldRef<unknown, string>
+      phone4?: FieldRef<unknown, Phone>
+      phone4Description?: FieldRef<unknown, string>
     }
     addressOk?: boolean
     buildingCode?: string

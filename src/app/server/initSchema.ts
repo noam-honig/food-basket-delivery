@@ -299,11 +299,13 @@ export async function initSchema(dataSource: SqlDatabase, org: string) {
     )
 
     // await dataSource.execute("create extension if not exists pg_trgm with schema pg_catalog;");
-    await dataSource.execute(
-      await sql.build(
-        'create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'
+    try {
+      await dataSource.execute(
+        await sql.build(
+          'create index if not exists for_like_on_groups on families using gin  (groups gin_trgm_ops)'
+        )
       )
-    )
+    } catch {}
     settings.dataStructureVersion = 12
     await settings.save()
   }

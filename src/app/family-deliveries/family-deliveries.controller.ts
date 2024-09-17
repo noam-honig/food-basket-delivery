@@ -19,7 +19,10 @@ import { DistributionCenters } from '../manage/distribution-centers'
 import { quantityHelper, totalItem } from '../families/BasketType'
 
 export class FamilyDeliveriesController {
-  @BackendMethod({ allowed: Roles.distCenterAdmin })
+  @BackendMethod({
+    allowed: Roles.distCenterAdmin,
+    paramTypes: [DistributionCenters]
+  })
   static async getGroups(dist: DistributionCenters, readyOnly = false) {
     let pendingStats = []
     let result: groupStats[] = []

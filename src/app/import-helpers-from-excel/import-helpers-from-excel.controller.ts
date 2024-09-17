@@ -136,7 +136,7 @@ interface serverCheckResults {
   updateRows: excelRowInfo[]
   errorRows: excelRowInfo[]
 }
-export async function getColumnDisplayValue(c: FieldRef<any>) {
+export async function getColumnDisplayValue(c: FieldRef) {
   let v = c.displayValue
   return v?.trim()
 }

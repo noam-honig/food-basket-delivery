@@ -6,12 +6,14 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries'
 import { BackendMethod } from 'remult'
 import { Roles } from '../auth/roles'
 
-import { HelperGifts } from '../helper-gifts/HelperGifts'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 import { DistributionCenters } from '../manage/distribution-centers'
 
 export class DeliveryHistoryController {
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({
+    allowed: Roles.admin,
+    paramTypes: [Date, Date, DistributionCenters, Boolean, Boolean]
+  })
   static async getHelperHistoryInfo(
     fromDate: Date,
     toDate: Date,
@@ -28,7 +30,6 @@ export class DeliveryHistoryController {
     var fd = await SqlFor(remult.repo(FamilyDeliveries))
 
     var h = await SqlFor(remult.repo(Helpers))
-    var hg = await SqlFor(remult.repo(HelperGifts))
 
     let r = fd.where({
       deliveryStatusDate: { '>=': fromDate, '<': toDate },
@@ -56,32 +57,7 @@ export class DeliveryHistoryController {
           from: h,
           where: () => [sql.build(h.id, '=', fd.courier.getDbName())]
         }),
-        sql.columnInnerSelect(hg, {
-          select: () => [
-            sql.build(
-              'sum (case when ',
-              sql.eq(hg.wasConsumed, true),
-              ' then 1 else 0 end) consumed'
-            )
-          ],
-          from: hg,
-          where: () => [
-            sql.build(hg.assignedToHelper, '=', fd.courier.getDbName())
-          ]
-        }),
-        sql.columnInnerSelect(hg, {
-          select: () => [
-            sql.build(
-              'sum (case when ',
-              sql.eq(hg.wasConsumed, false),
-              ' then 1 else 0 end) pending'
-            )
-          ],
-          from: hg,
-          where: () => [
-            sql.build(hg.assignedToHelper, '=', fd.courier.getDbName())
-          ]
-        }),
+
         'deliveries',
         'dates',
         'families',

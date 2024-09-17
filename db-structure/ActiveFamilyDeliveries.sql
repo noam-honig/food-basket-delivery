@@ -8,19 +8,19 @@ distributionCenter varchar default '' not null
 deliverStatus integer default 0 not null
 courier varchar default '' not null
 courierComments varchar default '' not null
-courierCommentsDate timestamp
+courierCommentsDate timestamptz
 internalDeliveryComment varchar default '' not null
 routeOrder integer default 0 not null
 special integer default 0 not null
-deliveryStatusDate timestamp
+deliveryStatusDate timestamptz
 courierAssignUser varchar default '' not null
-courierAssingTime timestamp
+courierAssingTime timestamptz
 deliveryStatusUser varchar default '' not null
-createDate timestamp
+createDate timestamptz
 createUser varchar default '' not null
 needsWork boolean default false not null
 needsWorkUser varchar default '' not null
-needsWorkDate timestamp
+needsWorkDate timestamptz
 deliveryComments varchar default '' not null
 receptionComments varchar default '' not null
 familySource varchar default '' not null
@@ -50,8 +50,8 @@ phone3Description varchar default '' not null
 phone4 varchar default '' not null
 phone4Description varchar default '' not null
 archive boolean default false not null
-archiveDate timestamp
-onTheWayDate timestamp
+archiveDate timestamptz
+onTheWayDate timestamptz
 archiveUser varchar default '' not null
 a1 varchar default '' not null
 a2 varchar default '' not null
@@ -59,8 +59,8 @@ a3 varchar default '' not null
 a4 varchar default '' not null
 caller varchar default '' not null
 callerComment varchar default '' not null
-lastCallDate timestamp
-callerAssignDate timestamp
+lastCallDate timestamptz
+callerAssignDate timestamptz
 callCount numeric default 0 not null
 urgent boolean default false not null
 deliveryType varchar default '' not null

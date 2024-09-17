@@ -22,7 +22,7 @@ import { Sites } from '../../sites/sites'
 import { MatStepper } from '@angular/material/stepper'
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers'
 import { Phone } from '../../model-shared/phone'
-import { use, Field } from '../../translate'
+import { use, Field, Fields } from '../../translate'
 import { NotAuthenticatedGuard } from '../../common-ui-elements'
 import { loginResult } from '../../auth/auth-service.controller'
 
@@ -38,36 +38,36 @@ export class LoginComponent implements OnInit, AfterViewInit {
     canActivate: [NotAuthenticatedGuard]
   }
   @DataControl({ allowClick: () => false })
-  @Field({ translation: (l) => l.phone, valueType: Phone })
+  @Field(() => Phone, { translation: (l) => l.phone, valueType: Phone })
   phone: Phone
-  @Field({
+  @Fields.string({
     translation: (l) => 'קוד שהתקבל בSMS',
     inputType: 'tel'
   })
   otp: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.password,
     inputType: 'password'
   })
   password: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.password,
     inputType: 'password'
   })
   newPassword: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.confirmPassword,
     inputType: 'password'
   })
   confirmPassword: string
-  @Field({
+  @Fields.boolean({
     translation: (l) => l.IConfirmEula
   })
   confirmEula: boolean
 
-  @Field({ translation: (l) => l.preferredDistributionAreaAddress })
+  @Fields.string({ translation: (l) => l.preferredDistributionAreaAddress })
   preferredDistributionArea: string
-  @Field({ translation: (l) => l.rememberMeOnThisDevice })
+  @Fields.boolean({ translation: (l) => l.rememberMeOnThisDevice })
   remember: boolean
   passwordArea = new DataAreaSettings({
     fields: () => [

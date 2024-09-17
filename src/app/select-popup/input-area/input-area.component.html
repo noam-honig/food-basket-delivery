@@ -1,8 +1,8 @@
-<div matDialogHeader style="display: flex; justify-content: space-between">
-  <div class="mat-title">{{ args.title }}</div>
+<div mat-dialog-title style="display: flex; justify-content: space-between">
+  <div style="width: 100%">{{ args.title }}</div>
   <app-dots-menu *ngIf="args.menu" [buttons]="args.menu"></app-dots-menu>
 </div>
-<mat-dialog-content>
+<mat-dialog-content style="padding-bottom: 0.2rem">
   <div class="help-text" *ngIf="args.helpText">
     {{ args.helpText }}
   </div>
@@ -19,14 +19,14 @@
   <button
     type="button"
     mat-raised-button
-    color="warning"
+    class="warning-button"
     (click)="this.dialogRef.close()"
     *ngIf="this.args.cancel"
   >
     {{ settings.lang.cancel }}
   </button>
 
-  <button mat-raised-button color="accent" (click)="confirm()">
+  <button mat-flat-button (click)="confirm()">
     {{ settings.lang.confirm }}
   </button>
 </mat-dialog-actions>

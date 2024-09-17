@@ -23,7 +23,8 @@ import {
   Filter,
   EntityFilter,
   ValueConverters,
-  remult
+  remult,
+  Field as xx
 } from 'remult'
 
 import {
@@ -52,7 +53,6 @@ import {
   getSettings
 } from '../manage/ApplicationSettings'
 
-import * as fetch from 'node-fetch'
 import { Roles } from '../auth/roles'
 
 import { Fields, Field, use, Entity } from '../translate'
@@ -362,7 +362,10 @@ export class Families extends IdEntity {
       })
     return result
   }
-  @BackendMethod<Families>({ allowed: Roles.admin })
+  @BackendMethod<Families>({
+    allowed: Roles.admin,
+    paramTypes: [String, BasketType, HelpersBase]
+  })
   async saveAsHistoryEntry(
     date: string,
     basket: BasketType,
@@ -497,7 +500,10 @@ export class Families extends IdEntity {
       cancel: () => {}
     })
   }
-  @BackendMethod({ allowed: Roles.familyAdmin })
+  @BackendMethod({
+    allowed: Roles.familyAdmin,
+    paramTypes: [String, BasketType, DistributionCenters, HelpersBase, Object]
+  })
   static async addDelivery(
     familyId: string,
     basketType: BasketType,
@@ -611,7 +617,7 @@ export class Families extends IdEntity {
   disableChangeLogging = false
   _suppressLastUpdateDuringSchemaInit = false
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.familyName,
     validate: Validators.required.withMessage(use.language.nameIsTooShort)
   })
@@ -620,7 +626,7 @@ export class Families extends IdEntity {
   })
   name: string
 
-  @Field({
+  @Fields.string({
     translation: (l) => l.socialSecurityNumber,
     includeInApi: Roles.familyAdmin
   })
@@ -628,7 +634,7 @@ export class Families extends IdEntity {
     valueChange: (self) => self.delayCheckDuplicateFamilies()
   })
   tz: string
-  @Field({
+  @Fields.string({
     translation: (l) => l.spouceSocialSecurityNumber,
     includeInApi: Roles.familyAdmin
   })
@@ -656,44 +662,44 @@ export class Families extends IdEntity {
     }
   })
   nextBirthday: Date
-  @Field({ translation: (l) => l.defaultBasketType })
+  @Field(() => BasketType, { translation: (l) => l.defaultBasketType })
   basketType: BasketType
   @Fields.integer({ translation: (l) => l.defaultQuantity })
   quantity: number
-  @Field({
+  @Field(() => FamilySources, {
     translation: (l) => l.familySource,
     includeInApi: Roles.familyAdmin
   })
   familySource: FamilySources
-  @Field({ translation: (l) => l.familyHelpContact })
+  @Fields.string({ translation: (l) => l.familyHelpContact })
   socialWorker: string
-  @Field({ translation: (l) => l.familyHelpPhone1 })
+  @Field(() => Phone, { translation: (l) => l.familyHelpPhone1 })
   socialWorkerPhone1: Phone
-  @Field({ translation: (l) => l.familyHelpPhone2 })
+  @Field(() => Phone, { translation: (l) => l.familyHelpPhone2 })
   socialWorkerPhone2: Phone
-  @Field({ includeInApi: Roles.familyAdmin })
+  @Field(() => GroupsValue, { includeInApi: Roles.familyAdmin })
   groups: GroupsValue = new GroupsValue('')
-  @Field({
+  @Field(() => YesNo, {
     translation: (l) => l.specialAsignment,
     includeInApi: Roles.familyAdmin
   })
   special: YesNo
-  @Field()
+  @Fields.boolean()
   defaultSelfPickup: boolean
-  @Field({
+  @Fields.string({
     translation: (l) => l.familyUniqueId,
     includeInApi: Roles.familyAdmin
   })
   iDinExcel: string
-  @Field({
+  @Fields.string({
     customInput: (c) => c.textArea(),
     includeInApi: Roles.familyAdmin
   })
   internalComment: string
-  @Field({ includeInApi: Roles.familyAdmin })
+  @Fields.string({ includeInApi: Roles.familyAdmin })
   addressApiResult: string
 
-  @Field({
+  @Fields.string({
     customInput: (c) => c.addressInput()
   })
   @DataControl<Families>({
@@ -710,76 +716,77 @@ export class Families extends IdEntity {
     () => this.$.addressApiResult
   )
 
-  @Field()
+  @Fields.string()
   floor: string
-  @Field()
+  @Fields.string()
   appartment: string
-  @Field()
+  @Fields.string()
   entrance: string
-  @Field()
+  @Fields.string()
   buildingCode: string
-  @Field({ translation: (l) => l.cityAutomaticallyUpdatedByGoogle })
+  @Fields.string({ translation: (l) => l.cityAutomaticallyUpdatedByGoogle })
   city: string
   @AreaColumn()
   area: string
-  @Field()
+  @Fields.string()
   addressComment: string
   @Fields.integer()
   postalCode: number
-  @Field({ translation: (l) => l.defaultDeliveryComment })
+  @Fields.string({ translation: (l) => l.defaultDeliveryComment })
   deliveryComments: string
 
   @DataControl({
     visible: () => getSettings().anyFamilySms
   })
-  @Field()
+  @Fields.boolean()
   doNotSendSms: boolean
-  @Field({
+  //  @xx(() => Phone,
+  @Field(() => Phone, {
     dbName: 'phone'
   })
   @DataControl<Families>({
     valueChange: (self) => self.delayCheckDuplicateFamilies()
   })
   phone1: Phone
-  @Field()
+  @Fields.string()
   phone1Description: string
-  @Field()
+  @Field(() => Phone)
   @DataControl<Families>({
     valueChange: (self) => self.delayCheckDuplicateFamilies()
   })
   phone2: Phone
-  @Field()
+  @Fields.string()
   phone2Description: string
-  @Field()
+  @Field(() => Phone)
   @DataControl<Families>({
     valueChange: (self) => self.delayCheckDuplicateFamilies()
   })
   phone3: Phone
-  @Field()
+  @Fields.string()
   phone3Description: string
-  @Field()
+  @Field(() => Phone)
   @DataControl<Families>({
     valueChange: (self) => self.delayCheckDuplicateFamilies()
   })
   phone4: Phone
-  @Field()
+  @Fields.string()
   phone4Description: string
-  @Field()
+  @Field(() => Email)
   email: Email
-  @Field()
+  @Field(() => FamilyStatus)
   status: FamilyStatus = FamilyStatus.Active
   @ChangeDateColumn({
     translation: (l) => l.statusChangeDate,
     includeInApi: Roles.familyAdmin
   })
   statusDate: Date
-  @Field({
+  @Field(() => HelpersBase, {
     translation: (l) => l.statusChangeUser,
     allowApiUpdate: false,
     includeInApi: Roles.familyAdmin
   })
   statusUser: HelpersBase
-  @Field({
+  @Field<Families>(() => HelpersBase, {
     translation: (l) => l.defaultVolunteer,
     clickWithTools: async (e, col, ui) => {
       ui.selectHelper({
@@ -795,7 +802,7 @@ export class Families extends IdEntity {
     includeInApi: Roles.familyAdmin
   })
   routeOrder: number
-  @Field({
+  @Field(() => DistributionCenters, {
     allowApiUpdate: Roles.admin,
     translation: (l) => l.defaultDistributionCenter,
     includeInApi: Roles.familyAdmin
@@ -860,7 +867,7 @@ export class Families extends IdEntity {
     }
     try {
       let r = await (
-        await fetch.default('https://www.zipy.co.il/findzip', {
+        await fetch('https://www.zipy.co.il/findzip', {
           method: 'post',
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -884,7 +891,7 @@ export class Families extends IdEntity {
     }
   }
 
-  @Field({
+  @Field<Families>(() => DeliveryStatus, {
     includeInApi: Roles.familyAdmin,
     translation: (l) => l.previousDeliveryStatus,
     sqlExpression: (self) => {
@@ -896,7 +903,7 @@ export class Families extends IdEntity {
     }
   })
   previousDeliveryStatus: DeliveryStatus
-  @ChangeDateColumn({
+  @ChangeDateColumn<Families>({
     includeInApi: Roles.familyAdmin,
     sqlExpression: (self) => {
       return dbNameFromLastDelivery(
@@ -907,7 +914,7 @@ export class Families extends IdEntity {
     }
   })
   previousDeliveryDate: Date
-  @Field<Families>({
+  @Fields.string<Families>({
     translation: (l) => l.previousDeliveryNotes,
     sqlExpression: (self) => {
       return dbNameFromLastDelivery(
@@ -918,7 +925,7 @@ export class Families extends IdEntity {
     }
   })
   previousDeliveryComment: string
-  @Fields.integer({
+  @Fields.integer<Families>({
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
       let fd = SqlFor(remult.repo(FamilyDeliveries))
@@ -940,7 +947,7 @@ export class Families extends IdEntity {
     }
   })
   numOfActiveReadyDeliveries: number
-  @Fields.integer({
+  @Fields.integer<Families>({
     translation: (l) => l.totalDeliveries,
     sqlExpression: async (selfDefs) => {
       let self = SqlFor(selfDefs)
@@ -962,21 +969,21 @@ export class Families extends IdEntity {
     }
   })
   totalDeliveries: number
-  @Field()
+  @Fields.number()
   //שים לב - אם המשתמש הקליד כתובת GPS בכתובת - אז הנקודה הזו תהיה הנקודה שהמשתמש הקליד ולא מה שגוגל מצא
   addressLongitude: number
-  @Field()
+  @Fields.number()
   addressLatitude: number
-  @Field()
+  @Fields.number()
   //זו התוצאה שחזרה מהGEOCODING כך שהיא מכוונת לכביש הקרוב
   drivingLongitude: number
-  @Field()
+  @Fields.number()
   drivingLatitude: number
-  @Field()
+  @Fields.string()
   addressByGoogle: string
-  @Field({ serverExpression: () => '' })
+  @Fields.string({ serverExpression: () => '' })
   autoCompleteResult: string
-  @Field()
+  @Fields.boolean()
   addressOk: boolean
 
   static getPreviousDeliveryColumn(self: FieldsMetadata<Families>) {
@@ -999,7 +1006,7 @@ export class Families extends IdEntity {
 
   @ChangeDateColumn({ includeInApi: Roles.familyAdmin })
   createDate: Date
-  @Field({
+  @Field(() => HelpersBase, {
     allowApiUpdate: false,
     translation: (l) => l.createUser,
     includeInApi: Roles.familyAdmin
@@ -1007,9 +1014,12 @@ export class Families extends IdEntity {
   createUser: HelpersBase
   @ChangeDateColumn({ includeInApi: Roles.familyAdmin })
   lastUpdateDate: Date
-  @Field({ allowApiUpdate: false, includeInApi: Roles.familyAdmin })
+  @Field(() => HelpersBase, {
+    allowApiUpdate: false,
+    includeInApi: Roles.familyAdmin
+  })
   lastUpdateUser: HelpersBase
-  @Field({ includeInApi: Roles.distCenterAdmin })
+  @Fields.string({ includeInApi: Roles.distCenterAdmin })
   shortUrlKey: string
 
   openWaze() {
@@ -1470,7 +1480,7 @@ export interface parseAddressResult {
 export function AreaColumn() {
   return (target, key) => {
     DataControl<any, string>({})(target, key)
-    return Field({
+    return Fields.string({
       translation: (l) => l.region,
       clickWithTools: async (row, col, ui) => {
         let areas = await Families.getAreas()

@@ -9,11 +9,14 @@ import { AppRoutingModule, routes } from './app-routing.module'
 import { AppComponent, routeMap } from './app.component'
 import { CommonUIElementsModule } from './common-ui-elements'
 import { MaterialModule } from './shared/material.module'
-import { ChartsModule } from 'ng2-charts'
+import { BaseChartDirective } from 'ng2-charts'
 import { FormsModule } from '@angular/forms'
-import { NgxPaginationModule } from 'ngx-pagination'
 import { HelpersComponent } from './helpers/helpers.component'
 import { JwtModule } from '@auth0/angular-jwt'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatTableModule } from '@angular/material/table'
 
 import {
   DialogService,
@@ -84,25 +87,11 @@ import { DuplicateFamiliesComponent } from './duplicate-families/duplicate-famil
 import { DateRangeComponent } from './date-range/date-range.component'
 import { ShowOnMapComponent } from './show-on-map/show-on-map.component'
 import { EventsComponent } from './events/events.component'
-import { DeliveryReceptionComponent } from './delivery-reception/delivery-reception.component'
-import { RegisterDonorComponent } from './register-donor/register-donor.component'
-import { RegisterHelperComponent } from './register-helper/register-helper.component'
 import { AddressInputComponent } from './address-input/address-input.component'
-import { InRouteFollowUpComponent } from './in-route-follow-up/in-route-follow-up.component'
-import { ShipmentAssignScreenComponent } from './shipment-assign-screen/shipment-assign-screen.component'
-import { VolunteerCrossAssignComponent } from './volunteer-cross-assign/volunteer-cross-assign.component'
-import { WeeklyReportMltComponent } from './weekly-report-mlt/weekly-report-mlt.component'
 import { PlatformModule } from '@angular/cdk/platform'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { HelperGiftsComponent } from './helper-gifts/helper-gifts.component'
-import { RegisterURLComponent } from './resgister-url/regsiter-url.component'
-
-import { GeneralImportFromExcelComponent } from './import-gifts/import-from-excel.component'
-import { MyGiftsDialogComponent } from './helper-gifts/my-gifts-dialog.component'
-import { MltFamiliesComponent } from './mlt-families/mlt-families.component'
 import { remult, Remult } from 'remult'
 import { PrintVolunteersComponent } from './print-volunteers/print-volunteers.component'
-import { Helpers } from './helpers/helpers'
 import { ImagesComponent } from './images/images.component'
 import { DeliveryImagesComponent } from './delivery-images/delivery-images.component'
 import { InitContext } from './helpers/init-context'
@@ -119,7 +108,7 @@ import { FamilySelfOrderComponent } from './family-self-order/family-self-order.
 import { RegisterToEvent } from './event-info/RegisterToEvent'
 import { PreviousDeliveryCommentsComponent } from './previous-delivery-comments/previous-delivery-comments.component'
 import { AreaDataComponent } from './area-data/area-data.component'
-import { NgDialogAnimationService } from 'ng-dialog-animation'
+
 import { DeliveryDetailsComponent } from './delivery-details/delivery-details.component'
 import { ChangeLogComponent } from './change-log/change-log.component'
 import { INVALID_TOKEN_ERROR } from './auth/auth-service.controller'
@@ -134,9 +123,9 @@ import { ButtonDataComponent } from './button-data/button-data.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { BelowEightteenMessageComponent } from './below-eightteen-message/below-eightteen-message.component'
 import { AddressInfoComponent } from './address-info/address-info.component'
-import { IntakeFormComponent } from './intake-form/intake-form.component';
+import { IntakeFormComponent } from './intake-form/intake-form.component'
 import { UgaConfirmCheckboxComponent } from './uga-confirm-checkbox/uga-confirm-checkbox.component'
-
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts'
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
 
 export class MyHammerConfig extends HammerGestureConfig {
@@ -208,19 +197,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     DateRangeComponent,
     ShowOnMapComponent,
     EventsComponent,
-    DeliveryReceptionComponent,
-    RegisterDonorComponent,
-    RegisterHelperComponent,
     AddressInputComponent,
-    InRouteFollowUpComponent,
-    ShipmentAssignScreenComponent,
-    VolunteerCrossAssignComponent,
-    WeeklyReportMltComponent,
-    HelperGiftsComponent,
-    RegisterURLComponent,
-    GeneralImportFromExcelComponent,
-    MyGiftsDialogComponent,
-    MltFamiliesComponent,
     PrintVolunteersComponent,
     ImagesComponent,
     DeliveryImagesComponent,
@@ -255,19 +232,23 @@ export class MyHammerConfig extends HammerGestureConfig {
     BrowserModule,
     FormsModule,
     DragDropModule,
-    NgxPaginationModule,
     MaterialModule,
+
     BrowserAnimationsModule,
     CommonUIElementsModule,
     AppRoutingModule,
-    ChartsModule,
+    BaseChartDirective,
     PlatformModule,
     JwtModule.forRoot({
       config: { tokenGetter: getToken }
-    })
+    }),
+    MatButtonModule,
+    MatCardModule,
+    MatRadioModule,
+    MatTableModule
   ],
   providers: [
-    NgDialogAnimationService,
+    provideCharts(withDefaultRegisterables()),
     DialogService,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
 
@@ -301,28 +282,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     SettingsService
   ],
 
-  bootstrap: [AppComponent],
-  entryComponents: [
-    SelectHelperComponent,
-    SelectFamilyComponent,
-    SelectListComponent,
-    CommonQuestionsComponent,
-    YesNoQuestionComponent,
-    InputAreaComponent,
-    GridDialogComponent,
-    UpdateFamilyDialogComponent,
-    PreviewFamilyComponent,
-    SelectCompanyComponent,
-    HelperAssignmentComponent,
-    MergeFamiliesComponent,
-    SiteOverviewComponent,
-    ShowOnMapComponent,
-    GetVolunteerFeedback,
-    UpdateGroupDialogComponent,
-    BasketSummaryComponent,
-    GeneralImportFromExcelComponent,
-    MyGiftsDialogComponent
-  ]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
 
@@ -387,13 +347,8 @@ export function initApp(
       routeMap.set(MyFamiliesComponent, l.MyFamiliesComponent)
       routeMap.set(UpdateInfoComponent, l.UpdateInfoComponent)
       routeMap.set(LoginComponent, l.LoginComponent)
-
       routeMap.set(EventsComponent, l.eventsComponent)
 
-      routeMap.set(WeeklyReportMltComponent, l.weeklyReportMltComponent)
-
-      routeMap.set(HelperGiftsComponent, l.HelperGiftsComponent)
-      routeMap.set(RegisterURLComponent, l.RegisterURLComponent)
       routeMap.set(OrgEventsComponent, l.volunteerOpportunities)
 
       RegisterToEvent.init()

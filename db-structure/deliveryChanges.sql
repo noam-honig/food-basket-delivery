@@ -5,7 +5,7 @@ deliveryName varchar default '' not null
 familyId varchar default '' not null
 appUrl varchar default '' not null
 apiUrl varchar default '' not null
-changeDate timestamp
+changeDate timestamptz
 userId varchar default '' not null
 userName varchar default '' not null
 courier varchar default '' not null

@@ -19,9 +19,9 @@ import { Families } from '../families/families'
 import { BasketType } from '../families/BasketType'
 import { ArchiveHelper } from '../family-deliveries/family-deliveries-actions'
 import { PromiseThrottle } from '../shared/utils'
-import { async } from 'rxjs/internal/scheduler/async'
+
 import { FamilyStatus } from '../families/FamilyStatus'
-import { use, Field } from '../translate'
+import { use, Field, Fields } from '../translate'
 import { GroupsValue } from '../manage/groups'
 import { DataControl } from '../common-ui-elements/interfaces'
 import { UITools } from '../helpers/init-context'
@@ -35,17 +35,17 @@ function visible(when: () => boolean, caption?: string) {
 
 @Controller('createNewEvent')
 export class CreateNewEvent {
-  @Field()
+  @Field(() => ArchiveHelper)
   archiveHelper: ArchiveHelper = new ArchiveHelper()
-  @Field({ translation: (l) => l.createNewDeliveryForAllFamilies })
+  @Fields.boolean({ translation: (l) => l.createNewDeliveryForAllFamilies })
   createNewDelivery: boolean
-  @Field<CreateNewEvent>()
+  @Fields.boolean<CreateNewEvent>()
   @DataControl<CreateNewEvent>({
     visible: (self) =>
       self.ui?.hasManyCenters && self.createNewDelivery && self.moreOptions
   })
   useFamilyDistributionList: boolean = true
-  @Field<CreateNewEvent>()
+  @Field<CreateNewEvent>(() => DistributionCenters)
   @DataControl<CreateNewEvent>({
     visible: (self) =>
       self.ui?.hasManyCenters &&
@@ -55,36 +55,36 @@ export class CreateNewEvent {
   })
   distributionCenter: DistributionCenters
   @DataControl({ visible: () => false })
-  @Field<CreateNewEvent>()
+  @Field<CreateNewEvent>(() => DistributionCenters)
   _selectedDistributionList: DistributionCenters
   get selectedDistributionList() {
     if (this.allDistCenters) return null
     return this._selectedDistributionList
   }
   @DataControl({ visible: () => false })
-  @Field<CreateNewEvent>()
+  @Fields.boolean<CreateNewEvent>()
   allDistCenters: boolean = false
 
-  @Field({ translation: (l) => l.moreOptions })
+  @Fields.boolean({ translation: (l) => l.moreOptions })
   @DataControl<CreateNewEvent>({ visible: (self) => self.createNewDelivery })
   moreOptions: boolean
-  @Field({ translation: (l) => l.includeGroups })
+  @Field(() => GroupsValue, { translation: (l) => l.includeGroups })
   @DataControl<CreateNewEvent>({
     visible: (self) => self.createNewDelivery && self.moreOptions
   })
   includeGroups: GroupsValue
-  @Field({ translation: (l) => l.excludeGroups })
+  @Field(() => GroupsValue, { translation: (l) => l.excludeGroups })
   @DataControl<CreateNewEvent>({
     visible: (self) => self.createNewDelivery && self.moreOptions
   })
   excludeGroups: GroupsValue
-  @Field({ translation: (l) => l.useFamilyDefaultBasketType })
+  @Fields.boolean({ translation: (l) => l.useFamilyDefaultBasketType })
   @DataControl<CreateNewEvent>({
     visible: (self) => self.createNewDelivery && self.moreOptions
   })
   useFamilyBasket: boolean
   @DataControl<CreateNewEvent>({ visible: (self) => !self.useFamilyBasket })
-  @Field()
+  @Field(() => BasketType)
   basketType: BasketType
 
   isAllowed() {
@@ -93,7 +93,11 @@ export class CreateNewEvent {
   get $() {
     return getFields<CreateNewEvent>(this, remult)
   }
-  @BackendMethod({ queue: true, allowed: Roles.admin })
+  @BackendMethod({
+    queue: true,
+    allowed: Roles.admin,
+    paramTypes: [ProgressListener]
+  })
   async createNewEvent(progress?: ProgressListener) {
     let settings = await ApplicationSettings.getAsync()
     for (const x of [
@@ -299,7 +303,11 @@ export class CreateNewEvent {
     })
   }
 
-  @BackendMethod({ queue: true, allowed: Roles.admin })
+  @BackendMethod({
+    queue: true,
+    allowed: Roles.admin,
+    paramTypes: [ProgressListener]
+  })
   async countNewDeliveries(progress?: ProgressListener) {
     return this.iterateFamilies(async () => {}, progress)
   }

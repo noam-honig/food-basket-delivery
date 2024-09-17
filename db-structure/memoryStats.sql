@@ -1,5 +1,5 @@
 create table memoryStats
 id varchar default '' not null
-stamp timestamp
+stamp timestamptz
 mem json
 stats json

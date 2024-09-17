@@ -1,8 +1,8 @@
-import * as fs from 'fs'
+import fs from 'fs'
 import { Language, TranslationOptions } from '../translate'
 import { config } from 'dotenv'
 
-import * as request from 'request'
+import request from 'request'
 
 async function loadTranslationXlsx(fileName: string, language: string) {
   let XLSX = await import('xlsx')

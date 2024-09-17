@@ -22,8 +22,7 @@
         </button>
         <button
           (click)="saveSettings(); moveToAdvancedSettings()"
-          mat-raised-button
-          color="accent"
+          mat-flat-button
         >
           {{ settings.lang.nextStep }}
         </button>
@@ -71,17 +70,7 @@
                 </select>
               </th>
             </tr>
-            <ng-container
-              *ngFor="
-                let r of rows
-                  | paginate
-                    : {
-                        itemsPerPage: 10,
-                        currentPage: excelPage,
-                        id: 'excelPage'
-                      }
-              "
-            >
+            <ng-container *ngFor="let r of rows">
               <tr>
                 <td>{{ r }}</td>
 
@@ -92,18 +81,13 @@
             </ng-container>
           </table>
         </div>
-        <pagination-controls
-          (pageChange)="excelPage = $event"
-          previousLabel="{{ settings.lang.previous }}"
-          nextLabel="{{ settings.lang.next }}"
-          id="excelPage"
-        ></pagination-controls>
+
         {{ settings.lang.total }} {{ rows.length }}
         {{ settings.lang.linesInExcel }}
       </ng-container>
     </mat-step>
     <mat-step label="{{ settings.lang.excelImportFinalSettings }}">
-      <button (click)="testImport()" mat-raised-button color="accent">
+      <button (click)="testImport()" mat-flat-button>
         {{ settings.lang.nextStep }}
       </button>
       <h3>{{ settings.lang.excelImportFinalSettings }}</h3>
@@ -125,17 +109,7 @@
                   {{ c.c.caption }}
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of errorRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: errorRowsPage,
-                          id: 'errorRows'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of errorRows">
                 <tr
                   [class.disabledErrorRow]="i.userIgnoreError"
                   class="top-error-row"
@@ -224,13 +198,7 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="errorRowsPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="errorRows"
-          >
-          </pagination-controls>
+
           <div style="height: 35px">
             <mat-checkbox [(ngModel)]="stopAskingQuestions">{{
               settings.lang.stopAskingForConfirmation
@@ -258,17 +226,7 @@
                   </mat-icon>
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of updateRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: updateRowsPage,
-                          id: 'updateRows'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of updateRows">
                 <tr>
                   <td>
                     <mat-menu #updatedRowOptions="matMenu">
@@ -334,18 +292,12 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="updateRowsPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="updateRows"
-          ></pagination-controls>
         </mat-tab>
         <mat-tab
           label="{{ settings.lang.newFamilies }} - {{ newRows.length }}"
           *ngIf="newRows && newRows.length"
         >
-          <button (click)="addAll()" mat-raised-button color="accent">
+          <button (click)="addAll()" mat-flat-button>
             {{ settings.lang.addAllFamilies }}
           </button>
           <div class="table-div">
@@ -357,17 +309,7 @@
                   {{ c.c.caption }}
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of newRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: newRowsPage,
-                          id: 'newRows'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of newRows">
                 <tr>
                   <td>
                     <mat-icon
@@ -385,13 +327,6 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="newRowsPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="newRows"
-          >
-          </pagination-controls>
         </mat-tab>
 
         <mat-tab
@@ -408,17 +343,7 @@
                   {{ c.c.caption }}
                 </th>
               </tr>
-              <ng-container
-                *ngFor="
-                  let i of identicalRows
-                    | paginate
-                      : {
-                          itemsPerPage: 100,
-                          currentPage: existingFamiliesPage,
-                          id: 'existingFamiliesPage'
-                        }
-                "
-              >
+              <ng-container *ngFor="let i of identicalRows">
                 <tr>
                   <td>{{ i.rowInExcel }}<br /></td>
                   <td *ngFor="let c of columnsInCompare">
@@ -428,12 +353,6 @@
               </ng-container>
             </table>
           </div>
-          <pagination-controls
-            (pageChange)="existingFamiliesPage = $event"
-            previousLabel="{{ settings.lang.previous }}"
-            nextLabel="{{ settings.lang.next }}"
-            id="existingFamiliesPage"
-          ></pagination-controls>
         </mat-tab>
       </mat-tab-group>
       <button mat-raised-button (click)="createImportReport()">

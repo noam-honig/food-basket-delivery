@@ -26,7 +26,7 @@ import {
   GridSettings
 } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
-import * as chart from 'chart.js'
+import chart from 'chart.js'
 import { Stats, FaimilyStatistics, colors } from './stats-action'
 
 import {
