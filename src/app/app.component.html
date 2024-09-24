@@ -112,15 +112,12 @@
       *ngIf="!noConfHeaderAndBorders()"
     >
       <hr style="padding: 0px" />
-      <a
-        *ngIf="!showEnglishUrl()"
-        href="https://noam-honig.github.io/salmaz"
-        target="_blank"
-        >{{ lang.copyright }}</a
-      >
+      <a *ngIf="!showEnglishUrl()" href="https://hagai.co" target="_blank">{{
+        lang.copyright
+      }}</a>
       <a
         *ngIf="showEnglishUrl()"
-        href="https://noam-honig.github.io/salmaz/en.html"
+        href="https://hagai.co/en.html"
         target="_blank"
         >{{ lang.copyright }}</a
       >
