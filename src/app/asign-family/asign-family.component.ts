@@ -15,7 +15,7 @@ import { DialogService, DestroyHelper } from '../select-popup/dialog'
 import { UserFamiliesList } from '../my-families/user-families'
 
 import { environment } from '../../environments/environment'
-import { Route } from '@angular/router'
+import { Route, ActivatedRoute } from '@angular/router'
 
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 
@@ -451,7 +451,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   constructor(
     public dialog: DialogService,
     public busy: BusyService,
-    public settings: ApplicationSettings
+    public settings: ApplicationSettings,
+    private route: ActivatedRoute
   ) {
     this.dialog.onDistCenterChange(
       () => this.refreshBaskets(),
@@ -499,6 +500,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
       this.phone = '0507330590'
       await this.searchPhone()
     }
+    this.route.queryParamMap.subscribe(async (x) => {
+      var phone = x.get('phone')
+      if (phone) {
+        this.phone = phone
+        await this.searchPhone()
+        if (this.helper.isNew()) this.helper.name = x.get('name')
+      }
+    })
     setTimeout(() => {
       if (this.phoneInput) this.phoneInput.nativeElement.focus()
     }, 200)
