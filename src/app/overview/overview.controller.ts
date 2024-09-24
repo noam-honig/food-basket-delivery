@@ -236,8 +236,20 @@ export class OverviewController {
         var h = await SqlFor(remult.repo(Helpers))
 
         let cols: any[] = [
-          as.organisationName,
-          as.logoUrl,
+          builder.build(
+            '(',
+            builder.query({
+              from: as,
+              select: () => [as.organisationName]
+            }),
+            ')'
+          ),
+          builder.build(
+            '(',
+            builder.query({ from: as, select: () => [as.logoUrl] }),
+            ')'
+          ),
+
           builder.build(
             '(',
             builder.query({
@@ -248,47 +260,60 @@ export class OverviewController {
             ')'
           )
         ]
+        let fdCols: any[] = []
 
         for (const dateRange of result.statistics) {
           let key = 'a' + cols.length
           if (dateRange.caption == connected) {
-          } else if (dateRange.caption == inEvent) {
-            cols.push(builder.countInnerSelect({ from: f }, key))
-          } else if (dateRange.caption == onTheWay) {
-            cols.push(
-              builder.countInnerSelect(
-                {
-                  from: f,
-                  where: () => [f.where(FamilyDeliveries.onTheWayFilter())]
-                },
-                key
+          } else {
+            cols.push(key)
+            if (dateRange.caption == inEvent) {
+              fdCols.push(
+                builder.countFilter(() => [f.where({ archive: false })], key)
               )
-            )
-          } else
-            cols.push(
-              builder.build(
-                '(select count(*) from ',
-                fd,
-                ' where ',
-                builder.and(
-                  fd.where({
-                    deliveryStatusDate: {
-                      '>=': dateRange.from,
-                      '<': dateRange.to
-                    },
-                    deliverStatus: DeliveryStatus.isAResultStatus()
-                  })
-                ),
-                ') ',
-                key
+            } else if (dateRange.caption == onTheWay) {
+              fdCols.push(
+                builder.countFilter(
+                  () => [
+                    f.where({
+                      $and: [
+                        FamilyDeliveries.onTheWayFilter(),
+                        { archive: false }
+                      ]
+                    })
+                  ],
+                  key
+                )
               )
-            )
+            } else
+              fdCols.push(
+                builder.countFilter(
+                  () => [
+                    fd.where({
+                      deliveryStatusDate: {
+                        '>=': dateRange.from,
+                        '<': dateRange.to
+                      },
+                      deliverStatus: DeliveryStatus.isAResultStatus()
+                    })
+                  ],
+                  key
+                )
+              )
+          }
         }
 
-        let z = await builder.query({
-          select: () => cols,
-          from: as
-        })
+        let z = await builder.build(
+          ` with x as (select `,
+          Promise.all(fdCols),
+          ` from `,
+          fd,
+          ') ',
+          'select ',
+          Promise.all(cols),
+          ' from x '
+        )
+
         let sql = dp as SqlDatabase
         let zz = await sql.execute(z)
         let row = zz.rows[0]

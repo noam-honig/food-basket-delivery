@@ -204,6 +204,14 @@ export class SqlBuilder {
     this.addEntity(rootEntity, await rootEntity.metadata.getDbName())
     return '(' + (await await this.query(query)) + ' limit 1)'
   }
+  async countFilter(where: () => any[], key: string) {
+    return this.build(
+      'count(*) ',
+      'filter (where ' + (await this.and(...where())),
+      ' ) ',
+      key
+    )
+  }
   async countInnerSelect(query: FromAndWhere, mappedColumn: any) {
     return this.build(
       '(',
