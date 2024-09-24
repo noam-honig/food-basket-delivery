@@ -36,7 +36,7 @@ import { RouteReuseStrategy } from '@angular/router'
 import { CustomReuseStrategy } from '../custom-reuse-controller-router-strategy'
 import { use, Field } from '../translate'
 import { Location } from '../shared/googleApiHelpers'
-import { Sites } from '../sites/sites'
+import { Sites, getLang } from '../sites/sites'
 import '../helpers/init-context'
 import {
   BELOW_18_ERROR,
@@ -377,10 +377,18 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
 
   async handleError(error) {
     super.handleError(error)
+    if (error.message?.includes('Failed to fetch dynamically imported')) {
+      alert(
+        getLang().newVersionPressOkToReload ?? 'New version, press OK to reload'
+      )
+      window.location.reload()
+    }
+
     if (
       error.message.startsWith('ExpressionChangedAfterItHasBeenCheckedError') ||
       error.message.startsWith('NG0100') ||
-      error.message.includes('unsubscribe')
+      error.message.includes('unsubscribe') ||
+      error.message.includes('ERR_NETWORK_IO_SUSPENDED')
     )
       return
     if (

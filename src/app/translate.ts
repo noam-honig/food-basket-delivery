@@ -483,6 +483,7 @@ export const translationConfig = {
 }
 
 export class Language {
+  newVersionPressOkToReload: 'גרסא חדשה, לחצו אשר לעדכון'
   assignDeliveryMenu = 'שיוך משלוחים למתנדב'
   defaultOrgName = 'שם הארגון שלי'
   defaultSmsText =
@@ -1571,6 +1572,7 @@ export class Language {
   registeredUsersSignIn = 'כניסת משתמשים רשומים'
   filterPhone = 'סינון לפי טלפון'
   totalDeliveries = 'מספר משלוחים'
+  availableWasThereBefore = 'משלוחים פעילים שהיה אצלהם בעבר'
 }
 
 const defaultLang = new Language()

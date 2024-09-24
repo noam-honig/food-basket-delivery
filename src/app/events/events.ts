@@ -661,6 +661,42 @@ export class volunteersInEvent extends IdEntity {
     }
   })
   succesfulDeliveries: number
+  @Fields.integer<volunteersInEvent>({
+    translation: (l) => l.availableWasThereBefore,
+    sqlExpression: async (selfDefs) => {
+      let sql = new SqlBuilder()
+      let self = SqlFor(selfDefs)
+      let d = SqlFor(remult.repo(FamilyDeliveries))
+      let ad = SqlFor(remult.repo(ActiveFamilyDeliveries))
+      return sql.columnCountWithAs(
+        self,
+        {
+          from: ad,
+          where: () => [
+            sql.eq(ad.courier, "''"),
+            d.where({
+              deliverStatus: DeliveryStatus.ReadyForDelivery
+            }),
+            sql.in(
+              ad.family,
+              sql.query({
+                from: d,
+                select: () => [d.family],
+                where: () => [
+                  sql.eq(d.courier, self.helper),
+                  d.where({
+                    deliverStatus: DeliveryStatus.Success
+                  })
+                ]
+              })
+            )
+          ]
+        },
+        'availableWasThereBefore'
+      )
+    }
+  })
+  availableWasThereBefore: number
   @Fields.string<volunteersInEvent>({
     translation: (l) => l.email,
     sqlExpression: async (selfDefs) => {
@@ -830,6 +866,7 @@ export class volunteersInEvent extends IdEntity {
           },
           { width: '100', field: ev.assignedDeliveries, readonly: true },
           { width: '100', field: ev.succesfulDeliveries, readonly: true },
+          { width: '150', field: ev.availableWasThereBefore, readonly: true },
           { width: '150', field: ev.helperPhone, readonly: true },
           { readonly: true, field: ev.helperEmail },
           { width: '100', field: ev.duplicateToNextEvent },
@@ -904,8 +941,7 @@ export class volunteersInEvent extends IdEntity {
           },
           {
             name: getLang().sendAttendanceReminder,
-            visible: () =>
-              getSettings().bulkSmsEnabled && gridSettings.currentRow,
+            visible: () => gridSettings.currentRow,
             click: async () => {
               const message = await remult
                 .repo(MessageTemplate)
@@ -974,8 +1010,9 @@ export class volunteersInEvent extends IdEntity {
         ],
         rowButtons: [
           {
-            name: getLang().assignDeliveryMenu,
+            textInMenu: getLang().assignDeliveryMenu,
             icon: 'list_alt',
+            showInLine: true,
             click: async (ev) => {
               let h = await ev.helper.getHelper()
               await ui.helperAssignment(h)
