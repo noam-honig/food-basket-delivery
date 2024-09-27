@@ -437,22 +437,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   clearList() {
     this.familyLists.clear()
   }
-  findHelper() {
-    openDialog(
-      SelectHelperComponent,
-      (s) =>
-        (s.args = {
-          onSelect: async (h) => {
-            if (h) {
-              this.clearHelperInfo(false)
-              this.initHelper(await remult.repo(Helpers).findId(h.id))
-            } else {
-              this.clearHelperInfo()
-            }
-          }
-        })
-    )
-  }
 
   constructor(
     public dialog: DialogService,

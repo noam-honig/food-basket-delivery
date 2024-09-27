@@ -12,10 +12,6 @@
             >
               <mat-icon>edit</mat-icon> {{ settings.lang.volunteerInfo }}
             </button>
-            <button mat-menu-item (click)="findHelper()">
-              <mat-icon>person_search</mat-icon>
-              {{ settings.lang.findHelperByName }}
-            </button>
             <button mat-menu-item (click)="clearHelperInfo()">
               <mat-icon>clear</mat-icon>{{ settings.lang.clearHelperInfo }}
             </button>
@@ -48,7 +44,7 @@
         appearance="outline"
         class="full-width-form-field dense-form-field"
       >
-        <mat-label>{{ settings.lang.volunteerPhoneNumber }}</mat-label>
+        <mat-label>{{ settings.lang.volunteerIdentifier }}</mat-label>
         <input
           matInput
           [(ngModel)]="identifier"
@@ -62,12 +58,9 @@
             {{ s.name }} {{ s.phone }} <span *ngIf="s.assignedDeliveries > 0" class="secondary-text">({{s.assignedDeliveries}} {{ settings.lang.ActiveDeliveries }})</span>
           </mat-option>
         </mat-autocomplete>
-        <div matSuffix style="display: flex">
+        <div matSuffix style="display: flex; margin-left: 8px;">
           <mat-icon (click)="clearHelperInfo()" class="clickable-icon"
             >clear</mat-icon
-          >
-          <mat-icon (click)="findHelper()" class="clickable-icon"
-            >person_search</mat-icon
           >
         </div>
       </mat-form-field>
@@ -78,14 +71,6 @@
     </mat-card>
   </div>
 
-  <span
-    *ngIf="showHelperInput && (!helper || !helper.name)"
-    class="help no-print"
-    >{{ settings.lang.assignHelpText }}
-    <mat-icon (click)="findHelper()" class="clickable-icon"
-      >person_search</mat-icon
-    ></span
-  >
   <br *ngIf="showHelperInput && (!helper || !helper.name)" />
   <a
     href="https://youtu.be/8LCeQRQPL1U"
