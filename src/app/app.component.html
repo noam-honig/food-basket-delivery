@@ -34,27 +34,36 @@
       >מדריך למנהל</a
     >
     <mat-nav-list role="list">
-      <mat-list-item *ngIf="createNewEventAction.isAllowed()">
-        <a matLine (click)="createNewEventAction.show(dialog, settings)">
-          {{ settings.lang.createNewEvent }}
-        </a>
-      </mat-list-item>
+      <a
+        mat-list-item
+        *ngIf="createNewEventAction.isAllowed()"
+        (click)="createNewEventAction.show(dialog, settings)"
+      >
+        {{ settings.lang.createNewEvent }}
+      </a>
       <mat-divider></mat-divider>
       <ng-container *ngFor="let m of router.config">
-        <mat-list-item
+        <a
+          mat-list-item
           *ngIf="shouldDisplayRoute(m)"
           routerLinkActive="active-route"
+          [routerLink]="m.path"
+          (click)="routeClicked()"
         >
-          <a matLine [routerLink]="m.path" (click)="routeClicked()">{{
+          {{
             routeName(m)
-          }}</a>
-        </mat-list-item>
+          }}
+        </a>
         <mat-divider *ngIf="showSeperator(m)"></mat-divider>
       </ng-container>
 
-      <mat-list-item *ngIf="remult.user">
-        <a matLine (click)="signOut()">{{ lang.exit }}</a>
-      </mat-list-item>
+      <a
+        mat-list-item
+        *ngIf="remult.user"
+        (click)="signOut()"
+      >
+        {{ lang.exit }}
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <div class="full-page">
