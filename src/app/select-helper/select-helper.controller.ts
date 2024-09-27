@@ -19,6 +19,7 @@ import { relativeDateName } from '../model-shared/types'
 import { getDb, SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
 import { getLang } from '../sites/sites'
 import { DeliveryStatus } from '../families/DeliveryStatus'
+import { helperInList } from '../helpers/query-helpers'
 
 export class SelectHelperController {
   @BackendMethod({ allowed: Roles.distCenterAdmin })
@@ -211,19 +212,4 @@ export class SelectHelperController {
       return a.name.localeCompare(b.name)
     })
   }
-}
-export interface helperInList {
-  helper?: HelpersBase
-  helperId: string
-  name: string
-  phone: string
-  distance?: number
-  location?: Location
-  assignedDeliveries?: number
-  totalRecentDeliveries?: number
-  isBusyVolunteer?: string
-  lastCompletedDeliveryString?: string
-  fixedFamilies?: number
-  distanceFrom?: string
-  hadProblem?: boolean
 }

@@ -51,11 +51,17 @@
         <mat-label>{{ settings.lang.volunteerPhoneNumber }}</mat-label>
         <input
           matInput
-          [(ngModel)]="phone"
-          (input)="searchPhone()"
-          type="tel"
-          #phoneInput
+          [(ngModel)]="identifier"
+          (input)="searchIdentifier()"
+          type="text"
+          #identifierInput
+          [matAutocomplete]="auto"
         />
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="searchIdentifier()">
+          <mat-option *ngFor="let s of helperSuggestions" [value]="s.phone" >
+            {{ s.name }} {{ s.phone }} <span *ngIf="s.assignedDeliveries > 0" class="secondary-text">({{s.assignedDeliveries}} {{ settings.lang.ActiveDeliveries }})</span>
+          </mat-option>
+        </mat-autocomplete>
         <div matSuffix style="display: flex">
           <mat-icon (click)="clearHelperInfo()" class="clickable-icon"
             >clear</mat-icon
@@ -67,7 +73,7 @@
       </mat-form-field>
       <data-area
         [settings]="area"
-        *ngIf="phone && isValidPhone() && showHelperInput && helper"
+        *ngIf="identifier && isValidPhone() && showHelperInput && helper"
       ></data-area>
     </mat-card>
   </div>

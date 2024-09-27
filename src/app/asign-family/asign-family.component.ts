@@ -52,6 +52,7 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
+import { getIdentifierType, helperInList, searchHelpersByIdentifier } from '../helpers/query-helpers'
 
 @Component({
   selector: 'app-asign-family',
@@ -64,7 +65,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     component: AsignFamilyComponent,
     canActivate: [distCenterAdminGuard]
   }
-  @ViewChild('phoneInput', { static: false }) phoneInput: ElementRef
+  @ViewChild('identifierInput', { static: false }) identifierInput: ElementRef
 
   canSeeCenter() {
     return remult.isAllowed(Roles.admin)
@@ -113,30 +114,34 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   }
   async editHelper() {
     await this.familyLists.helper.displayEditDialog(this.dialog)
-    if (this.phone != this.familyLists.helper.phone.thePhone)
-      this.phone = this.familyLists.helper.phone.thePhone
+    if (this.identifier != this.familyLists.helper.phone.thePhone)
+      this.identifier = this.familyLists.helper.phone.thePhone
   }
-  async searchPhone() {
+  async searchIdentifier() {
     this.clearHelperInfo(false)
-    let cleanPhone = Phone.fixPhoneInput(this.phone)
+    const cleanPhone = Phone.fixPhoneInput(this.identifier)
+    const identifierType = getIdentifierType(cleanPhone)
 
-    if (this.isValidPhone()) {
-      this.phone = cleanPhone
-      let thisPhone = new Phone(this.phone)
+    if (identifierType === 'phone' && this.isValidPhone()) {
+      this.identifier = cleanPhone
+      let thisPhone = new Phone(this.identifier)
       await this.busy.donotWait(async () => {
         let helper = await remult.repo(Helpers).findFirst({ phone: thisPhone })
         if (helper) {
           this.initHelper(helper)
-        } else if (this.phone == cleanPhone) {
+        } else if (this.identifier == cleanPhone) {
           helper = remult.repo(Helpers).create()
           helper.phone = thisPhone
           this.initHelper(helper)
         }
       })
+    } else {
+      this.identifier = identifierType === 'phone' ? cleanPhone : this.identifier
+      this.helperSuggestions = await searchHelpersByIdentifier(this.identifier)
     }
   }
   isValidPhone() {
-    let cleanPhone = Phone.fixPhoneInput(this.phone)
+    const cleanPhone = Phone.fixPhoneInput(this.identifier)
 
     return (
       cleanPhone.length == 10 ||
@@ -178,7 +183,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     else this.helperStats = ''
     this.helper = await helper.getHelper()
     this.initArea()
-    this.phone = this.helper.phone.thePhone
+    this.identifier = this.helper.phone.thePhone
     if (helper.isNew()) {
       await this.refreshList()
     } else {
@@ -208,14 +213,14 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   clearHelperInfo(clearPhone = true) {
     this.helper = undefined
     this.area = undefined
-    if (clearPhone) this.phone = ''
+    if (clearPhone) this.identifier = ''
     this.familyLists.setRouteStats(undefined)
     this.preferRepeatFamilies = true
     this.showRepeatFamilies = false
     this.clearList()
-    if (this.phoneInput)
+    if (this.identifierInput)
       setTimeout(() => {
-        this.phoneInput.nativeElement.focus()
+        this.identifierInput.nativeElement.focus()
       }, 200)
   }
 
@@ -263,7 +268,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   showHelperInput = true
   specificToHelper(h: HelpersBase) {
     this.showHelperInput = false
-    this.phone = h.phone.thePhone
+    this.identifier = h.phone.thePhone
     this.initHelper(h)
   }
   lastRefreshRoute = Promise.resolve()
@@ -393,8 +398,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   trackGroup(a, g: GroupsStats) {
     return g.name
   }
-  phone: string
+  identifier: string
   helper: Helpers
+  helperSuggestions: helperInList[] = []
 
   area: DataAreaSettings = new DataAreaSettings({})
   changeShowCompany() {
@@ -462,6 +468,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
   filterOptions: FieldRef<unknown, boolean>[] = []
   async ngOnInit() {
+    this.busy.donotWait(async () => {
+      this.helperSuggestions = await searchHelpersByIdentifier('')
+    })
     this.filterOptions.push(
       this.settings.$.showGroupsOnAssing,
       this.settings.$.showCityOnAssing,
@@ -497,20 +506,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
 
     if (!environment.production && this.showHelperInput) {
-      this.phone = '0507330590'
-      await this.searchPhone()
+      this.identifier = ''
+      await this.searchIdentifier()
     }
     this.route.queryParamMap.subscribe(async (x) => {
       var phone = x.get('phone')
       if (phone) {
-        this.phone = phone
-        await this.searchPhone()
+        this.identifier = phone
+        await this.searchIdentifier()
         if (this.helper.isNew()) this.helper.name = x.get('name')
       }
     })
-    setTimeout(() => {
-      if (this.phoneInput) this.phoneInput.nativeElement.focus()
-    }, 200)
   }
   numOfBaskets: number = 1
   private async assignFamilyBasedOnIdFromMap(familyId: string) {
