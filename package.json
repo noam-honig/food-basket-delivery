@@ -8,7 +8,7 @@
     "build-for-type-check": "tsc",
     "node-serve": "tsx watch src/app/server/server",
     "server-test": "tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",
-    "ng-serve-noam-ip-10.0.0.6": "ng serve --host 192.168.86.30",
+    "ng-serve-noam-ip-10.0.0.49": "ng serve --host 10.0.0.49",
     "start": "node server/app/server/server.js",
     "t-start": "node dist/server/app/server/server.js",
     "server:dev-run": "node --inspect dist/server/app/server/server.js",
