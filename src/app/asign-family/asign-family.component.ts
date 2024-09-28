@@ -52,7 +52,8 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
-import { getIdentifierType, helperInList, searchHelpersByIdentifier } from '../helpers/query-helpers'
+import { getIdentifierType, helperInList, mapHelpers, searchHelpersByIdentifier } from '../helpers/query-helpers'
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 @Component({
   selector: 'app-asign-family',
@@ -66,6 +67,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     canActivate: [distCenterAdminGuard]
   }
   @ViewChild('identifierInput', { static: false }) identifierInput: ElementRef
+  @ViewChild('autocompleteTrigger', { read: MatAutocompleteTrigger }) autocompleteTrigger: MatAutocompleteTrigger
 
   canSeeCenter() {
     return remult.isAllowed(Roles.admin)
@@ -135,6 +137,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
           this.initHelper(helper)
         }
       })
+      this.autocompleteTrigger.closePanel()
     } else {
       this.identifier = identifierType === 'phone' ? cleanPhone : this.identifier
       this.helperSuggestions = await searchHelpersByIdentifier(this.identifier)
@@ -210,10 +213,25 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
   }
 
-  clearHelperInfo(clearPhone = true) {
+  // Request helpers from API, and add the most recent ones on top
+  initHelperSuggestions() {
+    this.busy.donotWait(async () => {
+      const apiSuggestions = await searchHelpersByIdentifier('')
+      const recentHelperIds = Helpers.recentHelpers.map((x) => x.id)
+      this.helperSuggestions = [
+        ...mapHelpers(Helpers.recentHelpers, (x) => undefined),
+        ...apiSuggestions.filter(h => !recentHelperIds.includes(h.helperId))
+      ]
+    })
+  }
+
+  clearHelperInfo(clearIdentifier = true) {
     this.helper = undefined
     this.area = undefined
-    if (clearPhone) this.identifier = ''
+    if (clearIdentifier) {
+      this.identifier = ''
+      this.initHelperSuggestions()
+    }
     this.familyLists.setRouteStats(undefined)
     this.preferRepeatFamilies = true
     this.showRepeatFamilies = false
@@ -452,9 +470,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
   filterOptions: FieldRef<unknown, boolean>[] = []
   async ngOnInit() {
-    this.busy.donotWait(async () => {
-      this.helperSuggestions = await searchHelpersByIdentifier('')
-    })
+    this.initHelperSuggestions()
     this.filterOptions.push(
       this.settings.$.showGroupsOnAssing,
       this.settings.$.showCityOnAssing,
