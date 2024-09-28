@@ -52,6 +52,7 @@
           type="text"
           #identifierInput
           [matAutocomplete]="auto"
+          #autocompleteTrigger="matAutocompleteTrigger"
         />
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="searchIdentifier()">
           <mat-option *ngFor="let s of helperSuggestions" [value]="s.phone" >
