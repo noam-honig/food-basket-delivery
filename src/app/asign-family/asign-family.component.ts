@@ -21,7 +21,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 
 import { BasketType } from '../families/BasketType'
 
-import { Phone } from '../model-shared/phone'
+import { isPhoneSubstring, Phone } from '../model-shared/phone'
 import {
   BusyService,
   openDialog,
@@ -52,7 +52,7 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
-import { getIdentifierType, helperInList, mapHelpers, searchHelpersByIdentifier } from '../helpers/query-helpers'
+import { helperInList, mapHelpers, searchHelpersByIdentifier } from '../helpers/query-helpers'
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 @Component({
@@ -122,9 +122,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   async searchIdentifier() {
     this.clearHelperInfo(false)
     const cleanPhone = Phone.fixPhoneInput(this.identifier)
-    const identifierType = getIdentifierType(cleanPhone)
+    const isPhone = isPhoneSubstring(cleanPhone)
 
-    if (identifierType === 'phone' && this.isValidPhone()) {
+    if (isPhone && this.isValidPhone()) {
       this.identifier = cleanPhone
       let thisPhone = new Phone(this.identifier)
       await this.busy.donotWait(async () => {
@@ -139,8 +139,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
       })
       this.autocompleteTrigger.closePanel()
     } else {
-      this.identifier = identifierType === 'phone' ? cleanPhone : this.identifier
-      this.helperSuggestions = await searchHelpersByIdentifier(this.identifier)
+      this.identifier = isPhone ? cleanPhone : this.identifier
+      this.busy.donotWait(async () => {
+        this.helperSuggestions = await searchHelpersByIdentifier(this.identifier)
+      })
     }
   }
   isValidPhone() {

@@ -38,18 +38,16 @@ export function mapHelpers<hType extends HelpersBase>(
   )
 }
 
-export function getIdentifierType(searchString: string): IdentifierType {
-  return isPhoneSubstring(searchString) ? 'phone' : 'name'
-}
-
 export async function searchHelpersByIdentifier(searchString: string, limit: number = 20): Promise<helperInList[]> {
   return mapHelpers(
     await remult.repo(HelpersAndStats).find({
       orderBy: { name: 'asc' },
       limit,
       where: {
-        [getIdentifierType(searchString)]: { $contains: searchString },
         $and: [
+          isPhoneSubstring(searchString)
+            ? { phone: { $contains: searchString } }
+            : { name: { $contains: searchString } },
           HelpersBase.active,
         ]
       }
