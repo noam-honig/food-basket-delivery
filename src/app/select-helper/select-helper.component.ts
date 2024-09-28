@@ -11,9 +11,9 @@ import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats'
 import { DialogService } from '../select-popup/dialog'
 import { SelectHelperArgs } from '../helpers/init-context'
 import {
-  helperInList,
   SelectHelperController
 } from './select-helper.controller'
+import { mapHelpers, helperInList } from '../helpers/query-helpers'
 
 @Component({
   selector: 'app-select-helper',
@@ -131,18 +131,3 @@ export class SelectHelperComponent implements OnInit {
   }
 }
 
-function mapHelpers<hType extends HelpersBase>(
-  helpers: hType[],
-  getFamilies: (h: hType) => number
-): helperInList[] {
-  return helpers.map(
-    (h) =>
-      ({
-        helper: h,
-        helperId: h.id,
-        name: h.name,
-        phone: h.phone?.displayValue,
-        assignedDeliveries: getFamilies(h)
-      } as helperInList)
-  )
-}

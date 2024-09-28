@@ -579,6 +579,7 @@ export class Language {
   showHelperCompany = 'הצג ארגון למתנדב'
   hideHelperCompany = 'הסתר ארגון למתנדב'
   volunteerPhoneNumber = 'מספר הטלפון של המתנדב'
+  volunteerIdentifier = 'מספר הטלפון/השם של המתנדב'
   assignHelpText =
     'אנא הזיני את הטלפון של המתנדב ושמו, ואז תוכלי לבחור קבוצה, עיר ואילו סלים לשייך. לחיפוש לפי שם לחצי על - '
   asignVideoHelp = 'לסרטון הדרכה על שיוך משלוחים ויום האירוע לחצו כאן'

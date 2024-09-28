@@ -21,7 +21,7 @@ import { ApplicationSettings } from '../manage/ApplicationSettings'
 
 import { BasketType } from '../families/BasketType'
 
-import { Phone } from '../model-shared/phone'
+import { isPhoneSubstring, Phone } from '../model-shared/phone'
 import {
   BusyService,
   openDialog,
@@ -52,6 +52,8 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
+import { helperInList, mapHelpers, searchHelpersByIdentifier } from '../helpers/query-helpers'
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 @Component({
   selector: 'app-asign-family',
@@ -64,7 +66,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     component: AsignFamilyComponent,
     canActivate: [distCenterAdminGuard]
   }
-  @ViewChild('phoneInput', { static: false }) phoneInput: ElementRef
+  @ViewChild('identifierInput', { static: false }) identifierInput: ElementRef
+  @ViewChild('autocompleteTrigger', { read: MatAutocompleteTrigger }) autocompleteTrigger: MatAutocompleteTrigger
 
   canSeeCenter() {
     return remult.isAllowed(Roles.admin)
@@ -113,30 +116,37 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   }
   async editHelper() {
     await this.familyLists.helper.displayEditDialog(this.dialog)
-    if (this.phone != this.familyLists.helper.phone.thePhone)
-      this.phone = this.familyLists.helper.phone.thePhone
+    if (this.identifier != this.familyLists.helper.phone.thePhone)
+      this.identifier = this.familyLists.helper.phone.thePhone
   }
-  async searchPhone() {
+  async searchIdentifier() {
     this.clearHelperInfo(false)
-    let cleanPhone = Phone.fixPhoneInput(this.phone)
+    const cleanPhone = Phone.fixPhoneInput(this.identifier)
+    const isPhone = isPhoneSubstring(cleanPhone)
 
-    if (this.isValidPhone()) {
-      this.phone = cleanPhone
-      let thisPhone = new Phone(this.phone)
+    if (isPhone && this.isValidPhone()) {
+      this.identifier = cleanPhone
+      let thisPhone = new Phone(this.identifier)
       await this.busy.donotWait(async () => {
         let helper = await remult.repo(Helpers).findFirst({ phone: thisPhone })
         if (helper) {
           this.initHelper(helper)
-        } else if (this.phone == cleanPhone) {
+        } else if (this.identifier == cleanPhone) {
           helper = remult.repo(Helpers).create()
           helper.phone = thisPhone
           this.initHelper(helper)
         }
       })
+      this.autocompleteTrigger.closePanel()
+    } else {
+      this.identifier = isPhone ? cleanPhone : this.identifier
+      this.busy.donotWait(async () => {
+        this.helperSuggestions = await searchHelpersByIdentifier(this.identifier)
+      })
     }
   }
   isValidPhone() {
-    let cleanPhone = Phone.fixPhoneInput(this.phone)
+    const cleanPhone = Phone.fixPhoneInput(this.identifier)
 
     return (
       cleanPhone.length == 10 ||
@@ -178,7 +188,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     else this.helperStats = ''
     this.helper = await helper.getHelper()
     this.initArea()
-    this.phone = this.helper.phone.thePhone
+    this.identifier = this.helper.phone.thePhone
     if (helper.isNew()) {
       await this.refreshList()
     } else {
@@ -205,17 +215,32 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
   }
 
-  clearHelperInfo(clearPhone = true) {
+  // Request helpers from API, and add the most recent ones on top
+  initHelperSuggestions() {
+    this.busy.donotWait(async () => {
+      const apiSuggestions = await searchHelpersByIdentifier('')
+      const recentHelperIds = Helpers.recentHelpers.map((x) => x.id)
+      this.helperSuggestions = [
+        ...mapHelpers(Helpers.recentHelpers, (x) => undefined),
+        ...apiSuggestions.filter(h => !recentHelperIds.includes(h.helperId))
+      ]
+    })
+  }
+
+  clearHelperInfo(clearIdentifier = true) {
     this.helper = undefined
     this.area = undefined
-    if (clearPhone) this.phone = ''
+    if (clearIdentifier) {
+      this.identifier = ''
+      this.initHelperSuggestions()
+    }
     this.familyLists.setRouteStats(undefined)
     this.preferRepeatFamilies = true
     this.showRepeatFamilies = false
     this.clearList()
-    if (this.phoneInput)
+    if (this.identifierInput)
       setTimeout(() => {
-        this.phoneInput.nativeElement.focus()
+        this.identifierInput.nativeElement.focus()
       }, 200)
   }
 
@@ -263,7 +288,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   showHelperInput = true
   specificToHelper(h: HelpersBase) {
     this.showHelperInput = false
-    this.phone = h.phone.thePhone
+    this.identifier = h.phone.thePhone
     this.initHelper(h)
   }
   lastRefreshRoute = Promise.resolve()
@@ -393,8 +418,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   trackGroup(a, g: GroupsStats) {
     return g.name
   }
-  phone: string
+  identifier: string
   helper: Helpers
+  helperSuggestions: helperInList[] = []
 
   area: DataAreaSettings = new DataAreaSettings({})
   changeShowCompany() {
@@ -431,22 +457,6 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   clearList() {
     this.familyLists.clear()
   }
-  findHelper() {
-    openDialog(
-      SelectHelperComponent,
-      (s) =>
-        (s.args = {
-          onSelect: async (h) => {
-            if (h) {
-              this.clearHelperInfo(false)
-              this.initHelper(await remult.repo(Helpers).findId(h.id))
-            } else {
-              this.clearHelperInfo()
-            }
-          }
-        })
-    )
-  }
 
   constructor(
     public dialog: DialogService,
@@ -462,6 +472,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
   filterOptions: FieldRef<unknown, boolean>[] = []
   async ngOnInit() {
+    this.initHelperSuggestions()
     this.filterOptions.push(
       this.settings.$.showGroupsOnAssing,
       this.settings.$.showCityOnAssing,
@@ -497,20 +508,17 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }
 
     if (!environment.production && this.showHelperInput) {
-      this.phone = '0507330590'
-      await this.searchPhone()
+      this.identifier = ''
+      await this.searchIdentifier()
     }
     this.route.queryParamMap.subscribe(async (x) => {
       var phone = x.get('phone')
       if (phone) {
-        this.phone = phone
-        await this.searchPhone()
+        this.identifier = phone
+        await this.searchIdentifier()
         if (this.helper.isNew()) this.helper.name = x.get('name')
       }
     })
-    setTimeout(() => {
-      if (this.phoneInput) this.phoneInput.nativeElement.focus()
-    }, 200)
   }
   numOfBaskets: number = 1
   private async assignFamilyBasedOnIdFromMap(familyId: string) {

@@ -105,7 +105,7 @@ export class Phone {
           if (col.displayValue.length != 12) {
             col.validationError = getLang().invalidPhoneNumber;
           }
-    
+
         } else if (col.displayValue.startsWith('0')) {
           if (col.displayValue.length != 11) {
             col.validationError = getLang().invalidPhoneNumber;
@@ -123,4 +123,8 @@ export function isPhoneValidForIsrael(input: string) {
     let st1 = input.match(/^0(5\d|7\d|[2,3,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/)
     return st1 != null
   }
+}
+
+export function isPhoneSubstring(text: string) {
+  return !!text.match(/^\d+$/) && text.length > 1
 }

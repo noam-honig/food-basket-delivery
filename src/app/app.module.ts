@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatRadioModule } from '@angular/material/radio'
 import { MatTableModule } from '@angular/material/table'
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 import {
   DialogService,
@@ -245,7 +246,9 @@ export class MyHammerConfig extends HammerGestureConfig {
     MatButtonModule,
     MatCardModule,
     MatRadioModule,
-    MatTableModule
+    MatTableModule,
+    MatAutocomplete,
+    MatAutocompleteTrigger
   ],
   providers: [
     provideCharts(withDefaultRegisterables()),
