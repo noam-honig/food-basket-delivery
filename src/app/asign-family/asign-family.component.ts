@@ -52,7 +52,11 @@ import {
   BasketInfo,
   CityInfo
 } from './asign-family.controller'
-import { helperInList, mapHelpers, searchHelpersByIdentifier } from '../helpers/query-helpers'
+import {
+  helperInList,
+  mapHelpers,
+  searchHelpersByIdentifier
+} from '../helpers/query-helpers'
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 @Component({
@@ -67,7 +71,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     canActivate: [distCenterAdminGuard]
   }
   @ViewChild('identifierInput', { static: false }) identifierInput: ElementRef
-  @ViewChild('autocompleteTrigger', { read: MatAutocompleteTrigger }) autocompleteTrigger: MatAutocompleteTrigger
+  @ViewChild('autocompleteTrigger', { read: MatAutocompleteTrigger })
+  autocompleteTrigger: MatAutocompleteTrigger
 
   canSeeCenter() {
     return remult.isAllowed(Roles.admin)
@@ -141,7 +146,9 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     } else {
       this.identifier = isPhone ? cleanPhone : this.identifier
       this.busy.donotWait(async () => {
-        this.helperSuggestions = await searchHelpersByIdentifier(this.identifier)
+        this.helperSuggestions = await searchHelpersByIdentifier(
+          this.identifier
+        )
       })
     }
   }
@@ -218,11 +225,11 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   // Request helpers from API, and add the most recent ones on top
   initHelperSuggestions() {
     this.busy.donotWait(async () => {
-      const apiSuggestions = await searchHelpersByIdentifier('')
+      const apiSuggestions = [] // if nothing is types, the list should be empty - or only
       const recentHelperIds = Helpers.recentHelpers.map((x) => x.id)
       this.helperSuggestions = [
         ...mapHelpers(Helpers.recentHelpers, (x) => undefined),
-        ...apiSuggestions.filter(h => !recentHelperIds.includes(h.helperId))
+        ...apiSuggestions.filter((h) => !recentHelperIds.includes(h.helperId))
       ]
     })
   }
