@@ -203,7 +203,7 @@ export class PlaybackComponent implements OnInit {
     this.pie.reset()
 
     this.statuses.statuses.forEach((s) => {
-      this.pie.add(s.name + ' ' + s.value, s.value, s.color)
+      this.pie.add(s.name, s.value, s.color)
     })
     this.chart?.update()
   }
