@@ -104,3 +104,20 @@ h5 {
 ::ng-deep .mat-form-field-infix {
   width: auto !important;
 }
+
+.search-autocomplete-option {
+  position: absolute;
+  width: calc(100% - 32px);
+  top: 50%;
+  transform: translateY(-50%);
+  right: 16px;
+
+  @media only screen and (min-width: 768px) {
+    max-width: 350px;
+  }
+}
+
+.search-result-text {
+  display: flex;
+  justify-content: space-between;
+}

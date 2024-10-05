@@ -56,7 +56,10 @@
         />
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="searchIdentifier()">
           <mat-option *ngFor="let s of helperSuggestions" [value]="s.phone" >
-            {{ s.name }} {{ s.phone }} <span *ngIf="s.assignedDeliveries > 0" class="secondary-text">({{s.assignedDeliveries}} {{ settings.lang.ActiveDeliveries }})</span>
+            <div class="search-autocomplete-option">
+              <div class="search-result-text"><span>{{ s.name }}</span><span>{{ s.phone }}</span></div>
+              <span *ngIf="s.assignedDeliveries > 0" class="secondary-text">({{s.assignedDeliveries}} {{ settings.lang.ActiveDeliveries }})</span>
+            </div>
           </mat-option>
         </mat-autocomplete>
         <div matSuffix style="display: flex; margin-left: 8px;">
