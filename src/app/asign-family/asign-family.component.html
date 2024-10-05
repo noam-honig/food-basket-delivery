@@ -49,7 +49,7 @@
           matInput
           [(ngModel)]="identifier"
           (input)="searchIdentifier()"
-          type="text"
+          type="{{getKeyboardType()}}"
           #identifierInput
           [matAutocomplete]="auto"
           #autocompleteTrigger="matAutocompleteTrigger"
@@ -63,9 +63,8 @@
           </mat-option>
         </mat-autocomplete>
         <div matSuffix style="display: flex; margin-left: 8px;">
-          <mat-icon (click)="clearHelperInfo()" class="clickable-icon"
-            >clear</mat-icon
-          >
+          <mat-icon (click)="toggleKeyboardType()" class="clickable-icon">keyboard</mat-icon>
+          <mat-icon (click)="clearHelperInfo()" class="clickable-icon">clear</mat-icon>
         </div>
       </mat-form-field>
       <data-area
