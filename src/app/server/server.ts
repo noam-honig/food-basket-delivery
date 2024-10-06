@@ -426,6 +426,15 @@ s.parentNode.insertBefore(b, s);})();
     }
   }
   app.use(compression())
+
+  app.use((req, res, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "frame-src 'self' https://admin.weme.community;"
+    )
+    next()
+  })
+
   //
 
   const siteEventPublishers = new Map<
