@@ -131,6 +131,12 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
 
   toggleKeyboardType() {
     sessionStorage.setItem('keyboardType', this.getKeyboardType() === 'text' ? 'tel' : 'text')
+    setTimeout(() => {
+      if (this.identifierInput) {
+        this.identifierInput.nativeElement.blur()
+        this.identifierInput.nativeElement.focus()
+      }
+    }, 50)
   }
 
   async searchIdentifier() {
