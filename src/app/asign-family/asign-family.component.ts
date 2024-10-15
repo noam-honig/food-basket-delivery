@@ -134,7 +134,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       if (this.identifierInput) {
         this.identifierInput.nativeElement.blur()
-        this.identifierInput.nativeElement.focus()
+        this.autocompleteTrigger.closePanel()
       }
     }, 50)
   }
