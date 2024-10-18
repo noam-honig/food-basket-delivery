@@ -5,6 +5,7 @@
     "ng": "ng",
     "gc": "ng generate component --spec false",
     "ng-serve": "ng serve",
+    "ng-serve-ip": "ng serve --host 0.0.0.0",
     "build-for-type-check": "tsc",
     "node-serve": "tsx watch src/app/server/server",
     "server-test": "tsc-watch -p src/tsconfig.server-spec.json --onSuccess \"node node_modules/jasmine/bin/jasmine out-tsc/**/*.server-test.js",

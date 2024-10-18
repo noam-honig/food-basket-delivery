@@ -124,6 +124,21 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     if (this.identifier != this.familyLists.helper.phone.thePhone)
       this.identifier = this.familyLists.helper.phone.thePhone
   }
+
+  getKeyboardType() {
+    return sessionStorage.getItem('keyboardType') || 'text'
+  }
+
+  toggleKeyboardType() {
+    sessionStorage.setItem('keyboardType', this.getKeyboardType() === 'text' ? 'tel' : 'text')
+    setTimeout(() => {
+      if (this.identifierInput) {
+        this.identifierInput.nativeElement.blur()
+        this.autocompleteTrigger.closePanel()
+      }
+    }, 50)
+  }
+
   async searchIdentifier() {
     this.clearHelperInfo(false)
     const cleanPhone = Phone.fixPhoneInput(this.identifier)
