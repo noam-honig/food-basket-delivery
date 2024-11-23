@@ -9,7 +9,7 @@
     <base href="/" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0,  user-scalable=no"
     />
     <!-- for app like experiance in IOS
     <meta name="apple-mobile-web-app-capable" content="yes" />-->
@@ -27,6 +27,23 @@
       sizes="180x180"
       href="/assets/apple-touch-icon.png"
     />
+    <script>
+      const start = new Date()
+      const logEntries = []
+      function logSomething(what) {
+        logEntries.push({ what, time: new Date() - start })
+      }
+      function print() {
+        const dialog = document.getElementById('d')
+        dialog.innerHTML = `<pre dir="ltr">${logEntries
+          .map(({ what, time }) => `${what} - ${time}`)
+          .join('\n')}</pre><form method="dialog">
+    <button>Close</button>
+  </form>`
+        dialog.showModal()
+      }
+      logSomething('start')
+    </script>
     <script>
       document.lang = ''
       /*!SITE!*/
@@ -70,6 +87,8 @@
         <span>!TITLE!</span>
         <span> טוען...</span>
       </div>
+      <button onclick="print()">load info</button>
+      <dialog id="d"></dialog>
     </app-root>
   </body>
 
