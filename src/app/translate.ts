@@ -1574,6 +1574,7 @@ export class Language {
   filterPhone = 'סינון לפי טלפון'
   totalDeliveries = 'מספר משלוחים'
   availableWasThereBefore = 'משלוחים פעילים שהיה אצלהם בעבר'
+  editWhatsappMessage = 'ערוך הודעת וואטסאפ'
 }
 
 const defaultLang = new Language()

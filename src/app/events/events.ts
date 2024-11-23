@@ -835,6 +835,13 @@ export class volunteersInEvent extends IdEntity {
   a4: string
 
   static async displayVolunteer({ event, ui }: { event: Event; ui: UITools }) {
+    function createMessage(m: volunteersInEvent) {
+      return new messageMerger([
+        { token: 'שם', value: m.helperName },
+        { token: 'ארגון', value: getSettings().organisationName }
+      ])
+    }
+
     const settings = await remult.context.getSettings()
     const gridSettings = new GridSettings<volunteersInEvent>(
       remult.repo(volunteersInEvent),
@@ -1047,10 +1054,48 @@ export class volunteersInEvent extends IdEntity {
             }
           },
           {
-            name: getLang().sendWhats,
-            click: (h) => h.helperPhone.sendWhatsapp(),
+            name: getLang().editWhatsappMessage,
+            click: (h) => {
+              ui.editCustomMessageDialog({
+                message: createMessage(h),
+                templateText: localStorage.getItem('vol_message') || 'הי !שם! ',
+                title: 'מבנה הודעה למתנדב',
+                helpText:
+                  'ערכו את ההודעה כאן ולאחר שמירה תוכלו לשלוח אותה למתנדבים',
+                buttons: [
+                  {
+                    name: 'שמור',
+                    click: (x) => {
+                      localStorage.setItem('vol_message', x.templateText)
+                      x.close()
+                    }
+                  },
+                  {
+                    name: 'שלח',
+                    click: (x) => {
+                      localStorage.setItem('vol_message', x.templateText)
+                      let message: string = localStorage.getItem('vol_message')
+                      if (!message) message = 'הי !שם!\n'
+                      h.helperPhone.sendWhatsapp(
+                        createMessage(h).merge(message)
+                      )
+                    }
+                  }
+                ]
+              })
+            },
             icon: 'textsms'
           },
+          {
+            name: getLang().sendWhats,
+            click: (h) => {
+              let message: string = localStorage.getItem('vol_message')
+              if (!message) message = 'הי !שם!\n'
+              h.helperPhone.sendWhatsapp(createMessage(h).merge(message))
+            },
+            icon: 'textsms'
+          },
+
           (() => {
             let b = new SendBulkSms().sendSingleHelperButton(ui)
             return {
