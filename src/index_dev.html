@@ -33,7 +33,7 @@
       function logSomething(what) {
         logEntries.push({ what, time: new Date() - start })
       }
-      function print() {
+      function printLog() {
         const dialog = document.getElementById('d')
         dialog.innerHTML = `<pre dir="ltr">${logEntries
           .map(({ what, time }) => `${what} - ${time}`)
@@ -87,7 +87,7 @@
         <span>!TITLE!</span>
         <span> טוען...</span>
       </div>
-      <button onclick="print()">load info</button>
+      <button onclick="printLog()">load info</button>
       <dialog id="d"></dialog>
     </app-root>
   </body>
