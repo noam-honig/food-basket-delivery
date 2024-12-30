@@ -257,13 +257,13 @@ export function Entity<T>(
   key: string,
   settings: EntityOptions<T> & TranslatedCaption,
   ...options: (
-    | EntityOptions
-    | ((options: EntityOptions, remult: Remult) => void)
+    | EntityOptions<T>
+    | ((options: EntityOptions<T>, remult: Remult) => void)
   )[]
 ) {
   let opts: (
-    | EntityOptions
-    | ((options: EntityOptions, remult: Remult) => void)
+    | EntityOptions<T>
+    | ((options: EntityOptions<T>, remult: Remult) => void)
   )[] = [settings]
   if (settings.translation) {
     opts.push((o, remult) => {
@@ -271,7 +271,7 @@ export function Entity<T>(
     })
   }
   opts.push(...options)
-  return origEntity<T>(key, ...opts)
+  return origEntity<T>(key, ...(opts as any))
 }
 
 //https://gist.github.com/graydon/11198540
