@@ -10,6 +10,7 @@ import { SendSmsUtils } from '../asign-family/send-sms-action'
 
 import { getLang } from '../sites/sites'
 import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
+import { BasketType } from '../families/BasketType'
 
 export class HelpersController {
   @BackendMethod({ allowed: Roles.admin })
@@ -39,7 +40,10 @@ export class HelpersController {
     if (!h) return getLang().unfitForInvite
     if (!(h.admin || h.distCenterAdmin)) return getLang().unfitForInvite
     let url =
-      remult.context.getOrigin() + '/' + Sites.getOrganizationFromContext()+"/login"
+      remult.context.getOrigin() +
+      '/' +
+      Sites.getOrganizationFromContext() +
+      '/login'
     let s = await ApplicationSettings.getAsync()
     let hasPassword = h.password && h.password.length > 0
     let message =
@@ -108,16 +112,18 @@ export class HelpersController {
           .save()
       }
 
-      if (basketTypes) {
-        for (const basket of basketTypes) {          
-          const helperBasket = await repo(HelperBasketTypes).findFirst(
-            {
-              basketTypeId: basket.id,
-              helperId: helper.id
-            },
-            { createIfNotFound: true }
-          )
-          if (helperBasket.isNew()) await helperBasket.save()
+      if (basketTypes.length) {
+        for (const basket of basketTypes) {
+          const basketType = await repo(BasketType).findId(basket.id)
+
+          if (basketType) {
+            try {
+              await repo(HelperBasketTypes).insert({
+                helperId: helper.id,
+                basketType: basketType
+              })
+            } catch (err) {}
+          }
         }
       }
       return true

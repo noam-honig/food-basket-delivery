@@ -12,15 +12,16 @@
       [settings]="helperDataArea"
       *ngIf="helperDataArea"
     ></data-area>
-
-    <span class="header-basketTypes">סוגי סלים לחלוקה:</span>
-    <div class="basketTypes">
-      <mat-checkbox
-        *ngFor="let basket of basketTypes"
-        [(ngModel)]="basket.selected"
-        >{{ basket.name }}</mat-checkbox
-      >
-    </div>
+    <ng-container *ngIf="basketTypes.length">
+      <span class="header-basketTypes">סוגי סלים לחלוקה:</span>
+      <div class="basketTypes">
+        <mat-checkbox
+          *ngFor="let basket of basketTypes"
+          [(ngModel)]="basket.selected"
+          >{{ basket.name }}</mat-checkbox
+        >
+      </div></ng-container
+    >
   </div>
   <div class="save">
     <span class="error" *ngIf="error">{{ error }}</span>

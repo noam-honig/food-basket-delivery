@@ -1,14 +1,24 @@
-import { Allow, Entity, Fields, IdEntity } from 'remult'
+import { Allow, Entity, Field, Fields, IdEntity, repo } from 'remult'
+import { BasketType } from '../families/BasketType'
 
-@Entity<HelperBasketTypes>('HelpersBase', {
+@Entity<HelperBasketTypes>('HelperBasketTypes', {
   dbName: 'HelperBasketTypes',
-  allowApiCrud: false,
-  allowApiRead: Allow.authenticated
+  allowApiCrud: Allow.authenticated,
+  saving: async (row) => {
+    if (row.isNew() || row.$.basketType.valueChanged()) {
+      const helperBasketType = await repo(HelperBasketTypes).findFirst({
+        helperId: row.helperId,
+        basketType: row.basketType
+      })
+
+      if (helperBasketType) throw 'כבר קיים סל זה עבור המתנדב'
+    }
+  }
 })
 export class HelperBasketTypes extends IdEntity {
   @Fields.string<HelperBasketTypes>({})
   helperId: string
 
-  @Fields.string<HelperBasketTypes>({})
-  basketTypeId: string
+  @Field(() => BasketType, { caption: 'סוג סל' })
+  basketType: BasketType
 }

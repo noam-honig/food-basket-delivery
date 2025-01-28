@@ -44,7 +44,6 @@ export class HelperRegisterComponent implements OnInit {
     selected: boolean
   }[] = []
   ngOnInit() {
-    this.complete = true
     this.loadBasketTypes()
     this.load()
   }
@@ -96,7 +95,10 @@ export class HelperRegisterComponent implements OnInit {
       this.error = 'יש לאשר את הצהרת ההתנדבות'
       return
     }
-    if (!this.basketTypes.filter((basketType) => !!basketType.selected).length)
+    if (
+      !this.basketTypes.filter((basketType) => !!basketType.selected).length &&
+      this.basketTypes.length
+    )
       this.error = 'יש לבחור לכל הפחות סוג סל אחד לחלוקה'
   }
 
@@ -107,6 +109,7 @@ export class HelperRegisterComponent implements OnInit {
       this.helper,
       this.basketTypes.filter((basketType) => !!basketType.selected)
     )
+    if (!this.complete) this.error = 'תהליך הרשמה נכשל!'
   }
 
   get logo() {
