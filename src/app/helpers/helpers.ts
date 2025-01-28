@@ -515,6 +515,9 @@ export class Helpers extends HelpersBase {
                 orderBy: {
                   basketType: 'desc'
                 },
+                newRow: (row) => {
+                  row.helperId = this.id
+                },
                 columnSettings: (e) => [e.basketType],
                 where: {
                   helperId: this.id
