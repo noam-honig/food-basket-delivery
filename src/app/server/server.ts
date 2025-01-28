@@ -136,6 +136,7 @@ import { FamilyConfirmDetailsController } from '../family-confirm-details/family
 import { randomUUID } from 'crypto'
 import { IntakeFormController } from '../intake-form/intake-form.controllet'
 import { testMonday, updateReceivedFromMonday } from './monday'
+import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -158,6 +159,7 @@ const entities = [
   CitiesStatsPerDistCenter,
   HelpersBase,
   Helpers,
+  HelperBasketTypes,
   InRouteHelpers,
   ApplicationImages,
   ApplicationSettings,

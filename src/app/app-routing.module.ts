@@ -40,7 +40,8 @@ import {
   SignedInAndNotOverviewGuard,
   EventListGuard,
   FamilyAdminGuard,
-  CallModuleGuard
+  CallModuleGuard,
+  SderotGuard
 } from './auth/guards'
 import { Roles } from './auth/roles'
 import { AuthenticatedGuard } from '../app/common-ui-elements'
@@ -71,6 +72,7 @@ import { ManageCallersComponent } from './manage-callers/manage-callers.componen
 import { SpecificEventComponent } from './specific-event/specific-event.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { IntakeFormComponent } from './intake-form/intake-form.component'
+import { HelperRegisterComponent } from './helper-register/helper-register.component'
 
 @Injectable()
 export class IntakeFormGuard implements CanActivate {
@@ -114,6 +116,7 @@ export const routes: Routes = [
   FamilyDeliveriesComponent.route,
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
+  HelperRegisterComponent.route,
 
   NewsComponent.needsWorkRoute,
   {
@@ -250,6 +253,7 @@ export const routes: Routes = [
     MltAdminGuard,
     SignedInAndNotOverviewGuard,
     EventListGuard,
+    SderotGuard,
     CallModuleGuard
   ]
 })

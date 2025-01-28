@@ -10,6 +10,7 @@ import {
 import { Observable } from 'rxjs'
 import { Roles } from './roles'
 import { getSettings } from '../manage/ApplicationSettings'
+import { isSderot } from '../sites/sites'
 
 @Injectable()
 export class AdminGuard extends AuthenticatedGuard {
@@ -89,5 +90,19 @@ export class EventListGuard implements CanActivate {
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree> {
     return !remult.authenticated() || !remult.isAllowed(Roles.distCenterAdmin)
+  }
+}
+
+@Injectable()
+export class SderotGuard implements CanActivate {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | boolean
+    | UrlTree
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree> {
+    return !remult.authenticated() && isSderot()
   }
 }

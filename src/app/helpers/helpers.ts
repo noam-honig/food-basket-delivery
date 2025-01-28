@@ -34,7 +34,7 @@ import { isPhoneValidForIsrael, Phone } from '../model-shared/phone'
 
 import { Roles } from '../auth/roles'
 
-import { getLang } from '../sites/sites'
+import { getLang, isSderot } from '../sites/sites'
 import { AddressHelper, Location } from '../shared/googleApiHelpers'
 import { routeStats } from '../asign-family/route-strategy'
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
@@ -48,6 +48,7 @@ import { EntityFilter } from 'remult'
 import { UITools } from './init-context'
 import { recordChanges } from '../change-log/change-log'
 import { GroupsValue } from '../manage/groups'
+import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
 
 export function CompanyColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, string>
@@ -503,6 +504,29 @@ export class Helpers extends HelpersBase {
           click: () => {
             ui.editBlockedFamilies(this)
           }
+        },
+        {
+          name: remult.context.lang.basketTypes,
+          click: () => {
+            ui.gridDialog({
+              settings: new GridSettings(repo(HelperBasketTypes), {
+                knowTotalRows: true,
+                allowCrud: true,
+                orderBy: {
+                  basketType: 'desc'
+                },
+                newRow: (row) => {
+                  row.helperId = this.id
+                },
+                columnSettings: (e) => [e.basketType],
+                where: {
+                  helperId: this.id
+                }
+              }),
+              title: remult.context.lang.basketTypes + ' - ' + this.name
+            })
+          },
+          visible: () => !!isSderot() && !!this.id
         }
       ]
     })

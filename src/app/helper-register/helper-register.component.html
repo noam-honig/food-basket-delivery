@@ -1,0 +1,42 @@
+<mat-card *ngIf="!complete">
+  <div class="header">
+    <div>
+      <img width="25%" src="{{ logo }}" />
+    </div>
+    <div>טופס הרשמה למתנדב</div>
+  </div>
+
+  <div class="data">
+    <data-area
+      style="width: 80%"
+      [settings]="helperDataArea"
+      *ngIf="helperDataArea"
+    ></data-area>
+    <ng-container *ngIf="basketTypes.length">
+      <span class="header-basketTypes">סוגי סלים לחלוקה:</span>
+      <div class="basketTypes">
+        <mat-checkbox
+          *ngFor="let basket of basketTypes"
+          [(ngModel)]="basket.selected"
+          >{{ basket.name }}</mat-checkbox
+        >
+      </div></ng-container
+    >
+  </div>
+  <div class="save">
+    <span class="error" *ngIf="error">{{ error }}</span>
+    <button class="button-save" mat-raised-button (click)="save()">
+      שלח/י
+    </button>
+  </div>
+</mat-card>
+
+<mat-card *ngIf="complete">
+  <div class="header">
+    <div>
+      <img width="25%" src="{{ logo }}" />
+    </div>
+    <div>נרשמת בהצלחה!</div>
+    <a [href]="link">להתחברות למערכת</a>
+  </div>
+</mat-card>

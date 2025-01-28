@@ -10,12 +10,15 @@ import {
   DataAreaSettings
 } from '../../common-ui-elements/interfaces'
 import { Route } from '@angular/router'
-import { remult } from 'remult'
+import { remult, repo } from 'remult'
 import { ApplicationSettings } from '../../manage/ApplicationSettings'
 import {
   AuthenticatedGuard,
   RouteHelperService
 } from '../../common-ui-elements'
+import { HelperBasketTypes } from '../../helper-register/HelperBasketTypes'
+import { isSderot } from '../../sites/sites'
+import { BasketType } from '../../families/BasketType'
 
 @Component({
   selector: 'app-update-info',
@@ -46,6 +49,9 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
 
   area: DataAreaSettings
 
+  basketTypes: any[] = []
+  originalBasketTypes: any[] = []
+  helperBasketTypes: HelperBasketTypes[] = []
   ngAfterViewInit(): void {}
 
   async ngOnInit() {
@@ -69,6 +75,7 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
         //h.address
       ]
     })
+    if (isSderot()) await this.loadBasketTypes()
   }
   async register() {
     try {
@@ -76,6 +83,9 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
         this.dialog.Error(this.settings.lang.passwordDoesntMatchConfirmPassword)
       } else {
         await this.h.save()
+        if (isSderot()) {
+          await this.saveBasketTypes()
+        }
         this.dialog.Info(this.settings.lang.updateSaved)
         this.confirmPassword.value = this.h.password
           ? Helpers.emptyPassword
@@ -86,6 +96,57 @@ export class UpdateInfoComponent implements OnInit, AfterViewInit {
         )
       }
     } catch (err) {}
+  }
+
+  async loadBasketTypes() {
+    this.basketTypes = (await repo(BasketType).find()).map((basketType) => ({
+      ...basketType,
+      selected: false
+    }))
+
+    this.helperBasketTypes = await repo(HelperBasketTypes).find({
+      where: {
+        helperId: this.h.id
+      }
+    })
+    
+    this.basketTypes.forEach(
+      (basket) =>
+        (basket.selected = !!this.helperBasketTypes.find(
+          (helperBasket) => helperBasket.basketType.id == basket.id
+        ))
+    )
+
+    this.originalBasketTypes = this.basketTypes.map((basket) => ({ ...basket }))
+  }
+
+  async saveBasketTypes() {
+    const changeBasketTypes = this.basketTypes.filter(
+      (basket) =>
+        basket.selected !=
+        this.originalBasketTypes.find(
+          (originalBasket) => originalBasket.id == basket.id
+        )?.selected
+    )
+
+    const newbasketTypes = changeBasketTypes
+      .filter((basket) => basket.selected)
+      .map((basket) => ({ basketType: basket.id, helperId: this.h.id }))
+    const deleteBasketTypes = changeBasketTypes
+      .filter((basket) => !basket.selected)
+      .map((basket) => basket.id)
+
+    if (newbasketTypes.length)
+      await repo(HelperBasketTypes).insert(newbasketTypes)
+
+    if (deleteBasketTypes.length)
+      await repo(HelperBasketTypes).deleteMany({
+        where: { helperId: this.h.id, basketType: deleteBasketTypes }
+      })
+  }
+
+  isSderot() {
+    return isSderot()
   }
 
   signout() {
