@@ -1,6 +1,6 @@
 import { Helpers } from './helpers'
 
-import { BackendMethod, remult } from 'remult'
+import { BackendMethod, remult, repo } from 'remult'
 
 import { Roles } from '../auth/roles'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
@@ -9,6 +9,7 @@ import { Sites } from '../sites/sites'
 import { SendSmsUtils } from '../asign-family/send-sms-action'
 
 import { getLang } from '../sites/sites'
+import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
 
 export class HelpersController {
   @BackendMethod({ allowed: Roles.admin })
@@ -76,6 +77,54 @@ export class HelpersController {
       h.needEscort = false
       h.theHelperIAmEscorting = null
       await h.save()
+    }
+  }
+
+  @BackendMethod({ allowed: true })
+  static async saveHelper(
+    helperData: any,
+    basketTypes?: {
+      id: string
+      name: string
+      intakeCommentInstructions: string
+    }[]
+  ) {
+    try {
+      const helper = await remult.repo(Helpers).findFirst(
+        { phone: helperData.phone },
+        {
+          createIfNotFound: true
+        }
+      )
+
+      if (helper.isNew()) {
+        await helper
+          .assign({
+            name: helperData.name,
+            phone: helperData.phone,
+            email: helperData.email,
+            socialSecurityNumber: helperData.socialSecurityNumber
+          })
+          .save()
+      }
+
+      if (basketTypes) {
+        for (const basket of basketTypes) {          
+          const helperBasket = await repo(HelperBasketTypes).findFirst(
+            {
+              basketTypeId: basket.id,
+              helperId: helper.id
+            },
+            { createIfNotFound: true }
+          )
+          if (helperBasket.isNew()) await helperBasket.save()
+        }
+      }
+      return true
+    } catch (err) {
+      console.log(err)
+
+      return false
     }
   }
 }

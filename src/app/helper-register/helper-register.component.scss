@@ -1,0 +1,71 @@
+:host {
+  background-color: #f1f1f1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+mat-card {
+  width: 50%;
+  height: auto;
+  overflow: auto;
+  margin: 20px;
+}
+
+.header {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  margin: 30px;
+  margin-top: 5px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.data {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+}
+
+.header-basketTypes {
+  margin: 10px;
+  width: 80%;
+}
+
+.basketTypes {
+  display: flex;
+  flex-direction: column;
+  flex-direction: column;
+  width: 80%;
+  flex-wrap: wrap;
+  height: 120px;
+}
+
+.error {
+  font-size: 15px;
+  color: red;
+}
+
+.save {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 10px;
+  color: white;
+}
+
+.button-save {
+  margin: 25px;
+  background-color: var(
+    --mdc-protected-button-label-text-color,
+    var(--mat-app-primary)
+  ) !important;
+  color: #f1f1f1 !important;
+}
