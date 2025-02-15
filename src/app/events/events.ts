@@ -834,6 +834,14 @@ export class volunteersInEvent extends IdEntity {
   @CustomColumn(() => registerQuestionForVolunteers[4])
   a4: string
 
+  @Fields.string<volunteersInEvent>({
+    translation: (l) => l.internalComment,
+    allowNull: true,
+    allowApiUpdate: true,
+    inputType: 'textarea'
+  })
+  noteAboutVolunteer: string
+
   static async displayVolunteer({ event, ui }: { event: Event; ui: UITools }) {
     function createMessage(m: volunteersInEvent) {
       return new messageMerger([
@@ -893,7 +901,8 @@ export class volunteersInEvent extends IdEntity {
           ev.preferredFinishAddress,
           ev.preferredDistributionAreaAddressCity,
           ev.preferredFinishAddressCity,
-          ev.helperSocialSecurityNumber
+          ev.helperSocialSecurityNumber,
+          { field: ev.noteAboutVolunteer, width: '200', inputType: 'textarea' }
         ],
         rowCssClass: (v) => {
           if (v.canceled) return 'forzen'
