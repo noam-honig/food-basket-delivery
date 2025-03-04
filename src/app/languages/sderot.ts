@@ -1,504 +1,5 @@
-import {
-  Entity as origEntity,
-  FieldOptions,
-  Field as origField,
-  FieldType as origFieldType,
-  ValueListFieldType as origValueListFieldType,
-  ValueListItem,
-  EntityOptions,
-  CaptionTransformer,
-  Remult,
-  Fields as OrigFields,
-  Repository,
-  getValueList,
-  type StringFieldOptions
-} from 'remult'
-import { en } from './languages/en'
-import { getLang, Sites } from './sites/sites'
-import { donor } from './languages/donor'
-import { soldier } from './languages/soldier'
-import { ClassType } from 'remult/classType'
-import { sderot } from './languages/sderot'
-
-export class myBounds {
-  constructor(
-    public west: number,
-    public south: number,
-    public east: number,
-    public north: number
-  ) {}
-}
-export interface TranslatedCaption {
-  translation?: (l: Language) => string
-}
-const reported = new Set<string>([
-  'id',
-  'organisationName',
-  'addressApiResult',
-  'phoneStrategy',
-  'commonQuestions',
-  'dataStructureVersion',
-  'forWho',
-  '_old_for_soliders',
-  'removedFromListStrategy',
-  'usePhoneProxy',
-  'routeStrategy',
-  'currentUserIsValidForAppLoadTest',
-  'createBasketsForAllFamiliesInCreateEvent',
-  'includeGroupsInCreateEvent',
-  'excludeGroupsInCreateEvent',
-  'ApplicationSettings',
-  'ApplicationImages',
-  'totalKm',
-  'totalTime',
-  'shortUrlKey',
-  'archive',
-  'isFrozen',
-  'allowedIds',
-  'lastSignInDate',
-  'realStoredPassword',
-  'addressApiResult2',
-  'passwordChangeDate',
-  'EULASignDate',
-  'referredBy',
-  'Helpers',
-  'Sites',
-  'userId',
-  'url',
-  'submitTime',
-  'doneTime',
-  'result',
-  'progress',
-  'jobsInQueue',
-  'googleApiResult',
-  'GeocodeCache',
-  'BasketType',
-  'DistributionCenters',
-  'HelpersBase',
-  'FamilySources',
-  'nextBirthday',
-  'custom1',
-  'custom2',
-  'custom3',
-  'custom4',
-  'addressLongitude',
-  'addressLatitude',
-  'drivingLongitude',
-  'drivingLatitude',
-  'autoCompleteResult',
-  'courierCommentsDate',
-  'routeOrder',
-  'courierBeenHereBefore',
-  'visibleToCourier',
-  'a1',
-  'a2',
-  'a3',
-  'a4',
-  'groups',
-  'name',
-  'familiesCount',
-  'GroupsStatsPerDistributionCenter',
-  'GroupsStatsForAllDeliveryCenters',
-  'helpersAndStats',
-  'citiesStatsPerDistCenter',
-  'wasClicked',
-  'HelperGifts',
-  'events',
-  'eventId',
-  'lastSmsTime',
-  'lastAssignTime',
-  'volunteersInEvent',
-  'in-route-helpers',
-  'HelperCommunicationHistory',
-  'RegisterURL',
-  'citiesStats',
-  'courier',
-  'helperHistoryInfo'
-])
-CaptionTransformer.transformCaption = (remult, key, caption) => {
-  if (caption) return caption
-  let r = getLang()[key]
-  if (!r) {
-    if (!reported.has(key)) {
-      reported.add(key)
-      //console.log('"' + key + "\",");
-    }
-  }
-  return r
-}
-function adjustSettings<entityType, valueType>(
-  settings: FieldOptions<entityType, valueType> & TranslatedCaption,
-  options?: (
-    | FieldOptions<entityType, valueType>
-    | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void)
-  )[]
-) {
-  let opts: (
-    | FieldOptions<entityType, valueType>
-    | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void)
-  )[] = [settings]
-  if (settings && settings.translation) {
-    opts.push((o, remult) => {
-      o.caption = settings.translation(getLang())
-    })
-  }
-  if (options) opts.push(...options)
-  return opts
-}
-export function Field<entityType = unknown, valueType = unknown>(
-  valueType:
-    | (() => valueType extends number
-        ? Number
-        : valueType extends string
-        ? String
-        : valueType extends boolean
-        ? Boolean
-        : ClassType<valueType>)
-    | undefined,
-  settings?: FieldOptions<entityType, valueType> & TranslatedCaption,
-  ...options: (
-    | FieldOptions<entityType, valueType>
-    | ((options: FieldOptions<entityType, valueType>, remult: Remult) => void)
-  )[]
-) {
-  return origField<entityType, valueType>(
-    valueType,
-    ...adjustSettings(settings, options)
-  )
-}
-
-export class Fields {
-  static string<entityType = unknown, valueType = string>(
-    settings?: FieldOptions<entityType, valueType> & TranslatedCaption,
-    ...options: (
-      | (StringFieldOptions<entityType, valueType> & TranslatedCaption)
-      | ((
-          options: StringFieldOptions<entityType, valueType>,
-          remult: Remult
-        ) => void)
-    )[]
-  ) {
-    return OrigFields.string(...adjustSettings(settings, options))
-  }
-  static object = OrigFields.object
-  static boolean<entityType = unknown>(
-    options?: FieldOptions<entityType, boolean> & TranslatedCaption
-  ) {
-    return OrigFields.boolean(...adjustSettings(options))
-  }
-  static integer<entityType = unknown>(
-    settings?: FieldOptions<entityType, number> & TranslatedCaption,
-    ...options: (
-      | FieldOptions<entityType, number>
-      | ((options: FieldOptions<entityType, number>, remult: Remult) => void)
-    )[]
-  ) {
-    return OrigFields.integer<entityType>(...adjustSettings(settings, options))
-  }
-  static number<entityType = unknown>(
-    settings?: FieldOptions<entityType, number> & TranslatedCaption,
-    ...options: (
-      | FieldOptions<entityType, number>
-      | ((options: FieldOptions<entityType, number>, remult: Remult) => void)
-    )[]
-  ) {
-    return OrigFields.number<entityType>(...adjustSettings(settings, options))
-  }
-  static quantity<entityType>(
-    settings?: FieldOptions<entityType, number> & TranslatedCaption,
-    ...options: (
-      | FieldOptions<entityType, number>
-      | ((options: FieldOptions<entityType, number>, remult: Remult) => void)
-    )[]
-  ) {
-    return Fields.integer<entityType>(
-      { translation: (l) => l.quantity, ...settings },
-      ...options
-    )
-  }
-  static dateOnly<entityType = unknown>(
-    settings?: FieldOptions<entityType, Date> & TranslatedCaption,
-    ...options: (
-      | FieldOptions<entityType, Date>
-      | ((options: FieldOptions<entityType, Date>, remult: Remult) => void)
-    )[]
-  ) {
-    return OrigFields.dateOnly<entityType>(...adjustSettings(settings, options))
-  }
-  static date<entityType = unknown>(
-    settings?: FieldOptions<entityType, Date> & TranslatedCaption,
-    ...options: (
-      | FieldOptions<entityType, Date>
-      | ((options: FieldOptions<entityType, Date>, remult: Remult) => void)
-    )[]
-  ) {
-    return OrigFields.date<entityType>(...adjustSettings(settings, options))
-  }
-}
-
-export function FieldType<valueType = unknown>(
-  settings?: FieldOptions<any, valueType> & TranslatedCaption,
-  ...options: (
-    | FieldOptions<any, valueType>
-    | ((options: FieldOptions<any, valueType>, remult: Remult) => void)
-  )[]
-) {
-  return origFieldType<valueType>(...adjustSettings(settings, options))
-}
-export function ValueListFieldType<valueType extends ValueListItem = unknown>(
-  settings?: FieldOptions<unknown, valueType> & TranslatedCaption,
-  ...options: (
-    | FieldOptions<unknown, valueType>
-    | ((options: FieldOptions<unknown, valueType>, remult: Remult) => void)
-  )[]
-) {
-  return origValueListFieldType<valueType>(...adjustSettings(settings, options))
-}
-export function Entity<T>(
-  key: string,
-  settings: EntityOptions<T> & TranslatedCaption,
-  ...options: (
-    | EntityOptions<T>
-    | ((options: EntityOptions<T>, remult: Remult) => void)
-  )[]
-) {
-  let opts: (
-    | EntityOptions<T>
-    | ((options: EntityOptions<T>, remult: Remult) => void)
-  )[] = [settings]
-  if (settings.translation) {
-    opts.push((o, remult) => {
-      o.caption = settings.translation(getLang())
-    })
-  }
-  opts.push(...options)
-  return origEntity<T>(key, ...(opts as any))
-}
-
-//https://gist.github.com/graydon/11198540
-const israel = new myBounds(
-  34.2654333839,
-  29.5013261988,
-  35.8363969256,
-  33.2774264593
-)
-@ValueListFieldType()
-export class TranslationOptions {
-  static Families: TranslationOptions = new TranslationOptions(0, 'משפחות', {
-    googleMapCountry: 'IL',
-    bounds: israel
-  })
-  static us: TranslationOptions = new TranslationOptions(6, 'United States', {
-    googleMapCountry: 'US',
-    bounds: new myBounds(-171.791110603, 18.91619, -66.96466, 71.3577635769),
-    leftToRight: true,
-    languageCode: 'en',
-    languageFile: 'en',
-    internationalPrefixForSmsAndAws: '+1',
-    suppressPhoneZeroAddition: true
-  })
-  static australia: TranslationOptions = new TranslationOptions(
-    7,
-    'Australia',
-    {
-      googleMapCountry: 'AU',
-      bounds: new myBounds(
-        113.338953078,
-        -43.6345972634,
-        153.569469029,
-        -10.6681857235
-      ),
-      leftToRight: true,
-      languageCode: 'en',
-      languageFile: 'en',
-      internationalPrefixForSmsAndAws: '+61',
-      formatPhone: (x) => {
-        x =
-          x.substring(0, x.length - 3) +
-          '-' +
-          x.substring(x.length - 3, x.length)
-        x =
-          x.substring(0, x.length - 7) +
-          '-' +
-          x.substring(x.length - 7, x.length)
-        return x
-      }
-    }
-  )
-  static bulgaria: TranslationOptions = new TranslationOptions(
-    359,
-    'Bulgaria',
-    {
-      googleMapCountry: 'BG',
-      preferWaze: true,
-      bounds: new myBounds(
-        22.3805257504,
-        41.2344859889,
-        28.5580814959,
-        44.2349230007
-      ),
-      leftToRight: true,
-      languageCode: 'en',
-      languageFile: 'en',
-      internationalPrefixForSmsAndAws: '+359',
-      formatPhone: (x) => {
-        x =
-          x.substring(0, x.length - 3) +
-          '-' +
-          x.substring(x.length - 3, x.length)
-        x =
-          x.substring(0, x.length - 7) +
-          '-' +
-          x.substring(x.length - 7, x.length)
-        return x
-      }
-    }
-  )
-  static uk: TranslationOptions = new TranslationOptions(44, 'United Kingdom', {
-    googleMapCountry: 'GB',
-    bounds: new myBounds(
-      -7.57216793459,
-      49.959999905,
-      1.68153079591,
-      58.6350001085
-    ),
-    leftToRight: true,
-    languageCode: 'en',
-    languageFile: 'en',
-    internationalPrefixForSmsAndAws: '+44'
-  })
-  static donors: TranslationOptions = new TranslationOptions(1, 'מתחשבים', {
-    googleMapCountry: 'IL',
-    bounds: israel,
-    languageFile: 'donor',
-    translateFunction: (s) =>
-      s
-        .replace(/משפחה אחת/g, 'תורם אחד')
-        .replace(/משפחות חוזרות/g, 'תורמים חוזרים')
-        .replace(/משפחות מיוחדות/g, 'תורמים מיוחדים')
-        .replace(/מש' הכי קרובה/g, 'תורם הכי קרוב')
-        .replace(/משפחה כלשהי/g, 'תורם כלשהו')
-        .replace(/משפחות/g, 'תורמים')
-        .replace(/משפחה/g, 'תורם')
-        .replace(/חדשה/g, 'חדש')
-        .replace(/כפולות/g, 'כפולים')
-  })
-  static soldiers: TranslationOptions = new TranslationOptions(2, 'חיילים', {
-    googleMapCountry: 'IL',
-    bounds: israel,
-    languageFile: 'soldier',
-    translateFunction: (s) =>
-      s
-        .replace(/משפחה אחת/g, 'חייל אחד')
-        .replace(/משפחות חוזרות/g, 'חיילים חוזרים')
-        .replace(/משפחות מיוחדות/g, 'חיילים מיוחדים')
-        .replace(/מש' הכי קרובה/g, 'חייל הכי קרוב')
-        .replace(/משפחה כלשהי/g, 'חייל כלשהו')
-        .replace(/משפחות/g, 'חיילים')
-        .replace(/משפחה/g, 'חייל')
-        .replace(/חדשה/g, 'חדש')
-        .replace(/כפולות/g, 'כפולים')
-  })
-  static southAfrica: TranslationOptions = new TranslationOptions(
-    3,
-    'South Africa',
-    {
-      googleMapCountry: 'ZA',
-      bounds: new myBounds(
-        16.3449768409,
-        -34.8191663551,
-        32.830120477,
-        -22.0913127581
-      ),
-      leftToRight: true,
-      languageCode: 'en',
-      languageFile: 'en',
-      internationalPrefixForSmsAndAws: '+27'
-    }
-  )
-
-  static italy: TranslationOptions = new TranslationOptions(4, 'Italy', {
-    bounds: new myBounds(
-      6.7499552751,
-      36.619987291,
-      18.4802470232,
-      47.1153931748
-    ),
-    googleMapCountry: 'IT',
-    leftToRight: true,
-    languageCode: 'en',
-    languageFile: 'en',
-    internationalPrefixForSmsAndAws: '+39',
-    basedOnLang: 'en'
-  })
-  static chile: TranslationOptions = new TranslationOptions(5, 'Chile', {
-    bounds: new myBounds(-75.6443953112, -55.61183, -66.95992, -17.5800118954),
-    googleMapCountry: 'CL',
-    leftToRight: true,
-    languageFile: 'en',
-    languageCode: 'en',
-    basedOnLang: 'en'
-  })
-
-  static sderot: TranslationOptions = new TranslationOptions(8, 'שדרות', {
-    googleMapCountry: 'IL',
-    bounds: new myBounds(31.5265, 34.594, 31.5265, 34.594),
-    languageFile: 'sderot',
-    translateFunction: (s) =>
-      s
-        .replace(/משפחה אחת/g, 'משימה אחד')
-        .replace(/משפחות חוזרות/g, 'משימות חוזרות')
-        .replace(/משפחות מיוחדות/g, 'משימות מיוחדות')
-        .replace(/מש' הכי קרובה/g, 'משימה הכי קרובה')
-        .replace(/משפחה כלשהי/g, 'משימה כלשהו')
-        .replace(/משפחות/g, 'משימות')
-        .replace(/משפחה/g, 'משימה')
-  })
-  TranslateOption() {}
-
-  constructor(
-    public id: number,
-    public caption: string,
-    public args: {
-      leftToRight?: boolean
-      languageCode?: string
-      languageFile?: string
-      googleMapCountry: string
-      bounds: myBounds
-
-      basedOnLang?: string
-      translateFunction?: (s: string) => string
-      internationalPrefixForSmsAndAws?: string
-      suppressPhoneZeroAddition?: boolean
-      preferWaze?: boolean
-      formatPhone?: (s: string) => string
-    }
-  ) {
-    if (args.preferWaze === undefined) {
-      args.preferWaze == (args.languageCode == 'iw')
-    }
-  }
-  formatPhone(s: string) {
-    if (!s) return s
-    let x = s.replace(/\D/g, '')
-    if (x.length < 9 || x.length > 10) return s
-    if (x.length < 10 && !x.startsWith('0')) x = '0' + x
-    if (!this.args.formatPhone) {
-      x =
-        x.substring(0, x.length - 4) + '-' + x.substring(x.length - 4, x.length)
-      x =
-        x.substring(0, x.length - 8) + '-' + x.substring(x.length - 8, x.length)
-      return x
-    } else return this.args.formatPhone(x)
-  }
-}
-
-export const translationConfig = {
-  activateTranslation: false,
-  forWho: () => TranslationOptions.Families
-}
-
-export class Language {
+import { Language } from '../translate'
+export class sderot {
   newVersionPressOkToReload: 'גרסא חדשה, לחצו אשר לעדכון'
   assignDeliveryMenu = 'שיוך משלוחים למתנדב'
   defaultOrgName = 'שם הארגון שלי'
@@ -530,8 +31,8 @@ export class Language {
   ImportHelpersFromExcelComponent = 'קליטת מתנדבים מאקסל'
   DuplicateFamiliesComponent = 'חיפוש משפחות כפולות'
   ManageComponent = 'הגדרות מערכת'
-  MyFamiliesComponent = 'משלוחים שלי'
-  OpenDeliveriesComponent = 'משלוחים פתוחים'
+  MyFamiliesComponent = 'לוח פניות שלי'
+  OpenDeliveriesComponent = "לוח פניות פתוחות"
   UpdateInfoComponent = 'הגדרות אישיות'
   LoginComponent = 'כניסה'
   RegisterComponent = 'הרשמה'
@@ -546,7 +47,7 @@ export class Language {
   minutes = 'דקות'
   km = 'ק"מ'
   leftDeliveryNextToHouse = 'השארתי ליד הבית'
-  failedDeliveries = 'משלוחים שנתקלתי בבעיה'
+  failedDeliveries = 'משימות שנתקלתי בבעיה'
   ranIntoAProblem = 'נתקלתי בבעיה'
   showAllDeliveries = 'הצג את כל המשלוחים לחלוקה'
   sendSmsWithLink = 'שלח הודעת SMS עם קישור'
@@ -572,7 +73,7 @@ export class Language {
   entrance = 'כניסה'
   updateComment = 'עדכן הערה'
   clickedByMistake = 'נלחץ בטעות - החזר למשלוחים לחלוקה'
-  deliveriesDoneInTheLastTwoDays = 'משלוחים שחולקו'
+  deliveriesDoneInTheLastTwoDays = 'משימות שחולקו'
   showAllCompletedDeliveries = 'הצג את כל המשלוחים שחולקו'
   showRouteOnGoogleMaps = 'הצג מסלול ב Google Maps'
   assignCloseDeliveries = 'מצאו לי עוד תורמים בסביבתי'
@@ -585,8 +86,8 @@ export class Language {
   inacurateAddress = 'שימו לב, כתובת לא מדוייקת!'
   copyAddress = 'העתק כתובת'
   SelfPickupComponent = 'באים לקחת'
-  oneDeliveryToDistribute = 'משלוח אחד לחלוקה'
-  deliveriesToDistribute = 'משלוחים לחלוקה'
+  oneDeliveryToDistribute = 'משימה אחת לביצוע'
+  deliveriesToDistribute = 'משימות לביצוע'
   volunteerInfo = 'פרטי מתנדב'
   assignRequiresADistributionList =
     'לא ניתן לשייך מתנדבים מכיוון שלא נבחרה רשימת חלוקה. אנא בחרו רשימת חלוקה (למעלה מצד שמאל איפה שכתוב "כל הרשימות")'
@@ -607,7 +108,7 @@ export class Language {
   allCities = 'כל הערים'
   region = 'אזור'
   allRegions = 'כל האזורים'
-  basketType = 'סוג סל'
+  basketType = "אפשרות התנדבות"
   numOfFamilies = 'מספר משפחות'
   prioritizeRepeatFamilies = 'עדיפות למשפחות שהמתנדב היה אצלהן'
   inProgress = 'עובד על זה...'
@@ -623,7 +124,7 @@ export class Language {
   replanRoute = 'חשב מסלול מחדש'
   isDefinedAsEscortOf = 'מוגדר כמלווה של'
   displayFamiliesOf = 'האם להציג את המשפחות של'
-  allBaskets = 'כל הסלים'
+  allBaskets = 'כל dddddddd'
   transfer = 'להעביר'
   deliveriesFrom = 'משלוחים מ'
   toVolunteer = 'למתנדב'
@@ -814,9 +315,9 @@ export class Language {
   requireFollowUpUpdateUser = 'צריך טיפול - מי עדכן'
   requireFollowUpUpdateDate = 'צריך טיפול - מתי עודכן'
   deliveryDetailsFor = 'פרטי משלוח עבור'
-  remainingByBaskets = 'טרם שוייכו לפי סלים'
-  byBaskets = 'לפי סלים'
-  deliveredByBaskets = 'נמסרו לפי סלים'
+  remainingByBaskets = 'טרם שוייכו לפי אפשרויות התנדבות'
+  byBaskets = 'לפי אפשרויות התנדבות'
+  deliveredByBaskets = 'נמסרו לפי אפשרויות התנדבות'
   remainingByCities = 'טרם שוייכו לפי ערים'
   remainingByGroups = 'טרם שוייכו לפי קבוצות'
   deliveries = 'משלוחים'
@@ -926,7 +427,7 @@ export class Language {
   sampleReminderSms = 'הודעת תזכורת לדוגמא'
   registerFamilyReplyEmailText = 'הודעה זו תשלח לתורם אחרי שנרשם למערכת'
   registerHelperReplyEmailText = 'הודעה זו תשלח למתנדב אחרי שנרשם למערכת'
-  basketTypes = 'סוגי סלים'
+  basketTypes = 'אפשרויות התנדבות'
   distributionLists = 'רשימות חלוקה'
   familySources = 'גורמים מפנים'
   distributionListsHelp = 'קבוצות אלו יוצגו בשיוך משפחות ויאפשרו סינון מהיר'
@@ -1273,7 +774,7 @@ export class Language {
     'משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?'
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery =
     'עדכן ברירות מחדל למשפחה בהתאם למשלוח זה'
-  assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי סלים'
+  assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי אפשרויות התנדבות'
   selfPickupByBaskets = 'באים לקחת לפי סלים'
   routeOptimization = 'תכנון מסלול'
   routeStrategy = 'תכנון מסלול'
@@ -1494,7 +995,6 @@ export class Language {
   sendSelfOrderLink = 'שליחת קישור להזמנה עצמית'
   whatToOrder = 'מה להזמין?'
   smsProviderConfiguration = 'הגדרות ספק SMS'
-  firebaseConfiguration = 'הגדרות firebase'
   sendMessageToInviteVolunteers = 'שליחת הודעה לזימון מתנדבים'
   whatToTake = 'להביא'
   previewVolunteerScreen = 'הדגם תצוגת מתנדב'
@@ -1607,36 +1107,3 @@ export class Language {
   allowedReceiveNotifications = 'מורשה לקבלת פושים'
 }
 
-const defaultLang = new Language()
-export var use = { language: defaultLang }
-
-const langMap = new Map<string, Language>()
-function addLang(key: string, lang: any, defaultHebrew?: boolean) {
-  for (const key in defaultLang) {
-    if (Object.prototype.hasOwnProperty.call(defaultLang, key)) {
-      const element = defaultLang[key]
-      if (lang[key] == undefined) {
-        lang[key] = defaultHebrew ? element : key
-      }
-    }
-  }
-  langMap.set(key, lang)
-}
-addLang('en', new en())
-//addLang('es', new es());
-//addLang('italy', new italy());
-addLang('donor', new donor(), true)
-addLang('soldier', new soldier(), true)
-addLang('sderot', new sderot(), true)
-
-export function langByCode(lang: string) {
-  let r = langMap.get(lang)
-  if (!r) r = defaultLang
-  return r
-}
-
-if (typeof document !== 'undefined') {
-  //@ts-ignore
-  use.language = langByCode(document.lang)
-} else {
-}

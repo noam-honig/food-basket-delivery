@@ -51,7 +51,8 @@ export async function buildLanguageFiles() {
     //TranslationOptions.chile,
     //TranslationOptions.italy,
     TranslationOptions.donors,
-    TranslationOptions.soldiers
+    TranslationOptions.soldiers,
+    TranslationOptions.sderot
   ]) {
     let fileAndClassName = lang.args.languageCode
     if (lang.args.languageFile) fileAndClassName = lang.args.languageFile
