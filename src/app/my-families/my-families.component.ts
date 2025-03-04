@@ -16,6 +16,8 @@ import { SignedInAndNotOverviewGuard } from '../auth/guards'
 import { OrgEventsComponent } from '../org-events/org-events.component'
 import { Roles } from '../auth/roles'
 import { AsignFamilyController } from '../asign-family/asign-family.controller'
+import { isSderot } from '../sites/sites'
+import { DeliveriesDistributeComponent } from '../deliveries-distribute/deliveries-distribute.component'
 
 @Component({
   selector: 'app-my-families',
@@ -47,6 +49,10 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
   }
   hasEvents = false
   moveToOpertunities() {
+    if (isSderot()) {
+      this.helper.navigateToComponent(DeliveriesDistributeComponent)
+      return
+    }
     this.helper.navigateToComponent(OrgEventsComponent)
   }
   addressHelper() {

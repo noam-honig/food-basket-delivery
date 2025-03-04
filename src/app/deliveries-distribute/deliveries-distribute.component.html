@@ -1,0 +1,60 @@
+<mat-card class="deliveries" style="margin: 10px">
+  <mat-tab-group
+    (selectedTabChange)="mapTabClicked()"
+    #theTab
+    style="margin: 0"
+  >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">toc</mat-icon>
+        {{ settings.lang.list }}
+      </ng-template>
+      <ng-container *ngFor="let d of deliveries; let i = index; deliver">
+        <mat-card class="delivery">
+          <div style="padding: 10px">
+            <span>
+              <mat-card-title>{{ d.basketType.name }}</mat-card-title>
+            </span>
+
+            <button
+              mat-stroked-button
+              class="rounded-button"
+              (click)="assignDelivery(d)"
+              [disabled]="deliveriesBlock"
+            >
+              <mat-icon>person_search</mat-icon>
+              {{ settings.lang.assign }}
+            </button>
+          </div>
+          <div class="delivery-desc">
+            <span *ngIf="d.createDate">
+              <mat-icon>calendar_month</mat-icon>
+              {{
+                d.createDate.toLocaleString('en-GB', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                })
+              }}
+            </span>
+            <span *ngIf="d.deliveryComments">
+              <mat-icon>comment</mat-icon>
+              {{ d.deliveryComments }}
+            </span>
+          </div>
+        </mat-card>
+      </ng-container>
+      <p *ngIf="!deliveries.length && loaded">לא נמצאו משלוחים</p>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">room</mat-icon>
+        {{ settings.lang.map }}
+      </ng-template>
+      <div #gmap style="height: 100%"></div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>
