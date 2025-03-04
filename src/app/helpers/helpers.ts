@@ -34,7 +34,7 @@ import { isPhoneValidForIsrael, Phone } from '../model-shared/phone'
 
 import { Roles } from '../auth/roles'
 
-import { getLang } from '../sites/sites'
+import { getLang, isSderot } from '../sites/sites'
 import { AddressHelper, Location } from '../shared/googleApiHelpers'
 import { routeStats } from '../asign-family/route-strategy'
 import { ApplicationSettings, getSettings } from '../manage/ApplicationSettings'
@@ -48,6 +48,7 @@ import { EntityFilter } from 'remult'
 import { UITools } from './init-context'
 import { recordChanges } from '../change-log/change-log'
 import { GroupsValue } from '../manage/groups'
+import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
 
 export function CompanyColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, string>
@@ -212,6 +213,13 @@ export class HelpersBase extends IdEntity {
     }
   })
   isFrozen: boolean
+
+  @Fields.integer({
+    allowApiUpdate: Roles.admin,
+    includeInApi: isSderot(),
+    translation: (l) => l.maxDeliveries
+  })
+  maxDeliveries: number
 
   static active: EntityFilter<HelpersBase> = {
     archive: false
@@ -503,6 +511,29 @@ export class Helpers extends HelpersBase {
           click: () => {
             ui.editBlockedFamilies(this)
           }
+        },
+        {
+          name: remult.context.lang.basketTypes,
+          click: () => {
+            ui.gridDialog({
+              settings: new GridSettings(repo(HelperBasketTypes), {
+                knowTotalRows: true,
+                allowCrud: true,
+                orderBy: {
+                  basketType: 'desc'
+                },
+                newRow: (row) => {
+                  row.helperId = this.id
+                },
+                columnSettings: (e) => [e.basketType],
+                where: {
+                  helperId: this.id
+                }
+              }),
+              title: remult.context.lang.basketTypes + ' - ' + this.name
+            })
+          },
+          visible: () => !!isSderot() && !!this.id
         }
       ]
     })
@@ -642,6 +673,15 @@ export class Helpers extends HelpersBase {
       r.push({
         field: self.frozenTill,
         width: '120'
+      })
+    }
+
+    if (remult.isAllowed(Roles.admin) && isSderot()) {
+      r.push(self.maxDeliveries)
+      r.push(self.allowedArchiveDeliveries)
+      r.push({
+        field: self.allowedReceiveNotifications,
+        visible: (row) => !!row.admin
       })
     }
 
@@ -990,7 +1030,24 @@ export class Helpers extends HelpersBase {
   @Fields.integer({ translation: (l) => l.callQuota })
   @DataControl<Helpers>({ visible: (self) => self.caller, width: '70' })
   callQuota: number
+  @Fields.boolean<Helpers>({
+    translation: (l) => l.allowedArchiveDeliveries,
+    allowApiUpdate: Roles.admin,
+    includeInApi: Roles.admin && isSderot()
+  })
+  allowedArchiveDeliveries: boolean
+  @Fields.boolean<Helpers>({
+    translation: (l) => l.allowedReceiveNotifications,
+    allowApiUpdate: Roles.admin,
+    includeInApi: Roles.admin&& isSderot()
+  })
+  allowedReceiveNotifications: boolean
 
+  @Fields.string<Helpers>({
+    allowApiUpdate: true,
+    includeInApi: isSderot()
+  })
+  deviceTokenNotifications: string
   static deliveredPreviously = Filter.createCustom<Helpers, { city: string }>(
     ({ city }) => {
       return SqlDatabase.rawFilter(async (c) => {

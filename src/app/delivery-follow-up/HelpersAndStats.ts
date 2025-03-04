@@ -54,7 +54,7 @@ function log(s: string) {
         h.myGiftsURL,
         h.doNotSendSms,
         h.blockedFamilies,
-
+        h.maxDeliveries,
         sql.countDistinctInnerSelect(
           f.family,
           helperFamilies(() => [

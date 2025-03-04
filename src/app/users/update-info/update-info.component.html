@@ -1,6 +1,16 @@
 <mat-card>
   <data-area *ngIf="area" [settings]="area"></data-area>
 
+  <div class="basketTypes" *ngIf="isSderot()">
+    <span class="header-basketTypes">{{settings.lang.basketTypes}}:</span>
+
+    <mat-checkbox
+      *ngFor="let basket of basketTypes"
+      [(ngModel)]="basket.selected"
+      >{{ basket.name }}</mat-checkbox
+    >
+  </div>
+
   <div style="display: flex; justify-content: space-between">
     <button mat-raised-button color="accent" (click)="register()">
       {{ settings.lang.updateInfo }}
