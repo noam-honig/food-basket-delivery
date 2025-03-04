@@ -1,0 +1,80 @@
+<mat-card *ngIf="!complete">
+  <div class="header">
+    <div>
+      <img width="25%" src="{{ logo }}" />
+    </div>
+    <div>טופס הרשמה למתנדב/ת</div>
+  </div>
+
+  <div class="data">
+    <data-area
+      style="width: 80%"
+      [settings]="helperDataArea"
+      *ngIf="helperDataArea"
+    ></data-area>
+    <div style="font-size: 15px">{{ 'נוסח צריך להתקבל' }}</div>
+    <ng-container *ngIf="basketTypes.length">
+      <span class="header-basketTypes">{{ settings.lang.basketTypes }} :</span>
+      <div class="basketTypes">
+        <mat-checkbox
+          *ngFor="let basket of basketTypes"
+          [(ngModel)]="basket.selected"
+          >{{ basket.name }}</mat-checkbox
+        >
+      </div></ng-container
+    >
+
+    <mat-expansion-panel *ngIf="instructions.length">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.volunteerInstructions }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ul>
+        <li *ngFor="let instructio of instructions">
+          {{ instructio.description }}
+        </li>
+      </ul>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel *ngIf="terms.length">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.termsOfJoining }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ul>
+        <li *ngFor="let t of terms">{{ t.description }}</li>
+      </ul>
+    </mat-expansion-panel>
+
+    <mat-checkbox
+      [(ngModel)]="agreeToTerms"
+      style="width: 80%"
+      *ngIf="terms.length || instructions.length"
+      >קראתי את התנאים וההנחיות ואני מאשר/ת את הכתוב בהם</mat-checkbox
+    >
+  </div>
+  <div class="save">
+    <span class="error" *ngIf="error">{{ error }}</span>
+    <button class="button-save" mat-raised-button (click)="save()">
+      שלח/י
+    </button>
+  </div>
+</mat-card>
+
+<mat-card *ngIf="complete">
+  <div class="header">
+    <div>
+      <img width="25%" src="{{ logo }}" />
+    </div>
+    <div *ngIf="helperExists">
+      <span>מתנדב/ת קיים במערכת, להתחברות לחץ </span>
+      <a [href]="link">כאן</a>
+    </div>
+    <div *ngIf="!helperExists">
+      <div>נרשמת בהצלחה!</div>
+      <a [href]="link">להתחברות למערכת</a>
+    </div>
+  </div>
+</mat-card>

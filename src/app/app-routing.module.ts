@@ -42,6 +42,7 @@ import {
   FamilyAdminGuard,
   CallModuleGuard,
   SderotGuard,
+  NoSderotGuard,
 } from './auth/guards'
 import { Roles } from './auth/roles'
 import { AuthenticatedGuard } from '../app/common-ui-elements'
@@ -72,6 +73,7 @@ import { ManageCallersComponent } from './manage-callers/manage-callers.componen
 import { SpecificEventComponent } from './specific-event/specific-event.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { IntakeFormComponent } from './intake-form/intake-form.component'
+import { HelperRegisterComponent } from './helper-register/helper-register.component'
 import { DeliveriesDistributeComponent } from './deliveries-distribute/deliveries-distribute.component'
 
 @Injectable()
@@ -116,6 +118,7 @@ export const routes: Routes = [
   FamilyDeliveriesComponent.route,
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
+  HelperRegisterComponent.route,
 
   NewsComponent.needsWorkRoute,
   {
@@ -254,6 +257,7 @@ export const routes: Routes = [
     SignedInAndNotOverviewGuard,
     EventListGuard,
     SderotGuard,
+    NoSderotGuard,
     CallModuleGuard
   ]
 })

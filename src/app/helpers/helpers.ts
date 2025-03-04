@@ -919,7 +919,8 @@ export class Helpers extends HelpersBase {
   addressApiResult2: string
   @Fields.string({
     dbName: 'preferredDistributionAreaAddress2',
-    customInput: (i) => i.addressInput()
+    customInput: (i) => i.addressInput(),
+    caption: isSderot() ? 'כתובת מגורים' : undefined
   })
   preferredFinishAddress: string
   preferredFinishAddressHelper = new AddressHelper(
@@ -1039,7 +1040,7 @@ export class Helpers extends HelpersBase {
   @Fields.boolean<Helpers>({
     translation: (l) => l.allowedReceiveNotifications,
     allowApiUpdate: Roles.admin,
-    includeInApi: Roles.admin&& isSderot()
+    includeInApi: Roles.admin && isSderot()
   })
   allowedReceiveNotifications: boolean
 
