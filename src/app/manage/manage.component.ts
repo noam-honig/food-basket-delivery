@@ -44,6 +44,9 @@ import { OrgEventsController } from '../org-events/org-events.controller'
 import { ButtonDataComponent } from '../button-data/button-data.component'
 import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
 import { Helpers } from '../helpers/helpers'
+import { TermsOfJoining } from './TermsOfJoining'
+import { VolunteerInstructions } from './VolunteerInstructions'
+import { isSderot } from '../sites/sites'
 
 @Component({
   selector: 'app-manage',
@@ -277,6 +280,26 @@ export class ManageComponent implements OnInit {
     rowsInPage: 25,
     orderBy: { name: 'asc' },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
+  })
+  termsOfJoining = new GridSettings(remult.repo(TermsOfJoining), {
+    saving: () => this.refreshEnvironmentAfterSave(),
+    columnSettings: (s) => [s.description, s.active],
+    allowUpdate: true,
+    allowInsert: true,
+    allowDelete: true,
+    rowsInPage: 25,
+    orderBy: { description: 'asc' },
+    confirmDelete: (h) => this.dialog.confirmDelete(h.description)
+  })
+  VolunteerInstructions = new GridSettings(remult.repo(VolunteerInstructions), {
+    saving: () => this.refreshEnvironmentAfterSave(),
+    columnSettings: (s) => [s.description, s.active],
+    allowUpdate: true,
+    allowInsert: true,
+    allowDelete: true,
+    rowsInPage: 25,
+    orderBy: { description: 'asc' },
+    confirmDelete: (h) => this.dialog.confirmDelete(h.description)
   })
   settingsArea = new DataAreaSettings({
     fields: () => [
@@ -943,6 +966,10 @@ export class ManageComponent implements OnInit {
         helpers: remult.repo(Helpers)
       }
     })
+  }
+
+  isSderot() {
+    return isSderot()
   }
 }
 
