@@ -196,6 +196,7 @@ async function buildHelperUserInfo(h: Helpers) {
       result.roles.push(Roles.distCenterAdmin)
       result.roles.push(Roles.familyAdmin)
       result.roles.push(Roles.callPerson)
+      result.roles.push(Roles.archiveDeliveries)
     }
     if (
       h.phone.thePhone.endsWith('507330590') ||
@@ -210,6 +211,12 @@ async function buildHelperUserInfo(h: Helpers) {
   if (h.familyAdmin) {
     result.roles.push(Roles.familyAdmin)
     result.roles.push(Roles.distCenterAdmin)
+  }
+  if (h.allowedArchiveDeliveries) {
+    result.roles.push(Roles.archiveDeliveries)
+  }
+  if (h.allowedReceiveNotifications) {
+    result.roles.push(Roles.receiveNotifications)
   }
   if (h.caller && getSettings().usingCallModule)
     result.roles.push(Roles.callPerson)
