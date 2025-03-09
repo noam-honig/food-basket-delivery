@@ -15,6 +15,7 @@ import { SettingsService } from './SettingsService'
 import {
   DataAreaFieldsSetting,
   DataAreaSettings,
+  DataControlInfo,
   GridSettings,
   InputField
 } from '../common-ui-elements/interfaces'
@@ -108,23 +109,32 @@ export class ManageComponent implements OnInit {
   ) {}
 
   basketType = new GridSettings(remult.repo(BasketType), {
-    columnSettings: (x) => [
-      x.name,
-      {
-        field: x.boxes,
-        width: '100px'
-      },
-      {
-        field: x.boxes2,
-        width: '100px'
-      },
-      {
-        field: x.whatToTake
-      },
-      {
-        field: x.intakeCommentInstructions
+    columnSettings: (x) => {
+      const columns: DataControlInfo<BasketType>[] = [
+        x.name,
+        {
+          field: x.boxes,
+          width: '100px'
+        },
+        {
+          field: x.boxes2,
+          width: '100px'
+        },
+        {
+          field: x.whatToTake
+        },
+        {
+          field: x.intakeCommentInstructions
+        }
+      ]
+      if (isSderot()) {
+        columns.push(x.salTime)
+        columns.push(x.salDays)
+        columns.push(x.noticeTime)
+        columns.push(x.noticeDays)
       }
-    ],
+      return columns
+    },
     saving: () => this.refreshEnvironmentAfterSave(),
 
     rowsInPage: 25,
