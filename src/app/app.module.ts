@@ -130,6 +130,7 @@ import { AddressInfoComponent } from './address-info/address-info.component'
 import { IntakeFormComponent } from './intake-form/intake-form.component'
 import { UgaConfirmCheckboxComponent } from './uga-confirm-checkbox/uga-confirm-checkbox.component'
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts'
+import { HelperRegisterComponent } from './helper-register/helper-register.component'
 import { DeliveriesDistributeComponent } from './deliveries-distribute/deliveries-distribute.component'
 declare function logSomething(s: string): void
 logSomething('app module source loaded')
@@ -234,6 +235,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     AddressInfoComponent,
     IntakeFormComponent,
     UgaConfirmCheckboxComponent,
+    HelperRegisterComponent,
     DeliveriesDistributeComponent
   ],
   imports: [
