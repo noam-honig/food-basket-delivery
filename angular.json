@@ -25,14 +25,14 @@
             "outputPath": "dist/hagai",
             "index": "src/index_dev.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "externalDependencies": [
               "jsonwebtoken",
               "password-hash",
               "nodemailer",
-              "fs"
+              "fs",
+              "firebase-admin",
+              "node-cron"
             ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
@@ -40,9 +40,7 @@
               "src/firebase-messaging-sw.js",
               "src/assets"
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "aot": true,
             "extractLicenses": false,
@@ -110,9 +108,7 @@
             "main": "src/test.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "assets": [
               "src/favicon.ico",
@@ -124,13 +120,8 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

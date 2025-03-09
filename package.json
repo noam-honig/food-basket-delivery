@@ -130,6 +130,8 @@
     "password-hash": false,
     "nodemailer": false,
     "fs": false,
-    "firebase-admin": false
+    "firebase-admin": false,
+    "firebase": false,
+    "node-cron": false
   }
 }
