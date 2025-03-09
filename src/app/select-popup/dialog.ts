@@ -45,6 +45,7 @@ import {
   GridDialogArgs,
   InputAreaArgs,
   SelectHelperArgs,
+  selectListItem,
   UITools,
   UpdateFamilyDialogArgs,
   UpdateGroupArgs
@@ -61,6 +62,7 @@ import type { UpdateGroupDialogComponent } from '../update-group-dialog/update-g
 import type { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
 import type { GridDialogComponent } from '../grid-dialog/grid-dialog.component'
 import type { SelectHelperComponent } from '../select-helper/select-helper.component'
+import { SelectListComponent } from '../select-list/select-list.component'
 
 declare var gtag
 
@@ -219,6 +221,14 @@ export class DialogService implements UITools {
     title?: string
   }): Promise<void> {
     await openDialog(SelectValueDialogComponent, (x) => x.args(args))
+  }
+  async selectListDialog<T extends { caption?: string }>(args: {
+    options: selectListItem[]
+    title: string
+    multiSelect?: boolean
+    onSelect: (selectedItems: selectListItem[]) => void
+  }): Promise<void> {
+    await openDialog(SelectListComponent, (x) => (x.args = args))
   }
   async doWhileShowingBusy<T>(what: () => Promise<T>): Promise<T> {
     return this.busy.doWhileShowingBusy(what)
