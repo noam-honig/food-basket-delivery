@@ -565,6 +565,24 @@ export class ManageComponent implements OnInit {
       return r
     }
   })
+
+  configureFirebase() {
+    openDialog(
+      InputAreaComponent,
+      (a) =>
+        (a.args = {
+          title: use.language.smsProviderConfiguration,
+          fields: [
+            this.settings.$.firebaseConfig,
+            this.settings.$.firebaseVapidKey,
+            this.settings.$.firebaseCredentials
+          ],
+          ok: () => this.settings.save()
+        })
+    )
+    ;('')
+  }
+
   configureSmsGlobal() {
     openDialog(
       InputAreaComponent,

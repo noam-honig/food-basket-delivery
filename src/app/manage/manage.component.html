@@ -343,6 +343,9 @@
       <button mat-raised-button (click)="configureSmsGlobal()">
         {{ settings.lang.smsProviderConfiguration }}
       </button>
+      <button mat-raised-button *ngIf="isSderot" (click)="configureFirebase()">
+        {{ settings.lang.firebaseConfiguration }}
+      </button>
     </mat-expansion-panel>
     <mat-expansion-panel>
       <mat-expansion-panel-header>

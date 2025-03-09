@@ -140,3 +140,6 @@ sendOnTheWaySMSToFamilyOnSendSmsToVolunteer boolean default false not null
 customSmsOriginForSmsToFamily varchar default '' not null
 enableOtp boolean default false not null
 webhookUrl varchar default '' not null
+firebaseConfig varchar
+firebaseCredentials varchar 
+firebaseVapidKey varchar default ''

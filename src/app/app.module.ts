@@ -132,6 +132,7 @@ import { UgaConfirmCheckboxComponent } from './uga-confirm-checkbox/uga-confirm-
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts'
 import { HelperRegisterComponent } from './helper-register/helper-register.component'
 import { DeliveriesDistributeComponent } from './deliveries-distribute/deliveries-distribute.component'
+import { webPushService } from './deliveries-distribute/webPush.service'
 declare function logSomething(s: string): void
 logSomething('app module source loaded')
 var site = Sites.initOnBrowserAndReturnAngularBaseHref()
@@ -260,6 +261,7 @@ export class MyHammerConfig extends HammerGestureConfig {
     MatAutocompleteTrigger
   ],
   providers: [
+    webPushService,
     provideCharts(withDefaultRegisterables()),
     DialogService,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },

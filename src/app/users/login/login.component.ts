@@ -17,7 +17,7 @@ import {
   DataControl
 } from '../../common-ui-elements/interfaces'
 
-import { Sites } from '../../sites/sites'
+import { isSderot, Sites } from '../../sites/sites'
 
 import { MatStepper } from '@angular/material/stepper'
 import { Helpers, validatePasswordColumn } from '../../helpers/helpers'
@@ -25,6 +25,7 @@ import { Phone } from '../../model-shared/phone'
 import { use, Field, Fields } from '../../translate'
 import { NotAuthenticatedGuard } from '../../common-ui-elements'
 import { loginResult } from '../../auth/auth-service.controller'
+import { webPushService } from '../../deliveries-distribute/webPush.service'
 
 @Component({
   selector: 'app-login',
@@ -108,7 +109,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
   constructor(
     private dialog: DialogService,
     private auth: AuthService,
-    public settings: ApplicationSettings
+    public settings: ApplicationSettings,
+    private webPush: webPushService
   ) {}
   ngAfterViewInit(): void {
     if (this.phoneForm) {
@@ -177,6 +179,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
       return
     }
     this.setState(this.phoneState)
+    
+    if (remult.authenticated() && isSderot()) {
+      this.webPush.requestPermission()
+    }
+
     this.stepper.previous()
   }
 
