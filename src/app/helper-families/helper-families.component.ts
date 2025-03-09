@@ -46,7 +46,7 @@ import { InputAreaComponent } from '../select-popup/input-area/input-area.compon
 
 import { Phone } from '../model-shared/phone'
 import { SelectHelperComponent } from '../select-helper/select-helper.component'
-import { getLang } from '../sites/sites'
+import { getLang, isSderot } from '../sites/sites'
 import { moveDeliveriesHelper } from './move-deliveries-helper'
 
 import { animate, style, transition, trigger } from '@angular/animations'
@@ -82,6 +82,7 @@ import { Roles } from '../auth/roles'
   ]
 })
 export class HelperFamiliesComponent implements OnInit {
+  Roles = Roles
   switchToMap() {
     this.tab.selectedIndex = 1
   }
@@ -218,6 +219,7 @@ export class HelperFamiliesComponent implements OnInit {
   @Output() assignmentCanceled = new EventEmitter<void>()
   @Output() assignSmsSent = new EventEmitter<void>()
   @Input() preview = false
+  @Input() previewOnlyDeliveriesDone = false
   @ViewChild('theTab', { static: false }) tab: MatTabGroup
   currentUser: Helpers
   async ngOnInit() {
@@ -717,6 +719,10 @@ export class HelperFamiliesComponent implements OnInit {
     }
   }
   @ViewChild('map', { static: false }) map: MapComponent
+
+  get isSderot(){
+    return isSderot()
+  }
 }
 
 class limitList {

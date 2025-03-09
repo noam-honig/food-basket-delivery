@@ -1,4 +1,4 @@
-<div style="display: flex; flex-direction: column">
+<div style="display: flex; flex-direction: column; font-size: 17px !important">
   <div
     *ngIf="showStatus()"
     style="
@@ -62,7 +62,7 @@
         {{ settings.lang.showPreviousActivities }}
       </button>
     </div>
-    <div class="top-button-bar" *ngIf="partOfAssign">
+    <div class="top-button-bar" *ngIf="partOfAssign || isSderot">
       <button
         *ngIf="showCancelAssign(f)"
         mat-stroked-button
@@ -80,11 +80,21 @@
       >
         {{ settings.lang.packageWasPickedUp }}
       </button>
-      <button mat-stroked-button class="rounded-button" (click)="udpateInfo(f)">
+      <button
+        mat-stroked-button
+        class="rounded-button"
+        (click)="udpateInfo(f)"
+        *ngIf="partOfAssign"
+      >
         <mat-icon>edit</mat-icon>
         {{ settings.lang.deliveryDetails }}
       </button>
     </div>
+  </div>
+  <div *ngIf="isSderot && f.createDate">
+    <h4 style="display: inline">{{ 'תאריך יצירה' }}</h4>
+    :
+    <span *ngIf="f.createDate">{{ f.createDate.toLocaleString() }}</span>
   </div>
   <div>
     <h4 style="display: inline">{{ settings.lang.basket }}</h4>
@@ -93,6 +103,19 @@
     {{ f.$.basketType.displayValue }}
     <mat-card *ngIf="whatToTake && !callerScreen">
       <span style="white-space: pre">{{ whatToTake }}</span>
+    </mat-card>
+  </div>
+  <div *ngIf="f.moreBasketsType && isSderot">
+    <h4 style="display: inline">
+      {{ settings.lang.basketTypes + ' נוספות ' }}
+    </h4>
+    :
+    <mat-card>
+      <ul>
+        <li *ngFor="let basketType of f.moreBasketsType.split(',')">
+          <span style="white-space: pre">{{ basketType }}</span>
+        </li>
+      </ul>
     </mat-card>
   </div>
   <div
@@ -118,6 +141,7 @@
     <hr />
   </div>
   <app-address-info
+    *ngIf="showFamilyInfo"
     [args]="{
       f: f,
       callerScreen,
@@ -130,7 +154,9 @@
   ></app-address-info>
   <app-address-info
     *ngIf="
-      secondAddressArgs && !f.deliveryType.showSecondAddressAsPickupAddress
+      secondAddressArgs &&
+      !f.deliveryType.showSecondAddressAsPickupAddress &&
+      showFamilyInfo
     "
     [args]="secondAddressArgs"
   ></app-address-info>

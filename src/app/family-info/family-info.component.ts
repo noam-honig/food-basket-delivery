@@ -23,7 +23,7 @@ import {
 } from '../families/FamilyDeliveries'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 
-import { getLang, Sites } from '../sites/sites'
+import { getLang, isSderot, Sites } from '../sites/sites'
 import { Phone } from '../model-shared/phone'
 import { UserFamiliesList } from '../my-families/user-families'
 import { openDialog } from '../common-ui-elements'
@@ -59,6 +59,9 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   @Input() userFamilies: UserFamiliesList
   @Input() selfPickupScreen = false
   @Input() callerScreen = false
+
+  @Input() showFamilyInfo = true
+
   hasImages = false
   images: ImageInfo[]
   phones: { phone: Phone; desc: string }[]
@@ -162,8 +165,8 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
   }
 
   showCancelAssign(f: ActiveFamilyDeliveries) {
-    return (
-      this.partOfAssign &&
+    return !!(
+      (this.partOfAssign || isSderot()) &&
       f.courier &&
       (f.deliverStatus == DeliveryStatus.ReadyForDelivery ||
         f.deliverStatus == DeliveryStatus.DriverPickedUp)
@@ -300,5 +303,8 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
       this.f.deliverStatus != DeliveryStatus.DriverPickedUp &&
       !this.callerScreen
     )
+  }
+  get isSderot() {
+    return isSderot()
   }
 }

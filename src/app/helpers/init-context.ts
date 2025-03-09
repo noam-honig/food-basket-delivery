@@ -185,6 +185,16 @@ export interface UITools {
     onSelect: (selected: T) => void
     title?: string
   }): Promise<void>
+  selectListDialog<
+    T extends {
+      caption?: string
+    }
+  >(args: {
+    options: selectListItem[]
+    title: string
+    multiSelect?: boolean
+    onSelect: (selectedItems: selectListItem[]) => void
+  }): Promise<void>
 
   doWhileShowingBusy<T>(what: () => Promise<T>): Promise<T>
   donotWait<T>(what: () => Promise<T>): Promise<T>

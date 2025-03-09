@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { UserFamiliesList } from './user-families'
-import { Route } from '@angular/router'
+import { ActivatedRoute, Route } from '@angular/router'
 
 import { BusyService, RouteHelperService } from '../common-ui-elements'
 import { remult, UserInfo } from 'remult'
@@ -38,12 +38,14 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
   familyLists = new UserFamiliesList(this.settings, this.destroyHelper)
   user: UserInfo
   remult = remult
+  previewOnlyDeliveriesDone = false
   constructor(
     public settings: ApplicationSettings,
     private dialog: DialogService,
     private helper: RouteHelperService,
     public sessionManager: AuthService,
-    private busy: BusyService
+    private busy: BusyService,
+    private activeRoute: ActivatedRoute
   ) {
     this.user = remult.user as UserInfo
   }
@@ -114,6 +116,8 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
     return remult.isAllowed(Roles.admin)
   }
   async ngOnInit() {
+    this.previewOnlyDeliveriesDone = this.activeRoute.snapshot.data?.previewOnlyDeliveriesDone;
+    
     let done = ''
     try {
       done += '1'

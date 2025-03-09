@@ -4,7 +4,10 @@
 
 <mat-card
   class="no-print"
-  *ngIf="familyLists.toDeliver.length > 0 || familyLists.forceShowMap"
+  *ngIf="
+    (familyLists.toDeliver.length > 0 || familyLists.forceShowMap) &&
+    !previewOnlyDeliveriesDone
+  "
 >
   <mat-card-title *ngIf="familyLists.getLeftFamiliesDescription()">
     {{ familyLists.getLeftFamiliesDescription() }}
@@ -94,7 +97,7 @@
     </div>
   </mat-card-title>
   <div
-    *ngIf="familyLists.getBoxes() || this.familyLists.whatToTake"
+    *ngIf="(familyLists.getBoxes() || this.familyLists.whatToTake) && !isSderot"
     class="icon-and-text no-print"
     style="max-width: 290px"
   >
@@ -156,6 +159,7 @@
           "
         >
           <mat-expansion-panel
+            style="margin: 10px;margin-bottom: 25px;"
             #myPanel
             *ngIf="limitReady.shouldShow(i)"
             cdkDrag
@@ -163,7 +167,7 @@
             (click)="deliveryDetails(f, myPanel)"
             (afterExpand)="afterExpand(scrollToTop)"
           >
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header style="height: 90px !important;">
               <div #scrollToTop></div>
               <app-family-in-list
                 [f]="f"
@@ -261,7 +265,8 @@
     class="sendSmsButtonLine no-print"
     *ngIf="
       familyLists.toDeliver.length &&
-      ((partOfAssign && !partOfReview) || (partOfReview && !helperGotSms))
+      ((partOfAssign && !partOfReview) || (partOfReview && !helperGotSms)) &&
+      !previewOnlyDeliveriesDone
     "
   >
     <button
@@ -460,7 +465,10 @@
     </table>
   </div>
 
-  <mat-card *ngIf="familyLists.problem.length > 0" class="no-print">
+  <mat-card
+    *ngIf="familyLists.problem.length > 0 && !previewOnlyDeliveriesDone"
+    class="no-print"
+  >
     <mat-card-title
       >{{ settings.lang.failedDeliveries }} - {{ familyLists.problem.length }}
     </mat-card-title>
@@ -500,7 +508,13 @@
       </mat-expansion-panel>
     </mat-accordion>
   </mat-card>
-  <mat-card *ngIf="familyLists.delivered.length > 0" class="no-print">
+  <mat-card
+    *ngIf="
+      familyLists.delivered.length > 0 &&
+      (!isSderot || previewOnlyDeliveriesDone)
+    "
+    class="no-print"
+  >
     <mat-card-title>
       {{ settings.lang.deliveriesDoneInTheLastTwoDays }} -
       {{ familyLists.delivered.length }}
@@ -514,9 +528,11 @@
         >
           <mat-expansion-panel-header>
             <app-family-in-list
+              *ngIf="!previewOnlyDeliveriesDone"
               [f]="f"
               style="width: 100%"
             ></app-family-in-list>
+            <div *ngIf="previewOnlyDeliveriesDone">{{ f.basketType.name }}</div>
           </mat-expansion-panel-header>
           <ng-template matExpansionPanelContent>
             <app-family-info
@@ -524,6 +540,7 @@
               [showHelp]="true"
               [userFamilies]="familyLists"
               [partOfAssign]="partOfAssign"
+              [showFamilyInfo]="!previewOnlyDeliveriesDone"
               (assignmentCanceled)="cancelAssign(f)"
               (refreshList)="familyLists.reload()"
             >

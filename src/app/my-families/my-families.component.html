@@ -1,5 +1,13 @@
 <ng-container *ngIf="!settings.isSytemForMlt">
-  <div style="display: flex; justify-content: space-between">
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      margin-left: 20px;
+      margin-right: 20px;
+      align-items: center;
+    "
+  >
     <div>
       <h3 class="no-print">{{ settings.lang.hello }} {{ user.name }}</h3>
       <H4 *ngIf="user.escortedHelperName"
@@ -117,7 +125,7 @@
     </button>
   </div>
 
-  <app-helper-families [familyLists]="familyLists"> </app-helper-families>
+  <app-helper-families [familyLists]="familyLists" [previewOnlyDeliveriesDone]="previewOnlyDeliveriesDone"> </app-helper-families>
 
   <div *ngIf="hasEvents" style="text-align: center; margin-top: 16px">
     <button mat-raised-button color="primary" (click)="moveToOpertunities()">

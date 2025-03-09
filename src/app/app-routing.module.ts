@@ -43,6 +43,7 @@ import {
   CallModuleGuard,
   SderotGuard,
   NoSderotGuard,
+  DeliveriesDoneGuard
 } from './auth/guards'
 import { Roles } from './auth/roles'
 import { AuthenticatedGuard } from '../app/common-ui-elements'
@@ -212,6 +213,12 @@ export const routes: Routes = [
   DeliveriesDistributeComponent.route,
   MyFamiliesComponent.route,
   {
+    path: 'DeliveriesDone',
+    component: MyFamiliesComponent,
+    canActivate: [SignedInAndNotOverviewGuard, SderotGuard,DeliveriesDoneGuard],
+    data: { name: 'לוח פניות סגורות', previewOnlyDeliveriesDone: true,noGetMap:true }
+  },
+  {
     path: 'caller',
     component: CallerComponent,
     canActivate: [CallModuleGuard],
@@ -258,6 +265,7 @@ export const routes: Routes = [
     EventListGuard,
     SderotGuard,
     NoSderotGuard,
+    DeliveriesDoneGuard,
     CallModuleGuard
   ]
 })

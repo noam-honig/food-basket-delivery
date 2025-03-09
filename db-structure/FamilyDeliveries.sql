@@ -75,3 +75,4 @@ phone1_2 varchar default '' not null
 phone1Description_2 varchar default '' not null
 phone2_2 varchar default '' not null
 phone2Description_2 varchar default '' not null
+moreBasketsType varchar default '' not null
