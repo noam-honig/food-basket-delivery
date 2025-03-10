@@ -44,8 +44,15 @@ export class HelperRegisterComponent implements OnInit {
   }[] = []
   instructions: VolunteerInstructions[] = []
   terms: TermsOfJoining[] = []
+
+  deferredPrompt!: any
   ngOnInit() {
     this.load()
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      this.deferredPrompt = e
+      e.preventDefault()
+    })
   }
 
   async load() {
@@ -135,7 +142,8 @@ export class HelperRegisterComponent implements OnInit {
       )
 
       this.complete = true
-      this.openLogin()
+      this.createManifestFile()
+      // this.openLogin()
     } catch (err) {
       this.error = 'תהליך הרשמה נכשל!'
     }
@@ -150,6 +158,33 @@ export class HelperRegisterComponent implements OnInit {
     }, 5000)
   }
 
+  createManifestFile() {
+    try {
+      const blob = new Blob([JSON.stringify(this.manifestData)], {
+        type: 'application/json'
+      })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('link')
+      link.rel = 'manifest'
+      link.href = url
+      document.head.appendChild(link)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  saveLink() {
+    if (this.deferredPrompt) {
+      this.deferredPrompt.prompt()
+      this.deferredPrompt.userChoice.then((choiceResult: any) => {
+        if (choiceResult.outcome === 'accepted') {
+          window.location.href = this.link
+        }
+        this.deferredPrompt = null
+      })
+    }
+  }
+
   get logo() {
     return ApplicationSettings.get().logoUrl
   }
@@ -159,5 +194,23 @@ export class HelperRegisterComponent implements OnInit {
       window.origin + '/' + Sites.getOrganizationFromContext() + '/login'
 
     return link
+  }
+
+  get manifestData() {
+    return {
+      name: this.settings.organisationName,
+      short_name: this.settings.organisationName,
+      start_url: this.link,
+      display: 'standalone',
+      background_color: '#ffffff',
+      theme_color: '#000000',
+      icons: [
+        {
+          src: this.settings.logoUrl,
+          sizes: '160x160',
+          type: `image/${this.settings.logoUrl.split('.').pop().toLowerCase()}`
+        }
+      ]
+    }
   }
 }
