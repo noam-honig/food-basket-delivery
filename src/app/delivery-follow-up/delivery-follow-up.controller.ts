@@ -119,7 +119,7 @@ export class DeliveryFollowUpController {
       return res
     })
   }
-  @BackendMethod({ allowed: Roles.admin, paramTypes: [String] })
+  @BackendMethod({ allowed: Roles.admin })
   static async sendAttendanceReminder(ids: string[]) {
     const message = await remult
       .repo(MessageTemplate)
