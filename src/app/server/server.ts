@@ -139,6 +139,7 @@ import { testMonday, updateReceivedFromMonday } from './monday'
 import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
 import { TermsOfJoining } from '../manage/TermsOfJoining'
 import { VolunteerInstructions } from '../manage/VolunteerInstructions'
+import { DeliveriesInstructions } from '../family-info/DeliveriesInstructions'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -182,6 +183,7 @@ const entities = [
   VolunteerInstructions,
   TermsOfJoining,
   HelperBasketTypes,
+  DeliveriesInstructions
 ]
 const controllers = [
   SendSmsForFamilyDetailsConfirmation,

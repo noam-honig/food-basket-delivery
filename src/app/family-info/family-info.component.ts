@@ -12,7 +12,7 @@ import {
 import copy from 'copy-to-clipboard'
 import { DialogService } from '../select-popup/dialog'
 import { DeliveryStatus } from '../families/DeliveryStatus'
-import { remult } from 'remult'
+import { remult, repo } from 'remult'
 
 import { use } from '../translate'
 import { GetVolunteerFeedback } from '../update-comment/update-comment.component'
@@ -35,6 +35,7 @@ import { quantityHelper } from '../families/BasketType'
 import { FamilyInfoController } from './family-info.controller'
 import { AddressInfoArgs } from '../address-info/address-info.component'
 import { openGoogleMaps, openWaze } from '../shared/googleApiHelpers'
+import { DeliveriesInstructions } from './DeliveriesInstructions'
 
 @Component({
   selector: 'app-family-info',
@@ -72,6 +73,8 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
       this.hasImages = await this.dialog.donotWait(() =>
         FamilyDeliveries.hasFamilyImages(this.f.family, this.f.id)
       )
+
+      if (this.isSderot) this.loadInstructions()
     }
     if (this.f.deliveryType.displaySecondAddress) {
       this.secondAddressArgs = {
@@ -111,6 +114,7 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
     this.refreshWhatToTake()
   }
   whatToTake: string = ''
+  instructions: DeliveriesInstructions[] = []
   initPhones() {
     //[ ] remove
     this.phones = [
@@ -304,6 +308,35 @@ export class FamilyInfoComponent implements OnInit, OnChanges {
       !this.callerScreen
     )
   }
+
+  async loadInstructions() {
+    const instructions = this.f.basketType.intakeCommentInstructions
+      .split(',')
+      .filter((i) => !!i.trim())
+    const deliveriesInstructions = await repo(DeliveriesInstructions).find({
+      where: {
+        deliveryId: this.f.id,
+        description: instructions
+      }
+    })
+    for (const instruct of instructions) {
+      let deliveryInstruct = deliveriesInstructions.find(
+        (i) => i.description == instruct
+      )
+      if (!deliveryInstruct)
+        deliveryInstruct = await repo(DeliveriesInstructions).create({
+          deliveryId: this.f.id,
+          description: instruct
+        })
+
+      this.instructions.push(deliveryInstruct)
+    }
+  }
+
+  async saveInstruct(instruct: DeliveriesInstructions) {
+    await instruct.save()
+  }
+
   get isSderot() {
     return isSderot()
   }

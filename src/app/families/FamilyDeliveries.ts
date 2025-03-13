@@ -75,6 +75,7 @@ import { messageMerger } from '../edit-custom-message/messageMerger'
 import { DeliveryType } from './deliveryType'
 import { updateMondayBasedOnDriver } from '../server/monday'
 import { sendNotification } from '../deliveries-distribute/notification'
+import { DeliveriesInstructions } from '../family-info/DeliveriesInstructions'
 
 @ValueListFieldType({
   translation: (l) => l.messageStatus
@@ -271,22 +272,40 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
       }
     }
 
-    if (
-      self.$.deliverStatus.valueChanged() &&
-      self.deliverStatus == DeliveryStatus.Success &&
-      isBackend()
-    ) {
-      await FamilyDeliveries.sendNotificationAdmin(
-        'ביצוע  משימה',
-        `מתנדב ${self.courier.name} סיים בהצלחה משימה ${self.basketType.name}!`
-      )
-    }
+    if (isSderot()) {
+      if (
+        isBackend() &&
+        self.$.courier.valueChanged() &&
+        self.$.courier.originalValue &&
+        !self.isNew()
+      ) {
+        await repo(DeliveriesInstructions).updateMany({
+          where: {
+            deliveryId: self.id
+          },
+          set: {
+            done: false
+          }
+        })
+      }
 
-    if (self.isNew() && isBackend()) {
-      await FamilyDeliveries.sendNotificationAdmin(
-        'משימה נפתחה',
-        `נפתחה משימת ${self.basketType.name} חדשה`
-      )
+      if (
+        self.$.deliverStatus.valueChanged() &&
+        self.deliverStatus == DeliveryStatus.Success &&
+        isBackend()
+      ) {
+        await FamilyDeliveries.sendNotificationAdmin(
+          'ביצוע  משימה',
+          `מתנדב ${self.courier.name} סיים בהצלחה משימה ${self.basketType.name}!`
+        )
+      }
+
+      if (self.isNew() && isBackend()) {
+        await FamilyDeliveries.sendNotificationAdmin(
+          'משימה נפתחה',
+          `נפתחה משימת ${self.basketType.name} חדשה`
+        )
+      }
     }
   },
   apiPrefilter: () => FamilyDeliveries.isAllowedForUser()

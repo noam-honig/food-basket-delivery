@@ -118,6 +118,20 @@
       </ul>
     </mat-card>
   </div>
+  <div *ngIf="instructions.length && isSderot">
+    <h4 style="display: inline">{{ 'הנחיות ל' + settings.lang.basket }}</h4>
+    :
+    <mat-card *ngIf="instructions.length && !callerScreen">
+      <div style="white-space: pre-line" *ngFor="let instruct of instructions">
+        <mat-checkbox
+          (change)="saveInstruct(instruct)"
+          [(ngModel)]="instruct.done"
+        >
+          {{ instruct.description }}</mat-checkbox
+        >
+      </div>
+    </mat-card>
+  </div>
   <div
     *ngIf="secondAddressArgs && f.deliveryType.showSecondAddressAsPickupAddress"
   >
