@@ -116,7 +116,7 @@ export class NoSderotGuard implements CanActivate {
     | UrlTree
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree> {
-    return !isSderot() && remult.authenticated()
+    return !(isSderot() && remult.authenticated())
   }
 }
 @Injectable()

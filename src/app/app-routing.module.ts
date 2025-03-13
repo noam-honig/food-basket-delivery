@@ -215,8 +215,16 @@ export const routes: Routes = [
   {
     path: 'DeliveriesDone',
     component: MyFamiliesComponent,
-    canActivate: [SignedInAndNotOverviewGuard, SderotGuard,DeliveriesDoneGuard],
-    data: { name: 'לוח פניות סגורות', previewOnlyDeliveriesDone: true,noGetMap:true }
+    canActivate: [
+      SignedInAndNotOverviewGuard,
+      SderotGuard,
+      DeliveriesDoneGuard
+    ],
+    data: {
+      name: 'לוח פניות סגורות',
+      previewOnlyDeliveriesDone: true,
+      noGetMap: true
+    }
   },
   {
     path: 'caller',
@@ -230,7 +238,11 @@ export const routes: Routes = [
     canActivate: [CallModuleGuard, AdminGuard],
     data: { name: 'ניהול טלפנים', hide: true }
   },
-  { path: 'events', component: OrgEventsComponent },
+  {
+    path: 'events',
+    component: OrgEventsComponent,
+    canActivate: [NoSderotGuard]
+  },
   { path: 'events/:id', component: OrgEventsComponent },
   { path: 'event/:site/:id/:remote', component: SpecificEventComponent },
   { path: 'event/:site/:id', component: SpecificEventComponent },
