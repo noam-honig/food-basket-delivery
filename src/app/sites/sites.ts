@@ -101,6 +101,10 @@ export function usesIntakeForm() {
   )
 }
 
+export function isSderot() {
+  return true
+}
+
 //SELECT string_agg(id::text, ',') FROM guest.sites
 
 //count all tables

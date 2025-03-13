@@ -1,6 +1,6 @@
 {
   "name": "hug-moms",
-  "version": "0.9.326",
+  "version": "0.9.327-sderot.2",
   "scripts": {
     "ng": "ng",
     "gc": "ng generate component --spec false",
@@ -30,7 +30,8 @@
     "t-build": "npm run ng-build -- --configuration=production && npm run server:build",
     "release": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/salmaz.git master",
     "release-dev": "npm run t-build && npm version patch && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-test.git master",
-    "quick-release": "npm run t-build &&  copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-test.git master"
+    "release-dev-sderot": "npm run t-build && npm version prerelease -preid \"sderot\" && copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-sderot.git master",
+    "quick-release": "npm run t-build &&  copyfiles -V -a package.json dist/ && copyfiles -V -a package-lock.json dist/ && cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://git.heroku.com/hagai-sderot.git master"
   },
   "private": true,
   "dependencies": {
@@ -60,6 +61,8 @@
     "express-force-https": "^1.0.0",
     "express-jwt": "^6.0.0",
     "express-sse": "^0.5.1",
+    "firebase": "^11.3.1",
+    "firebase-admin": "^13.1.0",
     "form-data": "^4.0.0",
     "googlemaps": "^1.12.0",
     "jsonwebtoken": "^8.5.1",
@@ -67,6 +70,7 @@
     "moment": "^2.29.2",
     "ng2-charts": "^6.0.1",
     "ngx-pagination": "^4.1.0",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.6.1",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
@@ -125,6 +129,9 @@
     "jsonwebtoken": false,
     "password-hash": false,
     "nodemailer": false,
-    "fs": false
+    "fs": false,
+    "firebase-admin": false,
+    "firebase": false,
+    "node-cron": false
   }
 }

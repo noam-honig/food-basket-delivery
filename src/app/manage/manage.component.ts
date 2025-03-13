@@ -15,6 +15,7 @@ import { SettingsService } from './SettingsService'
 import {
   DataAreaFieldsSetting,
   DataAreaSettings,
+  DataControlInfo,
   GridSettings,
   InputField
 } from '../common-ui-elements/interfaces'
@@ -44,6 +45,9 @@ import { OrgEventsController } from '../org-events/org-events.controller'
 import { ButtonDataComponent } from '../button-data/button-data.component'
 import { EditCustomMessageComponent } from '../edit-custom-message/edit-custom-message.component'
 import { Helpers } from '../helpers/helpers'
+import { TermsOfJoining } from './TermsOfJoining'
+import { VolunteerInstructions } from './VolunteerInstructions'
+import { isSderot } from '../sites/sites'
 
 @Component({
   selector: 'app-manage',
@@ -105,23 +109,32 @@ export class ManageComponent implements OnInit {
   ) {}
 
   basketType = new GridSettings(remult.repo(BasketType), {
-    columnSettings: (x) => [
-      x.name,
-      {
-        field: x.boxes,
-        width: '100px'
-      },
-      {
-        field: x.boxes2,
-        width: '100px'
-      },
-      {
-        field: x.whatToTake
-      },
-      {
-        field: x.intakeCommentInstructions
+    columnSettings: (x) => {
+      const columns: DataControlInfo<BasketType>[] = [
+        x.name,
+        {
+          field: x.boxes,
+          width: '100px'
+        },
+        {
+          field: x.boxes2,
+          width: '100px'
+        },
+        {
+          field: x.whatToTake
+        },
+        {
+          field: x.intakeCommentInstructions
+        }
+      ]
+      if (isSderot()) {
+        columns.push(x.salTime)
+        columns.push(x.salDays)
+        columns.push(x.noticeTime)
+        columns.push(x.noticeDays)
       }
-    ],
+      return columns
+    },
     saving: () => this.refreshEnvironmentAfterSave(),
 
     rowsInPage: 25,
@@ -277,6 +290,26 @@ export class ManageComponent implements OnInit {
     rowsInPage: 25,
     orderBy: { name: 'asc' },
     confirmDelete: (h) => this.dialog.confirmDelete(h.name)
+  })
+  termsOfJoining = new GridSettings(remult.repo(TermsOfJoining), {
+    saving: () => this.refreshEnvironmentAfterSave(),
+    columnSettings: (s) => [s.description, s.active],
+    allowUpdate: true,
+    allowInsert: true,
+    allowDelete: true,
+    rowsInPage: 25,
+    orderBy: { description: 'asc' },
+    confirmDelete: (h) => this.dialog.confirmDelete(h.description)
+  })
+  VolunteerInstructions = new GridSettings(remult.repo(VolunteerInstructions), {
+    saving: () => this.refreshEnvironmentAfterSave(),
+    columnSettings: (s) => [s.description, s.active],
+    allowUpdate: true,
+    allowInsert: true,
+    allowDelete: true,
+    rowsInPage: 25,
+    orderBy: { description: 'asc' },
+    confirmDelete: (h) => this.dialog.confirmDelete(h.description)
   })
   settingsArea = new DataAreaSettings({
     fields: () => [
@@ -542,6 +575,24 @@ export class ManageComponent implements OnInit {
       return r
     }
   })
+
+  configureFirebase() {
+    openDialog(
+      InputAreaComponent,
+      (a) =>
+        (a.args = {
+          title: use.language.smsProviderConfiguration,
+          fields: [
+            this.settings.$.firebaseConfig,
+            this.settings.$.firebaseVapidKey,
+            this.settings.$.firebaseCredentials
+          ],
+          ok: () => this.settings.save()
+        })
+    )
+    ;('')
+  }
+
   configureSmsGlobal() {
     openDialog(
       InputAreaComponent,
@@ -943,6 +994,10 @@ export class ManageComponent implements OnInit {
         helpers: remult.repo(Helpers)
       }
     })
+  }
+
+  isSderot() {
+    return isSderot()
   }
 }
 

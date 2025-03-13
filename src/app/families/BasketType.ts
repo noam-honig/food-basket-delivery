@@ -49,9 +49,79 @@ export class BasketType extends MyIdEntity {
     clickWithTools: (u, fr, ui) => editItems(fr, ui)
   })
   whatToTake: string = ''
-  @Fields.string({ caption: 'הנחיות לטופס' })
+  @Fields.string({
+    caption: 'הנחיות לטופס',
+    clickWithTools: (u, fr, ui) => editItems(fr, ui)
+  })
   intakeCommentInstructions: string = ''
+  @Fields.string({
+    translation: (l) => l.durationTreatmentTime,
+    validate: (row) => {
+      if ((row as BasketType).$.salTime.valueChanged())
+        (row as BasketType).validateTime()
+    },
+    valueConverter: {
+      inputType: 'time',
+      toInput: (val) => {
+        return val?.substring(0, 2) + ':' + val?.substring(2, 4) + ':' + '00'
+      },
 
+      fromInput: (val) => {
+        return val?.split(':').join('') + '00'
+      }
+    },
+    displayValue: (_, value) => {
+      if (value === '000000') return ''
+      else if (!value) return ''
+      const hour = value.substring(0, 2)
+      const minutes = value.substring(2, 4)
+      return `${hour}:${minutes}`
+    }
+  })
+  salTime: string = ''
+  @Fields.number({
+    translation: (l) => l.durationTreatmentDays,
+    validate: (row, fieldRef) => {
+      if (fieldRef.value < 0) throw getLang().invalidValue
+      if ((row as BasketType).$.salDays.valueChanged())
+        (row as BasketType).validateTime()
+    }
+  })
+  salDays: number = 0
+  @Fields.string({
+    translation: (l) => l.noticeTime,
+    validate: (row, fieldRef) => {
+      if ((row as BasketType).$.noticeTime.valueChanged())
+        (row as BasketType).validateTime()
+    },
+    valueConverter: {
+      inputType: 'time',
+      toInput: (val) => {
+        return val?.substring(0, 2) + ':' + val?.substring(2, 4) + ':' + '00'
+      },
+
+      fromInput: (val) => {
+        return val?.split(':').join('') + '00'
+      }
+    },
+    displayValue: (_, value) => {
+      if (value === '000000') return ''
+      else if (!value) return ''
+      const hour = value.substring(0, 2)
+      const minutes = value.substring(2, 4)
+      return `${hour}:${minutes}`
+    }
+  })
+  noticeTime: string = ''
+  @Fields.number({
+    translation: (l) => l.noticeDays,
+    validate: (row, fieldRef) => {
+      if (fieldRef.value < 0) throw getLang().invalidValue
+      if ((row as BasketType).$.noticeDays.valueChanged())
+        (row as BasketType).validateTime()
+    }
+  })
+  noticeDays: number = 0
   static boxes1Name = !use ? '' : use.language.boxes1Name
   static boxes2Name = !use ? '' : use.language.boxes2Name
 
@@ -73,6 +143,24 @@ export class BasketType extends MyIdEntity {
       this.boxes2 ? (this.boxes2 * quantity).toString() : '',
       'n'
     )
+  }
+
+  validateTime() {
+    const [salHours, salMinutes] = this.$.salTime.displayValue
+      .split(':')
+      .filter((t) => t)
+      .map(Number)
+    const sal = this.salDays * 24 * 60 + (salHours * 60 || 0) + salMinutes || 0
+
+    const [noticeHours, noticeMinutes] = this.$.noticeTime.displayValue
+      .split(':')
+      .filter((t) => t)
+      .map(Number)
+
+    const notice =
+      this.noticeDays * 24 * 60 + (noticeHours * 60 || 0) + (noticeMinutes || 0)
+
+    if (notice >= sal) throw 'זמן התראה קטן ממשך זמן הטיפול'
   }
 }
 

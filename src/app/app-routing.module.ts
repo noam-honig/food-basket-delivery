@@ -40,7 +40,10 @@ import {
   SignedInAndNotOverviewGuard,
   EventListGuard,
   FamilyAdminGuard,
-  CallModuleGuard
+  CallModuleGuard,
+  SderotGuard,
+  NoSderotGuard,
+  DeliveriesDoneGuard
 } from './auth/guards'
 import { Roles } from './auth/roles'
 import { AuthenticatedGuard } from '../app/common-ui-elements'
@@ -71,6 +74,8 @@ import { ManageCallersComponent } from './manage-callers/manage-callers.componen
 import { SpecificEventComponent } from './specific-event/specific-event.component'
 import { FamilyConfirmDetailsComponent } from './family-confirm-details/family-confirm-details.component'
 import { IntakeFormComponent } from './intake-form/intake-form.component'
+import { HelperRegisterComponent } from './helper-register/helper-register.component'
+import { DeliveriesDistributeComponent } from './deliveries-distribute/deliveries-distribute.component'
 
 @Injectable()
 export class IntakeFormGuard implements CanActivate {
@@ -114,6 +119,7 @@ export const routes: Routes = [
   FamilyDeliveriesComponent.route,
   FamiliesComponent.route,
   DeliveryFollowUpComponent.route,
+  HelperRegisterComponent.route,
 
   NewsComponent.needsWorkRoute,
   {
@@ -204,7 +210,22 @@ export const routes: Routes = [
   LoginFromSmsComponent.route,
 
   //{ path: 'stam-test', component: UpdateGroupDialogComponent },
+  DeliveriesDistributeComponent.route,
   MyFamiliesComponent.route,
+  {
+    path: 'DeliveriesDone',
+    component: MyFamiliesComponent,
+    canActivate: [
+      SignedInAndNotOverviewGuard,
+      SderotGuard,
+      DeliveriesDoneGuard
+    ],
+    data: {
+      name: 'לוח פניות סגורות',
+      previewOnlyDeliveriesDone: true,
+      noGetMap: true
+    }
+  },
   {
     path: 'caller',
     component: CallerComponent,
@@ -217,7 +238,11 @@ export const routes: Routes = [
     canActivate: [CallModuleGuard, AdminGuard],
     data: { name: 'ניהול טלפנים', hide: true }
   },
-  { path: 'events', component: OrgEventsComponent },
+  {
+    path: 'events',
+    component: OrgEventsComponent,
+    canActivate: [NoSderotGuard]
+  },
   { path: 'events/:id', component: OrgEventsComponent },
   { path: 'event/:site/:id/:remote', component: SpecificEventComponent },
   { path: 'event/:site/:id', component: SpecificEventComponent },
@@ -250,6 +275,9 @@ export const routes: Routes = [
     MltAdminGuard,
     SignedInAndNotOverviewGuard,
     EventListGuard,
+    SderotGuard,
+    NoSderotGuard,
+    DeliveriesDoneGuard,
     CallModuleGuard
   ]
 })

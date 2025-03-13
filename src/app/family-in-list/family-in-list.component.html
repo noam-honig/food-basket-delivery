@@ -1,5 +1,5 @@
 <button
-  style="position: absolute ;"
+  style="position: absolute"
   mat-raised-button
   color="accent"
   *ngIf="swipe && delivered.observers.length"
@@ -28,7 +28,6 @@
       {{ f.$.basketType.displayValue }}
     </div>
   </mat-panel-title>
-
   <mat-panel-description style="justify-content: space-between">
     <div style="white-space: nowrap">
       {{ getAddressDescription() }}
@@ -40,4 +39,8 @@
       ({{ settings.lang.recentlyAssigned }})
     </div>
   </mat-panel-description>
+  <div style="font-size: 14px">
+    <span> {{ 'זמן לביצוע:' }}</span>
+    <span>{{ '  ' + getTimeDescription }}</span>
+  </div>
 </div>

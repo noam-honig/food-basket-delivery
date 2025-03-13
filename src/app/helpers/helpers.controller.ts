@@ -1,6 +1,6 @@
 import { Helpers } from './helpers'
 
-import { BackendMethod, remult } from 'remult'
+import { BackendMethod, remult, repo } from 'remult'
 
 import { Roles } from '../auth/roles'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
@@ -9,6 +9,8 @@ import { Sites } from '../sites/sites'
 import { SendSmsUtils } from '../asign-family/send-sms-action'
 
 import { getLang } from '../sites/sites'
+import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
+import { BasketType } from '../families/BasketType'
 
 export class HelpersController {
   @BackendMethod({ allowed: Roles.admin })
@@ -38,7 +40,10 @@ export class HelpersController {
     if (!h) return getLang().unfitForInvite
     if (!(h.admin || h.distCenterAdmin)) return getLang().unfitForInvite
     let url =
-      remult.context.getOrigin() + '/' + Sites.getOrganizationFromContext()+"/login"
+      remult.context.getOrigin() +
+      '/' +
+      Sites.getOrganizationFromContext() +
+      '/login'
     let s = await ApplicationSettings.getAsync()
     let hasPassword = h.password && h.password.length > 0
     let message =
@@ -77,5 +82,51 @@ export class HelpersController {
       h.theHelperIAmEscorting = null
       await h.save()
     }
+  }
+
+  @BackendMethod({ allowed: true })
+  static async saveHelper(
+    helperData: any,
+    basketTypes?: {
+      id: string
+      name: string
+      intakeCommentInstructions: string
+    }[]
+  ) {
+    const helper = await remult.repo(Helpers).findFirst(
+      { phone: helperData.phone },
+      {
+        createIfNotFound: true
+      }
+    )
+
+    const isNew = helper.isNew()
+    if (isNew) {
+      await helper
+        .assign({
+          name: helperData.name,
+          phone: helperData.phone,
+          email: helperData.email,
+          socialSecurityNumber: helperData.socialSecurityNumber,
+          preferredFinishAddress: helperData.preferredFinishAddress
+        })
+        .save()
+    }
+
+    if (basketTypes.length && isNew) {
+      for (const basket of basketTypes) {
+        const basketType = await repo(BasketType).findId(basket.id)
+
+        if (basketType) {
+          try {
+            await repo(HelperBasketTypes).insert({
+              helperId: helper.id,
+              basketType: basketType
+            })
+          } catch (err) {}
+        }
+      }
+    }
+    return !isNew
   }
 }

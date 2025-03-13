@@ -55,7 +55,7 @@ import {
   CustomColumn,
   questionForVolunteers
 } from '../manage/ApplicationSettings'
-import { getLang } from '../sites/sites'
+import { getLang, isSderot } from '../sites/sites'
 import {
   DataAreaFieldsSetting,
   DataControl,
@@ -74,6 +74,8 @@ import { UITools } from '../helpers/init-context'
 import { messageMerger } from '../edit-custom-message/messageMerger'
 import { DeliveryType } from './deliveryType'
 import { updateMondayBasedOnDriver } from '../server/monday'
+import { sendNotification } from '../deliveries-distribute/notification'
+import { DeliveriesInstructions } from '../family-info/DeliveriesInstructions'
 
 @ValueListFieldType({
   translation: (l) => l.messageStatus
@@ -269,6 +271,42 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
         })
       }
     }
+
+    if (isSderot()) {
+      if (
+        isBackend() &&
+        self.$.courier.valueChanged() &&
+        self.$.courier.originalValue &&
+        !self.isNew()
+      ) {
+        await repo(DeliveriesInstructions).updateMany({
+          where: {
+            deliveryId: self.id
+          },
+          set: {
+            done: false
+          }
+        })
+      }
+
+      if (
+        self.$.deliverStatus.valueChanged() &&
+        self.deliverStatus == DeliveryStatus.Success &&
+        isBackend()
+      ) {
+        await FamilyDeliveries.sendNotificationAdmin(
+          'ביצוע  משימה',
+          `מתנדב ${self.courier.name} סיים בהצלחה משימה ${self.basketType.name}!`
+        )
+      }
+
+      if (self.isNew() && isBackend()) {
+        await FamilyDeliveries.sendNotificationAdmin(
+          'משימה נפתחה',
+          `נפתחה משימת ${self.basketType.name} חדשה`
+        )
+      }
+    }
   },
   apiPrefilter: () => FamilyDeliveries.isAllowedForUser()
 })
@@ -416,6 +454,36 @@ export class FamilyDeliveries extends IdEntity {
     allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
   })
   basketType: BasketType
+
+  @Fields.string({
+    clickWithTools: async (row, c, ui) => {
+      let basketsType = await repo(BasketType).find({
+        where: { id: { '!=': (row as FamilyDeliveries).basketType.id } }
+      })
+      const basketsTypeSelected = c.value.split(',')
+      let options = basketsType.map((option) => ({
+        name: option.name,
+        item: option,
+        selected: c.value
+          ? !!basketsTypeSelected.find((b) => b == option.name)
+          : false
+      }))
+      ui.selectListDialog({
+        title: 'התנדבויות נוספות',
+        options: options,
+        multiSelect: true,
+        onSelect: (x) => {
+          let basketsType = x.map((option) => (option.item as BasketType).name)
+          c.value = basketsType.join(',')
+        }
+      })
+    },
+    includeInApi: isSderot(),
+    allowApiUpdate: isSderot(),
+    caption: 'התנדבויות נוספות'
+  })
+  moreBasketsType: string = ''
+
   @Fields.quantity({
     allowApiUpdate: [Roles.familyAdmin, Roles.callPerson]
   })
@@ -445,7 +513,7 @@ export class FamilyDeliveries extends IdEntity {
   deliverStatus: DeliveryStatus = DeliveryStatus.ReadyForDelivery
   @Field<FamilyDeliveries>(() => HelpersBase, {
     translation: (l) => l.volunteer,
-    allowApiUpdate: Roles.distCenterAdmin,
+    allowApiUpdate: !!(Roles.distCenterAdmin || isSderot()),
     clickWithTools: async (self, _, ui) =>
       ui.selectHelper({
         onSelect: (helper) => (self.courier = helper),
@@ -489,7 +557,7 @@ export class FamilyDeliveries extends IdEntity {
   })
   deliveryStatusUser: HelpersBase
   @ChangeDateColumn({
-    includeInApi: Roles.admin,
+    includeInApi: !!(isSderot() || Roles.admin),
     translation: (l) => l.deliveryCreateDate
   })
   createDate: Date
@@ -973,7 +1041,7 @@ export class FamilyDeliveries extends IdEntity {
       if (!remult.isAllowed([Roles.familyAdmin, Roles.distCenterAdmin]))
         result.push(FamilyDeliveries.active)
       let $or: EntityFilter<FamilyDeliveries>[] = []
-      if (remult.isAllowed(Roles.distCenterAdmin))
+      if (remult.isAllowed(Roles.distCenterAdmin) || isSderot())
         $or.push({
           distributionCenter: remult.context.filterCenterAllowedForUser()
         })
@@ -1494,6 +1562,21 @@ export class FamilyDeliveries extends IdEntity {
     if (fd) {
       fd.deliveryStatusDate = new Date(date)
       await fd.save()
+    }
+  }
+
+  @BackendMethod({ allowed: Allow.authenticated })
+  static async sendNotificationAdmin(title: string, body: string) {
+    const helpers = await repo(Helpers).find({
+      where: {
+        allowedReceiveNotifications: true,
+        deviceTokenNotifications: { '!=': '' }
+      }
+    })
+
+    for (const helper of helpers) {
+      if (helper.deviceTokenNotifications)
+        await sendNotification(title, body, helper.deviceTokenNotifications)
     }
   }
 }

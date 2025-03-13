@@ -33,6 +33,13 @@
       target="_blank"
       >מדריך למנהל</a
     >
+    <a
+      href="https://youtu.be/PHwTzaQN87g"
+      style="padding-right: 15px"
+      *ngIf="!isAdmin() && !showEnglishUrl() && isSderot"
+      target="_blank"
+      >מדריך למתנדב</a
+    >
     <mat-nav-list role="list">
       <a
         mat-list-item

@@ -47,7 +47,7 @@ import { FamilySources } from '../families/FamilySources'
 import { Self } from '@angular/core'
 
 import { BasketType } from '../families/BasketType'
-import { Sites, getLang, setLangForSite } from '../sites/sites'
+import { Sites, getLang, isSderot, setLangForSite } from '../sites/sites'
 import { routeStrategy } from '../asign-family/route-strategy'
 
 import { GroupsValue } from './groups'
@@ -666,6 +666,17 @@ export class ApplicationSettings extends EntityBase {
   smsPasswordInput: string
   @Fields.string({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string
+
+  @Fields.object({
+    includeInApi: Roles.admin && isSderot(),
+  })
+  firebaseCredentials: any
+  @Fields.object({
+    includeInApi: Roles.admin && isSderot()
+  })
+  firebaseConfig: any
+  @Fields.string({ includeInApi: Roles.admin && isSderot() })
+  firebaseVapidKey: string
 
   @Fields.boolean({ includeInApi: Roles.admin })
   familySelfOrderEnabled: boolean

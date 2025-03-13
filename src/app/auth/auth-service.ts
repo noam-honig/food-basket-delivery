@@ -6,7 +6,7 @@ import { openDialog, RouteHelperService } from '../common-ui-elements'
 import { remult, Remult, UserInfo } from 'remult'
 
 import { Roles } from './roles'
-import { Sites } from '../sites/sites'
+import { isSderot, Sites } from '../sites/sites'
 import { OverviewComponent } from '../overview/overview.component'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 import { YesNoQuestionComponent } from '../select-popup/yes-no-question/yes-no-question.component'
@@ -22,6 +22,7 @@ import {
 } from './auth-service.controller'
 import { CallerComponent } from '../caller/caller.component'
 import { messageMerger } from '../edit-custom-message/messageMerger'
+import { DeliveriesDistributeComponent } from '../deliveries-distribute/deliveries-distribute.component'
 
 let staticToken = ''
 export function getToken() {
@@ -162,7 +163,9 @@ export class AuthService {
         this.routeHelper.navigateToComponent(OverviewComponent)
       else if (remult.isAllowed(Roles.callPerson))
         this.routeHelper.navigateToComponent(CallerComponent)
-      else
+      else if (isSderot()) {
+        this.routeHelper.navigateToComponent(DeliveriesDistributeComponent)
+      } else
         this.routeHelper.navigateToComponent(
           (await import('../my-families/my-families.component'))
             .MyFamiliesComponent

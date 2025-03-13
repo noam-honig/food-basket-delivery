@@ -18,6 +18,7 @@ import { getLang, Sites } from './sites/sites'
 import { donor } from './languages/donor'
 import { soldier } from './languages/soldier'
 import { ClassType } from 'remult/classType'
+import { sderot } from './languages/sderot'
 
 export class myBounds {
   constructor(
@@ -438,6 +439,21 @@ export class TranslationOptions {
     languageCode: 'en',
     basedOnLang: 'en'
   })
+
+  static sderot: TranslationOptions = new TranslationOptions(8, 'שדרות', {
+    googleMapCountry: 'IL',
+    bounds: new myBounds(31.5265, 34.594, 31.5265, 34.594),
+    languageFile: 'sderot',
+    translateFunction: (s) =>
+      s
+        .replace(/משפחה אחת/g, 'משימה אחד')
+        .replace(/משפחות חוזרות/g, 'משימות חוזרות')
+        .replace(/משפחות מיוחדות/g, 'משימות מיוחדות')
+        .replace(/מש' הכי קרובה/g, 'משימה הכי קרובה')
+        .replace(/משפחה כלשהי/g, 'משימה כלשהו')
+        .replace(/משפחות/g, 'משימות')
+        .replace(/משפחה/g, 'משימה')
+  })
   TranslateOption() {}
 
   constructor(
@@ -515,6 +531,7 @@ export class Language {
   DuplicateFamiliesComponent = 'חיפוש משפחות כפולות'
   ManageComponent = 'הגדרות מערכת'
   MyFamiliesComponent = 'משלוחים שלי'
+  OpenDeliveriesComponent = 'משלוחים פתוחים'
   UpdateInfoComponent = 'הגדרות אישיות'
   LoginComponent = 'כניסה'
   RegisterComponent = 'הרשמה'
@@ -1477,6 +1494,7 @@ export class Language {
   sendSelfOrderLink = 'שליחת קישור להזמנה עצמית'
   whatToOrder = 'מה להזמין?'
   smsProviderConfiguration = 'הגדרות ספק SMS'
+  firebaseConfiguration = 'הגדרות firebase'
   sendMessageToInviteVolunteers = 'שליחת הודעה לזימון מתנדבים'
   whatToTake = 'להביא'
   previewVolunteerScreen = 'הדגם תצוגת מתנדב'
@@ -1575,6 +1593,18 @@ export class Language {
   totalDeliveries = 'מספר משלוחים'
   availableWasThereBefore = 'משלוחים פעילים שהיה אצלהם בעבר'
   editWhatsappMessage = 'ערוך הודעת וואטסאפ'
+
+  termsOfJoining = 'תנאי הצטרפות'
+  termDescription = 'תאור התנאי'
+  volunteerInstructions = 'הנחיות למתנדב'
+  instructioDescription = 'תאור הנחיה'
+  maxDeliveries = 'מקסימום משלוחים למתנדב'
+  durationTreatmentTime = 'משך זמן לטיפול בשעות'
+  durationTreatmentDays = 'משך זמן לטיפול בימים'
+  noticeTime = 'זמן להתראה בשעות'
+  noticeDays = 'זמן להתראה בימים'
+  allowedArchiveDeliveries = 'מורשה לצפיה בארכיון משלוחים'
+  allowedReceiveNotifications = 'מורשה לקבלת פושים'
 }
 
 const defaultLang = new Language()
@@ -1597,6 +1627,8 @@ addLang('en', new en())
 //addLang('italy', new italy());
 addLang('donor', new donor(), true)
 addLang('soldier', new soldier(), true)
+addLang('sderot', new sderot(), true)
+
 export function langByCode(lang: string) {
   let r = langMap.get(lang)
   if (!r) r = defaultLang

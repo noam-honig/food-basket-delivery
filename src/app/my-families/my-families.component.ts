@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { UserFamiliesList } from './user-families'
-import { Route } from '@angular/router'
+import { ActivatedRoute, Route } from '@angular/router'
 
 import { BusyService, RouteHelperService } from '../common-ui-elements'
 import { remult, UserInfo } from 'remult'
@@ -16,6 +16,8 @@ import { SignedInAndNotOverviewGuard } from '../auth/guards'
 import { OrgEventsComponent } from '../org-events/org-events.component'
 import { Roles } from '../auth/roles'
 import { AsignFamilyController } from '../asign-family/asign-family.controller'
+import { isSderot } from '../sites/sites'
+import { DeliveriesDistributeComponent } from '../deliveries-distribute/deliveries-distribute.component'
 
 @Component({
   selector: 'app-my-families',
@@ -36,17 +38,23 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
   familyLists = new UserFamiliesList(this.settings, this.destroyHelper)
   user: UserInfo
   remult = remult
+  previewOnlyDeliveriesDone = false
   constructor(
     public settings: ApplicationSettings,
     private dialog: DialogService,
     private helper: RouteHelperService,
     public sessionManager: AuthService,
-    private busy: BusyService
+    private busy: BusyService,
+    private activeRoute: ActivatedRoute
   ) {
     this.user = remult.user as UserInfo
   }
   hasEvents = false
   moveToOpertunities() {
+    if (isSderot()) {
+      this.helper.navigateToComponent(DeliveriesDistributeComponent)
+      return
+    }
     this.helper.navigateToComponent(OrgEventsComponent)
   }
   addressHelper() {
@@ -108,6 +116,8 @@ export class MyFamiliesComponent implements OnInit, OnDestroy {
     return remult.isAllowed(Roles.admin)
   }
   async ngOnInit() {
+    this.previewOnlyDeliveriesDone = this.activeRoute.snapshot.data?.previewOnlyDeliveriesDone;
+    
     let done = ''
     try {
       done += '1'

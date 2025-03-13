@@ -24,7 +24,8 @@ import {
   EntityFilter,
   ValueConverters,
   remult,
-  Field as xx
+  Field as xx,
+  repo
 } from 'remult'
 
 import {
@@ -59,13 +60,15 @@ import { Fields, Field, use, Entity } from '../translate'
 import { FamilyStatus } from './FamilyStatus'
 
 import { DistributionCenters } from '../manage/distribution-centers'
-import { getLang } from '../sites/sites'
+import { getLang, isSderot } from '../sites/sites'
 
 import { GroupsValue } from '../manage/groups'
 
 import { evil, UITools } from '../helpers/init-context'
 import { recordChanges } from '../change-log/change-log'
 import { messageMerger } from '../edit-custom-message/messageMerger'
+import { openDialog } from '../common-ui-elements'
+import { SelectListComponent } from '../select-list/select-list.component'
 
 var FamilyDeliveries: factoryFor<import('./FamilyDeliveries').FamilyDeliveries>
 
@@ -434,7 +437,15 @@ export class Families extends IdEntity {
     }
 
     const fields: DataAreaFieldsSetting<any>[] = [
-      [newDelivery.$.basketType, newDelivery.$.quantity],
+      [
+        {
+          field: newDelivery.$.basketType,
+          valueChange: (row, val) => {
+            row.basketsType = ''
+          }
+        },
+        newDelivery.$.quantity
+      ],
       newDelivery.$.items,
       newDelivery.$.deliveryComments
     ]
@@ -452,6 +463,14 @@ export class Families extends IdEntity {
     })
     fields.push(...newDelivery.secondAddressFieldsForUI())
 
+    if (isSderot())
+      fields.push({
+        field: newDelivery.$.moreBasketsType,
+        hideDataOnInput: true,
+        getValue: (row, fieldRef) => {
+          return fieldRef.value
+        }
+      })
     await ui.inputAreaDialog({
       fields,
       title: getLang().newDeliveryFor + this.name,
@@ -483,6 +502,7 @@ export class Families extends IdEntity {
             comment: newDelivery.deliveryComments,
             items: newDelivery.items,
             selfPickup: selfPickup.value,
+            moreBasketsType: newDelivery.moreBasketsType,
             more
           }
         )
@@ -516,6 +536,7 @@ export class Families extends IdEntity {
       deliverStatus?: DeliveryStatus
       archive?: boolean
       items?: string
+      moreBasketsType?: string
       more?: {}
     }
   ) {
@@ -541,6 +562,8 @@ export class Families extends IdEntity {
       if (settings.archive) fd.archive = settings.archive
       if (settings.selfPickup) fd.deliverStatus = DeliveryStatus.SelfPickup
       if (settings.items) fd.items = settings.items
+      if (settings.moreBasketsType)
+        fd.moreBasketsType = settings.moreBasketsType
 
       await fd.save()
       return fd.id

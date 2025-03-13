@@ -19,6 +19,7 @@ import { GridDialogComponent } from './grid-dialog/grid-dialog.component'
 import { Dial } from 'twilio/lib/twiml/VoiceResponse'
 import { SelectHelperComponent } from './select-helper/select-helper.component'
 import { UpdateGroupDialogComponent } from './update-group-dialog/update-group-dialog.component'
+import { isSderot } from './sites/sites'
 
 @Component({
   selector: 'app-root',
@@ -58,7 +59,7 @@ export class AppComponent {
   }
   routeName(route: Route) {
     let c = route.component
-    if (c) {
+    if (c && !route.data?.noGetMap) {
       let s = routeMap.get(c)
       if (s) return s
     }
@@ -147,6 +148,10 @@ export class AppComponent {
   test() {}
   showEnglishUrl() {
     return this.settings.lang.languageCode != 'iw'
+  }
+ 
+  get isSderot() {
+    return isSderot()
   }
 }
 

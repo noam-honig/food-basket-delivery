@@ -83,4 +83,44 @@ export class FamilyInListComponent implements OnInit {
     this.swipe = false
     return false
   }
+
+  get getTimeDescription() {
+    if (!this.f.basketType.salTime && !this.f.basketType.salDays)
+      return 'לא הוגדר זמן לביצוע '
+    
+    const now = new Date()
+    const [slaHours, slaMinutes] = this.f.basketType.$.salTime.displayValue
+      .split(':')
+      .map(Number)
+    const endDate = new Date(this.f.courierAssingTime)
+    endDate.setDate(endDate.getDate() + this.f.basketType.salDays)
+
+    if (slaHours) endDate.setHours(endDate.getHours() + slaHours)
+    if (slaMinutes) endDate.setMinutes(endDate.getMinutes() + slaMinutes)
+
+    endDate.setSeconds(0)
+    endDate.setMilliseconds(0)
+    now.setSeconds(0)
+    now.setMilliseconds(0)
+    const differenceInTime = endDate.getTime() - now.getTime()
+
+    const daysRemaining = Math.floor(differenceInTime / (1000 * 60 * 60 * 24))
+    const hoursRemaining = Math.floor(
+      (differenceInTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    )
+    const minutesRemaining = Math.floor(
+      (differenceInTime % (1000 * 60 * 60)) / (1000 * 60)
+    )
+
+    let timeRemaining = []
+
+    if (daysRemaining > 0)
+      timeRemaining.push(`${daysRemaining} ${this.settings.lang.days}`)
+    if (hoursRemaining > 0)
+      timeRemaining.push(`${hoursRemaining} ${this.settings.lang.hours}`)
+    if (minutesRemaining > 0)
+      timeRemaining.push(`${minutesRemaining}  ${this.settings.lang.minutes}`)
+
+    return timeRemaining.length ? ` ${timeRemaining.join(', ')}` : 'תם הזמן'
+  }
 }

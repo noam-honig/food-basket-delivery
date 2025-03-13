@@ -214,12 +214,12 @@ text-area {
 }
 
 .mat-expansion-panel-header {
-  padding-left: 10px !important;
-  padding-right: 2px !important;
+  // padding-left: 10px !important;
+  // padding-right: 2px !important;
 }
 
 .mat-expansion-panel-body {
-  padding: 0 0px 16px !important;
+  // padding: 0 0px 16px !important;
 }
 
 .wideList {
@@ -614,4 +614,27 @@ textarea {
 .endButtonPart:dir(ltr) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+
+////sderot
+.map-body {
+  // margin-top: -25px;
+  width: 140px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+.map-data {
+  display: flex;
+  align-items: center;
+  margin: 3px;
+  img {
+    width: 20px;
+    margin-left: 5px;
+  }
+}
+
+.example-tab-icon{
+  margin-left: 5px;
 }

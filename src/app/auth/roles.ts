@@ -8,4 +8,7 @@ export class Roles {
   static callPerson = 'caller'
   static smsSignIn = 'smsSignIn'
   static superAdmin = 'superAdmin'
+
+  static archiveDeliveries = 'archiveDeliveries'
+  static receiveNotifications = 'receiveNotifications'
 }

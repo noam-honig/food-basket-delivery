@@ -20,17 +20,20 @@ import { FamilyDeliveries } from '../families/FamilyDeliveries'
 import { DistributionCenters } from '../manage/distribution-centers'
 import { pagedRowsIterator } from '../families/familyActionsWiring'
 import { Language, TranslationOptions } from '../translate'
-import { Sites, getLang, setLangForSite } from '../sites/sites'
+import { Sites, getLang, isSderot, setLangForSite } from '../sites/sites'
 import { InitContext } from '../helpers/init-context'
 import { HelperCommunicationHistory } from '../in-route-follow-up/in-route-helpers'
 import { Helpers } from '../helpers/helpers'
 import { Roles } from '../auth/roles'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
 import { DeliveryType } from '../families/deliveryType'
-
+import { initFllowUp } from '../deliveries-distribute/initFllowUp'
+import { initNotification } from '../deliveries-distribute/notification'
 export async function initSchema(dataSource: SqlDatabase, org: string) {
   remult.context.getSite = () => org
   await InitContext(remult)
+  if (isSderot()) initFllowUp(remult)
+
   remult.dataProvider = dataSource
   remult.clearAllCache()
   let sql = new SqlBuilder()
@@ -92,6 +95,10 @@ export async function initSchema(dataSource: SqlDatabase, org: string) {
   let settings = await remult
     .repo(ApplicationSettings)
     .findId(1, { createIfNotFound: true })
+
+  if (isSderot() && settings.firebaseCredentials)
+    initNotification(settings.firebaseCredentials)
+
   let l = getLang()
   remult.user = {
     id: 'version_update',

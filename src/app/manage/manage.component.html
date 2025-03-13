@@ -69,6 +69,22 @@
       {{ settings.lang.distributionListsHelp }}
       <data-grid [settings]="groups" height="300"></data-grid>
     </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="isSderot()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.termsOfJoining }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-grid [settings]="termsOfJoining" height="300"></data-grid>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="isSderot()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ settings.lang.volunteerInstructions }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <data-grid [settings]="VolunteerInstructions" height="300"></data-grid>
+    </mat-expansion-panel>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -326,6 +342,9 @@
       </button>
       <button mat-raised-button (click)="configureSmsGlobal()">
         {{ settings.lang.smsProviderConfiguration }}
+      </button>
+      <button mat-raised-button *ngIf="isSderot" (click)="configureFirebase()">
+        {{ settings.lang.firebaseConfiguration }}
       </button>
     </mat-expansion-panel>
     <mat-expansion-panel>
