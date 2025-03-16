@@ -363,6 +363,7 @@ export class HelpersComponent implements OnInit, OnDestroy {
 
       return [
         ...Helpers.selectColumns(helpers),
+        helpers.lastDeliveryDate,
         helpers.preferredDistributionAreaAddressCity,
         helpers.preferredFinishAddressCity
       ]

@@ -1575,6 +1575,7 @@ export class Language {
   totalDeliveries = 'מספר משלוחים'
   availableWasThereBefore = 'משלוחים פעילים שהיה אצלהם בעבר'
   editWhatsappMessage = 'ערוך הודעת וואטסאפ'
+  lastDeliveryDate = 'תאריך משלוח אחרון'
 }
 
 const defaultLang = new Language()

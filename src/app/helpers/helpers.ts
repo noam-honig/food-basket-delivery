@@ -48,6 +48,7 @@ import { EntityFilter } from 'remult'
 import { UITools } from './init-context'
 import { recordChanges } from '../change-log/change-log'
 import { GroupsValue } from '../manage/groups'
+import { DeliveryStatus } from '../families/DeliveryStatus'
 
 export function CompanyColumn<entityType = unknown>(
   settings?: FieldOptions<entityType, string>
@@ -736,6 +737,36 @@ export class Helpers extends HelpersBase {
     }
   })
   allowedIds: string
+
+  @ChangeDateColumn<Helpers>({
+    translation: (l) => l.lastDeliveryDate,
+    sqlExpression: async (selfDefs) => {
+      let self = SqlFor(selfDefs)
+
+      const familyDeliveries = SqlFor(
+        remult.repo(
+          (await import('../families/FamilyDeliveries')).FamilyDeliveries
+        )
+      )
+      let sql = new SqlBuilder()
+      const result = await sql.columnMaxWithAs(
+        self,
+        familyDeliveries.deliveryStatusDate,
+        {
+          from: familyDeliveries,
+          where: () => [
+            sql.eq(familyDeliveries.courier, self.id),
+            familyDeliveries.where({
+              deliverStatus: DeliveryStatus.isAResultStatus()
+            })
+          ]
+        },
+        'lastDeliveryDate'
+      )
+      return result
+    }
+  })
+  lastDeliveryDate: Date
 
   _disableOnSavingRow = false
   _disableDuplicateCheck = false
