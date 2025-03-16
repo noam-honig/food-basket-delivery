@@ -268,22 +268,29 @@
       mat-flat-button
       style="width: 270px"
       class="startButtonPart accept-button"
-      (click)="sendSms(false)"
+      (click)="sendMessageOption()"
     >
-      {{ settings.lang.sendSmsWithLink }}
+      {{
+        settings.useWhatsapp
+          ? settings.lang.sendLinkOnWhatsapp
+          : settings.lang.sendSmsWithLink
+      }}
     </button>
     <button
       [matMenuTriggerFor]="appMenuSms"
       mat-flat-button
       class="endButtonPart accept-button"
       style="padding-left: 0; padding-right: 0; min-width: 38px"
-      (click)="prepareMessage(false)"
     >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #appMenuSms="matMenu">
-      <button mat-menu-item (click)="sendWhatsapp()">
-        {{ settings.lang.sendLinkOnWhatsapp }}
+      <button mat-menu-item (click)="sendMessageMenuOption()">
+        {{
+          !settings.useWhatsapp
+            ? settings.lang.sendLinkOnWhatsapp
+            : settings.lang.sendSmsWithLink
+        }}
       </button>
       <button mat-menu-item (click)="copyMessage()">
         {{ settings.lang.copyMessageWithLink }}

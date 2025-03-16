@@ -1576,6 +1576,7 @@ export class Language {
   availableWasThereBefore = 'משלוחים פעילים שהיה אצלהם בעבר'
   editWhatsappMessage = 'ערוך הודעת וואטסאפ'
   lastDeliveryDate = 'תאריך משלוח אחרון'
+  useWhatsapp = 'השתמש בווטסאפ כברירת מחדל לשליחת הודעות'
 }
 
 const defaultLang = new Language()

@@ -224,6 +224,7 @@ export class HelperFamiliesComponent implements OnInit {
     this.currentUser = await this.busy.donotWait(
       async () => await remult.context.getCurrentUser()
     )
+    this.prepareMessage(false)
     if (!environment.production && false)
       setTimeout(() => {
         if (this.familyLists.toDeliver.length > 0) {
@@ -567,6 +568,14 @@ export class HelperFamiliesComponent implements OnInit {
             cancel: () => {}
           })
       )
+  }
+  sendMessageOption() {
+    if (this.settings.useWhatsapp) return this.sendWhatsapp()
+    else return this.sendSms(false)
+  }
+  sendMessageMenuOption() {
+    if (!this.settings.useWhatsapp) return this.sendWhatsapp()
+    else return this.sendSms(false)
   }
   async sendSms(reminder: Boolean) {
     this.helperGotSms = true

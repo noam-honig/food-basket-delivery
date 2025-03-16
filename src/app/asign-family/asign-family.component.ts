@@ -130,7 +130,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   }
 
   toggleKeyboardType() {
-    sessionStorage.setItem('keyboardType', this.getKeyboardType() === 'text' ? 'tel' : 'text')
+    sessionStorage.setItem(
+      'keyboardType',
+      this.getKeyboardType() === 'text' ? 'tel' : 'text'
+    )
     setTimeout(() => {
       if (this.identifierInput) {
         this.identifierInput.nativeElement.blur()
@@ -500,7 +503,8 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
       this.settings.$.showCityOnAssing,
       this.settings.$.showAreaOnAssing,
       this.settings.$.showBasketOnAssing,
-      this.settings.$.showNumOfBoxesOnAssing
+      this.settings.$.showNumOfBoxesOnAssing,
+      this.settings.$.useWhatsapp
     )
     this.initArea()
     this.familyLists.userClickedOnFamilyOnMap = async (families) => {

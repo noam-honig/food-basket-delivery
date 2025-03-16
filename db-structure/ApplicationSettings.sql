@@ -140,3 +140,4 @@ sendOnTheWaySMSToFamilyOnSendSmsToVolunteer boolean default false not null
 customSmsOriginForSmsToFamily varchar default '' not null
 enableOtp boolean default false not null
 webhookUrl varchar default '' not null
+useWhatsapp boolean default false not null

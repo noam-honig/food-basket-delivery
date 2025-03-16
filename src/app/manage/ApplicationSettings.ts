@@ -695,8 +695,15 @@ export class ApplicationSettings extends EntityBase {
   @Fields.boolean({ allowApiUpdate: Roles.superAdmin })
   enableOtp: boolean
 
-  @Fields.string()
+  @Fields.string({
+    allowApiUpdate: Roles.admin
+  })
   webhookUrl = ''
+  @Fields.boolean({
+    translation: (l) => l.useWhatsapp,
+    allowApiUpdate: Roles.admin
+  })
+  useWhatsapp = true
 
   static get() {
     return getSettings()
