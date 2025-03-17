@@ -96,7 +96,7 @@ export function getLang() {
 }
 
 export function usesIntakeForm() {
-  return ['ssderot', 'test', 'test1'].includes(
+  return ['ssderot', 'test', 'test1', 'sderot'].includes(
     Sites.getOrganizationFromContext()
   )
 }
