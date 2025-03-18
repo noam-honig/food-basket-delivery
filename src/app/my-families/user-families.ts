@@ -15,6 +15,7 @@ import { routeStats, routeStrategy } from '../asign-family/route-strategy'
 import { openDialog } from '../common-ui-elements'
 import { Roles } from '../auth/roles'
 import { DestroyHelper } from '../select-popup/dialog'
+import { SendSmsAction } from '../asign-family/send-sms-action'
 
 const useWazeKey = 'useWaze'
 export class UserFamiliesList {
@@ -84,6 +85,7 @@ export class UserFamiliesList {
   }
   userClickedOnFamilyOnMap: (familyId: string[]) => void = (x) => {}
   async initForHelper(helper: HelpersBase) {
+    await this.prepareMessage(false)
     if (helper != this.helper) {
       await this.initHelper(helper)
       if (helper) {
@@ -101,6 +103,25 @@ export class UserFamiliesList {
     if (this.helper && h.escort) {
       this.escort = await h.escort
     }
+  }
+  smsMessage: string = ''
+  smsPhone: string = ''
+  smsLink: string = ''
+  isReminderMessage: boolean = false
+  async prepareMessage(reminder: boolean) {
+    this.isReminderMessage = reminder
+    if (this.helper && !this.helper.isNew())
+      await SendSmsAction.generateMessage(
+        this.helper,
+        window.origin,
+        reminder,
+        remult.user.name,
+        async (phone, message, sender, link) => {
+          this.smsMessage = message
+          this.smsPhone = phone
+          this.smsLink = link
+        }
+      )
   }
   showBasketSummary() {
     openDialog(BasketSummaryComponent, (x) => (x.families = this))

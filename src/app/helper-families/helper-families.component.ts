@@ -224,7 +224,6 @@ export class HelperFamiliesComponent implements OnInit {
     this.currentUser = await this.busy.donotWait(
       async () => await remult.context.getCurrentUser()
     )
-    this.prepareMessage(false)
     if (!environment.production && false)
       setTimeout(() => {
         if (this.familyLists.toDeliver.length > 0) {
@@ -600,7 +599,10 @@ export class HelperFamiliesComponent implements OnInit {
 
   async sendWhatsapp() {
     this.dialog.analytics('Send WhatsApp')
-    Phone.sendWhatsappToPhone(this.smsPhone, this.smsMessage)
+    Phone.sendWhatsappToPhone(
+      this.familyLists.smsPhone,
+      this.familyLists.smsMessage
+    )
     await this.updateMessageSent('Whatsapp')
   }
   print() {
@@ -614,30 +616,14 @@ export class HelperFamiliesComponent implements OnInit {
     let h = this.familyLists.helper
     h.sendSmsToCourier(this.dialog)
   }
-  smsMessage: string = ''
-  smsPhone: string = ''
-  smsLink: string = ''
-  isReminderMessage: boolean = false
-  prepareMessage(reminder: boolean) {
-    this.isReminderMessage = reminder
-    this.busy.donotWait(async () => {
-      await SendSmsAction.generateMessage(
-        this.familyLists.helper,
-        window.origin,
-        reminder,
-        remult.user.name,
-        async (phone, message, sender, link) => {
-          this.smsMessage = message
-          this.smsPhone = phone
-          this.smsLink = link
-        }
-      )
-    })
-  }
+
   async sendPhoneSms() {
     try {
       window.open(
-        'sms:' + this.smsPhone + ';?&body=' + encodeURI(this.smsMessage),
+        'sms:' +
+          this.familyLists.smsPhone +
+          ';?&body=' +
+          encodeURI(this.familyLists.smsMessage),
         '_blank'
       )
       await this.updateMessageSent('Sms from user phone')
@@ -659,18 +645,18 @@ export class HelperFamiliesComponent implements OnInit {
   }
   async updateMessageSent(type: string) {
     await SendSmsAction.documentHelperMessage(
-      this.isReminderMessage,
+      this.familyLists.isReminderMessage,
       this.familyLists.helper,
       type
     )
   }
   async copyMessage() {
-    copy(this.smsMessage)
+    copy(this.familyLists.smsMessage)
     this.dialog.Info(use.language.messageCopied)
     await this.updateMessageSent('Message Copied')
   }
   async copyLink() {
-    copy(this.smsLink)
+    copy(this.familyLists.smsLink)
     this.dialog.Info(use.language.linkCopied)
     await this.updateMessageSent('Link Copied')
   }
