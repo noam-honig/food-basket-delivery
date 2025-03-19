@@ -85,7 +85,6 @@ export class UserFamiliesList {
   }
   userClickedOnFamilyOnMap: (familyId: string[]) => void = (x) => {}
   async initForHelper(helper: HelpersBase) {
-    await this.prepareMessage(false)
     if (helper != this.helper) {
       await this.initHelper(helper)
       if (helper) {
@@ -93,6 +92,7 @@ export class UserFamiliesList {
         this.prevRouteStats = undefined
       }
     }
+    await this.prepareMessage(false)
     await this.reload()
     this.loaded = true
   }
