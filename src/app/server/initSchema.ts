@@ -27,12 +27,10 @@ import { Helpers } from '../helpers/helpers'
 import { Roles } from '../auth/roles'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
 import { DeliveryType } from '../families/deliveryType'
-import { initFllowUp } from '../deliveries-distribute/initFllowUp'
 import { initNotification } from '../deliveries-distribute/notification'
 export async function initSchema(dataSource: SqlDatabase, org: string) {
   remult.context.getSite = () => org
   await InitContext(remult)
-  if (isSderot()) initFllowUp(remult)
 
   remult.dataProvider = dataSource
   remult.clearAllCache()

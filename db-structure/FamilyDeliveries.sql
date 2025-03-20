@@ -2,6 +2,7 @@ create table FamilyDeliveries
 id varchar default '' not null
 family varchar default '' not null
 basketType varchar default '' not null
+moreBasketsType varchar default '' not null
 quantity integer default 0 not null
 items varchar default '' not null
 distributionCenter varchar default '' not null
@@ -75,4 +76,3 @@ phone1_2 varchar default '' not null
 phone1Description_2 varchar default '' not null
 phone2_2 varchar default '' not null
 phone2Description_2 varchar default '' not null
-moreBasketsType varchar default '' not null

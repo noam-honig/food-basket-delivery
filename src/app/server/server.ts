@@ -18,7 +18,7 @@ import {
   repo,
   SqlDatabase
 } from 'remult'
-import { Sites, setLangForSite, getSiteFromUrl } from '../sites/sites'
+import { Sites, setLangForSite, getSiteFromUrl, isSderot } from '../sites/sites'
 
 import {
   AdjustGeocode,
@@ -140,6 +140,7 @@ import { HelperBasketTypes } from '../helper-register/HelperBasketTypes'
 import { TermsOfJoining } from '../manage/TermsOfJoining'
 import { VolunteerInstructions } from '../manage/VolunteerInstructions'
 import { DeliveriesInstructions } from '../family-info/DeliveriesInstructions'
+import { initFollowUp } from '../deliveries-distribute/initFllowUp'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
@@ -492,7 +493,7 @@ s.parentNode.insertBefore(b, s);})();
     }
     //z.debugFileSaver = x => fs.writeFileSync('./tmp/messages/' + site + new Date().toISOString().replace(/:/g, '') + '.json', JSON.stringify(x, undefined, 2));
     remult.subscriptionServer = found.subscriptionServer
-    options.liveQueryStorage = found.liveQueryStorage
+    remult.liveQueryStorage = found.liveQueryStorage
     await InitContext(remult, undefined)
   }
 
@@ -529,6 +530,23 @@ s.parentNode.insertBefore(b, s);})();
     },
     initApi: async (remult) => {
       await initDatabase()
+
+      for (const site of Sites.schemas) {
+        remult.context.getSite = () => site
+        if (isSderot()) {
+          api.withRemultAsync(
+            {
+              url: `/${site}/my-families`,
+              origin: undefined,
+              referer: `http://localhost:4200/${site}/my-families`
+            } as any,
+            async () => {
+              initFollowUp()
+            }
+          )
+        }
+      }
+
       if (!process.env.DEV_MODE) return
       remult.context.getSite = () => 'test1'
       remult.dataProvider = await dataSource(remult)

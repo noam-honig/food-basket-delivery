@@ -266,7 +266,6 @@ async function initDatabase(
 }
 
 async function InitSpecificSchema(pool: Pool, s: string) {
-  console.log('init schema for ' + s)
   await verifySchemaExistance(pool, s)
 
   let db = new SqlDatabase(

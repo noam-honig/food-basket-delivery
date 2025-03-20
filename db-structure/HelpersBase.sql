@@ -19,3 +19,4 @@ archive boolean default false not null
 frozenTill date
 internalComment varchar default '' not null
 blockedFamilies json
+maxDeliveries integer default 0 not null

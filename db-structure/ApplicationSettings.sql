@@ -16,6 +16,7 @@ commentForSuccessDelivery varchar default '' not null
 commentForSuccessLeft varchar default '' not null
 commentForProblem varchar default '' not null
 messageForDoneDelivery varchar default '' not null
+messageEncouragement varchar default '' not null
 helpText varchar default '' not null
 helpPhone varchar default '' not null
 phoneStrategy varchar default '' not null
@@ -128,6 +129,9 @@ smsClientNumber varchar default '' not null
 smsUsername varchar default '' not null
 smsPasswordInput varchar default '' not null
 smsVirtualPhoneNumber varchar default '' not null
+firebaseCredentials varchar default '' not null
+firebaseConfig varchar default '' not null
+firebaseVapidKey varchar default '' not null
 familySelfOrderEnabled boolean default false not null
 familySelfOrderMessage varchar default '' not null
 familyConfirmDetailsEnabled boolean default false not null
@@ -140,7 +144,3 @@ sendOnTheWaySMSToFamilyOnSendSmsToVolunteer boolean default false not null
 customSmsOriginForSmsToFamily varchar default '' not null
 enableOtp boolean default false not null
 webhookUrl varchar default '' not null
-firebaseConfig varchar
-firebaseCredentials varchar 
-firebaseVapidKey varchar default ''
-messageEncouragement varchar default ''
