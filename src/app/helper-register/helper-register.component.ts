@@ -197,11 +197,10 @@ export class HelperRegisterComponent implements OnInit {
   }
 
   get manifestData() {
-    const srcLogo = this.settings.logoUrl.startsWith('/')
-      ? window.origin +
-        '/' +
-        Sites.getOrganizationFromContext() +
-        this.settings.logoUrl
+    const srcLogo = this.settings.logoUrl.startsWith(
+      '/' + Sites.getOrganizationFromContext
+    )
+      ? window.origin + this.settings.logoUrl
       : this.settings.logoUrl
 
     return {
