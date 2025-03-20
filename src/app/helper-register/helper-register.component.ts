@@ -197,6 +197,13 @@ export class HelperRegisterComponent implements OnInit {
   }
 
   get manifestData() {
+    const srcLogo = this.settings.logoUrl.startsWith('/')
+      ? window.origin +
+        '/' +
+        Sites.getOrganizationFromContext() +
+        this.settings.logoUrl
+      : this.settings.logoUrl
+
     return {
       name: this.settings.organisationName,
       short_name: this.settings.organisationName,
@@ -206,7 +213,7 @@ export class HelperRegisterComponent implements OnInit {
       theme_color: '#000000',
       icons: [
         {
-          src: this.settings.logoUrl,
+          src: srcLogo,
           sizes: '160x160',
           type: `image/${this.settings.logoUrl.split('.').pop().toLowerCase()}`
         }
