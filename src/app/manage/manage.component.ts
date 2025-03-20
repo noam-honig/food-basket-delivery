@@ -447,6 +447,10 @@ export class ManageComponent implements OnInit {
   settings2Messages = new DataAreaSettings({
     fields: (s) => [
       this.settings.$.messageForDoneDelivery,
+      {
+        field: this.settings.$.messageEncouragement,
+        visible: () => isSderot()
+      },
       this.settings.$.AddressProblemStatusText,
       this.settings.$.NotHomeProblemStatusText,
       this.settings.$.DoNotWantProblemStatusText,
@@ -936,6 +940,7 @@ export class ManageComponent implements OnInit {
     this.settings.commentForProblem = this.settings.lang.commentForProblem
     this.settings.messageForDoneDelivery =
       this.settings.lang.messageForDoneDelivery
+    this.settings.messageEncouragement = this.settings.lang.messageEncouragement
     this.settings.deliveredButtonText = this.settings.lang.deliveredButtonText
     this.settings.setDefaultsForProblemStatuses()
     this.settings.boxes1Name = this.settings.lang.boxes1Name

@@ -11,7 +11,7 @@ import { AuthService } from '../../auth/auth-service'
 import { Route } from '@angular/router'
 import { ApplicationSettings } from '../../manage/ApplicationSettings'
 
-import { getFields, remult } from 'remult'
+import { getFields, remult, repo } from 'remult'
 import {
   DataAreaSettings,
   DataControl
@@ -26,6 +26,9 @@ import { use, Field, Fields } from '../../translate'
 import { NotAuthenticatedGuard } from '../../common-ui-elements'
 import { loginResult } from '../../auth/auth-service.controller'
 import { webPushService } from '../../deliveries-distribute/webPush.service'
+import moment from 'moment'
+import { FamilyDeliveries } from '../../families/FamilyDeliveries'
+import { DeliveryStatus } from '../../families/DeliveryStatus'
 
 @Component({
   selector: 'app-login',
@@ -179,9 +182,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
       return
     }
     this.setState(this.phoneState)
-    
+
     if (remult.authenticated() && isSderot()) {
       this.webPush.requestPermission()
+      this.sendMessage()
     }
 
     this.stepper.previous()
@@ -259,6 +263,42 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   orgName() {
     return ApplicationSettings.get().organisationName
+  }
+
+  async sendMessage() {
+    try {
+      const helper = await repo(Helpers).findId(remult.user.id)
+      const lastSendMessage = helper?.lastSendMessage
+
+      const countLastDays = lastSendMessage
+        ? moment().diff(moment(lastSendMessage, 'DD/MM/YYYY'), 'days')
+        : 0
+
+      if (!helper?.lastSendMessage || countLastDays > 7) {
+        const start = lastSendMessage || moment().subtract(7, 'days').toDate()
+
+        const countDeliveries = await repo(FamilyDeliveries).count({
+          deliveryStatusDate: {
+            '>=': start,
+            '<': new Date()
+          },
+          deliverStatus: DeliveryStatus.isAResultStatus(),
+          courier: helper
+        })
+
+        if (countDeliveries) {
+          this.dialog.messageDialog(this.settings.lang.messageEncouragement)
+
+          await helper
+            .assign({
+              lastSendMessage: new Date()
+            })
+            .save()
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

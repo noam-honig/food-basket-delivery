@@ -44,3 +44,4 @@ caller boolean default false not null
 includeGroups varchar default '' not null
 excludeGroups varchar default '' not null
 callQuota integer default 0 not null
+lastSendMessage timestamptz

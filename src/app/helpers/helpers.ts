@@ -1049,6 +1049,12 @@ export class Helpers extends HelpersBase {
     includeInApi: isSderot()
   })
   deviceTokenNotifications: string
+
+  @ChangeDateColumn({
+    allowApiUpdate: isSderot(),
+    includeInApi: isSderot()
+  })
+  lastSendMessage: Date
   static deliveredPreviously = Filter.createCustom<Helpers, { city: string }>(
     ({ city }) => {
       return SqlDatabase.rawFilter(async (c) => {

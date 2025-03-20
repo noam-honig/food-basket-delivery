@@ -1605,6 +1605,8 @@ export class Language {
   noticeDays = 'זמן להתראה בימים'
   allowedArchiveDeliveries = 'מורשה לצפיה בארכיון משלוחים'
   allowedReceiveNotifications = 'מורשה לקבלת פושים'
+  messageEncouragementForVolunteer = 'הודעה עידוד למתנדב בכניסה למערכת'
+  messageEncouragement = 'כל הכבוד! נשמח אם תתנדב שוב'
 }
 
 const defaultLang = new Language()

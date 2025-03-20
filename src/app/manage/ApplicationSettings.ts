@@ -302,6 +302,11 @@ export class ApplicationSettings extends EntityBase {
   commentForProblem: string
   @Fields.string({ translation: (l) => l.messageForVolunteerWhenDoneCaption })
   messageForDoneDelivery: string
+  @Fields.string({
+    translation: (l) => l.messageEncouragementForVolunteer,
+    includeInApi: isSderot()
+  })
+  messageEncouragement: string
   @Fields.string({ translation: (l) => l.helpName })
   helpText: string
   @Field(() => Phone)
@@ -668,7 +673,7 @@ export class ApplicationSettings extends EntityBase {
   smsVirtualPhoneNumber: string
 
   @Fields.object({
-    includeInApi: Roles.admin && isSderot(),
+    includeInApi: Roles.admin && isSderot()
   })
   firebaseCredentials: any
   @Fields.object({

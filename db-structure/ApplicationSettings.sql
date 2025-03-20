@@ -143,3 +143,4 @@ webhookUrl varchar default '' not null
 firebaseConfig varchar
 firebaseCredentials varchar 
 firebaseVapidKey varchar default ''
+messageEncouragement varchar default ''
