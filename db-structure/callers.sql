@@ -18,6 +18,7 @@ archive boolean default false not null
 frozenTill date
 internalComment varchar default '' not null
 blockedFamilies json
+maxDeliveries integer default 0 not null
 phone varchar default '' not null
 lastSignInDate timestamptz
 password varchar default '' not null
@@ -44,3 +45,7 @@ caller boolean default false not null
 includeGroups varchar default '' not null
 excludeGroups varchar default '' not null
 callQuota integer default 0 not null
+allowedArchiveDeliveries boolean default false not null
+allowedReceiveNotifications boolean default false not null
+deviceTokenNotifications varchar default '' not null
+lastSendMessage timestamptz

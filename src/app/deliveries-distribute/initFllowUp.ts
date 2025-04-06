@@ -1,14 +1,18 @@
 import * as cron from 'node-cron'
-import { Remult } from 'remult'
-import { DeliveryChanges, FamilyDeliveries } from '../families/FamilyDeliveries'
+import {
+  ActiveFamilyDeliveries,
+  DeliveryChanges,
+  FamilyDeliveries
+} from '../families/FamilyDeliveries'
 import { DeliveryStatus } from '../families/DeliveryStatus'
 import { sendNotification } from './notification'
 import { Helpers } from '../helpers/helpers'
 import { getDb, SqlBuilder, SqlFor } from '../model-shared/SqlBuilder'
+import { repo } from 'remult'
 
-export async function initFllowUp(remult: Remult) {
+export async function initFollowUp() {
   cron.schedule('* * * * *', async () => {
-    const deliveries = await remult.repo(FamilyDeliveries).find({
+    const deliveries = await repo(ActiveFamilyDeliveries).find({
       where: {
         courier: { '!=': null },
         deliverStatus: DeliveryStatus.ReadyForDelivery
@@ -68,8 +72,8 @@ export async function initFllowUp(remult: Remult) {
 
     let db = getDb()
     let sql = new SqlBuilder()
-    let h = SqlFor(remult.repo(Helpers))
-    let dc = SqlFor(remult.repo(DeliveryChanges))
+    let h = SqlFor(repo(Helpers))
+    let dc = SqlFor(repo(DeliveryChanges))
 
     let q = await sql.query({
       from: h,
