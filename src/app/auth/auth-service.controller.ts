@@ -50,7 +50,7 @@ export class AuthServiceController {
     let settings = await remult.context.getSettings()
     let h = await remult
       .repo(Helpers)
-      .findFirst({ phone: new Phone(args.phone) })
+      .findFirst({ phone: new Phone(args.phone), archive: false })
     if (!h) {
       r.invalidUser = true
       return r
