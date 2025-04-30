@@ -20,13 +20,13 @@ export class webPushService {
     let firebaseConfig = settings.firebaseConfig
 
     try {
-      firebaseConfig = JSON.parse(firebaseConfig)
-
       if (firebaseConfig && settings.firebaseVapidKey) {
         const app = initializeApp(firebaseConfig)
         this.messaging = getMessaging(app)
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log('webPushService Error' + error)
+    }
   }
 
   requestPermission() {
