@@ -47,13 +47,18 @@ export async function initNotification(firebaseCredentials: any) {
     const credentials = firebaseCredentials
     if (!credentials) return
     const privateKey = credentials['private_key'].replace(/\\n/g, '\n')
-
+    console.log('Credential initNotification', {
+      projectId: credentials['project_id'],
+      privateKey,
+      clientEmail: credentials['client_email']
+    })
     if (
       credentials['project_id'] &&
       privateKey &&
       credentials['client_email']
     ) {
       const admin = require('firebase-admin')
+
       admin.initializeApp({
         credential: admin.credential.cert({
           projectId: credentials['project_id'],
@@ -63,6 +68,6 @@ export async function initNotification(firebaseCredentials: any) {
       })
     }
   } catch (err) {
-    console.log(err)
+    console.log('Error initNotification', err)
   }
 }

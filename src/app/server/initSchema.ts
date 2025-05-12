@@ -94,6 +94,8 @@ export async function initSchema(dataSource: SqlDatabase, org: string) {
     .repo(ApplicationSettings)
     .findId(1, { createIfNotFound: true })
 
+  console.log('befor initNotification ', settings?.firebaseCredentials)
+
   if (isSderot() && settings.firebaseCredentials)
     initNotification(settings.firebaseCredentials)
 
