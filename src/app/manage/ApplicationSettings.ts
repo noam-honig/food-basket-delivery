@@ -672,14 +672,14 @@ export class ApplicationSettings extends EntityBase {
   @Fields.string({ includeInApi: Roles.admin })
   smsVirtualPhoneNumber: string
 
-  @Fields.object({
+  @Fields.string({
     includeInApi: Roles.admin && isSderot()
   })
-  firebaseCredentials: any
-  @Fields.object({
+  firebaseCredentials: string
+  @Fields.string({
     includeInApi: Roles.admin && isSderot()
   })
-  firebaseConfig: any
+  firebaseConfig: string
   @Fields.string({ includeInApi: Roles.admin && isSderot() })
   firebaseVapidKey: string
 

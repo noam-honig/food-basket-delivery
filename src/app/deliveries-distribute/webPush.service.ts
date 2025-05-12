@@ -17,9 +17,8 @@ export class webPushService {
   private messaging: Messaging
 
   constructor(private settings: ApplicationSettings) {
-    let firebaseConfig = settings.firebaseConfig
-
     try {
+      let firebaseConfig = JSON.parse(settings.firebaseConfig)      
       if (firebaseConfig && settings.firebaseVapidKey) {
         const app = initializeApp(firebaseConfig)
         this.messaging = getMessaging(app)
