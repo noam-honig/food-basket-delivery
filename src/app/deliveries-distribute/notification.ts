@@ -44,7 +44,7 @@ export async function sendNotification(
 
 export async function initNotification(firebaseCredentials: any) {
   try {
-    const credentials = firebaseCredentials
+    const credentials = JSON.parse(firebaseCredentials)
     if (!credentials) return
     const privateKey = credentials['private_key'].replace(/\\n/g, '\n')
     console.log('Credential initNotification', {
