@@ -1183,7 +1183,7 @@ export class Language {
   volunteerCanUpdatePreferredDistributionAddress =
     'מתנדב יכול לעדכן אזור חלוקה מועדף'
   email = 'דואל'
-  preferredDistributionAreaAddress = 'כתובת לאזור חלוקה'
+  preferredDistributionAreaAddress = 'כתובת בסביבתה תרצו לחלק'
   preferredDistributionAreaAddressCity = 'עיר לאזור חלוקה'
   preferredFinishAddress = 'כתובת לסיום המסלול'
   preferredFinishAddressCity = 'עיר לסיום המסלול'

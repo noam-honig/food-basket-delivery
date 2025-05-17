@@ -14,3 +14,4 @@ a1 varchar default '' not null
 a2 varchar default '' not null
 a3 varchar default '' not null
 a4 varchar default '' not null
+notes varchar default '' not null
