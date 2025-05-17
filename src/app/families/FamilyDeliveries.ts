@@ -1567,7 +1567,7 @@ function logChanged(
   wasChanged: () => void
 ) {
   if (col.value != col.originalValue) {
-    dateCol.value = new Date()
+    if (!dateCol.valueChanged()) dateCol.value = new Date()
     user.setId(remult.user?.id)
     wasChanged()
   }

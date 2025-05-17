@@ -215,6 +215,8 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
   comment: string
   @Fields.boolean({ translation: (l) => l.deleteExistingComment })
   deleteExistingComment: boolean
+  @Fields.dateOnly({ translation: (l) => l.deliveryStatusDate })
+  deliveryStatusDate = new Date()
 
   constructor() {
     super({
@@ -264,6 +266,7 @@ export class UpdateDeliveriesStatus extends ActionOnFamilyDeliveries {
           )
         ) {
           f.deliverStatus = this.status
+          f.deliveryStatusDate = this.deliveryStatusDate
           if (this.deleteExistingComment) {
             f.internalDeliveryComment = ''
           }
