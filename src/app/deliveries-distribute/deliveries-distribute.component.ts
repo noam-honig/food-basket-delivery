@@ -66,7 +66,8 @@ export class DeliveriesDistributeComponent {
           //   !remult.isAllowed(Roles.distCenterAdmin)
           //     ? true
           //     : undefined,
-          basketType: helperBasketTypes
+          basketType: helperBasketTypes,
+          deliverStatus: DeliveryStatus.ReadyForDelivery,
         },
         orderBy: {
           deliverStatus: 'asc',
