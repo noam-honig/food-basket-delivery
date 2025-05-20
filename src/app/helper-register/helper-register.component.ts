@@ -110,12 +110,28 @@ export class HelperRegisterComponent implements OnInit {
     if (!this.helper.socialSecurityNumber) {
       err = true
       this.helper.$.socialSecurityNumber.error = 'שדה חובה'
-    } else this.helper.$.socialSecurityNumber.error = ''
+    } else {
+      if (
+        !this.validateSocialSecurityNumber(this.helper.socialSecurityNumber)
+      ) {
+        err = true
+        this.helper.$.socialSecurityNumber.error =
+          this.helper.$.socialSecurityNumber.metadata.caption + ' לא תקין'
+      } else this.helper.$.socialSecurityNumber.error = ''
+    }
 
     if (!this.helper.preferredFinishAddress) {
       err = true
       this.helper.$.preferredFinishAddress.error = 'שדה חובה'
     } else this.helper.$.preferredFinishAddress.error = ''
+
+    if (this.helper.email) {
+      if (!this.validateEmail(this.helper.email.address)) {
+        err = true
+        this.helper.$.email.error =
+          this.helper.$.email.metadata.caption + ' לא תקין'
+      } else this.helper.$.email.error = ''
+    }
 
     if (err) {
       this.error = 'נא למלא את השדות הנדרשים'
@@ -130,6 +146,26 @@ export class HelperRegisterComponent implements OnInit {
       this.error = 'יש לאשר את התנאים וההנחיות'
       return
     }
+  }
+
+  validateEmail(email: string) {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    return regex.test(email)
+  }
+
+  validateSocialSecurityNumber(value: any) {
+    value = value.toString().trim()
+    value = value.padStart(9, '0')
+
+    let total = 0
+
+    for (let i = 0; i < 8; i++) {
+      let digit = +value.charAt(i)
+      total += i % 2 === 0 ? digit : digit * 2 > 9 ? digit * 2 - 9 : digit * 2
+    }
+
+    const isValid = (total + +value.charAt(8)) % 10 === 0
+    return isValid
   }
 
   async save() {
