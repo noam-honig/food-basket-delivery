@@ -1591,11 +1591,7 @@ export class FamilyDeliveries extends IdEntity {
       }
     })
 
-    console.log(helpers.length, 'helpers')
-
     for (const helper of helpers) {
-      console.log(helper.deviceTokenNotifications, helper.name)
-
       if (helper.deviceTokenNotifications)
         await sendNotification(title, body, helper.deviceTokenNotifications)
     }
