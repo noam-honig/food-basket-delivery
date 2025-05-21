@@ -48,4 +48,6 @@ callQuota integer default 0 not null
 allowedArchiveDeliveries boolean default false not null
 allowedReceiveNotifications boolean default false not null
 deviceTokenNotifications varchar default '' not null
+availableVolunteering boolean default false not null
+dateUpdateAvailability date
 lastSendMessage timestamptz

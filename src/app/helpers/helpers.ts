@@ -1050,6 +1050,18 @@ export class Helpers extends HelpersBase {
   })
   deviceTokenNotifications: string
 
+  @Fields.boolean<Helpers>({
+    allowApiUpdate: true,
+    includeInApi: isSderot()
+  })
+  availableVolunteering: boolean
+
+  @Fields.dateOnly<Helpers>({
+    allowApiUpdate: true,
+    includeInApi: isSderot()
+  })
+  dateUpdateAvailability: Date
+
   @ChangeDateColumn({
     allowApiUpdate: isSderot(),
     includeInApi: isSderot()

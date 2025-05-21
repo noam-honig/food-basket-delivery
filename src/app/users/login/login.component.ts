@@ -184,8 +184,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.setState(this.phoneState)
 
     if (remult.authenticated() && isSderot()) {
+      await this.updateAvailability()
       this.webPush.requestPermission()
-      this.sendMessage()
+      await this.sendMessage()
     }
 
     this.stepper.previous()
@@ -265,6 +266,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     return ApplicationSettings.get().organisationName
   }
 
+  ///Sderot
   async sendMessage() {
     try {
       const helper = await repo(Helpers).findId(remult.user.id)
@@ -299,6 +301,38 @@ export class LoginComponent implements OnInit, AfterViewInit {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async updateAvailability() {
+    try {
+      const helper = await repo(Helpers).findId(remult.user.id)
+      if (
+        !helper.dateUpdateAvailability ||
+        !this.isToday(helper.dateUpdateAvailability)
+      ) {
+        helper.assign({
+          availableVolunteering: false,
+          dateUpdateAvailability: new Date()
+        })
+        await helper.save()
+
+        await this.dialog.YesNoQuestion('האם את/ה בעיר היום?', async () => {
+          helper.assign({ availableVolunteering: true })
+          await helper.save()
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  isToday(date: Date): boolean {
+    const today = new Date()
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    )
   }
 }
 
