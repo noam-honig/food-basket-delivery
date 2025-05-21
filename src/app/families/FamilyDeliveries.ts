@@ -303,7 +303,8 @@ async function documentChange(fd: FamilyDeliveries, deleted = false) {
       if (self.isNew() && isBackend()) {
         await FamilyDeliveries.sendNotificationAdmin(
           'משימה נפתחה',
-          `נפתחה משימת ${self.basketType.name} חדשה`
+          `נפתחה משימת ${self.basketType.name} חדשה`,
+          true
         )
       }
     }
@@ -1566,15 +1567,35 @@ export class FamilyDeliveries extends IdEntity {
   }
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static async sendNotificationAdmin(title: string, body: string) {
+  static async sendNotificationAdmin(
+    title: string,
+    body: string,
+    forHelperAvailable: boolean = false
+  ) {
+    const now = new Date()
+    now.setDate(now.getDate() + 1)
     const helpers = await repo(Helpers).find({
       where: {
-        allowedReceiveNotifications: true,
+        $or: [
+          { allowedReceiveNotifications: true },
+          forHelperAvailable
+            ? {
+                $and: [
+                  { availableVolunteering: true },
+                  { dateUpdateAvailability: now }
+                ]
+              }
+            : {}
+        ],
         deviceTokenNotifications: { '!=': '' }
       }
     })
 
+    console.log(helpers.length, 'helpers')
+
     for (const helper of helpers) {
+      console.log(helper.deviceTokenNotifications, helper.name)
+
       if (helper.deviceTokenNotifications)
         await sendNotification(title, body, helper.deviceTokenNotifications)
     }
