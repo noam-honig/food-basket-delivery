@@ -6,7 +6,6 @@ import { Roles } from '../auth/roles'
 import { Sites } from '../sites/sites'
 import { getLang } from '../sites/sites'
 import { TranslationOptions } from '../translate'
-import FormData from 'form-data'
 export class SendSmsAction {
   static getSuccessMessage(template: string, orgName: string, family: string) {
     return template
@@ -323,8 +322,7 @@ export class SendSmsUtils {
               'https://api.inforu.co.il/SendMessageXml.ashx',
               {
                 method: 'POST',
-                headers: formData.getHeaders(),
-                body: formData.getBuffer()
+                body: formData
               }
             )
 
