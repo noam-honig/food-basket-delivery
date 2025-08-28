@@ -739,7 +739,12 @@ s.parentNode.insertBefore(b, s);})();
   app.get('/index.html', api.withRemult, (req, res) => {
     sendIndex(res, req)
   })
-  app.use(express.static(publicRoot))
+  app.use(
+    express.static(publicRoot, {
+      cacheControl: true,
+      maxAge: 604800
+    })
+  )
 
   app.use('/*', api.withRemult, async (req, res) => {
     await sendIndex(res, req)
