@@ -38,7 +38,6 @@ actionInfo.runningOnServer = true
 export async function serverInit() {
   try {
     config()
-    console.log(process.env['DATABASE_URL'])
     let ssl: boolean | ConnectionOptions = {
       rejectUnauthorized: false
     }
