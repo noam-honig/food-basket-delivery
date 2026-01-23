@@ -380,12 +380,12 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
 
   async handleError(error) {
     super.handleError(error)
-    if (error.message?.includes('Failed to fetch dynamically imported')) {
-      alert(
-        getLang().newVersionPressOkToReload ?? 'New version, press OK to reload'
-      )
-      window.location.reload()
-    }
+    // if (error.message?.includes('Failed to fetch dynamically imported')) {
+    //   alert(
+    //     getLang().newVersionPressOkToReload ?? 'New version, press OK to reload'
+    //   )
+    //   window.location.reload()
+    // }
 
     if (
       error.message.startsWith('ExpressionChangedAfterItHasBeenCheckedError') ||
