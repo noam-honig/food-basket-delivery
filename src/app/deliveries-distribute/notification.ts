@@ -66,6 +66,8 @@ export async function initNotification(firebaseCredentials: any) {
           clientEmail: credentials['client_email']
         })
       })
+
+      console.log('Firebase Admin initialized successfully')
     }
   } catch (err) {
     console.log('Error initNotification', err)

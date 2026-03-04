@@ -12,6 +12,8 @@ import { repo } from 'remult'
 
 export async function initFollowUp() {
   cron.schedule('* * * * *', async () => {
+    console.log('Checking deliveries for follow-up...')
+
     const deliveries = await repo(ActiveFamilyDeliveries).find({
       where: {
         courier: { '!=': null },
@@ -32,6 +34,8 @@ export async function initFollowUp() {
         const noticeDate = calculateNoticeDate(delivery)
 
         if (noticeDate && noticeDate.getTime() === now.getTime()) {
+          console.log('Delivery notice:', delivery.id)
+
           const help = await delivery.courier.getHelper()
           if (help && help.deviceTokenNotifications) {
             await sendNotification(
@@ -42,6 +46,8 @@ export async function initFollowUp() {
           }
         }
         if (endDate && endDate.getTime() <= now.getTime()) {
+          console.log('Delivery overdue:', delivery.id)
+
           const help = await delivery.courier.getHelper()
           await delivery.assign({ courier: null }).save()
           if (help && help.deviceTokenNotifications) {
