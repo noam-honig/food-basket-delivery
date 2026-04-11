@@ -746,6 +746,7 @@ font-family: &quot;arial&quot;;
           deliveries.deliveryStatusDate,
           { field: deliveries.courierComments, width: '300' },
           { field: deliveries.internalDeliveryComment, width: '400' },
+          deliveries.internalComment,
           deliveries.needsWork,
           deliveries.needsWorkDate,
           deliveries.needsWorkUser,

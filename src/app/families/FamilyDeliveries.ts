@@ -820,6 +820,21 @@ export class FamilyDeliveries extends IdEntity {
     }
   })
   socialWorker: string
+  @Fields.string<FamilyDeliveries>({
+    translation: (l) => l.internalComment,
+    includeInApi: Roles.distCenterAdmin,
+    sqlExpression: async (selfDefs) => {
+      let sql = new SqlBuilder()
+      let self = SqlFor(selfDefs)
+      let f = SqlFor(remult.repo(Families))
+      return sql.columnInnerSelect(self, {
+        from: f,
+        select: () => [f.internalComment],
+        where: () => [sql.eq(f.id, self.family)]
+      })
+    }
+  })
+  internalComment: string
 
   @DataControl<FamilyDeliveries>({
     readonly: (self) => self.deliverStatus.IsAResultStatus()
