@@ -146,8 +146,13 @@ export class FamilyDeliveriesComponent implements OnInit, OnDestroy {
   assignedButNotOutBaskets: statsOnTabBasket = {
     name: getLang().assignedButNotOutBaskets,
     rule: {
-      messageStatus: MessageStatus.notSent,
-      $and: [FamilyDeliveries.onTheWayFilter()]
+      $or: [
+        FamilyDeliveries.readyAndSelfPickup(),
+        {
+          messageStatus: MessageStatus.notSent,
+          $and: [FamilyDeliveries.onTheWayFilter()]
+        }
+      ]
     },
     stats: [this.stats.ready, this.stats.special],
     moreStats: [],
@@ -993,7 +998,7 @@ font-family: &quot;arial&quot;;
               (d: ActiveFamilyDeliveries, c) => c == d.$.id || c == d.$.family,
               undefined,
               async (fd, addColumn) => {
-                await fd.basketType?.addBasketTypes(fd.quantity, addColumn)
+                BasketType.addBasketTypes(fd.basketType, fd.quantity, addColumn)
                 fd.addStatusExcelColumn(addColumn)
                 if (includeFamilyInfo)
                   await fd.addFamilyInfoToExcelFile(addColumn)

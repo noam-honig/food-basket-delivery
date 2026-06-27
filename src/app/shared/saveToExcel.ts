@@ -84,7 +84,7 @@ export async function saveToExcel<
           colName = XLSX.utils.encode_col(colIndex)
           if (v) {
             let len = v.length
-            if (len > col.wch) {
+            if (col && len > col.wch) {
               col.wch = len
             }
           }

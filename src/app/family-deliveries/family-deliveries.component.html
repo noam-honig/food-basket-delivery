@@ -33,6 +33,10 @@
     <div *ngIf="showTotalBoxes()" [class.hidden]="!showChart">
       {{ showTotalBoxes() }}
       <a (click)="calcTotalItems()"> {{ settings.lang.calcTotalItems }} </a>
+      <div *ngIf="currentTabStats === assignedButNotOutBaskets">
+        ⚠️ ב27/6 שינינו לשונית זו לכלול גם את הטרם שוייכו. מעכשיו כלולים טרם
+        שוייכו וכאלו ששוייכו ועוד לא נשלח להם SMS
+      </div>
     </div>
 
     <strong>{{ deliveries.totalRows }} {{ settings.lang.deliveries }} </strong>

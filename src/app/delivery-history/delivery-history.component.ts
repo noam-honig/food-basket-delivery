@@ -30,6 +30,7 @@ import { DeliveryStatus } from '../families/DeliveryStatus'
 import { BusyService, RouteHelperService } from '../common-ui-elements'
 import { DeliveryHistoryController } from './delivery-history.controller'
 import { PlaybackComponent } from '../playback/playback.component'
+import { BasketType } from '../families/BasketType'
 
 @Component({
   selector: 'app-delivery-history',
@@ -226,7 +227,11 @@ export class DeliveryHistoryComponent implements OnInit {
             (d: FamilyDeliveries, c) => c == d.$.id || c == d.$.family,
             undefined,
             async (f, addColumn) => {
-              await f.basketType?.addBasketTypes(f.quantity, addColumn)
+              await BasketType.addBasketTypes(
+                f.basketType,
+                f.quantity,
+                addColumn
+              )
               f.addStatusExcelColumn(addColumn)
               if (includeFamilyInfo) await f.addFamilyInfoToExcelFile(addColumn)
             },

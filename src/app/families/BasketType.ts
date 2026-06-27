@@ -55,7 +55,8 @@ export class BasketType extends MyIdEntity {
   static boxes1Name = !use ? '' : use.language.boxes1Name
   static boxes2Name = !use ? '' : use.language.boxes2Name
 
-  addBasketTypes(
+  static addBasketTypes(
+    basketType: BasketType,
     quantity: number,
     addColumn: (
       caption: string,
@@ -65,12 +66,12 @@ export class BasketType extends MyIdEntity {
   ) {
     addColumn(
       BasketType.boxes1Name,
-      this.boxes ? (this.boxes * quantity).toString() : '',
+      basketType?.boxes ? (basketType.boxes * quantity).toString() : '',
       'n'
     )
     addColumn(
       BasketType.boxes2Name,
-      this.boxes2 ? (this.boxes2 * quantity).toString() : '',
+      basketType?.boxes2 ? (basketType.boxes2 * quantity).toString() : '',
       'n'
     )
   }

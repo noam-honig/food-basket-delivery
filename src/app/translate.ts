@@ -1256,7 +1256,7 @@ export class Language {
     'משלוחים שהסתיימו. עדכון הסטטוס שלהם ימחק את הערך הקיים והמשלוח לא ישמר בהיסטוריה. אם אתם רוצים ליצור משלוח חדש, הפסיקו פעולה זו ובחרו באפשרות משלוח חדש בתפריט. לבטל פעולה זו?'
   excelImportUpdateFamilyDefaultsBasedOnCurrentDelivery =
     'עדכן ברירות מחדל למשפחה בהתאם למשלוח זה'
-  assignedButNotOutBaskets = 'שוייכו וטרם יצאו לפי סלים'
+  assignedButNotOutBaskets = 'טרם יצאו לפי סלים'
   selfPickupByBaskets = 'באים לקחת לפי סלים'
   routeOptimization = 'תכנון מסלול'
   routeStrategy = 'תכנון מסלול'
