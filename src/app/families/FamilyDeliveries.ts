@@ -401,10 +401,11 @@ export class FamilyDeliveries extends IdEntity {
     allowApiUpdate: false,
     translation: (l) => l.familyName,
     sqlExpression: async (entity) => {
+      //remult 3 requires a string result - returning undefined crashes name resolution
       let r =
         remult.isAllowed(Roles.distCenterAdmin) ||
         !(await remult.context.getSettings())?.showOnlyLastNamePartToVolunteer
-          ? undefined
+          ? 'name'
           : "regexp_replace(name, '^.* ', '')"
       return r
     }

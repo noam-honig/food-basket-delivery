@@ -4,7 +4,7 @@ import { ApplicationImages } from '../manage/ApplicationImages'
 import express from 'express'
 import fs from 'fs' //
 //import heapdump from 'heapdump'
-import { serverInit } from './serverInit'
+import { schemaInitEntities, serverInit } from './serverInit'
 import {
   ApplicationSettings,
   getSettings,
@@ -116,7 +116,7 @@ import { ChangeLog, FieldDecider } from '../change-log/change-log'
 import { CallerController } from '../caller/caller.controller'
 
 import { postgresColumnSyntax } from 'remult/postgres/schema-builder'
-import { remultExpress, RemultExpressServer } from 'remult/remult-express'
+import { remultExpress, type remultApiServer } from 'remult/remult-express'
 import { Callers } from '../manage-callers/callers'
 import { MessageTemplate } from '../edit-custom-message/messageMerger'
 import {
@@ -176,6 +176,7 @@ const entities = [
   MessageTemplate,
   HelperCommunicationHistory
 ]
+schemaInitEntities.push(...entities)
 const controllers = [
   SendSmsForFamilyDetailsConfirmation,
   FamilyConfirmDetailsController,
@@ -814,7 +815,7 @@ async function downloadPaperTrailLogs() {
     console.error(err)
   }
 }
-function registerImageUrls(app, api: RemultExpressServer, sitePrefix: string) {
+function registerImageUrls(app, api: remultApiServer, sitePrefix: string) {
   app.use(
     sitePrefix + '/assets/apple-touch-icon.png',
     api.withRemult,

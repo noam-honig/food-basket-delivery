@@ -34,6 +34,8 @@ declare const lang = ''
 export const initSettings = {
   disableSchemaInit: false
 }
+//in remult 3 the schema builder no longer has access to a global entity registry - server.ts registers its entity list here
+export const schemaInitEntities: ClassType<any>[] = []
 actionInfo.runningOnServer = true
 export async function serverInit() {
   try {
@@ -281,7 +283,9 @@ async function InitSpecificSchema(pool: Pool, s: string) {
     const settings = remult.repo(ApplicationSettings)
     await b.createIfNotExist(settings.metadata)
     await b.verifyAllColumns(settings.metadata)
-    await b.verifyStructureOfAllEntities(remult)
+    await b.ensureSchema(
+      schemaInitEntities.map((e) => remult.repo(e).metadata)
+    )
     await initSchema(db, s)
   }
   return db
