@@ -106,6 +106,8 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
   defaultDistributionCenter: boolean
   @Fields.boolean({ translation: (l) => l.defaultQuantity })
   quantity: boolean
+  @Fields.boolean({ translation: (l) => l.defaultItems })
+  items: boolean
   @Fields.boolean({ translation: (l) => l.commentForVolunteer })
   comment: boolean
   @Fields.boolean({ translation: (l) => l.selfPickup })
@@ -118,6 +120,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
         this.$.basketType,
         { field: this.$.selectBasket, visible: () => this.basketType },
         this.$.quantity,
+        this.$.items,
         this.$.byCurrentCourier,
         this.$.comment,
         {
@@ -147,6 +150,7 @@ export class UpdateFamilyDefaults extends ActionOnRows<ActiveFamilyDeliveries> {
                 .findId(this.selectBasket)
           }
           if (this.quantity) f.quantity = fd.quantity
+          if (this.items) f.items = fd.items
           if (this.comment) f.deliveryComments = fd.deliveryComments
           if (this.selfPickup)
             f.defaultSelfPickup =

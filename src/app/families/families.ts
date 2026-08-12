@@ -2,7 +2,7 @@ import { DeliveryStatus } from './DeliveryStatus'
 import { YesNo } from './YesNo'
 
 import { FamilySources } from './FamilySources'
-import { BasketType } from './BasketType'
+import { BasketType, editItems } from './BasketType'
 import {
   delayWhileTyping,
   Email,
@@ -135,6 +135,7 @@ declare type factoryFor<T> = {
         [
           self.$.basketType,
           self.$.quantity,
+          self.$.items,
           self.$.deliveryComments,
           self.$.defaultSelfPickup
         ].find((x) => x.valueChanged())
@@ -157,6 +158,11 @@ declare type factoryFor<T> = {
             fd.quantity == self.$.quantity.originalValue
           )
             fd.quantity = self.quantity
+          if (
+            self.$.items.valueChanged() &&
+            fd.items == self.$.items.originalValue
+          )
+            fd.items = self.items
           if (
             self.$.deliveryComments.valueChanged() &&
             fd.deliveryComments == self.$.deliveryComments.originalValue
@@ -556,6 +562,7 @@ export class Families extends IdEntity {
     fd.special = this.special
     fd.basketType = this.basketType
     fd.quantity = this.quantity
+    fd.items = this.items
     fd.deliveryComments = this.deliveryComments
     fd.courier = this.fixedCourier
     fd.deliverStatus = this.defaultSelfPickup
@@ -666,6 +673,13 @@ export class Families extends IdEntity {
   basketType: BasketType
   @Fields.integer({ translation: (l) => l.defaultQuantity })
   quantity: number
+  @Fields.string({
+    translation: (l) => l.defaultItems,
+    clickWithTools: (_, fr, ui) => {
+      editItems(fr, ui)
+    }
+  })
+  items: string = ''
   @Field(() => FamilySources, {
     translation: (l) => l.familySource,
     includeInApi: Roles.familyAdmin

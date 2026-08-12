@@ -241,6 +241,7 @@ export class donor {
   age = 'גיל'
   defaultBasketType = 'סוג סל ברירת מחדל'
   defaultQuantity = 'כמות ברירת מחדל'
+  defaultItems = 'פריטים ברירת מחדל'
   familySource = 'גורם מפנה'
   familyHelpContact = 'איש קשר לבירור פרטים (עו"ס)'
   familyHelpPhone1 = 'עו"ס טלפון 1'

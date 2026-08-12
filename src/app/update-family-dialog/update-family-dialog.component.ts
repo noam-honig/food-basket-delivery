@@ -409,6 +409,7 @@ export class UpdateFamilyDialogComponent
       fields: (f) =>
         [
           [f.basketType, f.quantity],
+          f.items,
           f.deliveryComments,
           f.defaultSelfPickup,
           f.fixedCourier,

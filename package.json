@@ -98,6 +98,7 @@
     "@types/jasminewd2": "^2.0.8",
     "@types/jsonwebtoken": "^8.3.5",
     "@types/node": "^18.11.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/password-hash": "^1.2.20",
     "@types/pg": "^7.14.4",
     "@types/xlsx": "0.0.36",

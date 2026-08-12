@@ -178,12 +178,14 @@ async function updateBasedOnMondayItem(item: MondayItem) {
       {
         comment: f.deliveryComments,
         quantity,
-        selfPickup: false
+        selfPickup: false,
+        items: f.items
       }
     )
   } else {
     fd.basketType = f.basketType
     fd.quantity = quantity
+    fd.items = f.items
     fd._disableMessageToUsers = true
     fd.deliveryComments = f.deliveryComments
     await fd.save()

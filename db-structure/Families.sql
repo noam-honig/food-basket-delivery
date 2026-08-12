@@ -7,6 +7,7 @@ familyMembers integer default 0 not null
 birthDate date
 basketType varchar default '' not null
 quantity integer default 0 not null
+items varchar default '' not null
 familySource varchar default '' not null
 socialWorker varchar default '' not null
 socialWorkerPhone1 varchar default '' not null

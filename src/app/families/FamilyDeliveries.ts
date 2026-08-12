@@ -381,6 +381,7 @@ export class FamilyDeliveries extends IdEntity {
     this.special = originalDelivery.special
     this.basketType = originalDelivery.basketType
     this.quantity = originalDelivery.quantity
+    this.items = originalDelivery.items
     this.deliveryComments = originalDelivery.deliveryComments
   }
   async duplicateCount() {

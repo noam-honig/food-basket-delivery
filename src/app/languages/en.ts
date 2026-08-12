@@ -256,6 +256,7 @@ export class en {
   age = 'age'
   defaultBasketType = 'Default parcel type'
   defaultQuantity = 'Default number of parcels'
+  defaultItems = 'Default items'
   familySource = 'Referrer'
   familyHelpContact = 'Contact details for details (COO)'
   familyHelpPhone1 = 'Clarification phone 1'

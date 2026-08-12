@@ -300,6 +300,7 @@ export class FamiliesComponent implements OnInit {
         families.nextBirthday,
         families.basketType,
         families.quantity,
+        families.items,
         families.deliveryComments,
         families.fixedCourier,
         families.defaultDistributionCenter,

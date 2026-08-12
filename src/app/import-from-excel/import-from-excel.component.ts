@@ -455,6 +455,9 @@ export class ImportFromExcelComponent implements OnInit {
       if (fd.$.quantity.valueChanged()) {
         f.quantity = fd.quantity
       }
+      if (fd.$.items.valueChanged()) {
+        f.items = fd.items
+      }
       if (fd.$.deliveryComments.valueChanged()) {
         f.deliveryComments = fd.deliveryComments
       }
@@ -1006,6 +1009,7 @@ export class ImportFromExcelComponent implements OnInit {
             if (
               c == this.f.basketType ||
               c == this.f.quantity ||
+              c == this.f.items ||
               c == this.f.deliveryComments ||
               c == this.f.fixedCourier ||
               c == this.f.defaultDistributionCenter
@@ -1292,6 +1296,9 @@ export class ImportFromExcelComponent implements OnInit {
       }
       if (updatedColumns.get(this.fd.quantity)) {
         updatedColumns.set(this.f.quantity, true)
+      }
+      if (updatedColumns.get(this.fd.items)) {
+        updatedColumns.set(this.f.items, true)
       }
       if (updatedColumns.get(this.fd.deliveryComments)) {
         updatedColumns.set(this.f.deliveryComments, true)
