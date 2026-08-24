@@ -363,7 +363,13 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
     if (!settings.key) settings.key = settings.caption
     this.inputType = settings.inputType!
     if (settings.defaultValue) {
-      this._value = settings.defaultValue(undefined) as unknown as valueType
+      if (typeof settings.defaultValue === 'function') {
+        this._value = (settings.defaultValue as (entity: any) => valueType)(
+          undefined
+        ) as unknown as valueType
+      } else {
+        this._value = settings.defaultValue as unknown as valueType
+      }
     }
 
     this.originalValue = this._value
