@@ -535,7 +535,7 @@ export class HelperFamiliesComponent implements OnInit {
     } else {
       showUpdateFail = await openDialog(
         CommonQuestionsComponent,
-        (x) => x.init(this.familyLists.allFamilies[0]),
+        (x) => x.init(f),
         (x) => x.updateFailedDelivery
       )
     }
