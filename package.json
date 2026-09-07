@@ -72,7 +72,7 @@
     "path": "^0.12.7",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
-    "remult": "^3.3.17",
+    "remult": "^3.4.0-next.2",
     "rxjs": "~7.8.0",
     "spherical-geometry-js": "^2.0.0",
     "tslib": "^2.3.0",
