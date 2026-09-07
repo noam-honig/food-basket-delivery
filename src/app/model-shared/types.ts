@@ -111,10 +111,14 @@ export class delayWhileTyping {
   constructor(private ms: number) {}
 
   do(what: () => void) {
-    clearTimeout(this.lastTimer)
+    this.cancel()
     this.lastTimer = setTimeout(() => {
       what()
     }, this.ms)
+  }
+
+  cancel() {
+    clearTimeout(this.lastTimer)
   }
 }
 

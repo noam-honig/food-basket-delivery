@@ -48,7 +48,7 @@
         <input
           matInput
           [(ngModel)]="identifier"
-          (input)="searchIdentifier()"
+          (input)="onIdentifierInput()"
           type="{{getKeyboardType()}}"
           #identifierInput
           [matAutocomplete]="auto"

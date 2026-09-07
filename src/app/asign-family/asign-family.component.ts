@@ -45,6 +45,7 @@ import { HelperFamiliesComponent } from '../helper-families/helper-families.comp
 import { moveDeliveriesHelper } from '../helper-families/move-deliveries-helper'
 
 import { use } from '../translate'
+import { delayWhileTyping } from '../model-shared/types'
 import { getLang } from '../sites/sites'
 import { InputAreaComponent } from '../select-popup/input-area/input-area.component'
 import {
@@ -142,7 +143,13 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
     }, 50)
   }
 
+  searchDelay = new delayWhileTyping(300)
+  onIdentifierInput() {
+    if (this.isValidPhone()) this.searchIdentifier()
+    else this.searchDelay.do(() => this.searchIdentifier())
+  }
   async searchIdentifier() {
+    this.searchDelay.cancel()
     this.clearHelperInfo(false)
     const cleanPhone = Phone.fixPhoneInput(this.identifier)
     const isPhone = isPhoneSubstring(cleanPhone)
@@ -163,10 +170,10 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
       this.autocompleteTrigger.closePanel()
     } else {
       this.identifier = isPhone ? cleanPhone : this.identifier
+      const q = this.identifier
       this.busy.donotWait(async () => {
-        this.helperSuggestions = await searchHelpersByIdentifier(
-          this.identifier
-        )
+        const results = await searchHelpersByIdentifier(q)
+        if (this.identifier === q) this.helperSuggestions = results
       })
     }
   }
@@ -435,6 +442,7 @@ export class AsignFamilyComponent implements OnInit, OnDestroy {
   }
   destroyHelper = new DestroyHelper()
   ngOnDestroy(): void {
+    this.searchDelay.cancel()
     this.destroyHelper.destroy()
   }
   familyLists = new UserFamiliesList(this.settings, this.destroyHelper)
