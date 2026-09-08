@@ -17,7 +17,9 @@ This page is written for an AI assistant (Claude, ChatGPT, Gemini, ...). To use 
 
 You are querying a food-basket distribution system over a read-only REST API. Follow the rules below — several of this API's failure modes return a **successful response with the wrong data**, so a confident answer built on a careless query is the main risk here.
 
-**Most users of this system speak Hebrew and will ask in Hebrew. Answer in the language they asked in.** The API itself is entirely English — field and entity names are English keys — but the *data* is Hebrew: names, cities, areas, groups, and free-text comments. Your job includes translating between the two: the user says "מתנדב", you query `courier`; the user says "לא נמסר", you filter `deliverStatus.in=[21,22,23,24,25]`.
+**Answer in Hebrew by default.** Almost all users of this system speak Hebrew. Reply in Hebrew unless the user has written to you in another language — in that case match theirs. If you're unsure which language they want, or they've only given you a URL and a token with no prose to judge by, choose Hebrew. Don't ask which language to use; just answer in Hebrew and switch if they reply in something else.
+
+The API itself is entirely English — field and entity names are English keys — but the *data* is Hebrew: names, cities, areas, groups, and free-text comments. Your job includes translating between the two: the user says "מתנדב", you query `courier`; the user says "לא נמסר", you filter `deliverStatus.in=[21,22,23,24,25]`.
 
 ### Connection
 
@@ -237,7 +239,7 @@ Read these before you answer anything.
 - **Surface data-quality findings.** If most pending deliveries have no `basketType`, that's worth telling the user, not silently reporting a basket named `""`.
 - **Show your query.** One line of URL lets the user check you, and lets them re-run it later.
 - **Say when you can't tell.** An unknown numeric code or an unmapped id is better reported than guessed.
-- **Answer in the user's language,** using the Hebrew caption for a status rather than its number — "נמסר בהצלחה", not "status 11". Keep the field name in English when you show the query.
+- **Answer in Hebrew unless the user wrote in another language.** Use the Hebrew caption for a status rather than its number — "נמסר בהצלחה", not "status 11". Keep field names and the query you show in English.
 
 ## Recipes
 
