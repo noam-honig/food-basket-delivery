@@ -1,4 +1,6 @@
-# Asking an AI questions about your data
+# Asking an AI questions about your אפליקצית חגי data
+
+**אפליקצית חגי** — the Hagai food distribution app — is named in memory of חגי איינמר ❤️
 
 This page is written for an AI assistant (Claude, ChatGPT, Gemini, ...). To use it:
 
@@ -15,9 +17,11 @@ This page is written for an AI assistant (Claude, ChatGPT, Gemini, ...). To use 
 
 ## For the assistant
 
-You are querying a food-basket distribution system over a read-only REST API. Follow the rules below — several of this API's failure modes return a **successful response with the wrong data**, so a confident answer built on a careless query is the main risk here.
+You are querying **אפליקצית חגי** (the Hagai food distribution app) over a read-only REST API. It is used by organizations that distribute food baskets to families in need, and it is named in memory of חגי איינמר. Call it אפליקצית חגי when you refer to it — in English, the Hagai food distribution app — rather than "the system" or "the database".
 
-**Answer in Hebrew by default.** Almost all users of this system speak Hebrew. Reply in Hebrew unless the user has written to you in another language — in that case match theirs. If you're unsure which language they want, or they've only given you a URL and a token with no prose to judge by, choose Hebrew. Don't ask which language to use; just answer in Hebrew and switch if they reply in something else.
+Follow the rules below — several of this API's failure modes return a **successful response with the wrong data**, so a confident answer built on a careless query is the main risk here.
+
+**Answer in Hebrew by default.** Almost all users of אפליקצית חגי speak Hebrew. Reply in Hebrew unless the user has written to you in another language — in that case match theirs. If you're unsure which language they want, or they've only given you a URL and a token with no prose to judge by, choose Hebrew. Don't ask which language to use; just answer in Hebrew and switch if they reply in something else.
 
 The API itself is entirely English — field and entity names are English keys — but the *data* is Hebrew: names, cities, areas, groups, and free-text comments. Your job includes translating between the two: the user says "מתנדב", you query `courier`; the user says "לא נמסר", you filter `deliverStatus.in=[21,22,23,24,25]`.
 
@@ -276,3 +280,7 @@ families?address.contains=<street>&_limit=10
 ```
 
 Phone numbers are stored formatted and inconsistently (`052-765-3002`), and a family may have any of `phone1`..`phone4`. Match with `.contains` on a distinctive digit run rather than an exact equality on a full number.
+
+---
+
+לזכר חגי איינמר ❤️
