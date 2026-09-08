@@ -16,6 +16,8 @@ import { openDialog } from '../common-ui-elements'
 import { Roles } from '../auth/roles'
 import { DestroyHelper } from '../select-popup/dialog'
 import { SendSmsAction } from '../asign-family/send-sms-action'
+import { AsignFamilyController } from '../asign-family/asign-family.controller'
+import type { refreshRouteArgs } from '../asign-family/asign-family.controller'
 
 const useWazeKey = 'useWaze'
 export class UserFamiliesList {
@@ -228,21 +230,18 @@ export class UserFamiliesList {
 
   distCenter: DistributionCenters
   lastTimeout: any
-  async refreshRoute(
-    args: import('../asign-family/asign-family.controller').refreshRouteArgs,
-    strategy?: routeStrategy
-  ) {
+  async refreshRoute(args: refreshRouteArgs, strategy?: routeStrategy) {
     if (this.lastTimeout) clearTimeout(this.lastTimeout)
     this.lastTimeout = setTimeout(async () => {
-      await (
-        await import('../asign-family/asign-family.controller')
-      ).AsignFamilyController.RefreshRoute(this.helper, args, strategy).then(
-        (r) => {
-          if (r && r.ok) {
-            this.setRouteStats(r.stats)
-          }
+      await AsignFamilyController.RefreshRoute(
+        this.helper,
+        args,
+        strategy
+      ).then((r) => {
+        if (r && r.ok) {
+          this.setRouteStats(r.stats)
         }
-      )
+      })
     }, 1000)
   }
   labs = Boolean(localStorage.getItem('labs'))

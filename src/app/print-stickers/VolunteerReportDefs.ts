@@ -15,6 +15,7 @@ import { Helpers, HelpersBase } from '../helpers/helpers'
 import { UITools } from '../helpers/init-context'
 import { getSettings } from '../manage/ApplicationSettings'
 import { use } from '../translate'
+import { AsignFamilyController } from '../asign-family/asign-family.controller'
 
 export class OptionalFieldsDefinition<dataArgs> {
   fields: {
@@ -205,9 +206,7 @@ export class VolunteerReportDefs extends OptionalFieldsDefinition<{
     })) {
       if (fd.courier != lastCourier) {
         lastCourier = fd.courier
-        await (
-          await import('../asign-family/asign-family.controller')
-        ).AsignFamilyController.RefreshRoute(fd.courier, {})
+        await AsignFamilyController.RefreshRoute(fd.courier, {})
       }
     }
 

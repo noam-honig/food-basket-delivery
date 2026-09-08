@@ -743,7 +743,12 @@ s.parentNode.insertBefore(b, s);})();
   app.use(
     express.static(publicRoot, {
       cacheControl: true,
-      maxAge: 604800
+      maxAge: '7d', // express takes ms; the old 604800 meant 10 minutes
+      setHeaders(res, filePath) {
+        // content-hashed bundles never change under the same name
+        if (/-[A-Z0-9]{8}\.(js|css)$/.test(filePath))
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+      }
     })
   )
 
