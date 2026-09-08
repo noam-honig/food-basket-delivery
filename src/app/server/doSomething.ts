@@ -20,8 +20,21 @@ import { Helpers } from '../helpers/helpers'
 import { ApplicationSettings } from '../manage/ApplicationSettings'
 
 import { Families } from '../families/families'
-import { FamilyDeliveries } from '../families/FamilyDeliveries'
+import {
+  ActiveFamilyDeliveries,
+  FamilyDeliveries
+} from '../families/FamilyDeliveries'
 import { volunteersInEvent, Event } from '../events/events'
+import { getValueList } from 'remult'
+import { HelpersAndStats } from '../delivery-follow-up/HelpersAndStats'
+import { ApplicationImages } from '../manage/ApplicationImages'
+import { BasketType } from '../families/BasketType'
+import { FamilySources } from '../families/FamilySources'
+import { Groups } from '../manage/groups'
+import { DistributionCenters } from '../manage/distribution-centers'
+import { CitiesStats } from '../family-deliveries/family-deliveries-stats'
+import { GroupsStatsPerDistributionCenter } from '../manage/GroupsStatsPerDistributionCenter'
+import { GroupsStatsForAllDeliveryCenters } from '../manage/GroupsStatsForAllDeliveryCenters'
 
 let match = 0
 export async function DoIt() {
@@ -134,20 +147,37 @@ async function buildDocs() {
   var c = new Remult()
 
   var s =
-    "## Data Model\n Here's a detailed list of all the entities used in the rest api"
+    "## Data Model\n Here's a detailed list of all the entities used in the rest api" +
+    '\n\nNumeric codes (`deliverStatus`, `status`, ...) are listed under [Value lists](#value-lists) at the bottom of this page.'
   let list: any[] = [
     Families,
     FamilyDeliveries,
+    ActiveFamilyDeliveries,
     Helpers,
+    HelpersAndStats,
     Event,
     volunteersInEvent,
-    ApplicationSettings
+    ApplicationSettings,
+    ApplicationImages,
+    BasketType,
+    FamilySources,
+    Groups,
+    DistributionCenters,
+    Sites,
+    GeocodeCache,
+    CitiesStats,
+    GroupsStatsPerDistributionCenter,
+    GroupsStatsForAllDeliveryCenters
   ]
   // for (const iterator of allEntities) {
   //     if (!list.includes(iterator) && iterator)
   //         list.push(iterator);
 
   // }
+
+  // Value lists are collected while walking the fields and rendered once at the
+  // end - the same status type is used by several entities.
+  const valueLists = new Map<string, { id: any; caption: string }[]>()
 
   for (const type of list) {
     var e = c.repo(type).metadata
@@ -160,6 +190,17 @@ async function buildDocs() {
 `
     for (const c of e.fields) {
       let extra = ''
+      const typeName = c.valueType?.name
+
+      const values = getValueList(c)
+      if (values?.length && typeName) {
+        if (!valueLists.has(typeName))
+          valueLists.set(
+            typeName,
+            values.map((v: any) => ({ id: v.id, caption: v.caption }))
+          )
+        extra = `see [${typeName}](#${typeName.toLowerCase()})`
+      }
 
       s +=
         '| ' +
@@ -173,5 +214,25 @@ async function buildDocs() {
         ' |\n'
     }
   }
+
+  if (valueLists.size) {
+    s +=
+      '\n\n# Value lists\n\nThese fields are stored as the numeric `id`. Filter and group by the id, and use the caption for display.'
+    for (const [typeName, values] of [...valueLists].sort((a, b) =>
+      a[0].localeCompare(b[0])
+    )) {
+      s +=
+        '\n\n## ' +
+        typeName +
+        `
+| id | caption |
+| --- | --- |
+`
+      for (const v of values) {
+        s += '| ' + v.id + ' | ' + v.caption + ' |\n'
+      }
+    }
+  }
+
   fs.writeFileSync('./docs/model.md', s)
 }

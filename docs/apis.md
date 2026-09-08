@@ -18,6 +18,8 @@ These apis are used to query and update data on the server using Rest API, suppo
 
 For a detailed break down see [model.md](model.md)
 
+To let an AI assistant answer questions about your data over these apis, point it at [ai-queries.md](ai-queries.md) — it covers the query syntax, the `deliverStatus` codes and the traps that produce wrong answers.
+
 
 ## Server functions, Apis used to perform a specific task
 
